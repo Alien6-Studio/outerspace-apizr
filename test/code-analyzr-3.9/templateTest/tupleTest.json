@@ -1,0 +1,166 @@
+{
+  "version": [
+    3,
+    9
+  ],
+  "imports": [],
+  "imports_from": [
+    {
+      "module": "typing",
+      "imports": [
+        {
+          "name": "Tuple",
+          "asname": null
+        }
+      ],
+      "level": 0
+    }
+  ],
+  "functions": [
+    {
+      "name": "foo",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "tuple",
+            "of": []
+          }
+        },
+        {
+          "name": "b",
+          "annotation": {
+            "type": "Tuple",
+            "of": [
+              {
+                "type": "int",
+                "of": []
+              },
+              {
+                "type": "float",
+                "of": []
+              }
+            ]
+          }
+        },
+        {
+          "name": "c",
+          "annotation": {
+            "type": "Tuple",
+            "of": []
+          }
+        },
+        {
+          "name": "d",
+          "annotation": {
+            "type": "Tuple",
+            "of": [
+              {
+                "type": "str",
+                "of": []
+              },
+              {
+                "type": "int",
+                "of": []
+              }
+            ]
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    },
+    {
+      "name": "bar",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "Tuple",
+            "of": [
+              {
+                "type": "Tuple",
+                "of": [
+                  {
+                    "type": "int",
+                    "of": []
+                  },
+                  {
+                    "type": "str",
+                    "of": []
+                  },
+                  {
+                    "type": "float",
+                    "of": []
+                  }
+                ]
+              },
+              {
+                "type": "Tuple",
+                "of": [
+                  {
+                    "type": "str",
+                    "of": []
+                  },
+                  {
+                    "type": "Tuple",
+                    "of": [
+                      {
+                        "type": "int",
+                        "of": []
+                      },
+                      {
+                        "type": "float",
+                        "of": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    },
+    {
+      "name": "baz",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "Tuple",
+            "of": [
+              {
+                "type": "Tuple",
+                "of": [
+                  {
+                    "type": "int",
+                    "of": []
+                  },
+                  {
+                    "type": "str",
+                    "of": []
+                  }
+                ]
+              },
+              {
+                "type": "Tuple",
+                "of": []
+              }
+            ]
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    }
+  ]
+}

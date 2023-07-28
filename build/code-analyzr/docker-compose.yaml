@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  code-analyzr-3.8:
+    build: 
+      context: ../../
+      dockerfile: ./build/code-analyzr/Dockerfile
+      args:
+        - TEST_PATH=3.8
+        - PYTHON_IMAGE_TAG=3.8-alpine3.18
+    image: outerspace.alien6.com/code-analyzr:python3.8
+    ports:
+      - "8080:5000"
+  code-analyzr-3.9:
+    build: 
+      context: ../../
+      dockerfile: ./build/code-analyzr/Dockerfile
+      args:
+        - TEST_PATH=3.9
+        - PYTHON_IMAGE_TAG=3.9-alpine3.18
+    image: outerspace.alien6.com/code-analyzr:python3.9
+    ports:
+      - "8080:5000"
+  code-analyzr-3.10:
+    build: 
+      context: ../../
+      dockerfile: ./build/code-analyzr/Dockerfile
+      args:
+        - TEST_PATH=3.10
+        - PYTHON_IMAGE_TAG=3.10-alpine3.18
+    image: outerspace.alien6.com/code-analyzr:python3.10
+    ports:
+      - "8080:5000"
+  code-analyzr-3.11:
+    build: 
+      context: ../../
+      dockerfile: ./build/code-analyzr/Dockerfile
+      args:
+        - TEST_PATH=3.11
+        - PYTHON_IMAGE_TAG=3.11-alpine3.18
+    image: outerspace.alien6.com/code-analyzr:python3.11
+    ports:
+      - "8080:5000"

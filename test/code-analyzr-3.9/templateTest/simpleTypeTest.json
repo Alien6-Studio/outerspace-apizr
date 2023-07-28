@@ -1,0 +1,171 @@
+{
+  "version": [
+    3,
+    9
+  ],
+  "imports": [],
+  "imports_from": [],
+  "functions": [
+    {
+      "name": "numbers",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "int",
+            "of": []
+          }
+        },
+        {
+          "name": "b",
+          "annotation": {
+            "type": "float",
+            "of": []
+          }
+        },
+        {
+          "name": "c",
+          "annotation": {
+            "type": "complex",
+            "of": []
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    },
+    {
+      "name": "iters",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "list",
+            "of": []
+          }
+        },
+        {
+          "name": "b",
+          "annotation": {
+            "type": "tuple",
+            "of": []
+          }
+        },
+        {
+          "name": "c",
+          "annotation": {
+            "type": "range",
+            "of": []
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    },
+    {
+      "name": "boolean",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "bool",
+            "of": []
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    },
+    {
+      "name": "bits",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "bytes",
+            "of": []
+          }
+        },
+        {
+          "name": "b",
+          "annotation": {
+            "type": "bytearray",
+            "of": []
+          }
+        },
+        {
+          "name": "c",
+          "annotation": {
+            "type": "memoryview",
+            "of": []
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    },
+    {
+      "name": "strings",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "str",
+            "of": []
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    },
+    {
+      "name": "dictionary",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "dict",
+            "of": []
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    },
+    {
+      "name": "sets",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "set",
+            "of": []
+          }
+        },
+        {
+          "name": "b",
+          "annotation": {
+            "type": "frozenset",
+            "of": []
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    }
+  ]
+}

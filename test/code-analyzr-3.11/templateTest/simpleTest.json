@@ -1,0 +1,18 @@
+{
+  "version": [
+    3,
+    11
+  ],
+  "imports": [],
+  "imports_from": [],
+  "functions": [
+    {
+      "name": "foo",
+      "args": [],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    }
+  ]
+}

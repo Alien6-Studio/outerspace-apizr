@@ -1,0 +1,39 @@
+# Use a lightweight base image
+FROM python:{{ python_version }}-alpine3.18
+
+# Update packages and install necessary dependencies
+RUN apk update && apk add --no-cache gcc musl-dev
+
+# Create a non-privileged user
+RUN addgroup -S outerspacer && adduser -S outerspacer -G outerspacer
+
+# Set environment variables
+ENV PYTHONPATH /app:$PYTHONPATH
+
+# Copy the source code into the container
+COPY . /app
+
+# Set the working directory
+WORKDIR /app
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Remove unnecessary dependencies
+RUN apk del gcc musl-dev
+
+# Change ownership for the application directory
+RUN chown -R outerspacer:outerspacer /app
+
+# Use the new user to run the container
+USER outerspacer
+
+# Expose the service
+EXPOSE {{ port }}
+
+# Add a health check
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost:5001/docs || exit 1
+
+# Run the application
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "wsgi:application"]

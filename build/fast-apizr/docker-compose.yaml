@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  fast-apizr-3.8:
+    build: 
+      context: ../../
+      dockerfile: ./build/fast-apizr/Dockerfile
+      args:
+        - PYTHON_IMAGE_TAG=3.8-alpine3.18
+    image: outerspace.alien6.com/fast-apizr:python3.8
+    ports:
+      - "8081:5000"
+  fast-apizr-3.9:
+    build:
+      context: ../../
+      dockerfile: ./build/fast-apizr/Dockerfile
+      args:
+        - PYTHON_IMAGE_TAG=3.9-alpine3.18
+    image: outerspace.alien6.com/fast-apizr:python3.9
+    ports:
+      - "8081:5000"
+  fast-apizr-3.10:
+    build:
+      context: ../../
+      dockerfile: ./build/fast-apizr/Dockerfile
+      args:
+        - PYTHON_IMAGE_TAG=3.10-alpine3.18
+    image: outerspace.alien6.com/fast-apizr:python3.10
+    ports:
+      - "8081:5000"
+  fast-apizr-3.11:
+    build:
+      context: ../../
+      dockerfile: ./build/fast-apizr/Dockerfile
+      args:
+        - PYTHON_IMAGE_TAG=3.11-alpine3.18
+    image: outerspace.alien6.com/fast-apizr:python3.11
+    ports:
+      - "8080:5000"

@@ -1,0 +1,114 @@
+{
+    "version": [
+        3,
+        7
+    ],
+    "imports": [],
+    "imports_from": [
+        {
+            "module": "typing",
+            "imports": [
+                {
+                    "name": "Tuple",
+                    "asname": null
+                },
+                {
+                    "name": "List",
+                    "asname": null
+                }
+            ],
+            "level": 0
+        }
+    ],
+    "functions": [
+        {
+            "name": "hello",
+            "args": [
+                {
+                    "name": "test",
+                    "annotation": {
+                        "type": "str",
+                        "of": []
+                    }
+                }
+            ],
+            "returns": {
+                "type": "any",
+                "of": []
+            },
+            "selected": true
+        },
+        {
+            "name": "addition",
+            "args": [
+                {
+                    "name": "a",
+                    "annotation": {
+                        "type": "int",
+                        "of": []
+                    }
+                },
+                {
+                    "name": "b",
+                    "annotation": {
+                        "type": "int",
+                        "of": []
+                    }
+                }
+            ],
+            "returns": {
+                "type": "any",
+                "of": []
+            },
+            "selected": true
+        },
+        {
+            "name": "testtuple",
+            "args": [
+                {
+                    "name": "a",
+                    "annotation": {
+                        "type": "Tuple",
+                        "of": [
+                            {
+                                "type": "int",
+                                "of": []
+                            },
+                            {
+                                "type": "str",
+                                "of": []
+                            }
+                        ]
+                    }
+                }
+            ],
+            "returns": {
+                "type": "any",
+                "of": []
+            },
+            "selected": true
+        },
+        {
+            "name": "testList",
+            "args": [
+                {
+                    "name": "a",
+                    "annotation": {
+                        "type": "List",
+                        "of": [
+                            {
+                                "type": "str",
+                                "of": []
+                            }
+                        ]
+                    }
+                }
+            ],
+            "returns": {
+                "type": "any",
+                "of": []
+            },
+            "selected": true
+        }
+    ]
+}

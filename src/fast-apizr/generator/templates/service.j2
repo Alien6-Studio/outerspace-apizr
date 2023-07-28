@@ -1,0 +1,8 @@
+{{schema}}
+
+@app.post('{{ service_url }}')
+def {{ service_name }}({% if schema|length %} arguments: {{schema_name}}{% endif %}):  
+    try:
+        return {{ module_name }}.{{ function_name }}({{ args_list }})
+    except Exception as err:
+      return {"errors": "an exception was thrown during program execution"}, 500
