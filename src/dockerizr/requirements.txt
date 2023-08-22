@@ -1,0 +1,3 @@
+fastapi
+uvicorn[standard]
+Jinja2==3.0.1

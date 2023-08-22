@@ -1,0 +1,38 @@
+{
+  "version": [
+    3,
+    8
+  ],
+  "imports": [],
+  "imports_from": [
+    {
+      "module": "typing",
+      "imports": [
+        {
+          "name": "List",
+          "asname": null
+        },
+        {
+          "name": "Tuple",
+          "asname": null
+        }
+      ],
+      "level": 0
+    },
+    {
+      "module": "werkzeug.datastructures",
+      "imports": [
+        {
+          "name": "FileStorage",
+          "asname": null
+        },
+        {
+          "name": "FileMultiDict",
+          "asname": "fmd"
+        }
+      ],
+      "level": 0
+    }
+  ],
+  "functions": []
+}

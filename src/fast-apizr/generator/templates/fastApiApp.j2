@@ -1,0 +1,14 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+import {{ main_module }} as {{ main_module }}
+
+app = FastAPI()
+
+{% for service in services %}
+{{ service }}
+{% endfor %}

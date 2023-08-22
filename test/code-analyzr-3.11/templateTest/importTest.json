@@ -1,0 +1,30 @@
+{
+  "version": [
+    3,
+    11
+  ],
+  "imports": [
+    {
+      "name": "typing",
+      "asname": null
+    },
+    {
+      "name": "werkzeug",
+      "asname": null
+    },
+    {
+      "name": "flask",
+      "asname": null
+    },
+    {
+      "name": "sklearn",
+      "asname": "sk"
+    },
+    {
+      "name": "numpy",
+      "asname": "np"
+    }
+  ],
+  "imports_from": [],
+  "functions": []
+}

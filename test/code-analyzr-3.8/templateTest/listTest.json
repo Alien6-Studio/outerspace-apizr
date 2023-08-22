@@ -1,0 +1,109 @@
+{
+  "version": [
+    3,
+    8
+  ],
+  "imports": [],
+  "imports_from": [
+    {
+      "module": "typing",
+      "imports": [
+        {
+          "name": "List",
+          "asname": null
+        }
+      ],
+      "level": 0
+    }
+  ],
+  "functions": [
+    {
+      "name": "foo",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "list",
+            "of": []
+          }
+        },
+        {
+          "name": "b",
+          "annotation": {
+            "type": "List",
+            "of": [{
+              "type": "int",
+              "of": []
+            }]
+          }
+        },
+        {
+          "name": "c",
+          "annotation": {
+            "type": "List",
+            "of": []
+          }
+        },
+        {
+          "name": "d",
+          "annotation": {
+            "type": "List",
+            "of": [{
+              "type": "str",
+              "of": []
+            }]
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    },
+    {
+      "name": "bar",
+      "args": [
+        {
+          "name": "a",
+          "annotation": {
+            "type": "List",
+            "of": [{
+              "type": "List",
+              "of": []
+            }]
+          }
+        },
+        {
+          "name": "b",
+          "annotation": {
+            "type": "List",
+            "of": [{
+              "type": "List",
+              "of": [{
+                "type": "int",
+                "of": []
+              }]
+            }]
+          }
+        },
+        {
+          "name": "c",
+          "annotation": {
+            "type": "List",
+            "of": [{
+              "type": "List",
+              "of": [{
+                "type": "str",
+                "of": []
+              }]
+            }]
+          }
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "of": []
+      }
+    }
+  ]
+}
