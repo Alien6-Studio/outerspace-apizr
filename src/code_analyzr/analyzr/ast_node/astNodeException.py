@@ -5,8 +5,9 @@ class AnnotationException(TypeError):
     to type annotations in the Abstract Syntax Tree.
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, message: str = "error while retrieving type"):
+        super().__init__(message)
+        self.message = message
 
     def __str__(self):
-        return "error while retrieving type"
+        return self.message

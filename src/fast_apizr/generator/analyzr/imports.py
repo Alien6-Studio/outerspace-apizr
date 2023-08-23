@@ -12,3 +12,4 @@ class Import(BaseModel):
 
     name: str  # The name of the imported module or library.
     asname: Optional[str] = None  # Optional alias for the imported module or library.
+    module: Optional[str] = None  # Optional module from which the name is imported.

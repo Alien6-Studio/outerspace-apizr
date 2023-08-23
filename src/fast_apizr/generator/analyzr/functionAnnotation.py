@@ -2,8 +2,6 @@ from pydantic import BaseModel
 
 from typing import List, ForwardRef, Optional, Union
 
-FunctionAnnotation = ForwardRef("FunctionAnnotation")
-
 
 class FunctionAnnotation(BaseModel):
     """Represents a Python type annotation, considering potentially nested types.
@@ -15,7 +13,7 @@ class FunctionAnnotation(BaseModel):
 
     type: str = "any"  # The general type of the annotation (default is "any").
     of: Optional[
-        List[Union[str, FunctionAnnotation]]
+        List[Union[str, "FunctionAnnotation"]]
     ] = []  # Optional list representing the nested type(s).
 
 

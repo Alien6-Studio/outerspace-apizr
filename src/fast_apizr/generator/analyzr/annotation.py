@@ -1,8 +1,5 @@
 from pydantic import BaseModel, validator
-
-from typing import List, ForwardRef, Optional, Union
-
-Annotation = ForwardRef("Annotation")
+from typing import List, Optional, Union
 
 
 class Annotation(BaseModel):
@@ -15,7 +12,7 @@ class Annotation(BaseModel):
 
     type: str = "any"  # The general type of the annotation (default is "any").
     of: Optional[
-        List[Union[str, Annotation]]
+        List[Union[str, "Annotation"]]
     ] = []  # Optional list representing the nested type(s).
 
     @validator("of", pre=True, each_item=True)

@@ -25,7 +25,7 @@ app = FastAPI()
 
 
 def validate_python_version(
-    python_version: str = Query("3.8", regex="^\d+\.\d+$")
+    python_version: str = Query("3.8", regex="^\\d+\\.\\d+$")
 ) -> tuple:
     """Validate and extract the python version."""
     return tuple(map(int, re.findall(r"[0-9]+", python_version)))

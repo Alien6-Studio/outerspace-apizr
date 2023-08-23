@@ -1,6 +1,7 @@
 import ast
 import sys
 
+from typing import List, Optional, Union
 from .astNode import AstNode
 from .astNodeException import AnnotationException
 
@@ -41,11 +42,7 @@ class AnnotationNode(AstNode):
         elif isinstance(node, ast.List):
             return self.parse_list(node)
         elif isinstance(node, ast.Tuple):
-            self.of = (
-                [AnnotationNode(elt) for elt in node.elts]
-                if node.elts is not []
-                else None
-            )
+            self.of = [AnnotationNode(elt) for elt in node.elts] if node.elts else []
             return "Tuple"
         elif isinstance(node, ast.Constant):
             return "None" if node.value is None else type(node.value).__name__
@@ -127,9 +124,5 @@ class AnnotationNode(AstNode):
         else:
             value = node.value
         if isinstance(value, ast.Tuple):
-            return (
-                [AnnotationNode(elt) for elt in value.elts]
-                if value.elts is not []
-                else None
-            )
+            return [AnnotationNode(elt) for elt in value.elts] if value.elts else []
         raise AnnotationException()

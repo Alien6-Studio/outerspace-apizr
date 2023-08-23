@@ -13,7 +13,10 @@ class Analyzr(BaseModel):
     foundation for generating FastAPI specific code or any other related tasks.
     """
 
-    version: Tuple = (3,8)  # The targeted Python version for the analysis (default is Python 3.8).
+    version: Tuple = (
+        3,
+        8,
+    )  # The targeted Python version for the analysis (default is Python 3.8).
     functions: List[Function]  # List of functions present in the analyzed code.
     imports: List[Import] = []  # Direct imports present in the analyzed code.
     imports_from: List[

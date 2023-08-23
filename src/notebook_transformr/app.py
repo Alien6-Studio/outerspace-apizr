@@ -5,11 +5,12 @@ from transformr import NotebookTransformr
 
 app = FastAPI()
 
+
 @app.post("/convert_notebook")
 async def convert_notebook(
     python_version: str = "3.8",
     encoding: str = "utf-8",
-    output_directory: str = None,
+    output_directory: str = "",
     file: UploadFile = File(...),
 ):
     """
@@ -20,7 +21,8 @@ async def convert_notebook(
     """
 
     # Validate the file extension
-    if not file.filename.endswith(".ipynb"):
+
+    if file.filename and not file.filename.endswith(".ipynb"):
         raise HTTPException(
             status_code=400,
             detail="Invalid file type. Please upload a .ipynb file.",
@@ -30,7 +32,7 @@ async def convert_notebook(
 
     try:
         # Read the file
-        content = await transformer.read_file(file)
+        content = transformer.read_file(file)
 
         # Convert the notebook to a Python script
         source, _ = transformer.convert_notebook(content)

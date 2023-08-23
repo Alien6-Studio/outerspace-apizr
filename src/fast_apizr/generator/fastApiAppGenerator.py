@@ -44,6 +44,7 @@ class FastApiAppGenerator:
         """
         services = []
         imports = FastApiImportGenerator(self.analyse).generate_import_code()
+
         for function in [f for f in self.analyse.functions if f.selected]:
             cl = FastApiServicesGenerator(function, self.conf)
             services.append(cl.gen_service_code())

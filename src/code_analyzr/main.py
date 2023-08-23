@@ -25,6 +25,7 @@ import sys
 
 from analyzr import AstAnalyzr
 
+
 def main():
     parser = argparse.ArgumentParser(description="Analyse Python code.")
     parser.add_argument("file", help="Path to the Python file to analyze")
@@ -81,6 +82,7 @@ def main():
             logger.error(f"Error writing to output file: {e}")
     else:
         print(result)
+
 
 if __name__ == "__main__":
     main()

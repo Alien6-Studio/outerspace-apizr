@@ -1,3 +1,4 @@
+import sys
 import ast
 import json
 import logging
@@ -7,9 +8,13 @@ from .ast_node import ImportNode
 from .ast_node import ImportFromNode
 from .ast_node import LogError
 
+from .exceptions import UnsupportedKeywordError
+
 
 # AstAnalyzr class analyzes the structure of a Python code using Abstract Syntax Tree (AST).
 class AstAnalyzr(ast.NodeVisitor):
+    KEYWORDS = {(3, 10): ["match", "case"]}
+
     def __init__(
         self, code_str, functions_to_analyze=None, ignore=None, version=(3, 8)
     ):
@@ -31,16 +36,32 @@ class AstAnalyzr(ast.NodeVisitor):
         self.imports_from = []
         self.functions = []
 
+    @LogError(logging)
+    def check_for_keywords(self, code_str):
+        version = sys.version_info[:2]
+        for ver, keywords in self.KEYWORDS.items():
+            for keyword in keywords:
+                if keyword in code_str and version < ver:
+                    raise UnsupportedKeywordError(keyword, ver, version)
+
+    @LogError(logging)
     def get_analyse(self):
         """Analyze the provided code string and return its structure in JSON format.
 
         Returns:
             str: A JSON string representing the structure of the analyzed code.
         """
-        self.generic_visit(
-            ast.parse(self.code_str, type_comments=True, feature_version=self.version)
-        )
-        return self.toJSON()
+        try:
+            self.check_for_keywords(self.code_str)
+
+            self.generic_visit(
+                ast.parse(
+                    self.code_str, type_comments=True, feature_version=self.version
+                )
+            )
+            return self.toJSON()
+        except UnsupportedKeywordError as e:
+            return json.dumps({"error": str(e)})
 
     @LogError(logging)
     def generic_visit(self, node):
@@ -49,6 +70,7 @@ class AstAnalyzr(ast.NodeVisitor):
         Args:
             node (ast.AST): The current AST node being visited.
         """
+
         # Handle 'import' statements
         if isinstance(node, ast.Import):
             self.imports.extend(ImportNode(alias) for alias in node.names)

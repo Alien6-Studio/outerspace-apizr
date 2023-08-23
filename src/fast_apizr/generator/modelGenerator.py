@@ -1,7 +1,7 @@
 import logging
 
 from os import path
-from typing import List
+from typing import List, Union, Optional
 from jinja2 import Template
 
 from .analyzr.argument import Argument
@@ -55,32 +55,47 @@ class ModelGenerator:
         if annotation is None or annotation.type == "any":
             return "Any"
         if annotation.type == "Callable":
-            return "Callable" + self.get_annotation_fields(annotation.of[0])
+            if annotation.of and isinstance(annotation.of[0], Annotation):
+                return "Callable" + self.get_annotation_fields(annotation.of[0])
+            elif annotation.of:
+                return f"Callable[{annotation.of[0]}]"
+            else:
+                return "Callable"
         if annotation.type == "List" or annotation.type == "Tuple":
-            return self.get_sub_type(annotation.of)
-        return annotation.type + self.get_sub_type(annotation.of)
+            return self.get_sub_type(annotation.of if annotation.of is not None else [])
+        return annotation.type + (
+            self.get_sub_type(annotation.of) if annotation.of else ""
+        )
 
-    def get_sub_type(self, annotations: List[Annotation]) -> str:
+    def get_sub_type(self, annotations: List[Union[str, Annotation]]) -> str:
         """Retrieve the sub-type for composite types like List or Tuple.
 
         Args:
-            annotations (List[Annotation]): The annotations for the composite type.
+            annotations (List[Union[str, Annotation]]): The annotations for the composite type.
 
         Returns:
             str: The sub-type representation.
         """
-        if len(annotations) == 0:
+        if not annotations:
             return ""
         elif len(annotations) > 1:
             return (
                 "["
                 + ", ".join(
-                    [self.get_annotation_fields(annot) for annot in annotations]
+                    [
+                        self.get_annotation_fields(annot)
+                        if isinstance(annot, Annotation)
+                        else annot
+                        for annot in annotations
+                    ]
                 )
                 + "]"
             )
         else:
-            return "[" + self.get_annotation_fields(annotations[0]) + "]"
+            if isinstance(annotations[0], Annotation):
+                return "[" + self.get_annotation_fields(annotations[0]) + "]"
+            else:
+                return f"[{annotations[0]}]"
 
     @LogError(logging)
     def gen_schema_code(self) -> str:

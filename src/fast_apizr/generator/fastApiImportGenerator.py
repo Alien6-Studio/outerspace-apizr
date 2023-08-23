@@ -3,7 +3,7 @@ import logging
 
 from os import path
 from pprint import pprint
-from typing import List
+from typing import List, Union, Optional
 
 from .analyzr.analyzr import Analyzr
 from .analyzr.imports import Import
@@ -44,7 +44,7 @@ class FastApiImportGenerator:
             analyse (Analyzr): The analysis details to guide the import code generation.
         """
         self.analyse = analyse
-        self.imports = list()
+        self.imports = []
         self.get_imports()
 
     @LogError(logging)
@@ -59,21 +59,19 @@ class FastApiImportGenerator:
                     for t in self.get_annotation_types(arg.annotation):
                         types.add(t)
 
-        for t in types:
-            if t in self.primitive_type:
-                continue
-            if t == "any":
-                self.imports.append(
-                    {
-                        "imports": [{"asname": None, "name": "Any"}],
-                        "level": 0,
-                        "module": "typing",
-                    }
-                )
-            else:
-                a = self.lookup(t)
-                if a:
-                    self.imports.append(a[0])
+            # Initialize as an empty list
+            self.imports = []
+
+            for t in types:
+                if t in self.primitive_type:
+                    continue
+                if t == "any":
+                    self.imports.append(Import(name="Any", module="typing"))
+                else:
+                    a = self.lookup(t)
+                    if a:
+                        # Assuming lookup returns a list of Import instances
+                        self.imports.append(a[0])
 
     @LogError(logging)
     def lookup(self, type):
@@ -107,23 +105,27 @@ class FastApiImportGenerator:
         return results
 
     @LogError(logging)
-    def get_annotation_types(self, annotation: Annotation):
+    def get_annotation_types(
+        self, annotation: Union[str, Optional[Annotation]]
+    ) -> List[str]:
         """Extract types from a given annotation.
 
         Args:
-            annotation (Annotation): The annotation from which types need to be extracted.
+            annotation (Union[str, Optional[Annotation]]): The annotation from which types need to be extracted.
 
         Returns:
             List[str]: A list of type names extracted from the annotation.
         """
-        if annotation is None:
-            return []
+        if annotation is None or isinstance(annotation, str):
+            return [annotation] if annotation else []
+
         if isinstance(annotation.of, list):
             return list(
                 itertools.chain(
                     *[self.get_annotation_types(of) for of in annotation.of]
                 )
             ) + [annotation.type]
+
         return self.get_annotation_types(annotation.of) + [annotation.type]
 
     @LogError(logging)
@@ -157,9 +159,9 @@ class FastApiImportGenerator:
                 )
             elif isinstance(imp, Import):
                 result.add(
-                    "import "
+                    (("from " + imp.module + " ") if imp.module is not None else "")
+                    + "import "
                     + imp.name
                     + ((" as " + imp.asname) if imp.asname is not None else "")
                 )
-
         return result

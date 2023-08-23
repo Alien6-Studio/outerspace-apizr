@@ -12,16 +12,31 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Import necessary typing modules
+from typing import Any, Dict, List, Union
+
+
 # Class to convert dictionaries to objects
 class ConfigObject:
-    def __init__(self, dictionary):
+    conf: Any
+    analyse: Any
+
+    def __init__(self, dictionary: Dict[str, Union["ConfigObject", List[Any], Any]]):
         for key, value in dictionary.items():
             if isinstance(value, dict):
                 setattr(self, key, ConfigObject(value))
             elif isinstance(value, list):
-                setattr(self, key, [ConfigObject(item) if isinstance(item, dict) else item for item in value])
+                setattr(
+                    self,
+                    key,
+                    [
+                        ConfigObject(item) if isinstance(item, dict) else item
+                        for item in value
+                    ],
+                )
             else:
                 setattr(self, key, value)
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -43,8 +58,14 @@ def main():
 
             # Validate that required attributes are present
             if not all(hasattr(config, attr) for attr in ["conf", "analyse"]):
-                logger.error("Error: The JSON file must contain both 'conf' and 'analyse' keys.")
+                logger.error(
+                    "Error: The JSON file must contain both 'conf' and 'analyse' keys."
+                )
                 sys.exit(1)
+
+            # Add assertions for type-checking purposes
+            assert hasattr(config, "conf")
+            assert hasattr(config, "analyse")
 
             conf = config.conf
             analyse = config.analyse
@@ -69,6 +90,7 @@ def main():
             logger.error(f"Error writing to output file: {e}")
     else:
         print(result)
+
 
 if __name__ == "__main__":
     main()
