@@ -9,12 +9,21 @@
     Analyze a file "example.py", but ignore the functions "func3" and "func4":
         python main.py example.py --ignore func3,func4
 """
+import logging
+
+# Configure logging settings
+logging.basicConfig(
+    level=logging.ERROR,
+    format="%(asctime)s [%(levelname)s]: %(message)s",
+    filename="app_errors.log",
+)
+
+logger = logging.getLogger(__name__)
 
 import argparse
 import sys
 
 from analyzr import AstAnalyzr
-
 
 def main():
     parser = argparse.ArgumentParser(description="Analyse Python code.")
@@ -48,10 +57,11 @@ def main():
     args = parser.parse_args()
 
     try:
+        logger.info("Attempting to open input file")
         with open(args.file, "r", encoding=args.encoding) as f:
             code = f.read()
     except Exception as e:
-        print(f"Error reading file: {e}")
+        logger.error(f"Error reading file: {e}")
         sys.exit(1)
 
     analyzer = AstAnalyzr(
@@ -66,12 +76,11 @@ def main():
         try:
             with open(args.output, "w") as f:
                 f.write(result)
-            print(f"Analysis result saved to {args.output}")
+            logger.info(f"Analysis result saved to {args.output}")
         except Exception as e:
-            print(f"Error writing to output file: {e}")
+            logger.error(f"Error writing to output file: {e}")
     else:
         print(result)
-
 
 if __name__ == "__main__":
     main()

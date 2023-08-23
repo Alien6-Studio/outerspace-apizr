@@ -3,6 +3,8 @@
     3,
     11
   ],
+  "functions_to_analyze": [],
+  "ignore": [],
   "imports": [],
   "imports_from": [
     {
@@ -58,7 +60,8 @@
       "returns": {
         "type": "any",
         "of": []
-      }
+      },
+      "selected": true
     },
     {
       "name": "bar",
@@ -103,7 +106,8 @@
       "returns": {
         "type": "any",
         "of": []
-      }
+      },
+      "selected": true
     }
   ]
 }

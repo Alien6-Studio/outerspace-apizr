@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "outerspace-apizr"
-version = "0.1.0-alpha.2"
+version = "0.1.1-alpha.1"
 description = "Apizr is a dynamic API generator built on top of FastAPI. It analyses your Python codebase, extracts relevant metadata, and automatically generates a FastAPI backend for your application. This simplifies the process of API development, saving time, and reducing the chance of errors."
 authors = [    
     "Ludovic FERNANDEZ <ludovic.fernandez@alien6.com>",
@@ -20,9 +20,9 @@ Jinja2 = "3.0.1"
 python-multipart = "*"
 
 [tool.poetry.extras]
-notebook-transformr = ["nbconvert", "pipreqs", "ipython", "black"]
-fast-apizr = ["fastapi", "uvicorn", "Jinja2"]
-code-analyzr = ["fastapi", "uvicorn", "python-multipart"]
+notebook_transformr = ["nbconvert", "pipreqs", "ipython", "black"]
+fast_apizr = ["fastapi", "uvicorn", "Jinja2"]
+code_analyzr = ["fastapi", "uvicorn", "python-multipart"]
 dockerizr = ["fastapi", "uvicorn", "Jinja2"]
 
 [[tool.poetry.packages]]

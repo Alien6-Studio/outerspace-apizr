@@ -10,7 +10,7 @@ description: Code Analyzr extracts API endpoints from Python codebase and genera
 
 ## Overview
 
-The code-analyzr project is designed to extract API endpoints from a provided Python codebase through AST (Abstract Syntax Tree) parsing. The primary entry point is the `app.py` file, offering functionalities for input validation, code analysis, and file creation.
+The Code Analyzr project is designed to extract API endpoints from a provided Python codebase through AST (Abstract Syntax Tree) parsing. The primary entry point is the `app.py` file, offering functionalities for input validation, code analysis, and file creation.
 
 The heart of the extraction process is the `AstAnalyzr` class located in the `analyzr/astAnalyzr.py` file. This class uses Python's built-in `ast` module to parse the provided code and derive meaningful information. The project is further supported by multiple helper classes within the `analyzr/ast_node/` directory, each dedicated to handling a specific type of AST node, such as annotations, functions, and imports.
 
@@ -84,10 +84,11 @@ The output from `CodeAnalyzr` would be:
 
 ```json
 {
-  "version": [3, 9],
+  "version": [3, 8],
   "functions_to_analyze": [],
   "ignore": [],
   "imports": [{"name": "math", "asname": null}],
+  "imports_from": [],
   "functions": [
     {
       "name": "add",
@@ -95,7 +96,8 @@ The output from `CodeAnalyzr` would be:
         {"name": "a", "annotation": {"type": "int", "of": []}},
         {"name": "b", "annotation": {"type": "int", "of": []}}
       ],
-      "returns": {"type": "int", "of": []}
+      "returns": {"type": "int", "of": []},
+      "selected": true
     }
   ]
 }

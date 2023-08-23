@@ -3,6 +3,8 @@
     3,
     10
   ],
+  "functions_to_analyze": [],
+  "ignore": [],
   "imports": [
     {
       "name": "typing",

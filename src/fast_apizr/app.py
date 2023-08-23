@@ -17,7 +17,7 @@ from generator.configuration import Configuration
 from generator.fastApiAppGenerator import FastApiAppGenerator
 from generator.errorLogger import LogError
 
-logger.info("Initializing the FastAPI app for fast-apizr")
+logger.info("Initializing the FastAPI app for Fast APIzr")
 app = FastAPI()
 
 

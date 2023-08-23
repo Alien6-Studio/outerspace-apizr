@@ -70,6 +70,7 @@ Given an analyzed output from Code Analyzr:
   "functions_to_analyze": [],
   "ignore": [],
   "imports": [{"name": "math", "asname": null}],
+  "imports_from": [],
   "functions": [
     {
       "name": "add",
@@ -77,7 +78,8 @@ Given an analyzed output from Code Analyzr:
         {"name": "a", "annotation": {"type": "int", "of": []}},
         {"name": "b", "annotation": {"type": "int", "of": []}}
       ],
-      "returns": {"type": "int", "of": []}
+      "returns": {"type": "int", "of": []},
+      "selected": true
     }
   ]
 }
@@ -87,10 +89,20 @@ FastApizr will produce a FastAPI route similar to:
 
 ```python
 from fastapi import FastAPI
+from pydantic import BaseModel
+
+import main as main
 
 app = FastAPI()
 
+class Add_model(BaseModel):
+   a: int
+   b: int
+
 @app.post('/add')
-def add(a: int, b: int) -> int:
-    return a + b
+def add_service( arguments: Add_model):  
+    try:
+        return main.add(a = arguments.a, b = arguments.b)
+    except Exception as err:
+      return {"errors": "an exception was thrown during program execution"}, 500
 ```
