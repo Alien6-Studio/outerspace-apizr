@@ -3,6 +3,8 @@
     3,
     11
   ],
+  "functions_to_analyze": [],
+  "ignore": [],
   "imports": [],
   "imports_from": [],
   "functions": [
@@ -12,7 +14,8 @@
       "returns": {
         "type": "int",
         "of": []
-      }
+      },
+      "selected": true
     },
     {
       "name": "baz",
@@ -20,7 +23,8 @@
       "returns": {
         "type": "dict",
         "of": []
-      }
+      },
+      "selected": true
     }
   ]
 }

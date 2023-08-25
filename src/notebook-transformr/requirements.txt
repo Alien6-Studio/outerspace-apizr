@@ -1,4 +1,0 @@
-nbconvert
-pipreqs
-ipython
-black

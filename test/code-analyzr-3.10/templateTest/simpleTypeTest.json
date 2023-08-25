@@ -3,6 +3,8 @@
     3,
     10
   ],
+  "functions_to_analyze": [],
+  "ignore": [],
   "imports": [],
   "imports_from": [],
   "functions": [
@@ -34,7 +36,8 @@
       "returns": {
         "type": "any",
         "of": []
-      }
+      },
+      "selected": true
     },
     {
       "name": "iters",
@@ -64,7 +67,8 @@
       "returns": {
         "type": "any",
         "of": []
-      }
+      },
+      "selected": true
     },
     {
       "name": "boolean",
@@ -80,7 +84,8 @@
       "returns": {
         "type": "any",
         "of": []
-      }
+      },
+      "selected": true
     },
     {
       "name": "bits",
@@ -110,7 +115,8 @@
       "returns": {
         "type": "any",
         "of": []
-      }
+      },
+      "selected": true
     },
     {
       "name": "strings",
@@ -126,7 +132,8 @@
       "returns": {
         "type": "any",
         "of": []
-      }
+      },
+      "selected": true
     },
     {
       "name": "dictionary",
@@ -142,7 +149,8 @@
       "returns": {
         "type": "any",
         "of": []
-      }
+      },
+      "selected": true
     },
     {
       "name": "sets",
@@ -165,7 +173,8 @@
       "returns": {
         "type": "any",
         "of": []
-      }
+      },
+      "selected": true
     }
   ]
 }

@@ -50,6 +50,7 @@ clean:
 	rm -f `find . -type f -name '*.py[co]'`
 	rm -f `find . -type f -name '*~'`
 	rm -f `find . -type f -name '.*~'`
+	rm -f `find . -type f -name '*.log'`
 	rm -rf site
 	rm -rf dist
 	rm -rf .cache

@@ -3,6 +3,8 @@
     3,
     9
   ],
+  "functions_to_analyze": [],
+  "ignore": [],
   "imports": [],
   "imports_from": [
     {

@@ -28,7 +28,7 @@ The Notebook Transformr module, part of OuterSpace Apizr, is a Python utility th
 
 ### Installation
 
-To use `notebook-transformr`, install the required dependencies using the `requirements.txt` file located in the `apizr/src/notebook-transformr` directory.
+To use `Notebook Transformr`, install the required dependencies using the `requirements.txt` file located in the `apizr/src/notebook_transformr` directory.
 
 ```bash
 pip install -r requirements.txt
