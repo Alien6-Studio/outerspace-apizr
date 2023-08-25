@@ -1,130 +1,106 @@
 import unittest
-import os, sys
-import tempfile
-import shutil
-import asyncio
+import os
+import sys
 
 PACKAGE_PARENT = "../../src/notebook_transformr"
 sys.path.append(PACKAGE_PARENT)
 
-# pylint: disable=import-error
 from transformr import NotebookTransformr
 
-
 class NotebookTransformrTest(unittest.TestCase):
-    def test_empty_notebook(self):
-        file_test_path = os.path.abspath("templateTest/emptyTest.ipynb")
-        output_dir = os.path.join(os.getcwd(), "output")
 
+    @staticmethod
+    def run_test_on_notebook(notebook_name):
+        """
+        Helper method to transform a notebook into a script.
+        """
+        # Define paths
+        file_test_path = os.path.abspath(f"templateTest/{notebook_name}.ipynb")
+        output_dir = os.path.join(os.getcwd(), ".output")
+        
+        # Ensure the output directory exists
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        # Create an instance of the transformer and convert notebook to script
         transformer = NotebookTransformr()
         source, _ = transformer.convert_notebook(file_test_path)
-        output_path = transformer.save_script(
-            source, output_dir, os.path.basename(file_test_path)
-        )
+        output_path = transformer.save_script(source, output_dir, os.path.basename(file_test_path))
+        
+        return output_path
 
+    def test_empty_notebook(self):
+        """
+        Test the transformation of an empty notebook.
+        """
+        output_path = self.run_test_on_notebook("emptyTest")
         self.assertTrue(os.path.exists(output_path))
         with open(output_path, "r") as file:
             content = file.read()
             self.assertEqual(content.strip(), "")
 
     def test_simple_notebook(self):
-        file_test_path = os.path.abspath("templateTest/simpleTest.ipynb")
-        output_dir = os.path.join(os.getcwd(), "output")
-
-        # Ensure the output directory exists
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-
-        # Create an instance of the transformer
-        transformer = NotebookTransformr()
-
-        # Convert the notebook to a script
-        source, _ = transformer.convert_notebook(file_test_path)
-
-        # Save the script to the output directory
-        output_path = transformer.save_script(
-            source, output_dir, os.path.basename(file_test_path)
-        )
-
-        # Assert that the file was saved successfully
+        """
+        Test the transformation of a simple notebook with basic operations.
+        """
+        output_path = self.run_test_on_notebook("simpleTest")
         self.assertTrue(os.path.exists(output_path))
-
-        with open(output_path, "r") as file:
-            content = file.read()
-            print(content)
 
     def test_import_notebook(self):
-        file_test_path = os.path.abspath("templateTest/importTest.ipynb")
-        output_dir = os.path.join(os.getcwd(), "output")
-
-        # Ensure the output directory exists
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-
-        # Create an instance of the transformer
-        transformer = NotebookTransformr()
-
-        # Convert the notebook to a script
-        source, _ = transformer.convert_notebook(file_test_path)
-
-        # Save the script to the output directory
-        output_path = transformer.save_script(
-            source, output_dir, os.path.basename(file_test_path)
-        )
-
-        # Assert that the file was saved successfully
+        """
+        Test the transformation of a notebook with library imports.
+        """
+        output_path = self.run_test_on_notebook("importTest")
         self.assertTrue(os.path.exists(output_path))
-
+        
         # Assert that the requirements.txt file was created successfully
-        requirements_path = os.path.join(output_dir, "requirements.txt")
+        requirements_path = os.path.join(os.getcwd(), "output", "requirements.txt")
         self.assertTrue(os.path.exists(requirements_path))
 
-        with open(output_path, "r") as file:
-            content = file.read()
-            print(content)
-
     def test_ipython_syntax(self):
-        file_test_path = os.path.abspath("templateTest/ipythonTest.ipynb")
-        output_dir = os.path.join(os.getcwd(), "output")
-
-        transformer = NotebookTransformr()
-        source, _ = transformer.convert_notebook(file_test_path)
-        output_path = transformer.save_script(
-            source, output_dir, os.path.basename(file_test_path)
-        )
-
+        """
+        Test the transformation of a notebook with IPython-specific syntax.
+        """
+        output_path = self.run_test_on_notebook("ipythonTest")
         self.assertTrue(os.path.exists(output_path))
 
     def test_special_characters(self):
-        file_test_path = os.path.abspath("templateTest/specialTest.ipynb")
-        output_dir = os.path.join(os.getcwd(), "output")
-
-        transformer = NotebookTransformr()
-        source, _ = transformer.convert_notebook(file_test_path)
-        output_path = transformer.save_script(
-            source, output_dir, os.path.basename(file_test_path)
-        )
-
+        """
+        Test the transformation of a notebook containing special characters.
+        """
+        output_path = self.run_test_on_notebook("specialTest")
         self.assertTrue(os.path.exists(output_path))
         with open(output_path, "r", encoding="utf-8") as file:
             content = file.read()
             self.assertIn("é, ñ, ü", content)
 
     def test_pep8_syntax(self):
-        file_test_path = os.path.abspath("templateTest/pep8Test.ipynb")
-        output_dir = os.path.join(os.getcwd(), "output")
-
-        transformer = NotebookTransformr()
-        source, _ = transformer.convert_notebook(file_test_path)
-        output_path = transformer.save_script(
-            source, output_dir, os.path.basename(file_test_path)
-        )
-
+        """
+        Test the transformation of a notebook with PEP 8 style considerations.
+        """
+        output_path = self.run_test_on_notebook("pep8Test")
         self.assertTrue(os.path.exists(output_path))
-        with open(output_path, "r") as file:
-            content = file.read()
-            print(content)
 
+    def test_basic_notebook(self):
+        """
+        Test the transformation of a basic notebook with elementary operations.
+        """
+        output_path = self.run_test_on_notebook("basic_notebook")
+        self.assertTrue(os.path.exists(output_path))
+
+    def test_dependencies_notebook(self):
+        """
+        Test the transformation of a notebook with external library dependencies.
+        """
+        output_path = self.run_test_on_notebook("dependencies_notebook")
+        self.assertTrue(os.path.exists(output_path))
+
+    def test_interactive_notebook(self):
+        """
+        Test the transformation of an interactive notebook with user inputs.
+        """
+        output_path = self.run_test_on_notebook("interactive_notebook")
+        self.assertTrue(os.path.exists(output_path))
 
 if __name__ == "__main__":
     unittest.main()
