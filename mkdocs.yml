@@ -82,7 +82,7 @@ extra:
       - accept
   analytics:
     provider: google
-    property: G-LG6R0GSCH8
+    property: G-P3BHZB2FVP
 
 extra_css:
   - assets/stylesheets/extra.css
