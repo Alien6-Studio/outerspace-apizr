@@ -1,8 +1,10 @@
 import logging
 from os import path
+
 from jinja2 import Template
 
-from .configuration import Configuration
+from configuration import DockerizrConfiguration
+
 from .errorLogger import LogError
 
 
@@ -17,7 +19,7 @@ class GunicornGenerator:
         conf (Configuration): An instance of the Configuration class containing all necessary configuration data.
     """
 
-    def __init__(self, conf: Configuration):
+    def __init__(self, conf: DockerizrConfiguration):
         """
         Initializes the GunicornGenerator with the provided configuration.
 
@@ -33,9 +35,7 @@ class GunicornGenerator:
 
         The generated files are saved in the project's main folder, as specified in the configuration.
         """
-        home_path = path.join(
-            self.conf.project.project_path, self.conf.project.main_folder
-        )
+        home_path = path.join(self.conf.project_path, self.conf.main_folder)
         with open(path.join(home_path, self.conf.server.wsgi_file_name), "w") as f:
             f.write(self.gunicorn_wsgi_generator())
 
@@ -55,9 +55,10 @@ class GunicornGenerator:
         ) as f:
             template = Template(f.read())
             output = template.render(
-                nb_workers=self.conf.server.nb_workers,
+                workers=self.conf.server.workers,
                 host=self.conf.server.host,
                 port=self.conf.server.port,
+                timeout=self.conf.server.timeout,
             )
             return output
 
@@ -71,5 +72,5 @@ class GunicornGenerator:
         """
         with open(path.join(path.dirname(__file__), "templates/wsgi.jinja"), "r") as f:
             template = Template(f.read())
-            output = template.render(main=self.conf.apizer.api_file_name[:-3])
+            output = template.render(main=self.conf.api_filename[:-3])
             return output

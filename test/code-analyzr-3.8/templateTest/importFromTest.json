@@ -1,7 +1,10 @@
 {
-  "version": [
-    3,
-    8
+  "version": [3, 8],
+  "keywords": [
+    {
+      "version": "3.10",
+      "values": ["match", "case"]
+    }
   ],
   "functions_to_analyze": [],
   "ignore": [],
@@ -25,12 +28,18 @@
       "module": "werkzeug.datastructures",
       "imports": [
         {
-          "name": "FileStorage",
-          "asname": null
-        },
-        {
           "name": "FileMultiDict",
           "asname": "fmd"
+        }
+      ],
+      "level": 0
+    },
+    {
+      "module": "werkzeug.datastructures",
+      "imports": [
+        {
+          "name": "FileStorage",
+          "asname": null
         }
       ],
       "level": 0

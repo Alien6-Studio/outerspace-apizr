@@ -1,14 +1,13 @@
 import itertools
 import logging
-
 from os import path
 from pprint import pprint
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 from .analyzr.analyzr import Analyzr
-from .analyzr.imports import Import
-from .analyzr.importFrom import ImportFrom
 from .analyzr.annotation import Annotation
+from .analyzr.importFrom import ImportFrom
+from .analyzr.imports import Import
 from .errorLogger import LogError
 
 
@@ -87,12 +86,12 @@ class FastApiImportGenerator:
         def search_in_import(imp: List[Import], type: str):
             # Test initial plus général
             matches = [im for im in imp if im.asname == type or im.name == type]
-
             # Si aucun match n'est trouvé avec le test général, utilisez le préfixe
             if not matches:
                 # Split the type string to get the prefix
                 prefix = type.split(".")[0] if "." in type else type
                 matches = [im for im in imp if im.asname == prefix or im.name == prefix]
+
             return matches
 
         results = [
@@ -100,6 +99,7 @@ class FastApiImportGenerator:
             for import_from in self.analyse.imports_from
             if search_in_import(import_from.imports, type)
         ] + search_in_import(self.analyse.imports, type)
+
         if not results:
             return None
         return results

@@ -1,0 +1,2 @@
+class FastApiAlreadyImplementedException(Exception):
+    pass

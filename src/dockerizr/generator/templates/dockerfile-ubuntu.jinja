@@ -1,0 +1,43 @@
+# Use an Ubuntu-based Python image
+FROM python:{{ python_version }}-{{ docker_image_tag }}
+
+# Update packages and install necessary dependencies
+RUN apt-get update && apt-get install -y curl
+
+# Create a non-privileged user
+RUN groupadd outerspacer && useradd -m -g outerspacer -s /bin/sh outerspacer
+
+# Set environment variables
+ENV PYTHONPATH /app:$PYTHONPATH
+
+# Copy the source code into the container
+COPY . /app
+
+# Set the working directory
+WORKDIR /app
+
+# Install dependencies
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# Remove unnecessary dependencies and cleanup
+RUN apt-get remove -y gcc \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Change ownership for the application directory
+RUN chown -R outerspacer:outerspacer /app
+
+# Use the new user to run the container
+USER outerspacer
+
+# Expose the service
+EXPOSE {{ port }}
+
+# Add a health check
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost:{{ port }}/docs || exit 1
+
+# Run the application
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "wsgi:application"]

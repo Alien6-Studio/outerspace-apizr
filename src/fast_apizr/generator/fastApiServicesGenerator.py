@@ -1,12 +1,13 @@
 import logging
-
 from os import path
+
 from jinja2 import Template
 
-from .modelGenerator import ModelGenerator
+from configuration import FastApizrConfiguration
+
 from .analyzr.function import Function
-from .configuration import Configuration
 from .errorLogger import LogError
+from .modelGenerator import ModelGenerator
 
 
 class FastApiServicesGenerator:
@@ -17,9 +18,9 @@ class FastApiServicesGenerator:
     """
 
     function: Function
-    conf: Configuration
+    conf: FastApizrConfiguration
 
-    def __init__(self, function: Function, conf: Configuration):
+    def __init__(self, function: Function, conf: FastApizrConfiguration):
         """Initialize the FastApiServicesGenerator with the given function and configuration.
 
         Args:

@@ -1,8 +1,10 @@
-from pydantic import BaseModel
 from typing import List, Tuple
+
+from pydantic import BaseModel
+
 from .function import Function
-from .imports import Import
 from .importFrom import ImportFrom
+from .imports import Import
 
 
 class Analyzr(BaseModel):

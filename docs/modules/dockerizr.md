@@ -40,7 +40,7 @@ This will yield the Dockerfile content for the provided project path.
 
 For Docker-based utilization of the Dockerizr module, ensure Docker is set up on your system. Once validated, the Dockerizr image can be fetched from Docker Hub:
 
-```bash 
+```bash
 docker pull outerspace.alien6.com/dockerizr
 ```
 
@@ -49,7 +49,6 @@ The Dockerizr container can then be initiated as:
 ```bash
 docker run -it --rm outerspace.alien6.com/dockerizr
 ```
-
 
 ### Dockerfile Explanation
 

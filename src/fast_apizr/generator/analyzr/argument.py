@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 from .annotation import Annotation
 
 

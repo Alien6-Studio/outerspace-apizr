@@ -11,7 +11,7 @@ Dockerizr offers the following API endpoints:
 
 Automates the creation of a Dockerfile for a specific Python project.
 
-#### Parameters
+#### Parameters <!-- markdownlint-disable MD024 -->
 
 - `project_path` (string, required): The path to the Python project.
 - `base_image` (string, optional): The base Docker image for the Dockerfile. Defaults to "python:3.8".
@@ -47,4 +47,3 @@ Analyzes and generates a requirements.txt file for a Python project.
 #### Returns
 
 A string containing the generated requirements.txt content.
-

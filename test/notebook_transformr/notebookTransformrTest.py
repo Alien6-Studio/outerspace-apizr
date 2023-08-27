@@ -1,14 +1,14 @@
-import unittest
 import os
 import sys
+import unittest
 
 PACKAGE_PARENT = "../../src/notebook_transformr"
 sys.path.append(PACKAGE_PARENT)
 
 from transformr import NotebookTransformr
 
-class NotebookTransformrTest(unittest.TestCase):
 
+class NotebookTransformrTest(unittest.TestCase):
     @staticmethod
     def run_test_on_notebook(notebook_name):
         """
@@ -17,7 +17,7 @@ class NotebookTransformrTest(unittest.TestCase):
         # Define paths
         file_test_path = os.path.abspath(f"templateTest/{notebook_name}.ipynb")
         output_dir = os.path.join(os.getcwd(), ".output")
-        
+
         # Ensure the output directory exists
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -25,8 +25,10 @@ class NotebookTransformrTest(unittest.TestCase):
         # Create an instance of the transformer and convert notebook to script
         transformer = NotebookTransformr()
         source, _ = transformer.convert_notebook(file_test_path)
-        output_path = transformer.save_script(source, output_dir, os.path.basename(file_test_path))
-        
+        output_path = transformer.save_script(
+            source, output_dir, os.path.basename(file_test_path)
+        )
+
         return output_path
 
     def test_empty_notebook(self):
@@ -52,7 +54,7 @@ class NotebookTransformrTest(unittest.TestCase):
         """
         output_path = self.run_test_on_notebook("importTest")
         self.assertTrue(os.path.exists(output_path))
-        
+
         # Assert that the requirements.txt file was created successfully
         requirements_path = os.path.join(os.getcwd(), "output", "requirements.txt")
         self.assertTrue(os.path.exists(requirements_path))
@@ -101,6 +103,7 @@ class NotebookTransformrTest(unittest.TestCase):
         """
         output_path = self.run_test_on_notebook("interactive_notebook")
         self.assertTrue(os.path.exists(output_path))
+
 
 if __name__ == "__main__":
     unittest.main()

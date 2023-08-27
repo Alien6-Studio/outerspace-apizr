@@ -1,30 +1,32 @@
+import argparse
 import logging
 import os
-import sys
-import argparse
 import shutil
-
+import sys
 from pathlib import Path
 
-from notebook_transformr.transformr.nbTransformr import NotebookTransformr
+import yaml
+
 from code_analyzr.analyzr.astAnalyzr import AstAnalyzr
-
-from fast_apizr.generator.configuration import Configuration as FastApiConfiguration
-from fast_apizr.generator.analyzr import Analyzr as FastApiAnalyzr
-from fast_apizr.generator.fastApiAppGenerator import FastApiAppGenerator
-
-from dockerizr.generator.configuration import Configuration as DockerizrConfiguration
+from code_analyzr.configuration import CodeAnalyzrConfiguration
+from configuration import MainConfiguration
+from dockerizr.configuration import DockerizrConfiguration
 from dockerizr.generator.dockerfileGenerator import DockerfileGenerator
 from dockerizr.generator.gunicornGenerator import GunicornGenerator
 from dockerizr.generator.requirementsAnalyzr import RequirementsAnalyzr
-
 from exceptions import (
+    DockerizationError,
+    FastApiGenerationError,
     InvalidNotebookError,
     InvalidScriptError,
     MetadataGenerationError,
-    FastApiGenerationError,
-    DockerizationError,
 )
+from fast_apizr.configuration import FastApizrConfiguration
+from fast_apizr.generator.analyzr import Analyzr as FastApiAnalyzr
+from fast_apizr.generator.exceptions import FastApiAlreadyImplementedException
+from fast_apizr.generator.fastApiAppGenerator import FastApiAppGenerator
+from notebook_transformr.configuration import NotebookTransformrConfiguration
+from notebook_transformr.transformr.nbTransformr import NotebookTransformr
 
 # Configure logging settings
 logging.basicConfig(
@@ -33,6 +35,9 @@ logging.basicConfig(
     filename="app_errors.log",
 )
 logger = logging.getLogger(__name__)
+
+
+HOSTNAME = "0.0.0.0"  # nosec B104
 
 
 def validate_input(file_path: Path):
@@ -89,7 +94,16 @@ def handle_args():
     parser.add_argument(
         "--script", type=Path, help="Path to the Python script to convert."
     )
-    parser.add_argument("--output", type=Path, help="Path to the output directory.")
+    parser.add_argument(
+        "--configuration", type=Path, help="Path to the configuration file."
+    )
+    parser.add_argument("--output", type=Path, help="Path to the output.")
+    parser.add_argument(
+        "--skip-fastapi", action="store_true", help="Skip FastAPI generation."
+    )
+    parser.add_argument(
+        "--skip-docker", action="store_true", help="Skip Dockerization."
+    )
 
     args = parser.parse_args()
 
@@ -98,6 +112,7 @@ def handle_args():
 
     if args.notebook and args.notebook == "":
         raise InvalidNotebookError("Notebook path is empty.")
+
     if args.script and args.script == "":
         raise InvalidScriptError("Script path is empty.")
 
@@ -117,7 +132,13 @@ def handle_args():
     return args
 
 
-def process_input(input_path: Path, output: Path):
+def process_input(
+    configuration: MainConfiguration,
+    input_path: Path,
+    output: Path,
+    skip_fastapi: bool,
+    skip_docker: bool,
+):
     """
     Process the provided input (notebook or script) for conversion and Dockerization.
 
@@ -145,14 +166,24 @@ def process_input(input_path: Path, output: Path):
     shutil.copy(input_path, destination_path)
 
     if input_path.suffix == ".ipynb":
-        code, script_name = convert_notebook_to_code(destination_path, output=output)
+        code, script_name = convert_notebook_to_code(
+            configuration=configuration.notebook_transformr,
+            notebook_path=destination_path,
+            output=output,
+        )
     else:
         with destination_path.open("r") as script_file:
             code = script_file.read()
         script_name = input_path.name
 
     try:
-        process_code(code, script_name=script_name, output=output)
+        process_code(
+            configuration=configuration,
+            code=code,
+            script_name=script_name,
+            output=output,
+            skip_fastapi=skip_fastapi,
+        )
     except MetadataGenerationError:
         logger.error(f"Failed to generate metadata from code in {script_name}")
         sys.exit(1)
@@ -160,10 +191,17 @@ def process_input(input_path: Path, output: Path):
         logger.error(f"Failed to generate FastAPI app from {script_name}")
         sys.exit(1)
 
-    dockerize_app(script_name=script_name, output=output)
+    if not skip_docker:
+        dockerize_app(
+            configuration=configuration.dockerizr,
+            script_name=script_name,
+            output=output,
+        )
 
 
-def convert_notebook_to_code(notebook_path: Path, output: Path) -> tuple:
+def convert_notebook_to_code(
+    configuration: NotebookTransformrConfiguration, notebook_path: Path, output: Path
+) -> tuple:
     """
     Converts the provided Jupyter notebook into executable Python code.
 
@@ -181,7 +219,14 @@ def convert_notebook_to_code(notebook_path: Path, output: Path) -> tuple:
     Raises:
         InvalidNotebookError: If there's an issue converting the notebook.
     """
-    transformr = NotebookTransformr()
+
+    if configuration:
+        nb_configuration = configuration
+    else:
+        nb_configuration = NotebookTransformrConfiguration()
+
+    transformr = NotebookTransformr(nb_configuration)
+
     try:
         code, _ = transformr.convert_notebook(
             notebook_path
@@ -195,7 +240,13 @@ def convert_notebook_to_code(notebook_path: Path, output: Path) -> tuple:
     return code, script_name
 
 
-def process_code(code: str, script_name: str, output: Path):
+def process_code(
+    configuration: MainConfiguration,
+    code: str,
+    script_name: str,
+    output: Path,
+    skip_fastapi: bool,
+):
     """
     Processes the given Python code to generate a corresponding FastAPI application.
     ...
@@ -210,9 +261,22 @@ def process_code(code: str, script_name: str, output: Path):
         logger.error("Output path not provided.")
         return
 
+    if skip_fastapi:
+        logger.info("Skipping FastAPI generation.")
+
+        # Rename the script to `<basename>-api.py``
+        api_filename = os.path.basename(script_name).replace(".py", "_api.py")
+        output_api_filepath = output / api_filename
+        shutil.move(output / script_name, output_api_filepath)
+        return
+
     # Generate Metadata from code
     try:
-        metadata = AstAnalyzr(code).get_analyse()
+        if configuration.code_analyzr:
+            code_analyzr_configuration = configuration.code_analyzr
+        else:
+            code_analyzr_configuration = CodeAnalyzrConfiguration()
+        metadata = AstAnalyzr(code_analyzr_configuration, code).get_analyse()
     except Exception as e:
         logger.error("Error generating metadata from code.")
         raise MetadataGenerationError(
@@ -220,17 +284,33 @@ def process_code(code: str, script_name: str, output: Path):
         ) from e
 
     api_filename = os.path.basename(script_name).replace(".py", "_api.py")
-    configuration: FastApiConfiguration = FastApiConfiguration.model_validate(
-        {
-            "module_name": script_name.replace(".py", ""),
-            "api_filename": api_filename,
-        }
-    )
+    if configuration.fast_apizr:
+        fast_apizr_configuration = configuration.fast_apizr
+    else:
+        fast_apizr_configuration: FastApizrConfiguration = (
+            FastApizrConfiguration.model_validate(
+                {
+                    "module_name": script_name.replace(".py", ""),
+                    "api_filename": api_filename,
+                }
+            )
+        )
 
     # Generate FastAPI app
     try:
         content = FastApiAnalyzr.model_validate_json(metadata)
-        result = FastApiAppGenerator(configuration, content).gen_fastapi_app()
+        result = FastApiAppGenerator(
+            fast_apizr_configuration, content
+        ).gen_fastapi_app()
+    except FastApiAlreadyImplementedException:
+        logger.info("FastAPI is already imported in the provided code.")
+        result = code
+
+        # Rename the script to `<basename>-api.py``
+        api_filename = os.path.basename(script_name).replace(".py", "_api.py")
+        output_api_filepath = output / api_filename
+        shutil.move(output / script_name, output_api_filepath)
+        return
     except Exception as e:
         logger.error("Error generating FastAPI app.")
         raise FastApiGenerationError(
@@ -247,31 +327,19 @@ def process_code(code: str, script_name: str, output: Path):
         logger.error(f"Error writing to output file: {e}")
 
 
-def dockerize_app(script_name: str, output: Path):
+def dockerize_app(
+    configuration: DockerizrConfiguration, script_name: str, output: Path
+):
     """
     ... (le reste de la docstring)
     """
 
     # Prepare API filename and configuration
     api_filename = script_name.replace(".py", "_api.py")
-    configuration: DockerizrConfiguration = DockerizrConfiguration.model_validate(
-        {
-            "project": {
-                "main_folder": str(
-                    output.resolve()
-                ),  # Use the absolute path of the output directory
-                "main_file": "main.py",
-                "main_module": "main",
-                "python_version": (3, 11),
-            },
-            "apizer": {"api_file_name": api_filename},
-            "server": {
-                "server_app": "gunicorn",
-                "wsgi_file_name": "wsgi.py",
-                "wsgi_conf_file_name": "gunicorn.conf.py",
-            },
-        }
-    )
+
+    # Set the project path to the absolute path of the output directory
+    configuration.api_filename = api_filename
+    configuration.project_path = str(output.resolve())
 
     try:
         # Generate necessary files for dockerization
@@ -289,17 +357,39 @@ def main():
     """
     Main execution function. Parses arguments, processes input, and generates output.
     """
+    configuration = MainConfiguration()
+
     try:
         args = handle_args()
+
+        if args.configuration:
+            try:
+                with args.configuration.open("r") as f:
+                    config_data = yaml.safe_load(f)
+                    configuration = MainConfiguration(**config_data)
+            except Exception as e:
+                logger.error(f"Error reading configuration file: {e}")
+                sys.exit(1)
 
         # Create the output directory if it doesn't exist
         args.output.mkdir(parents=True, exist_ok=True)
 
         if args.notebook:
-            process_input(args.notebook, args.output)
+            process_input(
+                configuration=configuration,
+                input_path=args.notebook,
+                output=args.output,
+                skip_fastapi=args.skip_fastapi,
+                skip_docker=args.skip_docker,
+            )
         elif args.script:
-            process_input(args.script, args.output)
-            dockerize_app(script_name=str(args.script), output=args.output)
+            process_input(
+                configuration=configuration,
+                input_path=args.script,
+                output=args.output,
+                skip_fastapi=args.skip_fastapi,
+                skip_docker=args.skip_docker,
+            )
 
     except (InvalidNotebookError, InvalidScriptError) as e:
         logger.error(str(e))

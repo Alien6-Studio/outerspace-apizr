@@ -131,6 +131,7 @@ env.bak/
 venv.bak/
 .DS_Store
 .output
+.trunk/
 
 # Spyder project settings
 .spyderproject

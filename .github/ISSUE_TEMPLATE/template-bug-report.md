@@ -1,10 +1,9 @@
 ---
 name: Bug Report
 about: Please describe the bug and the expected behavior. Be as specific as possible, and include any relevant details or error messages.
-title: ''
-labels: ''
-assignees: ''
-
+title: ""
+labels: ""
+assignees: ""
 ---
 
 ## Bug Report

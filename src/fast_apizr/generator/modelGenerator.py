@@ -1,11 +1,11 @@
 import logging
-
 from os import path
-from typing import List, Union, Optional
+from typing import List, Optional, Union
+
 from jinja2 import Template
 
-from .analyzr.argument import Argument
 from .analyzr.annotation import Annotation
+from .analyzr.argument import Argument
 from .errorLogger import LogError
 
 

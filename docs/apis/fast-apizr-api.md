@@ -1,5 +1,4 @@
-
-## API Endpoints
+## API Endpoints <!-- markdownlint-disable MD041 -->
 
 Fast Apizr provides the following API endpoints:
 
@@ -13,4 +12,3 @@ Fast Apizr provides the following API endpoints:
 #### Returns
 
 A dictionary with the analysis result.
-

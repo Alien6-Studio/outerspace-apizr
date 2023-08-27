@@ -10,14 +10,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import PlainTextResponse, JSONResponse
-
+from fastapi.responses import JSONResponse
+from configuration import DockerizrConfiguration
 from generator import (
-    GunicornGenerator,
-    Configuration,
-    RequirementsAnalyzr,
     DockerfileGenerator,
-    LogError,
+    GunicornGenerator,
+    RequirementsAnalyzr,
 )
 
 logger.info("Initializing the FastAPI app for dockerizr")
@@ -25,7 +23,7 @@ app = FastAPI()
 
 
 @app.post("/generate_gunicorn_files/")
-async def generate_gunicorn_files(conf: Configuration):
+async def generate_gunicorn_files(conf: DockerizrConfiguration):
     try:
         logger.debug("Attempting to generate Gunicorn files")
         GunicornGenerator(conf).generate_gunicorn()
@@ -40,7 +38,7 @@ async def generate_gunicorn_files(conf: Configuration):
 
 
 @app.post("/generate_requirements/")
-async def generate_requirements_txt(conf: Configuration):
+async def generate_requirements_txt(conf: DockerizrConfiguration):
     try:
         logger.debug("Attempting to generate requirements.txt")
         RequirementsAnalyzr(conf).generate_requirements()
@@ -55,7 +53,7 @@ async def generate_requirements_txt(conf: Configuration):
 
 
 @app.post("/generate_dockerfile/")
-async def generate_dockerfile(conf: Configuration):
+async def generate_dockerfile(conf: DockerizrConfiguration,):
     try:
         logger.debug("Attempting to generate Dockerfile")
         DockerfileGenerator(conf).generate_dockerfile()

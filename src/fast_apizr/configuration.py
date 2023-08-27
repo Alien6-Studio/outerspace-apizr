@@ -1,19 +1,19 @@
 from pydantic import BaseModel
 
+HOSTNAME = "0.0.0.0"  # nosec B104
 
-class Configuration(BaseModel):
+
+class FastApizrConfiguration(BaseModel):
     """Defines the configuration for generating the FastAPI application.
 
     Attributes:
+        python_version (str): The Python version to be used. Defaults to "3.8".
+        encoding (str): The character encoding format for reading and writing files. Defaults to "utf-8".
         module_name (str): The name of the module. Defaults to "main".
-        host (str): The host on which the application will run. Defaults to "0.0.0.0".
-        port (int): The port on which the application will run. Defaults to 5000.
-        debug (bool): Whether to enable debugging mode. Defaults to False.
         api_filename (str): The name of the generated file. Defaults to "app.py".
     """
 
+    python_version: tuple = (3, 8)
+    encoding: str = "utf-8"
     module_name: str = "main"
-    host: str = "0.0.0.0"
-    port: int = 5000
-    debug: bool = False
     api_filename: str = "app.py"

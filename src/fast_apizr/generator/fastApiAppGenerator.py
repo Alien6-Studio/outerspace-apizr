@@ -1,15 +1,15 @@
 import logging
-
 from os import path
 
 from jinja2 import Template
 
-from .fastApiServicesGenerator import FastApiServicesGenerator
-from .fastApiImportGenerator import FastApiImportGenerator
+from configuration import FastApizrConfiguration
 
 from .analyzr.analyzr import Analyzr
-from .configuration import Configuration
 from .errorLogger import LogError
+from .exceptions import FastApiAlreadyImplementedException
+from .fastApiImportGenerator import FastApiImportGenerator
+from .fastApiServicesGenerator import FastApiServicesGenerator
 
 
 class FastApiAppGenerator:
@@ -20,9 +20,9 @@ class FastApiAppGenerator:
     """
 
     analyse: Analyzr
-    conf: Configuration
+    conf: FastApizrConfiguration
 
-    def __init__(self, conf: Configuration, analyse: Analyzr):
+    def __init__(self, conf: FastApizrConfiguration, analyse: Analyzr):
         """Initialize the FastApiAppGenerator with the given configuration and analysis.
 
         Args:
@@ -43,6 +43,12 @@ class FastApiAppGenerator:
             str: The generated FastAPI application code.
         """
         services = []
+        for imp in self.analyse.imports_from:
+            if imp.module == "fastapi":
+                raise FastApiAlreadyImplementedException(
+                    "FastAPI is already imported in the provided code. Please remove it and try again."
+                )
+
         imports = FastApiImportGenerator(self.analyse).generate_import_code()
 
         for function in [f for f in self.analyse.functions if f.selected]:
@@ -55,10 +61,5 @@ class FastApiAppGenerator:
             template = Template(f.read())
 
         return template.render(
-            imports=imports,
-            main_module=self.conf.module_name,
-            services=services,
-            host=self.conf.host,
-            port=self.conf.port,
-            debug=self.conf.debug,
+            imports=imports, main_module=self.conf.module_name, services=services
         )

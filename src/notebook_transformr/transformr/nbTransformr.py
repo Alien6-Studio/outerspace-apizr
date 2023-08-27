@@ -1,15 +1,16 @@
 import os
-import subprocess
-
-from black import format_str, FileMode
-from nbconvert import PythonExporter
+import subprocess  # nosec B404 since there is no alternative to subprocess
 from itertools import groupby
+
+from black import FileMode, format_str
+from nbconvert import PythonExporter
+
+from configuration import NotebookTransformrConfiguration
 
 
 class NotebookTransformr:
-    def __init__(self, python_version: str = "3.8", encoding: str = "utf-8"):
-        self.python_version = python_version
-        self.encoding = encoding
+    def __init__(self, configuration: NotebookTransformrConfiguration):
+        self.configuration = configuration
         self.exporter = PythonExporter()
 
     async def read_file(self, file):
@@ -22,13 +23,14 @@ class NotebookTransformr:
         # Generate requirements.txt using pipreqs shell command
         requirements_path = os.path.join(output_directory, "requirements.txt")
         subprocess.run(
-            [
+            args=[
                 "pipreqs",
                 "--force",
                 "--savepath",
                 requirements_path,
                 output_directory,
-            ]
+            ],
+            shell=True,  # B603 recommended by Bandit
         )
 
     def save_script(self, source, output_directory, filename):
@@ -62,7 +64,7 @@ class NotebookTransformr:
         # Call the generate_requirements method to create requirements.txt
         self.generate_requirements(output_directory)
 
-        with open(output_path, "w", encoding=self.encoding) as f:
+        with open(output_path, "w", encoding=self.configuration.encoding) as f:
             f.write(formatted_source)  # Write the formatted source code
 
         return output_path

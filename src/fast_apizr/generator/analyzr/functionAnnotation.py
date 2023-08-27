@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+import sys
+from typing import ForwardRef, List, Optional, Union
 
-from typing import List, ForwardRef, Optional, Union
+from pydantic import BaseModel
 
 
 class FunctionAnnotation(BaseModel):
@@ -17,4 +18,7 @@ class FunctionAnnotation(BaseModel):
     ] = []  # Optional list representing the nested type(s).
 
 
-FunctionAnnotation.model_rebuild()
+if sys.version_info >= (3, 11):
+    FunctionAnnotation.model_rebuild()
+else:
+    FunctionAnnotation.update_forward_refs()

@@ -55,7 +55,7 @@ clean:
 	rm -rf dist
 	rm -rf .cache
 	rm -rf .ruff_cache
-
+	rm -rf `find . -type d -name '.output'`
 .PHONY: docs  ## Generate the docs
 docs:
 	pdm run mkdocs build

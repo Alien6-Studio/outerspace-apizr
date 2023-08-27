@@ -6,10 +6,10 @@ import multiprocessing
 bind = '{{host}}:{{port}}'
 backlog = 2048
 
-workers = {{ nb_workers }} 
+workers = {{ workers }}
 worker_class = 'uvicorn.workers.UvicornWorker'
 worker_connections = 1000
-timeout = 30
+timeout = {{ timeout }}
 keepalive = 2
 
 spew = False

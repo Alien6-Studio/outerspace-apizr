@@ -1,21 +1,18 @@
-import unittest, sys
 import json
-
 import os
+import sys
+import unittest
 
 PACKAGE_PARENT = "../../src/fast_apizr"
 sys.path.append(PACKAGE_PARENT)
 
-from generator import FastApiAppGenerator
-from generator import Configuration
-from generator import Analyzr
+from generator import Analyzr, FastApiAppGenerator, FastApizrConfiguration
 
-conf: Configuration = Configuration.model_validate(
+HOSTNAME = "0.0.0.0"  # nosec B104
+
+conf: FastApizrConfiguration = FastApizrConfiguration.model_validate(
     {
         "module_name": "main",
-        "host": "0.0.0.0",
-        "port": 5000,
-        "debug": False,
         "api_filename": "app.py",
     }
 )
@@ -25,7 +22,7 @@ class FastAPIAppGeneratorTest(unittest.TestCase):
     maxDiff = None
 
     def test_return(self):
-        test_result = os.path.abspath("templateTest/simpleTest.py")
+        os.path.abspath("templateTest/simpleTest.py")
         file_test = os.path.abspath("templateTest/simpleTest.json")
 
         with open(file_test, "r") as f:

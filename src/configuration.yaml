@@ -1,0 +1,20 @@
+---
+python_version:
+  - 3
+  - 11
+encoding: utf-8
+code_analyzr:
+  script: ""
+  functions_to_analyze: ""
+  ignore: ""
+fast_apizr:
+  module_name: main
+  api_filename: app.py
+dockerizr:
+  docker_image: alpine
+  docker_image_tag: alpine3.18
+  server:
+    workers: 2
+    timeout: 60
+    host: 0.0.0.0
+    port: 5001

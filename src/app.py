@@ -2,20 +2,14 @@
 import logging
 import os
 from pathlib import Path
+from typing import Optional
 
 # Third party imports
-from fastapi import FastAPI, File, HTTPException, UploadFile, Query
-from typing import Optional
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 
 # Local application imports
 import main
-from exceptions import (
-    InvalidFileExtensionError,
-    InvalidNotebookError,
-    InvalidScriptError,
-    MetadataGenerationError,
-    FastApiGenerationError,
-)
+from exceptions import InvalidFileExtensionError
 
 # Setup the logger configuration
 logging.basicConfig(
