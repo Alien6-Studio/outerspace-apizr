@@ -1,7 +1,10 @@
 {
-  "version": [
-    3,
-    8
+  "version": [3, 8],
+  "keywords": [
+    {
+      "version": "3.10",
+      "values": ["match", "case"]
+    }
   ],
   "functions_to_analyze": [],
   "ignore": [],
@@ -33,10 +36,12 @@
           "name": "b",
           "annotation": {
             "type": "List",
-            "of": [{
-              "type": "int",
-              "of": []
-            }]
+            "of": [
+              {
+                "type": "int",
+                "of": []
+              }
+            ]
           }
         },
         {
@@ -50,10 +55,12 @@
           "name": "d",
           "annotation": {
             "type": "List",
-            "of": [{
-              "type": "str",
-              "of": []
-            }]
+            "of": [
+              {
+                "type": "str",
+                "of": []
+              }
+            ]
           }
         }
       ],
@@ -70,36 +77,46 @@
           "name": "a",
           "annotation": {
             "type": "List",
-            "of": [{
-              "type": "List",
-              "of": []
-            }]
+            "of": [
+              {
+                "type": "List",
+                "of": []
+              }
+            ]
           }
         },
         {
           "name": "b",
           "annotation": {
             "type": "List",
-            "of": [{
-              "type": "List",
-              "of": [{
-                "type": "int",
-                "of": []
-              }]
-            }]
+            "of": [
+              {
+                "type": "List",
+                "of": [
+                  {
+                    "type": "int",
+                    "of": []
+                  }
+                ]
+              }
+            ]
           }
         },
         {
           "name": "c",
           "annotation": {
             "type": "List",
-            "of": [{
-              "type": "List",
-              "of": [{
-                "type": "str",
-                "of": []
-              }]
-            }]
+            "of": [
+              {
+                "type": "List",
+                "of": [
+                  {
+                    "type": "str",
+                    "of": []
+                  }
+                ]
+              }
+            ]
           }
         }
       ],

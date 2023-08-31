@@ -1,10 +1,10 @@
 import logging
 import warnings
 
+from .annotationNode import AnnotationNode
+from .argNode import ArgNode
 from .astNode import AstNode
 from .errorLogger import LogError
-from .argNode import ArgNode
-from .annotationNode import AnnotationNode
 
 
 class FunctionNode(AstNode):

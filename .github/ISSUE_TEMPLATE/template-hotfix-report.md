@@ -1,10 +1,9 @@
 ---
 name: Hotfix Report
 about: Please describe the issue that requires the hotfix. Be as specific as possible, and include any relevant details or error messages.
-title: ''
-labels: ''
-assignees: ''
-
+title: ""
+labels: ""
+assignees: ""
 ---
 
 ### Steps to reproduce

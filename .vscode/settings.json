@@ -1,4 +1,4 @@
 {
-    "editor.rulers": [79],
-    "python.linting.pep8Args": ["--max-line-length=79"]
+  "editor.rulers": [79],
+  "python.linting.pep8Args": ["--max-line-length=79"]
 }

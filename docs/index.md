@@ -1,7 +1,7 @@
 ---
 template: home.html
 title: OuterSpace Apizr
-description: 
+description:
 og_image: images/illustration.png
 ---
 

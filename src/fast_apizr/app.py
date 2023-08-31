@@ -11,18 +11,18 @@ logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import PlainTextResponse
-
 from generator.analyzr import Analyzr
-from generator.configuration import Configuration
-from generator.fastApiAppGenerator import FastApiAppGenerator
 from generator.errorLogger import LogError
+from generator.fastApiAppGenerator import FastApiAppGenerator
+
+from configuration import FastApizrConfiguration
 
 logger.info("Initializing the FastAPI app for Fast APIzr")
 app = FastAPI()
 
 
 @app.post("/get_fastapi_code/")
-async def create_file(conf: Configuration, analyse: Analyzr):
+async def create_file(conf: FastApizrConfiguration, analyse: Analyzr):
     """Generate FastAPI code based on the provided configuration and analysis.
 
     Args:

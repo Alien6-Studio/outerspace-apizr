@@ -16,7 +16,7 @@ theme:
   custom_dir: overrides
   logo: assets/images/logo.png
   icon:
-    repo: fontawesome/brands/github-alt 
+    repo: fontawesome/brands/github-alt
   palette:
     - scheme: default
       primary: amber
@@ -73,7 +73,7 @@ extra:
   generator: false
   consent:
     title: Cookie consent
-    description: >- 
+    description: >-
       We use cookies to recognize your repeated visits and preferences, as well
       as to measure the effectiveness of our documentation and whether users
       find what they're searching for. With your consent, you're helping us to
@@ -91,18 +91,18 @@ extra_css:
 nav:
   - Home: index.md
   - Getting Started:
-    - Introduction: getting-started/introduction.md
-    - Modules:
-      - Notebook Transformr: modules/notebook-transformr.md
-      - Code Analyzr: modules/code-analyzr.md
-      - Fast Apizr: modules/fast-apizr.md
-      - Dockerizr: modules/dockerizr.md
-    - APIs:
-      - Notebook Transformr API: apis/notebook-transformr-api.md
-      - Code Analyzr API: apis/code-analyzr-api.md
-      - Fast Apizr API: apis/fast-apizr-api.md
-      - Dockerizr API: apis/dockerizr-api.md
-    - About:
-      - Contributing: about/CONTRIBUTING.md
-      - Code of Conduct: about/CODE_OF_CONDUCT.md
-      - License: about/LICENSE.md
+      - Introduction: getting-started/introduction.md
+      - Modules:
+          - Notebook Transformr: modules/notebook-transformr.md
+          - Code Analyzr: modules/code-analyzr.md
+          - Fast Apizr: modules/fast-apizr.md
+          - Dockerizr: modules/dockerizr.md
+      - APIs:
+          - Notebook Transformr API: apis/notebook-transformr-api.md
+          - Code Analyzr API: apis/code-analyzr-api.md
+          - Fast Apizr API: apis/fast-apizr-api.md
+          - Dockerizr API: apis/dockerizr-api.md
+      - About:
+          - Contributing: about/CONTRIBUTING.md
+          - Code of Conduct: about/CODE_OF_CONDUCT.md
+          - License: about/LICENSE.md

@@ -1,5 +1,5 @@
 ---
-title: Analyzing Python codebase to extract API endpoints 
+title: Analyzing Python codebase to extract API endpoints
 description: Code Analyzr extracts API endpoints from Python codebase and generates a configuration file for Apizr.
 ---
 
@@ -87,16 +87,16 @@ The output from `CodeAnalyzr` would be:
   "version": [3, 8],
   "functions_to_analyze": [],
   "ignore": [],
-  "imports": [{"name": "math", "asname": null}],
+  "imports": [{ "name": "math", "asname": null }],
   "imports_from": [],
   "functions": [
     {
       "name": "add",
       "args": [
-        {"name": "a", "annotation": {"type": "int", "of": []}},
-        {"name": "b", "annotation": {"type": "int", "of": []}}
+        { "name": "a", "annotation": { "type": "int", "of": [] } },
+        { "name": "b", "annotation": { "type": "int", "of": [] } }
       ],
-      "returns": {"type": "int", "of": []},
+      "returns": { "type": "int", "of": [] },
       "selected": true
     }
   ]

@@ -1,4 +1,14 @@
+import json
 import logging
+import os
+import re
+from typing import Optional
+
+from analyzr import AstAnalyzr
+from analyzr.ast_node import LogError
+from fastapi import Depends, FastAPI, File, HTTPException, Query
+
+from configuration import CodeAnalyzrConfiguration
 
 # Configure logging settings
 logging.basicConfig(
@@ -9,15 +19,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-import json
-import re
-import os
-import logging
-
-from fastapi import FastAPI, File, HTTPException, Depends, Query
-from typing import Optional
-from analyzr import AstAnalyzr
-from analyzr.ast_node import LogError
 
 BASE_DIRECTORY = os.environ.get("BASE_DIRECTORY", "/app/data/")
 
@@ -43,13 +44,11 @@ def validate_encoding(encoding: str = Query("utf-8")) -> str:
 @LogError(logging)
 def analyze_python_code(
     file_content: bytes,
-    python_version: tuple,
-    encoding: str,
-    functions_to_analyze: Optional[str] = None,
-    ignore: Optional[str] = None,
+    configuration: CodeAnalyzrConfiguration,
 ) -> dict:
+    """Analyse Python code and return its structure."""
     try:
-        code_str = file_content.decode(encoding)
+        code_str = file_content.decode(configuration.encoding)
     except Exception:
         raise HTTPException(
             status_code=400,
@@ -58,10 +57,8 @@ def analyze_python_code(
 
     try:
         analyzer = AstAnalyzr(
-            code_str,
-            functions_to_analyze=functions_to_analyze,
-            ignore=ignore,
-            version=python_version,
+            code_str=code_str,
+            configuration=configuration,
         )
         result = analyzer.get_analyse()
     except Exception:
@@ -70,8 +67,8 @@ def analyze_python_code(
     return json.loads(result)
 
 
-@app.post("/analyse_file/")
-async def create_file(
+@app.post("/analyze_file/")
+def analyze_file(
     python_version: tuple = Depends(validate_python_version),
     encoding: str = Depends(validate_encoding),
     functions_to_analyze: Optional[str] = None,
@@ -79,9 +76,11 @@ async def create_file(
     file: bytes = File(...),
 ):
     """Analyse a Python file and return its structure."""
-    return analyze_python_code(
-        file, python_version, encoding, functions_to_analyze, ignore
-    )
+
+    configuration = CodeAnalyzrConfiguration()
+    configuration.python_version = python_version
+    configuration.encoding = encoding
+    return analyze_python_code(file_content=file, configuration=configuration)
 
 
 # WARNING: This endpoint can pose a security risk if exposed to the public.

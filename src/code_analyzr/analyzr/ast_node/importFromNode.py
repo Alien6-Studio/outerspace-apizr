@@ -1,6 +1,7 @@
+import ast
+
 from .astNode import AstNode
 from .importNode import ImportNode
-import ast
 
 
 class ImportFromNode(AstNode):

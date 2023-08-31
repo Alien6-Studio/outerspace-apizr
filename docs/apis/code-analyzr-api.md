@@ -1,5 +1,5 @@
 ---
-title: Analyzing Python codebase to extract API endpoints 
+title: Analyzing Python codebase to extract API endpoints
 description: Code Analyzr extracts API endpoints from Python codebase and generates a configuration file for Apizr.
 ---
 
@@ -25,7 +25,7 @@ A dictionary with the analysis result.
 
 Analyzes all Python files in a directory and returns their structures.
 
-#### Parameters
+#### Parameters <!-- markdownlint-disable MD024 -->
 
 - `directory_path` (string, required): The path of the directory to analyze.
 - `python_version` (string, optional): The Python version to use for the analysis. Defaults to "3.8".
@@ -34,4 +34,3 @@ Analyzes all Python files in a directory and returns their structures.
 #### Returns
 
 A dictionary where the keys are file paths and the values are analysis results.
-

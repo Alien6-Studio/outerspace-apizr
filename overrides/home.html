@@ -1,17 +1,15 @@
-{% extends "main.html" %}
-{% block tabs %}
-{{ super() }}
+{% extends "main.html" %} {% block tabs %} {{ super() }}
 <style>
   .md-main {
     height: 0;
-      }
+  }
 
   .md-header {
     position: initial;
   }
 
   .md-main__inner {
-    margin: 0
+    margin: 0;
   }
 
   .md-content {
@@ -23,27 +21,38 @@
     margin: 0;
   }
 
-  @media screen and (min-width:60em) {
+  @media screen and (min-width: 60em) {
     .md-sidebar--secondary {
-      display: none
+      display: none;
     }
   }
 
-  @media screen and (min-width:76.25em) {
+  @media screen and (min-width: 76.25em) {
     .md-sidebar--primary {
-      display: none
+      display: none;
     }
   }
 </style>
 
-<section class="fluid-box" data-md-color-scheme="slate" data-md-color-primary="indigo">
-  <img src="assets/images/illustration.png" alt="Illustration of OuterSpace Apizr" width="100%" height="auto"
-  draggable="false">
+<section
+  class="fluid-box"
+  data-md-color-scheme="slate"
+  data-md-color-primary="indigo"
+>
+  <img
+    src="assets/images/illustration.png"
+    alt="Illustration of OuterSpace Apizr"
+    width="100%"
+    height="auto"
+    draggable="false"
+  />
   <div class="md-grid">
     <div class="md-content__inner">
-        <header class="md-typeset">
-          <h1 id="open-source">Transform Your Notebooks into Powerful APIs with OuterSpace Apizr</h1>
-        </header>
+      <header class="md-typeset">
+        <h1 id="open-source">
+          Transform Your Notebooks into Powerful APIs with OuterSpace Apizr
+        </h1>
+      </header>
     </div>
   </div>
 </section>
@@ -51,20 +60,27 @@
 <section class="md-container">
   <div class="md-grid md-typeset">
     <div class="mdx-producthunt">
-      <h3>
-        We'd love to hear your feedback! 
-      </h3>
+      <h3>We'd love to hear your feedback!</h3>
       <p>
-        "What features would you like to see? How's the user experience? What are your thoughts on our branding? Your feedback is invaluable to us, and we appreciate your time and thoughts. Please review OuterSpace Apizr on ProductHunt. Thank you so much!"
+        "What features would you like to see? How's the user experience? What
+        are your thoughts on our branding? Your feedback is invaluable to us,
+        and we appreciate your time and thoughts. Please review OuterSpace Apizr
+        on ProductHunt. Thank you so much!"
       </p>
       <p>
-        <a href="https://www.producthunt.com/posts/outerspace-apizr?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-outerspace&#0045;apizr" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=410734&theme=dark" alt="OuterSpace&#0032;Apizr - Transform&#0032;Your&#0032;Notebooks&#0032;into&#0032;Powerful&#0032;APIs | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+        <a
+          href="https://www.producthunt.com/posts/outerspace-apizr?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-outerspace&#0045;apizr"
+          target="_blank"
+          ><img
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=410734&theme=dark"
+            alt="OuterSpace&#0032;Apizr - Transform&#0032;Your&#0032;Notebooks&#0032;into&#0032;Powerful&#0032;APIs | Product Hunt"
+            style="width: 250px; height: 54px"
+            width="250"
+            height="54"
+        /></a>
       </p>
-      </div>
+    </div>
   </div>
 </section>
 
-{% endblock %}
-{% block footer %}
-{{ super() }}
-{% endblock %}
+{% endblock %} {% block footer %} {{ super() }} {% endblock %}

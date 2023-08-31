@@ -1,4 +1,0 @@
-fastapi==0.101.1
-uvicorn[standard]
-Jinja2==3.0.1
-pydantic==2.2.1

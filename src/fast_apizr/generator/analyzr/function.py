@@ -1,5 +1,7 @@
-from pydantic import BaseModel
 from typing import List, Optional
+
+from pydantic import BaseModel
+
 from .argument import Argument
 from .functionAnnotation import FunctionAnnotation
 

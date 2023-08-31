@@ -1,7 +1,7 @@
 import ast
 import sys
-
 from typing import List, Optional, Union
+
 from .astNode import AstNode
 from .astNodeException import AnnotationException
 

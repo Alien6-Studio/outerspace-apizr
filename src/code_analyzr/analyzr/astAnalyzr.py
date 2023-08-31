@@ -1,37 +1,33 @@
-import sys
 import ast
 import json
 import logging
+import sys
 
-from .ast_node import FunctionNode
-from .ast_node import ImportNode
-from .ast_node import ImportFromNode
-from .ast_node import LogError
+from configuration import CodeAnalyzrConfiguration
 
+from .ast_node import FunctionNode, ImportFromNode, ImportNode, LogError
 from .exceptions import UnsupportedKeywordError
 
 
 # AstAnalyzr class analyzes the structure of a Python code using Abstract Syntax Tree (AST).
 class AstAnalyzr(ast.NodeVisitor):
-    KEYWORDS = {(3, 10): ["match", "case"]}
-
-    def __init__(
-        self, code_str, functions_to_analyze=None, ignore=None, version=(3, 8)
-    ):
+    def __init__(self, configuration: CodeAnalyzrConfiguration, code_str: str):
         """Initialize the AstAnalyzr with code string and Python version.
 
         Args:
+            configuration (CodeAnalyzrConfiguration): The configuration object.
             code_str (str): The Python code string to be analyzed.
-            version (tuple): The Python version tuple (e.g., (3, 8) for Python 3.8).
         """
-        self.code_str = code_str
-        self.version = version
-
+        self.code_str: str = code_str
+        self.version: tuple = configuration.python_version
+        self.keywords = configuration.keywords
         # Convert comma-separated string to list
         self.functions_to_analyze = (
-            functions_to_analyze.split(",") if functions_to_analyze else []
+            configuration.functions_to_analyze.split(",")
+            if configuration.functions_to_analyze
+            else []
         )
-        self.ignore = ignore.split(",") if ignore else []
+        self.ignore = configuration.ignore.split(",") if configuration.ignore else []
         self.imports = []
         self.imports_from = []
         self.functions = []
@@ -39,8 +35,9 @@ class AstAnalyzr(ast.NodeVisitor):
     @LogError(logging)
     def check_for_keywords(self, code_str):
         version = sys.version_info[:2]
-        for ver, keywords in self.KEYWORDS.items():
-            for keyword in keywords:
+        for keywords in self.keywords:
+            ver = tuple(map(int, keywords["version"].split(".")))
+            for keyword in keywords["values"]:
                 if keyword in code_str and version < ver:
                     raise UnsupportedKeywordError(keyword, ver, version)
 
@@ -53,7 +50,6 @@ class AstAnalyzr(ast.NodeVisitor):
         """
         try:
             self.check_for_keywords(self.code_str)
-
             self.generic_visit(
                 ast.parse(
                     self.code_str, type_comments=True, feature_version=self.version

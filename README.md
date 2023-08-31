@@ -1,9 +1,9 @@
+# OuterSpace Apizr
+
 [![Python 3.11](https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10%20|%203.11-blue.svg)](https://www.python.org/downloads/release/python-311/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-# OuterSpace Apizr
-
-__OuterSpace Apizr__ is a groundbreaking open-source tool that is set to redefine the way data engineers interact with notebooks. It is specifically designed to transform notebooks into powerful, containerized APIs, seamlessly bridging the gap between data analysis and application development.
+**OuterSpace Apizr** is a groundbreaking open-source tool that is set to redefine the way data engineers interact with notebooks. It is specifically designed to transform notebooks into powerful, containerized APIs, seamlessly bridging the gap between data analysis and application development.
 
 In the world of data engineering, notebooks are an essential tool for exploratory data analysis, prototyping, and sharing results. However, turning these notebooks into production-ready applications can be a challenging task. This is where OuterSpace Apizr comes in. It allows you to convert your notebooks into robust, containerized APIs, enabling you to integrate your data analysis and computations into larger systems and applications with ease.
 

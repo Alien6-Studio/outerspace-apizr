@@ -1,5 +1,7 @@
-from pydantic import BaseModel, validator
+import sys
 from typing import List, Optional, Union
+
+from pydantic import BaseModel, validator
 
 
 class Annotation(BaseModel):
@@ -22,4 +24,7 @@ class Annotation(BaseModel):
         return item
 
 
-Annotation.model_rebuild()
+if sys.version_info >= (3, 11):
+    Annotation.model_rebuild()
+else:
+    Annotation.update_forward_refs()

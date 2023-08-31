@@ -1,3 +1,6 @@
 import typing
-import werkzeug, flask
-import sklearn as sk, numpy as np
+
+import flask
+import numpy as np
+import sklearn as sk
+import werkzeug

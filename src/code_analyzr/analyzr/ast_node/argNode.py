@@ -1,8 +1,8 @@
 import logging
 
+from .annotationNode import AnnotationNode
 from .astNode import AstNode
 from .errorLogger import LogError
-from .annotationNode import AnnotationNode
 
 
 class ArgNode(AstNode):

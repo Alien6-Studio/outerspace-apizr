@@ -1,8 +1,13 @@
-import logging
 import argparse
-import json
+import logging
 import sys
-from generator import Configuration
+
+import yaml
+from generator.dockerfileGenerator import DockerfileGenerator
+from generator.gunicornGenerator import GunicornGenerator
+from generator.requirementsAnalyzr import RequirementsAnalyzr
+
+from configuration import DockerizrConfiguration
 
 # Configure logging settings
 logging.basicConfig(
@@ -13,62 +18,100 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# Class to convert dictionaries to objects
-class ConfigObject:
-    def __init__(self, dictionary):
-        for key, value in dictionary.items():
-            if isinstance(value, dict):
-                setattr(self, key, ConfigObject(value))
-            elif isinstance(value, list):
-                setattr(
-                    self,
-                    key,
-                    [
-                        ConfigObject(item) if isinstance(item, dict) else item
-                        for item in value
-                    ],
-                )
-            else:
-                setattr(self, key, value)
+class ConfigurationError(Exception):
+    """
+    Custom exception for configuration-related errors.
+    """
+
+    pass
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Interact with FastAPI app for dockerizr."
+def set_configuration(args) -> DockerizrConfiguration:
+    """
+    Set the configuration for dockerizr based on provided arguments.
+
+    :param args: Arguments passed to the script.
+    :return: Configured DockerizrConfiguration object.
+    """
+
+    configuration = DockerizrConfiguration()
+
+    # Update Configuration object with the provided configuration file
+    if args.configuration:
+        try:
+            with open(args.configuration, "r") as f:
+                data = yaml.safe_load(f)
+                configuration = DockerizrConfiguration(**data)
+        except Exception as e:
+            logger.error(f"Error reading configuration file: {e}")
+            sys.exit(1)
+
+    # Override Configuration object with the provided arguments
+    if args.version:
+        configuration.python_version = tuple(map(int, args.version.split(".")))
+
+    if args.encoding:
+        configuration.encoding = args.encoding
+
+    if args.project_path:
+        configuration.project_path = args.project_path
+
+    return configuration
+
+
+def handle_args():
+    """
+    Parse and handle command-line arguments.
+
+    :param args: Arguments passed to the script.
+    :return: Parsed arguments.
+    """
+    parser = argparse.ArgumentParser(description="Containerize Code.")
+    parser.add_argument(
+        "--configuration",
+        help="Path to the configuration file. If not specified, uses the default configuration.",
     )
-    parser.add_argument("file", help="Path to the JSON file with configurations.")
     parser.add_argument(
         "--action",
         choices=["gunicorn", "requirements", "dockerfile"],
-        required=True,
         help="Choose the action to perform: generate Gunicorn files, requirements.txt, or Dockerfile.",
     )
+    parser.add_argument(
+        "--version",
+        default="3.8",
+        help="Python version to use for analysis. Default is 3.8.",
+    )
+    parser.add_argument(
+        "--encoding",
+        default="utf-8",
+        help="Encoding of the file. Default is utf-8.",
+    )
+    parser.add_argument(
+        "--project_path",
+        help="Project path. Default is the current directory.",
+    )
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+def main():
     try:
-        with open(args.file, "r") as f:
-            config_dict = json.load(f)
-            config = ConfigObject(config_dict)
-            conf = Configuration(
-                **vars(config)
-            )  # Convert ConfigObject to Configuration
+        args = handle_args()
+        configuration: DockerizrConfiguration = set_configuration(args)
 
-            if args.action == "gunicorn":
-                from app import generate_gunicorn_files
+        if args.action == "gunicorn":
+            GunicornGenerator(configuration).generate_gunicorn()
+        elif args.action == "requirements":
+            RequirementsAnalyzr(configuration).generate_requirements()
+        elif args.action == "dockerfile":
+            DockerfileGenerator(configuration).generate_dockerfile()
+        else:  # do all actions
+            GunicornGenerator(configuration).generate_gunicorn()
+            RequirementsAnalyzr(configuration).generate_requirements()
+            DockerfileGenerator(configuration).generate_dockerfile()
 
-                generate_gunicorn_files(conf)
-            elif args.action == "requirements":
-                from app import generate_requirements_txt
-
-                generate_requirements_txt(conf)
-            elif args.action == "dockerfile":
-                from app import generate_dockerfile
-
-                generate_dockerfile(conf)
-
-    except Exception as e:
-        logger.error(f"Error during {args.action} generation: {str(e)}")
+    except ConfigurationError as e:
+        logger.error(f"Error containerizing code: {e}")
         sys.exit(1)
 
 

@@ -14,7 +14,7 @@ class Hello_model(BaseModel):
    test: str
 
 @app.post('/hello')
-def hello_service( arguments: Hello_model):  
+def hello_service( arguments: Hello_model):
     try:
         return main.hello(test = arguments.test)
     except Exception as err:
@@ -25,7 +25,7 @@ class Addition_model(BaseModel):
    b: int
 
 @app.post('/addition')
-def addition_service( arguments: Addition_model):  
+def addition_service( arguments: Addition_model):
     try:
         return main.addition(a = arguments.a, b = arguments.b)
     except Exception as err:
@@ -35,7 +35,7 @@ class Testtuple_model(BaseModel):
    a: [int, str]
 
 @app.post('/testtuple')
-def testtuple_service( arguments: Testtuple_model):  
+def testtuple_service( arguments: Testtuple_model):
     try:
         return main.testtuple(a = arguments.a)
     except Exception as err:
@@ -45,7 +45,7 @@ class Testlist_model(BaseModel):
    a: [str]
 
 @app.post('/testList')
-def testList_service( arguments: Testlist_model):  
+def testList_service( arguments: Testlist_model):
     try:
         return main.testList(a = arguments.a)
     except Exception as err:

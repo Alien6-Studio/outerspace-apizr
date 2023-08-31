@@ -1,10 +1,9 @@
 ---
 name: User Story
 about: As a [type of user], I want [some goal] so that [some reason].
-title: ''
-labels: ''
-assignees: ''
-
+title: ""
+labels: ""
+assignees: ""
 ---
 
 ## User Story
