@@ -11,12 +11,9 @@ logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+from generator import DockerfileGenerator, GunicornGenerator, RequirementsAnalyzr
+
 from configuration import DockerizrConfiguration
-from generator import (
-    DockerfileGenerator,
-    GunicornGenerator,
-    RequirementsAnalyzr,
-)
 
 logger.info("Initializing the FastAPI app for dockerizr")
 app = FastAPI()
@@ -53,7 +50,9 @@ async def generate_requirements_txt(conf: DockerizrConfiguration):
 
 
 @app.post("/generate_dockerfile/")
-async def generate_dockerfile(conf: DockerizrConfiguration,):
+async def generate_dockerfile(
+    conf: DockerizrConfiguration,
+):
     try:
         logger.debug("Attempting to generate Dockerfile")
         DockerfileGenerator(conf).generate_dockerfile()

@@ -104,7 +104,9 @@ def handle_args():
     parser.add_argument(
         "--skip-docker", action="store_true", help="Skip Dockerization."
     )
-
+    parser.add_argument(
+        "--skip-pipreqs", action="store_true", help="Skip pipreqs generation."
+    )
     args = parser.parse_args()
 
     if not args.notebook and not args.script:
@@ -138,6 +140,7 @@ def process_input(
     output: Path,
     skip_fastapi: bool,
     skip_docker: bool,
+    skip_pipreqs: bool,
 ):
     """
     Process the provided input (notebook or script) for conversion and Dockerization.
@@ -196,6 +199,7 @@ def process_input(
             configuration=configuration.dockerizr,
             script_name=script_name,
             output=output,
+            skip_pipreqs=skip_pipreqs,
         )
 
 
@@ -328,7 +332,10 @@ def process_code(
 
 
 def dockerize_app(
-    configuration: DockerizrConfiguration, script_name: str, output: Path
+    configuration: DockerizrConfiguration,
+    script_name: str,
+    output: Path,
+    skip_pipreqs: bool,
 ):
     """
     ... (le reste de la docstring)
@@ -343,7 +350,8 @@ def dockerize_app(
 
     try:
         # Generate necessary files for dockerization
-        RequirementsAnalyzr(configuration).generate_requirements()
+        if not skip_pipreqs:
+            RequirementsAnalyzr(configuration).generate_requirements()
         GunicornGenerator(configuration).generate_gunicorn()
         DockerfileGenerator(configuration).generate_dockerfile()
     except Exception as e:
@@ -381,6 +389,7 @@ def main():
                 output=args.output,
                 skip_fastapi=args.skip_fastapi,
                 skip_docker=args.skip_docker,
+                skip_pipreqs=args.skip_pipreqs,
             )
         elif args.script:
             process_input(
@@ -389,6 +398,7 @@ def main():
                 output=args.output,
                 skip_fastapi=args.skip_fastapi,
                 skip_docker=args.skip_docker,
+                skip_pipreqs=args.skip_pipreqs,
             )
 
     except (InvalidNotebookError, InvalidScriptError) as e:

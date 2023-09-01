@@ -6,6 +6,7 @@ import yaml
 from generator.dockerfileGenerator import DockerfileGenerator
 from generator.gunicornGenerator import GunicornGenerator
 from generator.requirementsAnalyzr import RequirementsAnalyzr
+from prompt import ConfigPrompter
 
 from configuration import DockerizrConfiguration
 
@@ -35,6 +36,10 @@ def set_configuration(args) -> DockerizrConfiguration:
     """
 
     configuration = DockerizrConfiguration()
+
+    if not (args.force or args.configuration):
+        # Use prompt mode
+        return ConfigPrompter(lang=args.lang).getConfiguration()
 
     # Update Configuration object with the provided configuration file
     if args.configuration:
@@ -90,7 +95,17 @@ def handle_args():
         "--project_path",
         help="Project path. Default is the current directory.",
     )
-
+    parser.add_argument(
+        "--lang",
+        default="en",
+        choices=["en", "fr"],
+        help="Language for prompts. Default is English.",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force using command line arguments instead of interactive prompts.",
+    )
     return parser.parse_args()
 
 

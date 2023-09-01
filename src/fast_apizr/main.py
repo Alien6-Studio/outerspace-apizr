@@ -6,6 +6,7 @@ import sys
 import yaml
 from generator import FastApiAppGenerator
 from generator.analyzr import Analyzr
+from prompt import ConfigPrompter
 
 from configuration import FastApizrConfiguration
 
@@ -34,6 +35,10 @@ def set_configuration(args) -> FastApizrConfiguration:
     :return: Configured FastApizrConfiguration object.
     """
     configuration = FastApizrConfiguration()
+
+    if not (args.force or args.configuration):
+        # Use prompt mode
+        return ConfigPrompter(lang=args.lang).getConfiguration()
 
     # Update Configuration object with the provided configuration file
     if args.configuration:
@@ -100,7 +105,17 @@ def handle_args():
         default=None,
         help="Path to save the analysis result as JSON. If not specified, prints to console.",
     )
-
+    parser.add_argument(
+        "--lang",
+        default="en",
+        choices=["en", "fr"],
+        help="Language for prompts. Default is English.",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force using command line arguments instead of interactive prompts.",
+    )
     return parser.parse_args()
 
 

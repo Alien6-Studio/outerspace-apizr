@@ -1,0 +1,12 @@
+{
+  "version": "Quelle version de Python souhaitez-vous utiliser pour l'analyse ? (par défaut {default_version}) : ",
+  "encoding": "Quel encodage souhaitez-vous utiliser pour lire le fichier ? (par défaut {default_encoding}) : ",
+  "method": {
+    "title": "Souhaitez-vous spécifier les fonctions à analyser, celles à ignorer, ou sélectionner toutes les méthodes ?",
+    "specify_analyze": "Spécifier les fonctions à analyser",
+    "specify_ignore": "Spécifier les fonctions à ignorer",
+    "take_all": "Sélectionner toutes les fonctions"
+  },
+  "analyze": "Veuillez sélectionner les fonctions que vous souhaitez analyser. Laissez vide pour tout sélectionner.",
+  "ignore": "Veuillez sélectionner les fonctions que vous souhaitez ignorer (séparés par des virgules). Laissez vide pour n'en ignorer aucune."
+}
