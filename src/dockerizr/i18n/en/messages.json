@@ -1,0 +1,16 @@
+{
+  "version": "Which Python version do you wish to use for analysis? (default {default_version}): ",
+  "encoding": "Which encoding do you wish to use for reading the file? (default {default_encoding}): ",
+  "docker_image": "Choose a Docker image:",
+  "docker_image_tag": "Choose a tag for the Docker image:",
+  "project_path": "Enter the path to your project (default is the current directory): ",
+  "main_folder": "Enter the name of the main folder for the project (if any): ",
+  "api_filename": "Enter the name of the FastAPI generated file (default is 'app.py'): ",
+  "server_app": "Enter the server application name (default is 'gunicorn'): ",
+  "wsgi_file_name": "Enter the name of the WSGI file (default is 'wsgi.py'): ",
+  "wsgi_conf_file_name": "Enter the name of the WSGI configuration file (default is 'gunicorn.conf.py'): ",
+  "host": "Enter the host address for the server (default is '0.0.0.0'): ",
+  "port": "Enter the port number for the server (default is 5001): ",
+  "workers": "Enter the number of workers for the server (default is 2): ",
+  "timeout": "Enter the timeout for the server in seconds (default is 60): "
+}

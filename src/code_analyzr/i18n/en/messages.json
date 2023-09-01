@@ -1,0 +1,12 @@
+{
+  "version": "Which Python version do you wish to use for analysis? (default {default_version}): ",
+  "encoding": "Which encoding do you wish to use for reading the file? (default {default_encoding}): ",
+  "method": {
+    "title": "Would you like to specify functions to analyze, ones to ignore, or select all functions?",
+    "specify_analyze": "Specify functions to analyze",
+    "specify_ignore": "Specify functions to ignore",
+    "take_all": "Analyze all functions"
+  },
+  "analyze": "Please select the functions you wish to analyze. Leave blank to select all.",
+  "ignore": "Please select the functions you wish to ignore (separated by commas). Leave blank to ignore none."
+}

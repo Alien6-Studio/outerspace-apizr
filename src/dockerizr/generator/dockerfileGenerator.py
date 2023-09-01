@@ -15,7 +15,22 @@ class DockerfileGenerator:
 
     @LogError(logging)
     def is_dependency_present(self, dependency_name: str) -> bool:
-        return any(dep["name"]== dependency_name for dep in self.conf.dependencies)
+        if not isinstance(self.conf.dependencies, list):
+            logging.error("self.conf.dependencies is not a list.")
+            return False
+
+        for dep in self.conf.dependencies:
+            if not isinstance(dep, dict):
+                logging.error(f"Unexpected type in self.conf.dependencies: {type(dep)}")
+                continue
+
+            if "name" not in dep:
+                logging.error("Missing 'name' key in dependency entry.")
+                continue
+
+            if dep["name"] == dependency_name:
+                return True
+        return False
 
     @LogError(logging)
     def get_dependency(self, dependency_name: str):
@@ -25,13 +40,17 @@ class DockerfileGenerator:
         return None
 
     @LogError(logging)
-    def get_alpine_packages(self) -> list:
+    def get_packages(self) -> list:
         packages = []
         with open(path.join(self.home_path, "requirements.txt"), "r") as f:
             for line in f:
                 library = line.strip().split("==")[0]
                 if self.is_dependency_present(library):
                     packages.extend(self.get_dependency(library).packages)
+
+        # Custom Packages
+        if self.conf.custom_packages:
+            packages.extend(self.conf.custom_packages)
         return list(set(packages))
 
     @LogError(logging)
@@ -54,6 +73,6 @@ class DockerfileGenerator:
                 docker_image_tag=f"{self.conf.docker_image_tag}",
                 host=self.conf.server.host,
                 port=self.conf.server.port,
-                dependencies=self.get_alpine_packages(),
+                dependencies=self.get_packages(),
             )
             return output

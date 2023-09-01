@@ -35,9 +35,24 @@ class AstAnalyzr(ast.NodeVisitor):
     @LogError(logging)
     def check_for_keywords(self, code_str):
         version = sys.version_info[:2]
+        if not isinstance(self.keywords, list):
+            logging.error("self.keywords is not a list.")
+            return
+
         for keywords in self.keywords:
-            ver = tuple(map(int, keywords["version"].split(".")))
-            for keyword in keywords["values"]:
+            if not isinstance(keywords, dict):
+                logging.error(f"Unexpected type in self.keywords: {type(keywords)}")
+                continue
+
+            version_key = keywords.get("version")
+            values_key = keywords.get("values")
+
+            if not version_key or not values_key:
+                logging.error("Missing 'version' or 'values' key in keywords entry.")
+                continue
+
+            ver = tuple(map(int, version_key.split(".")))
+            for keyword in values_key:
                 if keyword in code_str and version < ver:
                     raise UnsupportedKeywordError(keyword, ver, version)
 

@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class KeywordConfig(BaseModel):
@@ -14,6 +14,13 @@ class KeywordConfig(BaseModel):
 
     version: str
     values: List[str]
+
+    # Ensure that version is in the correct format (e.g., "3.10")
+    @validator("version")
+    def validate_version_format(cls, v):
+        if not all(part.isdigit() for part in v.split(".")):
+            raise ValueError("Invalid version format!")
+        return v
 
 
 class CodeAnalyzrConfiguration(BaseModel):
@@ -48,3 +55,12 @@ class CodeAnalyzrConfiguration(BaseModel):
     functions_to_analyze: Optional[str] = None
     ignore: Optional[str] = None
     keywords: List[KeywordConfig] = [{"version": "3.10", "values": ["match", "case"]}]
+
+    # Ensure that keywords is a list of KeywordConfig objects
+    @validator("keywords", pre=True, each_item=True)
+    def validate_keywords(cls, v):
+        if not isinstance(v, Dict) or "version" not in v or "values" not in v:
+            raise ValueError(
+                "Each keyword entry must be a dictionary with 'version' and 'values' keys."
+            )
+        return v

@@ -7,12 +7,36 @@ code_analyzr:
   script: ""
   functions_to_analyze: ""
   ignore: ""
+  keywords:
+    - version: "3.10"
+      values:
+        - match
+        - case
 fast_apizr:
   module_name: main
   api_filename: app.py
 dockerizr:
-  docker_image: alpine
-  docker_image_tag: alpine3.18
+  docker_image: debian
+  docker_image_tag: latest
+  dependencies:
+    - name: numpy
+      packages:
+        - gcc
+        - g++
+        - musl-dev
+        - python3-dev
+        - gfortran
+    - name: scikit_learn$
+      packages:
+        - gcc
+        - g++
+        - musl-dev
+        - python3-dev
+        - gfortran
+        - openblas-dev
+        - lapack-dev
+  custom_packages:
+    - jq
   server:
     workers: 2
     timeout: 60

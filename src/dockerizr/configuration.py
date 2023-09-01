@@ -76,6 +76,7 @@ class DockerizrConfiguration(BaseModel):
             ],
         },
     ]
+    custom_packages: List[str] = []
     project_path: str = "."
     main_folder: Optional[str] = ""
     api_filename: str = "app.py"
