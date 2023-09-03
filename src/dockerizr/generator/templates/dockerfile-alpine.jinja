@@ -13,6 +13,16 @@ ENV PYTHONPATH /app:$PYTHONPATH
 # Copy the source code into the container
 COPY . /app
 
+# Copy the start script into the container
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Copy the entrypoint script into the container
+{% if entrypoint %}
+RUN echo {{ entrypoint }} >> /app/entrypoint.sh && \
+    chmod +x /entrypoint.sh
+{% endif %}
+
 # Set the working directory
 WORKDIR /app
 
@@ -36,4 +46,4 @@ HEALTHCHECK --interval=5m --timeout=3s \
   CMD curl -f http://localhost:{{ port }}/docs || exit 1
 
 # Run the application
-CMD ["gunicorn", "-c", "gunicorn.conf.py", "wsgi:application"]
+ENTRYPOINT ["/app/start.sh"]

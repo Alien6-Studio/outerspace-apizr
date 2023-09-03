@@ -1,6 +1,7 @@
 import ast
 import collections.abc
 import json
+import os
 
 # Patch for PyInquirer and Python 3.10+
 collections.Mapping = collections.abc.Mapping
@@ -16,7 +17,9 @@ class ConfigPrompter:
 
     def load_translations(self, lang: str) -> dict:
         try:
-            with open(f"i18n/{lang}/messages.json", "r", encoding="utf-8") as f:
+            current_path = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(current_path, f"i18n/{lang}/messages.json")
+            with open(file_path, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
             print(f"Error loading translations: {e}")
@@ -25,14 +28,35 @@ class ConfigPrompter:
     def get_translation(self, key: str, **kwargs) -> str:
         return self.translations.get(key, "").format(**kwargs)
 
-    def getConfiguration(self) -> FastApizrConfiguration:
+    def getConfiguration(
+        self,
+        version=None,
+        api_filename: str = "",
+        module_name: str = "",
+        encoding=None
+    ) -> FastApizrConfiguration:
         configuration = FastApizrConfiguration()
-        configuration.python_version = tuple(
-            map(int, self.prompt_python_version().split("."))
-        )
-        configuration.encoding = self.prompt_encoding()
-        configuration.module_name = self.prompt_module_name()
-        configuration.api_filename = self.prompt_api_filename()
+        if not version:
+            configuration.python_version = tuple(
+                map(int, self.prompt_python_version().split("."))
+            )
+        else:
+            configuration.python_version = version
+
+        if not encoding:
+            configuration.encoding = self.prompt_encoding()
+        else:
+            configuration.encoding = encoding
+
+        if not api_filename:
+            configuration.api_filename = self.prompt_api_filename()
+        else:
+            configuration.api_filename = api_filename
+
+        if not module_name:
+            configuration.module_name = self.prompt_module_name()
+        else:
+            configuration.module_name = module_name
 
         return configuration
 
@@ -55,11 +79,11 @@ class ConfigPrompter:
         module_name = input(
             self.get_translation("module", default_module=default_module)
         )
-        return prompt(module_name) if module_name else default_module
+        return module_name if module_name else default_module
 
     def prompt_api_filename(self) -> str:
         default_filename = "app.py"
         api_filename = input(
             self.get_translation("filename", default_filename=default_filename)
         )
-        return prompt(api_filename) if api_filename else default_filename
+        return api_filename if api_filename else default_filename

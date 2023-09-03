@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 from code_analyzr.configuration import CodeAnalyzrConfiguration
-from dockerizr.configuration import DockerizrConfiguration
+from dockerizr.configuration import DockerizrConfiguration, GunicornConfiguration
 from fast_apizr.configuration import FastApizrConfiguration
 from notebook_transformr.configuration import NotebookTransformrConfiguration
 

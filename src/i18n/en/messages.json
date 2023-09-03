@@ -1,0 +1,4 @@
+{
+  "version": "Which Python version do you wish to use for analysis? (default {default_version}): ",
+  "encoding": "Which encoding do you wish to use for reading the file? (default {default_encoding}): "
+}

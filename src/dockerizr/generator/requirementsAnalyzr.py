@@ -16,9 +16,7 @@ class RequirementsAnalyzr:
     @LogError(logging)
     def generate_requirements(self) -> None:
         """Generate the requirements.txt file based on the code imports in the specified directory."""
-        output_directory = os.path.join(
-            self.config.project_path, self.config.main_folder
-        )
+        output_directory = self.config.project_path
 
         # Ensure the directory exists
         if not os.path.exists(output_directory):

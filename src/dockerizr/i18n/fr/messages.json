@@ -4,13 +4,14 @@
   "docker_image": "Choisissez une image Docker :",
   "docker_image_tag": "Choisissez un tag pour l'image Docker :",
   "project_path": "Entrez le chemin de votre projet (par défaut est le répertoire courant) : ",
-  "main_folder": "Entrez le nom du dossier principal du projet (si existant) : ",
-  "api_filename": "Entrez le nom du fichier généré par FastAPI (par défaut est 'app.py') : ",
+  "entrypoint": "Entrez le chemin d'un entrypoint si existant (par défaut 'entrypoint.sh'): ",
+  "module_name": "Entrez le nom du module principal du projet (si existant) : ",
+  "api_filename": "Entrez le nom du fichier généré par FastAPI (par défaut 'app.py') : ",
   "server_app": "Entrez le nom de l'application serveur (par défaut est 'gunicorn') : ",
   "wsgi_file_name": "Entrez le nom du fichier WSGI (par défaut est 'wsgi.py') : ",
-  "wsgi_conf_file_name": "Entrez le nom du fichier de configuration WSGI (par défaut est 'gunicorn.conf.py') : ",
+  "wsgi_conf_file_name": "Entrez le nom du fichier de configuration WSGI (par défaut 'gunicorn.conf.py') : ",
   "host": "Entrez l'adresse hôte pour le serveur (par défaut est '0.0.0.0') : ",
   "port": "Entrez le numéro de port pour le serveur (par défaut est 5001) : ",
   "workers": "Entrez le nombre de workers pour le serveur (par défaut est 2) : ",
-  "timeout": "Entrez le délai d'expiration pour le serveur en secondes (par défaut est 60) : "
+  "timeout": "Entrez le délai d'expiration pour le serveur en secondes (par défaut 60) : "
 }

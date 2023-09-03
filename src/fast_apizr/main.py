@@ -1,14 +1,15 @@
 import argparse
 import json
 import logging
+import os
 import sys
 
 import yaml
 from generator import FastApiAppGenerator
 from generator.analyzr import Analyzr
-from prompt import ConfigPrompter
 
 from configuration import FastApizrConfiguration
+from prompt import ConfigPrompter
 
 # Configure logging settings
 logging.basicConfig(
@@ -143,9 +144,9 @@ def save_result(output_path, result):
     """
 
     try:
+        print(f"Saving result to {output_path}")
         with open(output_path, "w") as f:
             f.write(result)
-        logger.info(f"Generated FastAPI code saved to {output_path}")
     except Exception as e:
         logger.error(f"Error writing to output file: {e}")
         raise ConfigurationError(e)
@@ -160,7 +161,7 @@ def main():
         result = FastApiAppGenerator(configuration, metadata).gen_fastapi_app()
 
         if args.output:
-            save_result(args.output, result)
+            save_result(os.path.join(args.output, configuration.api_filename), result)
         else:
             print(result)
 

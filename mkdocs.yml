@@ -92,17 +92,25 @@ nav:
   - Home: index.md
   - Getting Started:
       - Introduction: getting-started/introduction.md
-      - Modules:
-          - Notebook Transformr: modules/notebook-transformr.md
-          - Code Analyzr: modules/code-analyzr.md
-          - Fast Apizr: modules/fast-apizr.md
-          - Dockerizr: modules/dockerizr.md
-      - APIs:
-          - Notebook Transformr API: apis/notebook-transformr-api.md
-          - Code Analyzr API: apis/code-analyzr-api.md
-          - Fast Apizr API: apis/fast-apizr-api.md
-          - Dockerizr API: apis/dockerizr-api.md
-      - About:
-          - Contributing: about/CONTRIBUTING.md
-          - Code of Conduct: about/CODE_OF_CONDUCT.md
-          - License: about/LICENSE.md
+      - User Guide:
+          - Using Apizr: getting-started/user-guide/apizr.md
+          - Using Code Analyzr: getting-started/user-guide/code-analyzr.md
+          - Using Fast Apizr: getting-started/user-guide/fast-apizr.md
+          - Using Dockerizr: getting-started/user-guide/dockerizr.md
+      - Developer Guide:
+          - Setup: getting-started/developer-guide/setup.md
+          - Modules:
+              - Notebook Transformr: modules/notebook-transformr.md
+              - Code Analyzr: modules/code-analyzr.md
+              - Fast Apizr: modules/fast-apizr.md
+              - Dockerizr: modules/dockerizr.md
+          - APIs:
+              - Apizr API: apis/apizr-api.md
+              - Notebook Transformr API: apis/notebook-transformr-api.md
+              - Code Analyzr API: apis/code-analyzr-api.md
+              - Fast Apizr API: apis/fast-apizr-api.md
+              - Dockerizr API: apis/dockerizr-api.md
+          - About:
+              - Contributing: about/CONTRIBUTING.md
+              - Code of Conduct: about/CODE_OF_CONDUCT.md
+              - License: about/LICENSE.md

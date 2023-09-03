@@ -6,9 +6,9 @@ import yaml
 from generator.dockerfileGenerator import DockerfileGenerator
 from generator.gunicornGenerator import GunicornGenerator
 from generator.requirementsAnalyzr import RequirementsAnalyzr
-from prompt import ConfigPrompter
 
 from configuration import DockerizrConfiguration
+from prompt import ConfigPrompter
 
 # Configure logging settings
 logging.basicConfig(
@@ -39,7 +39,12 @@ def set_configuration(args) -> DockerizrConfiguration:
 
     if not (args.force or args.configuration):
         # Use prompt mode
-        return ConfigPrompter(lang=args.lang).getConfiguration()
+        version_tuple = tuple(map(int, args.version.split(".")))
+        return ConfigPrompter(lang=args.lang).getConfiguration(
+            version=version_tuple,
+            encoding=args.encoding,
+            project_path=args.project_path,
+        )
 
     # Update Configuration object with the provided configuration file
     if args.configuration:
@@ -47,19 +52,20 @@ def set_configuration(args) -> DockerizrConfiguration:
             with open(args.configuration, "r") as f:
                 data = yaml.safe_load(f)
                 configuration = DockerizrConfiguration(**data)
+
+            # Override Configuration object with the provided arguments
+            if args.version:
+                configuration.python_version = tuple(map(int, args.version.split(".")))
+
+            if args.encoding:
+                configuration.encoding = args.encoding
+
+            if args.project_path:
+                configuration.project_path = args.project_path
+
         except Exception as e:
             logger.error(f"Error reading configuration file: {e}")
             sys.exit(1)
-
-    # Override Configuration object with the provided arguments
-    if args.version:
-        configuration.python_version = tuple(map(int, args.version.split(".")))
-
-    if args.encoding:
-        configuration.encoding = args.encoding
-
-    if args.project_path:
-        configuration.project_path = args.project_path
 
     return configuration
 
