@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "outerspace-apizr"
-version = "0.1.2"
+version = "0.1.3"
 description = "Apizr is a dynamic API generator built on top of FastAPI. It analyses your Python codebase, extracts relevant metadata, and automatically generates a FastAPI backend for your application. This simplifies the process of API development, saving time, and reducing the chance of errors."
 authors = [
   "Ludovic FERNANDEZ <ludovic.fernandez@alien6.com>",
@@ -15,19 +15,19 @@ nbconvert = "*"
 pipreqs = "*"
 ipython = "*"
 black = "*"
-fastapi = "*"
+fastapi = "^0.103.0"
+pydantic = "^2.3.0"
 uvicorn = { version = "*", extras = ["standard"] }
-Jinja2 = "3.0.1"
-python-multipart = "*"
-
-[tool.poetry.extras]
-notebook_transformr = ["nbconvert", "pipreqs", "ipython", "black"]
-fast_apizr = ["fastapi", "uvicorn", "Jinja2"]
-code_analyzr = ["fastapi", "uvicorn", "python-multipart"]
-dockerizr = ["fastapi", "uvicorn", "Jinja2"]
+Jinja2 = "^3.1.2"
+python-multipart = "^0.0.6"
+PyYAML = "^6.0.1"
+PyInquirer = "^1.0.3"
 
 [[tool.poetry.packages]]
 include = "src/*"
+
+[tool.poetry.scripts]
+apizr = "src.main:main"
 
 [tool.poetry.urls]
 "Repository" = "https://github.com/Alien6-Studio/outerspace-apizr"

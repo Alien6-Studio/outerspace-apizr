@@ -16,11 +16,21 @@ The Dockerizr module is a dedicated sub-component of OuterSpace Apizr. Crafted i
 
 ## Features
 
-### Docker File Generation
+### Automated Dockerfile Generation
 
-Dockerizr automatically creates a Dockerfile tailored to the specific needs of your Python project, ensuring a seamless containerization experience.
+Dockerizr automatically crafts a Dockerfile tailored to the specific needs of your Python project.
 
----
+### Custom Entrypoint Support
+
+Allows users to specify custom startup scripts or commands that will be executed prior to the main application's launch.
+
+### Dependency Analysis
+
+Identifies and generates a requirements.txt file by analyzing imports from the project's source code.
+
+### Gunicorn Configuration
+
+Generates an optimal configuration for Gunicorn, enabling your FastAPI application to run efficiently in production environments.
 
 ## Usage
 
@@ -29,12 +39,68 @@ Dockerizr automatically creates a Dockerfile tailored to the specific needs of y
 To leverage Dockerizr, ensure you have Python 3.8 or a later version installed. Upon verification, you can incorporate the Dockerizr module into your Python script or notebook as illustrated:
 
 ```python
-from dockerizr import DockerGenerator
-generator = DockerGenerator(project_path="path_to_your_project")
-dockerfile_content = generator.generate_dockerfile()
+from dockerizr.generator.dockerfileGenerator import DockerGenerator
+from dockerizr.configuration import DockerizrConfiguration
+
+# Define the necessary configuration parameters
+config = DockerizrConfiguration(
+    project_path="path_to_your_project",
+    docker_image="desired_docker_image_name",
+    python_version=(3, 8),  # example Python version
+    # ... any other necessary configurations ...
+)
+
+# Initialize the DockerGenerator with the configuration
+generator = DockerGenerator(config)
+
+# Generate the Dockerfile content
+dockerfile_content = generator.dockerfile_generator()
+
 ```
 
 This will yield the Dockerfile content for the provided project path.
+
+### Usecase
+
+#### Introduction to Usecase
+
+Dockerizr streamlines the creation of a containerized setup for Python applications. Given an API file produced by FastApizr, Dockerizr generates:
+
+- A `Dockerfile` that defines how the application should be containerized.
+- A `requirements.txt` that lists all the necessary Python packages.
+- A `wsgi.py` that serves as an entry point for the Gunicorn server.
+- A `gunicorn.conf.py` that configures the Gunicorn server for optimal performance.
+
+With these files in place, your Python application is primed for containerization and deployment using Docker.
+
+### Module Structure and Usage
+
+```code
+Dockerizr
+│
+├── main.py - Entry point to interact with Dockerizr functionalities.
+│
+└── generator
+    ├── dockerfileGenerator.py - Handles Dockerfile generation.
+    │   ├── generate_dockerfile() - Writes the Dockerfile content to the project's main folder.
+    │   ├── dockerfile_generator() - Crafts Dockerfile content using a Jinja2 template.
+    |
+    ├── requirementsAnalyzr.py - Manages the generation of the `requirements.txt` file.
+    │   ├── generate_requirements() - Produces `requirements.txt` based on project imports.
+    |
+    ├── gunicornGenerator.py - Manages Gunicorn configuration file generation.
+    │   ├── generate_gunicorn() - Produces WSGI and Gunicorn configuration files.
+    │   ├── gunicorn_conf_generator() - Crafts Gunicorn configuration content using a Jinja2
+    |
+    ├── errorLogger.py - A decorator to log exceptions raised by decorated functions.
+    |
+    └── templates
+        ├── dockerfile-alpine.jinja - Jinja2 template for Dockerfile generation
+        ├── dockerfile-debian.jinja - Jinja2 template for Dockerfile generation
+        ├── wsgi.jinja - Jinja2 template for Gunicorn configuration file generation
+        ├── wsgi-conf.jinja - Jinja2 template for Gunicorn configuration file generation
+        └── start.sh - Script to run the application
+```
 
 ### Docker
 
@@ -72,16 +138,3 @@ Gunicorn is a Python WSGI HTTP server that's employed for serving Python applica
 3. **Worker Class**: Specifying the `uvicorn.workers.UvicornWorker` class enables Gunicorn to serve ASGI applications like FastAPI.
 4. **Timeout**: This ensures that overly time-consuming requests are terminated, preventing server overloads.
 5. **Logging**: Logging levels and formats are defined to effectively monitor the application's operations.
-
-### Usecase
-
-#### Introduction to Usecase
-
-Dockerizr streamlines the creation of a containerized setup for Python applications. Given an API file produced by FastApizr, Dockerizr generates:
-
-- A `Dockerfile` that defines how the application should be containerized.
-- A `requirements.txt` that lists all the necessary Python packages.
-- A `wsgi.py` that serves as an entry point for the Gunicorn server.
-- A `gunicorn.conf.py` that configures the Gunicorn server for optimal performance.
-
-With these files in place, your Python application is primed for containerization and deployment using Docker.

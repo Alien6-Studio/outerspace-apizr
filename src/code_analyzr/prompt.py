@@ -1,6 +1,7 @@
 import ast
 import collections.abc
 import json
+import os
 
 # Patch for PyInquirer and Python 3.10+
 collections.Mapping = collections.abc.Mapping
@@ -18,7 +19,9 @@ class ConfigPrompter:
 
     def load_translations(self, lang: str) -> dict:
         try:
-            with open(f"i18n/{lang}/messages.json", "r", encoding="utf-8") as f:
+            current_path = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(current_path, f"i18n/{lang}/messages.json")
+            with open(file_path, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
             print(f"Error loading translations: {e}")
@@ -33,12 +36,14 @@ class ConfigPrompter:
             node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
         ]
 
-    def getConfiguration(self) -> CodeAnalyzrConfiguration:
+    def getConfiguration(self, version=None, encoding=None) -> CodeAnalyzrConfiguration:
         configuration = CodeAnalyzrConfiguration()
-        configuration.python_version = tuple(
-            map(int, self.prompt_python_version().split("."))
-        )
-        configuration.encoding = self.prompt_encoding()
+        if not version:
+            configuration.python_version = tuple(
+                map(int, self.prompt_python_version().split("."))
+            )
+        if not encoding:
+            configuration.encoding = self.prompt_encoding()
 
         method = self.get_configuration_method()
         if method == self.translations["method"]["specify_analyze"]:

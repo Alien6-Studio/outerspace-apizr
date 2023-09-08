@@ -33,9 +33,9 @@ class GunicornGenerator:
         """
         Generates the WSGI and Gunicorn configuration files.
 
-        The generated files are saved in the project's main folder, as specified in the configuration.
+        The generated files are saved in the project's main folder.
         """
-        home_path = path.join(self.conf.project_path, self.conf.main_folder)
+        home_path = self.conf.project_path
         with open(path.join(home_path, self.conf.server.wsgi_file_name), "w") as f:
             f.write(self.gunicorn_wsgi_generator())
 
@@ -72,5 +72,5 @@ class GunicornGenerator:
         """
         with open(path.join(path.dirname(__file__), "templates/wsgi.jinja"), "r") as f:
             template = Template(f.read())
-            output = template.render(main=self.conf.api_filename[:-3])
+            output = template.render(main=self.conf.module_name)
             return output

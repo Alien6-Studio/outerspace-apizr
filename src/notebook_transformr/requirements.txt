@@ -1,5 +1,6 @@
 black==23.7.0
-fastapi==0.101.1
+fastapi==0.103.0
+uvicorn[standard]
 nbconvert==7.7.4
 pipreqs
 ipython

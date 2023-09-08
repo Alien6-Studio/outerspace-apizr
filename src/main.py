@@ -1,4 +1,6 @@
 import argparse
+import importlib
+import json
 import logging
 import os
 import shutil
@@ -27,6 +29,7 @@ from fast_apizr.generator.exceptions import FastApiAlreadyImplementedException
 from fast_apizr.generator.fastApiAppGenerator import FastApiAppGenerator
 from notebook_transformr.configuration import NotebookTransformrConfiguration
 from notebook_transformr.transformr.nbTransformr import NotebookTransformr
+from prompt import ConfigPrompter
 
 # Configure logging settings
 logging.basicConfig(
@@ -107,6 +110,17 @@ def handle_args():
     parser.add_argument(
         "--skip-pipreqs", action="store_true", help="Skip pipreqs generation."
     )
+    parser.add_argument(
+        "--lang",
+        default="en",
+        choices=["en", "fr"],
+        help="Language for prompts. Default is English.",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force using command line arguments instead of interactive prompts.",
+    )
     args = parser.parse_args()
 
     if not args.notebook and not args.script:
@@ -134,6 +148,18 @@ def handle_args():
     return args
 
 
+def is_local_module(module_name, input_path):
+    """
+    Check if a module is a local module or a standard/package module.
+    """
+    try:
+        # Try to import the module (this check fails)
+        result = importlib.import_module(module_name)
+        return input_path in result.__file__
+    except ImportError:
+        return True
+
+
 def process_input(
     configuration: MainConfiguration,
     input_path: Path,
@@ -141,6 +167,8 @@ def process_input(
     skip_fastapi: bool,
     skip_docker: bool,
     skip_pipreqs: bool,
+    language: str,
+    prompt: bool = True,
 ):
     """
     Process the provided input (notebook or script) for conversion and Dockerization.
@@ -180,12 +208,17 @@ def process_input(
         script_name = input_path.name
 
     try:
+        if prompt:
+            configuration = ConfigPrompter(
+                code, lang=language, script_name=script_name
+            ).getConfiguration(output_path=output)
         process_code(
             configuration=configuration,
             code=code,
             script_name=script_name,
             output=output,
             skip_fastapi=skip_fastapi,
+            input_path=input_path,
         )
     except MetadataGenerationError:
         logger.error(f"Failed to generate metadata from code in {script_name}")
@@ -250,11 +283,10 @@ def process_code(
     script_name: str,
     output: Path,
     skip_fastapi: bool,
+    input_path=Path,
 ):
     """
     Processes the given Python code to generate a corresponding FastAPI application.
-    ...
-    (rest of the docstring)
     """
 
     if not script_name:
@@ -280,7 +312,28 @@ def process_code(
             code_analyzr_configuration = configuration.code_analyzr
         else:
             code_analyzr_configuration = CodeAnalyzrConfiguration()
+
         metadata = AstAnalyzr(code_analyzr_configuration, code).get_analyse()
+        json_metadata = json.loads(metadata)
+
+        # Check imports for local modules
+        for import_data in json_metadata["imports_from"]:
+            module_name = import_data["module"]
+            if is_local_module(module_name, os.path.abspath(input_path.parent)):
+                s = str(Path(input_path.parent, module_name)).split(".")[0]
+                local_module_path = Path(s)
+                dest_path = Path(output, s)
+                local_file = Path(module_name + ".py")
+
+                # Case where the module is a directory
+                if local_module_path.exists() and not dest_path.exists():
+                    dest_path = Path(output, local_module_path.name)
+                    shutil.copytree(local_module_path, dest_path)
+
+                # Case where the module is a file
+                elif local_file.exists():
+                    shutil.copy(local_file, output)
+
     except Exception as e:
         logger.error("Error generating metadata from code.")
         raise MetadataGenerationError(
@@ -338,7 +391,7 @@ def dockerize_app(
     skip_pipreqs: bool,
 ):
     """
-    ... (le reste de la docstring)
+    Dockerizes the provided FastAPI application.
     """
 
     # Prepare API filename and configuration
@@ -390,6 +443,8 @@ def main():
                 skip_fastapi=args.skip_fastapi,
                 skip_docker=args.skip_docker,
                 skip_pipreqs=args.skip_pipreqs,
+                language=args.lang,
+                prompt=not (args.force or args.configuration),
             )
         elif args.script:
             process_input(
@@ -399,6 +454,8 @@ def main():
                 skip_fastapi=args.skip_fastapi,
                 skip_docker=args.skip_docker,
                 skip_pipreqs=args.skip_pipreqs,
+                language=args.lang,
+                prompt=not (args.force or args.configuration),
             )
 
     except (InvalidNotebookError, InvalidScriptError) as e:

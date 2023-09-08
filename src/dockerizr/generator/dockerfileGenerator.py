@@ -1,4 +1,5 @@
 import logging
+import shutil
 from os import path
 
 from jinja2 import Template
@@ -11,7 +12,7 @@ from .errorLogger import LogError
 class DockerfileGenerator:
     def __init__(self, conf: DockerizrConfiguration):
         self.conf = conf
-        self.home_path = path.join(self.conf.project_path, self.conf.main_folder)
+        self.home_path = self.conf.project_path
 
     @LogError(logging)
     def is_dependency_present(self, dependency_name: str) -> bool:
@@ -57,6 +58,10 @@ class DockerfileGenerator:
     def generate_dockerfile(self):
         with open(path.join(self.home_path, "Dockerfile"), "w") as f:
             f.write(self.dockerfile_generator())
+        shutil.copyfile(
+            path.join(path.dirname(__file__), "templates/start.sh"),
+            path.join(self.home_path, "start.sh"),
+        )
 
     @LogError(logging)
     def dockerfile_generator(self) -> str:
@@ -74,5 +79,6 @@ class DockerfileGenerator:
                 host=self.conf.server.host,
                 port=self.conf.server.port,
                 dependencies=self.get_packages(),
+                entrypoint=self.conf.entrypoint,
             )
             return output

@@ -4,9 +4,9 @@ import sys
 
 import yaml
 from analyzr import AstAnalyzr
-from prompt import ConfigPrompter
 
 from configuration import CodeAnalyzrConfiguration
+from prompt import ConfigPrompter
 
 # Configure logging settings
 logging.basicConfig(

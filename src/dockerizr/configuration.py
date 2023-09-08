@@ -78,10 +78,11 @@ class DockerizrConfiguration(BaseModel):
     ]
     custom_packages: List[str] = []
     project_path: str = "."
-    main_folder: Optional[str] = ""
     api_filename: str = "app.py"
+    module_name: Optional[str] = "main"
     server: GunicornConfiguration = GunicornConfiguration()
     apizr_requirements: List[str] = [
         "gunicorn==21.2.0",
         "uvicorn[standard]",
     ]
+    entrypoint: Optional[str] = ""
