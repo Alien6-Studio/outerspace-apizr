@@ -48,7 +48,7 @@ class DockerizrConfiguration(BaseModel):
     Attributes:
     - python_version (str): The Python version to be used. Defaults to "3.8".
     - encoding (str): The character encoding format for reading and writing files. Defaults to "utf-8".
-    - api_file_name (str): Name of the FastAPI generated file. Defaults to "app.py".
+    - api_filename (str): Name of the FastAPI generated file. Defaults to "app.py".
     - project_path (str): Path to the project directory. Defaults to the current directory.
     - main_folder (str): Name of the main folder for the project.
     - server (GunicornConfiguration): Configuration settings for the Gunicorn server.

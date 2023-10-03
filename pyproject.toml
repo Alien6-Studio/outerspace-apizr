@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "outerspace-apizr"
-version = "0.1.3.1"
+version = "0.1.3.2"
 description = "Apizr is a dynamic API generator built on top of FastAPI. It analyses your Python codebase, extracts relevant metadata, and automatically generates a FastAPI backend for your application. This simplifies the process of API development, saving time, and reducing the chance of errors."
 authors = [
   "Ludovic FERNANDEZ <ludovic.fernandez@alien6.com>",
