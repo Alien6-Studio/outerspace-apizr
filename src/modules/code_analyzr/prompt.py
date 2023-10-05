@@ -42,8 +42,12 @@ class ConfigPrompter:
             configuration.python_version = tuple(
                 map(int, self.prompt_python_version().split("."))
             )
+        else: 
+            configuration.python_version = version
         if not encoding:
             configuration.encoding = self.prompt_encoding()
+        else:
+            configuration.encoding = encoding
 
         method = self.get_configuration_method()
         if method == self.translations["method"]["specify_analyze"]:

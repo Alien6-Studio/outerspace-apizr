@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
-from code_analyzr.configuration import CodeAnalyzrConfiguration
-from dockerizr.configuration import DockerizrConfiguration, GunicornConfiguration
-from fast_apizr.configuration import FastApizrConfiguration
-from notebook_transformr.configuration import NotebookTransformrConfiguration
+from modules.code_analyzr.configuration import CodeAnalyzrConfiguration
+from modules.dockerizr.configuration import DockerizrConfiguration, GunicornConfiguration
+from modules.fast_apizr.configuration import FastApizrConfiguration
+from modules.notebook_transformr.configuration import NotebookTransformrConfiguration
 
 
 class MainConfiguration(BaseModel):
@@ -37,21 +37,28 @@ class MainConfiguration(BaseModel):
 
     python_version: tuple = (3, 8)
     encoding: str = "utf-8"
-    notebook_transformr: NotebookTransformrConfiguration = (
-        NotebookTransformrConfiguration()
-    )
+    notebook_transformr: NotebookTransformrConfiguration = NotebookTransformrConfiguration()
     code_analyzr: CodeAnalyzrConfiguration = CodeAnalyzrConfiguration()
     fast_apizr: FastApizrConfiguration = FastApizrConfiguration()
     dockerizr: DockerizrConfiguration = DockerizrConfiguration()
 
     def __init__(self, **data):
         super().__init__(**data)
+
+    def dispatch(self):
+        """
+        Dispatches the `python_version` and `encoding` values to each sub-configuration.
+        """
+
         self.notebook_transformr.python_version = self.python_version
         self.notebook_transformr.encoding = self.encoding
+
         self.code_analyzr.python_version = self.python_version
         self.code_analyzr.encoding = self.encoding
+
         self.fast_apizr.python_version = self.python_version
         self.fast_apizr.encoding = self.encoding
+
         self.dockerizr.python_version = self.python_version
         self.dockerizr.encoding = self.encoding
         self.dockerizr.api_filename = self.fast_apizr.api_filename

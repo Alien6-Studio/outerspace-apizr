@@ -13,6 +13,22 @@ class RequirementsAnalyzr:
     def __init__(self, config: DockerizrConfiguration):
         self.config = config
 
+    def remove_duplicates_preserving_order(self, filename):
+        with open(filename, "r") as f:
+            lines = f.readlines()
+
+        seen = set()
+        unique_lines = []
+
+        for line in lines:
+            line_stripped = line.strip()  # Strip whitespaces to ensure accurate comparison
+            if line_stripped not in seen:
+                unique_lines.append(line)
+                seen.add(line_stripped)
+
+        with open(filename, "w") as f:
+            f.writelines(unique_lines)
+
     @LogError(logging)
     def generate_requirements(self) -> None:
         """Generate the requirements.txt file based on the code imports in the specified directory."""
@@ -71,3 +87,6 @@ class RequirementsAnalyzr:
         with open(requirements_path, "a") as f:
             for requirement in self.config.apizr_requirements:
                 f.write(f"{requirement}\n")
+
+        # Remove duplicates
+        self.remove_duplicates_preserving_order(requirements_path)
