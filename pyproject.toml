@@ -42,6 +42,7 @@ dev = [
     "pyright>=1.1.400,<2",
     "pre-commit>=4,<5",
     "hypothesis>=6.140,<7",
+    "mcp>=2.2,<3",
 ]
 security = ["pip-audit>=2.9,<3"]
 docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5,<10", "plantuml-markdown>=3.10,<4"]
@@ -71,7 +72,7 @@ select = ["E4", "E7", "E9", "F", "I", "B", "C4", "PIE", "RUF100"]
 [tool.pyright]
 include = ["src/apizr", "scripts"]
 typeCheckingMode = "standard"
-strict = ["src/apizr/capabilities", "src/apizr/readiness", "src/apizr/generators/rest"]
+strict = ["src/apizr/capabilities", "src/apizr/readiness", "src/apizr/generators/rest", "src/apizr/interfaces", "src/apizr/generators/mcp"]
 pythonVersion = "3.11"
 
 [tool.coverage.run]

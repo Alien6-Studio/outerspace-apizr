@@ -93,9 +93,10 @@ assert not any(name == 'fastapi' or name.startswith('fastapi.') or name.startswi
     assert completed.returncode == 0, completed.stderr
 
 
+@pytest.mark.parametrize("target", ["rest", "mcp"])
 @pytest.mark.parametrize("notebook", [False, True])
 def test_fresh_generation_process_has_no_source_import_network_or_subprocess(
-    tmp_path, notebook
+    tmp_path, notebook, target
 ):
     source = tmp_path / (
         "hostile_rest_target.ipynb" if notebook else "hostile_rest_target.py"
@@ -127,14 +128,14 @@ def guard(event, args):
         raise AssertionError("Target executed during generation")
 sys.addaudithook(guard)
 from apizr.cli import main
-raise SystemExit(main(["generate", "rest", sys.argv[1], "--output-dir", sys.argv[2]]))
+raise SystemExit(main(["generate", sys.argv[3], sys.argv[1], "--output-dir", sys.argv[2]]))
 """
     result = subprocess.run(
-        [sys.executable, "-I", "-B", "-c", probe, str(source), str(output)],
+        [sys.executable, "-I", "-B", "-c", probe, str(source), str(output), target],
         cwd=tmp_path,
         capture_output=True,
         text=True,
     )
     assert result.returncode == 0, result.stderr
-    assert (output / "app.py").exists()
+    assert (output / ("app.py" if target == "rest" else "server.py")).exists()
     assert not marker.exists()

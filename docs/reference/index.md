@@ -22,3 +22,6 @@ generator consumes IR and readiness; legacy FastApizr and Dockerizr retain their
 existing analysis and output. Historical measurements and
 audit reports are kept in the [engineering archive](../architecture/records.md),
 separate from the current contracts.
+
+The [MCP generator contract](../architecture/mcp-generator-v1.md) describes the
+Tools backend and the interface semantics shared with REST.

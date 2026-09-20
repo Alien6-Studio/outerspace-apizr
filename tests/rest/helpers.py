@@ -5,6 +5,7 @@ from types import SimpleNamespace
 
 from apizr.generators.rest import generate, runtime
 from apizr.inspection import inspect_source
+from apizr.interfaces.runtime import validate
 
 
 @contextmanager
@@ -21,7 +22,9 @@ def application(root, source, *, module_name="rest_sample", select=None):
         # Exercise the exact standalone adapter source copied to generated app.py.
         # Separate subprocess/integrity tests also import the emitted app itself.
         app = runtime.create_app(root, plan)
-        yield SimpleNamespace(**vars(runtime), app=app, PLAN=plan)
+        yield SimpleNamespace(
+            **vars(runtime), sys=sys, validate=validate, app=app, PLAN=plan
+        )
     finally:
         for name in names:
             sys.modules.pop(name, None)

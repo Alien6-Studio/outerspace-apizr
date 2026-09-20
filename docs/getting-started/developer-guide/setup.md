@@ -23,6 +23,8 @@ uv run pytest --cov --cov-report=term-missing
 uv run coverage report --include='src/apizr/capabilities/*' --fail-under=90
 uv run coverage report --include='src/apizr/readiness/*' --fail-under=90
 uv run coverage report --include='src/apizr/generators/rest/*' --fail-under=90
+uv run coverage report --include='src/apizr/generators/mcp/*' --fail-under=90
+uv run coverage report --include='src/apizr/interfaces/*' --fail-under=90
 uv run pre-commit run --all-files
 uv build
 uv run python scripts/smoke_wheel.py dist/*.whl
@@ -73,7 +75,7 @@ candidates. Its corpus lives in `tests/fixtures/characterization/`, with tests i
 `tests/capabilities/`; static readiness and inspection tests live in `tests/readiness/`.
 
 ```sh
-uv run pytest tests/characterization tests/capabilities tests/readiness tests/rest
+uv run pytest tests/characterization tests/capabilities tests/readiness tests/rest tests/mcp_generator
 ```
 
 Hypothesis retains its failure database in `.hypothesis/` and prints replay

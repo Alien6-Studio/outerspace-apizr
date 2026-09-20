@@ -1,0 +1,19 @@
+"""Generated REST adapter. Importing this file executes trusted bundled source."""
+
+import importlib.machinery
+import importlib.util
+import inspect
+import json
+import logging
+import math
+import sys
+import types
+from collections.abc import Awaitable, Callable
+from hashlib import sha256
+from pathlib import Path
+from typing import Literal, TypeAlias, TypedDict
+
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from starlette.concurrency import run_in_threadpool

@@ -1,7 +1,6 @@
 """Render a deterministic REST bundle without importing or executing its source."""
 
 from collections.abc import Sequence
-from importlib.resources import files
 from pathlib import Path, PurePosixPath
 
 from apizr.capabilities import canonical_bytes as ir_bytes
@@ -12,6 +11,7 @@ from apizr.readiness import canonical_bytes as readiness_bytes
 from .model import Manifest
 from .output import write_bundle
 from .planner import plan
+from .rendering import runtime_source
 from .schema import openapi
 from .serialization import json_bytes
 
@@ -31,11 +31,7 @@ def render(
     )
     if executable is None:
         raise ValueError("Notebook executable bytes are required")
-    template = (
-        files("apizr.generators.rest")
-        .joinpath("runtime.py")
-        .read_text(encoding="utf-8")
-    )
+    template = runtime_source()
     adapter = template + (
         "\n\nROOT = Path(__file__).resolve().parent\n"
         'MANIFEST = json.loads((ROOT / "apizr-rest.json").read_bytes())\n'

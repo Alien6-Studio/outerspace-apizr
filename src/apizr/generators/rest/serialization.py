@@ -1,18 +1,3 @@
-"""Deterministic REST artifacts; hashes are external to their own document."""
+"""Compatibility import for the shared interface utility."""
 
-import json
-
-from pydantic import JsonValue
-
-
-def json_bytes(value: JsonValue) -> bytes:
-    return (
-        json.dumps(
-            value,
-            ensure_ascii=False,
-            sort_keys=True,
-            separators=(",", ":"),
-            allow_nan=False,
-        )
-        + "\n"
-    ).encode("utf-8")
+from apizr.interfaces.serialization import json_bytes as json_bytes

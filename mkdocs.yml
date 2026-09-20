@@ -92,6 +92,7 @@ nav:
       - Start here: getting-started/introduction.md
       - Inspect source without running it: getting-started/user-guide/inspect.md
       - Generate a REST interface: getting-started/user-guide/rest.md
+      - Generate an MCP server: getting-started/user-guide/mcp.md
       - Generate a legacy API and container: getting-started/user-guide/apizr.md
       - Migrate from 0.1.x: getting-started/developer-guide/releases.md
   - Reference:
@@ -115,6 +116,7 @@ nav:
           - Capability IR v1: architecture/capability-ir-v1.md
           - Static readiness v1: architecture/capability-readiness-v1.md
           - REST generator v1: architecture/rest-generator-v1.md
+          - MCP generator v1: architecture/mcp-generator-v1.md
           - Legacy behavior contract: architecture/legacy-behavior-contract.md
           - Artifact principles: architecture/artifact-principles.md
           - Security baseline: architecture/security-baseline.md
