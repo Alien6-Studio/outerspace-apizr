@@ -28,6 +28,7 @@ uv run coverage report --include='src/apizr/interfaces/*' --fail-under=90
 uv run coverage report --include='src/apizr/execution/*' --fail-under=90
 uv run coverage report --include='src/apizr/governed/*' --fail-under=90
 uv run coverage report --include='src/apizr/repository/*' --fail-under=90
+uv run coverage report --include='src/apizr/graph/*' --fail-under=90
 uv run coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
 uv run pre-commit run --all-files
 uv build

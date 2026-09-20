@@ -14,7 +14,9 @@ Source units → existing Inspection v1
            ↓
 Capability Catalog (catalog/v1)
            ↓
-FUTURE Capability Graph (not implemented)
+Capability Graph (graph/v1; separate consumer)
+           ↓
+FUTURE Repository Readiness / Policy Analysis
 ```
 
 ## Contracts and APIs
@@ -225,6 +227,7 @@ cross-version parser. The common-syntax golden corpus is identical on all four.
 Filesystem filename codepoints are preserved rather than silently renamed.
 
 Existing IR, Inspection, Readiness, REST/MCP, policy/runtime, direct/local/OCI and
-legacy artifact contracts are unchanged. Lexical import inventory, import/graph
-resolution, repository generation/execution, notebook discovery, Windows filesystem
-traversal and SCM provenance remain deliberately outside this implementation.
+legacy artifact contracts are unchanged. Lexical import inventory and relationship
+resolution belong to the separate [Capability Graph v1](capability-graph-v1.md)
+consumer. Repository generation/execution, notebook discovery, Windows filesystem
+traversal and SCM provenance remain deliberately outside the scanner.

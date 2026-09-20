@@ -113,6 +113,31 @@ print(apizr.__file__)
             check=True,
             stdout=subprocess.DEVNULL,
         )
+        (scan_source.parent / "checkout.py").write_text(
+            "from pricing import total\ndef checkout(values: list[int]) -> int: return total(values)\n"
+        )
+        graphed = subprocess.run(
+            [str(cli), "graph", str(scan_root), "--source-root", "src", "--graph"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            timeout=20,
+        )
+        graph = json.loads(graphed.stdout)
+        assert graph["schema_version"] == "apizr.graph/v1"
+        assert any(
+            edge["kind"] == "calls_capability"
+            and edge["source"] == "python:checkout:checkout"
+            and edge["target"] == "python:pricing:total"
+            for edge in graph["relationships"]
+        )
+        assert str(root).encode() not in graphed.stdout
+        subprocess.run(
+            [str(cli), "graph", str(scan_root), "--source-root", "src"],
+            cwd=root,
+            check=True,
+            stdout=subprocess.DEVNULL,
+        )
         policy = root / "policy.json"
         policy.write_text("{}")
         arguments = root / "arguments.json"
