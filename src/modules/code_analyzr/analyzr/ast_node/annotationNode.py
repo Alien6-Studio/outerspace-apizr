@@ -1,6 +1,7 @@
 import ast
 import sys
-from typing import List, Optional, Union
+
+from src.compat import unparse
 
 from .astNode import AstNode
 from .astNodeException import AnnotationException
@@ -67,7 +68,7 @@ class AnnotationNode(AstNode):
             self.of = [left_type, right_type]
             return binary_op
         else:
-            raise AnnotationException(f"Unhandled node type: {type(node)}")
+            return unparse(node)
 
     def parse_subscript(self, node):
         """Parse subscript type annotations like List[int] or Dict[str, int].
@@ -125,4 +126,4 @@ class AnnotationNode(AstNode):
             value = node.value
         if isinstance(value, ast.Tuple):
             return [AnnotationNode(elt) for elt in value.elts] if value.elts else []
-        raise AnnotationException()
+        return [AnnotationNode(value)]

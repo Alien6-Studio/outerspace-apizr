@@ -1,63 +1,28 @@
----
-title:
-description:
----
+# Development setup
 
-# Setting up your workstation for APIzr <!-- markdownlint-disable MD025 -->
+Use Python 3.8–3.14 and [uv](https://docs.astral.sh/uv/getting-started/installation/).
 
-This guide provides you with step-by-step instructions to set up a local development environment for the APIzr project. Follow the steps below to ensure a smooth setup.
-
-## Prerequisites
-
-- Git
-- Python (Version as specified in the project's `pyproject.toml` file, 3.10 is recommended)
-- Poetry (Python packaging and dependency management tool)
-
-## Installation Steps
-
-### 1. Clone the Repository
-
-First, clone the APIzr repository to your local machine:
-
-```bash
+```sh
 git clone https://github.com/Alien6-Studio/outerspace-apizr.git
 cd outerspace-apizr
+uv sync --locked
+make lint
+make test
+make build
 ```
 
-### 2. Install Poetry
+`pyproject.toml` defines the package and dependency groups. `uv.lock` is the only lockfile. Use `uv lock --upgrade` deliberately when updating dependencies and commit the resulting lockfile with the tested changes.
 
-If you don't already have Poetry installed, you can install it using the provided command:
-
-```bash
-curl -sSL https://install.python-poetry.org | python -
+```sh
+uv run --group docs mkdocs serve
+uv run --group docs mkdocs build --strict
+uv run python scripts/smoke_container.py
 ```
 
-For alternative installation methods or further details, refer to the [Poetry documentation](https://python-poetry.org/docs/){target=\_blank}.
+The smoke test requires Docker and exercises the generated application in a real container. It removes its container and image afterward. Ordinary tests use temporary directories and FastAPI's test client.
 
-### 3. Install Project Dependencies
+The supported import path is `src`, retained for compatibility with the original distribution. Run modules with `python -m src.modules.code_analyzr.main`, for example; do not modify `sys.path` or execute nested `main.py` files directly.
 
-Once you have Poetry installed and you're inside the project's directory, install the project's dependencies:
+Historical AST fixtures remain under `test/`. The maintained executable suite is under `tests/` and is collected by `pytest`.
 
-```bash
-poetry install
-```
-
-### 4. Activating the Virtual Environment
-
-Once dependencies are installed, activate the virtual environment created by Poetry:
-
-```bash
-poetry shell
-```
-
-Now, you're inside the project's virtual environment and are ready to run any Python or project-specific commands.
-
-### 5. Familiarize Yourself with Available Commands
-
-The `makefile` in the project root provides several helpful commands for development tasks. You can view all available commands by running:
-
-```bash
-make help
-```
-
-Use these commands to lint, format, check the code, and more.
+The CI matrix covers Python 3.8–3.14, including wheel installation outside the checkout. A separate container matrix generates projects using Python 3.14 and builds/runs each target image (3.8–3.14). Run locally with `uv run --python 3.8 --locked pytest` or `uv run python scripts/smoke_container.py --python-version 3.8`. Historical AST fixture directories 3.8, 3.9, 3.10 and 3.11 are selected by the corresponding test interpreter.

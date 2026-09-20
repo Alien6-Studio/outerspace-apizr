@@ -1,44 +1,19 @@
----
-python_version:
-  - 3
-  - 11
+# Complete pipeline configuration; all sections are optional.
+# Defaults to the running interpreter. Uncomment to target Python 3.8.
+# python_version: [3, 8]
 encoding: utf-8
 code_analyzr:
-  script: ""
-  functions_to_analyze: ""
-  ignore: ""
-  keywords:
-    - version: "3.10"
-      values:
-        - match
-        - case
+  functions_to_analyze: null
+  ignore: null
 fast_apizr:
-  module_name: main
   api_filename: app.py
 dockerizr:
   docker_image: debian
-  docker_image_tag: latest
-  dependencies:
-    - name: numpy
-      packages:
-        - gcc
-        - g++
-        - musl-dev
-        - python3-dev
-        - gfortran
-    - name: scikit_learn$
-      packages:
-        - gcc
-        - g++
-        - musl-dev
-        - python3-dev
-        - gfortran
-        - openblas-dev
-        - lapack-dev
-  custom_packages:
-    - jq
+  docker_image_tag: slim
+  custom_packages: []
+  dependencies: []
   server:
-    workers: 2
+    workers: 1
     timeout: 60
     host: 0.0.0.0
     port: 5001

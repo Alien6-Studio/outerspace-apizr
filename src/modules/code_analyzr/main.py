@@ -3,17 +3,12 @@ import logging
 import sys
 
 import yaml
-from analyzr import AstAnalyzr
 
-from configuration import CodeAnalyzrConfiguration
-from prompt import ConfigPrompter
+from src.modules.code_analyzr.analyzr import AstAnalyzr
+from src.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
+from src.modules.code_analyzr.prompt import ConfigPrompter
 
 # Configure logging settings
-logging.basicConfig(
-    level=logging.ERROR,
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-    filename="app_errors.log",
-)
 
 logger = logging.getLogger(__name__)
 
@@ -84,12 +79,12 @@ def handle_args():
     )
     parser.add_argument(
         "--version",
-        default="3.8",
-        help="Python version to use for analysis. Default is 3.8.",
+        default=None,
+        help="Python version to use for analysis. Defaults to the running interpreter.",
     )
     parser.add_argument(
         "--encoding",
-        default="utf-8",
+        default=None,
         help="Encoding of the file. Default is utf-8.",
     )
     parser.add_argument(

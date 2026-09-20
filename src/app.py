@@ -1,109 +1,59 @@
-# Standard library imports
-import logging
-import os
+"""Local generation API. Uploaded code is never executed by the generator."""
+
 from pathlib import Path
-from typing import Optional
+from tempfile import TemporaryDirectory
+from zipfile import ZIP_DEFLATED, ZipFile
 
-# Third party imports
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse
+from starlette.background import BackgroundTask
 
-# Local application imports
-import main
-from exceptions import InvalidFileExtensionError
+from .http import read_upload
+from .main import convert
+from .modules.code_analyzr.app import app as code_app
+from .modules.dockerizr.app import app as docker_app
+from .modules.fast_apizr.app import app as fastapi_app
+from .modules.notebook_transformr.app import app as notebook_app
 
-# Setup the logger configuration
-logging.basicConfig(
-    level=logging.ERROR,
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-    filename="app_errors.log",
-)
-logger = logging.getLogger(__name__)
-
-# Create a FastAPI application instance
-app = FastAPI()
+app = FastAPI(title="OuterSpace Apizr", version="0.2.0")
 
 
-def extract_code_from_file(file: UploadFile, output) -> tuple:
-    """
-    Extracts Python code from the given file based on its extension.
-    """
-
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="Filename cannot be empty")
-
-    file_name = file.filename
-    file_extension = os.path.splitext(file_name)[1]
-    file_content = file.file.read()
-
-    if file_extension == ".ipynb":
-        # Save the notebook content temporarily
-        temp_notebook_path = Path.cwd() / file_name
-        with temp_notebook_path.open("wb") as temp:
-            temp.write(file_content)
-
-        # Convert the notebook to code
-        code, script_name = main.convert_notebook_to_code(temp_notebook_path, output)
-
-        # Clean up the temporary notebook file
-        temp_notebook_path.unlink()
-
-        return code, script_name
-    elif file_extension == ".py":
-        return file_content.decode(), ""
-    else:
-        raise ValueError("Unsupported file type")
-
-
-def process_and_save_code(code: str, filename: str, output: Optional[str]) -> Path:
-    """Process the given code, save it to a temporary file, and call main.process_input."""
-    temp_file_path = (
-        Path.cwd() / filename
-    )  # Save with the original filename in the current directory
-
-    with temp_file_path.open("w", encoding="utf-8") as temp:
-        temp.write(code)
-
-    output_path = Path(output) if output else Path.cwd()
-    output_path.mkdir(parents=True, exist_ok=True)
-
-    main.process_input(temp_file_path, output_path)
-
-    temp_file_path.unlink()  # Clean up the temporary file
-    return output_path
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
 
 @app.post("/process_file/")
-async def process_file(file: UploadFile = File(...), output: Optional[str] = None):
-    """Process a file and return its structured output."""
-
+def process_file(file: UploadFile = File(...)):
+    """Return a ZIP project; server-side output paths are intentionally not accepted."""
+    filename, content = read_upload(file, {".py", ".ipynb"})
+    temporary = TemporaryDirectory(prefix="apizr-")
     try:
-        filename = file.filename
-        code, filename = extract_code_from_file(file, output)
-        processed_output_path = process_and_save_code(code, filename, output)
-        return {"status": "success", "output_path": str(processed_output_path)}
-    except InvalidFileExtensionError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error processing file: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        root = Path(temporary.name)
+        source = root / filename
+        source.write_bytes(content)
+        output = root / "project"
+        convert(source, output)
+        archive = root / "project.zip"
+        with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
+            for path in output.rglob("*"):
+                if path.is_file():
+                    bundle.write(path, path.relative_to(output))
+        return FileResponse(
+            archive,
+            media_type="application/zip",
+            filename=f"{source.stem}-api.zip",
+            background=BackgroundTask(temporary.cleanup),
+        )
+    except (ValueError, SyntaxError, UnicodeError) as exc:
+        temporary.cleanup()
+        raise HTTPException(400, str(exc)) from exc
+    except Exception:
+        temporary.cleanup()
+        raise
 
 
-@app.post("/dockerize_file/")
-async def dockerize_file(
-    filename: str = Query(..., description="Name of the file to be dockerized."),
-    output: str = Query(
-        ..., description="Path where the dockerized file should be saved."
-    ),
-):
-    """Dockerize the given file."""
-    if not filename:
-        raise HTTPException(status_code=400, detail="Filename cannot be empty")
-
-    try:
-        main.dockerize_app(
-            script_name=filename, output=Path(output)
-        )  # Convert output to Path
-        return {"status": "success"}
-    except Exception as e:
-        logger.error(f"Error dockerizing file: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+app.mount("/code", code_app)
+app.mount("/fastapi", fastapi_app)
+app.mount("/docker", docker_app)
+app.mount("/notebook", notebook_app)

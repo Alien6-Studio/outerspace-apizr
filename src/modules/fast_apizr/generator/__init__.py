@@ -1,4 +1,4 @@
-from configuration import FastApizrConfiguration
+from src.modules.fast_apizr.configuration import FastApizrConfiguration
 
 from .analyzr.analyzr import Analyzr
 from .errorLogger import LogError

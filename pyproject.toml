@@ -1,43 +1,60 @@
-[tool.poetry]
+[project]
 name = "outerspace-apizr"
-version = "0.1.3.2"
-description = "Apizr is a dynamic API generator built on top of FastAPI. It analyses your Python codebase, extracts relevant metadata, and automatically generates a FastAPI backend for your application. This simplifies the process of API development, saving time, and reducing the chance of errors."
-authors = [
-  "Ludovic FERNANDEZ <ludovic.fernandez@alien6.com>",
-  "Oussama HADJ AISSA <oussama.h.aissa@alien6.com>",
-]
-license = "GPL-3.0-or-later"
+version = "0.2.0"
+description = "Turn Python functions and Jupyter notebooks into containerized FastAPI applications."
+requires-python = ">=3.8,<3.15"
 readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["docs/about/LICENSE.md"]
+authors = [
+  {name = "Ludovic FERNANDEZ", email = "ludovic.fernandez@alien6.com"},
+  {name = "Oussama HADJ AISSA", email = "oussama.h.aissa@alien6.com"},
+]
+dependencies = [
+  "nbconvert>=7.16,<8",
+  "ipython>=7.34,<10",
+  "black>=24.8,<27",
+  "fastapi>=0.115,<1",
+  "pydantic>=2.10,<3",
+  "uvicorn[standard]>=0.30,<1",
+  "jinja2>=3.1.6,<4",
+  "python-multipart>=0.0.18,<1",
+  "PyYAML>=6.0.2,<7",
+  "questionary>=2.0.1,<3",
+  "packaging>=24,<27",
+  "typing-extensions>=4.12,<5",
+  "importlib-metadata>=6.8,<9; python_version < '3.10'",
+  "stdlib-list>=0.10,<1; python_version < '3.10'",
+  "astunparse>=1.6.3,<2; python_version < '3.9'",
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-nbconvert = "*"
-pipreqs = "*"
-ipython = "*"
-black = "*"
-fastapi = "^0.103.0"
-pydantic = "^2.3.0"
-uvicorn = { version = "*", extras = ["standard"] }
-Jinja2 = "^3.1.2"
-python-multipart = "^0.0.6"
-PyYAML = "^6.0.1"
-PyInquirer = "^1.0.3"
-
-[[tool.poetry.packages]]
-include = "src/*"
-
-[tool.poetry.scripts]
+[project.scripts]
 apizr = "src.main:main"
 
-[tool.poetry.urls]
-"Repository" = "https://github.com/Alien6-Studio/outerspace-apizr"
-"Website" = "https://apizr.outerspace.sh"
+[project.urls]
+Repository = "https://github.com/Alien6-Studio/outerspace-apizr"
+Website = "https://apizr.outerspace.sh"
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10", "httpx>=0.28,<1", "ruff>=0.11,<1"]
+docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5,<10", "plantuml-markdown>=3.10,<4"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
 
 [tool.ruff]
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select = ["E", "F"]
-ignore = ["F401", "E501", "E402"]
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F401"]

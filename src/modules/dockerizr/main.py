@@ -3,19 +3,15 @@ import logging
 import sys
 
 import yaml
-from generator.dockerfileGenerator import DockerfileGenerator
-from generator.gunicornGenerator import GunicornGenerator
-from generator.requirementsAnalyzr import RequirementsAnalyzr
 
-from configuration import DockerizrConfiguration
-from prompt import ConfigPrompter
+from src.compat import DEFAULT_PYTHON
+from src.modules.dockerizr.configuration import DockerizrConfiguration
+from src.modules.dockerizr.generator.dockerfileGenerator import DockerfileGenerator
+from src.modules.dockerizr.generator.gunicornGenerator import GunicornGenerator
+from src.modules.dockerizr.generator.requirementsAnalyzr import RequirementsAnalyzr
+from src.modules.dockerizr.prompt import ConfigPrompter
 
 # Configure logging settings
-logging.basicConfig(
-    level=logging.ERROR,
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-    filename="app_errors.log",
-)
 logger = logging.getLogger(__name__)
 
 
@@ -39,33 +35,28 @@ def set_configuration(args) -> DockerizrConfiguration:
 
     if not (args.force or args.configuration):
         # Use prompt mode
-        version_tuple = tuple(map(int, args.version.split(".")))
+        version_tuple = (
+            tuple(map(int, args.version.split("."))) if args.version else DEFAULT_PYTHON
+        )
         return ConfigPrompter(lang=args.lang).getConfiguration(
             version=version_tuple,
             encoding=args.encoding,
             project_path=args.project_path,
         )
 
-    # Update Configuration object with the provided configuration file
     if args.configuration:
-        try:
-            with open(args.configuration, "r") as f:
-                data = yaml.safe_load(f)
-                configuration = DockerizrConfiguration(**data)
-
-            # Override Configuration object with the provided arguments
-            if args.version:
-                configuration.python_version = tuple(map(int, args.version.split(".")))
-
-            if args.encoding:
-                configuration.encoding = args.encoding
-
-            if args.project_path:
-                configuration.project_path = args.project_path
-
-        except Exception as e:
-            logger.error(f"Error reading configuration file: {e}")
-            sys.exit(1)
+        with open(args.configuration, encoding="utf-8") as file:
+            configuration = DockerizrConfiguration.model_validate(
+                yaml.safe_load(file) or {}
+            )
+    if args.version:
+        configuration.python_version = tuple(map(int, args.version.split(".")))
+    if args.encoding:
+        configuration.encoding = args.encoding
+    if args.project_path:
+        configuration.project_path = args.project_path
+    if args.module_name:
+        configuration.module_name = args.module_name
 
     return configuration
 
@@ -89,12 +80,12 @@ def handle_args():
     )
     parser.add_argument(
         "--version",
-        default="3.8",
-        help="Python version to use for analysis. Default is 3.8.",
+        default=None,
+        help="Python version to use for analysis. Defaults to the running interpreter.",
     )
     parser.add_argument(
         "--encoding",
-        default="utf-8",
+        default=None,
         help="Encoding of the file. Default is utf-8.",
     )
     parser.add_argument(
@@ -112,6 +103,9 @@ def handle_args():
         action="store_true",
         help="Force using command line arguments instead of interactive prompts.",
     )
+    parser.add_argument(
+        "--module_name", help="Generated FastAPI module name (default: app)"
+    )
     return parser.parse_args()
 
 
@@ -127,11 +121,10 @@ def main():
         elif args.action == "dockerfile":
             DockerfileGenerator(configuration).generate_dockerfile()
         else:  # do all actions
-            GunicornGenerator(configuration).generate_gunicorn()
             RequirementsAnalyzr(configuration).generate_requirements()
             DockerfileGenerator(configuration).generate_dockerfile()
 
-    except ConfigurationError as e:
+    except (ConfigurationError, ValueError, OSError) as e:
         logger.error(f"Error containerizing code: {e}")
         sys.exit(1)
 

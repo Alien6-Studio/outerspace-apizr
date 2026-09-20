@@ -1,9 +1,8 @@
 import ast
 import json
 import logging
-import sys
 
-from configuration import CodeAnalyzrConfiguration
+from src.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
 
 from .ast_node import FunctionNode, ImportFromNode, ImportNode, LogError
 from .exceptions import UnsupportedKeywordError
@@ -23,38 +22,23 @@ class AstAnalyzr(ast.NodeVisitor):
         self.keywords = configuration.keywords
         # Convert comma-separated string to list
         self.functions_to_analyze = (
-            configuration.functions_to_analyze.split(",")
+            [name.strip() for name in configuration.functions_to_analyze.split(",")]
             if configuration.functions_to_analyze
             else []
         )
-        self.ignore = configuration.ignore.split(",") if configuration.ignore else []
+        self.ignore = (
+            [name.strip() for name in configuration.ignore.split(",")]
+            if configuration.ignore
+            else []
+        )
         self.imports = []
         self.imports_from = []
         self.functions = []
 
     @LogError(logging)
     def check_for_keywords(self, code_str):
-        version = sys.version_info[:2]
-        if not isinstance(self.keywords, list):
-            logging.error("self.keywords is not a list.")
-            return
-
-        for keywords in self.keywords:
-            if not isinstance(keywords, dict):
-                logging.error(f"Unexpected type in self.keywords: {type(keywords)}")
-                continue
-
-            version_key = keywords.get("version")
-            values_key = keywords.get("values")
-
-            if not version_key or not values_key:
-                logging.error("Missing 'version' or 'values' key in keywords entry.")
-                continue
-
-            ver = tuple(map(int, version_key.split(".")))
-            for keyword in values_key:
-                if keyword in code_str and version < ver:
-                    raise UnsupportedKeywordError(keyword, ver, version)
+        # ast.parse(feature_version=...) validates syntax without matching keywords in strings.
+        return None
 
     @LogError(logging)
     def get_analyse(self):
@@ -65,6 +49,9 @@ class AstAnalyzr(ast.NodeVisitor):
         """
         try:
             self.check_for_keywords(self.code_str)
+            self.imports.clear()
+            self.imports_from.clear()
+            self.functions.clear()
             self.generic_visit(
                 ast.parse(
                     self.code_str, type_comments=True, feature_version=self.version
@@ -89,7 +76,7 @@ class AstAnalyzr(ast.NodeVisitor):
         elif isinstance(node, ast.ImportFrom):
             self.imports_from.append(ImportFromNode(node))
         # Handle function definitions
-        elif isinstance(node, ast.FunctionDef):
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             if self.functions_to_analyze and node.name not in self.functions_to_analyze:
                 pass  # Skip this function if its name is not in functions_to_analyze
             elif node.name in self.ignore:
@@ -109,7 +96,11 @@ class AstAnalyzr(ast.NodeVisitor):
             str: A JSON string representation of the current state.
         """
         return json.dumps(
-            self.__getstate__(), default=lambda o: o.__getstate__(), indent=2
+            self.__getstate__(),
+            default=lambda o: (
+                o.model_dump() if hasattr(o, "model_dump") else o.__getstate__()
+            ),
+            indent=2,
         )
 
     def __getstate__(self):

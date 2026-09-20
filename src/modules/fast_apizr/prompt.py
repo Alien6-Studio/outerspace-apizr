@@ -1,14 +1,8 @@
-import ast
-import collections.abc
 import json
 import os
 
-# Patch for PyInquirer and Python 3.10+
-collections.Mapping = collections.abc.Mapping
-
-from PyInquirer import prompt
-
-from configuration import FastApizrConfiguration
+from src.compat import DEFAULT_PYTHON
+from src.modules.fast_apizr.configuration import FastApizrConfiguration
 
 
 class ConfigPrompter:
@@ -29,11 +23,7 @@ class ConfigPrompter:
         return self.translations.get(key, "").format(**kwargs)
 
     def getConfiguration(
-        self,
-        version=None,
-        api_filename: str = "",
-        module_name: str = "",
-        encoding=None
+        self, version=None, api_filename: str = "", module_name: str = "", encoding=None
     ) -> FastApizrConfiguration:
         configuration = FastApizrConfiguration()
         if not version:
@@ -61,7 +51,7 @@ class ConfigPrompter:
         return configuration
 
     def prompt_python_version(self) -> str:
-        default_version = "3.8"
+        default_version = "{}.{}".format(*DEFAULT_PYTHON)
         version = input(
             self.get_translation("version", default_version=default_version)
         )

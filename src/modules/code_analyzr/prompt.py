@@ -1,14 +1,11 @@
 import ast
-import collections.abc
 import json
 import os
 
-# Patch for PyInquirer and Python 3.10+
-collections.Mapping = collections.abc.Mapping
+from questionary import prompt
 
-from PyInquirer import prompt
-
-from configuration import CodeAnalyzrConfiguration
+from src.compat import DEFAULT_PYTHON
+from src.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
 
 
 class ConfigPrompter:
@@ -42,7 +39,7 @@ class ConfigPrompter:
             configuration.python_version = tuple(
                 map(int, self.prompt_python_version().split("."))
             )
-        else: 
+        else:
             configuration.python_version = version
         if not encoding:
             configuration.encoding = self.prompt_encoding()
@@ -57,7 +54,7 @@ class ConfigPrompter:
         return configuration
 
     def prompt_python_version(self) -> str:
-        default_version = "3.8"
+        default_version = "{}.{}".format(*DEFAULT_PYTHON)
         version = input(
             self.get_translation("version", default_version=default_version)
         )

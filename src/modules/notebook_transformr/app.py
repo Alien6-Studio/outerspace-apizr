@@ -1,66 +1,21 @@
-import logging
-import os
-import re
-from pathlib import Path
-from typing import Optional
+import io
 
-from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
-from transformr import NotebookTransformr
+from fastapi import FastAPI, File, HTTPException, UploadFile
 
-from configuration import NotebookTransformrConfiguration
+from src.http import read_upload
 
-# Configure logging settings
-logging.basicConfig(
-    level=logging.ERROR,
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-    filename="app_errors.log",
-)
+from .transformr import NotebookTransformr
 
-logger = logging.getLogger(__name__)
-
-
-app = FastAPI()
+app = FastAPI(title="Notebook Transformr")
 
 
 @app.post("/convert_notebook")
-async def convert_notebook(
-    python_version: str = Query("3.8", regex="^\\d+\\.\\d+$"),
-    encoding: str = "utf-8",
-    file: UploadFile = File(...),
-    output: Optional[str] = None,
-):
-    """
-    Converts a Jupyter notebook to a Python script.
-
-    Args:
-        ...
-    """
-
-    # Validate the file extension
-    if file.filename and not file.filename.endswith(".ipynb"):
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid file type. Please upload a .ipynb file.",
-        )
-
-    configuration = NotebookTransformrConfiguration()
-    configuration.python_version = tuple(map(int, python_version.split(".")))
-    configuration.encoding = encoding
-    transformer = NotebookTransformr(configuration=configuration)
-
+def convert_notebook(file: UploadFile = File(...)):
+    _, content = read_upload(file, {".ipynb"})
     try:
-        # Convert the notebook to a Python script
-        source, _ = transformer.convert_notebook(file.file)
-
-        if output:
-            # If an output directory is provided, save the script there
-            output_directory = Path(output)
-            output_directory.mkdir(parents=True, exist_ok=True)
-            output_path = transformer.save_script(
-                source, output_directory, file.filename
-            )
-            return {"message": f"Script successfully saved to {output_path}"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-    return {"script": source}
+        source, _ = NotebookTransformr().convert_notebook(
+            io.StringIO(content.decode("utf-8"))
+        )
+        return {"script": source}
+    except (ValueError, SyntaxError, UnicodeError) as exc:
+        raise HTTPException(400, str(exc)) from exc

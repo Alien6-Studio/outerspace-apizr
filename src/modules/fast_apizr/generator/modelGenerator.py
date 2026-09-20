@@ -1,6 +1,6 @@
 import logging
 from os import path
-from typing import List, Optional, Union
+from typing import List, Union
 
 from jinja2 import Template
 
@@ -62,7 +62,7 @@ class ModelGenerator:
             else:
                 return "Callable"
         if annotation.type == "List" or annotation.type == "Tuple":
-            return self.get_sub_type(annotation.of if annotation.of is not None else [])
+            return annotation.type + self.get_sub_type(annotation.of or [])
         return annotation.type + (
             self.get_sub_type(annotation.of) if annotation.of else ""
         )

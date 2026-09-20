@@ -2,6 +2,8 @@ from typing import List, Tuple
 
 from pydantic import BaseModel
 
+from src.compat import DEFAULT_PYTHON
+
 from .function import Function
 from .importFrom import ImportFrom
 from .imports import Import
@@ -15,10 +17,7 @@ class Analyzr(BaseModel):
     foundation for generating FastAPI specific code or any other related tasks.
     """
 
-    version: Tuple = (
-        3,
-        8,
-    )  # The targeted Python version for the analysis (default is Python 3.8).
+    version: Tuple[int, int] = DEFAULT_PYTHON
     functions: List[Function]  # List of functions present in the analyzed code.
     imports: List[Import] = []  # Direct imports present in the analyzed code.
     imports_from: List[

@@ -1,92 +1,78 @@
-import logging
-import os
-import subprocess  # nosec B404 since there is no alternative to subprocess
+"""Infer dependencies from imports without executing modules or contacting a registry."""
 
-from configuration import DockerizrConfiguration
+import ast
+from pathlib import Path
 
-from .errorLogger import LogError
+from packaging.requirements import Requirement
+
+from src.compat import DEFAULT_PYTHON, metadata, stdlib_module_names
+
+ALIASES = {
+    "sklearn": "scikit-learn",
+    "PIL": "Pillow",
+    "cv2": "opencv-python",
+    "yaml": "PyYAML",
+    "bs4": "beautifulsoup4",
+}
 
 
 class RequirementsAnalyzr:
-    """Class to generate the requirements.txt file for a Python project."""
-
-    def __init__(self, config: DockerizrConfiguration):
+    def __init__(self, config):
         self.config = config
 
-    def remove_duplicates_preserving_order(self, filename):
-        with open(filename, "r") as f:
-            lines = f.readlines()
-
-        seen = set()
-        unique_lines = []
-
-        for line in lines:
-            line_stripped = line.strip()  # Strip whitespaces to ensure accurate comparison
-            if line_stripped not in seen:
-                unique_lines.append(line)
-                seen.add(line_stripped)
-
-        with open(filename, "w") as f:
-            f.writelines(unique_lines)
-
-    @LogError(logging)
-    def generate_requirements(self) -> None:
-        """Generate the requirements.txt file based on the code imports in the specified directory."""
-        output_directory = self.config.project_path
-
-        # Ensure the directory exists
-        if not os.path.exists(output_directory):
-            raise ValueError(
-                f"The specified directory {output_directory} does not exist."
-            )
-
-        # Path to the requirements.txt file to be generated
-        requirements_path = os.path.join(output_directory, "requirements.txt")
-        # Check if requirements.txt already exists
-        if os.path.exists(requirements_path):
-            try:
-                # Check if new requirements are detected
-                result = subprocess.run(
-                    args=[
-                        "pipreqs",
-                        "--savepath",
-                        requirements_path,
-                        output_directory,
-                    ],
-                    shell=False,  # nosec B602, B603
-                    capture_output=True,
-                    text=True,
+    def generate_requirements(self, explicit=None):
+        directory = Path(self.config.project_path)
+        if not directory.is_dir():
+            raise ValueError(f"Project directory does not exist: {directory}")
+        requirements = set()
+        if explicit:
+            # Keep dependencies auditable and self-contained; reject includes and pip options.
+            for line in Path(explicit).read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                req = Requirement(line)
+                requirements.add(str(req))
+        else:
+            distributions = metadata.packages_distributions()
+            local = {p.stem for p in directory.glob("*.py")} | {
+                p.name for p in directory.iterdir() if p.is_dir()
+            }
+            imports = set()
+            for file in directory.rglob("*.py"):
+                for node in ast.walk(
+                    ast.parse(file.read_text(encoding=self.config.encoding))
+                ):
+                    if isinstance(node, ast.Import):
+                        imports.update(alias.name.split(".")[0] for alias in node.names)
+                    elif (
+                        isinstance(node, ast.ImportFrom)
+                        and node.module
+                        and not node.level
+                    ):
+                        imports.add(node.module.split(".")[0])
+            for name in sorted(imports - local - stdlib_module_names()):
+                candidates = distributions.get(name, [])
+                if len(candidates) > 1:
+                    raise ValueError(
+                        f"Ambiguous distribution for {name}; supply --requirements"
+                    )
+                distribution = ALIASES.get(name) or (
+                    candidates[0] if candidates else name.replace("_", "-")
                 )
-                if not result.stdout:
-                    # No new requirements detected, no need to update
-                    return
-            except subprocess.CalledProcessError:
-                raise RuntimeError(
-                    "The pipreqs command failed. Ensure pipreqs is installed and the specified path is correct."
-                )
-
-        # Generate or update the requirements.txt file
-        try:
-            subprocess.run(
-                args=[
-                    "pipreqs",
-                    "--force",
-                    "--savepath",
-                    requirements_path,
-                    output_directory,
-                ],
-                shell=False,  # nosec B602, B603
-                check=True,
-            )
-        except subprocess.CalledProcessError:
-            raise RuntimeError(
-                "The pipreqs command failed. Ensure pipreqs is installed and the specified path is correct."
-            )
-
-        # Add the values from apizr_requirements to requirements.txt
-        with open(requirements_path, "a") as f:
-            for requirement in self.config.apizr_requirements:
-                f.write(f"{requirement}\n")
-
-        # Remove duplicates
-        self.remove_duplicates_preserving_order(requirements_path)
+                try:
+                    requirement = (
+                        f"{distribution}=={metadata.version(distribution)}"
+                        if self.config.python_version == DEFAULT_PYTHON
+                        else distribution
+                    )
+                except metadata.PackageNotFoundError:
+                    requirement = distribution
+                requirements.add(requirement)
+        # Keep conditional requirements and constraints instead of overwriting by name.
+        # pip intersects repeated package constraints and reports incompatible pins.
+        for item in self.config.apizr_requirements:
+            requirements.add(str(Requirement(item)))
+        (directory / "requirements.txt").write_text(
+            "\n".join(sorted(requirements)) + "\n", encoding="utf-8"
+        )

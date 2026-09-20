@@ -1,13 +1,13 @@
-import collections.abc
 import json
 import os
 
-# Patch pour PyInquirer et Python 3.10+
-collections.Mapping = collections.abc.Mapping
+from questionary import prompt
 
-from PyInquirer import prompt
-
-from configuration import DockerizrConfiguration, GunicornConfiguration
+from src.compat import DEFAULT_PYTHON
+from src.modules.dockerizr.configuration import (
+    DockerizrConfiguration,
+    GunicornConfiguration,
+)
 
 HOSTNAME = "0.0.0.0"  # nosec B104
 
@@ -87,7 +87,7 @@ class ConfigPrompter:
         return configuration
 
     def prompt_python_version(self) -> str:
-        default_version = "3.8"
+        default_version = "{}.{}".format(*DEFAULT_PYTHON)
         version = input(
             self.get_translation("version", default_version=default_version)
         )
@@ -107,15 +107,15 @@ class ConfigPrompter:
                 "name": "docker_image",
                 "message": self.get_translation("docker_image"),
                 "choices": ["alpine", "debian"],
-                "default": "alpine",
+                "default": "debian",
             }
         ]
         return prompt(questions)["docker_image"]
 
     def prompt_docker_image_tag(self, docker_image: str) -> str:
         image_tags = {
-            "alpine": ["alpine", "alpine3.17", "alpine3.18", "latest"],
-            "debian": ["slim", "buster", "bullseye"],
+            "alpine": ["alpine"],
+            "debian": ["slim", "bookworm", "trixie"],
         }
         questions = [
             {

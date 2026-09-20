@@ -1,134 +1,78 @@
-import importlib
-import json
-import os
+import ast
+import keyword
 import shutil
 
-from pathlib import Path
-from extensions.context import Context
-from extensions.step import Step, StepException
+from src.compat import is_relative_to
 
-from modules.code_analyzr.analyzr.astAnalyzr import AstAnalyzr
-from modules.code_analyzr.configuration import CodeAnalyzrConfiguration
-from modules.code_analyzr.prompt import ConfigPrompter
+from ...modules.code_analyzr.analyzr.astAnalyzr import AstAnalyzr
+from ..context import ContextStatus
+from ..step import Step
+
+
+def copy_local_modules(source, source_dir, output_dir, seen=None):
+    """Copy local Python imports without importing them or executing user code."""
+    seen = seen if seen is not None else set()
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Import):
+            names = [alias.name.split(".")[0] for alias in node.names]
+        elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+            names = [node.module.split(".")[0]]
+        else:
+            continue
+        for name in names:
+            if name in seen:
+                continue
+            seen.add(name)
+            local = source_dir / f"{name}.py"
+            package = source_dir / name
+            if local.is_file():
+                if not is_relative_to(local.resolve(), source_dir.resolve()):
+                    raise ValueError(f"Local module escapes source directory: {local}")
+                destination = output_dir / local.name
+                if destination.exists() and destination.resolve() != local.resolve():
+                    raise ValueError(
+                        f"Local module collides with generated file: {destination.name}"
+                    )
+                if local.resolve() != destination.resolve():
+                    shutil.copyfile(local, destination)
+                copy_local_modules(
+                    local.read_text(encoding="utf-8"), source_dir, output_dir, seen
+                )
+            elif package.is_dir() and (package / "__init__.py").is_file():
+                if package.is_symlink():
+                    raise ValueError(f"Symlink packages are not supported: {package}")
+                for child in package.rglob("*"):
+                    if child.is_symlink():
+                        raise ValueError(
+                            f"Symlinks in local packages are not supported: {child}"
+                        )
+                destination = output_dir / name
+                shutil.copytree(
+                    package,
+                    destination,
+                    ignore=shutil.ignore_patterns("__pycache__", ".*", "*.pyc"),
+                )
+                for child in package.rglob("*.py"):
+                    copy_local_modules(
+                        child.read_text(encoding="utf-8"), source_dir, output_dir, seen
+                    )
+
 
 class CodeAnalyzrStep(Step):
-    """
-    A step that transforms a notebook using the notebook transformr module
-    """
-
-    def __init__(self) -> None:
-        super().__init__()
-
-
-    def __is_local_modules(self, module_name, input_path):
-        """
-        Check if a module is a local module or a standard/package module.
-        """
-        try:
-            # Try to import the module (this check fails)
-            result = importlib.import_module(module_name)
-            return input_path in result.__file__
-        except ImportError:
-            return True
-
-    def __copy_local_modules(self, metadata: str, input_path: Path, output_path: Path):
-        """
-        Check if the imports are local modules to copy them in the output directory.
-        """
-        json_metadata = json.loads(metadata)
-
-        for import_data in json_metadata["imports_from"]:
-            module_name = import_data["module"]
-            if self.__is_local_modules(module_name, os.path.abspath(input_path.parent)):
-                s = str(Path(input_path.parent, module_name)).split(".")[0]
-                local_module_path = Path(s)
-                dest_path = Path(output_path, s)
-                local_file = Path(module_name + ".py")
-
-                # Case where the module is a directory
-                if local_module_path.exists() and not dest_path.exists():
-                    dest_path = Path(output_path, local_module_path.name)
-                    shutil.copytree(local_module_path, dest_path)
-
-                # Case where the module is a file
-                elif local_file.exists():
-                    shutil.copy(local_file, output_path)
-
-    def execute(self, context: Context) -> Context:
-        """
-        Execute the step.
-        
-        :param context: A dictionary containing data shared across steps.
-        """
-
-        # Get context
+    def execute(self, context):
         self.validate(context)
-        configuration: CodeAnalyzrConfiguration = context.config
-        input_path: Path  = context.input_path # Path to the script
-        output_dir: Path = context.output_dir
-
-        # Read the code and place it in the context
-        context.read_input()
-
-        # Generate Metadata from code
-        try:
-            # Case 1 Prompt the user for configuration
-            if context.prompt:
-                code_analyzr_configuration = self.prompt(context).config
-            # Case 2 : Use the configuration w/o prompting when requested
-            elif context.config:
-                code_analyzr_configuration = configuration
-            # Otherwise: Use default configuration
-            else:
-                code_analyzr_configuration = CodeAnalyzrConfiguration()
-
-            # Generate metadata
-            metadata = AstAnalyzr(code_analyzr_configuration, context.data).get_analyse()
-
-            # Place the metadata as result in the context
-            context.result = ('CodeAnalyzr', metadata)
-            context.status = 'success'
-
-            # Save the metadata
-            if output_dir is not None:
-                metadata_name = input_path.stem + ".json"
-                context.write_output('CodeAnalyzr', metadata_name)
-                # Copy source code
-                shutil.copy(input_path, output_dir)
-                self.__copy_local_modules(metadata, input_path, output_dir)
-
-            return context
-
-        except Exception as e:
-            raise StepException(f"Failed to generate metadata from code: {str(e)}") from e
-        
-    def validate(self, context: Context):
-        """
-        Validate the step.
-        
-        :param context: A dictionary containing data shared across steps.
-        """
-        input_path: Path = context.input_path
-
-      # Check if input_path is a valid path
-        if input_path and not input_path.exists():
-            raise StepException(f"'{input_path}' does not exist.")
-        
-        if input_path and input_path.suffix == ".py":
-        # For now, we just check the extension. In the future, you might want to add more checks
-        # like checking for valid Python syntax.
-            pass
-    
-    def prompt(self, context: Context):
-        """
-        Prompt the user when the configuration has not been provided.
-        
-        :param context: A dictionary containing data shared across steps.
-        """
-        _config: CodeAnalyzrConfiguration = context.config
-        context.config: CodeAnalyzrConfiguration = ConfigPrompter(
-            code_str=context.data, 
-            lang=context.lang).getConfiguration(
-                version=_config.python_version,
-                encoding=_config.encoding)
+        name = context.input_path.stem
+        if not name.isidentifier() or keyword.iskeyword(name):
+            raise ValueError(
+                "The source filename must be a valid Python module name (letters, digits and underscores)"
+            )
+        source = context.input_path.read_text(encoding=context.config.encoding)
+        metadata = AstAnalyzr(context.config, source).get_analyse()
+        context.result = ("CodeAnalyzr", metadata)
+        context.write_output("CodeAnalyzr", name + ".json")
+        destination = context.output_dir / context.input_path.name
+        if destination.resolve() != context.input_path.resolve():
+            shutil.copyfile(context.input_path, destination)
+        copy_local_modules(source, context.source_dir, context.output_dir, {name})
+        context.status = ContextStatus.SUCCESS
         return context

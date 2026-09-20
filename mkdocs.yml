@@ -99,6 +99,7 @@ nav:
           - Using Dockerizr: getting-started/user-guide/dockerizr.md
       - Developer Guide:
           - Setup: getting-started/developer-guide/setup.md
+          - Migration and releases: getting-started/developer-guide/releases.md
           - Modules:
               - Notebook Transformr: modules/notebook-transformr.md
               - Code Analyzr: modules/code-analyzr.md

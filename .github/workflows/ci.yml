@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run --locked ruff check src tests scripts
+      - run: uv run --locked ruff format --check src tests scripts
+      - run: uv run --locked pytest
+      - run: uv build
+      - name: Test installed wheel outside the checkout
+        shell: bash
+        run: |
+          uv venv /tmp/apizr-wheel
+          uv pip install --python /tmp/apizr-wheel/bin/python dist/*.whl
+          cd /tmp
+          /tmp/apizr-wheel/bin/apizr --notebook "$GITHUB_WORKSPACE/examples/pricing.ipynb" --output-dir /tmp/apizr-wheel-output --force
+          test -f /tmp/apizr-wheel-output/Dockerfile
+
+  container:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: '3.14'
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run --locked python scripts/smoke_container.py --python-version "${{ matrix.python }}"

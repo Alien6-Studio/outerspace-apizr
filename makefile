@@ -1,68 +1,23 @@
-.DEFAULT_GOAL := all
-sources = src
+.PHONY: install test lint format build docs all
 
-.PHONY: .pdm  ## Check that PDM is installed
-.pdm:
-	@pdm -V || echo 'Please install PDM: https://pdm.fming.dev/latest/\#installation'
+install:
+	uv sync --locked
 
-.PHONY: .pre-commit  ## Check that pre-commit is installed
-.pre-commit:
-	@pre-commit -V || echo 'Please install pre-commit: https://pre-commit.com/'
+test:
+	uv run --locked pytest
 
-.PHONY: install  ## Install the package, dependencies, and pre-commit for local development
-install: .pdm .pre-commit
-	pdm install --group :all
-	pre-commit install --install-hooks
+lint:
+	uv run --locked ruff check src tests scripts
+	uv run --locked ruff format --check src tests scripts
 
-.PHONY: refresh-lockfiles  ## Sync lockfiles with requirements files.
-refresh-lockfiles: .pdm
-	pdm update --update-reuse --group :all
+format:
+	uv run ruff check --fix src tests scripts
+	uv run ruff format src tests scripts
 
-.PHONY: rebuild-lockfiles  ## Rebuild lockfiles from scratch, updating all dependencies
-rebuild-lockfiles: .pdm
-	pdm update --update-eager --group :all
+build:
+	uv build
 
-.PHONY: lint  ## Lint python source files
-lint: .pdm
-	pdm run ruff $(sources)
-	pdm run black $(sources) --check --diff
-
-.PHONY: format  ## Auto-format python source files
-format: .pdm
-	pdm run black $(sources)
-	pdm run ruff --fix $(sources)
-	
-.PHONY: codespell  ## Use Codespell to do spellchecking
-codespell: .pre-commit
-	pre-commit run codespell --all-files
-
-.PHONY: typecheck  ## Perform type-checking
-typecheck: .pre-commit .pdm
-	pre-commit run typecheck --all-files
-
-.PHONY: all  ## Run the standard set of checks performed in CI
-all: lint typecheck codespell
-
-.PHONY: clean  ## Clear local caches and build artifacts
-clean:
-	rm -rf `find . -name .DS_Store`
-	rm -rf `find . -name __pycache__`
-	rm -f `find . -type f -name '*.py[co]'`
-	rm -f `find . -type f -name '*~'`
-	rm -f `find . -type f -name '.*~'`
-	rm -f `find . -type f -name '*.log'`
-	rm -rf site
-	rm -rf dist
-	rm -rf .cache
-	rm -rf .ruff_cache
-	rm -rf `find . -type d -name '.output'`
-.PHONY: docs  ## Generate the docs
 docs:
-	pdm run mkdocs build
+	uv run --group docs mkdocs build --strict
 
-.PHONY: help  ## Display this message
-help:
-	@grep -E \
-		'^.PHONY: .*?## .*$$' $(MAKEFILE_LIST) | \
-		sort | \
-		awk 'BEGIN {FS = ".PHONY: |## "}; {printf "\033[36m%-19s\033[0m %s\n", $$2, $$3}'
+all: lint test build

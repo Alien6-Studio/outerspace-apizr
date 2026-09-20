@@ -7,7 +7,7 @@ bind = '{{host}}:{{port}}'
 backlog = 2048
 
 workers = {{ workers }}
-worker_class = 'uvicorn.workers.UvicornWorker'
+worker_class = 'uvicorn_worker.UvicornWorker'
 worker_connections = 1000
 timeout = {{ timeout }}
 keepalive = 2

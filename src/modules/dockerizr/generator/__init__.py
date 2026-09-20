@@ -1,4 +1,4 @@
-from configuration import DockerizrConfiguration
+from src.modules.dockerizr.configuration import DockerizrConfiguration
 
 from .dockerfileGenerator import DockerfileGenerator
 from .errorLogger import LogError

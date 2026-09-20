@@ -3,7 +3,7 @@ from os import path
 
 from jinja2 import Template
 
-from configuration import DockerizrConfiguration
+from src.modules.dockerizr.configuration import DockerizrConfiguration
 
 from .errorLogger import LogError
 

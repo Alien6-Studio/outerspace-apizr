@@ -1,7 +1,5 @@
 import itertools
 import logging
-from os import path
-from pprint import pprint
 from typing import List, Optional, Union
 
 from .analyzr.analyzr import Analyzr

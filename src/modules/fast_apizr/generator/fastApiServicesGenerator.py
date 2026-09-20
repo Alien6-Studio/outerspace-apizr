@@ -3,7 +3,7 @@ from os import path
 
 from jinja2 import Template
 
-from configuration import FastApizrConfiguration
+from src.modules.fast_apizr.configuration import FastApizrConfiguration
 
 from .analyzr.function import Function
 from .errorLogger import LogError

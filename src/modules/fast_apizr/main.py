@@ -5,18 +5,13 @@ import os
 import sys
 
 import yaml
-from generator import FastApiAppGenerator
-from generator.analyzr import Analyzr
 
-from configuration import FastApizrConfiguration
-from prompt import ConfigPrompter
+from src.modules.fast_apizr.configuration import FastApizrConfiguration
+from src.modules.fast_apizr.generator import FastApiAppGenerator
+from src.modules.fast_apizr.generator.analyzr import Analyzr
+from src.modules.fast_apizr.prompt import ConfigPrompter
 
 # Configure logging settings
-logging.basicConfig(
-    level=logging.ERROR,
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-    filename="app_errors.log",
-)
 logger = logging.getLogger(__name__)
 
 
@@ -83,22 +78,22 @@ def handle_args():
     )
     parser.add_argument(
         "--version",
-        default="3.8",
-        help="Python version to use for analysis. Default is 3.8.",
+        default=None,
+        help="Python version to use for analysis. Defaults to the running interpreter.",
     )
     parser.add_argument(
         "--encoding",
-        default="utf-8",
+        default=None,
         help="Encoding of the file. Default is utf-8.",
     )
     parser.add_argument(
         "--module_name",
-        default="main",
+        default=None,
         help="Name of the module. Default is main.",
     )
     parser.add_argument(
         "--api_filename",
-        default="app.py",
+        default=None,
         help="Name of the generated file. Default is app.py.",
     )
     parser.add_argument(
@@ -161,6 +156,7 @@ def main():
         result = FastApiAppGenerator(configuration, metadata).gen_fastapi_app()
 
         if args.output:
+            os.makedirs(args.output, exist_ok=True)
             save_result(os.path.join(args.output, configuration.api_filename), result)
         else:
             print(result)

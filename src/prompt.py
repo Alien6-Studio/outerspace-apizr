@@ -1,12 +1,8 @@
-import collections.abc
 import json
 import os
 
-# Patch pour PyInquirer et Python 3.10+
-collections.Mapping = collections.abc.Mapping
-
-from PyInquirer import prompt
-from configuration import MainConfiguration
+from src.compat import DEFAULT_PYTHON
+from src.configuration import MainConfiguration
 
 
 class ConfigPrompter:
@@ -36,7 +32,7 @@ class ConfigPrompter:
         return configuration
 
     def prompt_python_version(self) -> str:
-        default_version = "3.8"
+        default_version = "{}.{}".format(*DEFAULT_PYTHON)
         version = input(
             self.get_translation("version", default_version=default_version)
         )

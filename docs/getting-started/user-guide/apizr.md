@@ -1,34 +1,25 @@
----
-title:
-description:
----
+# Using Apizr
 
-<!-- markdownlint-disable MD025 -->
+From an installed development checkout:
 
-APIzr provides a command-line interface (CLI) to convert Jupyter notebooks or Python scripts into containers, analyze Python code, and generate FastAPI applications. This section of the documentation will guide you through the various functionalities and how to use APIzr and its modules effectively.
+```sh
+uv run apizr --notebook examples/pricing.ipynb --output-dir .output/pricing --force
+uv run uvicorn pricing_api:app --app-dir .output/pricing --host 127.0.0.1 --port 5001
+```
 
-By default:
+POST `{"prices": [10, 20]}` to `/total` to obtain `36.0`. Visit `/docs` for the generated API schema.
 
-- Using the `--notebook` option triggers the "notebook transformr", initiating the process with a Jupyter notebook as the input.
-- The `--script` option starts from the next phase, analyzing a given Python script.
+```sh
+docker build -t apizr-pricing .output/pricing
+docker run --rm -p 127.0.0.1:5001:5001 apizr-pricing
+```
 
-It's important to note that the `--script` and `--notebook` options are mutually exclusive, meaning you can only use one at a time.
+Use `--script file.py` for Python source. The filename must be a valid Python module name. Output defaults to `.output/<source>` and must be empty. A YAML file can be supplied with `--configuration`; `src/configuration.yaml` is the reference example. `fast_apizr.api_filename` controls the generated filename.
 
-For users who want more control over specific steps:
+Use `--requirements requirements.txt` to provide application dependencies explicitly. Otherwise imports are analyzed without execution, with installed distributions pinned when identifiable. External data, dynamic imports and ambiguous dependencies require manual packaging.
 
-- The `--skip-docker` option skips the containerization phase.
-- The `--skip-pipreqs` option omits the generation of the `pipreqs` file, allowing users to manually specify package versions if desired.
+Use `--skip-docker` for an API-only project. `--skip-fastapi` also requires `--skip-docker`. `--skip-pipreqs` disables dependency inference; Docker generation still requires an explicit requirements file.
 
-## Configuration Details
+Top-level functions become POST routes. Async functions, argument defaults and supported Pydantic annotations are preserved. Magics, shell commands and variadic signatures are rejected. Starting the resulting API imports the original code; run trusted inputs only.
 
-The execution can be tailored using a configuration file. The configuration is segmented into different sections, each catering to a specific module or general setting. Users can create their own configuration file based on provided templates or detailed instructions, allowing for a customized experience:
-
-- **General Settings**: Define the Python version and file encoding.
-- **CodeAnalyzr**: Configure the Python script path, functions to analyze, functions to ignore, and specific keywords for certain Python versions.
-- **FastAPIzr**: Specify the module name and the name of the generated file.
-- **Dockerizr**: Customize Docker settings, including the Docker image, dependencies, custom packages, and server configurations.
-
-If neither the `--configuration` option nor the `--force` option is specified, the CLI will, by default, prompt the user to configure the execution interactively. However, you can:
-
-- Directly specify a configuration file using the `--configuration` option.
-- Use the `--force` option to execute with default settings, bypassing interactive prompts.
+Use `--python-version 3.8` (or YAML `python_version: [3, 8]`) to select a target explicitly. The default is the running interpreter. Apizr must run on Python at least as recent as its target and does not transpile newer code. Dependencies inferred for a different target are left unpinned so the target installer can select compatible releases.
