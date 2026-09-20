@@ -90,6 +90,7 @@ nav:
   - Home: index.md
   - Guides:
       - Start here: getting-started/introduction.md
+      - Inventory a Python project: getting-started/user-guide/scan.md
       - Inspect source without running it: getting-started/user-guide/inspect.md
       - Generate a REST interface: getting-started/user-guide/rest.md
       - Generate an MCP server: getting-started/user-guide/mcp.md
@@ -114,6 +115,7 @@ nav:
           - Notebook conversion endpoint: apis/notebook-transformr-api.md
           - Docker generation endpoints: apis/dockerizr-api.md
       - Architecture and contracts:
+          - Repository Scanner and Catalog v1: architecture/repository-scanner-v1.md
           - Capability IR v1: architecture/capability-ir-v1.md
           - Static readiness v1: architecture/capability-readiness-v1.md
           - REST generator v1: architecture/rest-generator-v1.md

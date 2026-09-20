@@ -27,6 +27,7 @@ uv run coverage report --include='src/apizr/generators/mcp/*' --fail-under=90
 uv run coverage report --include='src/apizr/interfaces/*' --fail-under=90
 uv run coverage report --include='src/apizr/execution/*' --fail-under=90
 uv run coverage report --include='src/apizr/governed/*' --fail-under=90
+uv run coverage report --include='src/apizr/repository/*' --fail-under=90
 uv run coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
 uv run pre-commit run --all-files
 uv build
@@ -124,3 +125,9 @@ without Docker; integration tests skip only when no explicit image was supplied.
 Image building is a deliberate preparation step and may access registries. Test
 invocations never pull. Remove the locally built image by its printed ID when no
 longer needed. See the [backend contract](../../architecture/oci-container-runtime-v1.md).
+
+Repository scanner/catalog tests live in `tests/repository/` and require no Docker.
+The new package and scan CLI use strict Pyright; each compatibility job enforces
+a separate 90% branch-aware repository coverage floor. Catalog and schema goldens
+are under `tests/fixtures/catalog/` and `docs/specs/`. See the
+[scanner contract](../../architecture/repository-scanner-v1.md) before changing discovery policy.

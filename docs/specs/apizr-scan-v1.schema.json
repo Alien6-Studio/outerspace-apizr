@@ -1,0 +1,93 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "excluded_directories": {
+      "default": [
+        ".git",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".venv",
+        "__pycache__",
+        "build",
+        "dist",
+        "venv"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Excluded Directories",
+      "type": "array"
+    },
+    "included_suffixes": {
+      "default": [
+        ".py"
+      ],
+      "items": {
+        "const": ".py",
+        "type": "string"
+      },
+      "title": "Included Suffixes",
+      "type": "array"
+    },
+    "max_depth": {
+      "default": 64,
+      "maximum": 128,
+      "minimum": 1,
+      "title": "Max Depth",
+      "type": "integer"
+    },
+    "max_entries": {
+      "default": 20000,
+      "maximum": 1000000,
+      "minimum": 1,
+      "title": "Max Entries",
+      "type": "integer"
+    },
+    "max_file_bytes": {
+      "default": 1048576,
+      "maximum": 16777216,
+      "minimum": 1,
+      "title": "Max File Bytes",
+      "type": "integer"
+    },
+    "max_source_files": {
+      "default": 1000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Max Source Files",
+      "type": "integer"
+    },
+    "max_total_bytes": {
+      "default": 16777216,
+      "maximum": 268435456,
+      "minimum": 1,
+      "title": "Max Total Bytes",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "apizr.scan/v1",
+      "default": "apizr.scan/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_roots": {
+      "default": [
+        "."
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Roots",
+      "type": "array"
+    },
+    "symlinks": {
+      "const": "skip",
+      "default": "skip",
+      "title": "Symlinks",
+      "type": "string"
+    }
+  },
+  "title": "ScanPolicy",
+  "type": "object"
+}

@@ -1,0 +1,1 @@
+"""Small catalog compatibility fixture."""
