@@ -196,6 +196,24 @@ per REST/MCP stdio/MCP HTTP transport, with repeated non-OOM/timeout controls an
 removal assertions. Passing local samples alone do not establish reproduction
 of the original Linux CI race.
 
+The strengthened #57 CI investigation captured 17 consecutive terminal
+`exited/137/OOMKilled=false` observations through the entire budget, including
+just before removal. Waiting longer is not a general remedy when evidence is
+lost: containerd documents a
+[systemd scope garbage-collection race](https://github.com/containerd/containerd/pull/12819)
+that can remove a cgroup before its OOM event is read. Apizr must still return a
+generic failure if Docker never reports OOM; it does not inspect host journals or
+infer the cause from exit 137.
+
+The required `oci-isolation` runner therefore explicitly configures Docker's
+`cgroupfs` driver before building its fixture image. This changes cgroup lifecycle
+management on the disposable test host, not invocation limits, cgroup namespaces,
+network, seccomp, read-only mounts or cleanup. The job logs the before/after engine
+and driver versions and retains every OOM assertion. There is no test skip or
+workflow retry. Apizr never changes a user's daemon configuration. With other
+provider configurations, missing upstream OOM evidence remains an explicit
+classification limitation, even when terminal-state polling is correct.
+
 This fix changes three embedded OCI source files and their hashes in generated
 OCI bundles (including the enclosing manifests). Existing bundles must be
 regenerated to receive it. Public schemas/versions, policies/plans, direct/local

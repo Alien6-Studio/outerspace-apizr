@@ -87,6 +87,25 @@ jobs:
         with:
           python-version: '3.14'
           enable-cache: true
+      # systemd scope GC can discard OOM evidence before containerd reads it:
+      # https://github.com/containerd/containerd/pull/12819
+      # Keep every assertion; use the cgroupfs driver on this disposable runner.
+      - name: Configure reliable Docker OOM evidence on the test runner
+        run: |
+          docker info --format 'Docker={{.ServerVersion}} cgroup_driver={{.CgroupDriver}} cgroup_version={{.CgroupVersion}}'
+          sudo python3 - <<'PYCONFIG'
+          import json
+          from pathlib import Path
+          path = Path("/etc/docker/daemon.json")
+          config = json.loads(path.read_text()) if path.exists() else {}
+          options = config.get("exec-opts", [])
+          config["exec-opts"] = [option for option in options if not option.startswith("native.cgroupdriver=")]
+          config["exec-opts"].append("native.cgroupdriver=cgroupfs")
+          path.write_text(json.dumps(config) + "\n")
+          PYCONFIG
+          sudo systemctl restart docker
+          docker info --format 'Docker={{.ServerVersion}} cgroup_driver={{.CgroupDriver}} cgroup_version={{.CgroupVersion}}'
+          test "$(docker info --format '{{.CgroupDriver}}')" = cgroupfs
       - run: uv sync --locked
       - run: uv build
       - name: Deliberately build local fixture worker image
