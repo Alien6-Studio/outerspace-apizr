@@ -59,7 +59,8 @@
         "APIZR-GRAPH-007",
         "APIZR-GRAPH-008",
         "APIZR-GRAPH-009",
-        "APIZR-GRAPH-010"
+        "APIZR-GRAPH-010",
+        "APIZR-GRAPH-011"
       ],
       "title": "Code",
       "type": "string"
@@ -503,7 +504,8 @@
         "imports_module",
         "imports_external_module",
         "imports_capability",
-        "calls_capability"
+        "calls_capability",
+        "references_capability"
       ],
       "title": "RelationshipKind",
       "type": "string"

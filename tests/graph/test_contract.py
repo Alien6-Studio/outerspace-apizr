@@ -70,7 +70,7 @@ def test_reviewed_graph_and_schemas():
         "python:shop.pricing:calculate",
     )
     assert {r.kind for r in g.relationships} == set(K)
-    assert Code.DYNAMIC in {d.code for d in g.diagnostics}
+    assert {Code.DYNAMIC, Code.STAR} <= {d.code for d in g.diagnostics}
     assert policy_bytes(GraphPolicy()) == policy_bytes(
         GraphPolicy.model_validate_json(policy_bytes(GraphPolicy()))
     )

@@ -26,8 +26,8 @@ def checkout(value: int) -> int:
 If `shop.pricing.calculate` is a uniquely identified capability with a stable
 binding, the graph records separate facts: a module import, a capability-symbol
 import and a possible direct call from `checkout` to `calculate`. Importing a
-function without calling it produces no call edge. Returning the function as a
-value also produces no call edge.
+function without calling it produces no call edge. Returning or passing the function as a
+value produces a distinct `references_capability` relationship, never a call edge.
 
 An import is not proof of invocation. A resolved call expression is evidence of
 a **possible direct call**, not proof that the branch executes or the call succeeds.

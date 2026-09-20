@@ -72,9 +72,9 @@ These are different facts:
 3. A capability refers to a symbol as a value.
 4. A capability contains a direct call expression targeting a symbol.
 
-An import is not proof of invocation. V1 records import declarations and
-conservatively resolved direct calls. Bare value references are deliberately not
-edges; `return module.function` does not become a call. There is no generic
+An import is not proof of invocation. V1 records import declarations, conservatively resolved callable references and
+direct calls. `return module.function` produces `references_capability`, never
+`calls_capability`. Passing a callable as a value also records only a reference. There is no generic
 `depends_on` relationship.
 
 | Relationship | Meaning |
@@ -83,6 +83,7 @@ edges; `return module.function` does not become a call. There is no generic
 | `imports_module` | Lexical import resolved to a unique repository module |
 | `imports_external_module` | Lexical import with no matching repository module |
 | `imports_capability` | Imported symbol resolved to a Catalog capability with stable binding |
+| `references_capability` | Conservatively resolved loaded callable value in a capability body |
 | `calls_capability` | Conservatively resolved direct `ast.Call` in a capability body |
 
 A `calls_capability` edge means:
@@ -100,6 +101,13 @@ Two calls on the same line remain distinct through their columns. Repeated
 identical derived facts at the same occurrence are deduplicated; declaration
 records preserve the full ordered alias list. Query helpers return unique sorted
 target IDs rather than repeating occurrences.
+
+A reference is a loaded `ast.Name` or complete `ast.Attribute` expression with a
+stable Catalog capability target under the same binding rules as calls. Callee
+expressions are represented by call relationships only; attribute prefixes are
+not separate references. `alias = calculate` can record the reference to
+`calculate`, but a subsequent `alias()` is not resolved through assignment flow.
+Reference uncertainty uses its own diagnostic. This does not add points-to analysis.
 
 ## Lexical import inventory and resolution
 
@@ -197,6 +205,7 @@ resolution is `observed` Catalog membership. No numeric confidence is used.
 | `APIZR-GRAPH-008` | Aggregate graph/parser limit | Blocking, incomplete result |
 | `APIZR-GRAPH-009` | Catalog module collision | Blocking; no unique module node |
 | `APIZR-GRAPH-010` | Catalog Inspection unavailable | Blocking; skip source analysis |
+| `APIZR-GRAPH-011` | Unstable callable reference | Warning; no resolved reference |
 
 Codes and structured fields are semantics; messages/severity are presentation
 properties. The graph also binds Catalog's exit status. `complete` means no

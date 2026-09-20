@@ -504,3 +504,66 @@ def test_wide_import_declarations_are_indexed_without_quadratic_alias_search():
     assert len(edges(g, K.EXTERNAL)) == 2500
     assert not g.capability_calls("python:a:run")
     assert not g.diagnostics
+
+
+def test_resolved_references_are_distinct_from_calls_and_imports():
+    g = graph(
+        {
+            "a.py": "import b\nfrom b import f as alias\ndef reference(): return b.f, alias\ndef invoke(): return b.f()\ndef indirect():\n callback = alias\n return callback()",
+            "b.py": "def f(): return 1",
+        }
+    )
+    assert edges(g, K.REFERENCE) == {
+        ("python:a:reference", "python:b:f"),
+        ("python:a:indirect", "python:b:f"),
+    }
+    assert edges(g, K.CALL) == {("python:a:invoke", "python:b:f")}
+    assert (
+        len(
+            [
+                r
+                for r in g.relationships
+                if r.source == "python:a:reference" and r.kind == K.REFERENCE
+            ]
+        )
+        == 2
+    )
+    assert edges(g, K.CAPABILITY) == {("python-module:a", "python:b:f")}
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "def reference(f): return f",
+        "def reference():\n return f\n f = replacement",
+        "def reference():\n def inner(): return f\n return inner",
+        "def reference(): return lambda: f",
+        "def reference(): return f.attribute",
+        "def reference(): return [f for f in values]",
+    ],
+)
+def test_references_respect_shadowing_nested_scopes_and_attribute_boundaries(body):
+    g = graph({"a.py": "def f(): return 1\n" + body})
+    assert ("python:a:reference", "python:a:f") not in edges(g, K.REFERENCE)
+
+
+def test_conditional_references_and_unstable_reference_diagnostics():
+    g = graph(
+        {
+            "a.py": "def f(): return 1\n@decorator\ndef uncertain(): return 1\ndef reference():\n if flag: return f\n return uncertain"
+        }
+    )
+    edge = next(r for r in g.relationships if r.kind == K.REFERENCE)
+    assert edge.target == "python:a:f" and edge.availability == "conditional"
+    assert Code.REFERENCE in {d.code for d in g.diagnostics}
+    assert not edges(g, K.CALL)
+
+
+def test_bare_dynamic_import_reference_does_not_claim_dynamic_invocation():
+    g = graph(
+        {
+            "a.py": "from importlib import import_module\ndef reference(): return import_module, __import__"
+        }
+    )
+    assert Code.DYNAMIC not in {d.code for d in g.diagnostics}
+    assert not edges(g, K.REFERENCE)

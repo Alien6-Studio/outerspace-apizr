@@ -25,6 +25,7 @@ class Code(str, Enum):
     LIMIT = "APIZR-GRAPH-008"
     COLLISION = "APIZR-GRAPH-009"
     UNAVAILABLE = "APIZR-GRAPH-010"
+    REFERENCE = "APIZR-GRAPH-011"
 
 
 MESSAGES = {
@@ -35,6 +36,7 @@ MESSAGES = {
     Code.DYNAMIC: "Dynamic import target is unresolved; arguments are not evaluated.",
     Code.REBOUND: "Import binding is conditional, rebound or ambiguous.",
     Code.CALL: "Possible capability call has no stable unique target binding.",
+    Code.REFERENCE: "Callable reference has no stable unique target binding.",
     Code.LIMIT: "Graph resource limit exceeded; all syntax relationships discarded.",
     Code.COLLISION: "Colliding catalog modules cannot identify a unique graph node.",
     Code.UNAVAILABLE: "Catalog inspection unavailable; relationship analysis skipped.",
@@ -165,6 +167,7 @@ class RelationshipKind(str, Enum):
     EXTERNAL = "imports_external_module"
     CAPABILITY = "imports_capability"
     CALL = "calls_capability"
+    REFERENCE = "references_capability"
 
 
 class Relationship(Location):
@@ -289,6 +292,7 @@ class Graph(ValueModel):
             RelationshipKind.EXTERNAL: ({"module", "capability"}, "external_module"),
             RelationshipKind.CAPABILITY: ({"module", "capability"}, "capability"),
             RelationshipKind.CALL: ({"capability"}, "capability"),
+            RelationshipKind.REFERENCE: ({"capability"}, "capability"),
         }
         for edge in self.relationships:
             source, target = nodes.get(edge.source), nodes.get(edge.target)

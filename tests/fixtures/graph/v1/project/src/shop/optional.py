@@ -1,5 +1,3 @@
-import importlib
-
 if feature_enabled:
     import optional_service
 
@@ -10,4 +8,8 @@ def preview(value: int) -> int:
 
 
 def load_plugin(name: str):
+    import importlib
     return importlib.import_module(name)
+
+
+from optional_exports import *

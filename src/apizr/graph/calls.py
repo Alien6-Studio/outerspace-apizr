@@ -1,4 +1,4 @@
-"""Resolve direct ast.Call targets only, never arbitrary attribute/object values."""
+"""Resolve direct callable uses, separating loaded references from ast.Call."""
 
 import ast
 from collections.abc import Mapping
@@ -21,11 +21,34 @@ def analyze_calls(
     local_imports: Mapping[str, Binding],
     module_imports: Mapping[str, Binding],
 ) -> None:
+    # Only complete loaded expressions are references. A call's callee is
+    # represented by its call edge, and attribute prefixes are not separate uses.
+    excluded = {
+        child
+        for site in sites
+        for child in (
+            (site.node.func,)
+            if isinstance(site.node, ast.Call)
+            else (site.node.value,)
+            if isinstance(site.node, ast.Attribute)
+            else ()
+        )
+    }
     for site in sites:
         node = site.node
-        if not isinstance(node, ast.Call):
+        is_call = isinstance(node, ast.Call)
+        if is_call:
+            expression = dotted(node.func)
+        elif (
+            isinstance(node, (ast.Name, ast.Attribute))
+            and isinstance(node.ctx, ast.Load)
+            and node not in excluded
+        ):
+            expression = dotted(node)
+        else:
             continue
-        expression = dotted(node.func)
+        kind = RelationshipKind.CALL if is_call else RelationshipKind.REFERENCE
+        diagnostic = Code.CALL if is_call else Code.REFERENCE
         if expression is None:
             continue
         root = expression.split(".")[0]
@@ -39,7 +62,8 @@ def analyze_calls(
         if blocked:
             continue
         if (
-            expression == "__import__"
+            is_call
+            and expression == "__import__"
             and not local_name
             and root not in module_inventory.writes
         ):
@@ -58,12 +82,13 @@ def analyze_calls(
                 binding.statement.lineno,
                 binding.statement.col_offset,
             ):
-                analysis.diagnostic(Code.CALL, path, site)
+                analysis.diagnostic(diagnostic, path, site)
                 continue
             suffix = expression[len(binding.prefix) :].lstrip(".")
             if binding.kind == "dynamic":
-                if (binding.target == "importlib" and suffix == "import_module") or (
-                    binding.target == "importlib.import_module" and not suffix
+                if is_call and (
+                    (binding.target == "importlib" and suffix == "import_module")
+                    or (binding.target == "importlib.import_module" and not suffix)
                 ):
                     analysis.diagnostic(Code.DYNAMIC, path, site)
             elif binding.kind == "capability" and not suffix:
@@ -89,8 +114,6 @@ def analyze_calls(
                     uncertain = True
         if caller is not None:
             if target is not None:
-                analysis.edge(
-                    caller, target, RelationshipKind.CALL, location(path, site)
-                )
+                analysis.edge(caller, target, kind, location(path, site))
             elif uncertain:
-                analysis.diagnostic(Code.CALL, path, site)
+                analysis.diagnostic(diagnostic, path, site)
