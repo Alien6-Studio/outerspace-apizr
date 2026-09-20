@@ -422,9 +422,15 @@ def test_repeated_oom_transport_classification(
 
     def observations():
         path = tmp_path / "observations.jsonl"
-        return path.read_text() if path.exists() else "No provider observations"
+        evidence = (
+            path.read_text().splitlines()[-1]
+            if path.exists()
+            else "No provider observations"
+        )
+        print("OCI provider evidence for failed invocation:", evidence)
+        return "See captured provider evidence"
 
-    cases = [("memory", 5), ("crash", 3), ("loop", 3)]
+    cases = [("memory", 20), ("crash", 3), ("loop", 3)]
     if transport == "rest":
         with (
             http_server(root, "rest") as (url, process),

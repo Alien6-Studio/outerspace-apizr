@@ -191,7 +191,7 @@ the old one-observation gap. Docker's
 update state separately; attach completion alone is not a terminal-evidence
 contract. Tests cover that sequence, transient inspection failures, strict JSON,
 bounded waiting, ordinary exit 23, non-OOM exit 137 and timeout precedence.
-Required OCI CI also checks every sample of 10 real direct OOM invocations and 5
+Required OCI CI also checks every sample of 10 real direct OOM invocations and 20
 per REST/MCP stdio/MCP HTTP transport, with repeated non-OOM/timeout controls and
 removal assertions. Passing local samples alone do not establish reproduction
 of the original Linux CI race.
