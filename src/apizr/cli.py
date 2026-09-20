@@ -47,6 +47,10 @@ def _inspect(argv: Sequence[str]) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] == "graph":
+        from apizr.graph_cli import main as graph_command
+
+        return graph_command(arguments[1:])
     if arguments and arguments[0] == "scan":
         from apizr.scan_cli import main as scan_command
 
@@ -83,6 +87,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         print(
             "\nStatic repository inventory: apizr scan ROOT [--source-root DIR] [--format json | --catalog]"
+        )
+        print(
+            "Static capability relationships: apizr graph ROOT [--source-root DIR] [--format json | --graph]"
         )
         return 0
     generate(arguments)
