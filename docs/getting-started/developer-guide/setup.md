@@ -104,3 +104,21 @@ cross-links rather than copying it into several audience sections.
 
 The [publication workflow](../../contributing/releases.md#documentation-publication)
 deploys the documentation automatically after a merge to `master`.
+
+The independent OCI isolation suite needs an explicitly built local worker image:
+
+```sh
+uv build
+uv run python scripts/build_worker_image.py dist/*.whl --output /tmp/apizr-worker-image.json
+APIZR_TEST_OCI_IMAGE=/tmp/apizr-worker-image.json uv run pytest tests/oci \
+  --cov=apizr.oci --cov-report=term-missing --cov-fail-under=90
+uv run python scripts/smoke_wheel.py dist/*.whl \
+  --runtime-image-config /tmp/apizr-worker-image.json
+```
+
+The Linux `oci-isolation` CI job requires real Docker controls and checks for leaked
+invocation containers. Normal compatibility jobs run OCI model/planner/unit tests
+without Docker; integration tests skip only when no explicit image was supplied.
+Image building is a deliberate preparation step and may access registries. Test
+invocations never pull. Remove the locally built image by its printed ID when no
+longer needed. See the [backend contract](../../architecture/oci-container-runtime-v1.md).

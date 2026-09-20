@@ -76,3 +76,25 @@ jobs:
       - run: uv sync --locked
       # Generate once per target: verifies target-specific dependency resolution in Docker.
       - run: uv run --locked python scripts/smoke_container.py --python-version "${{ matrix.python }}"
+
+  oci-isolation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: '3.14'
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv build
+      - name: Deliberately build local fixture worker image
+        run: uv run --locked python scripts/build_worker_image.py dist/*.whl --output /tmp/apizr-worker-image.json
+      - name: Exercise actual Linux container boundaries
+        env:
+          APIZR_TEST_OCI_IMAGE: /tmp/apizr-worker-image.json
+        run: uv run --locked pytest tests/oci --cov=apizr.oci --cov-report=term-missing --cov-fail-under=90
+      - name: Installed wheel supports explicit OCI execution
+        run: uv run --locked python scripts/smoke_wheel.py dist/*.whl --runtime-image-config /tmp/apizr-worker-image.json
+      - name: Assert no invocation containers remain
+        if: always()
+        run: test -z "$(docker ps -aq --filter label=org.apizr.execution=oci-v1)"

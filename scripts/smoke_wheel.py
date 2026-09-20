@@ -13,6 +13,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wheel", type=Path)
     parser.add_argument("--python", default=sys.executable)
+    parser.add_argument(
+        "--runtime-image-config", type=Path, help="Explicit local OCI test image JSON"
+    )
     args = parser.parse_args()
     wheel = args.wheel.resolve()
     with zipfile.ZipFile(wheel) as archive:
@@ -346,6 +349,40 @@ asyncio.run(check())
                     check=True,
                     timeout=30,
                 )
+        if args.runtime_image_config:
+            image_config = json.loads(args.runtime_image_config.read_text())
+            container_policy = root / "container-policy.json"
+            container_policy.write_text('{"schema_version":"apizr.execution/v2"}')
+            for target in (source, local_notebook):
+                container_result = subprocess.run(
+                    [
+                        str(cli),
+                        "execute",
+                        str(target),
+                        "total",
+                        "--arguments",
+                        str(arguments),
+                        "--policy",
+                        str(container_policy),
+                        "--runtime-image",
+                        image_config["image"],
+                        "--runtime-platform",
+                        image_config["platform"],
+                    ],
+                    cwd=root,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    timeout=30,
+                )
+                assert json.loads(container_result.stdout) == {
+                    "schema_version": "apizr.execution-result/v2",
+                    "status": "success",
+                    "value": 3,
+                }, container_result.stdout
+            print(
+                "Installed-wheel OCI Python/notebook execution passed outside checkout."
+            )
         result = subprocess.run(
             [
                 str(cli),
