@@ -369,3 +369,41 @@ def test_real_worker_verifies_symbol_even_for_internally_consistent_ir(worker_im
     provider = Observed()
     assert execute(runtime, raw, {}, provider=provider).status == "binding_failed"
     provider.assert_removed()
+
+
+@pytest.mark.timeout(180)
+@pytest.mark.parametrize(
+    "source,status,repetitions,limits",
+    [
+        (
+            "def f():\n chunks=[]\n for i in range(512): chunks.append(bytearray(1024*1024))\n return len(chunks)",
+            "resource_limit",
+            10,
+            {"wall_time_ms": 10000},
+        ),
+        (
+            "import os\ndef f(): os._exit(23)",
+            "worker_failed",
+            5,
+            {"wall_time_ms": 10000},
+        ),
+        # SIGKILL-style exit without Docker OOM evidence is not a resource limit.
+        (
+            "import os\ndef f(): os._exit(137)",
+            "worker_failed",
+            3,
+            {"wall_time_ms": 10000},
+        ),
+        ("def f():\n while True: pass", "timeout", 5, {"wall_time_ms": 1200}),
+    ],
+    ids=["oom", "ordinary", "exit137", "timeout"],
+)
+def test_repeated_terminal_classification(
+    worker_image, source, status, repetitions, limits
+):
+    for sample in range(repetitions):
+        result, provider = invoke(
+            worker_image, source, limits=limits, resources={"memory_bytes": 100663296}
+        )
+        assert result.status == status, (sample, result)
+        provider.assert_removed()

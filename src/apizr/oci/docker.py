@@ -1,14 +1,16 @@
 """Docker Engine launcher for the OCI-container contract; never pulls images."""
 
+import math
 import os
 import subprocess
+import time
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from .model import ContainerPlan, RuntimeImage
-from .provider import ProviderError
+from .provider import ContainerState, ProviderError
 
 
 class HostInfo(BaseModel):
@@ -33,15 +35,25 @@ class ImageInfo(BaseModel):
     Config: ImageConfig
 
 
-class ContainerState(BaseModel):
+class DockerState(BaseModel):
+    # Inspect includes other documented fields which are not needed here.
+    model_config = ConfigDict(strict=True)
+
+    Running: bool
+    Status: str
     OOMKilled: bool
+    ExitCode: int
 
 
 class DockerProvider:
     identity = "apizr.docker-engine/v1"
 
     def run(
-        self, arguments: Sequence[str], *, environment: Mapping[str, str] | None = None
+        self,
+        arguments: Sequence[str],
+        *,
+        environment: Mapping[str, str] | None = None,
+        timeout: float = 10,
     ) -> bytes:
         try:
             result = subprocess.run(
@@ -50,7 +62,7 @@ class DockerProvider:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.DEVNULL,
                 env=environment,
-                timeout=10,
+                timeout=timeout,
                 check=True,
             )
             return result.stdout
@@ -162,14 +174,40 @@ class DockerProvider:
     def command(self, name: str) -> Sequence[str]:
         return ["docker", "start", "--attach", "--interactive", name]
 
-    def oom_killed(self, name: str) -> bool:
-        try:
-            return ContainerState.model_validate_json(
-                self.run(["inspect", "--format", "{{json .State}}", name])
-            ).OOMKilled
-        except (ProviderError, ValueError):
-            # Absence of reliable evidence must never be reported as an OOM.
-            return False
+    def final_state(self, name: str, *, timeout: float = 1.0) -> ContainerState | None:
+        """Observe terminal evidence for at most one second by default.
+
+        Attach completion need not coincide with Docker's terminal/OOM metadata.
+        The observation budget includes inspect calls, not capability wall time.
+        """
+        if not math.isfinite(timeout) or timeout <= 0:
+            raise ValueError("Positive finite observation timeout required")
+        deadline = time.monotonic() + timeout
+        terminal = None
+        while (remaining := deadline - time.monotonic()) > 0:
+            try:
+                state = DockerState.model_validate_json(
+                    self.run(
+                        ["inspect", "--format", "{{json .State}}", name],
+                        timeout=min(0.25, remaining),
+                    )
+                )
+                evidence = ContainerState(
+                    state.Running, state.Status, state.OOMKilled, state.ExitCode
+                )
+                if evidence.terminal:
+                    terminal = evidence
+                    # Exit 137 only extends observation; it NEVER proves OOM.
+                    # Exit 0 without a protocol result is also inconclusive.
+                    if evidence.oom_killed or evidence.exit_code not in {0, 137}:
+                        return evidence
+            except (ProviderError, ValueError):
+                # Unavailable/invalid evidence cannot turn a failure into OOM.
+                pass
+            remaining = deadline - time.monotonic()
+            if remaining > 0:
+                time.sleep(min(0.05, remaining))
+        return terminal
 
     def remove(self, name: str) -> None:
         # rm -f terminates the container namespace, including setsid descendants.

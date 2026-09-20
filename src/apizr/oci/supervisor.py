@@ -77,8 +77,10 @@ def execute(
                     runtime.policy.limits.wall_time_ms,
                     runtime.policy.limits.max_output_bytes,
                 )
-                if result.status == "worker_failed" and provider.oom_killed(name):
-                    return ContainerResult(status="resource_limit")
+                if result.status == "worker_failed":
+                    state = provider.final_state(name)
+                    if state is not None and state.terminal and state.oom_killed:
+                        return ContainerResult(status="resource_limit")
                 return ContainerResult(status=result.status, value=result.value)
             finally:
                 provider.remove(name)

@@ -140,25 +140,6 @@ def test_create_has_no_escape_hatches_or_environment_values(monkeypatch, tmp_pat
 
 
 @pytest.mark.parametrize(
-    "state,expected",
-    [
-        (b'{"OOMKilled":true}', True),
-        (b'{"OOMKilled":false}', False),
-        (b"{}", False),
-        (None, False),
-    ],
-)
-def test_oom_requires_provider_evidence(monkeypatch, state, expected):
-    def run(*args, **kwargs):
-        if state is None:
-            raise ProviderError()
-        return state
-
-    monkeypatch.setattr(DockerProvider, "run", run)
-    assert DockerProvider().oom_killed("test") is expected
-
-
-@pytest.mark.parametrize(
     "scenario", ["success", "already_absent", "retry", "unreachable", "still_present"]
 )
 def test_cleanup_retries_and_reports_failure(monkeypatch, scenario):
