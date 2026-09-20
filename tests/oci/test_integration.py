@@ -111,16 +111,16 @@ def f():
 
 def test_real_network_deny_with_host_listener(worker_image):
     with socket.socket() as listener:
-        listener.bind(("0.0.0.0", 0))
+        host_address = socket.gethostbyname(socket.gethostname())
+        listener.bind((host_address, 0))
         listener.listen()
         port = listener.getsockname()[1]
-        # Docker Desktop host alias plus the standard Linux bridge gateway and
-        # host's own resolved address. All attempts use real sockets in the container.
-        hosts = [
-            "host.docker.internal",
-            "172.17.0.1",
-            socket.gethostbyname(socket.gethostname()),
-        ]
+        # Positive host-side control: the exact address/port really accepts TCP.
+        # Bind one interface only, never expose a test listener on all interfaces.
+        with socket.create_connection((host_address, port), timeout=1):
+            accepted, _ = listener.accept()
+            accepted.close()
+        hosts = [host_address]
         source = f"""import socket
 def f():
     results = []
