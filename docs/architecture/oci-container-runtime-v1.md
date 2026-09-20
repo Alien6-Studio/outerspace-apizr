@@ -2,7 +2,8 @@
 
 This second backend executes one selected READY capability in a fresh Linux
 container. It is available through `apizr execute` and `apizr.oci` Python APIs.
-REST/MCP generation and their governed local-process bundles do not use it.
+[Governed REST/MCP OCI bundles](governed-oci-transports-v2.md) reuse this backend
+when explicitly selected. Direct and local-process generation remain unchanged.
 
 ## Boundaries and versions
 
@@ -182,5 +183,5 @@ fail, rather than silently skipping security checks.
 
 REST/MCP direct and governed output, execution v1 goldens, Capability IR,
 Readiness, Interface Contract and the legacy generator remain byte-compatible.
-Transport integration, custom seccomp/subprocess prohibition, microVM isolation,
+Custom seccomp/subprocess prohibition, microVM isolation,
 image publication/acquisition UX and resource scheduling remain deferred.

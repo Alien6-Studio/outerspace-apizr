@@ -180,3 +180,5 @@ alongside all existing quality/security/coverage gates.
 [Issue #44](https://github.com/Alien6-Studio/outerspace-apizr/issues/44) is the
 opt-in transport integration addressed here. [Issue #45](https://github.com/Alien6-Studio/outerspace-apizr/issues/45)
 remains open for genuine stronger host and detached-descendant containment.
+
+An independent [v2 OCI transport bridge](governed-oci-transports-v2.md) is now available through explicit v2 policy/image options. This page and existing v1 bundles retain their local-process semantics.

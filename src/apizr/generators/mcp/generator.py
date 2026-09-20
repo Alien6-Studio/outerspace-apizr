@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from apizr.execution.policy import ExecutionPolicy
+    from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from importlib.resources import files
 from pathlib import Path, PurePosixPath
 
@@ -47,8 +48,17 @@ def render(
     *,
     executable: bytes | None = None,
     select: Sequence[str] | None = None,
-    execution_policy: "ExecutionPolicy | None" = None,
+    execution_policy: "ExecutionPolicy | ExecutionPolicyV2 | None" = None,
+    runtime_image: "RuntimeImage | None" = None,
 ) -> dict[str, bytes]:
+    from apizr.oci.model import ExecutionPolicyV2
+
+    if runtime_image is not None and not isinstance(
+        execution_policy, ExecutionPolicyV2
+    ):
+        raise ValueError("Runtime image requires an OCI v2 execution policy")
+    if isinstance(execution_policy, ExecutionPolicyV2) and runtime_image is None:
+        raise ValueError("OCI execution requires explicit immutable image and platform")
     contract = plan(inspection, source, executable=executable, select=select)
     executable = source if contract.source.kind == "python" else executable
     if executable is None:
@@ -83,6 +93,19 @@ def render(
         },
     )
     artifacts["apizr-mcp.json"] = json_bytes(manifest.model_dump(mode="json"))
+    if isinstance(execution_policy, ExecutionPolicyV2):
+        from apizr.governed_oci.embedding import govern as govern_oci
+
+        assert runtime_image is not None
+        return govern_oci(
+            artifacts,
+            inspection,
+            source,
+            executable,
+            execution_policy,
+            runtime_image,
+            "mcp",
+        )
     if execution_policy is not None:
         from apizr.governed.embedding import govern
 
@@ -99,7 +122,8 @@ def generate(
     *,
     executable: bytes | None = None,
     select: Sequence[str] | None = None,
-    execution_policy: "ExecutionPolicy | None" = None,
+    execution_policy: "ExecutionPolicy | ExecutionPolicyV2 | None" = None,
+    runtime_image: "RuntimeImage | None" = None,
 ) -> tuple[str, ...]:
     artifacts = render(
         inspection,
@@ -107,6 +131,7 @@ def generate(
         executable=executable,
         select=select,
         execution_policy=execution_policy,
+        runtime_image=runtime_image,
     )
     write_bundle(output, artifacts)
     return tuple(artifacts)

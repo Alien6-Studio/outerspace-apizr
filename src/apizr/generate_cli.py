@@ -20,7 +20,13 @@ def main(argv: Sequence[str]) -> int:
         target.add_argument(
             "--execution-policy",
             type=Path,
-            help="Opt into governed local-process execution of trusted code",
+            help="Opt into local-process v1 or OCI-container v2 governed execution",
+        )
+        target.add_argument(
+            "--runtime-image", help="Full immutable local sha256 image ID; OCI only"
+        )
+        target.add_argument(
+            "--runtime-platform", choices=["linux/amd64", "linux/arm64"]
         )
         target.add_argument("--select", help="Comma-separated capability names or IDs")
     args = parser.parse_args(argv)
@@ -62,12 +68,34 @@ def main(argv: Sequence[str]) -> int:
             selected = [part.strip() for part in args.select.split(",")]
             if not all(selected):
                 raise ValueError("Selection requires non-empty capability names or IDs")
-        policy = None
-        if args.execution_policy is not None:
-            from apizr.execution.policy import ExecutionPolicy
+        from apizr.execution.policy import ExecutionPolicy
+        from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 
-            policy = ExecutionPolicy.model_validate_json(
-                args.execution_policy.read_bytes()
+        policy: ExecutionPolicy | ExecutionPolicyV2 | None = None
+        runtime_image = None
+        if args.execution_policy is not None:
+            with args.execution_policy.open("rb") as policy_file:
+                policy_bytes = policy_file.read(1048577)
+            if len(policy_bytes) > 1048576:
+                raise ValueError("Execution policy exceeds size limit")
+            document = json.loads(policy_bytes)
+            if (
+                isinstance(document, dict)
+                and document.get("schema_version") == "apizr.execution/v2"
+            ):
+                policy = ExecutionPolicyV2.model_validate_json(policy_bytes)
+                if not args.runtime_image or not args.runtime_platform:
+                    raise ValueError(
+                        "OCI policy requires --runtime-image and --runtime-platform"
+                    )
+                runtime_image = RuntimeImage(
+                    image=args.runtime_image, platform=args.runtime_platform
+                )
+            else:
+                policy = ExecutionPolicy.model_validate_json(policy_bytes)
+        if runtime_image is None and (args.runtime_image or args.runtime_platform):
+            raise ValueError(
+                "Runtime image/platform require an OCI v2 execution policy"
             )
         names = generate(
             inspected,
@@ -76,6 +104,7 @@ def main(argv: Sequence[str]) -> int:
             executable=executable,
             select=selected,
             execution_policy=policy,
+            runtime_image=runtime_image,
         )
     except (GenerationRefused, ContractError) as error:
         print(f"apizr generate {args.target}: {error}", file=sys.stderr)
@@ -93,8 +122,19 @@ def main(argv: Sequence[str]) -> int:
                     {
                         "execution": {
                             "mode": "governed",
-                            "policy_version": "apizr.execution/v1",
-                            "backend_version": "apizr.local-process/v1",
+                            "backend": policy.backend,
+                            "policy_version": policy.schema_version,
+                            "backend_version": "apizr.oci-container/v1"
+                            if runtime_image
+                            else "apizr.local-process/v1",
+                            **(
+                                {
+                                    "provider": "docker-engine",
+                                    "bundle_version": "apizr.execution-bundle/v2",
+                                }
+                                if runtime_image
+                                else {}
+                            ),
                         }
                     }
                     if policy is not None

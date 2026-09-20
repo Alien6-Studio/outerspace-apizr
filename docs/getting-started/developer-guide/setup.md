@@ -110,8 +110,10 @@ The independent OCI isolation suite needs an explicitly built local worker image
 ```sh
 uv build
 uv run python scripts/build_worker_image.py dist/*.whl --output /tmp/apizr-worker-image.json
-APIZR_TEST_OCI_IMAGE=/tmp/apizr-worker-image.json uv run pytest tests/oci \
-  --cov=apizr.oci --cov-report=term-missing --cov-fail-under=90
+APIZR_TEST_OCI_IMAGE=/tmp/apizr-worker-image.json uv run pytest tests/oci tests/governed_oci \
+  --cov=apizr.oci --cov=apizr.governed_oci --cov-report=term-missing --cov-fail-under=90
+uv run coverage report --include='src/apizr/oci/*' --fail-under=90
+uv run coverage report --include='src/apizr/governed_oci/*' --fail-under=90
 uv run python scripts/smoke_wheel.py dist/*.whl \
   --runtime-image-config /tmp/apizr-worker-image.json
 ```
