@@ -47,6 +47,10 @@ def _inspect(argv: Sequence[str]) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] == "execute":
+        from apizr.execute_cli import main as execute_command
+
+        return execute_command(arguments[1:])
     if arguments and arguments[0] == "inspect":
         return _inspect(arguments[1:])
     if arguments and arguments[0] == "generate":
@@ -69,6 +73,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         print(
             "Modern MCP generation: apizr generate mcp SOURCE --output-dir DIR [--select NAMES]"
+        )
+        print(
+            "Experimental trusted execution: apizr execute SOURCE CAPABILITY --arguments FILE --policy FILE"
         )
         return 0
     generate(arguments)

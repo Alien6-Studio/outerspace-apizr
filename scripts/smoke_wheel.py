@@ -85,7 +85,31 @@ print(apizr.__file__)
                 }
             )
         )
+        policy = root / "policy.json"
+        policy.write_text("{}")
+        arguments = root / "arguments.json"
+        arguments.write_text('{"values":[1,2]}')
         for target in (source, local_notebook):
+            executed = subprocess.run(
+                [
+                    str(cli),
+                    "execute",
+                    str(target),
+                    "total",
+                    "--module-name",
+                    "installed.sample",
+                    "--arguments",
+                    str(arguments),
+                    "--policy",
+                    str(policy),
+                ],
+                cwd=root,
+                check=True,
+                capture_output=True,
+                timeout=20,
+            )
+            outcome = json.loads(executed.stdout)
+            assert outcome["status"] == "success" and outcome["value"] == 3
             command = [
                 str(cli),
                 "inspect",
@@ -262,7 +286,7 @@ asyncio.run(check())
         for name in manifest["files"]:
             assert (root / "project" / name).is_file()
         print(
-            "Wheel namespace, IR/readiness, inspection and REST/MCP generation/runtime (Python/notebook), resources, license, CLI help and legacy notebook generation passed."
+            "Wheel namespace, IR/readiness, governed execution, inspection and REST/MCP generation/runtime (Python/notebook), resources, license, CLI help and legacy notebook generation passed."
         )
 
 

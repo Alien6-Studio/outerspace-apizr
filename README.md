@@ -52,6 +52,15 @@ Python SDK v2. Generation uses the same readiness and input semantics as REST;
 starting the server executes trusted source. See the [MCP guide](docs/getting-started/user-guide/mcp.md)
 for runtime setup, client calls and limits.
 
+## Governed local execution (experimental)
+
+`apizr execute SOURCE CAPABILITY --arguments args.json --policy policy.json`
+executes one trusted capability in a fresh local Python process, with wall-time,
+input/output and environment controls. It is **not a filesystem/network sandbox**.
+Unsupported requested controls are refused. See the [execution guide](docs/getting-started/user-guide/execute.md)
+for policy examples and the POSIX backend requirement. REST/MCP runtimes retain
+their current behavior.
+
 ## Notebook → API → container (legacy pipeline)
 
 ```sh

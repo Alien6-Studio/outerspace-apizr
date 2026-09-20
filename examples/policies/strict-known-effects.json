@@ -1,0 +1,1 @@
+{"backend":"local-process","effects":{"require_known":["filesystem_write","network"]},"environment":{"allow":[],"inherit":false},"filesystem":{"mode":"host"},"limits":{"max_input_bytes":1048576,"max_output_bytes":1048576,"wall_time_ms":5000},"network":{"mode":"inherit"},"schema_version":"apizr.execution/v1","subprocess":{"mode":"allow"},"working_directory":"fresh"}
