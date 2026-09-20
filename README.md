@@ -17,6 +17,18 @@ uv run apizr --help
 
 For an ordinary pip environment, `python -m pip install .` also works. Development dependencies and their exact versions are recorded in `uv.lock`.
 
+## Inspect source without running it
+
+```sh
+uv run apizr inspect example.py
+uv run apizr inspect examples/pricing.ipynb --format json
+```
+
+Inspection reports declarations and static interface readiness without importing or
+executing the input. `ready` is a contract assessment, not proof of runtime safety;
+effects remain unknown. See the [inspection guide](docs/getting-started/user-guide/inspect.md)
+for states, machine output and exit codes. The generation commands below remain independent.
+
 ## Notebook → API → container
 
 ```sh

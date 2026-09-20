@@ -5,6 +5,7 @@ This reference is for using individual interfaces or understanding their contrac
 
 | What you need | Where to look |
 | --- | --- |
+| Inspect one Python file or notebook without execution | [Inspection guide](../getting-started/user-guide/inspect.md) and [readiness policy](../architecture/capability-readiness-v1.md) |
 | Run one pipeline stage from the command line | [Python analysis](../getting-started/user-guide/code-analyzr.md), [FastAPI generation](../getting-started/user-guide/fast-apizr.md), [Docker generation](../getting-started/user-guide/dockerizr.md) |
 | Understand or call a pipeline component | [Notebook conversion](../modules/notebook-transformr.md), [Python analysis](../modules/code-analyzr.md), [FastAPI generation](../modules/fast-apizr.md), [Docker generation](../modules/dockerizr.md) |
 | Generate files through Apizr's HTTP service | [Service setup and project upload](../apis/apizr-api.md), with the stage endpoints in the same navigation group |
