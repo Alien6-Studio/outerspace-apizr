@@ -25,6 +25,8 @@ uv run coverage report --include='src/apizr/readiness/*' --fail-under=90
 uv run coverage report --include='src/apizr/generators/rest/*' --fail-under=90
 uv run coverage report --include='src/apizr/generators/mcp/*' --fail-under=90
 uv run coverage report --include='src/apizr/interfaces/*' --fail-under=90
+uv run coverage report --include='src/apizr/execution/*' --fail-under=90
+uv run coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
 uv run pre-commit run --all-files
 uv build
 uv run python scripts/smoke_wheel.py dist/*.whl
