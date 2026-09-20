@@ -84,7 +84,11 @@ relative or non-stdlib imports create unresolved local/namespace/external depend
 reasons; no files or distributions are searched. Imports within a candidate's body
 are inspected syntactically for dependency uncertainty, including nested scopes,
 without claiming a call graph. Ordinary stdlib imports are a bounded allowance,
-not a promise that their initialization succeeds.
+not a promise that their initialization succeeds. The allowed roots are frozen in
+`apizr.readiness.stdlib.STDLIB_ROOTS`, using the intersection of CPython 3.11–3.14
+stdlib catalogs. The analyzer never consults the host's stdlib catalog. New,
+removed or otherwise unlisted roots remain unresolved even if available on the
+current interpreter; changing this allowance requires policy-version review.
 
 ## Input and output contracts
 
