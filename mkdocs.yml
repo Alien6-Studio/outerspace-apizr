@@ -101,6 +101,8 @@ nav:
           - Setup: getting-started/developer-guide/setup.md
           - Migration and releases: getting-started/developer-guide/releases.md
           - Architecture:
+              - Capability IR v1: architecture/capability-ir-v1.md
+              - Capability IR verification: architecture/capability-ir-v1-verification.md
               - Legacy Behavior Contract: architecture/legacy-behavior-contract.md
               - 0.2 baseline: architecture/0.2-baseline.md
               - Artifact principles: architecture/artifact-principles.md

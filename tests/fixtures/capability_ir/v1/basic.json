@@ -1,0 +1,191 @@
+{
+  "capabilities": [
+    {
+      "availability": {
+        "evidence": "observed",
+        "value": "unconditional"
+      },
+      "decorators": [],
+      "docstring": "Calculate a value using the declared mode.",
+      "effects": {
+        "environment": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "external_service": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "filesystem_read": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "filesystem_write": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "network": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "secrets": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "state_mutation": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "subprocess": {
+          "evidence": "unknown",
+          "value": "unknown"
+        }
+      },
+      "evidence": "observed",
+      "execution": "sync",
+      "id": "python:pricing:calculate",
+      "kind": "function",
+      "name": "calculate",
+      "overloads": [],
+      "qualified_name": "calculate",
+      "signature": {
+        "parameters": [
+          {
+            "annotation": {
+              "declared": "int",
+              "evidence": "declared",
+              "form": "name"
+            },
+            "default": null,
+            "evidence": "observed",
+            "kind": "positional_only",
+            "name": "value",
+            "required": true
+          },
+          {
+            "annotation": {
+              "declared": "Literal['a', 'b']",
+              "evidence": "declared",
+              "form": "subscript"
+            },
+            "default": {
+              "declared": "'a'",
+              "evidence": "declared"
+            },
+            "evidence": "observed",
+            "kind": "keyword_only",
+            "name": "mode",
+            "required": false
+          }
+        ],
+        "returns": {
+          "annotation": {
+            "declared": "Union[int, str]",
+            "evidence": "declared",
+            "form": "subscript"
+          },
+          "enforcement": "none"
+        }
+      },
+      "source": {
+        "end_line": 6,
+        "line": 4,
+        "module": "pricing",
+        "symbol": "calculate"
+      }
+    },
+    {
+      "availability": {
+        "evidence": "observed",
+        "value": "unconditional"
+      },
+      "decorators": [],
+      "docstring": null,
+      "effects": {
+        "environment": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "external_service": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "filesystem_read": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "filesystem_write": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "network": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "secrets": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "state_mutation": {
+          "evidence": "unknown",
+          "value": "unknown"
+        },
+        "subprocess": {
+          "evidence": "unknown",
+          "value": "unknown"
+        }
+      },
+      "evidence": "observed",
+      "execution": "async",
+      "id": "python:pricing:describe",
+      "kind": "function",
+      "name": "describe",
+      "overloads": [],
+      "qualified_name": "describe",
+      "signature": {
+        "parameters": [
+          {
+            "annotation": {
+              "declared": "int | None",
+              "evidence": "declared",
+              "form": "union"
+            },
+            "default": {
+              "declared": "None",
+              "evidence": "declared"
+            },
+            "evidence": "observed",
+            "kind": "positional_or_keyword",
+            "name": "value",
+            "required": false
+          }
+        ],
+        "returns": {
+          "annotation": {
+            "declared": "str",
+            "evidence": "declared",
+            "form": "name"
+          },
+          "enforcement": "none"
+        }
+      },
+      "source": {
+        "end_line": 10,
+        "line": 9,
+        "module": "pricing",
+        "symbol": "describe"
+      }
+    }
+  ],
+  "diagnostics": [],
+  "schema_version": "apizr.capability/v1",
+  "source": {
+    "digest": {
+      "algorithm": "sha256",
+      "value": "9bf1a4effa776950696e64727ba19b88abc0578de12fd1f298db1c08d87eff4a"
+    },
+    "kind": "python",
+    "module": "pricing",
+    "transformed_digest": null
+  }
+}

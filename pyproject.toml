@@ -71,6 +71,7 @@ select = ["E4", "E7", "E9", "F", "I", "B", "C4", "PIE", "RUF100"]
 [tool.pyright]
 include = ["src/apizr", "scripts"]
 typeCheckingMode = "standard"
+strict = ["src/apizr/capabilities"]
 pythonVersion = "3.11"
 
 [tool.coverage.run]
