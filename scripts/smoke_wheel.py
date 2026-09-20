@@ -270,6 +270,7 @@ asyncio.run(check())
         rest_python = (
             rest_env / ("Scripts" if sys.platform == "win32" else "bin") / "python"
         )
+        governed_probes = {}
         for target in (source, local_notebook):
             for transport in ("rest", "mcp"):
                 output = root / ("governed-" + transport + "-" + target.suffix[1:])
@@ -335,6 +336,7 @@ async def check():
         assert not result.is_error and result.structured_content==3,result
 asyncio.run(check())
 """
+                governed_probes[transport] = probe
                 subprocess.run(
                     [
                         str(target_python),
@@ -380,8 +382,55 @@ asyncio.run(check())
                     "status": "success",
                     "value": 3,
                 }, container_result.stdout
+                for transport in ("rest", "mcp"):
+                    output = root / ("oci-" + transport + "-" + target.suffix[1:])
+                    generated = subprocess.run(
+                        [
+                            str(cli),
+                            "generate",
+                            transport,
+                            str(target),
+                            "--execution-policy",
+                            str(container_policy),
+                            "--runtime-image",
+                            image_config["image"],
+                            "--runtime-platform",
+                            image_config["platform"],
+                            "--module-name",
+                            "installed.sample",
+                            "--output-dir",
+                            str(output),
+                        ],
+                        cwd=root,
+                        check=True,
+                        capture_output=True,
+                    )
+                    assert (
+                        json.loads(generated.stdout)["execution"]["backend"]
+                        == "oci-container"
+                    )
+                    # Reuse environments already populated only from generated
+                    # requirements; neither contains outerspace-apizr.
+                    target_python = (
+                        rest_python if transport == "rest" else runtime_python
+                    )
+                    subprocess.run(
+                        [
+                            str(target_python),
+                            "-I",
+                            "-c",
+                            governed_probes[transport],
+                            str(
+                                output
+                                / ("app.py" if transport == "rest" else "server.py")
+                            ),
+                        ],
+                        cwd=root,
+                        check=True,
+                        timeout=30,
+                    )
             print(
-                "Installed-wheel OCI Python/notebook execution passed outside checkout."
+                "Installed-wheel OCI execution and standalone REST/MCP (Python/notebook) passed outside checkout."
             )
         result = subprocess.run(
             [

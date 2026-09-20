@@ -121,6 +121,7 @@ nav:
           - Execution Policy v1: architecture/execution-policy-v1.md
           - OCI container execution: architecture/oci-container-runtime-v1.md
           - Governed REST and MCP: architecture/governed-transport-runtime-v1.md
+          - OCI-governed REST and MCP: architecture/governed-oci-transports-v2.md
           - Legacy behavior contract: architecture/legacy-behavior-contract.md
           - Artifact principles: architecture/artifact-principles.md
           - Security baseline: architecture/security-baseline.md

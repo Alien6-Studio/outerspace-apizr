@@ -158,3 +158,34 @@ This v1 command does not infer project dependencies or create Docker files.
 
 See [REST generator v1](../../architecture/rest-generator-v1.md) for the exact type
 mapping, integrity checks, manifest, deterministic serialization and limitations.
+
+## Governed OCI-container mode
+
+There are three explicit modes: direct (default), governed local-process (v1
+policy), and governed OCI-container (v2 policy). Local-process bundles and their
+bytes remain unchanged and do not require Docker.
+
+Prepare a trusted local worker image as described in the
+[execution guide](execute.md#advanced-explicit-oci-container-execution), then use
+its full immutable ID and platform:
+
+```sh
+apizr generate rest sample.py --output-dir ./generated-oci \
+  --execution-policy examples/policies/container-default.json \
+  --runtime-image sha256:<full-64-character-local-image-ID> \
+  --runtime-platform linux/amd64
+```
+
+Generation works without Docker and never pulls images. Both image and platform
+are mandatory for OCI; image options with a local v1 policy are errors. Install
+`generated-oci/requirements.txt` in the server environment; Apizr itself is not
+required there. Docker CLI/Engine and the selected prepared worker image must be
+available when starting the generated server. Startup checks fail before serving
+if the provider or image is unavailable.
+
+The interface definition is identical across modes; execution changes. Every OCI
+call uses a fresh container, so globals and mutable defaults reset. The transport
+never imports user source. The capability receives the existing OCI filesystem,
+network and resource limits. Subprocesses remain permitted but contained.
+See the [v2 bridge contract](../../architecture/governed-oci-transports-v2.md) for
+the control matrix, sanitized error mappings, integrity checks and trust boundary.

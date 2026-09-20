@@ -69,7 +69,8 @@ protocol, digest chain, controls, limits and trust boundary.
 
 The independent OCI backend adds Linux container filesystem/network and resource
 boundaries. It requires a trusted Docker Engine, POSIX supervisor and an explicitly
-prepared worker image. REST/MCP governed bundles still use local-process v1.
+prepared worker image. REST/MCP generation can explicitly select this backend with a v2 policy; see
+[governed OCI transports](../../architecture/governed-oci-transports-v2.md).
 
 From the repository, deliberately build a local fixture image:
 
