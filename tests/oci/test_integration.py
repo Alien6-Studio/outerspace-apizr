@@ -2,6 +2,7 @@ import concurrent.futures
 import json
 import socket
 import subprocess
+import sys
 import time
 
 import pytest
@@ -111,16 +112,24 @@ def f():
 
 def test_real_network_deny_with_host_listener(worker_image):
     with socket.socket() as listener:
-        host_address = socket.gethostbyname(socket.gethostname())
+        # Docker Desktop forwards the host alias to host services, including
+        # loopback; Linux CI uses the concrete host interface. Avoid LAN firewall
+        # interception on Desktop while retaining a real TCP listener/control.
+        host_address = (
+            "127.0.0.1"
+            if sys.platform == "darwin"
+            else socket.gethostbyname(socket.gethostname())
+        )
         listener.bind((host_address, 0))
         listener.listen()
+        listener.settimeout(1)
         port = listener.getsockname()[1]
         # Positive host-side control: the exact address/port really accepts TCP.
         # Bind one interface only, never expose a test listener on all interfaces.
         with socket.create_connection((host_address, port), timeout=1):
             accepted, _ = listener.accept()
             accepted.close()
-        hosts = [host_address]
+        hosts = [host_address, "host.docker.internal"]
         source = f"""import socket
 def f():
     results = []
