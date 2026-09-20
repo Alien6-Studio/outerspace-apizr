@@ -93,7 +93,7 @@ nav:
       - Inspect source without running it: getting-started/user-guide/inspect.md
       - Generate a REST interface: getting-started/user-guide/rest.md
       - Generate an MCP server: getting-started/user-guide/mcp.md
-      - Execute trusted code locally: getting-started/user-guide/execute.md
+      - Execute code with a policy: getting-started/user-guide/execute.md
       - Generate a legacy API and container: getting-started/user-guide/apizr.md
       - Migrate from 0.1.x: getting-started/developer-guide/releases.md
   - Reference:
@@ -119,6 +119,7 @@ nav:
           - REST generator v1: architecture/rest-generator-v1.md
           - MCP generator v1: architecture/mcp-generator-v1.md
           - Execution Policy v1: architecture/execution-policy-v1.md
+          - OCI container execution: architecture/oci-container-runtime-v1.md
           - Governed REST and MCP: architecture/governed-transport-runtime-v1.md
           - Legacy behavior contract: architecture/legacy-behavior-contract.md
           - Artifact principles: architecture/artifact-principles.md

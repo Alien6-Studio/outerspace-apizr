@@ -64,3 +64,43 @@ and unsupported policies are refused.
 
 See [Execution Policy v1](../../architecture/execution-policy-v1.md) for the exact
 protocol, digest chain, controls, limits and trust boundary.
+
+## Advanced: explicit OCI container execution
+
+The independent OCI backend adds Linux container filesystem/network and resource
+boundaries. It requires a trusted Docker Engine, POSIX supervisor and an explicitly
+prepared worker image. REST/MCP governed bundles still use local-process v1.
+
+From the repository, deliberately build a local fixture image:
+
+```sh
+uv build
+uv run python scripts/build_worker_image.py dist/*.whl --output /tmp/worker-image.json
+```
+
+This preparation step can download the base image and hash-locked dependencies.
+It prints the immutable image ID and platform. It does not publish an image or
+include user source. Copy those values into the explicit invocation (replace the
+placeholder with the complete ID; use the platform printed by the build):
+
+```sh
+apizr execute sample.py total --arguments args.json \
+  --policy examples/policies/container-default.json \
+  --runtime-image sha256:<full-64-character-local-image-ID> \
+  --runtime-platform linux/amd64
+```
+
+Execution never pulls. Missing images return `runtime_image_unavailable`. V2
+requires `schema_version: "apizr.execution/v2"`; `{}` still selects local v1.
+The container policy defaults to network deny, read-only filesystem/bundle,
+non-root execution, 256 MiB memory, one CPU, 64 PIDs and 16 MiB `/tmp` scratch.
+Use `/tmp` for writable files. `resources.cpu_millis` expresses thousandths of one
+CPU, independently of `limits.wall_time_ms`. Environment allowlists work as in
+v1, but whole-environment inheritance and subprocess denial are unsupported.
+
+Results use `apizr.execution-result/v2`; timeout, OOM evidence (`resource_limit`),
+worker failures and cleanup failures are sanitized. Containers contain subprocesses
+and detached children, but do not prohibit process creation or establish a VM
+security boundary. The daemon, kernel and selected worker image must be trusted.
+See [OCI container runtime v1](../../architecture/oci-container-runtime-v1.md) for
+exact controls, version boundaries, failure semantics and limitations.

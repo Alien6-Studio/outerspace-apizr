@@ -21,7 +21,8 @@ Modules separate typed policy/backend capabilities (`policy.py`), bound plan and
 result (`model.py`), validation (`planner.py`), canonical serialization, framed
 JSON (`protocol.py`), parent supervision and worker execution. `execute_cli.py`
 connects the explicit command to these APIs. No backend registry or plugin system
-is introduced; a stronger future backend must declare its own version and actual
+is introduced into v1; the separate [OCI backend](oci-container-runtime-v1.md)
+declares its own version and actual
 controls without changing interface semantics.
 
 | Contract | Version |
