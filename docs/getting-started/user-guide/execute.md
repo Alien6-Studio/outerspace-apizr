@@ -3,7 +3,8 @@
 **Experimental. This command executes trusted Python source. It is not a
 filesystem or network sandbox.** It requires a POSIX host (Linux or macOS) for the
 local-process backend. Static inspection and REST/MCP generation still do not run
-source, and their generated runtimes have not been migrated to this backend.
+source. Generated REST/MCP runtimes remain direct by default and can
+[explicitly opt into this backend](../../architecture/governed-transport-runtime-v1.md).
 
 Create `sample.py`:
 

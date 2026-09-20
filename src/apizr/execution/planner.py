@@ -5,7 +5,13 @@ from apizr.inspection import Inspection
 from apizr.interfaces.planner import plan as interface_plan
 
 from .model import RuntimePlan
-from .policy import ExecutionPolicy, PolicyRefused, check_controls, local_capabilities
+from .policy import (
+    BackendCapabilities,
+    ExecutionPolicy,
+    PolicyRefused,
+    check_controls,
+    local_capabilities,
+)
 from .serialization import digest
 
 
@@ -16,9 +22,17 @@ def plan(
     policy: ExecutionPolicy,
     *,
     executable: bytes | None = None,
+    check_availability: bool = True,
 ) -> RuntimePlan:
     policy = ExecutionPolicy.model_validate(policy.model_dump(mode="json"))
-    check_controls(policy, local_capabilities())
+    # Generation targets the backend contract, independently of the build host.
+    # Local execution and worker validation always check actual availability.
+    check_controls(
+        policy,
+        local_capabilities()
+        if check_availability
+        else BackendCapabilities(available=True),
+    )
     shared = interface_plan(
         inspection, source, executable=executable, select=[capability]
     )

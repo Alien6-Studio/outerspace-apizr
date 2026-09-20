@@ -259,6 +259,93 @@ asyncio.run(check())
                 cwd=root,
                 check=True,
             )
+        # Governed bundles run in environments with no Apizr installation.
+        rest_env = root / "governed-rest-env"
+        subprocess.run(
+            ["uv", "venv", "--python", args.python, str(rest_env)], check=True
+        )
+        rest_python = (
+            rest_env / ("Scripts" if sys.platform == "win32" else "bin") / "python"
+        )
+        for target in (source, local_notebook):
+            for transport in ("rest", "mcp"):
+                output = root / ("governed-" + transport + "-" + target.suffix[1:])
+                generated = subprocess.run(
+                    [
+                        str(cli),
+                        "generate",
+                        transport,
+                        str(target),
+                        "--module-name",
+                        "installed.sample",
+                        "--execution-policy",
+                        str(policy),
+                        "--output-dir",
+                        str(output),
+                    ],
+                    cwd=root,
+                    check=True,
+                    capture_output=True,
+                )
+                assert json.loads(generated.stdout)["execution"]["mode"] == "governed"
+                target_python = rest_python if transport == "rest" else runtime_python
+                subprocess.run(
+                    [
+                        "uv",
+                        "pip",
+                        "install",
+                        "--python",
+                        str(target_python),
+                        "-r",
+                        str(output / "requirements.txt"),
+                    ],
+                    check=True,
+                )
+                if transport == "rest":
+                    probe = """import asyncio, importlib.util, json, runpy, sys
+assert importlib.util.find_spec('apizr') is None
+app = runpy.run_path(sys.argv[1])['app']
+assert 'installed.sample' not in sys.modules
+async def check():
+    messages=[]
+    async def receive():
+        return {'type':'http.request','body':b'{"values":[1,2]}','more_body':False}
+    async def send(message): messages.append(message)
+    await app({'type':'http','asgi':{'version':'3.0'},'http_version':'1.1',
+        'method':'POST','scheme':'http','path':'/capabilities/total','raw_path':b'/capabilities/total',
+        'query_string':b'','headers':[(b'content-type',b'application/json')],
+        'root_path':'','client':('127.0.0.1',1),'server':('localhost',80)},receive,send)
+    assert messages[0]['status']==200,messages
+    assert json.loads(b''.join(m.get('body',b'') for m in messages))==3
+asyncio.run(check())
+assert 'installed.sample' not in sys.modules
+"""
+                else:
+                    probe = """import asyncio, importlib.util, sys
+from mcp import Client, StdioServerParameters
+assert importlib.util.find_spec('apizr') is None
+assert importlib.util.find_spec('fastapi') is None
+async def check():
+    async with Client(StdioServerParameters(command=sys.executable,args=[sys.argv[1],'--transport','stdio'])) as client:
+        assert client.protocol_version=='2026-07-28'
+        result=await client.call_tool('total',{'values':[1,2]})
+        assert not result.is_error and result.structured_content==3,result
+asyncio.run(check())
+"""
+                subprocess.run(
+                    [
+                        str(target_python),
+                        "-I",
+                        "-c",
+                        probe,
+                        str(
+                            output / ("app.py" if transport == "rest" else "server.py")
+                        ),
+                    ],
+                    cwd=root,
+                    check=True,
+                    timeout=30,
+                )
         result = subprocess.run(
             [
                 str(cli),
@@ -286,7 +373,7 @@ asyncio.run(check())
         for name in manifest["files"]:
             assert (root / "project" / name).is_file()
         print(
-            "Wheel namespace, IR/readiness, governed execution, inspection and REST/MCP generation/runtime (Python/notebook), resources, license, CLI help and legacy notebook generation passed."
+            "Wheel namespace, IR/readiness, governed execution, inspection and direct/governed standalone REST/MCP generation/runtime (Python/notebook), resources, license, CLI help and legacy notebook generation passed."
         )
 
 
