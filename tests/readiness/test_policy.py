@@ -237,3 +237,13 @@ def test_shared_discovery_inputs_have_consistent_assessment_membership(case):
             "async_generator": State.UNSUPPORTED,
         }
         assert inspection.readiness.assessments[0].state == expected[case["id"]]
+
+
+def test_dependency_policy_is_independent_of_host_stdlib_catalog(monkeypatch):
+    import sys
+
+    source = "import math\nimport compression\ndef f(x: int): return x\n"
+    before = inspect_source(source, module_name="stdlib_policy")
+    monkeypatch.setattr(sys, "stdlib_module_names", frozenset({"compression"}))
+    after = inspect_source(source, module_name="stdlib_policy")
+    assert before == after

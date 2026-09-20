@@ -1,9 +1,10 @@
 """Bounded lexical evidence; no imports, evaluation or filesystem discovery."""
 
 import ast
-import sys
 from collections import defaultdict
 from dataclasses import dataclass
+
+from .stdlib import STDLIB_ROOTS
 
 Function = ast.FunctionDef | ast.AsyncFunctionDef
 TYPING_NAMES = {
@@ -269,9 +270,7 @@ def unresolved_import(node: ast.Import | ast.ImportFrom) -> bool:
     if isinstance(node, ast.ImportFrom):
         return (
             bool(node.level)
-            or (node.module or "").split(".")[0] not in sys.stdlib_module_names
+            or (node.module or "").split(".")[0] not in STDLIB_ROOTS
             or any(a.name == "*" for a in node.names)
         )
-    return any(
-        alias.name.split(".")[0] not in sys.stdlib_module_names for alias in node.names
-    )
+    return any(alias.name.split(".")[0] not in STDLIB_ROOTS for alias in node.names)
