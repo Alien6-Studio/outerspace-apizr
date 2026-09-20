@@ -1,16 +1,12 @@
-"""Validate bound artifacts and consume eligibility; never analyze user source."""
+"""REST route planning around the shared validated inspection boundary."""
 
 from collections.abc import Sequence
 
-from apizr.capabilities.model import Digest
 from apizr.inspection import Inspection
+from apizr.interfaces.planner import GenerationRefused as GenerationRefused
+from apizr.interfaces.planner import plan as interface_plan
 
-from .model import Endpoint, Input, RestPlan, TypeSpec
-from .schema import lower
-
-
-class GenerationRefused(ValueError):
-    """Selected declarations lack readiness eligibility; nothing may be emitted."""
+from .model import Endpoint, RestPlan
 
 
 def plan(
@@ -20,114 +16,11 @@ def plan(
     executable: bytes | None = None,
     select: Sequence[str] | None = None,
 ) -> RestPlan:
-    # Revalidate even objects made with model_construct/model_copy bypasses.
-    inspected = Inspection.model_validate(inspection.model_dump(mode="json"))
-    ir = inspected.capability_ir
-    readiness = inspected.readiness
-    if Digest.of_bytes(source) != ir.source.digest:
-        raise ValueError("Source bytes do not match the inspected source digest")
-    if ir.source.kind == "python":
-        if executable is not None and executable != source:
-            raise ValueError("Python executable must be the exact inspected source")
-        executable = source
-    if executable is None or Digest.of_bytes(executable) != (
-        ir.source.transformed_digest or ir.source.digest
-    ):
-        raise ValueError("Executable bytes do not match the inspected Python digest")
-    capabilities = {c.id: c for c in ir.capabilities}
-    assessments = {a.capability_id: a for a in readiness.assessments}
-    declarations = set(capabilities) | {
-        f"python:{d.source.module}:{d.source.symbol}" for d in ir.diagnostics
-    }
-    if declarations != set(assessments):
-        raise ValueError("Readiness identities do not cover the IR declarations")
-    for identity, assessment in assessments.items():
-        capability = capabilities.get(identity)
-        if assessment.in_ir != (capability is not None):
-            raise ValueError("Readiness IR membership does not match the document")
-        if capability and (
-            assessment.source != capability.source
-            or assessment.effects != capability.effects
-        ):
-            raise ValueError("Readiness capability evidence does not match the IR")
-    if not assessments:
-        raise ValueError("No callable declarations to generate")
-    by_name = {a.source.symbol: a.capability_id for a in assessments.values()}
-    if select is None:
-        chosen = set(assessments)
-    else:
-        if not select:
-            raise ValueError("Selection cannot be empty")
-        chosen: set[str] = set()
-        for name in select:
-            identity = by_name.get(name, name)
-            if identity not in assessments:
-                raise ValueError(f"Unknown capability selection: {name}")
-            chosen.add(identity)
-    rejected = [
-        assessments[i]
-        for i in sorted(chosen)
-        if not assessments[i].can_generate_interface
-    ]
-    if rejected:
-        details: list[str] = []
-        for assessment in rejected:
-            codes = sorted(
-                {
-                    r.code.value
-                    for dimension in (
-                        assessment.dimensions.binding,
-                        assessment.dimensions.execution,
-                        assessment.dimensions.inputs,
-                        assessment.dimensions.outputs,
-                    )
-                    for r in dimension.reasons
-                }
-            )
-            details.append(
-                f"{assessment.source.symbol}: {assessment.state.value} ({', '.join(codes)})"
-            )
-        raise GenerationRefused(
-            "Generation refused; select only eligible capabilities: "
-            + "; ".join(details)
-        )
-    endpoints: list[Endpoint] = []
-    for identity in sorted(chosen):
-        capability = capabilities[identity]
-        if capability.execution not in ("sync", "async"):
-            raise ValueError("Inconsistent eligible IR execution form")
-        assessment = assessments[identity]
-        # Readiness already records when output semantics are unresolved. Do not
-        # resolve aliases or pretend this documentation adds return enforcement.
-        returns = (
-            TypeSpec(kind="any")
-            if assessment.dimensions.outputs.reasons
-            else lower(capability.signature.returns.annotation)
-        )
-        endpoints.append(
-            Endpoint(
-                capability_id=identity,
-                name=capability.name,
-                route=f"/capabilities/{capability.name}",
-                execution="async" if capability.execution == "async" else "sync",
-                parameters=tuple(
-                    Input(
-                        name=p.name,
-                        kind=p.kind,
-                        required=p.required,
-                        type=lower(p.annotation),
-                    )
-                    for p in capability.signature.parameters
-                ),
-                returns=returns,
-                description=capability.docstring,
-            )
-        )
+    contract = interface_plan(inspection, source, executable=executable, select=select)
     return RestPlan(
-        source=ir.source,
-        executable_digest=Digest.of_bytes(executable),
-        executable_path="source/" + "/".join(ir.source.module.split(".")) + ".py",
-        ir_digest=inspected.ir_digest,
-        readiness_digest=inspected.readiness_digest,
-        endpoints=tuple(endpoints),
+        **contract.model_dump(exclude={"capabilities"}),
+        endpoints=tuple(
+            Endpoint(**c.model_dump(), route=f"/capabilities/{c.name}")
+            for c in contract.capabilities
+        ),
     )

@@ -12,10 +12,12 @@ source → Capability IR v1 → Readiness v1 → REST plan
 
 ## Boundary and versions
 
-`apizr.generators.rest` contains typed plans, IR type lowering, static OpenAPI
-construction, deterministic serialization, bundle rendering and exclusive output
-handling. Its standalone runtime adapter is copied as source into the bundle.
-The generator reads that adapter resource; it does not import FastAPI or import
+`apizr.generators.rest` contains REST plans, static OpenAPI construction and bundle
+rendering. It uses `apizr.interfaces` for IR type lowering, invocation contracts,
+canonical serialization, exclusive output and framework-neutral runtime checks.
+The standalone adapter is assembled from shared runtime functions and the REST
+transport layer; the original REST v1 artifact bytes remain unchanged.
+The generator reads those adapter resources; it does not import FastAPI or import
 or execute the user's source. The IR/readiness packages do not load the generator.
 
 `apizr.rest/v1` versions the REST plan and manifest. The identifiers

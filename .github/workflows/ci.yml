@@ -41,6 +41,8 @@ jobs:
       - run: uv run --locked coverage report --include='src/apizr/capabilities/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/readiness/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/generators/rest/*' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/generators/mcp/*' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/interfaces/*' --fail-under=90
 
   package:
     runs-on: ubuntu-latest

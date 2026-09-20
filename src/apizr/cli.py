@@ -67,6 +67,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(
             "Modern REST generation: apizr generate rest SOURCE --output-dir DIR [--select NAMES]"
         )
+        print(
+            "Modern MCP generation: apizr generate mcp SOURCE --output-dir DIR [--select NAMES]"
+        )
         return 0
     generate(arguments)
     return 0

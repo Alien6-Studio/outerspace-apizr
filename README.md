@@ -41,6 +41,17 @@ artifact manifest. It accepts only readiness-approved contracts; starting the
 application executes trusted bundled source. See the [REST guide](docs/getting-started/user-guide/rest.md)
 for selection, request semantics and limits. The legacy API/container pipeline below remains available.
 
+## Generate MCP Tools from the same contract
+
+```sh
+uv run apizr generate mcp examples/pricing.ipynb --module-name project.pricing --output-dir .output/mcp
+```
+
+The standalone bundle supports stdio and Streamable HTTP through the official MCP
+Python SDK v2. Generation uses the same readiness and input semantics as REST;
+starting the server executes trusted source. See the [MCP guide](docs/getting-started/user-guide/mcp.md)
+for runtime setup, client calls and limits.
+
 ## Notebook → API → container (legacy pipeline)
 
 ```sh

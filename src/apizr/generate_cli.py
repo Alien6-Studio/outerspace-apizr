@@ -1,4 +1,4 @@
-"""Modern generation orchestration; analysis stays upstream of REST planning."""
+"""Modern generation orchestration; analysis stays upstream of backend planning."""
 
 import argparse
 import json
@@ -10,23 +10,32 @@ from pathlib import Path
 def main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(prog="apizr generate")
     targets = parser.add_subparsers(dest="target", required=True)
-    rest = targets.add_parser("rest", help="Generate a static REST/OpenAPI bundle")
-    rest.add_argument("source", type=Path)
-    rest.add_argument("--output-dir", type=Path, required=True)
-    rest.add_argument("--module-name")
-    rest.add_argument("--select", help="Comma-separated capability names or IDs")
+    for name in ("rest", "mcp"):
+        target = targets.add_parser(
+            name, help=f"Generate a static {name.upper()} bundle"
+        )
+        target.add_argument("source", type=Path)
+        target.add_argument("--output-dir", type=Path, required=True)
+        target.add_argument("--module-name")
+        target.add_argument("--select", help="Comma-separated capability names or IDs")
     args = parser.parse_args(argv)
     from apizr.capabilities import document_digest
-    from apizr.generators.rest import generate
-    from apizr.generators.rest.planner import GenerationRefused
-    from apizr.generators.rest.schema import ContractError
+
+    if args.target == "rest":
+        from apizr.generators.rest import generate
+    else:
+        from apizr.generators.mcp import generate
     from apizr.inspection import Inspection, inspect_source
+    from apizr.interfaces.planner import GenerationRefused
+    from apizr.interfaces.schema import ContractError
     from apizr.readiness import assess, report_digest
 
     try:
         module_name = args.module_name or args.source.stem
         if args.source.suffix not in {".py", ".ipynb"}:
-            raise ValueError("REST generation supports one .py or .ipynb file")
+            raise ValueError(
+                f"{args.target.upper()} generation supports one .py or .ipynb file"
+            )
         raw = args.source.read_bytes()
         executable = raw
         if args.source.suffix == ".py":
@@ -52,13 +61,16 @@ def main(argv: Sequence[str]) -> int:
             inspected, raw, args.output_dir, executable=executable, select=selected
         )
     except (GenerationRefused, ContractError) as error:
-        print(f"apizr generate rest: {error}", file=sys.stderr)
+        print(f"apizr generate {args.target}: {error}", file=sys.stderr)
         return 1
     except (OSError, ValueError, SyntaxError, UnicodeError, RecursionError) as error:
         message = error.msg if isinstance(error, SyntaxError) else str(error)
-        print(f"apizr generate rest: {message}", file=sys.stderr)
+        print(f"apizr generate {args.target}: {message}", file=sys.stderr)
         return 2
     print(
-        json.dumps({"schema_version": "apizr.rest/v1", "files": names}, sort_keys=True)
+        json.dumps(
+            {"schema_version": f"apizr.{args.target}/v1", "files": names},
+            sort_keys=True,
+        )
     )
     return 0

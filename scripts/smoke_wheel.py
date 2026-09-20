@@ -21,6 +21,9 @@ def main():
         assert "apizr/capabilities/model.py" in names
         assert "apizr/readiness/model.py" in names
         assert "apizr/generators/rest/runtime.py" in names
+        assert "apizr/generators/rest/templates/preamble.txt" in names
+        assert "apizr/interfaces/runtime.py" in names
+        assert "apizr/generators/mcp/runtime.py" in names
         assert not any(name == "src.py" or name.startswith("src/") for name in names)
         assert any(name.endswith(".dist-info/licenses/LICENSE") for name in names)
         assert "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2" in names
@@ -162,6 +165,76 @@ assert adapter.app.openapi() == json.loads((root / 'openapi.json').read_bytes())
                 cwd=root,
                 check=True,
             )
+        # MCP generation itself must work without the SDK installed in Apizr's env.
+        subprocess.run(
+            [
+                str(python),
+                "-I",
+                "-c",
+                "import importlib.util; assert importlib.util.find_spec('mcp') is None",
+            ],
+            cwd=root,
+            check=True,
+        )
+        runtime_env = root / "mcp-env"
+        subprocess.run(
+            ["uv", "venv", "--python", args.python, str(runtime_env)], check=True
+        )
+        runtime_python = (
+            runtime_env / ("Scripts" if sys.platform == "win32" else "bin") / "python"
+        )
+        for target in (source, local_notebook):
+            mcp_output = root / (
+                "mcp-notebook" if target.suffix == ".ipynb" else "mcp-python"
+            )
+            subprocess.run(
+                [
+                    str(cli),
+                    "generate",
+                    "mcp",
+                    str(target),
+                    "--module-name",
+                    "installed.sample",
+                    "--output-dir",
+                    str(mcp_output),
+                ],
+                cwd=root,
+                check=True,
+            )
+            subprocess.run(
+                [
+                    "uv",
+                    "pip",
+                    "install",
+                    "--python",
+                    str(runtime_python),
+                    "-r",
+                    str(mcp_output / "requirements.txt"),
+                ],
+                check=True,
+            )
+            subprocess.run(
+                [
+                    str(runtime_python),
+                    "-I",
+                    "-c",
+                    """import asyncio, importlib.util, sys
+from mcp import Client, StdioServerParameters
+assert importlib.util.find_spec('apizr') is None
+assert importlib.util.find_spec('fastapi') is None
+async def check():
+    async with Client(StdioServerParameters(command=sys.executable, args=[sys.argv[1], '--transport', 'stdio'])) as client:
+        assert client.protocol_version == '2026-07-28'
+        assert [t.name for t in (await client.list_tools()).tools] == ['total']
+        result = await client.call_tool('total', {'values':[1,2]})
+        assert not result.is_error and result.structured_content == 3
+asyncio.run(check())
+""",
+                    str(mcp_output / "server.py"),
+                ],
+                cwd=root,
+                check=True,
+            )
         result = subprocess.run(
             [
                 str(cli),
@@ -189,7 +262,7 @@ assert adapter.app.openapi() == json.loads((root / 'openapi.json').read_bytes())
         for name in manifest["files"]:
             assert (root / "project" / name).is_file()
         print(
-            "Wheel namespace, IR/readiness, inspection and REST generation/runtime (Python/notebook), resources, license, CLI help and legacy notebook generation passed."
+            "Wheel namespace, IR/readiness, inspection and REST/MCP generation/runtime (Python/notebook), resources, license, CLI help and legacy notebook generation passed."
         )
 
 
