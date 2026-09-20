@@ -6,6 +6,8 @@ from jinja2 import Environment, StrictUndefined
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
+from apizr.output import write_new_text
+
 
 class DockerfileGenerator:
     def __init__(self, conf):
@@ -67,6 +69,13 @@ class DockerfileGenerator:
 
     def generate_dockerfile(self):
         self.home_path.mkdir(parents=True, exist_ok=True)
+        filenames = ["Dockerfile", "start.sh", ".dockerignore"]
+        if self.conf.entrypoint:
+            filenames.append("entrypoint.sh")
+        for filename in filenames:
+            target = self.home_path / filename
+            if target.exists() or target.is_symlink():
+                raise FileExistsError(f"Generated output already exists: {target}")
         dockerfile = self.dockerfile_generator()
         command = [
             "uvicorn",
@@ -84,14 +93,18 @@ class DockerfileGenerator:
         if self.conf.entrypoint:
             startup += "sh ./entrypoint.sh\n"
             entrypoint = self.home_path / "entrypoint.sh"
-            entrypoint.write_text(
-                "#!/bin/sh\nset -eu\n" + self.conf.entrypoint + "\n", encoding="utf-8"
+            write_new_text(
+                entrypoint,
+                "#!/bin/sh\nset -eu\n" + self.conf.entrypoint + "\n",
+                encoding="utf-8",
             )
             entrypoint.chmod(0o755)
         startup += "exec " + shlex.join(command) + "\n"
-        (self.home_path / "Dockerfile").write_text(dockerfile, encoding="utf-8")
-        (self.home_path / "start.sh").write_text(startup, encoding="utf-8")
+        write_new_text(self.home_path / "Dockerfile", dockerfile)
+        write_new_text(self.home_path / "start.sh", startup)
         (self.home_path / "start.sh").chmod(0o755)
-        (self.home_path / ".dockerignore").write_text(
-            ".git\n.venv\n__pycache__\n*.pyc\n.env\n.env.*\n*.ipynb\n", encoding="utf-8"
+        write_new_text(
+            self.home_path / ".dockerignore",
+            ".git\n.venv\n__pycache__\n*.pyc\n.env\n.env.*\n*.ipynb\n",
+            encoding="utf-8",
         )

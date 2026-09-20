@@ -34,7 +34,15 @@ Repository = "https://github.com/Alien6-Studio/outerspace-apizr"
 Website = "https://apizr.outerspace.sh"
 
 [dependency-groups]
-dev = ["pytest>=9.0.3,<10", "pytest-cov>=7,<8", "httpx>=0.28,<1", "ruff>=0.11,<1", "pyright>=1.1.400,<2", "pre-commit>=4,<5"]
+dev = [
+    "pytest>=9.0.3,<10",
+    "pytest-cov>=7,<8",
+    "httpx>=0.28,<1",
+    "ruff>=0.11,<1",
+    "pyright>=1.1.400,<2",
+    "pre-commit>=4,<5",
+    "hypothesis>=6.140,<7",
+]
 security = ["pip-audit>=2.9,<3"]
 docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5,<10", "plantuml-markdown>=3.10,<4"]
 

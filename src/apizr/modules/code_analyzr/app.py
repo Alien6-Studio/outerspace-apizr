@@ -3,6 +3,9 @@ from typing import Optional
 from fastapi import FastAPI, File, HTTPException, UploadFile
 
 from apizr.http import read_upload
+from apizr.modules.code_analyzr.analyzr.ast_node.astNodeException import (
+    AnnotationException,
+)
 
 from .analyzr import AstAnalyzr
 from .configuration import CodeAnalyzrConfiguration
@@ -26,5 +29,5 @@ def analyze_file(
         return json.loads(
             AstAnalyzr(configuration, content.decode("utf-8")).get_analyse()
         )
-    except (ValueError, SyntaxError, UnicodeError) as exc:
+    except (ValueError, SyntaxError, UnicodeError, AnnotationException) as exc:
         raise HTTPException(400, str(exc)) from exc

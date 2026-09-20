@@ -22,7 +22,7 @@ _apizr_hints_{{ loop.index }} = _apizr_get_type_hints(_apizr_source.{{ function.
 _apizr_parameters_{{ loop.index }} = _apizr_inspect.signature(_apizr_source.{{ function.name }}).parameters
 _apizr_model_{{ loop.index }} = _apizr_create_model(
     "{{ function.name }}_Arguments",
-    __config__=_ApizrConfigDict(extra="forbid", populate_by_name=True),
+    __config__=_ApizrConfigDict(extra="forbid"),
 {% set index = loop.index %}
 {% for arg in function.args %}
     field_{{ loop.index }}=(

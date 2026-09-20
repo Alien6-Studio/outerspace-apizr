@@ -101,6 +101,7 @@ nav:
           - Setup: getting-started/developer-guide/setup.md
           - Migration and releases: getting-started/developer-guide/releases.md
           - Architecture:
+              - Legacy Behavior Contract: architecture/legacy-behavior-contract.md
               - 0.2 baseline: architecture/0.2-baseline.md
               - Artifact principles: architecture/artifact-principles.md
               - Security baseline: architecture/security-baseline.md

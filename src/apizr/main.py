@@ -6,6 +6,9 @@ from pathlib import Path
 
 import yaml
 
+from apizr.modules.code_analyzr.analyzr.ast_node.astNodeException import (
+    AnnotationException,
+)
 from apizr.runtime import parse_python_target, python_target_argument
 
 from .configuration import MainConfiguration
@@ -151,7 +154,7 @@ def main(argv=None):
     args = handle_args(argv)
     try:
         result = init_engine(args, init_context(args)).run()
-    except (ValueError, OSError, RuntimeError, SyntaxError) as exc:
+    except (ValueError, OSError, RuntimeError, SyntaxError, AnnotationException) as exc:
         raise SystemExit(f"apizr: {exc}") from exc
     print(json.dumps(result, indent=2))
 

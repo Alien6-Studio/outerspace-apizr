@@ -64,3 +64,17 @@ than split into new orchestration modules. Update `src.*` imports and commands
 to `apizr.*`; no namespace shim is included.
 
 Python 3.8–3.10 are intentionally no longer supported; see the [migration notes](releases.md). The 55% coverage floor remains unchanged.
+
+## Adversarial characterization
+
+The [legacy behavior contract](../../architecture/legacy-behavior-contract.md)
+separates intentional support, explicit rejections, observed legacy behavior and
+future candidates. Its corpus lives in `tests/fixtures/characterization/` and is
+executed by `tests/characterization/`. Hypothesis is a development dependency;
+run this suite with `uv run pytest tests/characterization`.
+
+Hypothesis keeps its normal failure database in `.hypothesis/` and prints replay
+information on failure. Preserve the failing example when reporting a defect;
+do not suppress it with broad assumptions. Generation tests use isolated temporary
+directories and bounded inputs. Ordinary generated-application imports execute
+trusted test fixtures only.

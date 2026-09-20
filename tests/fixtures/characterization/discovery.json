@@ -1,0 +1,176 @@
+[
+  {
+    "id": "top_level_function",
+    "classification": "SUPPORTED",
+    "source": "def first():\n    return 1\ndef second(value: int = 2) -> int:\n    return value\n",
+    "names": [
+      "first",
+      "second"
+    ],
+    "error": null,
+    "note": ""
+  },
+  {
+    "id": "async_function",
+    "classification": "SUPPORTED",
+    "source": "async def work(value: int):\n    return value\n",
+    "names": [
+      "work"
+    ],
+    "error": null,
+    "note": ""
+  },
+  {
+    "id": "mixed_parameters",
+    "classification": "SUPPORTED",
+    "source": "def call(a: int, /, b: str = \"x\", *, c: int, d=None):\n    return a\n",
+    "names": [
+      "call"
+    ],
+    "error": null,
+    "note": ""
+  },
+  {
+    "id": "unicode_identifiers",
+    "classification": "SUPPORTED",
+    "source": "def café(数: int):\n    return 数\n",
+    "names": [
+      "café"
+    ],
+    "error": null,
+    "note": ""
+  },
+  {
+    "id": "long_identifier",
+    "classification": "SUPPORTED",
+    "source": "def function_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx():\n    return 1\n",
+    "names": [
+      "function_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    ],
+    "error": null,
+    "note": ""
+  },
+  {
+    "id": "decorators",
+    "classification": "LEGACY OBSERVED",
+    "source": "@ordinary\n@factory(\"config\")\ndef work(x: int) -> int:\n    \"\"\"Documentation only.\"\"\"\n    return x\n",
+    "names": [
+      "work"
+    ],
+    "error": null,
+    "note": "Decorator syntax omitted from metadata; names are not resolved during analysis."
+  },
+  {
+    "id": "variadic_args",
+    "classification": "EXPLICITLY REJECTED",
+    "source": "def work(*args):\n    return 1\n",
+    "names": [],
+    "error": "fixed JSON schema",
+    "note": ""
+  },
+  {
+    "id": "variadic_kwargs",
+    "classification": "EXPLICITLY REJECTED",
+    "source": "def work(**kwargs):\n    return 1\n",
+    "names": [],
+    "error": "fixed JSON schema",
+    "note": ""
+  },
+  {
+    "id": "variadic_both",
+    "classification": "EXPLICITLY REJECTED",
+    "source": "def work(value, *args, **kwargs):\n    return 1\n",
+    "names": [],
+    "error": "fixed JSON schema",
+    "note": ""
+  },
+  {
+    "id": "lambda",
+    "classification": "FUTURE CANDIDATE",
+    "source": "work = lambda x: x + 1\n",
+    "names": [],
+    "error": null,
+    "note": "No function definition discovered; full API generation rejects an empty selection."
+  },
+  {
+    "id": "nested_closure",
+    "classification": "LEGACY OBSERVED",
+    "source": "def outer(value: int):\n    def inner():\n        return value\n    return inner\n",
+    "names": [
+      "outer"
+    ],
+    "error": null,
+    "note": "Only outer is discovered; returned closure has no guaranteed JSON semantics."
+  },
+  {
+    "id": "methods",
+    "classification": "FUTURE CANDIDATE",
+    "source": "from abc import abstractmethod\nclass Service:\n    @abstractmethod\n    def abstract(self): pass\n    @staticmethod\n    def static(): pass\n    @classmethod\n    def cls(cls): pass\n    def instance(self): pass\n",
+    "names": [],
+    "error": null,
+    "note": "Class bodies are intentionally not traversed; issue #5 remains open."
+  },
+  {
+    "id": "generator",
+    "classification": "LEGACY OBSERVED",
+    "source": "def items():\n    yield 1\n",
+    "names": [
+      "items"
+    ],
+    "error": null,
+    "note": "No generator flag; runtime serializes a synchronous generator as a sequence."
+  },
+  {
+    "id": "async_generator",
+    "classification": "LEGACY OBSERVED",
+    "source": "async def items():\n    yield 1\n",
+    "names": [
+      "items"
+    ],
+    "error": null,
+    "note": "Marked async; generated await fails on an async generator."
+  },
+  {
+    "id": "overloads",
+    "classification": "LEGACY OBSERVED",
+    "source": "from typing import overload\n@overload\ndef call(x: int) -> int: ...\n@overload\ndef call(x: str) -> str: ...\ndef call(x):\n    return x\n",
+    "names": [
+      "call",
+      "call",
+      "call"
+    ],
+    "error": null,
+    "note": "Overload stubs are independently discovered like duplicate definitions."
+  },
+  {
+    "id": "duplicate_definitions",
+    "classification": "LEGACY OBSERVED",
+    "source": "def calculate(x: int):\n    return x\ndef calculate(x: str):\n    return x\n",
+    "names": [
+      "calculate",
+      "calculate"
+    ],
+    "error": null,
+    "note": "Two metadata records/routes; runtime resolves the final binding."
+  },
+  {
+    "id": "conditional_definition",
+    "classification": "LEGACY OBSERVED",
+    "source": "if False:\n    def unavailable():\n        return 1\n",
+    "names": [
+      "unavailable"
+    ],
+    "error": null,
+    "note": "Non-class/non-function blocks are traversed, irrespective of runtime reachability."
+  },
+  {
+    "id": "keywords_in_data",
+    "classification": "SUPPORTED",
+    "source": "text = \"def fake(): class Ghost: match case\"\n# async def hidden():\ndef real():\n    \"\"\"def fake(): pass\"\"\"\n    return text\n",
+    "names": [
+      "real"
+    ],
+    "error": null,
+    "note": ""
+  }
+]
