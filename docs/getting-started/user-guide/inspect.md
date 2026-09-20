@@ -24,8 +24,8 @@ and stable reason codes. Ordinary syntax or file errors appear on stderr.
 
 `can_generate_interface` is true only for a `ready` IR capability. It is not
 permission to execute code. Effects remain unknown, return values are not
-enforced, and runtime failure remains possible. No generator consumes this
-readiness report yet. The existing [generation workflow](apizr.md) is independent.
+enforced, and runtime failure remains possible. The [REST generator](rest.md) consumes this readiness report. The historical
+[generation workflow](apizr.md) remains independent.
 
 For example, an async function with integer inputs can be ready. A decorator or
 later reassignment makes its binding conditional. A generator needs a streaming

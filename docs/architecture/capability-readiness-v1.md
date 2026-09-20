@@ -3,13 +3,13 @@
 Capability IR records source declarations. Readiness applies a separate, bounded
 policy to those declarations and matching static source evidence. Neither model
 executes source, imports user modules, resolves a repository or guarantees runtime
-success. Future generators will choose how to expose eligible contracts; no such
-generator is introduced here.
+success. The [REST v1 consumer](rest-generator-v1.md) defines how eligible contracts
+are exposed; readiness itself remains independent of that target.
 
 ```text
 source → Capability IR v1 → readiness policy → readiness report
                                                 |
-                                  FUTURE REST / MCP / runtime
+                                  REST v1 / future consumers
 ```
 
 ## Version and compatibility
@@ -38,7 +38,7 @@ Binding, execution, inputs and outputs each contain ordered reasons and a derive
 state. The overall state uses precedence ambiguous > unsupported > conditional >
 ready. `can_generate_interface` is true only for an actual IR capability whose
 overall state is ready. It means an adapter can be described without inventing
-input semantics, not that execution is safe or that a generator already exists.
+input semantics, not that execution is safe or that an adapter will execute successfully.
 
 Unknown response schemas and absent runtime return enforcement are explicit
 output limitations, not blocking states. All effects are preserved from IR and
@@ -95,8 +95,8 @@ current interpreter; changing this allowance requires policy-version review.
 Known syntactic primitives `str`, `int`, `float`, `bool`, `None` and JSON-shaped
 list/dict/tuple/set contracts are eligible when members are representable. A dict
 requires string keys; tuples may be fixed-length or `tuple[T, ...]`. Unsubscripted
-containers and absent annotations are explicitly unconstrained JSON contracts;
-no stronger validation is inferred. Union, Optional and scalar Literal members (including signed finite numbers)
+containers retain their declared shape with unconstrained members; absent
+annotations are unconstrained JSON contracts. No stronger validation is inferred. Union, Optional and scalar Literal members (including signed finite numbers)
 are classified recursively. Callable and bytes need adapters and are unsupported.
 Annotated retains its metadata but is conditional: v1 does not invent or discard
 constraint semantics. Unknown expressions, arbitrary classes, aliases and forward
@@ -105,8 +105,11 @@ references are conditional, even when a class declaration exists locally.
 Builtin/typing spellings are syntax conventions, not imported runtime objects.
 Visible bindings that replace those spellings, or attribute/subscript writes through
 their roots, are conditional. Direct typing
-imports and their aliases can be recognized when uniquely bound; arbitrary alias
-expressions are never evaluated. Unbound conventional typing names may describe
+imports can be recognized when uniquely bound and their symbol is not renamed.
+Renamed symbol imports remain conditional because IR v1 does not preserve their
+resolution for consumers (the boundary inconsistency tracked in issue #39). Module
+aliases such as `t.List` retain the explicit type member and remain recognizable.
+Arbitrary alias expressions are never evaluated. Unbound conventional typing names may describe
 an adapter contract, but do not establish runtime importability.
 
 Implementation and recorded overload inputs are reviewed independently; no
@@ -203,6 +206,6 @@ This is not Python abstract interpretation, import resolution, a resource
 sandbox, full effect inference or a guarantee of runtime safety. Reflection,
 indirect aliases and arbitrary mutation cannot be resolved completely. The
 explicit bounded allowances and unknown effects remain visible to consumers.
-No REST/MCP/runtime generator consumes this report yet. Historical issue #28
+The REST v1 generator consumes this report without redefining eligibility. Historical issue #28
 remains open for the unchanged legacy pipeline; this policy addresses the
 separate static-evidence problem in issue #31.

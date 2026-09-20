@@ -29,7 +29,19 @@ executing the input. `ready` is a contract assessment, not proof of runtime safe
 effects remain unknown. See the [inspection guide](docs/getting-started/user-guide/inspect.md)
 for states, machine output and exit codes. The generation commands below remain independent.
 
-## Notebook → API → container
+## Generate a REST interface from the inspected contract
+
+```sh
+uv run apizr generate rest examples/pricing.ipynb --module-name project.pricing --output-dir .output/rest
+uv run uvicorn app:app --app-dir .output/rest --host 127.0.0.1 --port 8001
+```
+
+This independent command emits a REST application, static OpenAPI and hashed
+artifact manifest. It accepts only readiness-approved contracts; starting the
+application executes trusted bundled source. See the [REST guide](docs/getting-started/user-guide/rest.md)
+for selection, request semantics and limits. The legacy API/container pipeline below remains available.
+
+## Notebook → API → container (legacy pipeline)
 
 ```sh
 uv run apizr --notebook examples/pricing.ipynb --output-dir .output/pricing --force

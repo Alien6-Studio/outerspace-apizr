@@ -49,6 +49,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
     if arguments and arguments[0] == "inspect":
         return _inspect(arguments[1:])
+    if arguments and arguments[0] == "generate":
+        from apizr.generate_cli import main as generate_modern
+
+        return generate_modern(arguments[1:])
     from apizr.main import main as generate
 
     if arguments in (["--help"], ["-h"]):
@@ -59,6 +63,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 raise
         print(
             "\nStatic inspection: apizr inspect SOURCE [--format json | --ir] [--module-name NAME]"
+        )
+        print(
+            "Modern REST generation: apizr generate rest SOURCE --output-dir DIR [--select NAMES]"
         )
         return 0
     generate(arguments)
