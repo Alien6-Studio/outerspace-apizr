@@ -2,6 +2,8 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Optional, Protocol
 
+from apizr.output import write_new_text
+
 
 class EncodingConfiguration(Protocol):
     encoding: str
@@ -65,5 +67,5 @@ class Context:
             raise ContextException("Output path must stay inside the output directory")
         if self.config is None:
             raise ContextException("Configuration is not set")
-        target.write_text(self._result[key], encoding=self.config.encoding)
+        write_new_text(target, self._result[key], encoding=self.config.encoding)
         return Path(target)

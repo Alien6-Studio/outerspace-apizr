@@ -1,6 +1,8 @@
 """Convert notebooks without executing their cells."""
 
 import ast
+import io
+import json
 from pathlib import Path
 
 from black import FileMode, format_str
@@ -10,6 +12,7 @@ from nbformat import ValidationError
 from apizr.modules.notebook_transformr.configuration import (
     NotebookTransformrConfiguration,
 )
+from apizr.output import write_new_text
 
 
 class NotebookTransformr:
@@ -21,6 +24,16 @@ class NotebookTransformr:
         return await file.read()
 
     def convert_notebook(self, content):
+        # nbformat assumes a mapping and otherwise raises an internal AttributeError.
+        if isinstance(content, (str, Path)):
+            raw = Path(content).read_text(encoding="utf-8")
+        else:
+            raw = content.read()
+            if isinstance(raw, bytes):
+                raw = raw.decode("utf-8")
+            content = io.StringIO(raw)
+        if not isinstance(json.loads(raw), dict):
+            raise ValueError("Invalid notebook structure: expected a JSON object")
         try:
             source, resources = (
                 self.exporter.from_filename(str(content))
@@ -52,8 +65,6 @@ class NotebookTransformr:
             for line in source.splitlines()
             if not line.startswith(("#!", "# coding:", "# In["))
         ]
-        output_path.write_text(
-            format_str("\n".join(lines), mode=FileMode()),
-            encoding=self.configuration.encoding,
-        )
+        formatted = format_str("\n".join(lines), mode=FileMode())
+        write_new_text(output_path, formatted, encoding=self.configuration.encoding)
         return str(output_path)

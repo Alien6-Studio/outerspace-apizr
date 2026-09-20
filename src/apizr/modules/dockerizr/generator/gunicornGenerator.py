@@ -4,6 +4,7 @@ from os import path
 from jinja2 import Template
 
 from apizr.modules.dockerizr.configuration import DockerizrConfiguration
+from apizr.output import output_path, write_new_text
 
 from .errorLogger import LogError
 
@@ -35,12 +36,17 @@ class GunicornGenerator:
 
         The generated files are saved in the project's main folder.
         """
-        home_path = self.conf.project_path
-        with open(path.join(home_path, self.conf.server.wsgi_file_name), "w") as f:
-            f.write(self.gunicorn_wsgi_generator())
-
-        with open(path.join(home_path, self.conf.server.wsgi_conf_file_name), "w") as f:
-            f.write(self.gunicorn_conf_generator())
+        targets = [
+            output_path(self.conf.project_path, self.conf.server.wsgi_file_name),
+            output_path(self.conf.project_path, self.conf.server.wsgi_conf_file_name),
+        ]
+        if targets[0] == targets[1]:
+            raise ValueError("Gunicorn output filenames must be distinct")
+        for target in targets:
+            if target.exists() or target.is_symlink():
+                raise FileExistsError(f"Generated output already exists: {target}")
+        write_new_text(targets[0], self.gunicorn_wsgi_generator())
+        write_new_text(targets[1], self.gunicorn_conf_generator())
 
     @LogError(logging)
     def gunicorn_conf_generator(self) -> str:

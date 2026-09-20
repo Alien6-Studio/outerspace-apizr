@@ -8,6 +8,10 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from starlette.background import BackgroundTask
 
+from apizr.modules.code_analyzr.analyzr.ast_node.astNodeException import (
+    AnnotationException,
+)
+
 from .http import read_upload
 from .main import convert
 from .modules.code_analyzr.app import app as code_app
@@ -45,7 +49,7 @@ def process_file(file: UploadFile = File(...)):
             filename=f"{source.stem}-api.zip",
             background=BackgroundTask(temporary.cleanup),
         )
-    except (ValueError, SyntaxError, UnicodeError) as exc:
+    except (ValueError, SyntaxError, UnicodeError, AnnotationException) as exc:
         temporary.cleanup()
         raise HTTPException(400, str(exc)) from exc
     except Exception:

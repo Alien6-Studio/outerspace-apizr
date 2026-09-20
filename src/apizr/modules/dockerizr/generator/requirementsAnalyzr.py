@@ -7,6 +7,7 @@ from pathlib import Path
 
 from packaging.requirements import Requirement
 
+from apizr.output import write_new_text
 from apizr.runtime import DEFAULT_PYTHON
 
 ALIASES = {
@@ -75,6 +76,8 @@ class RequirementsAnalyzr:
         # pip intersects repeated package constraints and reports incompatible pins.
         for item in self.config.apizr_requirements:
             requirements.add(str(Requirement(item)))
-        (directory / "requirements.txt").write_text(
-            "\n".join(sorted(requirements)) + "\n", encoding="utf-8"
+        write_new_text(
+            directory / "requirements.txt",
+            "\n".join(sorted(requirements)) + "\n",
+            encoding="utf-8",
         )

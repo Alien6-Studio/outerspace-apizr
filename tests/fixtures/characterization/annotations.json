@@ -1,0 +1,336 @@
+[
+  {
+    "id": "int",
+    "expression": "int",
+    "metadata_type": "int",
+    "valid": 3,
+    "invalid": "bad",
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "str",
+    "expression": "str",
+    "metadata_type": "str",
+    "valid": "x",
+    "invalid": {},
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "float",
+    "expression": "float",
+    "metadata_type": "float",
+    "valid": 1.5,
+    "invalid": "bad",
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "bool",
+    "expression": "bool",
+    "metadata_type": "bool",
+    "valid": true,
+    "invalid": [],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "bytes",
+    "expression": "bytes",
+    "metadata_type": "bytes",
+    "valid": "text",
+    "invalid": {},
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "None",
+    "expression": "None",
+    "metadata_type": "None",
+    "valid": null,
+    "invalid": 1,
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "list[int]",
+    "expression": "list[int]",
+    "metadata_type": "list",
+    "valid": [
+      1,
+      2
+    ],
+    "invalid": [
+      "bad"
+    ],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "dict[str, int]",
+    "expression": "dict[str, int]",
+    "metadata_type": "dict",
+    "valid": {
+      "x": 1
+    },
+    "invalid": {
+      "x": []
+    },
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "tuple[int, str]",
+    "expression": "tuple[int, str]",
+    "metadata_type": "tuple",
+    "valid": [
+      1,
+      "x"
+    ],
+    "invalid": [
+      1,
+      2
+    ],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "set[str]",
+    "expression": "set[str]",
+    "metadata_type": "set",
+    "valid": [
+      "x"
+    ],
+    "invalid": [
+      {}
+    ],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "typing.List[int]",
+    "expression": "typing.List[int]",
+    "metadata_type": "typing.List",
+    "valid": [
+      1
+    ],
+    "invalid": [
+      "bad"
+    ],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "typing.Dict[str, int]",
+    "expression": "typing.Dict[str, int]",
+    "metadata_type": "typing.Dict",
+    "valid": {
+      "x": 1
+    },
+    "invalid": {
+      "x": "bad"
+    },
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "typing.Tuple[int, str]",
+    "expression": "typing.Tuple[int, str]",
+    "metadata_type": "typing.Tuple",
+    "valid": [
+      1,
+      "x"
+    ],
+    "invalid": [],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "Optional[int]",
+    "expression": "Optional[int]",
+    "metadata_type": "Optional",
+    "valid": null,
+    "invalid": [],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "Union[int, str]",
+    "expression": "Union[int, str]",
+    "metadata_type": "Union",
+    "valid": "x",
+    "invalid": [],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "int | str",
+    "expression": "int | str",
+    "metadata_type": "Union",
+    "valid": "x",
+    "invalid": [],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "int | None",
+    "expression": "int | None",
+    "metadata_type": "Union",
+    "valid": null,
+    "invalid": [],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "Literal[\"a\", \"b\"]",
+    "expression": "Literal[\"a\", \"b\"]",
+    "metadata_type": "Literal",
+    "valid": "a",
+    "invalid": "c",
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "Annotated[int, ...]",
+    "expression": "Annotated[int, ...]",
+    "metadata_type": "Annotated",
+    "valid": 2,
+    "invalid": "bad",
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "Annotated[int, Field(gt=0)]",
+    "expression": "Annotated[int, Field(gt=0)]",
+    "metadata_type": "Annotated",
+    "valid": 1,
+    "invalid": 0,
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "Sequence[int]",
+    "expression": "Sequence[int]",
+    "metadata_type": "Sequence",
+    "valid": [
+      1
+    ],
+    "invalid": [
+      "bad"
+    ],
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "Mapping[str, int]",
+    "expression": "Mapping[str, int]",
+    "metadata_type": "Mapping",
+    "valid": {
+      "x": 1
+    },
+    "invalid": {
+      "x": []
+    },
+    "classification": "SUPPORTED"
+  },
+  {
+    "id": "Callable",
+    "expression": "Callable",
+    "metadata_type": "Callable",
+    "valid": null,
+    "invalid": "not_callable",
+    "classification": "LEGACY OBSERVED",
+    "runtime": "dangling_schema_reference",
+    "note": "OpenAPI returns 200 but its request schema reference is absent from components; JSON cannot supply a callable."
+  },
+  {
+    "id": "Callable[[int], str]",
+    "expression": "Callable[[int], str]",
+    "metadata_type": "Callable",
+    "valid": null,
+    "invalid": "not_callable",
+    "classification": "LEGACY OBSERVED",
+    "runtime": "dangling_schema_reference",
+    "note": "OpenAPI returns 200 but its request schema reference is absent from components; JSON cannot supply a callable."
+  },
+  {
+    "id": "Plain",
+    "expression": "Plain",
+    "metadata_type": "Plain",
+    "valid": {},
+    "invalid": null,
+    "classification": "LEGACY OBSERVED",
+    "preamble": "class Plain: pass\n",
+    "runtime": "import_error"
+  },
+  {
+    "id": "Item",
+    "expression": "Item",
+    "metadata_type": "Item",
+    "valid": {
+      "value": 1
+    },
+    "invalid": {
+      "value": []
+    },
+    "classification": "SUPPORTED",
+    "preamble": "class Item(BaseModel):\n    value: int\n"
+  },
+  {
+    "id": "Record",
+    "expression": "Record",
+    "metadata_type": "Record",
+    "valid": {
+      "value": 1
+    },
+    "invalid": {
+      "value": []
+    },
+    "classification": "SUPPORTED",
+    "preamble": "@dataclass\nclass Record:\n    value: int\n"
+  },
+  {
+    "id": "Choice",
+    "expression": "Choice",
+    "metadata_type": "Choice",
+    "valid": "a",
+    "invalid": "c",
+    "classification": "SUPPORTED",
+    "preamble": "class Choice(str, Enum):\n    A = \"a\"\n    B = \"b\"\n"
+  },
+  {
+    "id": "\"Item\"",
+    "expression": "\"Item\"",
+    "metadata_type": "str",
+    "valid": {
+      "value": 1
+    },
+    "invalid": {
+      "value": []
+    },
+    "classification": "LEGACY OBSERVED",
+    "preamble": "class Item(BaseModel):\n    value: int\n",
+    "note": "Static string literal loses the referenced type; runtime resolution succeeds."
+  },
+  {
+    "id": "Alias",
+    "expression": "Alias",
+    "metadata_type": "Alias",
+    "valid": [
+      1
+    ],
+    "invalid": [
+      "bad"
+    ],
+    "classification": "SUPPORTED",
+    "preamble": "Alias = list[int]\n"
+  },
+  {
+    "id": "Node",
+    "expression": "Node",
+    "metadata_type": "Node",
+    "valid": {
+      "children": [
+        {
+          "children": []
+        }
+      ]
+    },
+    "invalid": {
+      "children": [
+        1
+      ]
+    },
+    "classification": "SUPPORTED",
+    "preamble": "class Node(BaseModel):\n    children: list[\"Node\"] = Field(default_factory=list)\n"
+  },
+  {
+    "id": "\"Missing\"",
+    "expression": "\"Missing\"",
+    "metadata_type": "str",
+    "valid": null,
+    "invalid": null,
+    "classification": "LEGACY OBSERVED",
+    "runtime": "unresolved_reference"
+  }
+]

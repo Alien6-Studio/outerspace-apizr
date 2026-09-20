@@ -141,7 +141,7 @@ def save_result(output_path, result):
     :param result: Analysis result to save.
     """
     try:
-        with open(output_path, "w") as f:
+        with open(output_path, "x") as f:
             f.write(result)
         logger.info(f"Analysis result saved to {output_path}")
     except Exception as e:

@@ -37,6 +37,10 @@ def copy_local_modules(source, source_dir, output_dir, seen=None):
                     local.read_text(encoding="utf-8"), source_dir, output_dir, seen
                 )
             elif package.is_dir() and (package / "__init__.py").is_file():
+                if output_dir.resolve().is_relative_to(package.resolve()):
+                    raise ValueError(
+                        "Output directory must not be inside a copied package"
+                    )
                 if package.is_symlink():
                     raise ValueError(f"Symlink packages are not supported: {package}")
                 for child in package.rglob("*"):

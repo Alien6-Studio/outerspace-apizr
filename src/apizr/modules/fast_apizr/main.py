@@ -10,6 +10,7 @@ from apizr.modules.fast_apizr.configuration import FastApizrConfiguration
 from apizr.modules.fast_apizr.generator import FastApiAppGenerator
 from apizr.modules.fast_apizr.generator.analyzr import Analyzr
 from apizr.modules.fast_apizr.prompt import ConfigPrompter
+from apizr.output import output_path
 from apizr.runtime import parse_python_target, python_target_argument
 
 # Configure logging settings
@@ -140,7 +141,7 @@ def save_result(output_path, result):
 
     try:
         print(f"Saving result to {output_path}")
-        with open(output_path, "w") as f:
+        with open(output_path, "x") as f:
             f.write(result)
     except Exception as e:
         logger.error(f"Error writing to output file: {e}")
@@ -157,7 +158,7 @@ def main():
 
         if args.output:
             os.makedirs(args.output, exist_ok=True)
-            save_result(os.path.join(args.output, configuration.api_filename), result)
+            save_result(output_path(args.output, configuration.api_filename), result)
         else:
             print(result)
 
