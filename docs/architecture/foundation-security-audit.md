@@ -1,5 +1,11 @@
 # Historical foundation dependency audit
 
+!!! note "Historical engineering record"
+
+    These vulnerability findings belong to the earlier dependency graph, not the current security baseline.
+    See the [archive index](records.md), [current migration guidance](../getting-started/developer-guide/releases.md)
+    and [current security baseline](security-baseline.md) for context.
+
 This records the pre-runtime-rationalization audit. See the [current security baseline](security-baseline.md) for the Python 3.11–3.14 closure.
 
 Recorded 2026-09-20. The audit exits **1**; the security gate is intentionally

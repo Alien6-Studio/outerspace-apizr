@@ -112,6 +112,6 @@ uv run python scripts/smoke_container.py  # requires a running Docker daemon
 
 CI tests Python 3.11, 3.12, 3.13 and 3.14, builds the package, installs its wheel outside the checkout, and runs the notebook → Docker → HTTP smoke test. The container smoke test removes its own container and image afterward.
 
-See [migration and release notes](docs/getting-started/developer-guide/releases.md) for changes from 0.1.x and PyPI publication. Creating a PyPI organization is not required to develop or publish a package.
+See the [migration notes](docs/getting-started/developer-guide/releases.md) for changes from 0.1.x and the [maintainer release procedure](docs/contributing/releases.md) for PyPI publication. Creating a PyPI organization is not required to develop or publish a package.
 
 Licensed under [GPL-3.0-or-later](LICENSE).

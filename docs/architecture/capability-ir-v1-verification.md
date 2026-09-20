@@ -1,5 +1,11 @@
 # Capability IR v1 verification record
 
+!!! note "Historical engineering record"
+
+    These results describe the Capability IR v1 change at the recorded revision; they are not live CI status.
+    See the [archive index](records.md), [current migration guidance](../getting-started/developer-guide/releases.md)
+    and [current security baseline](security-baseline.md) for context.
+
 Baseline: `a386f507000852ab19e8239f6cbc8b4b3b8d249a`. This record concerns local
 verification from a clean index export, not a claim about a future GitHub run.
 The normative contract is [Capability IR v1](capability-ir-v1.md).
