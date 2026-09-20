@@ -6,6 +6,8 @@ from pathlib import Path
 
 import yaml
 
+from apizr.runtime import parse_python_target, python_target_argument
+
 from .configuration import MainConfiguration
 from .extensions.context import Context
 from .extensions.engine import AutomationEngine
@@ -21,7 +23,8 @@ def handle_args(argv=None):
     parser.add_argument("--configuration", type=Path)
     parser.add_argument(
         "--python-version",
-        choices=["3.{}".format(minor) for minor in range(8, 15)],
+        type=python_target_argument,
+        metavar="3.11–3.14",
         help="Target Python version; defaults to the running interpreter",
     )
     parser.add_argument("--output-dir", type=Path)
@@ -59,8 +62,7 @@ def init_context(args):
 
         configuration = ConfigPrompter(args.lang).getConfiguration()
     if args.python_version:
-        major, minor = map(int, args.python_version.split("."))
-        configuration.python_version = (major, minor)
+        configuration.python_version = parse_python_target(args.python_version)
     configuration.dispatch()
     context.config = configuration
     context.input_path = (args.notebook or args.script).resolve()

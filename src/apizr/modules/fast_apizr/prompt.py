@@ -1,8 +1,8 @@
 import json
 import os
 
-from apizr.compat import DEFAULT_PYTHON
 from apizr.modules.fast_apizr.configuration import FastApizrConfiguration
+from apizr.runtime import DEFAULT_PYTHON, parse_python_target, validate_python_target
 
 
 class ConfigPrompter:
@@ -27,10 +27,11 @@ class ConfigPrompter:
     ) -> FastApizrConfiguration:
         configuration = FastApizrConfiguration()
         if not version:
-            major, minor = map(int, self.prompt_python_version().split("."))
-            configuration.python_version = (major, minor)
+            configuration.python_version = parse_python_target(
+                self.prompt_python_version()
+            )
         else:
-            configuration.python_version = version
+            configuration.python_version = validate_python_target(version)
 
         if not encoding:
             configuration.encoding = self.prompt_encoding()

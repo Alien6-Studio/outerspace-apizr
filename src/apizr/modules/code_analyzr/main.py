@@ -7,6 +7,7 @@ import yaml
 from apizr.modules.code_analyzr.analyzr import AstAnalyzr
 from apizr.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
 from apizr.modules.code_analyzr.prompt import ConfigPrompter
+from apizr.runtime import parse_python_target, python_target_argument
 
 # Configure logging settings
 
@@ -47,8 +48,7 @@ def set_configuration(args) -> CodeAnalyzrConfiguration:
 
     # Override Configuration object with the provided arguments
     if args.version:
-        major, minor = map(int, args.version.split("."))
-        configuration.python_version = (major, minor)
+        configuration.python_version = parse_python_target(args.version)
 
     if args.encoding:
         configuration.encoding = args.encoding
@@ -78,6 +78,7 @@ def handle_args():
     )
     parser.add_argument(
         "--version",
+        type=python_target_argument,
         default=None,
         help="Python version to use for analysis. Defaults to the running interpreter.",
     )
@@ -153,8 +154,8 @@ def main():
     Main function to analyze a Python file based on provided arguments.
 
     Usage example:
-    Analyze a file "example.py" with Python 3.8, encoding utf-8, and save the result in "result.json":
-        python main.py example.py --version 3.8 --encoding utf-8 --output result.json
+    Analyze a file "example.py" with Python 3.11, encoding utf-8, and save the result in "result.json":
+        python main.py example.py --version 3.11 --encoding utf-8 --output result.json
 
     Analyze a file "example.py", but only the functions "func1" and "func2":
         python main.py example.py --analyze func1,func2
@@ -175,7 +176,8 @@ def main():
         else:
             print(result)
 
-    except ConfigurationError:
+    except (ConfigurationError, ValueError) as exc:
+        logger.error("Invalid configuration: %s", exc)
         sys.exit(1)
 
 

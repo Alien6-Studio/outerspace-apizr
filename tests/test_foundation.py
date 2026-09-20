@@ -62,3 +62,27 @@ def test_generation_is_repeatable_offline_and_execution_requires_import(
     finally:
         sys.modules.pop("trusted_business_api", None)
         sys.modules.pop("trusted_business", None)
+
+
+@pytest.mark.parametrize("escape", ["parent", "absolute", "symlink"])
+def test_context_output_cannot_escape_directory(tmp_path, escape):
+    from apizr.configuration import MainConfiguration
+
+    output = tmp_path / "output"
+    output.mkdir()
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    if escape == "symlink":
+        (output / "link").symlink_to(outside, target_is_directory=True)
+        target = "link/escaped.txt"
+    elif escape == "absolute":
+        target = outside / "escaped.txt"
+    else:
+        target = "../outside/escaped.txt"
+    context = Context()
+    context.config = MainConfiguration()
+    context.output_dir = output
+    context.result = ("code", "must not escape")
+    with pytest.raises(ContextException, match="inside the output directory"):
+        context.write_output("code", target)
+    assert not (outside / "escaped.txt").exists()

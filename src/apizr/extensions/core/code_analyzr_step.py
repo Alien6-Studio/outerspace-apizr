@@ -2,8 +2,6 @@ import ast
 import keyword
 import shutil
 
-from apizr.compat import is_relative_to
-
 from ...modules.code_analyzr.analyzr.astAnalyzr import AstAnalyzr
 from ..context import ContextStatus
 from ..step import Step
@@ -26,7 +24,7 @@ def copy_local_modules(source, source_dir, output_dir, seen=None):
             local = source_dir / f"{name}.py"
             package = source_dir / name
             if local.is_file():
-                if not is_relative_to(local.resolve(), source_dir.resolve()):
+                if not local.resolve().is_relative_to(source_dir.resolve()):
                     raise ValueError(f"Local module escapes source directory: {local}")
                 destination = output_dir / local.name
                 if destination.exists() and destination.resolve() != local.resolve():

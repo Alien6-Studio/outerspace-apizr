@@ -1,8 +1,8 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from apizr.compat import DEFAULT_PYTHON
+from apizr.runtime import DEFAULT_PYTHON, PythonTarget
 
 
 class KeywordConfig(BaseModel):
@@ -11,7 +11,7 @@ class KeywordConfig(BaseModel):
 
 
 class CodeAnalyzrConfiguration(BaseModel):
-    python_version: Tuple[int, int] = DEFAULT_PYTHON
+    python_version: PythonTarget = DEFAULT_PYTHON
     encoding: str = "utf-8"
     functions_to_analyze: Optional[str] = None
     ignore: Optional[str] = None

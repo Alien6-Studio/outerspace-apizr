@@ -1,8 +1,8 @@
 import json
 import os
 
-from apizr.compat import DEFAULT_PYTHON
 from apizr.configuration import MainConfiguration
+from apizr.runtime import DEFAULT_PYTHON, parse_python_target
 
 
 class ConfigPrompter:
@@ -25,8 +25,7 @@ class ConfigPrompter:
 
     def getConfiguration(self) -> MainConfiguration:
         configuration = MainConfiguration()
-        major, minor = map(int, self.prompt_python_version().split("."))
-        configuration.python_version = (major, minor)
+        configuration.python_version = parse_python_target(self.prompt_python_version())
         configuration.encoding = self.prompt_encoding()
         return configuration
 

@@ -2,7 +2,7 @@
 
 Turn top-level Python functions in a script or Jupyter notebook into a FastAPI application and a Docker project.
 
-**Development version: 0.2.0. Python 3.8–3.14.** This checkout is the source of truth until a new release is published on PyPI.
+**Development version: 0.2.0. Python 3.11–3.14.** This checkout is the source of truth until a new release is published on PyPI.
 
 ## Install from the repository
 
@@ -47,20 +47,20 @@ Use an empty output directory. Existing non-empty directories are rejected to av
 
 ## Python compatibility
 
-Apizr runs on Python **3.8 through 3.14**, including the original 3.8–3.11 range. `uv.lock` resolves compatible dependencies for every version rather than imposing recent dependency versions on older interpreters.
+Apizr runs on Python **3.11 through 3.14**. Python 3.8–3.10 were deliberately dropped to remove obsolete compatibility machinery and vulnerable dependency variants. This is a security and maintenance decision; it applies both to Apizr itself and generated targets. See the [migration notes](docs/getting-started/developer-guide/releases.md).
 
 By default, generated containers target the interpreter running Apizr. Select an older target explicitly:
 
 ```sh
-uv run apizr --notebook examples/pricing.ipynb --python-version 3.8 --output-dir .output/pricing38
+uv run apizr --notebook examples/pricing.ipynb --python-version 3.11 --output-dir .output/pricing311
 ```
 
-The YAML equivalent is `python_version: [3, 8]`. Run Apizr with an interpreter at least as recent as the target: it parses the source using that target's grammar but does not transpile newer Python features. Input code and its dependencies must support the selected target. When targeting a different interpreter, inferred dependencies are not pinned to versions from the host environment; the target installer resolves compatible versions. Explicit requirements are preserved.
+The YAML equivalent is `python_version: [3, 11]`. Run Apizr with an interpreter at least as recent as the target: it parses the source using that target's grammar but does not transpile newer Python features. Input code and its dependencies must support the selected target. When targeting a different interpreter, inferred dependencies are not pinned to versions from the host environment; the target installer resolves compatible versions. Explicit requirements are preserved.
 
 To run the development suite on a specific interpreter:
 
 ```sh
-uv run --python 3.8 --locked pytest
+uv run --python 3.14 --locked pytest
 uv run --python 3.11 --locked pytest
 ```
 
@@ -110,7 +110,7 @@ uv run --group docs mkdocs build --strict
 uv run python scripts/smoke_container.py  # requires a running Docker daemon
 ```
 
-CI tests Python 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 and 3.14, builds the package, installs its wheel outside the checkout, and runs the notebook → Docker → HTTP smoke test. The container smoke test removes its own container and image afterward.
+CI tests Python 3.11, 3.12, 3.13 and 3.14, builds the package, installs its wheel outside the checkout, and runs the notebook → Docker → HTTP smoke test. The container smoke test removes its own container and image afterward.
 
 See [migration and release notes](docs/getting-started/developer-guide/releases.md) for changes from 0.1.x and PyPI publication. Creating a PyPI organization is not required to develop or publish a package.
 

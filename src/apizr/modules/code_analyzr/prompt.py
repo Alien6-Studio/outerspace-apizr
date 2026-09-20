@@ -4,8 +4,8 @@ import os
 
 from questionary import prompt
 
-from apizr.compat import DEFAULT_PYTHON
 from apizr.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
+from apizr.runtime import DEFAULT_PYTHON, parse_python_target, validate_python_target
 
 
 class ConfigPrompter:
@@ -36,10 +36,11 @@ class ConfigPrompter:
     def getConfiguration(self, version=None, encoding=None) -> CodeAnalyzrConfiguration:
         configuration = CodeAnalyzrConfiguration()
         if not version:
-            major, minor = map(int, self.prompt_python_version().split("."))
-            configuration.python_version = (major, minor)
+            configuration.python_version = parse_python_target(
+                self.prompt_python_version()
+            )
         else:
-            configuration.python_version = version
+            configuration.python_version = validate_python_target(version)
         if not encoding:
             configuration.encoding = self.prompt_encoding()
         else:

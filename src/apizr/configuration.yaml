@@ -1,6 +1,6 @@
 # Complete pipeline configuration; all sections are optional.
-# Defaults to the running interpreter. Uncomment to target Python 3.8.
-# python_version: [3, 8]
+# Defaults to the running interpreter. Uncomment to target Python 3.11.
+# python_version: [3, 11]
 encoding: utf-8
 code_analyzr:
   functions_to_analyze: null

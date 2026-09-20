@@ -2,7 +2,12 @@
 
 ## 0.2.0 — unreleased
 
-- Python 3.8–3.14, preserving the original Python 3.8–3.11 compatibility. The lockfile selects compatible dependency versions for each interpreter; Pydantic 2 is retained.
+- **Python 3.11–3.14 only**, for both Apizr and generated targets. Python 3.8, 3.9 and 3.10 are deliberately dropped for security and maintenance reasons. The earlier foundation commit supported 3.8–3.14; this revision supersedes that policy.
+- Python 3.8/3.9 are end-of-life; 3.10 approaches the end of security support. See the [upstream lifecycle](https://devguide.python.org/versions/). Older runtimes forced vulnerable dependency variants into the universal lock.
+- Upgrade your interpreter and deployment image to 3.11 or newer before syncing/installing. Update `--python-version` and YAML `python_version` targets; unsupported targets fail with the supported range. Existing source is parsed, never transpiled.
+- The release remains **0.2.0, unreleased**: no version bump or publication is performed by this security PR. The release procedure selects the final available version before publishing.
+- Removed `apizr.compat` and obsolete backports. Application APIs remain under `apizr`; consumers of internal compatibility helpers should use the Python standard library.
+- Security minima for FastAPI, Starlette, python-multipart, nbconvert, Black and pytest are documented in the [current security baseline](../../architecture/security-baseline.md). Pydantic 2 remains in use.
 - One PEP 621 package definition and `uv.lock`; Poetry/PDM lockfiles and separate module requirement files are retired.
 - Imports work from an installed wheel, without changing `sys.path`.
 - Non-interactive CLI defaults; `--force` remains accepted and `--interactive` enables prompts.

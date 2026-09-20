@@ -1,10 +1,8 @@
 """Validated configuration shared by the CLI and HTTP interfaces."""
 
-from typing import Tuple
-
 from pydantic import BaseModel, Field
 
-from apizr.compat import DEFAULT_PYTHON
+from apizr.runtime import DEFAULT_PYTHON, PythonTarget, validate_python_target
 
 from .modules.code_analyzr.configuration import CodeAnalyzrConfiguration
 from .modules.dockerizr.configuration import DockerizrConfiguration
@@ -13,7 +11,7 @@ from .modules.notebook_transformr.configuration import NotebookTransformrConfigu
 
 
 class MainConfiguration(BaseModel):
-    python_version: Tuple[int, int] = DEFAULT_PYTHON
+    python_version: PythonTarget = DEFAULT_PYTHON
     encoding: str = "utf-8"
     notebook_transformr: NotebookTransformrConfiguration = Field(
         default_factory=NotebookTransformrConfiguration
@@ -25,8 +23,7 @@ class MainConfiguration(BaseModel):
     dockerizr: DockerizrConfiguration = Field(default_factory=DockerizrConfiguration)
 
     def dispatch(self):
-        if not (3, 8) <= self.python_version <= (3, 14):
-            raise ValueError("Supported Python targets are 3.8 through 3.14")
+        validate_python_target(self.python_version)
         if self.python_version > DEFAULT_PYTHON:
             raise ValueError(
                 "Run Apizr with a Python version at least as recent as the requested target"

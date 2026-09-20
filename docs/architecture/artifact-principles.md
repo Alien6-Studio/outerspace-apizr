@@ -1,6 +1,6 @@
 # Artifact principles
 
-Apizr artifacts should be independently hashable and attestable without requiring
+Apizr artifacts must be independently hashable and attestable without requiring
 an attestation implementation.
 
 Generation takes explicit source, configuration and optional requirements inputs,
