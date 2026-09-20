@@ -44,12 +44,10 @@ theme:
     # - content.tabs.link
     - content.tooltips
     - header.autohide
-    - navigation.expand
     - navigation.footer
     - navigation.indexes
     # - navigation.instant
     # - navigation.prune
-    - navigation.sections
     - navigation.tabs
     # - navigation.tabs.sticky
     - navigation.top
@@ -87,40 +85,44 @@ extra:
 extra_css:
   - assets/stylesheets/extra.css
 
-# Page tree
+# Organize by reader task; keep published page paths stable.
 nav:
   - Home: index.md
-  - Getting Started:
-      - Introduction: getting-started/introduction.md
-      - User Guide:
-          - Using Apizr: getting-started/user-guide/apizr.md
-          - Using Code Analyzr: getting-started/user-guide/code-analyzr.md
-          - Using Fast Apizr: getting-started/user-guide/fast-apizr.md
-          - Using Dockerizr: getting-started/user-guide/dockerizr.md
-      - Developer Guide:
-          - Setup: getting-started/developer-guide/setup.md
-          - Migration and releases: getting-started/developer-guide/releases.md
-          - Architecture:
-              - Capability IR v1: architecture/capability-ir-v1.md
-              - Capability IR verification: architecture/capability-ir-v1-verification.md
-              - Legacy Behavior Contract: architecture/legacy-behavior-contract.md
-              - 0.2 baseline: architecture/0.2-baseline.md
-              - Artifact principles: architecture/artifact-principles.md
-              - Security baseline: architecture/security-baseline.md
-              - Historical foundation audit: architecture/foundation-security-audit.md
-              - Foundation verification: architecture/0.2-hardening.md
-          - Modules:
-              - Notebook Transformr: modules/notebook-transformr.md
-              - Code Analyzr: modules/code-analyzr.md
-              - Fast Apizr: modules/fast-apizr.md
-              - Dockerizr: modules/dockerizr.md
-          - APIs:
-              - Apizr API: apis/apizr-api.md
-              - Notebook Transformr API: apis/notebook-transformr-api.md
-              - Code Analyzr API: apis/code-analyzr-api.md
-              - Fast Apizr API: apis/fast-apizr-api.md
-              - Dockerizr API: apis/dockerizr-api.md
-          - About:
-              - Contributing: about/CONTRIBUTING.md
-              - Code of Conduct: about/CODE_OF_CONDUCT.md
-              - License: about/LICENSE.md
+  - Guides:
+      - Start here: getting-started/introduction.md
+      - Generate an API and container: getting-started/user-guide/apizr.md
+      - Migrate from 0.1.x: getting-started/developer-guide/releases.md
+  - Reference:
+      - Overview: reference/index.md
+      - Standalone commands:
+          - Analyze Python: getting-started/user-guide/code-analyzr.md
+          - Generate FastAPI: getting-started/user-guide/fast-apizr.md
+          - Generate Docker files: getting-started/user-guide/dockerizr.md
+      - Pipeline components:
+          - Notebook conversion: modules/notebook-transformr.md
+          - Python analysis: modules/code-analyzr.md
+          - FastAPI generation: modules/fast-apizr.md
+          - Docker generation: modules/dockerizr.md
+      - HTTP generation service:
+          - Service and project upload: apis/apizr-api.md
+          - Python analysis endpoint: apis/code-analyzr-api.md
+          - FastAPI generation endpoint: apis/fast-apizr-api.md
+          - Notebook conversion endpoint: apis/notebook-transformr-api.md
+          - Docker generation endpoints: apis/dockerizr-api.md
+      - Architecture and contracts:
+          - Capability IR v1: architecture/capability-ir-v1.md
+          - Legacy behavior contract: architecture/legacy-behavior-contract.md
+          - Artifact principles: architecture/artifact-principles.md
+          - Security baseline: architecture/security-baseline.md
+  - Contributing:
+      - Overview: about/CONTRIBUTING.md
+      - Development and checks: getting-started/developer-guide/setup.md
+      - Publish a release: contributing/releases.md
+      - Engineering archive:
+          - Read these records: architecture/records.md
+          - Original 0.2 baseline: architecture/0.2-baseline.md
+          - Foundation verification: architecture/0.2-hardening.md
+          - Historical dependency audit: architecture/foundation-security-audit.md
+          - Capability IR verification: architecture/capability-ir-v1-verification.md
+      - Code of conduct: about/CODE_OF_CONDUCT.md
+      - License: about/LICENSE.md

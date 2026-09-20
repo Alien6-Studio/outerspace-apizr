@@ -1,80 +1,99 @@
-# Development setup
+# Development and checks
 
-Use Python 3.11–3.14 and [uv](https://docs.astral.sh/uv/getting-started/installation/).
+<span id="development-setup"></span>
+
+Follow [Start here](../introduction.md#install-the-development-checkout) to install
+Python 3.11–3.14, uv and a checkout. This page covers work on Apizr itself.
+
+`pyproject.toml` defines the package and dependency groups; `uv.lock` is the only
+lockfile. Use `uv lock --upgrade` deliberately for dependency updates and commit
+the resulting lockfile with the tested changes. The installed namespace is
+`apizr`, with a conventional `src/apizr/` layout.
+
+<span id="foundation-quality-gates"></span>
+
+## Quality gates
 
 ```sh
-git clone https://github.com/Alien6-Studio/outerspace-apizr.git
-cd outerspace-apizr
 uv sync --locked
-make lint
-make test
-make build
-```
-
-`pyproject.toml` defines the package and dependency groups. `uv.lock` is the only lockfile. Use `uv lock --upgrade` deliberately when updating dependencies and commit the resulting lockfile with the tested changes.
-
-```sh
-uv run --group docs mkdocs serve
-uv run --group docs mkdocs build --strict
-uv run python scripts/smoke_container.py
-```
-
-The smoke test requires Docker and exercises the generated application in a real container. It removes its container and image afterward. Ordinary tests use temporary directories and FastAPI's test client.
-
-The installed package is `apizr`, using the conventional `src/apizr/` layout. The former `src` namespace is no longer shipped. Run modules with `python -m apizr.modules.code_analyzr.main`, for example; do not modify `sys.path` or execute nested `main.py` files directly.
-
-Historical fixtures are preserved byte-for-byte under `tests/fixtures/legacy/`. The maintained suite and fixture corpus now share the `tests/` hierarchy.
-
-The compatibility test matrix covers Python 3.11–3.14. A single package job builds once and installs that wheel outside the checkout on Python 3.11 and 3.14. A separate container matrix generates projects using Python 3.14 and builds/runs each target image (3.11–3.14). Run locally with `uv run --python 3.11 --locked pytest` or `uv run python scripts/smoke_container.py --python-version 3.11`. The Python 3.11 golden fixture set is exercised on all supported runtimes; older golden files remain archived unchanged.
-
-
-## Foundation quality gates
-
-```sh
 uv run ruff check .
 uv run ruff format --check .
 uv run pyright
 uv run pytest --cov --cov-report=term-missing
+uv run coverage report --include='src/apizr/capabilities/*' --fail-under=90
 uv run pre-commit run --all-files
 uv build
 uv run python scripts/smoke_wheel.py dist/*.whl
+uv run --group docs mkdocs build --strict
 uv run --group security python scripts/audit_dependencies.py
 ```
 
-Pyright uses standard mode on production and tooling code, targeting Python 3.11
-syntax and APIs. Obsolete compatibility backports have been removed. There are no blanket diagnostic
-disables. Dynamic AST metadata, decorators and mutable pipeline state still have
-incomplete inferred types; standard mode is not a claim of strict typing.
+Ruff is the repository linter and formatter. Black remains a runtime dependency
+of notebook conversion. Pyright uses standard mode on production/tooling code and
+strict mode for `apizr.capabilities`, targeting Python 3.11 syntax and APIs.
+Dynamic legacy metadata and pipeline state still have incomplete inferred types.
 
-Coverage includes legacy modules, reports missing lines, and uses a conservative
-55% branch-aware floor against the recorded 55.90% baseline. Generated temporary
-applications are exercised functionally, not included in the package coverage
-percentage. Subprocess coverage remains separate from this parent-process metric.
+Coverage has a global 55% branch-aware floor and a separate 90% floor for the
+capability core. Generated applications are tested functionally; their temporary
+files and subprocess execution are not included in the package coverage metric.
+Point-in-time coverage measurements belong in the [engineering archive](../../architecture/records.md).
 
-Security tools require Python 3.11 or newer. The audit exports `uv.lock` to temporary `pylock.toml` files for runtime, development, documentation and
-security-tooling scopes, then runs `pip-audit --locked` on each. All findings
-and collection failures are blocking. A regression test checks that their union
-covers every locked registry package/version variant. It does not re-resolve a hand-maintained
-requirements file or suppress findings. See [SECURITY.md](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/SECURITY.md)
-for reporting and execution boundaries.
+The security audit exports the resolved `uv.lock` graph for runtime, development,
+documentation and security-tooling scopes, then runs `pip-audit --locked`. Findings
+and collection failures block the check. No advisories are automatically ignored.
+See [SECURITY.md](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/SECURITY.md)
+for private reporting and execution boundaries.
 
-The CLI entry point is `apizr.main:main`: `main.py` already owns CLI parsing and
-the conversion entry point, so it was moved unchanged in responsibility rather
-than split into new orchestration modules. Update `src.*` imports and commands
-to `apizr.*`; no namespace shim is included.
+## Compatibility and packaging
 
-Python 3.8–3.10 are intentionally no longer supported; see the [migration notes](releases.md). The 55% coverage floor remains unchanged.
+CI tests Python 3.11–3.14. One package job builds wheel/sdist and checks wheel
+installation outside the checkout on Python 3.11 and 3.14. A separate container
+matrix generates projects with Python 3.14 and builds/runs target images for all
+four supported versions.
 
-## Adversarial characterization
+```sh
+uv run --python 3.11 --locked pytest
+uv run python scripts/smoke_container.py --python-version 3.11
+```
+
+The container smoke test requires Docker, exercises the generated application,
+and removes its container/image afterward. Ordinary tests use temporary
+directories and FastAPI's test client.
+
+<span id="adversarial-characterization"></span>
+
+## Characterization and fixtures
 
 The [legacy behavior contract](../../architecture/legacy-behavior-contract.md)
-separates intentional support, explicit rejections, observed legacy behavior and
-future candidates. Its corpus lives in `tests/fixtures/characterization/` and is
-executed by `tests/characterization/`. Hypothesis is a development dependency;
-run this suite with `uv run pytest tests/characterization`.
+records intentional support, explicit rejections, observed behavior and future
+candidates. Its corpus lives in `tests/fixtures/characterization/`, with tests in
+`tests/characterization/`. Capability IR uses separate expectations under
+`tests/capabilities/`.
 
-Hypothesis keeps its normal failure database in `.hypothesis/` and prints replay
-information on failure. Preserve the failing example when reporting a defect;
-do not suppress it with broad assumptions. Generation tests use isolated temporary
-directories and bounded inputs. Ordinary generated-application imports execute
-trusted test fixtures only.
+```sh
+uv run pytest tests/characterization tests/capabilities
+```
+
+Hypothesis retains its failure database in `.hypothesis/` and prints replay
+information. Preserve failing examples when reporting defects. Generated-application
+imports in tests execute trusted fixtures only.
+
+Historical fixtures remain unchanged under `tests/fixtures/legacy/`; the Python
+3.11 golden set runs on all supported interpreters. Do not update historical
+expectations merely to make a changed implementation pass.
+
+## Work on the documentation
+
+```sh
+uv run --group docs mkdocs serve
+uv run --group docs mkdocs build --strict
+```
+
+Keep user workflows in **Guides**, interface details and current contracts in
+**Reference**, and maintainer tasks in **Contributing**. Place dated audits and
+verification reports in the **Engineering archive**, with links to current policy.
+Preserve published page URLs where possible. Reuse a canonical explanation with
+cross-links rather than copying it into several audience sections.
+
+The [publication workflow](../../contributing/releases.md#documentation-publication)
+deploys the documentation automatically after a merge to `master`.

@@ -22,8 +22,8 @@ uv run pre-commit run --all-files
 uv run python scripts/smoke_container.py --python-version 3.11
 ```
 
-The Docker check requires Docker. See the developer guide for wheel validation
-and the dependency audit. Python 3.11–3.14 remains supported. Use Python 3.11 or
+The Docker check requires Docker. See [development and checks](docs/getting-started/developer-guide/setup.md) for wheel
+validation and the dependency audit. Python 3.11–3.14 remains supported. Use Python 3.11 or
 newer for security tooling. Ruff formats repository code; Black is a runtime
 notebook-formatting dependency and is not the repository formatter.
 
