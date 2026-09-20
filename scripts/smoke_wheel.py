@@ -20,13 +20,14 @@ def main():
         assert "apizr/__init__.py" in names
         assert "apizr/capabilities/model.py" in names
         assert "apizr/readiness/model.py" in names
+        assert "apizr/generators/rest/runtime.py" in names
         assert not any(name == "src.py" or name.startswith("src/") for name in names)
         assert any(name.endswith(".dist-info/licenses/LICENSE") for name in names)
         assert "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2" in names
         assert "apizr/i18n/en/messages.json" in names
     notebook = Path(__file__).resolve().parents[1] / "examples/pricing.ipynb"
     with tempfile.TemporaryDirectory(prefix="apizr-wheel-") as directory:
-        root = Path(directory)
+        root = Path(directory).resolve()
         env = root / "env"
         subprocess.run(["uv", "venv", "--python", args.python, str(env)], check=True)
         bin_dir = env / ("Scripts" if sys.platform == "win32" else "bin")
@@ -110,6 +111,57 @@ print(apizr.__file__)
                 command, cwd=root, check=True, capture_output=True, text=True
             )
             assert "readiness: READY" in text.stdout
+            rest_output = root / (
+                "rest-notebook" if target.suffix == ".ipynb" else "rest-python"
+            )
+            subprocess.run(
+                [
+                    str(cli),
+                    "generate",
+                    "rest",
+                    str(target),
+                    "--module-name",
+                    "installed.sample",
+                    "--output-dir",
+                    str(rest_output),
+                ],
+                cwd=root,
+                check=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                [
+                    str(python),
+                    "-I",
+                    "-c",
+                    """import asyncio, importlib.util, json, sys
+from pathlib import Path
+root = Path(sys.argv[1])
+spec = importlib.util.spec_from_file_location('generated_adapter', root / 'app.py')
+adapter = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(adapter)
+assert not any(name == 'apizr' or name.startswith('apizr.') for name in sys.modules)
+async def check():
+    messages = []
+    async def receive():
+        return {'type': 'http.request', 'body': b'{"values":[1,2]}', 'more_body': False}
+    async def send(message):
+        messages.append(message)
+    await adapter.app({'type':'http', 'asgi':{'version':'3.0'}, 'http_version':'1.1',
+        'method':'POST', 'scheme':'http', 'path':'/capabilities/total',
+        'raw_path':b'/capabilities/total', 'query_string':b'',
+        'headers':[(b'content-type',b'application/json')], 'root_path':'',
+        'client':('127.0.0.1', 1), 'server':('localhost',80)}, receive, send)
+    assert messages[0]['status'] == 200, messages
+    assert json.loads(b''.join(m.get('body',b'') for m in messages)) == 3
+asyncio.run(check())
+assert adapter.app.openapi() == json.loads((root / 'openapi.json').read_bytes())
+""",
+                    str(rest_output),
+                ],
+                cwd=root,
+                check=True,
+            )
         result = subprocess.run(
             [
                 str(cli),
@@ -137,7 +189,7 @@ print(apizr.__file__)
         for name in manifest["files"]:
             assert (root / "project" / name).is_file()
         print(
-            "Wheel namespace, Capability IR, readiness inspection (Python/notebook), resources, license, CLI help and notebook generation passed."
+            "Wheel namespace, IR/readiness, inspection and REST generation/runtime (Python/notebook), resources, license, CLI help and legacy notebook generation passed."
         )
 
 

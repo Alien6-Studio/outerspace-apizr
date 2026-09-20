@@ -73,7 +73,7 @@ def test_inputs_do_not_invent_runtime_or_adapter_semantics(annotation, state, co
 @pytest.mark.parametrize(
     "source",
     [
-        "from typing import List as Sequence\ndef f(x: Sequence[int]): pass",
+        "from typing import List as List\ndef f(x: List[int]): pass",
         "import typing as t\ndef f(x: t.List[int]): pass",
         'from typing import Literal, Optional\ndef f(x: Optional[Literal["a"]]): pass',
     ],

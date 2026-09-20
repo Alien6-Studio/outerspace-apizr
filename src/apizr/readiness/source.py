@@ -224,7 +224,14 @@ class SourceFacts(ast.NodeVisitor):
                 ):
                     for alias in imported.names:
                         if (alias.asname or alias.name) == node.id:
-                            return alias.name if alias.name in TYPING_NAMES else None
+                            # IR v1 does not carry import alias resolution. Consumers
+                            # need the original type spelling to preserve semantics.
+                            return (
+                                alias.name
+                                if alias.name in TYPING_NAMES
+                                and (alias.asname is None or alias.asname == alias.name)
+                                else None
+                            )
         if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
             if node.value.id in self.mutated_roots or node.attr not in TYPING_NAMES:
                 return None
