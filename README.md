@@ -68,7 +68,7 @@ uv run --python 3.11 --locked pytest
 
 ```sh
 uv run apizr --script path/to/business.py --output-dir .output/business
-uv run apizr --script path/to/business.py --configuration src/configuration.yaml --output-dir .output/configured
+uv run apizr --script path/to/business.py --configuration src/apizr/configuration.yaml --output-dir .output/configured
 uv run apizr --script path/to/business.py --requirements path/to/requirements.txt --output-dir .output/explicit
 ```
 
@@ -93,7 +93,7 @@ Dependency inference scans imports without network access. Installed distributio
 ## Local generation service
 
 ```sh
-uv run uvicorn src.app:app --host 127.0.0.1 --port 8000
+uv run uvicorn apizr.app:app --host 127.0.0.1 --port 8000
 curl -f -F 'file=@examples/pricing.ipynb' http://127.0.0.1:8000/process_file/ -o pricing-api.zip
 ```
 
@@ -114,4 +114,4 @@ CI tests Python 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 and 3.14, builds the package, i
 
 See [migration and release notes](docs/getting-started/developer-guide/releases.md) for changes from 0.1.x and PyPI publication. Creating a PyPI organization is not required to develop or publish a package.
 
-Licensed under [GPL-3.0-or-later](docs/about/LICENSE.md).
+Licensed under [GPL-3.0-or-later](LICENSE).

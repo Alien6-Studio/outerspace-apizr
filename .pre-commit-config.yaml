@@ -1,3 +1,5 @@
+# Golden fixtures are immutable test inputs, not repository-formatting targets.
+exclude: ^tests/fixtures/
 repos:
   - repo: local
     hooks:
@@ -5,11 +7,24 @@ repos:
         name: Ruff check
         entry: uv run --locked ruff check
         language: system
-        types: [python]
-        files: ^(src|tests|scripts)/
+        types_or: [python, jupyter]
       - id: ruff-format
         name: Ruff format
         entry: uv run --locked ruff format --check
         language: system
-        types: [python]
-        files: ^(src|tests|scripts)/
+        types_or: [python, jupyter]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^(LICENSE$|overrides/|src/apizr/.*/templates/)
+      - id: end-of-file-fixer
+        exclude: ^(LICENSE$|overrides/|src/apizr/.*/templates/)
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-added-large-files
+        args: [--maxkb=1024, --enforce-all]
+        # Existing documentation artwork and the generated universal lock are intentional.
+        exclude: ^(uv\.lock|docs/assets/images/(apizr-teaser-01|illustration)\.png)$

@@ -3,7 +3,7 @@
 Generate dependency and Docker files for an existing FastAPI project:
 
 ```sh
-uv run python -m src.modules.dockerizr.main --project_path .output/api --module_name business_api --force
+uv run python -m apizr.modules.dockerizr.main --project_path .output/api --module_name business_api --force
 ```
 
 Use `--action requirements` or `--action dockerfile` to run an individual generator. YAML configuration accepts `DockerizrConfiguration` fields directly (without the top-level `dockerizr` key used by the complete pipeline).

@@ -4,7 +4,7 @@ from zipfile import ZipFile
 import pytest
 from fastapi.testclient import TestClient
 
-from src.app import app
+from apizr.app import app
 
 
 @pytest.fixture
@@ -90,7 +90,7 @@ def test_docker_endpoint_does_not_write_requested_directory(client, tmp_path):
 def test_windows_upload_name_validation():
     from fastapi import HTTPException, UploadFile
 
-    from src.http import read_upload
+    from apizr.http import read_upload
 
     with pytest.raises(HTTPException) as error:
         read_upload(UploadFile(filename="C:\\escape.py", file=io.BytesIO(b"")), {".py"})

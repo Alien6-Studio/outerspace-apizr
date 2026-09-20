@@ -14,7 +14,7 @@ docker build -t apizr-pricing .output/pricing
 docker run --rm -p 127.0.0.1:5001:5001 apizr-pricing
 ```
 
-Use `--script file.py` for Python source. The filename must be a valid Python module name. Output defaults to `.output/<source>` and must be empty. A YAML file can be supplied with `--configuration`; `src/configuration.yaml` is the reference example. `fast_apizr.api_filename` controls the generated filename.
+Use `--script file.py` for Python source. The filename must be a valid Python module name. Output defaults to `.output/<source>` and must be empty. A YAML file can be supplied with `--configuration`; `src/apizr/configuration.yaml` is the reference example. `fast_apizr.api_filename` controls the generated filename.
 
 Use `--requirements requirements.txt` to provide application dependencies explicitly. Otherwise imports are analyzed without execution, with installed distributions pinned when identifiable. External data, dynamic imports and ambiguous dependencies require manual packaging.
 
