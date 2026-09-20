@@ -9,7 +9,7 @@ when explicitly selected. Direct and local-process generation remain unchanged.
 
 The policy describes requirements; the provider implements launch mechanics.
 `apizr.oci.provider.ContainerProvider` separates probe, creation, attached protocol
-command, OOM evidence and removal. Docker Engine is the first trusted provider.
+command, terminal-state evidence and removal. Docker Engine is the first trusted provider.
 There is no Docker SDK dependency and no arbitrary Docker argument/mount option.
 
 | Contract | Version | Meaning |
@@ -146,14 +146,78 @@ terminates descendants even after `setsid()`. There is no process pool, host-wid
 kill heuristic or automatic removal that hides OOM evidence.
 
 The attached invocation deadline includes Docker start overhead. Probe, create,
-inspection and removal have separate bounded CLI timeouts (10 seconds each);
+and removal have separate bounded CLI timeouts (10 seconds each);
 cleanup retries up to three times. A daemon outage may prevent confirmed removal:
 return `cleanup_failed`, never claim successful cleanup, and restore/manage the
 trusted daemon before further work. Normal integration paths assert absence of
 the exact invocation container after return.
 
-Only reliable Docker `State.OOMKilled` maps a failed worker to `resource_limit`.
-A generic exit code alone remains `worker_failed`. Wall expiration is `timeout`.
+Only reliable terminal Docker `State.OOMKilled=true` maps a failed worker to
+`resource_limit`. A generic exit code alone remains `worker_failed`. Wall
+expiration is `timeout` and bypasses terminal observation, even if subsequent
+cleanup kills the container.
+
+`ContainerProvider.final_state` returns internal typed evidence (`running`,
+`status`, `oom_killed`, `exit_code`) or no evidence. Docker validates the four
+[documented State fields](https://docs.docker.com/reference/api/engine/version/v1.52/)
+strictly, requiring their actual JSON types. Additional unused Docker fields are
+ignored. Evidence is terminal only when `Running=false` and `Status` is `exited`
+or `dead`. This representation is not added to any public result or manifest.
+
+The provider observes only a generic `worker_failed` result, before removal.
+The default monotonic observation budget is **1 second**, independent of the
+capability wall deadline. Each inspect subprocess gets at most **250 ms**, capped
+by the remaining budget. Nonterminal, inconsistent, malformed or unavailable
+observations retry after at most **50 ms**, without busy waiting. A terminal OOM
+returns immediately. An ordinary terminal exit such as 23 returns immediately.
+Exit 137 (and exit 0 without a valid worker response) leaves room for delayed OOM
+metadata until the budget expires; neither code is OOM evidence. Without positive
+terminal OOM evidence the generic failure remains unchanged. An inspect failure
+never exposes Docker stderr. Cleanup still runs in `finally`, and its failure
+still takes precedence over classification.
+
+Successful calls and supervisor timeouts perform **no extra inspection or sleep**.
+An inconclusive failure adds at most a one-second observation budget, plus normal
+OS process-creation/reaping and scheduler overhead; Python subprocess timeouts
+cannot strictly bound those OS operations. Probe/create/removal budgets are
+unchanged. There is no arbitrary supervisor sleep or GitHub Actions retry.
+
+Issue [#57](https://github.com/Alien6-Studio/outerspace-apizr/issues/57) recorded
+intermittent direct and MCP HTTP misclassification on Linux CI. Those failed runs
+did not capture Docker State, so their exact event ordering is unproven. A
+controlled running/false → exited/false/137 → exited/true/137 sequence reproduces
+the old one-observation gap. Docker's
+[OOM and exit event handlers](https://github.com/moby/moby/blob/master/daemon/monitor.go)
+update state separately; attach completion alone is not a terminal-evidence
+contract. Tests cover that sequence, transient inspection failures, strict JSON,
+bounded waiting, ordinary exit 23, non-OOM exit 137 and timeout precedence.
+Required OCI CI also checks every sample of 10 real direct OOM invocations and 20
+per REST/MCP stdio/MCP HTTP transport, with repeated non-OOM/timeout controls and
+removal assertions. Passing local samples alone do not establish reproduction
+of the original Linux CI race.
+
+The strengthened #57 CI investigation captured 17 consecutive terminal
+`exited/137/OOMKilled=false` observations through the entire budget, including
+just before removal. Waiting longer is not a general remedy when evidence is
+lost: containerd documents a
+[systemd scope garbage-collection race](https://github.com/containerd/containerd/pull/12819)
+that can remove a cgroup before its OOM event is read. Apizr must still return a
+generic failure if Docker never reports OOM; it does not inspect host journals or
+infer the cause from exit 137.
+
+The required `oci-isolation` runner therefore explicitly configures Docker's
+`cgroupfs` driver before building its fixture image. This changes cgroup lifecycle
+management on the disposable test host, not invocation limits, cgroup namespaces,
+network, seccomp, read-only mounts or cleanup. The job logs the before/after engine
+and driver versions and retains every OOM assertion. There is no test skip or
+workflow retry. Apizr never changes a user's daemon configuration. With other
+provider configurations, missing upstream OOM evidence remains an explicit
+classification limitation, even when terminal-state polling is correct.
+
+This fix changes three embedded OCI source files and their hashes in generated
+OCI bundles (including the enclosing manifests). Existing bundles must be
+regenerated to receive it. Public schemas/versions, policies/plans, direct/local
+bundles and legacy artifacts remain unchanged.
 Failure results contain only stable statuses and null values: no provider stderr,
 source exceptions, host paths, daemon addresses, IDs or environment values.
 

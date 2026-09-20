@@ -87,6 +87,25 @@ jobs:
         with:
           python-version: '3.14'
           enable-cache: true
+      # systemd scope GC can discard OOM evidence before containerd reads it:
+      # https://github.com/containerd/containerd/pull/12819
+      # Keep every assertion; use the cgroupfs driver on this disposable runner.
+      - name: Configure reliable Docker OOM evidence on the test runner
+        run: |
+          docker info --format 'Docker={{.ServerVersion}} cgroup_driver={{.CgroupDriver}} cgroup_version={{.CgroupVersion}}'
+          sudo python3 - <<'PYCONFIG'
+          import json
+          from pathlib import Path
+          path = Path("/etc/docker/daemon.json")
+          config = json.loads(path.read_text()) if path.exists() else {}
+          options = config.get("exec-opts", [])
+          config["exec-opts"] = [option for option in options if not option.startswith("native.cgroupdriver=")]
+          config["exec-opts"].append("native.cgroupdriver=cgroupfs")
+          path.write_text(json.dumps(config) + "\n")
+          PYCONFIG
+          sudo systemctl restart docker
+          docker info --format 'Docker={{.ServerVersion}} cgroup_driver={{.CgroupDriver}} cgroup_version={{.CgroupVersion}}'
+          test "$(docker info --format '{{.CgroupDriver}}')" = cgroupfs
       - run: uv sync --locked
       - run: uv build
       - name: Deliberately build local fixture worker image
@@ -94,8 +113,13 @@ jobs:
       - name: Exercise actual Linux container boundaries
         env:
           APIZR_TEST_OCI_IMAGE: /tmp/apizr-worker-image.json
-        run: uv run --locked pytest tests/oci tests/governed_oci --cov=apizr.oci --cov=apizr.governed_oci --cov-report=term-missing --cov-fail-under=90
+        run: uv run --locked pytest tests/oci tests/governed_oci --cov=apizr.oci --cov=apizr.governed_oci --cov-report=term-missing --cov-fail-under=90 -k "not repeated"
+      - name: Every repeated OOM, ordinary failure and timeout sample must pass
+        env:
+          APIZR_TEST_OCI_IMAGE: /tmp/apizr-worker-image.json
+        run: uv run --locked pytest tests/oci tests/governed_oci -k repeated --cov=apizr.oci --cov=apizr.governed_oci --cov-append --cov-report=term-missing --cov-fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/oci/*' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/oci/docker.py,src/apizr/oci/provider.py,src/apizr/oci/supervisor.py' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/governed_oci/*' --fail-under=90
       - name: Installed wheel supports explicit OCI execution
         run: uv run --locked python scripts/smoke_wheel.py dist/*.whl --runtime-image-config /tmp/apizr-worker-image.json

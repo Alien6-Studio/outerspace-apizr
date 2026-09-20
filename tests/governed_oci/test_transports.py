@@ -390,3 +390,91 @@ def test_real_provider_refuses_bad_image_before_serving(worker_image, tmp_path, 
                 check=True,
                 capture_output=True,
             )
+
+
+@pytest.mark.parametrize("transport", ["rest", "stdio", "streamable-http"])
+def test_repeated_oom_transport_classification(
+    worker_image, tmp_path, monkeypatch, transport
+):
+    """Every sample must pass; no pass-until-success retries."""
+    root = bundle(
+        tmp_path / "bundle",
+        "rest" if transport == "rest" else "mcp",
+        image=worker_image,
+        policy=ExecutionPolicyV2.model_validate(
+            {
+                "limits": {"wall_time_ms": 2000},
+                "resources": {"memory_bytes": 100663296},
+            }
+        ),
+        select=["memory", "crash", "loop"],
+    )
+    before = remaining()
+    # Diagnostic evidence is recorded only by the test server, after classification.
+    from pathlib import Path
+
+    instrumentation = Path(__file__).with_name("observation.py")
+    observed_server = SERVER.replace(
+        'if sys.argv[2]=="rest":',
+        f'runpy.run_path({str(instrumentation)!r})["install"](root)\nif sys.argv[2]=="rest":',
+    )
+    monkeypatch.setattr("governed.helpers.SERVER", observed_server)
+
+    def observations():
+        path = tmp_path / "observations.jsonl"
+        evidence = (
+            path.read_text().splitlines()[-1]
+            if path.exists()
+            else "No provider observations"
+        )
+        print("OCI provider evidence for failed invocation:", evidence)
+        return "See captured provider evidence"
+
+    cases = [("memory", 20), ("crash", 3), ("loop", 3)]
+    if transport == "rest":
+        with (
+            http_server(root, "rest") as (url, process),
+            httpx.Client(base_url=url, timeout=15) as client,
+        ):
+            for name, repetitions in cases:
+                for sample in range(repetitions):
+                    response = client.post("/capabilities/" + name, json={})
+                    assert (
+                        response.status_code
+                        == {"memory": 503, "crash": 500, "loop": 504}[name]
+                    ), (name, sample, response.text, observations())
+                    assert remaining() == before
+            assert process.poll() is None
+    else:
+
+        async def check(connection):
+            async with Client(connection, read_timeout_seconds=15) as client:
+                for name, repetitions in cases:
+                    for sample in range(repetitions):
+                        response = await client.call_tool(name, {})
+                        assert response.is_error
+                        assert (
+                            response.content[0].text
+                            == {
+                                "memory": "Tool execution resource limit exceeded",
+                                "crash": "Tool execution failed",
+                                "loop": "Tool execution timed out",
+                            }[name]
+                        ), (name, sample, response, observations())
+                        assert remaining() == before
+
+        if transport == "stdio":
+            anyio.run(
+                check,
+                StdioServerParameters(
+                    command=sys.executable,
+                    args=["-I", "-c", observed_server, str(root), "stdio"],
+                    cwd=root,
+                    env=dict(os.environ),
+                ),
+            )
+        else:
+            with http_server(root, "mcp") as (url, process):
+                anyio.run(check, url + "/mcp")
+                assert process.poll() is None
+    assert remaining() == before
