@@ -6,9 +6,9 @@ import sys
 
 import pytest
 
-from src.compat import DEFAULT_PYTHON, stdlib_module_names
-from src.configuration import MainConfiguration
-from src.main import convert
+from apizr.compat import DEFAULT_PYTHON, stdlib_module_names
+from apizr.configuration import MainConfiguration
+from apizr.main import convert
 
 
 def test_default_target_is_running_interpreter(tmp_path):
@@ -31,7 +31,7 @@ def test_cli_can_target_python38(tmp_path):
         [
             sys.executable,
             "-m",
-            "src.main",
+            "apizr.main",
             "--script",
             str(source),
             "--output-dir",
@@ -58,7 +58,7 @@ def test_outside_supported_range_is_rejected(target):
 
 
 def test_future_target_is_rejected(monkeypatch):
-    monkeypatch.setattr("src.configuration.DEFAULT_PYTHON", (3, 8))
+    monkeypatch.setattr("apizr.configuration.DEFAULT_PYTHON", (3, 8))
     with pytest.raises(ValueError, match="at least as recent"):
         MainConfiguration(python_version=(3, 9)).dispatch()
 

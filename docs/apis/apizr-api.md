@@ -1,6 +1,6 @@
 # Apizr API
 
-Run `uv run uvicorn src.app:app --host 127.0.0.1 --port 8000` and open `/docs`.
+Run `uv run uvicorn apizr.app:app --host 127.0.0.1 --port 8000` and open `/docs`.
 
 `POST /process_file/` accepts a multipart `file` ending in `.py` or `.ipynb` and returns an `application/zip` project. The filename cannot contain directory components. Uploads are limited to 10 MiB. Temporary files are isolated per request and removed after the response.
 

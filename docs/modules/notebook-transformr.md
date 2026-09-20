@@ -1,9 +1,9 @@
 # Notebook Transformr
 
-`src.modules.notebook_transformr.transformr.NotebookTransformr` exports code cells through nbconvert without executing them. It rejects notebook magics and shell commands and formats saved scripts with Black.
+`apizr.modules.notebook_transformr.transformr.NotebookTransformr` exports code cells through nbconvert without executing them. It rejects notebook magics and shell commands and formats saved scripts with Black.
 
 ```python
-from src.modules.notebook_transformr.transformr import NotebookTransformr
+from apizr.modules.notebook_transformr.transformr import NotebookTransformr
 
 transformer = NotebookTransformr()
 source, _ = transformer.convert_notebook("examples/pricing.ipynb")

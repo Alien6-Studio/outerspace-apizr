@@ -10,7 +10,21 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: '3.14'
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run --locked ruff check .
+      - run: uv run --locked ruff format --check .
+      - run: uv run --locked pyright
+      - run: uv run --locked pre-commit run --all-files
+
+  compatibility:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -23,18 +37,21 @@ jobs:
           python-version: ${{ matrix.python }}
           enable-cache: true
       - run: uv sync --locked
-      - run: uv run --locked ruff check src tests scripts
-      - run: uv run --locked ruff format --check src tests scripts
-      - run: uv run --locked pytest
+      - run: uv run --locked pytest --cov --cov-report=term-missing
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: '3.14'
+          enable-cache: true
+      - run: uv sync --locked
       - run: uv build
-      - name: Test installed wheel outside the checkout
-        shell: bash
-        run: |
-          uv venv /tmp/apizr-wheel
-          uv pip install --python /tmp/apizr-wheel/bin/python dist/*.whl
-          cd /tmp
-          /tmp/apizr-wheel/bin/apizr --notebook "$GITHUB_WORKSPACE/examples/pricing.ipynb" --output-dir /tmp/apizr-wheel-output --force
-          test -f /tmp/apizr-wheel-output/Dockerfile
+      - run: uv run --locked python scripts/smoke_wheel.py dist/*.whl
+      - name: Check the same wheel on the oldest supported Python
+        run: uv run --locked python scripts/smoke_wheel.py dist/*.whl --python 3.8
 
   container:
     runs-on: ubuntu-latest
@@ -49,4 +66,5 @@ jobs:
           python-version: '3.14'
           enable-cache: true
       - run: uv sync --locked
+      # Generate once per target: verifies target-specific dependency resolution in Docker.
       - run: uv run --locked python scripts/smoke_container.py --python-version "${{ matrix.python }}"

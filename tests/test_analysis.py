@@ -4,17 +4,17 @@ from pathlib import Path
 
 import pytest
 
-from src.modules.code_analyzr.analyzr.astAnalyzr import AstAnalyzr
-from src.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
-from src.modules.dockerizr.configuration import DockerizrConfiguration
-from src.modules.dockerizr.generator.dockerfileGenerator import DockerfileGenerator
-from src.modules.fast_apizr.generator.analyzr.annotation import Annotation
-from src.modules.fast_apizr.generator.modelGenerator import ModelGenerator
+from apizr.modules.code_analyzr.analyzr.astAnalyzr import AstAnalyzr
+from apizr.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
+from apizr.modules.dockerizr.configuration import DockerizrConfiguration
+from apizr.modules.dockerizr.generator.dockerfileGenerator import DockerfileGenerator
+from apizr.modules.fast_apizr.generator.analyzr.annotation import Annotation
+from apizr.modules.fast_apizr.generator.modelGenerator import ModelGenerator
 
 FIXTURE_VERSION = "{}.{}".format(*min(sys.version_info[:2], (3, 11)))
 FIXTURES = (
-    Path(__file__).resolve().parents[1]
-    / f"test/code-analyzr-{FIXTURE_VERSION}/templateTest"
+    Path(__file__).resolve().parent
+    / f"fixtures/legacy/code-analyzr-{FIXTURE_VERSION}/templateTest"
 )
 
 
@@ -53,7 +53,7 @@ def test_issue_7_callable_without_arguments(payload):
 
     from pydantic import BaseModel
 
-    from src.modules.fast_apizr.generator.analyzr.argument import Argument
+    from apizr.modules.fast_apizr.generator.analyzr.argument import Argument
 
     generator = ModelGenerator(
         "callback",
@@ -99,7 +99,9 @@ def test_analyzer_is_repeatable_and_does_not_match_keywords_in_strings():
 
 
 def test_explicit_requirements_keep_environment_markers(tmp_path):
-    from src.modules.dockerizr.generator.requirementsAnalyzr import RequirementsAnalyzr
+    from apizr.modules.dockerizr.generator.requirementsAnalyzr import (
+        RequirementsAnalyzr,
+    )
 
     explicit = tmp_path / "explicit.txt"
     explicit.write_text(

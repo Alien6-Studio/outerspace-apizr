@@ -10,7 +10,7 @@ import urllib.request
 import uuid
 from pathlib import Path
 
-from src.main import convert
+from apizr.main import convert
 
 
 def run(*args):
@@ -49,9 +49,9 @@ def main():
                     with urllib.request.urlopen(url + "/health", timeout=2) as response:
                         assert json.load(response) == {"status": "ok"}
                     break
-                except (urllib.error.URLError, TimeoutError, ConnectionError):
+                except (urllib.error.URLError, TimeoutError, ConnectionError) as exc:
                     if time.monotonic() >= deadline:
-                        raise RuntimeError("Container did not become healthy")
+                        raise RuntimeError("Container did not become healthy") from exc
                     time.sleep(0.5)
             request = urllib.request.Request(
                 url + "/total",

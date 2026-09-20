@@ -8,7 +8,7 @@ import nbformat
 import pytest
 from fastapi.testclient import TestClient
 
-from src.main import convert
+from apizr.main import convert
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -161,7 +161,7 @@ def test_cli_runs_outside_repository(tmp_path):
         [
             sys.executable,
             "-m",
-            "src.main",
+            "apizr.main",
             "--notebook",
             str(ROOT / "examples/pricing.ipynb"),
             "--output-dir",
@@ -255,14 +255,14 @@ def test_standalone_module_clis(tmp_path):
     output = tmp_path / "output"
     commands = [
         [
-            "src.modules.code_analyzr.main",
+            "apizr.modules.code_analyzr.main",
             str(source),
             "--force",
             "--output",
             str(metadata),
         ],
         [
-            "src.modules.fast_apizr.main",
+            "apizr.modules.fast_apizr.main",
             str(metadata),
             "--force",
             "--module_name",
@@ -273,7 +273,7 @@ def test_standalone_module_clis(tmp_path):
             str(output),
         ],
         [
-            "src.modules.dockerizr.main",
+            "apizr.modules.dockerizr.main",
             "--force",
             "--project_path",
             str(output),
