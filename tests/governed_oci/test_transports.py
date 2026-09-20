@@ -393,7 +393,9 @@ def test_real_provider_refuses_bad_image_before_serving(worker_image, tmp_path, 
 
 
 @pytest.mark.parametrize("transport", ["rest", "stdio", "streamable-http"])
-def test_repeated_oom_transport_classification(worker_image, tmp_path, transport):
+def test_repeated_oom_transport_classification(
+    worker_image, tmp_path, monkeypatch, transport
+):
     """Every sample must pass; no pass-until-success retries."""
     root = bundle(
         tmp_path / "bundle",
@@ -408,6 +410,20 @@ def test_repeated_oom_transport_classification(worker_image, tmp_path, transport
         select=["memory", "crash", "loop"],
     )
     before = remaining()
+    # Diagnostic evidence is recorded only by the test server, after classification.
+    from pathlib import Path
+
+    instrumentation = Path(__file__).with_name("observation.py")
+    observed_server = SERVER.replace(
+        'if sys.argv[2]=="rest":',
+        f'runpy.run_path({str(instrumentation)!r})["install"](root)\nif sys.argv[2]=="rest":',
+    )
+    monkeypatch.setattr("governed.helpers.SERVER", observed_server)
+
+    def observations():
+        path = tmp_path / "observations.jsonl"
+        return path.read_text() if path.exists() else "No provider observations"
+
     cases = [("memory", 5), ("crash", 3), ("loop", 3)]
     if transport == "rest":
         with (
@@ -420,7 +436,7 @@ def test_repeated_oom_transport_classification(worker_image, tmp_path, transport
                     assert (
                         response.status_code
                         == {"memory": 503, "crash": 500, "loop": 504}[name]
-                    ), (name, sample, response.text)
+                    ), (name, sample, response.text, observations())
                     assert remaining() == before
             assert process.poll() is None
     else:
@@ -438,7 +454,7 @@ def test_repeated_oom_transport_classification(worker_image, tmp_path, transport
                                 "crash": "Tool execution failed",
                                 "loop": "Tool execution timed out",
                             }[name]
-                        ), (name, sample, response)
+                        ), (name, sample, response, observations())
                         assert remaining() == before
 
         if transport == "stdio":
@@ -446,7 +462,7 @@ def test_repeated_oom_transport_classification(worker_image, tmp_path, transport
                 check,
                 StdioServerParameters(
                     command=sys.executable,
-                    args=["-I", "-c", SERVER, str(root), "stdio"],
+                    args=["-I", "-c", observed_server, str(root), "stdio"],
                     cwd=root,
                     env=dict(os.environ),
                 ),
