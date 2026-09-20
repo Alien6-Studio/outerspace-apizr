@@ -18,6 +18,7 @@ def main():
     with zipfile.ZipFile(wheel) as archive:
         names = archive.namelist()
         assert "apizr/__init__.py" in names
+        assert "apizr/capabilities/model.py" in names
         assert not any(name == "src.py" or name.startswith("src/") for name in names)
         assert any(name.endswith(".dist-info/licenses/LICENSE") for name in names)
         assert "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2" in names
@@ -38,7 +39,17 @@ def main():
                 str(python),
                 "-I",
                 "-c",
-                "import apizr, importlib.util; assert apizr.__file__; assert importlib.util.find_spec('src') is None; print(apizr.__file__)",
+                """import apizr, importlib.util
+from apizr.capabilities import inspect_source, canonical_bytes, document_digest
+assert apizr.__file__
+assert importlib.util.find_spec('src') is None
+ir = inspect_source(b'def work(x: int) -> int: return x', module_name='installed')
+assert ir.schema_version == 'apizr.capability/v1'
+assert ir.capabilities[0].id == 'python:installed:work'
+assert canonical_bytes(ir).endswith(b'\\n')
+assert len(document_digest(ir).value) == 64
+print(apizr.__file__)
+""",
             ],
             cwd=root,
             check=True,
@@ -73,7 +84,7 @@ def main():
         for name in manifest["files"]:
             assert (root / "project" / name).is_file()
         print(
-            "Wheel namespace, resources, license, CLI help and notebook generation passed."
+            "Wheel namespace, Capability IR, resources, license, CLI help and notebook generation passed."
         )
 
 
