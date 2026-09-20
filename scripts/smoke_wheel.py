@@ -88,6 +88,31 @@ print(apizr.__file__)
                 }
             )
         )
+        # Repository scanning uses only installed resources, outside the checkout.
+        scan_root = root / "scan-project"
+        scan_source = scan_root / "src" / "pricing.py"
+        scan_source.parent.mkdir(parents=True)
+        scan_source.write_text(
+            "def total(values: list[int]) -> int: return sum(values)\n"
+        )
+        scanned = subprocess.run(
+            [str(cli), "scan", str(scan_root), "--source-root", "src", "--catalog"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            timeout=20,
+        )
+        catalog = json.loads(scanned.stdout)
+        assert catalog["schema_version"] == "apizr.catalog/v1"
+        assert catalog["capabilities"][0]["id"] == "python:pricing:total"
+        assert catalog["sources"][0]["path"] == "src/pricing.py"
+        assert str(root).encode() not in scanned.stdout
+        subprocess.run(
+            [str(cli), "scan", str(scan_root), "--source-root", "src"],
+            cwd=root,
+            check=True,
+            stdout=subprocess.DEVNULL,
+        )
         policy = root / "policy.json"
         policy.write_text("{}")
         arguments = root / "arguments.json"

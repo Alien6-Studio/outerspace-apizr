@@ -1,4 +1,4 @@
-"""Add inspection without changing the historical generation argument parser."""
+"""Static and runtime commands, separate from the historical generation parser."""
 
 import argparse
 import sys
@@ -47,6 +47,10 @@ def _inspect(argv: Sequence[str]) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] == "scan":
+        from apizr.scan_cli import main as scan_command
+
+        return scan_command(arguments[1:])
     if arguments and arguments[0] == "execute":
         from apizr.execute_cli import main as execute_command
 
@@ -76,6 +80,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         print(
             "Experimental trusted execution: apizr execute SOURCE CAPABILITY --arguments FILE --policy FILE"
+        )
+        print(
+            "\nStatic repository inventory: apizr scan ROOT [--source-root DIR] [--format json | --catalog]"
         )
         return 0
     generate(arguments)
