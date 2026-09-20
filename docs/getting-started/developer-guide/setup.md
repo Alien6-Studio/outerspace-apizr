@@ -21,6 +21,7 @@ uv run ruff format --check .
 uv run pyright
 uv run pytest --cov --cov-report=term-missing
 uv run coverage report --include='src/apizr/capabilities/*' --fail-under=90
+uv run coverage report --include='src/apizr/readiness/*' --fail-under=90
 uv run pre-commit run --all-files
 uv build
 uv run python scripts/smoke_wheel.py dist/*.whl
@@ -30,11 +31,11 @@ uv run --group security python scripts/audit_dependencies.py
 
 Ruff is the repository linter and formatter. Black remains a runtime dependency
 of notebook conversion. Pyright uses standard mode on production/tooling code and
-strict mode for `apizr.capabilities`, targeting Python 3.11 syntax and APIs.
+strict mode for `apizr.capabilities` and `apizr.readiness`, targeting Python 3.11 syntax and APIs.
 Dynamic legacy metadata and pipeline state still have incomplete inferred types.
 
 Coverage has a global 55% branch-aware floor and a separate 90% floor for the
-capability core. Generated applications are tested functionally; their temporary
+capability and readiness cores individually. Generated applications are tested functionally; their temporary
 files and subprocess execution are not included in the package coverage metric.
 Point-in-time coverage measurements belong in the [engineering archive](../../architecture/records.md).
 
@@ -68,10 +69,10 @@ The [legacy behavior contract](../../architecture/legacy-behavior-contract.md)
 records intentional support, explicit rejections, observed behavior and future
 candidates. Its corpus lives in `tests/fixtures/characterization/`, with tests in
 `tests/characterization/`. Capability IR uses separate expectations under
-`tests/capabilities/`.
+`tests/capabilities/`; static readiness and inspection tests live in `tests/readiness/`.
 
 ```sh
-uv run pytest tests/characterization tests/capabilities
+uv run pytest tests/characterization tests/capabilities tests/readiness
 ```
 
 Hypothesis retains its failure database in `.hypothesis/` and prints replay

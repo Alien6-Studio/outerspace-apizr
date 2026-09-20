@@ -19,6 +19,7 @@ def main():
         names = archive.namelist()
         assert "apizr/__init__.py" in names
         assert "apizr/capabilities/model.py" in names
+        assert "apizr/readiness/model.py" in names
         assert not any(name == "src.py" or name.startswith("src/") for name in names)
         assert any(name.endswith(".dist-info/licenses/LICENSE") for name in names)
         assert "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2" in names
@@ -57,6 +58,58 @@ print(apizr.__file__)
         subprocess.run(
             [str(cli), "--help"], cwd=root, check=True, stdout=subprocess.DEVNULL
         )
+        # Both inputs live outside the repository; the installed CLI must be sufficient.
+        source = root / "sample.py"
+        source.write_text("def total(values: list[int]) -> int: return sum(values)\n")
+        local_notebook = root / "sample.ipynb"
+        local_notebook.write_text(
+            json.dumps(
+                {
+                    "nbformat": 4,
+                    "nbformat_minor": 5,
+                    "metadata": {},
+                    "cells": [
+                        {
+                            "cell_type": "code",
+                            "id": "sample",
+                            "metadata": {},
+                            "execution_count": None,
+                            "outputs": [],
+                            "source": source.read_text(),
+                        }
+                    ],
+                }
+            )
+        )
+        for target in (source, local_notebook):
+            command = [
+                str(cli),
+                "inspect",
+                str(target),
+                "--module-name",
+                "installed.sample",
+            ]
+            inspected = subprocess.run(
+                command + ["--format", "json"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+            )
+            report = json.loads(inspected.stdout)
+            assert report["schema_version"] == "apizr.inspection/v1"
+            assert report["readiness"]["policy_version"] == "apizr.readiness/v1"
+            assessment = report["readiness"]["assessments"][0]
+            assert (
+                assessment["state"] == "ready" and assessment["can_generate_interface"]
+            )
+            canonical = subprocess.run(
+                command + ["--ir"], cwd=root, check=True, capture_output=True
+            )
+            assert json.loads(canonical.stdout) == report["capability_ir"]
+            text = subprocess.run(
+                command, cwd=root, check=True, capture_output=True, text=True
+            )
+            assert "readiness: READY" in text.stdout
         result = subprocess.run(
             [
                 str(cli),
@@ -84,7 +137,7 @@ print(apizr.__file__)
         for name in manifest["files"]:
             assert (root / "project" / name).is_file()
         print(
-            "Wheel namespace, Capability IR, resources, license, CLI help and notebook generation passed."
+            "Wheel namespace, Capability IR, readiness inspection (Python/notebook), resources, license, CLI help and notebook generation passed."
         )
 
 
