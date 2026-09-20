@@ -1,0 +1,6 @@
+{
+  "version": "Which Python version do you wish to use for analysis? (default {default_version}): ",
+  "encoding": "Which encoding do you wish to use for reading the file? (default {default_encoding}): ",
+  "module": "What is the module name ? (default {default_module}): ",
+  "filename": "What is the name of the generated file (default {default_filename}): "
+}

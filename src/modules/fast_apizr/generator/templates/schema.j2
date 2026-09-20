@@ -1,0 +1,4 @@
+class {{schema_name}}({{inherited_schema | default("BaseModel", true)}}):
+{%- for fields_name, fields_type in fields %}
+   {{ fields_name }}: {{ fields_type }}
+{%- endfor %}

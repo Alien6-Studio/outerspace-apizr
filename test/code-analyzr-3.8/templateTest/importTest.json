@@ -1,0 +1,35 @@
+{
+  "version": [3, 8],
+  "keywords": [
+    {
+      "version": "3.10",
+      "values": ["match", "case"]
+    }
+  ],
+  "functions_to_analyze": [],
+  "ignore": [],
+  "imports": [
+    {
+      "name": "typing",
+      "asname": null
+    },
+    {
+      "name": "flask",
+      "asname": null
+    },
+    {
+      "name": "numpy",
+      "asname": "np"
+    },
+    {
+      "name": "sklearn",
+      "asname": "sk"
+    },
+    {
+      "name": "werkzeug",
+      "asname": null
+    }
+  ],
+  "imports_from": [],
+  "functions": []
+}

@@ -1,0 +1,21 @@
+name: Build and Deploy MkDocs
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - run: pip install mkdocs
+      - run: pip install mkdocs-material
+      - run: pip install pymdown-extensions
+      - run: pip install -U plantuml-markdown
+      - run: mkdocs build
+      - run: mkdocs gh-deploy --force --clean --verbose

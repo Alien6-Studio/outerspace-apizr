@@ -1,0 +1,49 @@
+# Use a lightweight base image
+FROM python:{{ python_version }}-{{ docker_image_tag }}
+
+# Update packages and install necessary dependencies
+RUN apk update && apk add --no-cache curl {% for dep in dependencies %} {{ dep }} {% endfor %}
+
+# Create a non-privileged user
+RUN addgroup -S outerspacer && adduser -S outerspacer -G outerspacer
+
+# Set environment variables
+ENV PYTHONPATH /app:$PYTHONPATH
+
+# Copy the source code into the container
+COPY . /app
+
+# Copy the start script into the container
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Copy the entrypoint script into the container
+{% if entrypoint %}
+RUN echo {{ entrypoint }} >> /app/entrypoint.sh && \
+    chmod +x /entrypoint.sh
+{% endif %}
+
+# Set the working directory
+WORKDIR /app
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Remove unnecessary dependencies
+RUN apk del gcc musl-dev
+
+# Change ownership for the application directory
+RUN chown -R outerspacer:outerspacer /app
+
+# Use the new user to run the container
+USER outerspacer
+
+# Expose the service
+EXPOSE {{ port }}
+
+# Add a health check
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost:{{ port }}/docs || exit 1
+
+# Run the application
+ENTRYPOINT ["/app/start.sh"]
