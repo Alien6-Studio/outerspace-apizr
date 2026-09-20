@@ -17,6 +17,11 @@ def main(argv: Sequence[str]) -> int:
         target.add_argument("source", type=Path)
         target.add_argument("--output-dir", type=Path, required=True)
         target.add_argument("--module-name")
+        target.add_argument(
+            "--execution-policy",
+            type=Path,
+            help="Opt into governed local-process execution of trusted code",
+        )
         target.add_argument("--select", help="Comma-separated capability names or IDs")
     args = parser.parse_args(argv)
     from apizr.capabilities import document_digest
@@ -57,8 +62,20 @@ def main(argv: Sequence[str]) -> int:
             selected = [part.strip() for part in args.select.split(",")]
             if not all(selected):
                 raise ValueError("Selection requires non-empty capability names or IDs")
+        policy = None
+        if args.execution_policy is not None:
+            from apizr.execution.policy import ExecutionPolicy
+
+            policy = ExecutionPolicy.model_validate_json(
+                args.execution_policy.read_bytes()
+            )
         names = generate(
-            inspected, raw, args.output_dir, executable=executable, select=selected
+            inspected,
+            raw,
+            args.output_dir,
+            executable=executable,
+            select=selected,
+            execution_policy=policy,
         )
     except (GenerationRefused, ContractError) as error:
         print(f"apizr generate {args.target}: {error}", file=sys.stderr)
@@ -69,7 +86,21 @@ def main(argv: Sequence[str]) -> int:
         return 2
     print(
         json.dumps(
-            {"schema_version": f"apizr.{args.target}/v1", "files": names},
+            {
+                "schema_version": f"apizr.{args.target}/v1",
+                "files": names,
+                **(
+                    {
+                        "execution": {
+                            "mode": "governed",
+                            "policy_version": "apizr.execution/v1",
+                            "backend_version": "apizr.local-process/v1",
+                        }
+                    }
+                    if policy is not None
+                    else {"execution": {"mode": "direct"}}
+                ),
+            },
             sort_keys=True,
         )
     )

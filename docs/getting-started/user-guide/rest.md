@@ -24,9 +24,54 @@ filesystem alias such as `/tmp` is a symlink on your system. Safe output writing
 requires the directory-descriptor/no-follow facilities tested on Linux and macOS;
 unsupported hosts fail before writing.
 
+## Choose direct or governed execution
+
+Direct mode remains the default. To opt into a bounded fresh worker for every
+request/Tool call, generate a separate bundle with an explicit policy:
+
+```sh
+apizr generate rest pricing.py --execution-policy examples/policies/local-default.json \
+  --output-dir .output/rest-governed
+```
+
+Use that example policy from the Apizr checkout, or create `policy.json` containing
+`{}` and pass its path. Both Python and notebook inputs support the option.
+
+| Behavior | Direct (default) | Governed (opt-in) |
+| --- | --- | --- |
+| Source import | In server at startup | Only in a fresh worker on each call |
+| Globals / mutable defaults | Persist between calls | Reset each call |
+| Wall timeout | No process timeout boundary | Worker termination on policy deadline |
+| Worker protocol | Existing in-process invocation | Bounded input/output |
+| Environment | Server environment | Clean or explicitly allowlisted |
+| Filesystem/network sandbox | None | None |
+
+**Both modes require trusted code. Governed mode is not a filesystem/network
+sandbox.** It requires a supported POSIX runtime host. Unsupported requested
+controls, such as network denial, are refused during generation; unavailable
+runtime facilities or invalid artifacts fail startup. No Apizr installation is
+needed to run either bundle. Install its own `requirements.txt` and use the same
+startup commands below.
+
+Governed startup checks policy, plan, source and artifact digests without importing
+source. Changed source/plans/policy or missing worker files after startup cause
+sanitized call errors; the server remains usable. Generation stays static in both
+modes. OpenAPI/Tool definitions stay identical. The CLI reports `execution.mode`;
+only governed bundles add an `execution/` bridge and `apizr_governed/` runtime.
+
+Governed errors map invalid arguments to HTTP 422, timeout to 504, and every other
+execution failure to generic 500. Results must already be finite JSON: unlike the
+direct FastAPI encoder, governed execution rejects tuples, sets, bytes and arbitrary
+objects. Return annotations still do not enforce results. Source exceptions,
+including intentional HTTPException responses, are sanitized at the worker boundary.
+
+See [governed transport architecture](../../architecture/governed-transport-runtime-v1.md)
+and the [execution policy guide](execute.md) for defaults, limits, environment
+allowlists and the precise trust boundary.
+
 ## Start the application
 
-**Startup imports and executes the bundled source. Run only trusted code.** A
+**Direct-mode startup imports and executes the bundled source; governed mode imports it only inside the worker on a call. Run only trusted code.** A
 `ready` result concerns the static interface contract, not runtime safety.
 
 From the Apizr checkout:
@@ -89,8 +134,8 @@ Positional-only and keyword-only declarations keep their call semantics. For
 rejected with HTTP 422 and documented by OpenAPI. Trailing defaults may be omitted.
 
 Declared return types are documentation only. Unexpected function/serialization
-errors produce a generic HTTP 500; intentional FastAPI `HTTPException` responses
-are preserved. Source digest or callable-shape mismatches stop application startup.
+errors in direct mode produce a generic HTTP 500; intentional FastAPI `HTTPException` responses
+are preserved. In direct mode, source digest or callable-shape mismatches stop application startup. Governed mappings are described above.
 
 CLI exit codes:
 

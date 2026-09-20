@@ -4,7 +4,9 @@
 one fresh Python process per invocation. This is **not a filesystem or network
 sandbox**. It runs with the caller's privileges and requires trusted source.
 `inspect`, `generate rest` and `generate mcp` remain static and non-executing.
-REST/MCP v1 continue using their existing in-process runtimes.
+REST/MCP v1 retain their existing in-process runtimes by default;
+[optional governed generation](governed-transport-runtime-v1.md) delegates calls to
+this same worker implementation.
 
 ## Boundary and contracts
 
@@ -128,7 +130,7 @@ satisfy the annotation. Sync calls run directly; async calls run using the worke
 own event loop. No thread is used to interrupt user code. Each call starts afresh,
 so module globals, environment changes and mutable defaults do not persist.
 This intentionally differs from current REST/MCP in-process state lifetime;
-[issue #44](https://github.com/Alien6-Studio/outerspace-apizr/issues/44) tracks that integration boundary.
+[optional governed transport integration](governed-transport-runtime-v1.md) preserves this difference explicitly.
 
 ## Results and failures
 

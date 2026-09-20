@@ -1,6 +1,10 @@
 """Render standalone MCP artifacts without loading the runtime SDK or source."""
 
 from collections.abc import Sequence
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from apizr.execution.policy import ExecutionPolicy
 from importlib.resources import files
 from pathlib import Path, PurePosixPath
 
@@ -43,6 +47,7 @@ def render(
     *,
     executable: bytes | None = None,
     select: Sequence[str] | None = None,
+    execution_policy: "ExecutionPolicy | None" = None,
 ) -> dict[str, bytes]:
     contract = plan(inspection, source, executable=executable, select=select)
     executable = source if contract.source.kind == "python" else executable
@@ -78,6 +83,12 @@ def render(
         },
     )
     artifacts["apizr-mcp.json"] = json_bytes(manifest.model_dump(mode="json"))
+    if execution_policy is not None:
+        from apizr.governed.embedding import govern
+
+        return govern(
+            artifacts, inspection, source, executable, execution_policy, "mcp"
+        )
     return dict(sorted(artifacts.items()))
 
 
@@ -88,7 +99,14 @@ def generate(
     *,
     executable: bytes | None = None,
     select: Sequence[str] | None = None,
+    execution_policy: "ExecutionPolicy | None" = None,
 ) -> tuple[str, ...]:
-    artifacts = render(inspection, source, executable=executable, select=select)
+    artifacts = render(
+        inspection,
+        source,
+        executable=executable,
+        select=select,
+        execution_policy=execution_policy,
+    )
     write_bundle(output, artifacts)
     return tuple(artifacts)

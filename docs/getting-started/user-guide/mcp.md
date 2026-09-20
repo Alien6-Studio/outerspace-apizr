@@ -37,9 +37,53 @@ ambiguous callable declaration prevents generation. There is no unsafe override.
 Use an empty physical directory without symlink components; existing user files
 are never overwritten.
 
+## Choose direct or governed execution
+
+Direct mode remains the default. To opt into a bounded fresh worker for every
+request/Tool call, generate a separate bundle with an explicit policy:
+
+```sh
+apizr generate mcp pricing.py --execution-policy examples/policies/local-default.json \
+  --output-dir .output/mcp-governed
+```
+
+Use that example policy from the Apizr checkout, or create `policy.json` containing
+`{}` and pass its path. Both Python and notebook inputs support the option.
+
+| Behavior | Direct (default) | Governed (opt-in) |
+| --- | --- | --- |
+| Source import | In server at startup | Only in a fresh worker on each call |
+| Globals / mutable defaults | Persist between calls | Reset each call |
+| Wall timeout | No process timeout boundary | Worker termination on policy deadline |
+| Worker protocol | Existing in-process invocation | Bounded input/output |
+| Environment | Server environment | Clean or explicitly allowlisted |
+| Filesystem/network sandbox | None | None |
+
+**Both modes require trusted code. Governed mode is not a filesystem/network
+sandbox.** It requires a supported POSIX runtime host. Unsupported requested
+controls, such as network denial, are refused during generation; unavailable
+runtime facilities or invalid artifacts fail startup. No Apizr installation is
+needed to run either bundle. Install its own `requirements.txt` and use the same
+startup commands below.
+
+Governed startup checks policy, plan, source and artifact digests without importing
+source. Changed source/plans/policy or missing worker files after startup cause
+sanitized call errors; the server remains usable. Generation stays static in both
+modes. OpenAPI/Tool definitions stay identical. The CLI reports `execution.mode`;
+only governed bundles add an `execution/` bridge and `apizr_governed/` runtime.
+
+Governed Tool errors are `Invalid tool arguments`, `Tool execution timed out`, or
+`Tool execution failed`. No worker status, stderr, traceback or private path reaches
+the client. Both stdio and Streamable HTTP support governed execution, using the
+same SDK v2 / MCP 2026-07-28 contract and finite JSON result rules as direct MCP.
+
+See [governed transport architecture](../../architecture/governed-transport-runtime-v1.md)
+and the [execution policy guide](execute.md) for defaults, limits, environment
+allowlists and the precise trust boundary.
+
 ## Run trusted source
 
-Starting the generated server **imports and executes the bundled source**. Run
+Starting a direct-mode server **imports and executes the bundled source**; a governed server defers that import to its worker on each call. Run
 only source and dependencies you trust. Readiness is not a security sandbox or an
 execution approval.
 

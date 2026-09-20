@@ -58,8 +58,9 @@ for runtime setup, client calls and limits.
 executes one trusted capability in a fresh local Python process, with wall-time,
 input/output and environment controls. It is **not a filesystem/network sandbox**.
 Unsupported requested controls are refused. See the [execution guide](docs/getting-started/user-guide/execute.md)
-for policy examples and the POSIX backend requirement. REST/MCP runtimes retain
-their current behavior.
+for policy examples and the POSIX backend requirement. REST/MCP generation can
+opt into the same worker using `--execution-policy policy.json`; direct execution
+remains the default. See the [transport execution contract](docs/architecture/governed-transport-runtime-v1.md).
 
 ## Notebook → API → container (legacy pipeline)
 

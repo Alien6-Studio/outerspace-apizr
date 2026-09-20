@@ -144,6 +144,7 @@ def execute(
     payload: JsonValue,
     *,
     executable: bytes | None = None,
+    worker_command: Sequence[str] | None = None,
 ) -> ExecutionResult:
     executable = source if runtime.source.kind == "python" else executable
     try:
@@ -171,7 +172,8 @@ def execute(
             target.parent.mkdir(parents=True)
             target.write_bytes(executable)
             return exchange(
-                [sys.executable, "-I", "-m", "apizr.execution.worker"],
+                worker_command
+                or [sys.executable, "-I", "-m", "apizr.execution.worker"],
                 data,
                 root,
                 worker_environment(validated.policy.environment, os.environ),
