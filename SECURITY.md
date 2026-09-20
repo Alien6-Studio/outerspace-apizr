@@ -3,10 +3,16 @@
 ## Supported versions
 
 Security fixes target the current 0.2.x line. The historical 0.1.x line is not
-maintained. Apizr's advertised Python compatibility remains 3.8–3.14; this does
-not extend upstream Python or dependency security support. Some older Python
-interpreters require older dependency versions. Review the dependency audit
-before deploying; compatibility is not a guarantee of vulnerability-free code.
+maintained. Apizr and generated targets support **Python 3.11–3.14** only.
+Python 3.8–3.10 were deliberately dropped for security and maintenance: older
+interpreters forced vulnerable dependency variants. Python 3.8/3.9 are end-of-life
+and 3.10 is nearing the end of its security-support lifetime. See the
+[Python lifecycle](https://devguide.python.org/versions/) and
+[migration notes](docs/getting-started/developer-guide/releases.md).
+
+The current resolved runtime and tooling graphs pass the vulnerability audit.
+This is a dated database result, not a guarantee of vulnerability-free software;
+rerun the audit regularly and after dependency changes.
 
 ## Report a vulnerability privately
 
@@ -30,7 +36,8 @@ no runtime sandbox. Upload validation is not a substitute for trusted execution.
 GitHub default CodeQL setup analyzes Python and Actions and publishes alerts.
 The explicit Python workflow also retains its SARIF report as an artifact; it
 does not upload a second copy while default setup is enabled. The dependency job exports the resolved `uv.lock` graph
-to a temporary PEP 751 lockfile and audits it with pip-audit, including alternate
-versions for supported Python targets and development/documentation tools.
+to temporary PEP 751 lockfiles and audits each with pip-audit. Output distinguishes
+runtime, development, documentation and security-tooling dependencies. Every
+scope is blocking; all locked variants remain covered.
 Findings are not silently ignored. Review the architecture hardening record for
 known findings and the limits of locally executed checks.

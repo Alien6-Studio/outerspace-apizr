@@ -31,7 +31,7 @@ class FunctionNode(AstNode):
             if index >= required_count:
                 argument.has_default = True
             result.append(argument)
-        for node, default in zip(args.kwonlyargs, args.kw_defaults):
+        for node, default in zip(args.kwonlyargs, args.kw_defaults, strict=False):
             argument = ArgNode(node)
             argument.kind = "keyword_only"
             if default is not None:

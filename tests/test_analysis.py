@@ -115,4 +115,4 @@ def test_explicit_requirements_keep_environment_markers(tmp_path):
     assert "numpy>=2" in result
     # Retain both constraints so pip can report the incompatible pin, instead of silently accepting v1.
     assert "pydantic==1.10.0" in result
-    assert "pydantic<3,>=2.10" in result
+    assert "pydantic<3,>=2.12" in result

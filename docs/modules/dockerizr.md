@@ -1,6 +1,6 @@
 # Dockerizr
 
-Dockerizr generates a Dockerfile, Uvicorn startup script and `.dockerignore`. The complete pipeline uses `python:<target>-slim`, where the target defaults to the running interpreter (3.8–3.14), runs as UID 10001, and checks `/health` on port 5001. Alpine templates are also available; their image tag must begin with `alpine`.
+Dockerizr generates a Dockerfile, Uvicorn startup script and `.dockerignore`. The complete pipeline uses `python:<target>-slim`, where the target defaults to the running interpreter (3.11–3.14), runs as UID 10001, and checks `/health` on port 5001. Alpine templates are also available; their image tag must begin with `alpine`.
 
 Dependencies are inferred statically from imports, excluding standard-library and local modules. Installed distribution versions are pinned when available. Supply an explicit requirements file for packages that cannot be inferred reliably. Explicit requirements use PEP 508 syntax.
 

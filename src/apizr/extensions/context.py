@@ -2,8 +2,6 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Optional, Protocol
 
-from apizr.compat import is_relative_to
-
 
 class EncodingConfiguration(Protocol):
     encoding: str
@@ -63,7 +61,7 @@ class Context:
         if self.output_dir is None:
             raise ContextException("Output directory is not set")
         target = self.output_dir / (path or "output.txt")
-        if not is_relative_to(target.resolve(), self.output_dir.resolve()):
+        if not target.resolve().is_relative_to(self.output_dir.resolve()):
             raise ContextException("Output path must stay inside the output directory")
         if self.config is None:
             raise ContextException("Configuration is not set")

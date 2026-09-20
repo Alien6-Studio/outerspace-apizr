@@ -1,8 +1,8 @@
-from typing import List, Literal, Tuple
+from typing import List, Literal
 
 from pydantic import BaseModel, Field
 
-from apizr.compat import DEFAULT_PYTHON
+from apizr.runtime import DEFAULT_PYTHON, PythonTarget
 
 HOSTNAME = "0.0.0.0"
 
@@ -23,7 +23,7 @@ class GunicornConfiguration(BaseModel):
 
 
 class DockerizrConfiguration(BaseModel):
-    python_version: Tuple[int, int] = DEFAULT_PYTHON
+    python_version: PythonTarget = DEFAULT_PYTHON
     encoding: str = "utf-8"
     docker_image: Literal["alpine", "debian"] = "debian"
     docker_image_tag: str = "slim"
@@ -35,9 +35,9 @@ class DockerizrConfiguration(BaseModel):
     server: GunicornConfiguration = Field(default_factory=GunicornConfiguration)
     apizr_requirements: List[str] = Field(
         default_factory=lambda: [
-            "fastapi>=0.115,<1",
-            "pydantic>=2.10,<3",
-            "typing-extensions>=4.12,<5",
+            "fastapi>=0.141,<1",
+            "pydantic>=2.12,<3",
+            "starlette>=1.3.1",
             "uvicorn[standard]>=0.30,<1",
         ]
     )

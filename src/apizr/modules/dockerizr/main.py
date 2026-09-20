@@ -4,12 +4,12 @@ import sys
 
 import yaml
 
-from apizr.compat import DEFAULT_PYTHON
 from apizr.modules.dockerizr.configuration import DockerizrConfiguration
 from apizr.modules.dockerizr.generator.dockerfileGenerator import DockerfileGenerator
 from apizr.modules.dockerizr.generator.gunicornGenerator import GunicornGenerator
 from apizr.modules.dockerizr.generator.requirementsAnalyzr import RequirementsAnalyzr
 from apizr.modules.dockerizr.prompt import ConfigPrompter
+from apizr.runtime import DEFAULT_PYTHON, parse_python_target, python_target_argument
 
 # Configure logging settings
 logger = logging.getLogger(__name__)
@@ -49,8 +49,7 @@ def set_configuration(args) -> DockerizrConfiguration:
                 yaml.safe_load(file) or {}
             )
     if args.version:
-        major, minor = map(int, args.version.split("."))
-        configuration.python_version = (major, minor)
+        configuration.python_version = parse_python_target(args.version)
     if args.encoding:
         configuration.encoding = args.encoding
     if args.project_path:
@@ -80,6 +79,7 @@ def handle_args():
     )
     parser.add_argument(
         "--version",
+        type=python_target_argument,
         default=None,
         help="Python version to use for analysis. Defaults to the running interpreter.",
     )

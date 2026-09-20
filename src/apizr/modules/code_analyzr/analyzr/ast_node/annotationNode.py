@@ -1,7 +1,4 @@
 import ast
-import sys
-
-from apizr.compat import unparse
 
 from .astNode import AstNode
 from .astNodeException import AnnotationException
@@ -68,7 +65,7 @@ class AnnotationNode(AstNode):
             self.of = [left_type, right_type]
             return binary_op
         else:
-            return unparse(node)
+            return ast.unparse(node)
 
     def parse_subscript(self, node):
         """Parse subscript type annotations like List[int] or Dict[str, int].
@@ -84,10 +81,7 @@ class AnnotationNode(AstNode):
             self.of = self.parse_tuple(node.slice)
             return ty
         else:
-            if sys.version_info >= (3, 9):
-                self.of.append(AnnotationNode(node.slice))
-            else:
-                self.of.append(AnnotationNode(node.slice.value))
+            self.of.append(AnnotationNode(node.slice))
             return ty
 
     def parse_list(self, node):
@@ -120,10 +114,7 @@ class AnnotationNode(AstNode):
         Returns:
             list: A list of AnnotationNodes representing each type in the tuple.
         """
-        if sys.version_info >= (3, 9):
-            value = node
-        else:
-            value = node.value
+        value = node
         if isinstance(value, ast.Tuple):
             return [AnnotationNode(elt) for elt in value.elts] if value.elts else []
         return [AnnotationNode(value)]

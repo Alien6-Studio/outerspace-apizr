@@ -104,6 +104,7 @@ nav:
               - 0.2 baseline: architecture/0.2-baseline.md
               - Artifact principles: architecture/artifact-principles.md
               - Security baseline: architecture/security-baseline.md
+              - Historical foundation audit: architecture/foundation-security-audit.md
               - Foundation verification: architecture/0.2-hardening.md
           - Modules:
               - Notebook Transformr: modules/notebook-transformr.md

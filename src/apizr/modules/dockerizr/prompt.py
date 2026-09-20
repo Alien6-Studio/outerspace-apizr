@@ -4,11 +4,11 @@ from typing import Literal, Optional, Tuple
 
 from questionary import prompt
 
-from apizr.compat import DEFAULT_PYTHON
 from apizr.modules.dockerizr.configuration import (
     DockerizrConfiguration,
     GunicornConfiguration,
 )
+from apizr.runtime import DEFAULT_PYTHON, parse_python_target, validate_python_target
 
 HOSTNAME = "0.0.0.0"  # nosec B104
 
@@ -45,10 +45,11 @@ class ConfigPrompter:
 
         # Version can be passed from Apizr
         if not version:
-            major, minor = map(int, self.prompt_python_version().split("."))
-            configuration.python_version = (major, minor)
+            configuration.python_version = parse_python_target(
+                self.prompt_python_version()
+            )
         else:
-            configuration.python_version = version
+            configuration.python_version = validate_python_target(version)
 
         # Encoding can be passed from Apizr
         if not encoding:

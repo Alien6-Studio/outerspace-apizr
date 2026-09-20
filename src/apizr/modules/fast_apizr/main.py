@@ -10,6 +10,7 @@ from apizr.modules.fast_apizr.configuration import FastApizrConfiguration
 from apizr.modules.fast_apizr.generator import FastApiAppGenerator
 from apizr.modules.fast_apizr.generator.analyzr import Analyzr
 from apizr.modules.fast_apizr.prompt import ConfigPrompter
+from apizr.runtime import parse_python_target, python_target_argument
 
 # Configure logging settings
 logger = logging.getLogger(__name__)
@@ -46,8 +47,7 @@ def set_configuration(args) -> FastApizrConfiguration:
 
     # Override Configuration object with the provided arguments
     if args.version:
-        major, minor = map(int, args.version.split("."))
-        configuration.python_version = (major, minor)
+        configuration.python_version = parse_python_target(args.version)
 
     if args.encoding:
         configuration.encoding = args.encoding
@@ -77,6 +77,7 @@ def handle_args():
     )
     parser.add_argument(
         "--version",
+        type=python_target_argument,
         default=None,
         help="Python version to use for analysis. Defaults to the running interpreter.",
     )
@@ -160,7 +161,7 @@ def main():
         else:
             print(result)
 
-    except ConfigurationError as e:
+    except (ConfigurationError, ValueError) as e:
         logger.error(f"Error generating FastAPI code: {e}")
         sys.exit(1)
 

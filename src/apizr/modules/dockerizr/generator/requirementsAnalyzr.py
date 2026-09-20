@@ -1,11 +1,13 @@
 """Infer dependencies from imports without executing modules or contacting a registry."""
 
 import ast
+import sys
+from importlib import metadata
 from pathlib import Path
 
 from packaging.requirements import Requirement
 
-from apizr.compat import DEFAULT_PYTHON, metadata, stdlib_module_names
+from apizr.runtime import DEFAULT_PYTHON
 
 ALIASES = {
     "sklearn": "scikit-learn",
@@ -51,7 +53,7 @@ class RequirementsAnalyzr:
                         and not node.level
                     ):
                         imports.add(node.module.split(".")[0])
-            for name in sorted(imports - local - stdlib_module_names()):
+            for name in sorted(imports - local - sys.stdlib_module_names):
                 candidates = distributions.get(name, [])
                 if len(candidates) > 1:
                     raise ValueError(

@@ -60,7 +60,7 @@ def test_complete_notebook(generated):
 def test_signatures_and_runtime_types(generated):
     client, _, _ = generated("""from __future__ import annotations
 from typing import List, Literal, Optional, Tuple
-from typing_extensions import Annotated
+from typing import Annotated
 from pydantic import BaseModel, Field
 
 class Item(BaseModel):

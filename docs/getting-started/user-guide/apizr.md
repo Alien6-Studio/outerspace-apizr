@@ -22,4 +22,4 @@ Use `--skip-docker` for an API-only project. `--skip-fastapi` also requires `--s
 
 Top-level functions become POST routes. Async functions, argument defaults and supported Pydantic annotations are preserved. Magics, shell commands and variadic signatures are rejected. Starting the resulting API imports the original code; run trusted inputs only.
 
-Use `--python-version 3.8` (or YAML `python_version: [3, 8]`) to select a target explicitly. The default is the running interpreter. Apizr must run on Python at least as recent as its target and does not transpile newer code. Dependencies inferred for a different target are left unpinned so the target installer can select compatible releases.
+Use `--python-version 3.11` (or YAML `python_version: [3, 11]`) to select a target explicitly. The default is the running interpreter. Apizr must run on Python at least as recent as its target and does not transpile newer code. Dependencies inferred for a different target are left unpinned so the target installer can select compatible releases.
