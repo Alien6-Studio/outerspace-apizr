@@ -29,6 +29,10 @@ executing the input. `ready` is a contract assessment, not proof of runtime safe
 effects remain unknown. See the [inspection guide](docs/getting-started/user-guide/inspect.md)
 for states, machine output and exit codes. The generation commands below remain independent.
 
+## Assess repository exposure evidence
+
+Repository exposure and governance evidence can be assessed from saved Catalog and Graph artifacts with `apizr repository-readiness catalog.json graph.json`. See the [guide](docs/getting-started/user-guide/repository-readiness.md) and [Repository Readiness v1 contract](docs/architecture/repository-readiness-v1.md). This reports static evidence under a supplied policy, not a runtime guarantee.
+
 ## Generate a REST interface from the inspected contract
 
 ```sh

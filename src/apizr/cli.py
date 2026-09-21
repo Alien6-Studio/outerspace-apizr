@@ -47,6 +47,10 @@ def _inspect(argv: Sequence[str]) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] == "repository-readiness":
+        from apizr.repository_readiness_cli import main as readiness_command
+
+        return readiness_command(arguments[1:])
     if arguments and arguments[0] == "graph":
         from apizr.graph_cli import main as graph_command
 
@@ -90,6 +94,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         print(
             "Static capability relationships: apizr graph ROOT [--source-root DIR] [--format json | --graph]"
+        )
+        print(
+            "Repository exposure evidence: apizr repository-readiness CATALOG GRAPH [--policy FILE] [--format json]"
         )
         return 0
     generate(arguments)
