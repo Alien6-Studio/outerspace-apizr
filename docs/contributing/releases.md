@@ -97,6 +97,13 @@ Documentation is independent of PyPI and follows `master`; it is not a frozen
 versioned documentation site. For the exact published source documentation, use
 the [v0.2.0 tag](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.2.0/docs).
 Release notes distinguish shipped behavior from subsequent maintenance.
+Material's native repository component displays the latest GitHub release tag,
+stars and forks using `repo_url` and `repo_name`. On desktop it appears beside
+the search bar; on mobile it appears in the navigation drawer. GitHub requests
+remain subject to the site's optional GitHub consent setting. No release number
+is hard-coded in the theme, and no header override is needed. See
+[Material's repository documentation](https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/).
+
 PRs run a strict MkDocs build. A master
 push builds and publishes the site to `gh-pages`, served at
 [apizr.outerspace.sh](https://apizr.outerspace.sh/). Keep this active publication

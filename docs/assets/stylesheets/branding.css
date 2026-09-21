@@ -16,3 +16,18 @@
     width: 3rem;
   }
 }
+
+/* Fit the full repository name above Material's native release/star/fork row. */
+@media screen and (min-width: 60em) {
+  .md-header__source {
+    width: 16rem;
+    max-width: none;
+    flex-shrink: 0;
+  }
+}
+
+/* The native repository block moves into the drawer on smaller screens. */
+.md-nav .md-source__repository {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
