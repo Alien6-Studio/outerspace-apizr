@@ -35,7 +35,7 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-  favicon: assets/images/logo.png
+  favicon: assets/images/favicon.png
   features:
     - content.code.copy
     - content.tooltips
@@ -61,6 +61,9 @@ markdown_extensions:
 
 extra:
   generator: false
+  release:
+    version: 0.2.0
+    notes: releases/0.2.0/
   consent:
     title: Cookie consent
     description: >-

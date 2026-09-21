@@ -97,6 +97,13 @@ Documentation is independent of PyPI and follows `master`; it is not a frozen
 versioned documentation site. For the exact published source documentation, use
 the [v0.2.0 tag](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.2.0/docs).
 Release notes distinguish shipped behavior from subsequent maintenance.
+The header links to the latest published release using `extra.release` in
+`mkdocs.yml`. Update its version and notes path after each successful PyPI
+publication; this label does not identify a frozen documentation snapshot.
+The header override is based on Material 9.7.7: compare
+`overrides/partials/header.html` with upstream when upgrading the theme.
+A native `mike` version selector can be introduced when multiple frozen
+versions of the documentation are published.
 PRs run a strict MkDocs build. A master
 push builds and publishes the site to `gh-pages`, served at
 [apizr.outerspace.sh](https://apizr.outerspace.sh/). Keep this active publication
