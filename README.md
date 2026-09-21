@@ -2,12 +2,12 @@
 
 **Apizr is an open-source capability compiler for Python codebases.**
 
-[![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg)](https://pypi.org/project/outerspace-apizr/)
+[![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg?cacheSeconds=300)](https://pypi.org/project/outerspace-apizr/)
 [![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml)
 [![Security](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml)
 [![Documentation](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/mkdocs.yaml/badge.svg?branch=master)](https://apizr.outerspace.sh/)
 [![Python](https://img.shields.io/badge/python-3.11%E2%80%933.14-blue.svg)](https://pypi.org/project/outerspace-apizr/)
-[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://apizr.outerspace.sh/about/LICENSE/)
 
 It discovers executable capabilities, builds deterministic contracts and relationships,
 exposes eligible capabilities through REST or MCP, and supports governed execution.
@@ -139,4 +139,4 @@ The legacy pipeline's duplicate-definition/overload issue remains tracked in
 - [Development and checks](https://apizr.outerspace.sh/getting-started/developer-guide/setup/)
 - [Report an issue](https://github.com/Alien6-Studio/outerspace-apizr/issues)
 
-Licensed under [GPL-3.0-or-later](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/LICENSE).
+Licensed under [GPL-3.0-or-later](https://apizr.outerspace.sh/about/LICENSE/).
