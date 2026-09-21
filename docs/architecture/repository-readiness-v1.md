@@ -139,28 +139,80 @@ B's effects or readiness. A call from B to C does not add C to A's canonical dir
 relationships. Graph v1 edges describe possible direct static calls, not execution
 proofs. There is no transitive effect or state propagation in v1.
 
-## Execution compatibility
+## Execution compatibility: additive v1 completion
+
+Readiness defines its own transport-neutral `Control` vocabulary; it does not
+extend the control enum or alter any execution policy, plan, backend, or generated
+bundle contract. The static adapter lives in `repository_readiness/execution.py`.
+It obtains local guarantees from `BackendCapabilities` without calling the host
+availability function. Its explicit OCI additions map to the existing reviewed
+network/filesystem controls and `Resources.memory_bytes`, `cpu_millis`, and `pids`.
+No runtime behavior or #58 embedded-code hash changes are involved.
 
 Only declared control support is assessed, independently of host OS, environment,
 Docker, images or daemon access. Every mode says `runtime_availability: not_assessed`.
 At least one selected mode must support **all** required controls; support cannot
-be assembled from multiple modes.
+be assembled from multiple modes. Compatibility is not a recommendation or ranking.
 
-| Control | local-process v1 | OCI-container v1 |
-| --- | --- | --- |
-| wall_timeout, input_limit, output_limit | supported | supported |
-| environment, working_directory | supported | supported |
-| network_deny | unsupported | supported with the existing network-deny policy |
-| filesystem_sandbox | unsupported | supported by the existing container filesystem boundary |
-| subprocess_deny | unsupported | unsupported |
+| Readiness control | direct | local-process | OCI-container |
+| --- | --- | --- | --- |
+| `wall_timeout` | no | yes | yes |
+| `input_limit` | no | yes | yes |
+| `output_limit` | no | yes | yes |
+| `environment` (clean/allowlisted) | no | yes | yes |
+| `working_directory` (fresh) | no | yes | yes |
+| `network_deny` | no | no | yes |
+| `filesystem_sandbox` | no | no | yes |
+| `memory_limit` (hard memory limit) | no | no | yes |
+| `cpu_limit` (CPU quota) | no | no | yes |
+| `pid_limit` | no | no | yes |
+| `subprocess_deny` | no | no | no |
 
-`environment` means the existing clean/allowlisted environment control;
-`working_directory` means the existing fresh work directory. Container support is
-conditional on actual deployment of the existing OCI execution policy, which uses
-a clean environment, network deny, its constrained filesystem and configured resource
-limits. Compatibility does not create an execution plan, select an image, establish
-runtime availability or promise that invocation succeeds. PID limits are not absolute
-subprocess prohibition; issue #49 remains open.
+`direct` represents existing ungoverned invocation, with an empty guarantee set
+and `backend_version: direct`; it does not invent a governed runtime version.
+It must be explicitly selected. With no requested controls it is compatible; with
+any requested control it is incompatible. The unchanged default modes remain
+`local-process` and `oci-container`.
+
+Memory, CPU and PID requirements describe support for the existing OCI policy's
+configured limits. Readiness does not choose numeric limits or promise a given
+allocation. Memory hard limits are distinct from CPU quotas, which constrain CPU
+use rather than guaranteeing latency. PID containment does not prohibit creating
+subprocesses: `subprocess_deny` remains unsupported everywhere, and #49 remains open.
+
+### Byte compatibility with the original v1
+
+Schemas only add enum values. Old policy defaults, accepted names, semantics and
+canonical bytes remain unchanged. The original #59 policy/report goldens are
+retained unchanged; additional snapshots capture the default policy and its report
+at baseline `ebe7af7`. Tests cover all 768 combinations of the old control/mode
+subsets, and revalidate saved reports against their original inputs.
+
+To avoid changing old report bytes merely by expanding an advertised guarantee
+list, `supported_controls` is a vocabulary projection:
+
+- Policies using only original modes and controls retain the original v1 list.
+- Explicit selection of `direct` or any resource control enables the completed
+  vocabulary in every selected mode's list.
+
+This affects the breadth of the reported list, not the meaning of any old control.
+Compatibility always tests all requested controls against one mode's guarantees.
+New capabilities are visible only when the input explicitly opts into this additive
+completion; no default digest is silently changed. To inspect the full matrix in a
+report, explicitly select all three modes. Old documents remain valid, and new
+resource requirements are never silently ignored.
+
+Container compatibility is conditional on actual deployment of the existing OCI
+execution policy, including clean environment, network deny, constrained filesystem
+and configured resource limits. Assessment does not create a plan, select an image,
+establish availability or promise invocation success. Docker, its daemon, a worker
+image, and the necessary Linux controls can all be absent while static compatibility
+is true.
+
+Human output lists each selected mode's compatible/incompatible result, missing
+controls and the number of repository-ready declarations whose control requirements
+it satisfies. This is evidence context; it does not select a backend. `--details`
+adds supported controls and expands all declarations.
 
 ## Repository reason codes
 
@@ -183,3 +235,25 @@ Canonical UTF-8 JSON has sorted object keys, ordered assessments and a final new
 content identities. Published schemas are
 [policy](../specs/apizr-repository-readiness-policy-v1.schema.json) and
 [report](../specs/apizr-repository-readiness-v1.schema.json).
+
+## Repository-first orchestration
+
+`apizr readiness ROOT` calls `graph_repository(...)` exactly once, then passes that
+result's Catalog and Graph to the same `assess_repository` used by the artifact-first
+CLI. The existing discovery manifest feeds both layers: source bytes are not reopened
+between Catalog, Graph and readiness. The pure assessment API above is unchanged.
+
+`--source-root`, `--exclude-dir` and all Scan/Graph bounds share parsing and policy
+construction with `apizr scan` and `apizr graph`. `--policy FILE` selects the readiness
+policy; `--report` and `--format json` emit the same canonical v1 report, with no
+wrapper or progress output on stdout. The root path never enters canonical identity.
+`--details` expands human output beyond its default 20 declarations. The existing
+`apizr repository-readiness CATALOG GRAPH` remains fully supported, including its
+complete human output and `--format json`; it also accepts `--report`.
+
+Instrumentation tests count exactly one discovery and one read per source, mutate
+source after Catalog assembly to detect reopening, compare independent Scan/Graph
+artifacts with repo-first bytes, and check ordering/location/hash-seed invariance.
+An isolated audit-hook test forbids source execution, source writes, subprocesses,
+network access, Git/package-install commands and Docker/transport imports; hostile
+top-level statements, decorators and defaults remain inert.

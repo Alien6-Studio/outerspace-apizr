@@ -47,6 +47,10 @@ def _inspect(argv: Sequence[str]) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] == "readiness":
+        from apizr.readiness_cli import main as readiness_repo_command
+
+        return readiness_repo_command(arguments[1:])
     if arguments and arguments[0] == "repository-readiness":
         from apizr.repository_readiness_cli import main as readiness_command
 
@@ -97,6 +101,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         print(
             "Repository exposure evidence: apizr repository-readiness CATALOG GRAPH [--policy FILE] [--format json]"
+        )
+        print(
+            "Repository readiness: apizr readiness ROOT [--source-root DIR] [--policy FILE] [--report]"
         )
         return 0
     generate(arguments)

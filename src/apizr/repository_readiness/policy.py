@@ -5,9 +5,24 @@ from typing import Literal
 from pydantic import Field, StrictBool, field_validator
 
 from apizr.capabilities.types import ValueModel
-from apizr.execution.policy import Control, EffectName
+from apizr.execution.policy import EffectName
 
-Mode = Literal["local-process", "oci-container"]
+# Readiness requirements are transport-neutral and independent of runtime policy
+# schemas. Keep every original v1 spelling while completing the static vocabulary.
+Control = Literal[
+    "wall_timeout",
+    "input_limit",
+    "output_limit",
+    "environment",
+    "working_directory",
+    "network_deny",
+    "filesystem_sandbox",
+    "subprocess_deny",
+    "memory_limit",
+    "cpu_limit",
+    "pid_limit",
+]
+Mode = Literal["direct", "local-process", "oci-container"]
 
 
 class EffectRequirements(ValueModel):

@@ -1,0 +1,1 @@
+{"effects":{"require_false":[],"require_known":[]},"execution":{"modes":["local-process","oci-container"],"require_controls":[]},"relationships":{"require_resolved":true},"require_interface":false,"schema_version":"apizr.repository-readiness-policy/v1"}

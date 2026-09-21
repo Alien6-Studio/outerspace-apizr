@@ -3,10 +3,10 @@
 import argparse
 import sys
 from collections.abc import Sequence
-from pathlib import Path
 
-from apizr.repository import ScanPolicy, catalog_bytes, scan
+from apizr.repository import catalog_bytes, scan
 from apizr.repository.reporting import envelope_bytes, text_report
+from apizr.repository_cli import add_scan_arguments, scan_policy
 
 
 def main(argv: Sequence[str]) -> int:
@@ -14,23 +14,7 @@ def main(argv: Sequence[str]) -> int:
         prog="apizr scan",
         description="Statically inventory Python sources without imports, Git or network access.",
     )
-    parser.add_argument("root", type=Path)
-    parser.add_argument(
-        "--source-root",
-        action="append",
-        help="Relative source root; repeat for disjoint roots",
-    )
-    parser.add_argument(
-        "--exclude-dir",
-        action="append",
-        default=[],
-        help="Additional exact directory basename to exclude",
-    )
-    parser.add_argument("--max-file-bytes", type=int, default=1048576)
-    parser.add_argument("--max-source-files", type=int, default=1000)
-    parser.add_argument("--max-total-bytes", type=int, default=16777216)
-    parser.add_argument("--max-entries", type=int, default=20000)
-    parser.add_argument("--max-depth", type=int, default=64)
+    add_scan_arguments(parser)
     output = parser.add_mutually_exclusive_group()
     output.add_argument("--format", choices=["text", "json"], default="text")
     output.add_argument(
@@ -43,19 +27,7 @@ def main(argv: Sequence[str]) -> int:
     )
     args = parser.parse_args(argv)
     try:
-        policy = ScanPolicy(
-            source_roots=tuple(args.source_root or ["."]),
-            excluded_directories=(
-                *ScanPolicy().excluded_directories,
-                *args.exclude_dir,
-            ),
-            max_file_bytes=args.max_file_bytes,
-            max_source_files=args.max_source_files,
-            max_total_bytes=args.max_total_bytes,
-            max_entries=args.max_entries,
-            max_depth=args.max_depth,
-        )
-        catalog = scan(args.root, policy=policy)
+        catalog = scan(args.root, policy=scan_policy(args))
     except (OSError, ValueError, UnicodeError, RecursionError):
         print(
             "apizr scan: invalid policy or inaccessible repository root; check source roots, limits and filesystem support",
