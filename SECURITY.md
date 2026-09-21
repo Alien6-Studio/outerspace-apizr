@@ -20,6 +20,12 @@ in a public issue. There is no promised response SLA or paid security service.
 If the form is unavailable, use the public issue tracker only to request that
 a private reporting channel be restored, without disclosing vulnerability details.
 
+Maintenance is provided on a best-effort basis by the current maintainer. There
+is no guaranteed acknowledgement, fix or disclosure deadline. We coordinate
+disclosure with reporters according to impact, available mitigations and fix
+readiness, and communicate an expected schedule when one can reasonably be given.
+The private reporting channel remains the starting point for that coordination.
+
 ## Execution boundary
 
 Apizr generation must not execute supplied Python or notebook code. Importing

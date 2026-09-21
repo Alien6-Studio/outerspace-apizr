@@ -12,5 +12,8 @@ conversion, start with the [user guides](../getting-started/introduction.md).
 
 The canonical [contribution guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/CONTRIBUTING.md)
 at the repository root describes issue reporting and pull request expectations.
+New contributions require a [DCO 1.1 declaration](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/CONTRIBUTING.md#developer-certificate-of-origin)
+using the submitter's own sign-off. The required CI check enforces this policy;
+existing history is not rewritten.
 See the [Code of Conduct](CODE_OF_CONDUCT.md), [license](LICENSE.md) and
 [private vulnerability reporting policy](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/SECURITY.md).

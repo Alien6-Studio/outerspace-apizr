@@ -17,6 +17,9 @@
 
 ### Documentation and maintenance
 
+- Remove Google Analytics from documentation; optional GitHub statistics remain
+  off by default. Adopt DCO 1.1 for new contributions and document best-effort
+  maintenance/disclosure without guaranteed response deadlines.
 - Clarify immutable published files versus later verification builds, restore
   the repository release display, credit third-party assets and remove the
   obsolete Product Hunt promotion.

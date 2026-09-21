@@ -168,14 +168,14 @@ vulnerability reporting remain enabled. None substitutes for source review.
 
 ## Site analytics review
 
-The original Google Analytics property `G-P3BHZB2FVP` is still configured; its
-ownership and purpose await maintainer confirmation. Optional analytics and GitHub
-statistics are unchecked by default. The consent panel provides accept, reject and
-settings controls, and the footer exposes a persistent **Cookie settings** link.
-Test a clean browser, rejection and explicit opt-in before changing this policy.
+Google Analytics was removed for 0.2.1 after the maintainer's decision in #73.
+The site no longer has an Analytics provider or property configured. Optional
+GitHub statistics remain unchecked by default. The consent panel provides accept,
+reject and settings controls, and the footer exposes a persistent **Cookie settings**
+link. Verify a clean browser and a previously stored Analytics opt-in: neither
+should load Analytics. Test rejection and explicit GitHub opt-in separately.
 The original hero and bee logo remain part of the site. Google Fonts makes
-separate requests; the optional analytics settings are not a claim that the page
-makes no third-party requests.
+separate requests; the optional consent controls apply to GitHub statistics.
 
 ## Additional evidence for future releases
 

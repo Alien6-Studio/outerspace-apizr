@@ -14,12 +14,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           version: '0.12.0'
           python-version: '3.14'
           enable-cache: true
       - run: uv sync --locked
+      - name: Check DCO declarations for new contributions
+        if: github.event_name == 'pull_request' || github.event_name == 'push'
+        env:
+          DCO_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          DCO_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: uv run --locked python scripts/check_dco.py --base "$DCO_BASE" --head "$DCO_HEAD"
       - run: uv run --locked ruff check .
       - run: uv run --locked ruff format --check .
       - run: uv run --locked pyright
