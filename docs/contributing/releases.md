@@ -3,7 +3,7 @@
 This is the maintainer procedure. Users should follow [Start here](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
-## Published 0.2.0 and current verification builds
+## Published releases and verification builds
 
 **0.2.0 was published on 21 September 2026**, from commit
 `31997407010d6e38f99970d0b3b319135a0d5d15`, tagged `v0.2.0`.
@@ -12,16 +12,18 @@ Keep that tag and its PyPI/GitHub distributions unchanged. See the
 
 The later commits that still declared `0.2.0` produced verification artifacts:
 sharing a version number did not make them the published files, and they must
-not replace those files. The current release preparation declares **0.2.1**;
-its [maintenance notes](../releases/0.2.1.md) record publication status. Build attestations
+not replace those files. **0.2.1 was published on 21 September 2026**, from
+`8ab471de436b1ca92a3b213c40402c5241926d5a`, tagged `v0.2.1`.
+Its [maintenance notes](../releases/0.2.1.md) record the verified delivery and
+signed timestamped receipt. Keep its tag and distributions unchanged too. Build attestations
 apply only to their exact subjects and source commit. The
 [post-release audit](../architecture/0.2.0-post-release-verification.md) records
 the distinction and the current validation evidence.
 
-The procedure below is for an **explicitly authorized release**. Version `0.2.1`
-is prepared through a separate release PR; version metadata alone does not mean
-it has been published. The publication guard refuses any version already on
-PyPI, including `0.2.0`.
+The procedure below is for a future **explicitly authorized release**. Prepare
+each new version through a separate release PR; version metadata alone does not
+mean publication has occurred. The publication guard refuses any version
+already on PyPI, including `0.2.0` and `0.2.1`.
 
 <span id="pypi-ownership"></span>
 
@@ -93,8 +95,8 @@ and publisher and is not part of this workflow.
 
 Example deliberate dispatch from the verified release checkout, after the new
 tag exists and checks are green. Set `REVIEWED_MASTER_RUN_ID` to the reviewed
-successful master push CI run ID. **Do not run this for the already-published
-0.2.0 checkout.**
+successful master push CI run ID. **Do not run this for an already-published
+0.2.0 or 0.2.1 checkout.**
 
 ```sh
 RELEASE_VERSION=$(python -c 'import pathlib, tomllib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"])')
