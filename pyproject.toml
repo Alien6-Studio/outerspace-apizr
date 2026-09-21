@@ -1,6 +1,6 @@
 [project]
 name = "outerspace-apizr"
-version = "0.2.0"
+version = "0.2.1"
 description = "Compile Python codebases into discoverable, typed and governable capabilities."
 requires-python = ">=3.11,<3.15"
 readme = "README.md"

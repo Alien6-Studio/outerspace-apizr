@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.2.1 — Unreleased
+
+### Verification and release evidence
+
+- Require bounded terminal evidence and no surviving activity for ordinary worker
+  descendants; retain process-state diagnostics when verification fails (#79).
+- Enforce 18 security mutation checks, a 90% global branch-coverage floor, a
+  separate measured legacy floor, and macOS validation.
+- Archive exact source/lock, runtime and validation SBOMs, tests, coverage and
+  dependency reports with verified CI provenance.
+- Sign and RFC 3161 timestamp release-delivery receipts using the managed Apizr
+  identity; verify receipt identity, timestamp and artifact hashes before upload.
+- Enforce reviewed license expressions, archive fingerprints, scoped exceptions
+  and denied-package policy for every version in the universal dependency lock.
+
+### Documentation and maintenance
+
+- Remove Google Analytics from documentation; optional GitHub statistics remain
+  off by default. Adopt DCO 1.1 for new contributions and document best-effort
+  maintenance/disclosure without guaranteed response deadlines.
+- Clarify immutable published files versus later verification builds, restore
+  the repository release display, credit third-party assets and remove the
+  obsolete Product Hunt promotion.
+- Update pinned GitHub Actions dependencies.
+
+The Python 3.11–3.14 and application contracts are unchanged. The descendant
+change strengthens verification; it does not establish the cause of the older
+failure or change the process runtime. See the [maintenance notes](https://apizr.outerspace.sh/releases/0.2.1/).
+
 ## 0.2.0 — 2026-09-21
 
 ### Added

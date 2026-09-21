@@ -64,23 +64,16 @@ extra:
   consent:
     title: Cookie consent
     description: >-
-      Optional Google Analytics measures documentation usage. Optional GitHub
-      requests show repository statistics. Both are off until you choose them.
-      You can reject them or change your choices at any time.
+      Optional GitHub requests show repository statistics. They are off until
+      you choose them. You can reject them or change your choice at any time.
     actions:
       - accept
       - reject
       - manage
     cookies:
-      analytics:
-        name: Google Analytics
-        checked: false
       github:
         name: GitHub repository statistics
         checked: false
-  analytics:
-    provider: google
-    property: G-P3BHZB2FVP
 
 validation:
   links:
@@ -138,6 +131,7 @@ nav:
           - Artifact principles: architecture/artifact-principles.md
           - Security baseline: architecture/security-baseline.md
   - Releases:
+      - 0.2.1: releases/0.2.1.md
       - 0.2.0: releases/0.2.0.md
   - Contributing:
       - Overview: about/CONTRIBUTING.md

@@ -10,16 +10,17 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 Keep that tag and its PyPI/GitHub distributions unchanged. See the
 [release notes](../releases/0.2.0.md) for the shipped scope.
 
-Subsequent `master` commits still declare package version `0.2.0`. Their CI builds
-are verification artifacts: sharing a version number does not make them the
-published files, and they must not replace those files. Later build attestations
+The later commits that still declared `0.2.0` produced verification artifacts:
+sharing a version number did not make them the published files, and they must
+not replace those files. The current release preparation declares **0.2.1**;
+its [maintenance notes](../releases/0.2.1.md) record publication status. Build attestations
 apply only to their exact subjects and source commit. The
 [post-release audit](../architecture/0.2.0-post-release-verification.md) records
 the distinction and the current validation evidence.
 
-The procedure below is for a **future, explicitly authorized release**. Choose its
-unused version in a separate release PR; this documentation update does not choose
-or bump a version. The existing publication guard refuses any version already on
+The procedure below is for an **explicitly authorized release**. Version `0.2.1`
+is prepared through a separate release PR; version metadata alone does not mean
+it has been published. The publication guard refuses any version already on
 PyPI, including `0.2.0`.
 
 <span id="pypi-ownership"></span>
@@ -75,8 +76,12 @@ and publisher and is not part of this workflow.
    `ci_run_id`. Its verification job checks tag/version/commit, successful CI,
    Security and Documentation runs, availability of the PyPI version, archive
    metadata and original checksums. It downloads and forwards the same bytes;
-   there is no rebuild. Approve the protected `pypi` deployment after review.
-8. The isolated publication job downloads the verified artifacts and exchanges
+   there is no rebuild. Approve the protected `pypi` receipt job after review.
+8. The receipt job signs and RFC 3161 timestamps those exact distributions and
+   evidence with the managed Apizr identity. Signature, expected identity,
+   timestamp and recomputation must all pass; missing keys or timestamp service
+   failures stop delivery. Review its receipt before approving the protected
+   publication job. The isolated publication job downloads the verified artifacts and exchanges
    its GitHub identity with PyPI using the pinned PyPA action. Only this job has
    `id-token: write`; it does not check out or execute repository source. A
    failed/partial upload requires inspection of PyPI state before any retry.
@@ -111,9 +116,12 @@ Complete against the final commit; historical green runs are not sufficient.
 - [ ] Wheel/sdist content and hashes are reviewed; installed-wheel smoke passes.
 - [ ] Legacy container matrix and mandatory `oci-isolation` pass unchanged.
 - [ ] Dependency audit, CodeQL and strict MkDocs build pass.
+- [ ] License inventory/policy and preserved notices cover the exact universal lock.
 - [ ] Open issues are classified and no release blocker remains unresolved.
 - [ ] Ownership, Trusted Publisher and protected `pypi` environment are verified.
 - [ ] The tag identifies the exact verified master commit and CI artifact run.
+- [ ] Managed Attest identity, signature, RFC 3161 timestamp and recomputation pass
+      for the exact delivery; receipt and public verification material are archived.
 - [ ] PyPI file hashes and fresh index installation are verified after publication.
 
 ## Documentation publication
@@ -160,14 +168,14 @@ vulnerability reporting remain enabled. None substitutes for source review.
 
 ## Site analytics review
 
-The original Google Analytics property `G-P3BHZB2FVP` is still configured; its
-ownership and purpose await maintainer confirmation. Optional analytics and GitHub
-statistics are unchecked by default. The consent panel provides accept, reject and
-settings controls, and the footer exposes a persistent **Cookie settings** link.
-Test a clean browser, rejection and explicit opt-in before changing this policy.
+Google Analytics was removed for 0.2.1 after the maintainer's decision in #73.
+The site no longer has an Analytics provider or property configured. Optional
+GitHub statistics remain unchecked by default. The consent panel provides accept,
+reject and settings controls, and the footer exposes a persistent **Cookie settings**
+link. Verify a clean browser and a previously stored Analytics opt-in: neither
+should load Analytics. Test rejection and explicit GitHub opt-in separately.
 The original hero and bee logo remain part of the site. Google Fonts makes
-separate requests; the optional analytics settings are not a claim that the page
-makes no third-party requests.
+separate requests; the optional consent controls apply to GitHub statistics.
 
 ## Additional evidence for future releases
 
