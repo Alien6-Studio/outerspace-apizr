@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block tabs %}
+  {{ super() }}
+  <img
+    src="{{ 'assets/images/illustration.png' | url }}"
+    alt="OuterSpace Apizr: a space explorer in an orange suit in front of a yellow spacecraft"
+    width="2048"
+    height="642"
+    style="display: block; width: 100%; height: auto;"
+    fetchpriority="high"
+  />
+{% endblock %}

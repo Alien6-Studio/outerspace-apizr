@@ -1,4 +1,5 @@
 ---
+template: home.html
 title: Apizr — capability compiler for Python
 description: Discover Python capabilities, inspect their contracts and relationships, and generate REST or MCP interfaces with explicit execution policies.
 ---
