@@ -174,3 +174,10 @@ oci-repeated.xml
 oci-coverage.json
 mutation-evidence/
 release-evidence/
+
+# Attest private material and local execution state (public trust is versioned).
+.attest/keys/
+.attest/receipts/
+.attest/cache/
+.attest/causal/
+attest-workspace/

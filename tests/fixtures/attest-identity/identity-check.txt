@@ -1,0 +1,1 @@
+Apizr signing identity setup check only; this is not a release receipt.

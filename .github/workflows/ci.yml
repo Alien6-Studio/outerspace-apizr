@@ -24,6 +24,9 @@ jobs:
       - run: uv run --locked ruff format --check .
       - run: uv run --locked pyright
       - run: uv run --locked pre-commit run --all-files
+      - uses: ./.github/actions/install-attest
+      - name: Verify managed Attest identity and real offline rejection cases
+        run: uv run --locked python scripts/check_attest_identity.py --attest "$(command -v attest)"
 
   compatibility:
     runs-on: ubuntu-latest

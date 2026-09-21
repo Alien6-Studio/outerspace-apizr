@@ -144,6 +144,7 @@ nav:
       - Development and checks: getting-started/developer-guide/setup.md
       - Publish a release: contributing/releases.md
       - Verify builds and releases: contributing/verification.md
+      - Managed Attest identity: contributing/attest.md
       - Dependency maintenance: contributing/dependencies.md
       - Engineering archive:
           - Read these records: architecture/records.md

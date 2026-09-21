@@ -1,0 +1,17 @@
+name: Install pinned Attest
+description: Verify the fixed Linux archive before installing Attest 0.1.0
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set -euo pipefail
+        destination="$RUNNER_TEMP/apizr-attest-tool"
+        mkdir -p "$destination"
+        curl --fail --location --retry 2 --max-time 90 \
+          https://github.com/Alien6-Studio/continuum-attest/releases/download/v0.1.0/attest-v0.1.0-linux-x86_64.tar.gz \
+          -o "$destination/attest.tar.gz"
+        echo "f51201745b30be356e066cd615a7ef41fed92b17cf720ceb03e7f2a4d58505ad  $destination/attest.tar.gz" | sha256sum --check --strict
+        tar -xzf "$destination/attest.tar.gz" -C "$destination" attest
+        "$destination/attest" --version
+        echo "$destination" >> "$GITHUB_PATH"

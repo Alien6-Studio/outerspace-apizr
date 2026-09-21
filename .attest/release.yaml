@@ -1,0 +1,11 @@
+version: "0.1"
+name: "apizr-release-delivery"
+steps:
+  bind-verified-delivery:
+    # These files were built/tested in CI and verified before this job.
+    # This receipt binds their delivery; it does not claim to rerun the build.
+    run: "true"
+    inputs: ["delivery/"]
+    outputs: ["delivery/"]
+    attestation:
+      type: "verified-release-delivery"
