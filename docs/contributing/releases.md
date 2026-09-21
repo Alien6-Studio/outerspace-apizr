@@ -165,9 +165,9 @@ ownership and purpose await maintainer confirmation. Optional analytics and GitH
 statistics are unchecked by default. The consent panel provides accept, reject and
 settings controls, and the footer exposes a persistent **Cookie settings** link.
 Test a clean browser, rejection and explicit opt-in before changing this policy.
-The original hero, bee logo and Product Hunt badge remain part of the site.
-Product Hunt's external badge and Google Fonts are separate requests; the optional
-analytics settings are not a claim that the page makes no third-party requests.
+The original hero and bee logo remain part of the site. Google Fonts makes
+separate requests; the optional analytics settings are not a claim that the page
+makes no third-party requests.
 
 ## Additional evidence for future releases
 
