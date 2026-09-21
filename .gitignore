@@ -165,3 +165,12 @@ cython_debug/
 #.idea/
 
 .ruff_cache/
+
+# CI verification evidence
+coverage.json
+tests.xml
+oci-tests.xml
+oci-repeated.xml
+oci-coverage.json
+mutation-evidence/
+release-evidence/

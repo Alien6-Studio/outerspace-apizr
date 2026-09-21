@@ -93,7 +93,11 @@ Complete against the final commit; historical green runs are not sufficient.
 
 ## Documentation publication
 
-Documentation is independent of PyPI. PRs run a strict MkDocs build. A master
+Documentation is independent of PyPI and follows `master`; it is not a frozen
+versioned documentation site. For the exact published source documentation, use
+the [v0.2.0 tag](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.2.0/docs).
+Release notes distinguish shipped behavior from subsequent maintenance.
+PRs run a strict MkDocs build. A master
 push builds and publishes the site to `gh-pages`, served at
 [apizr.outerspace.sh](https://apizr.outerspace.sh/). Keep this active publication
 branch; edit Markdown and MkDocs configuration, not generated files.
@@ -103,8 +107,10 @@ branch; edit Markdown and MkDocs configuration, not generated files.
 Apizr follows the same protection model as `Alien6-Studio/continuum-attest`:
 PR-only changes, no force push/deletion or bypass actors, signed commits on the
 default branch, resolved review threads, and required up-to-date checks. GitHub
-squash merging provides a verified merge commit. All 14 existing Apizr gates
-remain required, including `oci-isolation`; their names and floors are unchanged.
+squash merging provides a verified merge commit. The original 14 gates remain
+required, including `oci-isolation`; additional macOS and security-mutation gates
+protect the expanded validation matrix. Coverage floors are documented in the
+[verification guide](verification.md).
 
 GitHub Actions defaults to read-only permissions and cannot approve PR reviews.
 Individual deployment jobs explicitly declare necessary write permissions.
@@ -112,17 +118,31 @@ Release tags cannot be deleted or force-updated. CODEOWNERS requests maintainer
 review of external contributions; as with the reference repository, mandatory
 independent PR approval remains zero while there is one active owner. This is
 not a claim of independent human review. The publication environment has a
-separate maintainer approval gate. Dependabot reviews uv and Actions updates.
+separate maintainer approval gate. There is one active maintainer: self-review of
+publication remains possible, and no independent source review is claimed. Branch
+bypass rules and environment administrator bypass are separate settings.
+Dependabot proposes uv and Actions updates for review.
 
 Secret scanning, push protection, dependency security updates and private
 vulnerability reporting remain enabled. None substitutes for source review.
 
 ## Site analytics review
 
-The existing Google Analytics property `G-P3BHZB2FVP` and Material cookie-consent
-configuration are retained; no tracker was added. Their original business purpose
-and account ownership cannot be established from source alone. The maintainer
-should confirm continued use and property ownership. The consent text describes
-repeat visits/preferences and documentation usage; Material gates configured
-analytics on consent. This release removes obsolete decorative/social templates,
-not analytics by assumption.
+The original Google Analytics property `G-P3BHZB2FVP` is still configured; its
+ownership and purpose await maintainer confirmation. Optional analytics and GitHub
+statistics are unchecked by default. The consent panel provides accept, reject and
+settings controls, and the footer exposes a persistent **Cookie settings** link.
+Test a clean browser, rejection and explicit opt-in before changing this policy.
+The original hero, bee logo and Product Hunt badge remain part of the site.
+Product Hunt's external badge and Google Fonts are separate requests; the optional
+analytics settings are not a claim that the page makes no third-party requests.
+
+## Additional evidence for future releases
+
+Before publication, download and inspect `build-attestations` from the exact CI run
+and `dependency-audit` from its verified Security run. The publication workflow
+requires valid signed provenance for the wheel, sdist and `ci-evidence.tar.gz`, then
+preserves the evidence on the existing GitHub release. See the
+[verification guide](verification.md) for contents, commands and limitations.
+Never attach a later build's attestation to the original 0.2.0 files as if it were
+produced by the original build. Never replace the original distributions or tag.

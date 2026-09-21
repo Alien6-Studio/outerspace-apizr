@@ -43,6 +43,7 @@ def validate_run(run: dict, sha: str, workflow: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-id", required=True, type=int)
+    parser.add_argument("--github-output", type=Path)
     args = parser.parse_args()
     project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
     version = project["version"]
@@ -54,6 +55,7 @@ def main() -> None:
     if sha != os.environ.get("GITHUB_SHA"):
         raise ValueError("Checkout must equal the dispatched tag commit")
     validate_run(github(f"actions/runs/{args.run_id}"), sha, "ci.yml")
+    verified_runs = {}
     for workflow in ("security.yml", "mkdocs.yaml"):
         runs = github(
             f"actions/workflows/{workflow}/runs?head_sha={sha}&event=push&per_page=100"
@@ -61,7 +63,9 @@ def main() -> None:
         # A later failed/in-progress attempt must not be hidden by an older green one.
         if not runs:
             raise ValueError(f"Missing {workflow} verification")
-        validate_run(max(runs, key=lambda run: run["id"]), sha, workflow)
+        selected = max(runs, key=lambda run: run["id"])
+        validate_run(selected, sha, workflow)
+        verified_runs[workflow] = int(selected["id"])
     try:
         urllib.request.urlopen(
             f"https://pypi.org/pypi/{project['name']}/{version}/json", timeout=30
@@ -73,6 +77,9 @@ def main() -> None:
         raise ValueError(
             "Version already exists on PyPI; never overwrite or skip existing files"
         )
+    if args.github_output:
+        with args.github_output.open("a") as output:
+            output.write(f"security_run_id={verified_runs['security.yml']}\n")
     print(
         f"Verified {version}, {sha}, CI run {args.run_id}, Security, Documentation, and unused PyPI version"
     )

@@ -35,3 +35,9 @@ historical issues unless their acceptance criteria are actually satisfied.
 
 Contributions retain [GPL-3.0-or-later](LICENSE). Participation follows the
 [Code of Conduct](CODE_OF_CONDUCT.md).
+
+
+Dependency changes must follow the [source, vulnerability and license review policy](docs/contributing/dependencies.md).
+Security-sensitive changes must pass `uv run --locked python scripts/security_mutations.py`;
+it runs in a disposable copy and fails if a selected protection can be removed
+without its designated test detecting the regression.

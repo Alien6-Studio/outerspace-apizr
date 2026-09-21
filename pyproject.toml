@@ -96,8 +96,8 @@ branch = true
 [tool.coverage.report]
 show_missing = true
 precision = 2
-# Below the recorded 55.90% branch-aware baseline; includes legacy modules.
-fail_under = 55
+# Release CI measured 90.65–90.99% across Python 3.11–3.14, including legacy.
+fail_under = 90
 
 [tool.ruff.lint.flake8-bugbear]
 # FastAPI dependency declarations are evaluated defaults by design.
