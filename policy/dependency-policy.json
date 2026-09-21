@@ -1,0 +1,123 @@
+{
+  "allowed_licenses": [
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "CC0-1.0",
+    "ISC",
+    "MIT",
+    "MIT-0",
+    "MPL-2.0",
+    "PSF-2.0",
+    "Python-2.0",
+    "Unicode-3.0",
+    "Unicode-DFS-2016"
+  ],
+  "denied_packages": [
+    {
+      "name": "sklearn",
+      "reason": "Deprecated install-time placeholder; use the actual scikit-learn distribution after review.",
+      "reference": "https://pypi.org/project/sklearn/"
+    },
+    {
+      "name": "tensorflow-gpu",
+      "reason": "Removed install-time placeholder; use the maintained tensorflow distribution after review.",
+      "reference": "https://pypi.org/project/tensorflow-gpu/"
+    }
+  ],
+  "exceptions": [
+    {
+      "evidence_sha256": [
+        "2a82ac9bbc3e3ee066908381e8d373896db5a6025d083fbd59692fe9ccfb9111",
+        "fb5ce1f2dbd2bedc01fad9507be71ca19ec37b4d6f8dfb9516fbfefee410d85d"
+      ],
+      "licenses": [
+        "CC-BY-4.0"
+      ],
+      "name": "license-expression",
+      "reason": "License-index data; retain attribution, source and license notices.",
+      "version": "30.4.4"
+    },
+    {
+      "evidence_sha256": [
+        "75d79cccf1fc302cb4a99bd32aac8bd4fc80926b15d31f0ba994d16cdf844032"
+      ],
+      "licenses": [
+        "LicenseRef-Pyahocorasick-Public-Domain"
+      ],
+      "name": "license-expression",
+      "reason": "The upstream ABOUT file dedicates the copied pure-Python algorithm to the public domain; retain its provenance.",
+      "version": "30.4.4"
+    },
+    {
+      "evidence_sha256": [
+        "329f24fdba0c57714d7d202d30a74767feac6907685ee24f0abbf1bd47581a07"
+      ],
+      "licenses": [
+        "CC-BY-4.0",
+        "OFL-1.1"
+      ],
+      "name": "mkdocs-material",
+      "reason": "Font Awesome icons, fonts and code respectively; preserve attribution; do not sell fonts alone or use reserved names for modified fonts.",
+      "version": "9.7.7"
+    },
+    {
+      "evidence_sha256": [
+        "5ea2f23c7f00c3006bacf267183e816d8d4b6dc95ea57a4ddb0ff81de6d8719e"
+      ],
+      "licenses": [
+        "LGPL-2.1-only"
+      ],
+      "name": "pywin32",
+      "reason": "adodbapi includes LGPL 2.1; only unmodified dependency installation is admitted, preserving its license and corresponding-source/relinking obligations if redistributed.",
+      "version": "312"
+    },
+    {
+      "evidence_sha256": [
+        "57ec79bbeab4fd1cf7460a7ad450d2ab01471810459aeae9e75e4c66b472095f"
+      ],
+      "licenses": [
+        "LicenseRef-Scintilla-Permission"
+      ],
+      "name": "pywin32",
+      "reason": "Scintilla permits use, copying, modification and distribution, with copyright and permission retained in copies and supporting documentation.",
+      "version": "312"
+    },
+    {
+      "evidence_sha256": [
+        "9d312abddabac1f6167f549b1f8320d6b44fed86813968b83b86378d7816743b"
+      ],
+      "licenses": [
+        "LGPL-2.1-or-later",
+        "LGPL-3.0-or-later"
+      ],
+      "name": "pyzmq",
+      "reason": "The bundled Debian copyright inventory lists legacy LGPL files and a linking exception. Preserve it; this conservative component entry does not assert that every historical path is still present.",
+      "version": "27.2.0"
+    },
+    {
+      "evidence_sha256": [
+        "cce5d01fa4a83b794271bd2c28cffdf99afd43c803e6ddefddae39b591ea7448"
+      ],
+      "licenses": [
+        "CC-BY-4.0"
+      ],
+      "name": "uvloop",
+      "reason": "libuv documentation only; retain attribution when copying its documentation.",
+      "version": "0.22.1"
+    },
+    {
+      "evidence_sha256": [
+        "70b98a95a2144eb70af8017fa8c6d95ce247e40867436e8bc649e137fe13d21a"
+      ],
+      "licenses": [
+        "LicenseRef-Kuhn-Permission"
+      ],
+      "name": "wcwidth",
+      "reason": "Markus Kuhn permits use, copying, modification and distribution for any purpose without fee; retain this notice.",
+      "version": "0.8.4"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "locked-dependency-use-with-upstream-notices"
+}
