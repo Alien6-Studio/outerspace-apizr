@@ -13,6 +13,7 @@ copyright: Copyright &copy; 2023–2026 Alien6
 
 theme:
   name: material
+  custom_dir: overrides
   logo: assets/images/logo.png
   icon:
     repo: fontawesome/brands/github-alt
@@ -75,6 +76,9 @@ validation:
   links:
     not_found: warn
     anchors: warn
+
+extra_css:
+  - assets/stylesheets/branding.css
 
 # Organize by reader task; keep published page paths stable.
 nav:

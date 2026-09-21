@@ -1,4 +1,5 @@
 ---
+template: home.html
 title: Apizr — capability compiler for Python
 description: Discover Python capabilities, inspect their contracts and relationships, and generate REST or MCP interfaces with explicit execution policies.
 ---
@@ -15,6 +16,10 @@ functions through REST or MCP, and execute trusted code under explicit policies.
 
 [Start with a small Python project](getting-started/introduction.md){ .md-button .md-button--primary }
 [Read the 0.2.0 release notes](releases/0.2.0.md){ .md-button }
+
+Share your feedback on Product Hunt:
+
+[![OuterSpace Apizr on Product Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=410734&theme=dark){ width="250" height="54" }](https://www.producthunt.com/posts/outerspace-apizr)
 
 ## Discover
 
