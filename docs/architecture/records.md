@@ -10,6 +10,7 @@ current checkout. Their published URLs remain available for existing links.
 | [Foundation verification](0.2-hardening.md) | Package normalization, tests and the findings still open at that stage |
 | [Historical dependency audit](foundation-security-audit.md) | Vulnerabilities in the earlier dependency graph before runtime rationalization |
 | [Capability IR verification](capability-ir-v1-verification.md) | The independent IR implementation, compatibility checks and byte comparisons |
+| [0.2.0 post-release verification](0.2.0-post-release-verification.md) | Published files versus later master builds, full CI evidence and remaining maintenance decisions |
 
 For current work, use the [development checks](../getting-started/developer-guide/setup.md),
 [migration guidance](../getting-started/developer-guide/releases.md) and

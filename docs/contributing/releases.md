@@ -3,6 +3,25 @@
 This is the maintainer procedure. Users should follow [Start here](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
+## Published 0.2.0 and current verification builds
+
+**0.2.0 was published on 21 September 2026**, from commit
+`31997407010d6e38f99970d0b3b319135a0d5d15`, tagged `v0.2.0`.
+Keep that tag and its PyPI/GitHub distributions unchanged. See the
+[release notes](../releases/0.2.0.md) for the shipped scope.
+
+Subsequent `master` commits still declare package version `0.2.0`. Their CI builds
+are verification artifacts: sharing a version number does not make them the
+published files, and they must not replace those files. Later build attestations
+apply only to their exact subjects and source commit. The
+[post-release audit](../architecture/0.2.0-post-release-verification.md) records
+the distinction and the current validation evidence.
+
+The procedure below is for a **future, explicitly authorized release**. Choose its
+unused version in a separate release PR; this documentation update does not choose
+or bump a version. The existing publication guard refuses any version already on
+PyPI, including `0.2.0`.
+
 <span id="pypi-ownership"></span>
 
 ## Ownership and one-time setup
@@ -31,7 +50,8 @@ and publisher and is not part of this workflow.
 
 1. Prepare a PR with current README, release notes, compatibility guidance and package
    metadata. `pyproject.toml` is the version source; installed application/CLI
-   versions come from distribution metadata. Keep `0.2.0` for this release.
+   versions come from distribution metadata. Use the explicitly authorized,
+   previously unpublished version; align its release notes and changelog.
 2. Merge through the protected default branch after **all** required checks pass.
    Wait for CI, Security and Documentation to pass again on the exact master
    merge commit. Do not disable a gate, lower a coverage floor or use an admin bypass.
@@ -46,11 +66,11 @@ and publisher and is not part of this workflow.
    in the release record. Never rebuild on a laptop for the upload.
 5. Check [PyPI release history](https://pypi.org/project/outerspace-apizr/#history)
    immediately before publication. Versions and filenames are immutable. If
-   `0.2.0` already exists, stop and investigate; do not overwrite, silently skip
+   the target version already exists, stop and investigate; do not overwrite, silently skip
    files, or automatically choose another version.
-6. Create `v0.2.0` on that exact verified merge commit. Release tags are protected
+6. Create `v<version>` on that exact verified merge commit. Release tags are protected
    against deletion/force updates. Prepare the GitHub release notes from
-   [0.2.0](../releases/0.2.0.md) and attach the reviewed wheel/sdist and checksums.
+   the reviewed notes for that version and attach the reviewed wheel/sdist and checksums.
 7. Explicitly dispatch **Publish PyPI** on the tag, passing the verified master
    `ci_run_id`. Its verification job checks tag/version/commit, successful CI,
    Security and Documentation runs, availability of the PyPI version, archive
@@ -61,15 +81,20 @@ and publisher and is not part of this workflow.
    `id-token: write`; it does not check out or execute repository source. A
    failed/partial upload requires inspection of PyPI state before any retry.
 9. Verify PyPI metadata, rendered README and file SHA-256 values against the
-   reviewed artifacts. Install `outerspace-apizr==0.2.0` from PyPI in a fresh
+   reviewed artifacts. Install `outerspace-apizr==<version>` from PyPI in a fresh
    environment outside checkout and run the CLI/example smoke. Record the actual
    publication date, release links and hashes; update the changelog's `Unreleased`
    label through a follow-up documentation PR if publication has completed.
 
-Example deliberate dispatch, after the tag exists and checks are green:
+Example deliberate dispatch from the verified release checkout, after the new
+tag exists and checks are green. Set `REVIEWED_MASTER_RUN_ID` to the reviewed
+successful master push CI run ID. **Do not run this for the already-published
+0.2.0 checkout.**
 
 ```sh
-gh workflow run publish-pypi.yml --ref v0.2.0 -f ci_run_id=REVIEWED_MASTER_RUN_ID
+RELEASE_VERSION=$(python -c 'import pathlib, tomllib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"])')
+gh workflow run publish-pypi.yml --ref "v${RELEASE_VERSION}" \
+  -f ci_run_id="$REVIEWED_MASTER_RUN_ID"
 ```
 
 Publication is never triggered by an ordinary master push or PR. The workflow
