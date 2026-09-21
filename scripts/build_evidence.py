@@ -35,6 +35,7 @@ def main() -> None:
         "scripts",
         "tests",
         ".github",
+        "policy",
     ):
         raise ValueError(
             "Untracked build or validation inputs are not release evidence"
@@ -62,6 +63,26 @@ def main() -> None:
         )
     for name in ("uv.lock", "pyproject.toml", "SHA256SUMS.json"):
         shutil.copyfile(root / name, output / name)
+    for name in (
+        "dependency-policy.json",
+        "dependency-licenses.json",
+        "dependency-license-texts.json",
+    ):
+        shutil.copyfile(root / "policy" / name, output / name)
+    subprocess.run(
+        [
+            "uv",
+            "run",
+            "--locked",
+            "--offline",
+            "python",
+            "scripts/check_dependency_licenses.py",
+            "--output",
+            str(output / "dependency-license-report.json"),
+        ],
+        cwd=root,
+        check=True,
+    )
     subprocess.run(
         [
             "git",
