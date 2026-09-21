@@ -7,9 +7,10 @@ provenance. The repository maintainer manages its provisioning and revocation.
 - Key identifier: `ac3b0b1c565ef9e18f894c10f5ce1cdb`.
 - Raw public key: `1d397e601c7efc4b8e372efa3d23bfbd819ecc02070d38a80335b1fd9a4e72e1`.
 - Public key and trust policy: `.attest/trust/` in the protected repository.
-- Intended private-key storage: `APIZR_ATTEST_SIGNING_KEY`, a PKCS#8 PEM in the
-  protected `pypi` GitHub environment. Provisioning is pending explicit maintainer
-  authorization. No repository-wide secret or private key in source control.
+- Private-key storage: `APIZR_ATTEST_SIGNING_KEY`, a PKCS#8 PEM provisioned on
+  2026-09-21 in the protected `pypi` GitHub environment with maintainer
+  authorization. The temporary local private copy was removed after verification.
+  No repository-wide secret or private key in source control.
 - Timestamp authority: DigiCert's documented
   [RFC 3161 service](https://knowledge.digicert.com/general-information/rfc3161-compliant-time-stamp-authority-server),
   `http://timestamp.digicert.com`. Only the signature's digest is submitted.
@@ -24,6 +25,21 @@ labeled test message, not a release receipt. CI verifies its signature and real
 RFC 3161 token offline, then requires rejection of changed content, a missing
 timestamp, an invalid signature and an untrusted key. PRs never use the private
 release key or call the timestamp service.
+
+An authorized local test also signed and timestamped the actual artifacts from
+[CI run 35624060995](https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/35624060995)
+at `d254da33f649b853dee8bfa5669f0ca383e6f282`. GitHub provenance for the wheel,
+sdist and CI archive was verified against the repository, workflow, commit and
+`master` ref before signing. All five Attest checks passed again after extracting
+the receipt archive, using the independently held repository trust store; every
+archived file matched the verified input's SHA-256. The test receipt archive has
+SHA-256 `76ad8ebc0c69991c689759521c6e99123544db5d1798124af7ae30956f1e2626`.
+
+These were post-release CI verification builds declaring 0.2.0, not the immutable
+published 0.2.0 distributions. This local test does not establish execution of
+the protected GitHub publication job or delivery of a new release. The existing
+environment protections remain: required maintainer review, `v*` tags only and
+no administrator bypass.
 
 ## Receipt before publication
 
@@ -77,7 +93,7 @@ The pipeline mode is intentional: the published 0.1.0 CLI's `--recompute` needs
 
 ## Rotation and recovery
 
-Once provisioned, the private key is retained in the protected GitHub environment; GitHub does not
+The private key is retained in the protected GitHub environment; GitHub does not
 offer API retrieval of a stored secret. If it is lost or access is withdrawn,
 create a new identity and update its public policy through a reviewed PR. Do not
 silently replace the private key under an existing key identifier. Revoke a
