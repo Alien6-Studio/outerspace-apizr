@@ -62,6 +62,14 @@ MUTATIONS = (
         "os.O_RDONLY | os.O_DIRECTORY",
         "tests/rest/test_output.py::test_output_symlink_and_symlink_parent_are_rejected",
     ),
+    Mutation(
+        "local-process-group-kill",
+        "src/apizr/execution/supervisor.py",
+        "def kill_group(process: subprocess.Popen[bytes]) -> None:\n    try:",
+        "def kill_group(process: subprocess.Popen[bytes]) -> None:\n"
+        "    process.kill()\n    process.wait()\n    return\n    try:",
+        "tests/execution/test_process.py::test_ordinary_descendant_is_stopped_with_worker",
+    ),
     *(
         Mutation(
             "oci-" + flag.removeprefix("--").split("=")[0],

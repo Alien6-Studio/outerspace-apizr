@@ -85,3 +85,29 @@ and changed source anchors fail the gate. Its initial 17 mutations cover static
 analysis, symlink confinement, artifact integrity, policy refusal and Docker
 isolation/resource flags. This is a selected protection set, not exhaustive mutation
 coverage or a substitute for the actual OCI boundary tests.
+
+The eighteenth mutation disables local process-group termination while retaining
+direct-worker termination. The ordinary-descendant test must detect the surviving
+child's activity. Test cleanup runs only after the assertions and cannot make a
+mutant pass.
+
+## Observing local descendant termination
+
+The local supervisor sends `SIGKILL` to the worker's process group and waits for
+the direct worker. It cannot reap an orphaned grandchild. The descendant test
+therefore observes disappearance or a zombie state within a two-second bound,
+while requiring its heartbeat to remain unchanged. A persistent `D`, `R`, `S` or
+`T` state, resumed activity, changed process group or failed observation fails the
+test. Failure output preserves the timed state/group/parent observations and,
+on Linux when available, pending-signal fields from `/proc`.
+
+This replaces the single snapshot that once observed `D` in the Python 3.14 CI
+run recorded in [#79](https://github.com/Alien6-Studio/outerspace-apizr/issues/79).
+Linux documents `D` as an
+[uninterruptible wait](https://docs.kernel.org/filesystems/proc.html); it is not
+terminal evidence. The old run did not collect enough information to establish
+why that state occurred. The bounded observation handles asynchronous scheduling
+without accepting a stopped or blocked child as terminated. Separate tests reject
+a real stopped child and simulated persistent nonterminal states. This changes
+the verification procedure, not the runtime's termination behavior or its
+[containment guarantees](../architecture/execution-policy-v1.md).
