@@ -1,0 +1,9 @@
+version: "0.1"
+name: "apizr-identity-check"
+steps:
+  identity-check:
+    run: "true"
+    inputs: ["identity-check.txt"]
+    outputs: ["identity-check.txt"]
+    attestation:
+      type: "identity-check-not-release"

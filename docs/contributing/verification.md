@@ -31,8 +31,10 @@ release attachments preserve the published evidence beyond that limit.
 
 These controls apply to builds made **after** their introduction. They do not
 retroactively establish build provenance for 0.2.0. A signed and RFC 3161 timestamped
-**Attest receipt is not yet provided**. GitHub/Sigstore attestations must not be
-presented as that additional receipt or as complete parity with continuum-attest.
+**Attest receipt has not yet been delivered with a published Apizr release**.
+The [managed Apizr identity and publication gate](attest.md) now prepare that
+receipt for the next release. GitHub/Sigstore attestations must not be presented
+as that additional receipt or as complete parity with continuum-attest.
 
 ## Check the identity as well as the hash
 

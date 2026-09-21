@@ -1,0 +1,11 @@
+version = 1
+key_id = "ac3b0b1c565ef9e18f894c10f5ce1cdb"
+public_key_hex = "1d397e601c7efc4b8e372efa3d23bfbd819ecc02070d38a80335b1fd9a4e72e1"
+tsa_url = "http://timestamp.digicert.com"
+tsa_issuer_sha256 = "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd"
+
+[tool]
+version = "0.1.0"
+repository = "Alien6-Studio/continuum-attest"
+linux_x86_64_sha256 = "f51201745b30be356e066cd615a7ef41fed92b17cf720ceb03e7f2a4d58505ad"
+macos_aarch64_sha256 = "93d02f9fc90a8c0dd6c8f3df05ce56660b89b83eb334a02aaad4c3f68f9ceb4d"

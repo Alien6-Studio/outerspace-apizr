@@ -89,8 +89,46 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-  publish:
+  receipt:
     needs: verify
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/install-attest
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: verified-distributions
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: verified-release-evidence
+          path: release-evidence
+      - name: Sign, timestamp and verify the exact delivery
+        env:
+          APIZR_ATTEST_SIGNING_KEY: ${{ secrets.APIZR_ATTEST_SIGNING_KEY }}
+          CI_RUN_ID: ${{ inputs.ci_run_id }}
+        run: |
+          python3 scripts/attest_release.py --attest "$(command -v attest)" \
+            --dist dist --evidence release-evidence \
+            --workspace "$RUNNER_TEMP/apizr-attest-workspace" \
+            --output attest-evidence --commit "$GITHUB_SHA" --ci-run "$CI_RUN_ID"
+      - name: Remove temporary private material even after interruption
+        if: always()
+        run: rm -f "$RUNNER_TEMP/apizr-attest-workspace/.attest/keys/"*.key
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: attest-release-evidence
+          path: attest-evidence/
+          if-no-files-found: error
+          retention-days: 90
+
+  publish:
+    needs: [verify, receipt]
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -116,6 +154,10 @@ jobs:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: verified-release-evidence
+          path: evidence
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: attest-release-evidence
           path: evidence
       - name: Preserve evidence beyond Actions retention
         env:
