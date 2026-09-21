@@ -9,7 +9,9 @@ repo_name: alien6-studio/outerspace-apizr
 repo_url: https://github.com/alien6-studio/outerspace-apizr
 
 # Copyright
-copyright: Copyright &copy; 2023–2026 Alien6
+copyright: >-
+  Copyright &copy; 2023–2026 Alien6 ·
+  <a href="#__consent">Cookie settings</a>
 
 theme:
   name: material
@@ -62,12 +64,20 @@ extra:
   consent:
     title: Cookie consent
     description: >-
-      We use cookies to recognize your repeated visits and preferences, as well
-      as to measure the effectiveness of our documentation and whether users
-      find what they're searching for. With your consent, you're helping us to
-      make our documentation better.
+      Optional Google Analytics measures documentation usage. Optional GitHub
+      requests show repository statistics. Both are off until you choose them.
+      You can reject them or change your choices at any time.
     actions:
       - accept
+      - reject
+      - manage
+    cookies:
+      analytics:
+        name: Google Analytics
+        checked: false
+      github:
+        name: GitHub repository statistics
+        checked: false
   analytics:
     provider: google
     property: G-P3BHZB2FVP
@@ -133,6 +143,8 @@ nav:
       - Overview: about/CONTRIBUTING.md
       - Development and checks: getting-started/developer-guide/setup.md
       - Publish a release: contributing/releases.md
+      - Verify builds and releases: contributing/verification.md
+      - Dependency maintenance: contributing/dependencies.md
       - Engineering archive:
           - Read these records: architecture/records.md
           - Original 0.2 baseline: architecture/0.2-baseline.md

@@ -132,3 +132,16 @@ The new package and scan CLI use strict Pyright; each compatibility job enforces
 a separate 90% branch-aware repository coverage floor. Catalog and schema goldens
 are under `tests/fixtures/catalog/` and `docs/specs/`. See the
 [scanner contract](../../architecture/repository-scanner-v1.md) before changing discovery policy.
+
+
+## Operating-system validation
+
+Linux CI runs the complete ordinary suite on Python 3.11–3.14, plus the separate
+Docker/OCI boundary suite and legacy containers. macOS CI runs the ordinary suite
+on Python 3.11 and 3.14. OCI isolation is qualified against a Linux Docker host,
+not a macOS container engine. Windows is outside the validated support matrix;
+local-process supervision and safe output creation depend on POSIX facilities.
+
+CI retains JUnit, branch-coverage and mutation reports. See
+[build verification](../../contributing/verification.md) and
+[dependency maintenance](../../contributing/dependencies.md).

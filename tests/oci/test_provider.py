@@ -124,7 +124,21 @@ def test_create_has_no_escape_hatches_or_environment_values(monkeypatch, tmp_pat
     plan, _ = planned()
     DockerProvider().create("test", plan, tmp_path, {"MARKER": "PRIVATE"})
     args, kwargs = calls[0]
-    assert "--pull=never" in args and "--network=none" in args
+    for control in (
+        "--pull=never",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges=true",
+        "--user=65532:65532",
+        "--ipc=private",
+        "--cgroupns=private",
+        "--pids-limit",
+        "--memory",
+        "--memory-swap",
+        "--cpu-quota",
+    ):
+        assert control in args
     assert "PRIVATE" not in str(args)
     assert kwargs["environment"]["MARKER"] == "PRIVATE"
     assert args[-1] == "MARKER"
