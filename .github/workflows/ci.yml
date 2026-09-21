@@ -57,7 +57,7 @@ jobs:
 
       - name: Preserve tests and branch coverage
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: validation-linux-python-${{ matrix.python }}
           path: |
@@ -83,7 +83,7 @@ jobs:
       - run: uv sync --locked
       - run: uv run --locked pytest --cov --cov-report=term-missing --cov-report=json:coverage.json --junitxml=tests.xml
       - run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: validation-macos-python-${{ matrix.python }}
@@ -104,7 +104,7 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
       - run: uv run --locked python scripts/security_mutations.py
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: security-mutation-evidence
@@ -129,19 +129,19 @@ jobs:
         run: uv run --locked python scripts/smoke_wheel.py dist/*.whl --python 3.11
       - name: Preserve source, lock and dependency SBOMs
         run: uv run --locked python scripts/build_evidence.py
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: build-evidence
           path: release-evidence/
           if-no-files-found: error
           retention-days: 90
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: python-distributions
           path: dist/*
           if-no-files-found: error
           retention-days: 30
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: distribution-checksums
           path: SHA256SUMS.json
@@ -213,7 +213,7 @@ jobs:
       - name: Assert no invocation containers remain
         if: always()
         run: test -z "$(docker ps -aq --filter label=org.apizr.execution=oci-v1)"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: validation-oci
@@ -272,7 +272,7 @@ jobs:
         run: |
           cp "$PROVENANCE_BUNDLE" attestations/build-provenance.sigstore.json
           cp "$SBOM_BUNDLE" attestations/runtime-sbom.sigstore.json
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: build-attestations
           path: attestations/
