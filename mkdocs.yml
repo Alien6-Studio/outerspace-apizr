@@ -151,5 +151,6 @@ nav:
           - Foundation verification: architecture/0.2-hardening.md
           - Historical dependency audit: architecture/foundation-security-audit.md
           - Capability IR verification: architecture/capability-ir-v1-verification.md
+          - 0.2.0 post-release verification: architecture/0.2.0-post-release-verification.md
       - Code of conduct: about/CODE_OF_CONDUCT.md
       - License: about/LICENSE.md
