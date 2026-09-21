@@ -61,8 +61,13 @@ Publication requires the expected Apizr signer and **all five** verification
 checks to pass: schema, consistency, signature, timestamp and recomputed hashes.
 Missing or skipped checks, warnings and timestamp-service failures block; there
 is no unsigned fallback. The environment's existing reviewer and tag restrictions
-remain in place. The workflow has not yet published a release with this receipt;
-the final delivered-artifact criterion in #73 remains open until it does.
+remain in place. [Release 0.2.1](../releases/0.2.1.md) exercised this protected
+workflow and delivered the receipt with the exact PyPI distributions. Its
+signature, RFC 3161 timestamp and recomputed hashes were independently checked
+offline after extraction, using the repository trust store. Public PyPI bytes
+and all GitHub attachments matched the verified inputs. The release record
+contains the source, runs and receipt archive hash that satisfy the delivered-
+artifact criterion in #73.
 
 ## Verify a delivered receipt
 

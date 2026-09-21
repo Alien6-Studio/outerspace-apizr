@@ -30,11 +30,13 @@ without overwriting existing assets. Actions retention is 90 days for these repo
 release attachments preserve the published evidence beyond that limit.
 
 These controls apply to builds made **after** their introduction. They do not
-retroactively establish build provenance for 0.2.0. A signed and RFC 3161 timestamped
-**Attest receipt has not yet been delivered with a published Apizr release**.
-The [managed Apizr identity and publication gate](attest.md) now prepare that
-receipt for the next release. GitHub/Sigstore attestations must not be presented
-as that additional receipt or as complete parity with continuum-attest.
+retroactively establish build provenance for 0.2.0. **The published 0.2.1 release
+includes a signed and RFC 3161 timestamped Attest delivery receipt**, independently
+verified offline against the repository trust store. Its exact source, CI run,
+hashes and publication checks are in the [0.2.1 release record](../releases/0.2.1.md).
+See the [managed identity and receipt verification](attest.md) for the five
+required checks. GitHub/Sigstore attestations are separate build evidence;
+the delivery receipt does not claim that Attest supervised the earlier build.
 
 ## Check the identity as well as the hash
 
