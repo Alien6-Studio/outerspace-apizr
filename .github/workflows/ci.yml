@@ -61,9 +61,22 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
       - run: uv build
+      - run: uv run --locked python scripts/check_distribution.py dist --manifest SHA256SUMS.json
       - run: uv run --locked python scripts/smoke_wheel.py dist/*.whl
       - name: Check the same wheel on the oldest supported Python
         run: uv run --locked python scripts/smoke_wheel.py dist/*.whl --python 3.11
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: python-distributions
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: distribution-checksums
+          path: SHA256SUMS.json
+          if-no-files-found: error
+          retention-days: 30
 
   container:
     runs-on: ubuntu-latest

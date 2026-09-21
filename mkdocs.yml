@@ -2,18 +2,17 @@ site_name: OuterSpace Apizr
 site_url: https://apizr.outerspace.sh
 site_author: Ludovic FERNANDEZ, Alien6
 site_description: >-
-  OuterSpace Apizr
+  Open-source capability compiler for Python codebases.
 
 # Repository
 repo_name: alien6-studio/outerspace-apizr
 repo_url: https://github.com/alien6-studio/outerspace-apizr
 
 # Copyright
-copyright: Copyright &copy; 2023 Alien6
+copyright: Copyright &copy; 2023–2026 Alien6
 
 theme:
   name: material
-  custom_dir: overrides
   logo: assets/images/logo.png
   icon:
     repo: fontawesome/brands/github-alt
@@ -33,30 +32,20 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-    favicon: assets/images/logo.png
+  favicon: assets/images/logo.png
   features:
-    - announce.dismiss
-    - announce.hide
-    # - content.action.edit
-    # - content.action.view
-    # - content.code.annotate
     - content.code.copy
-    # - content.tabs.link
     - content.tooltips
     - header.autohide
     - navigation.footer
     - navigation.indexes
-    # - navigation.instant
-    # - navigation.prune
     - navigation.tabs
-    # - navigation.tabs.sticky
     - navigation.top
     - navigation.tracking
     - search.highlight
     - search.share
     - search.suggest
     - toc.follow
-    #- toc.integrate
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -82,8 +71,10 @@ extra:
     provider: google
     property: G-P3BHZB2FVP
 
-extra_css:
-  - assets/stylesheets/extra.css
+validation:
+  links:
+    not_found: warn
+    anchors: warn
 
 # Organize by reader task; keep published page paths stable.
 nav:
@@ -91,32 +82,33 @@ nav:
   - Guides:
       - Start here: getting-started/introduction.md
       - Inventory a Python project: getting-started/user-guide/scan.md
-      - Assess repository exposure evidence: getting-started/user-guide/repository-readiness.md
       - Inspect capability relationships: getting-started/user-guide/graph.md
       - Inspect source without running it: getting-started/user-guide/inspect.md
+      - Assess repository exposure evidence: getting-started/user-guide/repository-readiness.md
       - Generate a REST interface: getting-started/user-guide/rest.md
       - Generate an MCP server: getting-started/user-guide/mcp.md
       - Execute code with a policy: getting-started/user-guide/execute.md
       - Generate a legacy API and container: getting-started/user-guide/apizr.md
-      - Migrate from 0.1.x: getting-started/developer-guide/releases.md
+      - Compatibility notes: getting-started/developer-guide/releases.md
   - Reference:
       - Overview: reference/index.md
-      - Standalone commands:
+      - Legacy standalone commands:
           - Analyze Python: getting-started/user-guide/code-analyzr.md
           - Generate FastAPI: getting-started/user-guide/fast-apizr.md
           - Generate Docker files: getting-started/user-guide/dockerizr.md
-      - Pipeline components:
+      - Legacy pipeline components:
           - Notebook conversion: modules/notebook-transformr.md
           - Python analysis: modules/code-analyzr.md
           - FastAPI generation: modules/fast-apizr.md
           - Docker generation: modules/dockerizr.md
-      - HTTP generation service:
+      - Legacy HTTP generation service:
           - Service and project upload: apis/apizr-api.md
           - Python analysis endpoint: apis/code-analyzr-api.md
           - FastAPI generation endpoint: apis/fast-apizr-api.md
           - Notebook conversion endpoint: apis/notebook-transformr-api.md
           - Docker generation endpoints: apis/dockerizr-api.md
       - Architecture and contracts:
+          - Capability Compiler overview: architecture/overview.md
           - Repository Scanner and Catalog v1: architecture/repository-scanner-v1.md
           - Repository Readiness v1: architecture/repository-readiness-v1.md
           - Capability Graph v1: architecture/capability-graph-v1.md
@@ -131,6 +123,8 @@ nav:
           - Legacy behavior contract: architecture/legacy-behavior-contract.md
           - Artifact principles: architecture/artifact-principles.md
           - Security baseline: architecture/security-baseline.md
+  - Releases:
+      - 0.2.0: releases/0.2.0.md
   - Contributing:
       - Overview: about/CONTRIBUTING.md
       - Development and checks: getting-started/developer-guide/setup.md

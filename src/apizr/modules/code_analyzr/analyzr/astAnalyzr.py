@@ -5,7 +5,6 @@ import logging
 from apizr.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
 
 from .ast_node import FunctionNode, ImportFromNode, ImportNode, LogError
-from .exceptions import UnsupportedKeywordError
 
 
 # AstAnalyzr class analyzes the structure of a Python code using Abstract Syntax Tree (AST).
@@ -47,19 +46,14 @@ class AstAnalyzr(ast.NodeVisitor):
         Returns:
             str: A JSON string representing the structure of the analyzed code.
         """
-        try:
-            self.check_for_keywords(self.code_str)
-            self.imports.clear()
-            self.imports_from.clear()
-            self.functions.clear()
-            self.generic_visit(
-                ast.parse(
-                    self.code_str, type_comments=True, feature_version=self.version
-                )
-            )
-            return self.toJSON()
-        except UnsupportedKeywordError as e:
-            return json.dumps({"error": str(e)})
+        self.check_for_keywords(self.code_str)
+        self.imports.clear()
+        self.imports_from.clear()
+        self.functions.clear()
+        self.generic_visit(
+            ast.parse(self.code_str, type_comments=True, feature_version=self.version)
+        )
+        return self.toJSON()
 
     @LogError(logging)
     def generic_visit(self, node):

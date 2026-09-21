@@ -65,6 +65,35 @@ print(apizr.__file__)
         subprocess.run(
             [str(cli), "--help"], cwd=root, check=True, stdout=subprocess.DEVNULL
         )
+        version_result = subprocess.run(
+            [str(cli), "--version"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        expected_version = subprocess.run(
+            [
+                str(python),
+                "-I",
+                "-c",
+                "from importlib.metadata import version; print('outerspace-apizr ' + version('outerspace-apizr'))",
+            ],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        assert version_result.stdout == expected_version.stdout
+        subprocess.run(
+            [
+                sys.executable,
+                str(Path(__file__).with_name("smoke_readme.py").resolve()),
+                str(cli),
+            ],
+            cwd=root,
+            check=True,
+        )
         # Both inputs live outside the repository; the installed CLI must be sufficient.
         source = root / "sample.py"
         source.write_text("def total(values: list[int]) -> int: return sum(values)\n")
