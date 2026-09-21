@@ -1,0 +1,13 @@
+{
+  "schema_version": "apizr.repository-readiness-policy/v1",
+  "execution": {
+    "modes": [
+      "direct",
+      "local-process",
+      "oci-container"
+    ],
+    "require_controls": [
+      "subprocess_deny"
+    ]
+  }
+}

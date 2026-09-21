@@ -295,6 +295,7 @@
           ],
           "items": {
             "enum": [
+              "direct",
               "local-process",
               "oci-container"
             ],
@@ -314,7 +315,10 @@
               "working_directory",
               "network_deny",
               "filesystem_sandbox",
-              "subprocess_deny"
+              "subprocess_deny",
+              "memory_limit",
+              "cpu_limit",
+              "pid_limit"
             ],
             "type": "string"
           },
@@ -492,6 +496,7 @@
       "properties": {
         "backend_version": {
           "enum": [
+            "direct",
             "apizr.local-process/v1",
             "apizr.oci-container/v1"
           ],
@@ -512,7 +517,10 @@
               "working_directory",
               "network_deny",
               "filesystem_sandbox",
-              "subprocess_deny"
+              "subprocess_deny",
+              "memory_limit",
+              "cpu_limit",
+              "pid_limit"
             ],
             "type": "string"
           },
@@ -521,6 +529,7 @@
         },
         "mode": {
           "enum": [
+            "direct",
             "local-process",
             "oci-container"
           ],
@@ -543,7 +552,10 @@
               "working_directory",
               "network_deny",
               "filesystem_sandbox",
-              "subprocess_deny"
+              "subprocess_deny",
+              "memory_limit",
+              "cpu_limit",
+              "pid_limit"
             ],
             "type": "string"
           },

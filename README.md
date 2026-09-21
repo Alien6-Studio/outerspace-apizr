@@ -31,7 +31,20 @@ for states, machine output and exit codes. The generation commands below remain 
 
 ## Assess repository exposure evidence
 
-Repository exposure and governance evidence can be assessed from saved Catalog and Graph artifacts with `apizr repository-readiness catalog.json graph.json`. See the [guide](docs/getting-started/user-guide/repository-readiness.md) and [Repository Readiness v1 contract](docs/architecture/repository-readiness-v1.md). This reports static evidence under a supplied policy, not a runtime guarantee.
+Understand a repository with Scan → Graph → Readiness:
+
+```sh
+apizr scan .
+apizr graph .
+apizr readiness .
+```
+
+Use `apizr readiness . --source-root src --policy policy.json --report` for a
+canonical report from one bounded discovery. Saved artifacts remain supported:
+`apizr repository-readiness catalog.json graph.json`. See the
+[guide](docs/getting-started/user-guide/repository-readiness.md) and
+[v1 contract](docs/architecture/repository-readiness-v1.md). These report static
+evidence under a supplied policy, not runtime availability or an access recommendation.
 
 ## Generate a REST interface from the inspected contract
 

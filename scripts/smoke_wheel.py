@@ -138,6 +138,79 @@ print(apizr.__file__)
             check=True,
             stdout=subprocess.DEVNULL,
         )
+        # Readiness consumes one discovery, or independently persisted matching
+        # artifacts; both installed entry points must emit exactly the same bytes.
+        scanned_after_graph = subprocess.run(
+            [str(cli), "scan", str(scan_root), "--source-root", "src", "--catalog"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            timeout=20,
+        )
+        catalog_path, graph_path = root / "catalog.json", root / "graph.json"
+        catalog_path.write_bytes(scanned_after_graph.stdout)
+        graph_path.write_bytes(graphed.stdout)
+        readiness_policy = root / "readiness-policy.json"
+        for controls in [
+            None,
+            [],
+            ["network_deny", "memory_limit", "cpu_limit", "pid_limit"],
+            ["subprocess_deny"],
+        ]:
+            flags = []
+            if controls is not None:
+                readiness_policy.write_text(
+                    json.dumps(
+                        {
+                            "execution": {
+                                "modes": ["direct", "local-process", "oci-container"],
+                                "require_controls": controls,
+                            }
+                        }
+                    )
+                )
+                flags = ["--policy", str(readiness_policy)]
+            repo_report = subprocess.run(
+                [
+                    str(cli),
+                    "readiness",
+                    str(scan_root),
+                    "--source-root",
+                    "src",
+                    "--report",
+                    *flags,
+                ],
+                cwd=root,
+                capture_output=True,
+                timeout=20,
+            )
+            artifact_report = subprocess.run(
+                [
+                    str(cli),
+                    "repository-readiness",
+                    str(catalog_path),
+                    str(graph_path),
+                    "--format",
+                    "json",
+                    *flags,
+                ],
+                cwd=root,
+                capture_output=True,
+                timeout=20,
+            )
+            # Checkout's local dependency remains conditional under these policies.
+            assert repo_report.returncode == artifact_report.returncode == 1
+            assert repo_report.stdout == artifact_report.stdout
+            readiness = json.loads(repo_report.stdout)
+            assert readiness["schema_version"] == "apizr.repository-readiness/v1"
+            assert all(
+                mode["runtime_availability"] == "not_assessed"
+                for mode in readiness["execution"]
+            )
+            assert str(root).encode() not in repo_report.stdout
+        print(
+            "Installed scan/graph/repo-first/artifact-first readiness parity passed outside checkout."
+        )
         policy = root / "policy.json"
         policy.write_text("{}")
         arguments = root / "arguments.json"
