@@ -16,3 +16,63 @@
     width: 3rem;
   }
 }
+
+.apizr-name-short {
+  display: none;
+}
+
+/* Release notes stay reachable without JavaScript or optional GitHub requests. */
+.apizr-release {
+  flex-shrink: 0;
+  padding: .2rem .5rem;
+  border: 1px solid currentColor;
+  border-radius: 1rem;
+  font-size: .65rem;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.apizr-release:hover {
+  background: var(--md-primary-bg-color);
+  color: var(--md-primary-fg-color);
+}
+
+.apizr-release:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media screen and (max-width: 29.984375em) {
+  .md-header__button.md-logo {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+  }
+
+  .md-header__button.md-logo img {
+    position: relative;
+    top: -.7rem;
+    left: -.7rem;
+    width: 3.4rem;
+    height: 3.4rem;
+    max-width: none;
+  }
+
+  .md-header__title {
+    margin-inline: .25rem;
+  }
+
+  .apizr-name-full {
+    display: none;
+  }
+
+  .apizr-name-short {
+    display: inline;
+  }
+
+  .apizr-release {
+    padding: .15rem .3rem;
+    font-size: .6rem;
+  }
+}
