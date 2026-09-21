@@ -11,7 +11,7 @@
 
 It discovers executable capabilities, builds deterministic contracts and relationships,
 exposes eligible capabilities through REST or MCP, and supports governed execution.
-Python **3.11–3.14** · GPL-3.0-or-later · Release **0.2.0**
+Python **3.11–3.14** · GPL-3.0-or-later · Release line **0.2.x**
 
 ## What Apizr does
 
@@ -30,7 +30,7 @@ python -m pip install outerspace-apizr
 ```
 
 For a uv-managed project: `uv add outerspace-apizr`. These instructions describe
-0.2.0; check the installed release with `apizr --version`.
+0.2.x; check the installed release with `apizr --version`.
 
 ## A 30-second example
 
@@ -135,7 +135,8 @@ The legacy pipeline's duplicate-definition/overload issue remains tracked in
 - [Repository scan](https://apizr.outerspace.sh/getting-started/user-guide/scan/),
   [graph](https://apizr.outerspace.sh/getting-started/user-guide/graph/) and
   [readiness](https://apizr.outerspace.sh/getting-started/user-guide/repository-readiness/)
-- [0.2.0 release notes](https://apizr.outerspace.sh/releases/0.2.0/)
+- [0.2.1 maintenance notes](https://apizr.outerspace.sh/releases/0.2.1/)
+- [0.2.0 feature release](https://apizr.outerspace.sh/releases/0.2.0/)
 - [Development and checks](https://apizr.outerspace.sh/getting-started/developer-guide/setup/)
 - [Report an issue](https://github.com/Alien6-Studio/outerspace-apizr/issues)
 
