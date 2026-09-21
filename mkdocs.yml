@@ -91,6 +91,7 @@ nav:
   - Guides:
       - Start here: getting-started/introduction.md
       - Inventory a Python project: getting-started/user-guide/scan.md
+      - Assess repository exposure evidence: getting-started/user-guide/repository-readiness.md
       - Inspect capability relationships: getting-started/user-guide/graph.md
       - Inspect source without running it: getting-started/user-guide/inspect.md
       - Generate a REST interface: getting-started/user-guide/rest.md
@@ -117,6 +118,7 @@ nav:
           - Docker generation endpoints: apis/dockerizr-api.md
       - Architecture and contracts:
           - Repository Scanner and Catalog v1: architecture/repository-scanner-v1.md
+          - Repository Readiness v1: architecture/repository-readiness-v1.md
           - Capability Graph v1: architecture/capability-graph-v1.md
           - Capability IR v1: architecture/capability-ir-v1.md
           - Static readiness v1: architecture/capability-readiness-v1.md
