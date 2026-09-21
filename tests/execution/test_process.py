@@ -1,4 +1,6 @@
+import json
 import os
+import signal
 import sys
 import time
 
@@ -11,6 +13,7 @@ from apizr.execution.policy import Environment
 from apizr.execution.supervisor import exchange, worker_environment
 
 from .helpers import planned
+from .observation import process_state, wait_for_terminal_process
 
 pytestmark = pytest.mark.timeout(20)
 
@@ -298,26 +301,31 @@ def test_actual_worker_environment_property(parent):
 
 
 def test_ordinary_descendant_is_stopped_with_worker(tmp_path):
-    import subprocess
-
     marker = tmp_path / "descendant"
     heartbeat = tmp_path / "heartbeat"
     child = f"import time\nfrom pathlib import Path\nwhile True:\n Path({str(heartbeat)!r}).write_text(str(time.monotonic()))\n time.sleep(.02)"
-    source = f"import subprocess\nimport sys\nimport time\nfrom pathlib import Path\ndef f():\n    child=subprocess.Popen([sys.executable,'-I','-c',{child!r}])\n    Path({str(marker)!r}).write_text(str(child.pid))\n    time.sleep(3600)\n"
+    source = f"import json\nimport os\nimport subprocess\nimport sys\nimport time\nfrom pathlib import Path\ndef f():\n    child=subprocess.Popen([sys.executable,'-I','-c',{child!r}])\n    Path({str(marker)!r}).write_text(json.dumps({{'pid':child.pid,'pgid':os.getpgrp(),'worker':os.getpid()}}))\n    time.sleep(3600)\n"
     result = invoke(source, limits={"wall_time_ms": 1200})
-    assert result.status == "timeout"
-    pid = int(marker.read_text())
-    last = heartbeat.read_text()
-    time.sleep(0.1)
-    assert heartbeat.read_text() == last
-    state = subprocess.run(
-        ["ps", "-o", "stat=", "-p", str(pid)],
-        capture_output=True,
-        text=True,
-        check=False,
-    ).stdout.strip()
-    # An orphan can briefly await host-init reaping, but cannot still execute.
-    assert not state or state.startswith("Z")
+    identity = json.loads(marker.read_text())
+    pid, pgid = identity["pid"], identity["pgid"]
+    try:
+        assert result.status == "timeout"
+        assert pgid == identity["worker"]
+        # Observe asynchronous descendant termination, not a fixed-delay snapshot.
+        # An unchanged heartbeat or D state alone is never sufficient evidence.
+        wait_for_terminal_process(pid, pgid, heartbeat)
+        last = heartbeat.read_bytes()
+        time.sleep(0.1)
+        assert heartbeat.read_bytes() == last
+    finally:
+        # A deliberately broken kill-group mutant must fail without leaving its
+        # test child running. This happens after the assertion and cannot pass it.
+        state = process_state(pid)
+        if state and state["pgid"] == pgid and not state["state"].startswith("Z"):
+            try:
+                os.kill(pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
 
 
 def test_closed_pipes_do_not_evade_wall_deadline(tmp_path):
