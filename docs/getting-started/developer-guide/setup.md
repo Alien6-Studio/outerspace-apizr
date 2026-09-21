@@ -2,7 +2,7 @@
 
 <span id="development-setup"></span>
 
-Follow [Start here](../introduction.md#install-the-development-checkout) to install
+Follow [Start here](../introduction.md#install) to install
 Python 3.11–3.14, uv and a checkout. This page covers work on Apizr itself.
 
 `pyproject.toml` defines the package and dependency groups; `uv.lock` is the only

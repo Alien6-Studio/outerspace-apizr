@@ -1,6 +1,7 @@
 # Using Apizr
 
-From an installed development checkout:
+With Apizr installed, download the [example pricing notebook](https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/master/examples/pricing.ipynb)
+to `examples/pricing.ipynb`, then:
 
 ```sh
 uv run apizr --notebook examples/pricing.ipynb --output-dir .output/pricing --force

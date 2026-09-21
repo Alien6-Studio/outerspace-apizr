@@ -1,16 +1,14 @@
-# Migration from 0.1.x
+# Compatibility notes
 
 <span id="migration-and-releases"></span>
 
-## 0.2.0 — unreleased
+## Supported environments
 
-- **Python 3.11–3.14 only**, for both Apizr and generated targets. Python 3.8, 3.9 and 3.10 are deliberately dropped for security and maintenance reasons. The earlier foundation commit supported 3.8–3.14; this revision supersedes that policy.
-- Python 3.8/3.9 are end-of-life; 3.10 approaches the end of security support. See the [upstream lifecycle](https://devguide.python.org/versions/). Older runtimes forced vulnerable dependency variants into the universal lock.
-- Upgrade your interpreter and deployment image to 3.11 or newer before syncing/installing. Update `--python-version` and YAML `python_version` targets; unsupported targets fail with the supported range. Existing source is parsed, never transpiled.
-- The release remains **0.2.0, unreleased**: these notes describe the development checkout, not a published package. Maintainers select the final available version through the [release procedure](../../contributing/releases.md#release-procedure).
-- Removed `apizr.compat` and obsolete backports. Application APIs remain under `apizr`; consumers of internal compatibility helpers should use the Python standard library.
+- **Python 3.11–3.14 only**, for both Apizr and generated targets.
+- Use a supported interpreter and deployment image. Set `--python-version` and YAML `python_version` targets; unsupported targets fail with the supported range. Existing source is parsed, never transpiled.
+- Application APIs live under `apizr`; use Python standard-library APIs for interpreter compatibility.
 - Security minima for FastAPI, Starlette, python-multipart, nbconvert, Black and pytest are documented in the [current security baseline](../../architecture/security-baseline.md). Pydantic 2 remains in use.
-- One PEP 621 package definition and `uv.lock`; Poetry/PDM lockfiles and separate module requirement files are retired.
+- One PEP 621 package definition and `uv.lock` describe the supported package and development environment.
 - Imports work from an installed wheel, without changing `sys.path`.
 - Non-interactive CLI defaults; `--force` remains accepted and `--interactive` enables prompts.
 - The pipeline passes the converted script and generated API module through every stage.
@@ -21,6 +19,24 @@
 - HTTP generation returns a ZIP instead of writing to caller-selected paths. Directory scanning and the old `/dockerize_file/` endpoint are removed. The notebook endpoint returns script text. Docker endpoints return generated content.
 - Non-empty output directories are rejected. Choose a new directory when regenerating.
 
+## Adopt compiler workflows incrementally
+
+The `--script` / `--notebook` legacy pipeline remains supported. Its discovery,
+routes and configuration are independent of the Capability Compiler; existing
+projects do not automatically switch to the new generators.
+
+Use `apizr scan` and `apizr graph` to inventory a repository, `apizr inspect` for
+Capability IR and static readiness, and `apizr readiness` for repository policy
+evidence. Generate explicit REST/MCP interfaces with `apizr generate rest` or
+`apizr generate mcp`. Governed local/OCI execution and governed transports are
+opt-in and experimental; inspect their policies and operational prerequisites.
+None of these static assessments grants trust or makes arbitrary Python safe.
+
+The legacy duplicate-definition/overload limitation remains open as
+[#28](https://github.com/Alien6-Studio/outerspace-apizr/issues/28). Class/method
+capabilities and absolute subprocess prohibition remain unsupported. See the
+[0.2.0 release notes](../../releases/0.2.0.md) for scope and boundaries.
+
 ## PyPI ownership
 
 Maintainers: see [package ownership](../../contributing/releases.md#pypi-ownership).
@@ -29,7 +45,3 @@ Maintainers: see [package ownership](../../contributing/releases.md#pypi-ownersh
 
 Maintainers: see [publishing a release](../../contributing/releases.md#release-procedure).
 User installation and migration do not require PyPI ownership or publication.
-
-The 0.2.0 changes are not available through `pip install outerspace-apizr` until a
-release is actually published. Install from the checkout as described in
-[Start here](../introduction.md).

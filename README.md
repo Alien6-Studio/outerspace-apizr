@@ -1,179 +1,142 @@
 # OuterSpace Apizr
 
-Turn top-level Python functions in a script or Jupyter notebook into a FastAPI application and a Docker project.
+**Apizr is an open-source capability compiler for Python codebases.**
 
-**Development version: 0.2.0. Python 3.11–3.14.** This checkout is the source of truth until a new release is published on PyPI.
+[![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg)](https://pypi.org/project/outerspace-apizr/)
+[![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml)
+[![Security](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml)
+[![Documentation](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/mkdocs.yaml/badge.svg?branch=master)](https://apizr.outerspace.sh/)
+[![Python](https://img.shields.io/badge/python-3.11%E2%80%933.14-blue.svg)](https://pypi.org/project/outerspace-apizr/)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/LICENSE)
 
-## Install from the repository
+It discovers executable capabilities, builds deterministic contracts and relationships,
+exposes eligible capabilities through REST or MCP, and supports governed execution.
+Python **3.11–3.14** · GPL-3.0-or-later · Release **0.2.0**
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then:
+## What Apizr does
+
+- **Discover:** inventory a Python repository without importing or executing its source.
+- **Understand:** inspect typed capabilities, relationships and static readiness.
+- **Expose:** generate REST or MCP interfaces from the same eligible contracts.
+- **Govern:** execute trusted code under explicit local-process or OCI policies.
+
+Scripts and notebooks are inputs for individual inspection and generation. Repository
+scanning discovers Python files. The historical notebook-to-API workflow remains supported.
+
+## Install
 
 ```sh
-git clone https://github.com/Alien6-Studio/outerspace-apizr.git
-cd outerspace-apizr
-uv sync --locked
-uv run apizr --help
+python -m pip install outerspace-apizr
 ```
 
-For an ordinary pip environment, `python -m pip install .` also works. Development dependencies and their exact versions are recorded in `uv.lock`.
+For a uv-managed project: `uv add outerspace-apizr`. These instructions describe
+0.2.0; check the installed release with `apizr --version`.
 
-## Inspect source without running it
+## A 30-second example
 
-```sh
-uv run apizr inspect example.py
-uv run apizr inspect examples/pricing.ipynb --format json
+Save this as `example.py` in an empty project directory:
+
+```python
+def subtotal(prices: list[float]) -> float:
+    return sum(prices)
+
+
+def total(prices: list[float], tax: float = 0.2) -> float:
+    return subtotal(prices) * (1 + tax)
 ```
 
-Inspection reports declarations and static interface readiness without importing or
-executing the input. `ready` is a contract assessment, not proof of runtime safety;
-effects remain unknown. See the [inspection guide](docs/getting-started/user-guide/inspect.md)
-for states, machine output and exit codes. The generation commands below remain independent.
-
-## Assess repository exposure evidence
-
-Understand a repository with Scan → Graph → Readiness:
+Discover the functions, their call relationship and their contracts:
 
 ```sh
 apizr scan .
 apizr graph .
+apizr inspect example.py
 apizr readiness .
 ```
 
-Use `apizr readiness . --source-root src --policy policy.json --report` for a
-canonical report from one bounded discovery. Saved artifacts remain supported:
-`apizr repository-readiness catalog.json graph.json`. See the
-[guide](docs/getting-started/user-guide/repository-readiness.md) and
-[v1 contract](docs/architecture/repository-readiness-v1.md). These report static
-evidence under a supplied policy, not runtime availability or an access recommendation.
-
-## Generate a REST interface from the inspected contract
+Generate both interfaces from the same capability:
 
 ```sh
-uv run apizr generate rest examples/pricing.ipynb --module-name project.pricing --output-dir .output/rest
-uv run uvicorn app:app --app-dir .output/rest --host 127.0.0.1 --port 8001
+apizr generate rest example.py --select total --output-dir .output/rest
+apizr generate mcp example.py --select total --output-dir .output/mcp
 ```
 
-This independent command emits a REST application, static OpenAPI and hashed
-artifact manifest. It accepts only readiness-approved contracts; starting the
-application executes trusted bundled source. See the [REST guide](docs/getting-started/user-guide/rest.md)
-for selection, request semantics and limits. The legacy API/container pipeline below remains available.
-
-## Generate MCP Tools from the same contract
+No Docker is needed. The REST bundle includes `app.py`, `openapi.json` and an
+artifact manifest; the MCP bundle includes `server.py` and `mcp-tools.json`. Each
+bundle includes its runtime requirements. To serve the REST interface:
 
 ```sh
-uv run apizr generate mcp examples/pricing.ipynb --module-name project.pricing --output-dir .output/mcp
+python -m pip install -r .output/rest/requirements.txt
+uvicorn app:app --app-dir .output/rest --host 127.0.0.1 --port 8000
 ```
 
-The standalone bundle supports stdio and Streamable HTTP through the official MCP
-Python SDK v2. Generation uses the same readiness and input semantics as REST;
-starting the server executes trusted source. See the [MCP guide](docs/getting-started/user-guide/mcp.md)
-for runtime setup, client calls and limits.
+Starting a generated server imports trusted source. See the
+[REST guide](https://apizr.outerspace.sh/getting-started/user-guide/rest/) and
+[MCP guide](https://apizr.outerspace.sh/getting-started/user-guide/mcp/) for invocation,
+stdio/HTTP transport setup and generated bundle integrity checks.
 
-## Governed local execution (experimental)
+## From source to an interface
+
+```text
+Python repository → Scanner → Capability Catalog → Capability Graph
+Scripts / notebooks ──────────────→ Capability IR + static readiness
+Catalog + Graph ─────────────────→ Repository Readiness (policy evidence)
+Capability IR + static readiness → Interface Contract → REST / MCP
+                                                          ↓
+                                      direct or governed execution
+                                             local-process / OCI
+```
+
+REST and MCP consume shared contracts. Readiness policies assess static evidence;
+execution policies control explicit invocation. Neither discovery nor a `READY`
+assessment grants trust or proves runtime safety. Unknown effects remain unknown.
+See the [architecture overview](https://apizr.outerspace.sh/architecture/overview/).
+
+## Governed execution
 
 `apizr execute SOURCE CAPABILITY --arguments args.json --policy policy.json`
-executes one trusted capability in a fresh local Python process, with wall-time,
-input/output and environment controls. It is **not a filesystem/network sandbox**.
-Unsupported requested controls are refused. See the [execution guide](docs/getting-started/user-guide/execute.md)
-for policy examples and the POSIX backend requirement. REST/MCP generation can
-opt into the same worker using `--execution-policy policy.json`; direct execution
-remains the default. See the [transport execution contract](docs/architecture/governed-transport-runtime-v1.md).
+runs one trusted capability under an explicit policy. Generated REST/MCP servers
+can opt in with `--execution-policy policy.json`; their default is direct execution.
 
-## Notebook → API → container (legacy pipeline)
+The execution backends remain **experimental**: policy contracts and refusal
+behavior are tested, but they are not a general untrusted-code service.
+A local process provides bounded execution, **not filesystem or network isolation**.
+OCI adds Linux container controls and requires a trusted Docker host and worker
+image; it is not a VM boundary. Absolute subprocess prohibition remains unsupported.
+See the [execution guide](https://apizr.outerspace.sh/getting-started/user-guide/execute/).
 
-```sh
-uv run apizr --notebook examples/pricing.ipynb --output-dir .output/pricing --force
-uv run uvicorn pricing_api:app --app-dir .output/pricing --host 127.0.0.1 --port 5001
-```
+## Legacy generation pipeline
 
-In another terminal:
+The notebook/script → FastAPI → container workflow remains supported:
 
 ```sh
-curl -f http://127.0.0.1:5001/health
-curl -f http://127.0.0.1:5001/total \
-  -H 'Content-Type: application/json' \
-  -d '{"prices": [10, 20]}'
-# 36.0 (the default tax is 20%)
+apizr --script example.py --output-dir .output/legacy --force
+apizr --notebook your-notebook.ipynb --output-dir .output/notebook --force
 ```
 
-Open <http://127.0.0.1:5001/docs> for the generated OpenAPI documentation. Stop the local server before binding the container to the same port:
+Use a fresh output directory. This independent pipeline is retained for compatibility;
+it is not a prerequisite for the compiler commands. See the
+[legacy guide](https://apizr.outerspace.sh/getting-started/user-guide/apizr/) and
+[compatibility notes](https://apizr.outerspace.sh/getting-started/developer-guide/releases/).
 
-```sh
-docker build -t apizr-pricing .output/pricing
-docker run --rm -p 127.0.0.1:5001:5001 apizr-pricing
-```
+## Limits and trust boundary
 
-The output contains the converted script, AST metadata, generated API, `requirements.txt`, `Dockerfile`, `start.sh`, and `.dockerignore`. The container runs Uvicorn as a non-root user. Debian slim is the default; Alpine remains configurable.
+Static scanning, inspection and generation do not execute source. Direct servers
+import and execute it; governed invocation still requires trusted source and dependencies.
+Capabilities currently represent top-level functions, not class methods. Dynamic
+bindings, imports and effects can remain unresolved. Generated artifacts are
+hashable evidence, not signed attestations. No enterprise control plane is included.
+The legacy pipeline's duplicate-definition/overload issue remains tracked in
+[#28](https://github.com/Alien6-Studio/outerspace-apizr/issues/28).
 
-Use an empty output directory. Existing non-empty directories are rejected to avoid silently overwriting files or retaining stale modules.
+## Documentation and contributing
 
-## Python compatibility
+- [Start here](https://apizr.outerspace.sh/getting-started/introduction/)
+- [Repository scan](https://apizr.outerspace.sh/getting-started/user-guide/scan/),
+  [graph](https://apizr.outerspace.sh/getting-started/user-guide/graph/) and
+  [readiness](https://apizr.outerspace.sh/getting-started/user-guide/repository-readiness/)
+- [0.2.0 release notes](https://apizr.outerspace.sh/releases/0.2.0/)
+- [Development and checks](https://apizr.outerspace.sh/getting-started/developer-guide/setup/)
+- [Report an issue](https://github.com/Alien6-Studio/outerspace-apizr/issues)
 
-Apizr runs on Python **3.11 through 3.14**. Python 3.8–3.10 were deliberately dropped to remove obsolete compatibility machinery and vulnerable dependency variants. This is a security and maintenance decision; it applies both to Apizr itself and generated targets. See the [migration notes](docs/getting-started/developer-guide/releases.md).
-
-By default, generated containers target the interpreter running Apizr. Select an older target explicitly:
-
-```sh
-uv run apizr --notebook examples/pricing.ipynb --python-version 3.11 --output-dir .output/pricing311
-```
-
-The YAML equivalent is `python_version: [3, 11]`. Run Apizr with an interpreter at least as recent as the target: it parses the source using that target's grammar but does not transpile newer Python features. Input code and its dependencies must support the selected target. When targeting a different interpreter, inferred dependencies are not pinned to versions from the host environment; the target installer resolves compatible versions. Explicit requirements are preserved.
-
-To run the development suite on a specific interpreter:
-
-```sh
-uv run --python 3.14 --locked pytest
-uv run --python 3.11 --locked pytest
-```
-
-## Scripts and configuration
-
-```sh
-uv run apizr --script path/to/business.py --output-dir .output/business
-uv run apizr --script path/to/business.py --configuration src/apizr/configuration.yaml --output-dir .output/configured
-uv run apizr --script path/to/business.py --requirements path/to/requirements.txt --output-dir .output/explicit
-```
-
-Without configuration the API filename is `<source>_api.py`. `fast_apizr.api_filename` can override it. The business module is derived from the input filename; Docker always starts the actual generated API module.
-
-The CLI is non-interactive by default; `--force` remains accepted. `--interactive` prompts for common settings. Use `code_analyzr.functions_to_analyze` or `code_analyzr.ignore` in YAML to select functions.
-
-`--skip-docker` generates the API without Docker files. `--skip-fastapi` requires `--skip-docker`. The legacy flag `--skip-pipreqs` skips dependency inference; when Docker is enabled, supply `--requirements` instead.
-
-## Supported code and limits
-
-- Top-level synchronous and asynchronous functions; typed JSON arguments, defaults, positional-only and keyword-only parameters.
-- Types supported by Pydantic, including lists, tuples, unions, `Literal`, `Annotated` and Pydantic models. Annotations are resolved in the source module when the generated API starts.
-- Local sibling `.py` modules and regular Python packages are copied without importing them. Namespace packages, external data/model files, dynamically loaded modules and modules outside the source directory must be packaged explicitly.
-- `*args`, `**kwargs`, notebooks without selected functions, notebook magics and shell commands are rejected with an explicit error.
-- Classes and nested functions are not exposed as routes. Notebook cell outputs and notebook execution state are not used.
-- Generation never executes the source code. **Starting the generated API imports the source module and executes its top-level statements. Only run trusted inputs.** Move interactive code, training and development side effects behind `if __name__ == "__main__":`.
-- Input validation errors return HTTP 422; unexpected function failures return HTTP 500 without exposing exception details. Application `HTTPException` responses are preserved.
-
-Dependency inference scans imports without network access. Installed distributions are pinned when identifiable; unknown import names are inferred with common aliases. This is a convenience, not a universal resolver. Use `--requirements` for reproducible application dependencies, private packages or ambiguous imports. Explicit files accept PEP 508 requirements, not pip options or nested `-r` files. Server dependencies are added automatically.
-
-## Local generation service
-
-```sh
-uv run uvicorn apizr.app:app --host 127.0.0.1 --port 8000
-curl -f -F 'file=@examples/pricing.ipynb' http://127.0.0.1:8000/process_file/ -o pricing-api.zip
-```
-
-Uploads are limited to 10 MiB and generation uses isolated temporary directories. The service returns a ZIP archive; callers cannot select server filesystem paths. Module APIs are mounted at `/code`, `/fastapi`, `/notebook`, and `/docker`, each with its own `/docs`. This service has no authentication and is intended for local use.
-
-## Development and verification
-
-```sh
-uv sync --locked
-make lint
-make test
-make build
-uv run --group docs mkdocs build --strict
-uv run python scripts/smoke_container.py  # requires a running Docker daemon
-```
-
-CI tests Python 3.11, 3.12, 3.13 and 3.14, builds the package, installs its wheel outside the checkout, and runs the notebook → Docker → HTTP smoke test. The container smoke test removes its own container and image afterward.
-
-See the [migration notes](docs/getting-started/developer-guide/releases.md) for changes from 0.1.x and the [maintainer release procedure](docs/contributing/releases.md) for PyPI publication. Creating a PyPI organization is not required to develop or publish a package.
-
-Licensed under [GPL-3.0-or-later](LICENSE).
+Licensed under [GPL-3.0-or-later](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/LICENSE).

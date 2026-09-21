@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+from importlib.metadata import version
 from pathlib import Path
 from typing import Sequence
 
@@ -47,6 +48,9 @@ def _inspect(argv: Sequence[str]) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments == ["--version"]:
+        print(f"outerspace-apizr {version('outerspace-apizr')}")
+        return 0
     if arguments and arguments[0] == "readiness":
         from apizr.readiness_cli import main as readiness_repo_command
 
@@ -76,11 +80,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     from apizr.main import main as generate
 
     if arguments in (["--help"], ["-h"]):
-        try:
-            generate(arguments)
-        except SystemExit as exc:
-            if exc.code != 0:
-                raise
+        print("Apizr — an open-source capability compiler for Python codebases.\n")
+        print("Version: apizr --version")
         print(
             "\nStatic inspection: apizr inspect SOURCE [--format json | --ir] [--module-name NAME]"
         )
@@ -105,6 +106,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(
             "Repository readiness: apizr readiness ROOT [--source-root DIR] [--policy FILE] [--report]"
         )
+        print("\nLegacy generation pipeline (retained for compatibility):")
+        try:
+            generate(arguments)
+        except SystemExit as exc:
+            if exc.code != 0:
+                raise
         return 0
     generate(arguments)
     return 0

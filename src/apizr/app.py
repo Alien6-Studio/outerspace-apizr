@@ -1,5 +1,6 @@
 """Local generation API. Uploaded code is never executed by the generator."""
 
+from importlib.metadata import version
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -19,7 +20,7 @@ from .modules.dockerizr.app import app as docker_app
 from .modules.fast_apizr.app import app as fastapi_app
 from .modules.notebook_transformr.app import app as notebook_app
 
-app = FastAPI(title="OuterSpace Apizr", version="0.2.0")
+app = FastAPI(title="OuterSpace Apizr", version=version("outerspace-apizr"))
 
 
 @app.get("/health")

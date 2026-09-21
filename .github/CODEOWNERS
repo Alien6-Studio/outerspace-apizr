@@ -1,0 +1,13 @@
+# One maintainer today. Request reviews of outside contributions without
+# requiring an impossible self-approval; add a second owner before requiring it.
+* @Coopyrightdmin
+/.github/ @Coopyrightdmin
+/pyproject.toml @Coopyrightdmin
+/uv.lock @Coopyrightdmin
+/src/apizr/execution/ @Coopyrightdmin
+/src/apizr/oci/ @Coopyrightdmin
+/src/apizr/governed/ @Coopyrightdmin
+/src/apizr/governed_oci/ @Coopyrightdmin
+/scripts/ @Coopyrightdmin
+/SECURITY.md @Coopyrightdmin
+/LICENSE @Coopyrightdmin

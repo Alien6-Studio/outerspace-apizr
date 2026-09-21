@@ -2,13 +2,9 @@
 
 ## Supported versions
 
-Security fixes target the current 0.2.x line. The historical 0.1.x line is not
-maintained. Apizr and generated targets support **Python 3.11–3.14** only.
-Python 3.8–3.10 were deliberately dropped for security and maintenance: older
-interpreters forced vulnerable dependency variants. Python 3.8/3.9 are end-of-life
-and 3.10 is nearing the end of its security-support lifetime. See the
-[Python lifecycle](https://devguide.python.org/versions/) and
-[migration notes](docs/getting-started/developer-guide/releases.md).
+Security fixes target the current 0.2.x line. Apizr and generated targets support
+**Python 3.11–3.14**. Use a supported interpreter and keep dependencies updated.
+See the [compatibility notes](docs/getting-started/developer-guide/releases.md).
 
 The current resolved runtime and tooling graphs pass the vulnerability audit.
 This is a dated database result, not a guarantee of vulnerability-free software;
@@ -28,8 +24,11 @@ a private reporting channel be restored, without disclosing vulnerability detail
 
 Apizr generation must not execute supplied Python or notebook code. Importing
 or running a generated application **does execute its source module**. Only run
-code you trust in an environment appropriate to its privileges. Apizr provides
-no runtime sandbox. Upload validation is not a substitute for trusted execution.
+code you trust in an environment appropriate to its privileges. Local-process execution does not isolate host filesystem or network access. OCI
+execution adds Linux container controls with a trusted Docker host and worker image;
+it is not a VM boundary. Both execution backends remain experimental and require
+trusted code. Static `READY` does not mean runtime safe. Upload validation is not
+a substitute for trusted execution.
 
 ## Automated checks
 
