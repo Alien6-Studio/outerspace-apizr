@@ -82,6 +82,8 @@ validation:
 
 extra_css:
   - assets/stylesheets/branding.css
+extra_javascript:
+  - assets/javascripts/video.js
 
 # Organize by reader task; keep published page paths stable.
 nav:
