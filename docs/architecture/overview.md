@@ -1,7 +1,6 @@
 # Capability Compiler architecture
 
-Apizr 0.3.0 is the repository release candidate; the latest published stable is
-0.2.1. The complete repository workflow is implemented:
+Apizr 0.3.0 is the latest published stable release. The complete repository workflow is implemented:
 
 ```text
 Repository

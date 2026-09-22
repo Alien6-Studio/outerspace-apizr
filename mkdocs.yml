@@ -92,7 +92,7 @@ nav:
       - Inspect capability relationships: getting-started/user-guide/graph.md
       - Inspect source without running it: getting-started/user-guide/inspect.md
       - Assess repository exposure evidence: getting-started/user-guide/repository-readiness.md
-      - Plan exposure (0.3 candidate): getting-started/user-guide/exposure.md
+      - Plan exposure: getting-started/user-guide/exposure.md
       - Generate a REST interface: getting-started/user-guide/rest.md
       - Generate an MCP server: getting-started/user-guide/mcp.md
       - Execute code with a policy: getting-started/user-guide/execute.md
@@ -119,8 +119,8 @@ nav:
           - Capability Compiler overview: architecture/overview.md
           - Repository Scanner and Catalog v1: architecture/repository-scanner-v1.md
           - Repository Readiness v1: architecture/repository-readiness-v1.md
-          - Exposure Plan v1 (0.3 candidate): architecture/exposure-plan-v1.md
-          - Repository Bundle v1 (0.3 candidate): architecture/repository-bundle-v1.md
+          - Exposure Plan v1: architecture/exposure-plan-v1.md
+          - Repository Bundle v1: architecture/repository-bundle-v1.md
           - Governed repository execution: architecture/governed-repository-runtime.md
           - Capability Graph v1: architecture/capability-graph-v1.md
           - Capability IR v1: architecture/capability-ir-v1.md
@@ -136,7 +136,7 @@ nav:
           - Artifact principles: architecture/artifact-principles.md
           - Security baseline: architecture/security-baseline.md
   - Releases:
-      - 0.3.0 candidate: releases/0.3.0.md
+      - 0.3.0: releases/0.3.0.md
       - 0.2.1: releases/0.2.1.md
       - 0.2.0: releases/0.2.0.md
   - Contributing:

@@ -6,7 +6,7 @@ Discover capabilities in existing Python code, assess their static readiness,
 explicitly choose what to expose, generate REST or MCP interfaces, and run them
 under direct or governed execution policies.
 
-**Latest published stable: 0.2.1 · Release candidate in this repository: 0.3.0**
+**Latest published stable: 0.3.0 · Released 22 September 2026**
 
 0.3 adds explicit Exposure Plans and multi-module repository REST/MCP bundles,
 with direct, fresh local-process or fresh OCI-container execution. Discovery,
@@ -20,37 +20,26 @@ Python **3.11–3.14** · GPL-3.0-or-later.
 [![Python](https://img.shields.io/badge/python-3.11%E2%80%933.14-blue.svg)](https://pypi.org/project/outerspace-apizr/)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://apizr.outerspace.sh/about/LICENSE/)
 
-## Install stable or try the candidate
+## Install
 
-Published stable:
-
-```sh
-python -m pip install outerspace-apizr==0.2.1
-```
-
-The walkthrough below requires the **unpublished 0.3.0 repository candidate**:
+Use Python 3.11–3.14 in a virtual environment:
 
 ```sh
-git clone https://github.com/Alien6-Studio/outerspace-apizr.git
-cd outerspace-apizr
-python -m pip install .
+python -m pip install outerspace-apizr==0.3.0
 apizr --version
 ```
 
-Use a virtual environment. 0.3.0 is not yet on PyPI; a final package version in the
-repository does not mean a release has been published.
-
-The base candidate installs only Pydantic for static Python workflows. Optional
+The base installation requires only Pydantic for static Python workflows. Optional
 workflows require explicit extras (this changes the default installation from 0.2.1):
 
-| Workflow | Checkout installation |
+| Workflow | PyPI installation |
 | --- | --- |
-| Notebook inspection/generation | `python -m pip install ".[notebook]"` |
-| HTTP adapters | `python -m pip install ".[http]"` |
-| MCP adapters | `python -m pip install ".[mcp]"` |
-| Complete historical pipeline/web app | `python -m pip install ".[legacy]"` |
+| Notebook inspection/generation | `python -m pip install "outerspace-apizr[notebook]==0.3.0"` |
+| HTTP adapters | `python -m pip install "outerspace-apizr[http]==0.3.0"` |
+| MCP adapters | `python -m pip install "outerspace-apizr[mcp]==0.3.0"` |
+| Complete historical pipeline/web app | `python -m pip install "outerspace-apizr[legacy]==0.3.0"` |
 
-Extras combine, for example `".[notebook,mcp]"`. Install a 0.3 wheel with `[legacy]`
+Extras combine, for example `"outerspace-apizr[notebook,mcp]==0.3.0"`. Choose `[legacy]`
 to retain the full 0.2.1 stack. Generated servers keep their own requirements.
 
 ## One repository, two public capabilities
@@ -158,7 +147,7 @@ evidence; neither `READY` nor a generated bundle establishes trust or runtime sa
 
 [Start here](https://apizr.outerspace.sh/getting-started/introduction/) ·
 [Architecture](https://apizr.outerspace.sh/architecture/overview/) ·
-[0.3 candidate notes and migration](https://apizr.outerspace.sh/releases/0.3.0/)
+[0.3 release notes and migration](https://apizr.outerspace.sh/releases/0.3.0/)
 
 ## Existing workflows and limits
 

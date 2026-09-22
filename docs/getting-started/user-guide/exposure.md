@@ -1,6 +1,6 @@
 # Plan explicit repository exposure
 
-**Repository release candidate: 0.3.0. Latest published stable: 0.2.1.**
+**Available in published stable 0.3.0.**
 Use a repository candidate for these commands; the public PyPI installation
 instructions continue to install the stable release. No 0.3 release is published.
 

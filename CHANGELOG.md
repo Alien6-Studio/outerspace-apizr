@@ -1,8 +1,9 @@
 # Changelog
 
-## 0.3.0 — Unreleased
+## 0.3.0 — 2026-09-22
 
-Repository release candidate: **0.3.0**. Latest published stable: **0.2.1**.
+Published from `43f5626fe9e26b018aa323abd83b9611f7b2aba9`, using the exact artifacts
+from master CI run `35735875051`. See the [verified delivery](https://apizr.outerspace.sh/releases/0.3.0/#verified-delivery).
 
 ### Added
 
@@ -21,7 +22,7 @@ Repository release candidate: **0.3.0**. Latest published stable: **0.2.1**.
 
 - Make discovery → readiness → explicit selection → exposure → execution the main
   README, Start Here, homepage and CLI journey; add small policy examples.
-- Prepare final package metadata and release/migration notes without publication.
+- Publish reviewed package metadata and release/migration notes.
 
 ### Security / execution boundaries
 
