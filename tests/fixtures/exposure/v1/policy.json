@@ -1,0 +1,1 @@
+{"eligibility":{"allow_conditional":false},"execution":{"allowed":["local-process","oci-container"],"require":[]},"interfaces":["mcp","rest"],"schema_version":"apizr.exposure-policy/v1","selection":{"exclude":[],"include":["python:shop:availability","python:shop:calculate"],"include_all_ready":false}}

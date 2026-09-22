@@ -11,7 +11,7 @@
 
 It discovers executable capabilities, builds deterministic contracts and relationships,
 exposes eligible capabilities through REST or MCP, and supports governed execution.
-Python **3.11–3.14** · GPL-3.0-or-later · Release line **0.2.x**
+Python **3.11–3.14** · GPL-3.0-or-later · Latest stable **0.2.1** · Development line **0.3.0** (`0.3.0.dev0`)
 
 ## What Apizr does
 
@@ -81,6 +81,10 @@ stdio/HTTP transport setup and generated bundle integrity checks.
 Python repository → Scanner → Capability Catalog → Capability Graph
 Scripts / notebooks ──────────────→ Capability IR + static readiness
 Catalog + Graph ─────────────────→ Repository Readiness (policy evidence)
+                                            ↓ + Exposure Policy (0.3 development)
+                                      Exposure Plan
+                                            ↓
+                              FUTURE repository REST/MCP bundle
 Capability IR + static readiness → Interface Contract → REST / MCP
                                                           ↓
                                       direct or governed execution
@@ -91,6 +95,14 @@ REST and MCP consume shared contracts. Readiness policies assess static evidence
 execution policies control explicit invocation. Neither discovery nor a `READY`
 assessment grants trust or proves runtime safety. Unknown effects remain unknown.
 See the [architecture overview](https://apizr.outerspace.sh/architecture/overview/).
+
+## Exposure planning (0.3 development)
+
+The development checkout adds `apizr expose plan ROOT --policy exposure.json`.
+An Exposure Plan records explicitly selected capabilities, intended REST/MCP
+interfaces and contract-compatible execution modes over digest-bound repository
+evidence. It does not generate a repository server. The stable PyPI release
+remains **0.2.1**. See the [development exposure guide](https://apizr.outerspace.sh/getting-started/user-guide/exposure/).
 
 ## Governed execution
 

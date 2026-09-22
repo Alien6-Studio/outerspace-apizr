@@ -51,6 +51,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     if arguments == ["--version"]:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
         return 0
+    if arguments and arguments[0] == "expose":
+        from apizr.exposure_cli import main as exposure_command
+
+        return exposure_command(arguments[1:])
     if arguments and arguments[0] == "readiness":
         from apizr.readiness_cli import main as readiness_repo_command
 
@@ -106,6 +110,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(
             "Repository readiness: apizr readiness ROOT [--source-root DIR] [--policy FILE] [--report]"
         )
+        print("Exposure planning: apizr expose plan ROOT --policy FILE [--plan]")
         print("\nLegacy generation pipeline (retained for compatibility):")
         try:
             generate(arguments)

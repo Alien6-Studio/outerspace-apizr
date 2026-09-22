@@ -25,6 +25,8 @@ def main():
         assert "apizr/readiness/model.py" in names
         assert "apizr/generators/rest/runtime.py" in names
         assert "apizr/generators/rest/templates/preamble.txt" in names
+        assert "apizr/exposure/planner.py" in names
+        assert "apizr/exposure_cli.py" in names
         assert "apizr/interfaces/runtime.py" in names
         assert "apizr/generators/mcp/runtime.py" in names
         assert not any(name == "src.py" or name.startswith("src/") for name in names)
@@ -240,6 +242,58 @@ print(apizr.__file__)
         print(
             "Installed scan/graph/repo-first/artifact-first readiness parity passed outside checkout."
         )
+        exposed = subprocess.run(
+            [
+                str(cli),
+                "expose",
+                "plan",
+                str(scan_root),
+                "--source-root",
+                "src",
+                "--interface",
+                "mcp",
+                "--execution-mode",
+                "oci-container",
+                "--select",
+                "python:pricing:total",
+                "--plan",
+            ],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            timeout=20,
+        )
+        exposure = json.loads(exposed.stdout)
+        assert exposure["schema_version"] == "apizr.exposure-plan/v1"
+        assert [c["capability_id"] for c in exposure["capabilities"]] == [
+            "python:pricing:total"
+        ]
+        assert exposure["capabilities"][0]["compatible_execution_modes"] == [
+            "oci-container"
+        ]
+        assert str(root).encode() not in exposed.stdout
+        refused = subprocess.run(
+            [
+                str(cli),
+                "expose",
+                "plan",
+                str(scan_root),
+                "--source-root",
+                "src",
+                "--interface",
+                "mcp",
+                "--execution-mode",
+                "oci-container",
+                "--select",
+                "python:pricing:typo",
+                "--plan",
+            ],
+            cwd=root,
+            capture_output=True,
+            timeout=20,
+        )
+        assert refused.returncode == 1 and not refused.stdout
+        print("Installed exposure plan/refusal passed outside checkout.")
         policy = root / "policy.json"
         policy.write_text("{}")
         arguments = root / "arguments.json"

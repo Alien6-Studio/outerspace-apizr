@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 — Unreleased
+
+- Begin development at `0.3.0.dev0`; the latest published stable release remains 0.2.1.
+- Add Exposure Policy v1 and Exposure Plan v1 with explicit selection, digest-bound
+  static evidence, fail-closed interface/execution checks and `apizr expose plan`.
+  Repository-level REST/MCP bundle generation remains deferred (#88).
+
 ## 0.2.1 — 2026-09-21
 
 ### Verification and release evidence
