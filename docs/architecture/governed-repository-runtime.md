@@ -5,7 +5,7 @@ The original backend contract remains unchanged. An opt-in
 protocol; v1 static adapters retain their original guarantees.
 
 
-**Repository release candidate: 0.3.0. Latest published stable: 0.2.1.**
+**Available in published stable 0.3.0.**
 
 Repository exposure now supports direct, governed local-process and governed OCI
 REST/MCP bundles. The requested backend must be explicitly compatible with every

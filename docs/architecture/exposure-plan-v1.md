@@ -5,7 +5,7 @@ The original backend contract remains unchanged. An opt-in
 protocol; v1 static adapters retain their original guarantees.
 
 
-**Repository release candidate: 0.3.0. Latest published stable: 0.2.1.**
+**Available in published stable 0.3.0.**
 This feature is not part of the published 0.2.1 package.
 
 An exposure plan records an explicit publication decision over static evidence; it is not an authorization grant or runtime safety proof.

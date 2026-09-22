@@ -1,6 +1,6 @@
 # Repository / Agent Readiness v1
 
-The original backend contract described here is unchanged. The 0.3 candidate
+The original backend contract described here is unchanged. The 0.3 release
 line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
 with a separate worker protocol; v1 static adapters retain their original guarantees.
 
