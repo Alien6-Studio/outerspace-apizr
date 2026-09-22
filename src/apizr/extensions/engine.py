@@ -1,3 +1,6 @@
+from pathlib import Path
+
+from .context import Context
 from .core import (
     CodeAnalyzrStep,
     DockerizrStep,
@@ -21,9 +24,17 @@ STEPS = {
 class AutomationEngine:
     def __init__(self):
         self.steps = []
+        self.registry = dict(STEPS)
+
+    def add_plugin(self, name, plugin, context):
+        key = "plugin:" + name
+        if key in self.registry:
+            raise ValueError(f"Duplicate pipeline plugin: {name}")
+        self.registry[key] = plugin
+        self.steps.append((key, context))
 
     def add_step(self, step_name, context):
-        if step_name not in STEPS:
+        if step_name not in self.registry:
             raise ValueError(f"Unknown step: {step_name}")
         self.steps.append((step_name, context))
 
@@ -35,7 +46,30 @@ class AutomationEngine:
             context.data = shared.copy()
             if current_input is not None:
                 context.input_path = current_input
-            result = STEPS[name]().execute(context)
+            expected_output = context.output_dir
+            expected_input = context.input_path
+            try:
+                result = self.registry[name]().execute(context)
+            except Exception as exc:
+                if name.startswith("plugin:"):
+                    raise RuntimeError(f"Pipeline {name} failed") from exc
+                raise
+            if name.startswith("plugin:"):
+                if (
+                    not isinstance(result, Context)
+                    or result.output_dir != expected_output
+                ):
+                    raise ValueError(
+                        f"Pipeline {name} must return a Context with the same output directory"
+                    )
+                if result.input_path != expected_input and (
+                    not isinstance(result.input_path, Path)
+                    or not result.input_path.is_file()
+                    or not result.input_path.resolve().is_relative_to(
+                        expected_output.resolve()
+                    )
+                ):
+                    raise ValueError(f"Pipeline {name} returned an invalid input path")
             shared.update(result.result)
             current_input = result.input_path
             output_dir = result.output_dir

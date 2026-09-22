@@ -2,6 +2,12 @@
 
 ## 0.3.0 — Unreleased
 
+- Build a notebook/script Docker image with `--build-image`, preserving explicit
+  application requirements, generation configuration and selected `--include`
+  data/config files, with an image ID or actionable failure (#1).
+- Load independently packaged legacy pipeline plugins only through explicit
+  `--plugin` selection, with versioned entry points and per-plugin options (#15).
+
 - Discover class declarations and method signatures in a separate static legacy
   inventory, without changing top-level capability/exposure contracts (#5).
 - Reject ambiguous selected legacy definitions and duplicate generated routes,

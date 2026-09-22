@@ -14,6 +14,13 @@ from apizr.runtime import parse_python_target, python_target_argument
 from .configuration import MainConfiguration
 from .extensions.context import Context
 from .extensions.engine import AutomationEngine
+from .extensions.plugins.api import load_plugins
+from .legacy_delivery import (
+    build_image,
+    copy_resources,
+    resource_files,
+    validate_image_tag,
+)
 
 
 def handle_args(argv=None):
@@ -25,12 +32,31 @@ def handle_args(argv=None):
     source.add_argument("--script", type=Path)
     parser.add_argument("--configuration", type=Path)
     parser.add_argument(
+        "--plugin",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="Explicitly load a trusted installed apizr.pipeline.v1 extension (repeatable)",
+    )
+    parser.add_argument(
         "--python-version",
         type=python_target_argument,
         metavar="3.11–3.14",
         help="Target Python version; defaults to the running interpreter",
     )
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument(
+        "--include",
+        action="append",
+        default=[],
+        metavar="PATH",
+        help="Include a data/config file or directory relative to the source directory (repeatable)",
+    )
+    parser.add_argument(
+        "--build-image",
+        metavar="TAG",
+        help="After generation, explicitly run a local Docker build; does not start or publish the image",
+    )
     parser.add_argument(
         "--requirements",
         type=Path,
@@ -69,6 +95,7 @@ def init_context(args):
     configuration.dispatch()
     context.config = configuration
     context.input_path = (args.notebook or args.script).resolve()
+    assert isinstance(context.input_path, Path)
     if not context.input_path.is_file():
         raise ValueError(f"Input file does not exist: {context.input_path}")
     expected = ".ipynb" if args.notebook else ".py"
@@ -106,6 +133,13 @@ def init_engine(args, context):
         ),
         ("DockerizrStep", not args.skip_docker, "dockerizr"),
     ]
+    plugins = load_plugins(args.plugin)
+    enabled_names = {name for name, enabled, _ in steps if enabled}
+    for name, plugin in plugins:
+        if plugin.after not in enabled_names:
+            raise ValueError(
+                f"Pipeline plugin {name!r} requires enabled step {plugin.after!r}"
+            )
     for name, enabled, key in steps:
         if enabled:
             step = Context()
@@ -116,6 +150,17 @@ def init_engine(args, context):
             step.prompt = False
             step.requirements_path = context.requirements_path
             engine.add_step(name, step)
+            for plugin_name, plugin in plugins:
+                if plugin.after == name:
+                    extension = Context()
+                    extension.config = context.config
+                    extension.input_path = context.input_path
+                    extension.source_dir = context.input_path.parent
+                    extension.output_dir = context.output_dir
+                    extension.options = context.config.plugin_options.get(
+                        plugin_name, {}
+                    ).copy()
+                    engine.add_plugin(plugin_name, plugin, extension)
     return engine
 
 
@@ -129,8 +174,11 @@ def convert(
     skip_docker=False,
     skip_fastapi=False,
     skip_pipreqs=False,
+    plugins=None,
+    include=None,
+    image_tag=None,
 ):
-    """Generate files without importing or executing the user's Python code."""
+    """Generate files; plugins and Docker builds run only when explicitly requested."""
     path = Path(input_path)
     args = argparse.Namespace(
         notebook=path if path.suffix == ".ipynb" else None,
@@ -145,15 +193,45 @@ def convert(
         force=True,
         interactive=False,
         lang="en",
+        plugin=list(plugins or ()),
+        include=list(include or ()),
+        build_image=image_tag,
     )
+    return run_pipeline(args)
+
+
+def run_pipeline(args):
+    if args.build_image is not None:
+        validate_image_tag(args.build_image)
+        if args.skip_docker:
+            raise ValueError("--build-image cannot be combined with --skip-docker")
+    source_dir = (args.notebook or args.script).resolve().parent
+    files = resource_files(source_dir, args.include)
     context = init_context(args)
-    return init_engine(args, context).run()
+    assert isinstance(context.output_dir, Path)
+    if any(
+        context.output_dir.is_relative_to(source_dir / name) for name in args.include
+    ):
+        raise ValueError("Output directory must not be inside included resources")
+    result = init_engine(args, context).run()
+    copy_resources(files, context.output_dir)
+    result["files"] = sorted(
+        str(p.relative_to(context.output_dir))
+        for p in context.output_dir.rglob("*")
+        if p.is_file()
+    )
+    if args.build_image is not None:
+        result["image"] = {
+            "tag": args.build_image,
+            "id": build_image(context.output_dir, args.build_image),
+        }
+    return result
 
 
 def main(argv=None):
     args = handle_args(argv)
     try:
-        result = init_engine(args, init_context(args)).run()
+        result = run_pipeline(args)
     except (ValueError, OSError, RuntimeError, SyntaxError, AnnotationException) as exc:
         raise SystemExit(f"apizr: {exc}") from exc
     print(json.dumps(result, indent=2))

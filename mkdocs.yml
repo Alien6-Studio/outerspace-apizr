@@ -140,6 +140,7 @@ nav:
   - Contributing:
       - Overview: about/CONTRIBUTING.md
       - Development and checks: getting-started/developer-guide/setup.md
+      - Legacy pipeline plugins: getting-started/developer-guide/plugins.md
       - Publish a release: contributing/releases.md
       - Verify builds and releases: contributing/verification.md
       - Managed Attest identity: contributing/attest.md
