@@ -776,6 +776,51 @@ asyncio.run(check())
         } <= set(manifest["files"])
         for name in manifest["files"]:
             assert (root / "project" / name).is_file()
+        # Install a separate distribution and activate its versioned entry point.
+        # The CLI and Apizr imports still come exclusively from the candidate wheel.
+        subprocess.run(
+            [
+                "uv",
+                "pip",
+                "install",
+                "--python",
+                str(python),
+                "--no-deps",
+                str(Path(__file__).resolve().parents[1] / "examples/pipeline-plugin"),
+            ],
+            cwd=root,
+            check=True,
+        )
+        config = root / "plugin.yaml"
+        config.write_text(
+            "plugin_options:\n  delivery-note:\n    project: installed-wheel\n"
+        )
+        (root / "settings.json").write_text('{"value": 5}')
+        for enabled in (False, True):
+            output = root / ("plugin-on" if enabled else "plugin-off")
+            command = [
+                str(cli),
+                "--notebook",
+                str(local_notebook),
+                "--output-dir",
+                str(output),
+                "--configuration",
+                str(config),
+                "--include",
+                "settings.json",
+            ]
+            if enabled:
+                command += ["--plugin", "delivery-note"]
+            subprocess.run(command, cwd=root, check=True, stdout=subprocess.DEVNULL)
+            assert (output / "settings.json").read_text() == '{"value": 5}'
+            assert (output / "delivery.json").exists() == enabled
+        assert json.loads((root / "plugin-on/delivery.json").read_text()) == {
+            "api_module": "sample_api",
+            "project": "installed-wheel",
+        }
+        print(
+            "Installed external pipeline plugin: explicit activation/options and resource delivery passed."
+        )
         print(
             "Wheel namespace, IR/readiness, governed execution, inspection and direct/governed standalone REST/MCP generation/runtime (Python/notebook), resources, license, CLI help and legacy notebook generation passed."
         )

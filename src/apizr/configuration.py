@@ -1,6 +1,6 @@
 """Validated configuration shared by the CLI and HTTP interfaces."""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, JsonValue
 
 from apizr.runtime import DEFAULT_PYTHON, PythonTarget, validate_python_target
 
@@ -21,6 +21,7 @@ class MainConfiguration(BaseModel):
     )
     fast_apizr: FastApizrConfiguration = Field(default_factory=FastApizrConfiguration)
     dockerizr: DockerizrConfiguration = Field(default_factory=DockerizrConfiguration)
+    plugin_options: dict[str, dict[str, JsonValue]] = Field(default_factory=dict)
 
     def dispatch(self):
         validate_python_target(self.python_version)

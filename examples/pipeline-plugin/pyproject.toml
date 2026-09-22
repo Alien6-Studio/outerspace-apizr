@@ -1,0 +1,12 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "apizr-example-note"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["outerspace-apizr>=0.3.0.dev0,<0.4"]
+
+[project.entry-points."apizr.pipeline.v1"]
+delivery-note = "apizr_example_note:DeliveryNote"

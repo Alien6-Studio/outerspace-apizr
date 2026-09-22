@@ -27,10 +27,11 @@ class Context:
         self.config: Optional[EncodingConfiguration] = None
         self.data = {}
         self._result = {}
-        self.input_path = None
-        self.source_dir = None
-        self.output_dir = None
-        self.requirements_path = None
+        self.input_path: Path | None = None
+        self.source_dir: Path | None = None
+        self.output_dir: Path | None = None
+        self.requirements_path: Path | None = None
+        self.options = {}
         self.lang = "en"
         self.prompt = False
         self.status = ContextStatus.PENDING
