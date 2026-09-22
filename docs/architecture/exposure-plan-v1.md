@@ -1,5 +1,10 @@
 # Exposure Plan v1
 
+The original backend contract described here is unchanged. The 0.3 development
+line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
+with a separate worker protocol; v1 static adapters retain their original guarantees.
+
+
 **Development line: 0.3.0 (`0.3.0.dev0`). Latest stable: 0.2.1.**
 This feature is not part of the published 0.2.1 package.
 

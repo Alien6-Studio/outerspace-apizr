@@ -1,5 +1,10 @@
 # Repository / Agent Readiness v1
 
+The original backend contract described here is unchanged. The 0.3 development
+line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
+with a separate worker protocol; v1 static adapters retain their original guarantees.
+
+
 Repository readiness means **sufficient static evidence under this versioned policy**.
 It is not a runtime guarantee, security certification, AI safety score, probability,
 LLM judgment, recommendation, or authorization to give an agent access.
@@ -178,7 +183,7 @@ Memory, CPU and PID requirements describe support for the existing OCI policy's
 configured limits. Readiness does not choose numeric limits or promise a given
 allocation. Memory hard limits are distinct from CPU quotas, which constrain CPU
 use rather than guaranteeing latency. PID containment does not prohibit creating
-subprocesses: `subprocess_deny` remains unsupported everywhere, and #49 remains open.
+subprocesses: `subprocess_deny` remains unsupported everywhere, in this frozen static adapter.
 
 ### Byte compatibility with the original v1
 

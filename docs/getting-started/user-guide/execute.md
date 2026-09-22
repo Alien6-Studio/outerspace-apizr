@@ -97,11 +97,12 @@ The container policy defaults to network deny, read-only filesystem/bundle,
 non-root execution, 256 MiB memory, one CPU, 64 PIDs and 16 MiB `/tmp` scratch.
 Use `/tmp` for writable files. `resources.cpu_millis` expresses thousandths of one
 CPU, independently of `limits.wall_time_ms`. Environment allowlists work as in
-v1, but whole-environment inheritance and subprocess denial are unsupported.
+v1; whole-environment inheritance remains unsupported. For explicit subprocess
+denial, use the [strict OCI profile](../../architecture/subprocess-deny.md) with a
+current worker image. This profile also prohibits new threads.
 
 Results use `apizr.execution-result/v2`; timeout, OOM evidence (`resource_limit`),
-worker failures and cleanup failures are sanitized. Containers contain subprocesses
-and detached children, but do not prohibit process creation or establish a VM
-security boundary. The daemon, kernel and selected worker image must be trusted.
+worker failures and cleanup failures are sanitized. Default allow-mode containers
+contain subprocesses and detached children. Neither mode establishes a VM boundary. The daemon, kernel and selected worker image must be trusted.
 See [OCI container runtime v1](../../architecture/oci-container-runtime-v1.md) for
 exact controls, version boundaries, failure semantics and limitations.

@@ -81,6 +81,10 @@ def main(argv: Sequence[str]) -> int:
             from apizr.oci.planner import plan as container_plan
             from apizr.oci.supervisor import execute as container_execute
 
+            if policy.subprocess.mode == "deny":
+                from apizr.subprocess_guard.single import execute as container_execute
+                from apizr.subprocess_guard.single import plan as container_plan
+
             image = RuntimeImage(
                 image=args.runtime_image, platform=args.runtime_platform
             )

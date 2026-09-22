@@ -173,7 +173,12 @@ def govern(
         if isinstance(policy, ExecutionPolicyV2):
             if runtime_image is None:
                 raise ValueError("OCI requires explicit runtime image and platform")
-            plan = container_plan(
+            selected_plan = container_plan
+            if policy.subprocess.mode == "deny":
+                from apizr.subprocess_guard.repository import (
+                    container_plan as selected_plan,
+                )
+            plan = selected_plan(
                 contract,
                 artifacts["exposure-plan.json"],
                 capability.capability_id,
@@ -198,7 +203,12 @@ def govern(
         plans[capability.capability_id] = PlanArtifact(path=path, digest=digest(plan))
     artifacts.pop("apizr_runtime.py")
     artifacts.pop("apizr_repository_runtime.py")
-    artifacts.update(runtime_files(transport))
+    runtime_artifacts = runtime_files(transport)
+    if isinstance(policy, ExecutionPolicyV2) and policy.subprocess.mode == "deny":
+        from apizr.subprocess_guard.embedding import strict_files
+
+        runtime_artifacts = strict_files(runtime_artifacts, repository=True)
+    artifacts.update(runtime_artifacts)
     artifacts["execution/policy.json"] = canonical_bytes(policy)
     artifacts["requirements.txt"] += b"pydantic>=2.12,<3\n"
     fields = Bridge(

@@ -129,6 +129,7 @@ nav:
           - MCP generator v1: architecture/mcp-generator-v1.md
           - Execution Policy v1: architecture/execution-policy-v1.md
           - OCI container execution: architecture/oci-container-runtime-v1.md
+          - Subprocess deny: architecture/subprocess-deny.md
           - Governed REST and MCP: architecture/governed-transport-runtime-v1.md
           - OCI-governed REST and MCP: architecture/governed-oci-transports-v2.md
           - Legacy behavior contract: architecture/legacy-behavior-contract.md

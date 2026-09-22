@@ -50,6 +50,7 @@ def main():
             f"RUN pip install --no-cache-dir --no-deps /build/{wheel.name} && rm -rf /build\n"
             'LABEL org.apizr.worker.protocol="apizr.runtime/v1"\n'
             'LABEL org.apizr.repository.worker.protocol="apizr.repository-runtime/v1"\n'
+            'LABEL org.apizr.subprocess-deny.protocol="apizr.subprocess-deny/v1"\n'
             "USER 65532:65532\n"
             'ENTRYPOINT ["/usr/local/bin/python", "-I", "-B", "-m", "apizr.oci.entrypoint"]\n'
         )

@@ -606,11 +606,55 @@ asyncio.run(check())
             if args.runtime_image_config
             else {"image": "sha256:" + "0" * 64, "platform": "linux/amd64"}
         )
-        for backend in ("direct", "local-process", "oci-container"):
+        if args.runtime_image_config:
+            strict_source = root / "deny_probe.py"
+            strict_source.write_text(
+                "import os\ndef denied() -> bool:\n    try:\n        pid = os.fork()\n    except PermissionError:\n        return True\n    if pid == 0: os._exit(0)\n    os.waitpid(pid, 0)\n    return False\n"
+            )
+            strict_policy = root / "deny-policy.json"
+            strict_policy.write_text(
+                '{"schema_version":"apizr.execution/v2","subprocess":{"mode":"deny"}}'
+            )
+            strict_arguments = root / "deny-arguments.json"
+            strict_arguments.write_text("{}")
+            result = subprocess.run(
+                [
+                    str(cli),
+                    "execute",
+                    str(strict_source),
+                    "denied",
+                    "--arguments",
+                    str(strict_arguments),
+                    "--policy",
+                    str(strict_policy),
+                    "--runtime-image",
+                    image_identity["image"],
+                    "--runtime-platform",
+                    image_identity["platform"],
+                ],
+                cwd=root,
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            assert json.loads(result.stdout)["value"] is True
+        for profile in ("direct", "local-process", "oci-container", "oci-deny"):
+            backend = "oci-container" if profile == "oci-deny" else profile
+            oci_policy.write_text(
+                json.dumps(
+                    {
+                        "schema_version": "apizr.execution/v2",
+                        "subprocess": {
+                            "mode": "deny" if profile == "oci-deny" else "allow"
+                        },
+                    }
+                )
+            )
             readiness_config = root / "repository-readiness-policy.json"
             readiness_config.write_text(json.dumps({"execution": {"modes": [backend]}}))
             for transport in ("rest", "mcp"):
-                output = root / ("repository-" + backend + "-" + transport)
+                output = root / ("repository-" + profile + "-" + transport)
                 flags = [
                     str(repository),
                     "--interface",

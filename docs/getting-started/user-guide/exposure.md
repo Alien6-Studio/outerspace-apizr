@@ -68,7 +68,9 @@ That fragment is a **readiness** policy. The exposure policy uses
 
 Inline flags also include `--allow-conditional` and repeated
 `--require-control`. Requiring `network_deny` narrows compatible modes to OCI;
-`subprocess_deny` cannot be satisfied by any current mode. Docker/image
+`subprocess_deny` is not advertised by the frozen v1 static backend adapters.
+The additional [strict OCI profile](../../architecture/subprocess-deny.md) is
+selected in the separate execution policy and verified against its worker image. Docker/image
 availability is not checked. No runtime image is part of the plan.
 
 ## Read the result
@@ -217,7 +219,8 @@ direct servers keep their existing persistent-state behavior.
 
 Local workers provide timeout/bounds/environment/process cleanup, not a filesystem
 or network sandbox. OCI adds the established container controls and requires the
-repository-aware image. Neither supports absolute subprocess denial (#49), and OCI
+repository-aware image. Local execution cannot prohibit subprocesses. OCI offers an opt-in
+[strict subprocess-deny profile](../../architecture/subprocess-deny.md), and OCI
 is not a VM. Missing backends refuse operation without fallback. Application
 libraries must be installed in the execution Python environment or selected image;
 no dependency installation/inference or resource-file packaging is added.

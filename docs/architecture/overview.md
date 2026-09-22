@@ -59,7 +59,8 @@ A direct server imports and invokes trusted source in its own process.
   limits. No host filesystem or network isolation.
 - **OCI-container:** Linux container namespaces and resource controls with a
   trusted Docker daemon and explicit worker image. Not a VM boundary.
-- **Unsupported:** absolute subprocess prohibition, arbitrary untrusted-code
+- **Opt-in OCI:** [process/thread creation prohibition](subprocess-deny.md) with a strict worker image.
+- **Unsupported:** arbitrary untrusted-code
   hosting, automatic trust decisions and an enterprise control plane.
 
 Execution remains experimental: the contracts and refusal paths are tested,

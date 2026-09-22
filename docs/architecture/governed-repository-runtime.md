@@ -1,5 +1,10 @@
 # Governed repository execution
 
+The original backend contract described here is unchanged. The 0.3 development
+line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
+with a separate worker protocol; v1 static adapters retain their original guarantees.
+
+
 **Development: `0.3.0.dev0`; latest stable: 0.2.1.**
 
 Repository exposure now supports direct, governed local-process and governed OCI
@@ -102,7 +107,7 @@ seccomp, private IPC/cgroup namespace, memory/CPU/PID limits, bounded scratch,
 read-only `/bundle` and unconditional teardown. Only the fixed repository entrypoint
 differs. There is no second security-flag list or generic Docker argument/mount/device
 escape. This is container isolation, not a VM. PID limits do not prohibit subprocesses;
-`subprocess_deny` remains refused and issue #49 remains open.
+`subprocess_deny` remains refused under this original contract.
 
 Repository OCI startup and invocation verify the immutable `sha256:<64hex>` image
 ID, explicit Linux platform, existing worker compatibility and the additional label
