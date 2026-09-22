@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -6,46 +5,22 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from .support import analyze, generate, runtime
+from .support import generate, runtime
 
 
-def test_duplicate_definitions_keep_two_routes_but_use_last_binding(tmp_path):
-    source = 'def calculate(x: int): return x + 1\ndef calculate(x: str): return "last:" + x\n'
-    metadata = json.loads(analyze(source))["functions"]
-    assert [f["args"][0]["annotation"]["type"] for f in metadata] == ["int", "str"]
-    output = generate(tmp_path, source)
-    assert (output / "contract_source_api.py").read_text().count(
-        '@app.post("/calculate")'
-    ) == 2
-    with runtime(output) as client:
-        routes = [r for r in client.app.routes if r.path == "/calculate"]
-        assert len(routes) == 2
-        assert client.post("/calculate", json={"x": "x"}).json() == "last:x"
-        assert client.post("/calculate", json={"x": 3}).status_code == 422
-        operation = client.get("/openapi.json").json()["paths"]["/calculate"]["post"][
-            "operationId"
-        ]
-        assert (
-            "route_2" in operation
-        )  # docs describe last route; request dispatch uses first
-
-
-def test_duplicate_changed_argument_name_fails_only_at_trusted_import(tmp_path):
-    output = generate(
-        tmp_path,
+@pytest.mark.parametrize(
+    "source",
+    [
+        'def calculate(x: int): return x + 1\ndef calculate(x: str): return "last:" + x\n',
         "def calculate(x: int = 1): return x\ndef calculate(y: str): return y\n",
-    )
-    with pytest.raises(KeyError, match="x"), runtime(output):
-        pass
-
-
-def test_overloads_and_conditional_definitions_are_not_resolved(tmp_path):
-    source = "from typing import overload\n@overload\ndef choose(x: int) -> int: ...\n@overload\ndef choose(x: str) -> str: ...\ndef choose(x): return x\n"
-    output = generate(tmp_path, source)
-    with runtime(output) as client:
-        assert len([r for r in client.app.routes if r.path == "/choose"]) == 3
-        # Stubs' type declarations are not the runtime implementation's hints.
-        assert client.post("/choose", json={"x": [1]}).json() == [1]
+        "from typing import overload\n@overload\ndef choose(x: int) -> int: ...\n@overload\ndef choose(x: str) -> str: ...\ndef choose(x): return x\n",
+        "if True:\n def choose(x): return x\nelse:\n def choose(y): return y\n",
+    ],
+)
+def test_ambiguous_definitions_refused_before_generation_or_import(tmp_path, source):
+    with pytest.raises(ValueError, match="Ambiguous function definitions"):
+        generate(tmp_path, source)
+    assert not list((tmp_path / "output").iterdir())
 
 
 def test_false_branch_callable_is_discovered_but_unavailable_at_runtime(tmp_path):

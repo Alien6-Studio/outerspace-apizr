@@ -5,6 +5,7 @@ import logging
 from apizr.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
 
 from .ast_node import FunctionNode, ImportFromNode, ImportNode, LogError
+from .classes import describe_class
 
 
 # AstAnalyzr class analyzes the structure of a Python code using Abstract Syntax Tree (AST).
@@ -33,6 +34,7 @@ class AstAnalyzr(ast.NodeVisitor):
         self.imports = []
         self.imports_from = []
         self.functions = []
+        self.classes = []
 
     @LogError(logging)
     def check_for_keywords(self, code_str):
@@ -50,9 +52,18 @@ class AstAnalyzr(ast.NodeVisitor):
         self.imports.clear()
         self.imports_from.clear()
         self.functions.clear()
+        self.classes.clear()
         self.generic_visit(
             ast.parse(self.code_str, type_comments=True, feature_version=self.version)
         )
+        names = [function.name for function in self.functions]
+        duplicates = sorted({name for name in names if names.count(name) > 1})
+        if duplicates:
+            raise ValueError(
+                "Ambiguous function definitions (including overloads): "
+                + ", ".join(duplicates)
+                + ". Select an unambiguous wrapper or exclude these names."
+            )
         return self.toJSON()
 
     @LogError(logging)
@@ -77,9 +88,8 @@ class AstAnalyzr(ast.NodeVisitor):
                 pass  # Skip this function if its name is in ignore
             else:
                 self.functions.append(FunctionNode(node))
-        # @TODO: Handle class definitions and other node types as needed.
         elif isinstance(node, ast.ClassDef):
-            pass
+            self.classes.append(describe_class(node))
         else:
             ast.NodeVisitor.generic_visit(self, node)
 
@@ -105,4 +115,7 @@ class AstAnalyzr(ast.NodeVisitor):
         """
         state = dict(self.__dict__)
         del state["code_str"]
+        # Preserve existing function-only analysis documents byte for byte.
+        if not state["classes"]:
+            del state["classes"]
         return state

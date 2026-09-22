@@ -16,6 +16,9 @@ class FastApiAppGenerator:
             if not name.isidentifier() or keyword.iskeyword(name):
                 raise ValueError("module_name must be a valid Python module path")
         functions = [f for f in self.analyse.functions if f.selected]
+        names = [function.name for function in functions]
+        if len(set(names)) != len(names):
+            raise ValueError("Ambiguous function definitions: duplicate route names")
         for function in functions:
             for name in [function.name, *(arg.name for arg in function.args)]:
                 if not name.isidentifier() or keyword.iskeyword(name):
