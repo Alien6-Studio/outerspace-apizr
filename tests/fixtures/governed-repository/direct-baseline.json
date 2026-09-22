@@ -1,0 +1,43 @@
+{
+  "artifacts": {
+    "mcp": {
+      "apizr-repository-mcp.json": "037dc5bcbcdfa41e664a0cdde90c76db7ad06b0a35514b36b01383e24db2e59a",
+      "apizr_repository_runtime.py": "74c40505ad1beaa76b2bc8256b0a1964e62d657f44f48f18ee1052c337cc8054",
+      "apizr_runtime.py": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14",
+      "capability-catalog.json": "957021149968a303f4faca6c5980528e7379bb038101496d90b84a6a13bffff8",
+      "capability-graph.json": "5579aea9aa6e3decbe1f1c929f149fc7df1b7f64810f735f3036bb2df2868201",
+      "exposure-plan.json": "abc9d22722a6bd4637afd1b4ba6af33e9b194dcf19ce28b3ab3ef53c6bc6abbe",
+      "exposure-policy.json": "06fa3058fa18c7e613645430d1addf725d3daee76b622186aea91328bdb25cb0",
+      "mcp-tools.json": "57535f6ba0c8b892fc9c8dd511b79f754e4240b21a56ca7298b423470dc0fc62",
+      "repository-interface.json": "53e84f43d6b26b06ee5980c5cdf880462a7125e45120e9a78dbb005db88d344a",
+      "repository-readiness.json": "620badc432956c07dfb43a543cbd419e9aa2a5a355bf2f7ff15ec55c30ad1a13",
+      "requirements.txt": "92af853508dc94ec5da25d834bad8540be7df90930dbf7b4063ae94b098a4353",
+      "server.py": "b51fbe828497a1b13a143f7fa1f8c05da0bbdebeec59740e14f589040d4bf6aa",
+      "source/shop/__init__.py": "d6956f548c849543638298bf8e38b4f0728d81e16f006632d0a1ff09e6ec7932",
+      "source/shop/admin.py": "74299f981a87e40b384596174832ec7bd2edc55b22daf03bc053003939e38a9e",
+      "source/shop/api.py": "8b4e0ac0220ac1ff7fd5d2901d4b3cad98a8ceb5f9c468cae2e9ee984a72d4d7",
+      "source/shop/inventory.py": "6f0effe34678e56e1bc3fa4ecbb6c0e6a121f65f4019089578cd7b59c2013301",
+      "source/shop/pricing.py": "7784555292558239adc9b7a8c2187816b8ddd02229fd26d01317459d25a5c271"
+    },
+    "rest": {
+      "apizr-repository-rest.json": "94b23f3b62b50c1c75e3d8bc3b3f44ffc8b53a6d3e639b4ab9a5fad695e1cc81",
+      "apizr_repository_runtime.py": "74c40505ad1beaa76b2bc8256b0a1964e62d657f44f48f18ee1052c337cc8054",
+      "apizr_runtime.py": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14",
+      "app.py": "8148ec8d36b4c062451a145e9f178abb115787ac589185bd63ca5352c281d12b",
+      "capability-catalog.json": "957021149968a303f4faca6c5980528e7379bb038101496d90b84a6a13bffff8",
+      "capability-graph.json": "5579aea9aa6e3decbe1f1c929f149fc7df1b7f64810f735f3036bb2df2868201",
+      "exposure-plan.json": "abc9d22722a6bd4637afd1b4ba6af33e9b194dcf19ce28b3ab3ef53c6bc6abbe",
+      "exposure-policy.json": "06fa3058fa18c7e613645430d1addf725d3daee76b622186aea91328bdb25cb0",
+      "openapi.json": "a877a56cc42f19742f127b1c319e9e7af09358b99fd746e15bdd5670e7635bcc",
+      "repository-interface.json": "20026aa2f81911d07280f2d7ddb216dcd763137109e2dcb83621b5a45376791c",
+      "repository-readiness.json": "620badc432956c07dfb43a543cbd419e9aa2a5a355bf2f7ff15ec55c30ad1a13",
+      "requirements.txt": "b6720280cbeb47c0e9e9dc6b7b58c67e28610b25321019774db612b9ba3fb3d5",
+      "source/shop/__init__.py": "d6956f548c849543638298bf8e38b4f0728d81e16f006632d0a1ff09e6ec7932",
+      "source/shop/admin.py": "74299f981a87e40b384596174832ec7bd2edc55b22daf03bc053003939e38a9e",
+      "source/shop/api.py": "8b4e0ac0220ac1ff7fd5d2901d4b3cad98a8ceb5f9c468cae2e9ee984a72d4d7",
+      "source/shop/inventory.py": "6f0effe34678e56e1bc3fa4ecbb6c0e6a121f65f4019089578cd7b59c2013301",
+      "source/shop/pricing.py": "7784555292558239adc9b7a8c2187816b8ddd02229fd26d01317459d25a5c271"
+    }
+  },
+  "baseline": "5b898c66c4d501f04b1838898f1650c7744dcfea"
+}

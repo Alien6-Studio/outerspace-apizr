@@ -8,7 +8,11 @@
 - Add deterministic direct repository REST/MCP bundles from validated Exposure
   Plans, complete verified source packaging, qualified names and transactional
   `apizr expose build` output (#88). Existing Readiness eligibility remains
-  unchanged; governed repository execution is deferred (#90).
+  unchanged.
+- Add governed repository REST/MCP execution (#90): independently versioned
+  multi-source plans and bridges, fresh local/OCI workers, per-call integrity
+  validation, explicit repository worker image compatibility and shared Docker
+  controls. Direct and single-source artifact bytes remain unchanged.
 
 ## 0.2.1 — 2026-09-21
 

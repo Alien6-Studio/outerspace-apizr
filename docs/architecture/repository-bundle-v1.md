@@ -93,8 +93,9 @@ Only selected modules and the modules they import execute. Unrelated sources are
 hash-checked without executing them. Startup fails if any selected binding cannot
 be loaded. Imports are cached by Python; module state and mutable defaults persist
 between calls in this **trusted, direct** server process. No process/container
-isolation is claimed. Governed repository execution is deferred to
-[#90](https://github.com/Alien6-Studio/outerspace-apizr/issues/90).
+isolation is claimed. An explicit execution policy adds the independently versioned
+[governed repository runtime](governed-repository-runtime.md), with a fresh local
+process or OCI container per invocation. Direct behavior remains unchanged.
 
 ## Existing Readiness v1 limitation
 

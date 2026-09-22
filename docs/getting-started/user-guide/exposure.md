@@ -154,8 +154,8 @@ those is an explicit operator responsibility. Generation never queries or instal
 them. Source/resources outside the scanned Python universe are not copied.
 
 These servers execute trusted code directly. Global state and mutable defaults
-persist across calls. Local-process/OCI repository execution is deferred to
-[#90](https://github.com/Alien6-Studio/outerspace-apizr/issues/90).
+persist across calls. Add an explicit execution policy for a fresh local worker
+or OCI container per invocation, as described below.
 
 Existing Readiness restrictions still apply. In particular, a local/relative
 import in a selected declaration or its module may make it ineligible;
@@ -172,3 +172,55 @@ bundles and overwriting existing contents. There is no saved-plan CLI shortcut.
 See [Repository Bundle v1](../../architecture/repository-bundle-v1.md) for exact
 integrity, packaging and runtime semantics, and
 [Exposure Plan v1](../../architecture/exposure-plan-v1.md) for planning contracts.
+
+
+## Build a governed repository bundle
+
+Use an exposure policy whose `execution.allowed` explicitly includes the requested
+backend for every selection. The readiness policy must also allow it. For local
+execution, create `local-policy.json` containing `{}` and use:
+
+```bash
+apizr expose build mcp . \
+  --readiness-policy readiness.json --policy exposure.json \
+  --execution-policy local-policy.json --output-dir .output/mcp
+```
+
+For example, the readiness execution configuration is
+`{"execution":{"modes":["local-process"]}}` and the exposure execution configuration
+is `{"execution":{"allowed":["local-process"]}}`. Keep your explicit selection and
+`interfaces: ["mcp"]` in the exposure policy.
+
+For OCI, allow `oci-container` in those policies, create `oci-policy.json` containing
+`{"schema_version":"apizr.execution/v2"}`, and supply an existing image ID/platform:
+
+```bash
+apizr expose build mcp . \
+  --readiness-policy readiness.json --policy exposure.json \
+  --execution-policy oci-policy.json \
+  --runtime-image sha256:<64hex> --runtime-platform linux/amd64 \
+  --output-dir .output/mcp
+```
+
+Replace the image placeholder with the immutable image ID. It must advertise
+`org.apizr.repository.worker.protocol=apizr.repository-runtime/v1` as well as the
+existing single-source worker label. No image is pulled automatically. Generation
+is static and works without Docker; the generated server checks availability at
+startup and invocation. CLI output describes the **configured** backend.
+
+Use `rest` and a REST exposure policy for the corresponding HTTP server. Install
+the emitted requirements and start generated servers as in the direct examples.
+The transport never imports project source. Each call revalidates all artifacts
+and copies the exact Python source universe into a fresh worker directory.
+Globals, mutable defaults and support-module state reset on every governed call;
+direct servers keep their existing persistent-state behavior.
+
+Local workers provide timeout/bounds/environment/process cleanup, not a filesystem
+or network sandbox. OCI adds the established container controls and requires the
+repository-aware image. Neither supports absolute subprocess denial (#49), and OCI
+is not a VM. Missing backends refuse operation without fallback. Application
+libraries must be installed in the execution Python environment or selected image;
+no dependency installation/inference or resource-file packaging is added.
+
+See [Governed repository execution](../../architecture/governed-repository-runtime.md)
+for contracts, tamper validation, error mappings and deployment responsibilities.
