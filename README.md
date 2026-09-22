@@ -105,7 +105,9 @@ evidence. `apizr expose build {rest,mcp} ROOT --policy exposure.json
 --readiness-policy readiness.json --output-dir DIR` generates one direct server
 for the selected eligible capabilities, with verified multi-source packaging and
 module-qualified public names. Both policies must explicitly permit direct execution.
-Governed repository execution remains deferred; existing Readiness eligibility
+Add `--execution-policy policy.json` for a fresh local worker per invocation, or
+an OCI v2 policy with an explicit immutable image and platform for a fresh container.
+Every selected capability must permit that backend; existing Readiness eligibility
 restrictions still apply. The stable PyPI release remains **0.2.1**. See the [development exposure guide](https://apizr.outerspace.sh/getting-started/user-guide/exposure/).
 
 ## Governed execution

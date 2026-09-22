@@ -1,0 +1,624 @@
+{
+  "$defs": {
+    "BundledSource": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_path": {
+          "title": "Bundle Path",
+          "type": "string"
+        },
+        "is_package": {
+          "title": "Is Package",
+          "type": "boolean"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "source_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "source_path": {
+          "title": "Source Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module",
+        "source_path",
+        "bundle_path",
+        "source_digest",
+        "size",
+        "is_package"
+      ],
+      "title": "BundledSource",
+      "type": "object"
+    },
+    "Capability": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "invocation": {
+          "$ref": "#/$defs/InvocationContract"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "public_name": {
+          "title": "Public Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capability_id",
+        "public_name",
+        "module",
+        "invocation"
+      ],
+      "title": "Capability",
+      "type": "object"
+    },
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "Effect": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "unknown"
+        },
+        "value": {
+          "$ref": "#/$defs/EffectValue",
+          "default": "unknown"
+        }
+      },
+      "title": "Effect",
+      "type": "object"
+    },
+    "EffectValue": {
+      "enum": [
+        "true",
+        "false",
+        "unknown"
+      ],
+      "title": "EffectValue",
+      "type": "string"
+    },
+    "Environment": {
+      "additionalProperties": false,
+      "properties": {
+        "allow": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Allow",
+          "type": "array"
+        },
+        "inherit": {
+          "default": false,
+          "title": "Inherit",
+          "type": "boolean"
+        }
+      },
+      "title": "Environment",
+      "type": "object"
+    },
+    "Evidence": {
+      "enum": [
+        "declared",
+        "observed",
+        "inferred",
+        "unknown"
+      ],
+      "title": "Evidence",
+      "type": "string"
+    },
+    "ExecutionPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "const": "local-process",
+          "default": "local-process",
+          "title": "Backend",
+          "type": "string"
+        },
+        "effects": {
+          "$ref": "#/$defs/apizr__execution__policy__Effects",
+          "default": {
+            "require_known": []
+          }
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment",
+          "default": {
+            "allow": [],
+            "inherit": false
+          }
+        },
+        "filesystem": {
+          "$ref": "#/$defs/Filesystem",
+          "default": {
+            "mode": "host"
+          }
+        },
+        "limits": {
+          "$ref": "#/$defs/Limits",
+          "default": {
+            "max_input_bytes": 1048576,
+            "max_output_bytes": 1048576,
+            "wall_time_ms": 5000
+          }
+        },
+        "network": {
+          "$ref": "#/$defs/Network",
+          "default": {
+            "mode": "inherit"
+          }
+        },
+        "schema_version": {
+          "const": "apizr.execution/v1",
+          "default": "apizr.execution/v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "subprocess": {
+          "$ref": "#/$defs/Subprocess",
+          "default": {
+            "mode": "allow"
+          }
+        },
+        "working_directory": {
+          "const": "fresh",
+          "default": "fresh",
+          "title": "Working Directory",
+          "type": "string"
+        }
+      },
+      "title": "ExecutionPolicy",
+      "type": "object"
+    },
+    "Filesystem": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "host",
+          "enum": [
+            "host",
+            "sandbox"
+          ],
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "Filesystem",
+      "type": "object"
+    },
+    "Input": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/ParameterKind"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "type": {
+          "$ref": "#/$defs/TypeSpec"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "required",
+        "type"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "InvocationContract": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "execution": {
+          "enum": [
+            "sync",
+            "async"
+          ],
+          "title": "Execution",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "parameters": {
+          "items": {
+            "$ref": "#/$defs/Input"
+          },
+          "title": "Parameters",
+          "type": "array"
+        },
+        "returns": {
+          "$ref": "#/$defs/TypeSpec"
+        }
+      },
+      "required": [
+        "capability_id",
+        "name",
+        "execution",
+        "parameters",
+        "returns"
+      ],
+      "title": "InvocationContract",
+      "type": "object"
+    },
+    "Limits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_input_bytes": {
+          "default": 1048576,
+          "maximum": 16777216,
+          "minimum": 1,
+          "title": "Max Input Bytes",
+          "type": "integer"
+        },
+        "max_output_bytes": {
+          "default": 1048576,
+          "maximum": 16777216,
+          "minimum": 128,
+          "title": "Max Output Bytes",
+          "type": "integer"
+        },
+        "wall_time_ms": {
+          "default": 5000,
+          "maximum": 3600000,
+          "minimum": 1,
+          "title": "Wall Time Ms",
+          "type": "integer"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "Network": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "inherit",
+          "enum": [
+            "inherit",
+            "deny"
+          ],
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "Network",
+      "type": "object"
+    },
+    "ParameterKind": {
+      "enum": [
+        "positional_only",
+        "positional_or_keyword",
+        "keyword_only"
+      ],
+      "title": "ParameterKind",
+      "type": "string"
+    },
+    "RepositoryInterface": {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "items": {
+            "$ref": "#/$defs/Capability"
+          },
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "catalog_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "exposure_plan_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "graph_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "interface": {
+          "enum": [
+            "rest",
+            "mcp"
+          ],
+          "title": "Interface",
+          "type": "string"
+        },
+        "repository_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "repository_readiness_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "schema_version": {
+          "const": "apizr.repository-interface/v1",
+          "default": "apizr.repository-interface/v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/BundledSource"
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "exposure_plan_digest",
+        "repository_digest",
+        "catalog_digest",
+        "graph_digest",
+        "repository_readiness_digest",
+        "interface",
+        "sources",
+        "capabilities"
+      ],
+      "title": "RepositoryInterface",
+      "type": "object"
+    },
+    "Subprocess": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "allow",
+          "enum": [
+            "allow",
+            "deny"
+          ],
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "Subprocess",
+      "type": "object"
+    },
+    "TypeSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TypeSpec"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "any",
+            "int",
+            "str",
+            "float",
+            "bool",
+            "null",
+            "list",
+            "dict",
+            "tuple",
+            "set",
+            "union",
+            "literal"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "values": {
+          "default": [],
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Values",
+          "type": "array"
+        },
+        "variadic": {
+          "default": false,
+          "title": "Variadic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "TypeSpec",
+      "type": "object"
+    },
+    "apizr__capabilities__model__Effects": {
+      "additionalProperties": false,
+      "properties": {
+        "environment": {
+          "$ref": "#/$defs/Effect"
+        },
+        "external_service": {
+          "$ref": "#/$defs/Effect"
+        },
+        "filesystem_read": {
+          "$ref": "#/$defs/Effect"
+        },
+        "filesystem_write": {
+          "$ref": "#/$defs/Effect"
+        },
+        "network": {
+          "$ref": "#/$defs/Effect"
+        },
+        "secrets": {
+          "$ref": "#/$defs/Effect"
+        },
+        "state_mutation": {
+          "$ref": "#/$defs/Effect"
+        },
+        "subprocess": {
+          "$ref": "#/$defs/Effect"
+        }
+      },
+      "title": "Effects",
+      "type": "object"
+    },
+    "apizr__execution__policy__Effects": {
+      "additionalProperties": false,
+      "properties": {
+        "require_known": {
+          "default": [],
+          "items": {
+            "enum": [
+              "filesystem_read",
+              "filesystem_write",
+              "network",
+              "environment",
+              "subprocess",
+              "state_mutation",
+              "secrets",
+              "external_service"
+            ],
+            "type": "string"
+          },
+          "title": "Require Known",
+          "type": "array"
+        }
+      },
+      "title": "Effects",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "backend_version": {
+      "const": "apizr.local-process/v1",
+      "default": "apizr.local-process/v1",
+      "title": "Backend Version",
+      "type": "string"
+    },
+    "capability_id": {
+      "title": "Capability Id",
+      "type": "string"
+    },
+    "effects": {
+      "$ref": "#/$defs/apizr__capabilities__model__Effects"
+    },
+    "execution_context": {
+      "default": "local-process",
+      "enum": [
+        "local-process",
+        "oci-container"
+      ],
+      "title": "Execution Context",
+      "type": "string"
+    },
+    "exposure_plan_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "interface": {
+      "$ref": "#/$defs/InvocationContract"
+    },
+    "interface_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "policy": {
+      "$ref": "#/$defs/ExecutionPolicy"
+    },
+    "policy_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "repository_interface": {
+      "$ref": "#/$defs/RepositoryInterface"
+    },
+    "repository_interface_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "schema_version": {
+      "const": "apizr.repository-runtime/v1",
+      "default": "apizr.repository-runtime/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_universe_digest": {
+      "$ref": "#/$defs/Digest"
+    }
+  },
+  "required": [
+    "repository_interface",
+    "repository_interface_digest",
+    "exposure_plan_digest",
+    "source_universe_digest",
+    "capability_id",
+    "interface",
+    "interface_digest",
+    "effects",
+    "policy",
+    "policy_digest"
+  ],
+  "title": "RepositoryRuntimePlan",
+  "type": "object"
+}

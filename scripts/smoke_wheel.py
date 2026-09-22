@@ -557,6 +557,118 @@ asyncio.run(check())
                     check=True,
                     timeout=30,
                 )
+        # Repository exposure is exercised from the installed wheel, outside the
+        # checkout. Each emitted runtime runs in a requirements-only environment.
+        repository = root / "repository-smoke"
+        repository.mkdir()
+        (repository / "billing.py").write_text(
+            "def total(values: list[int]) -> int: return sum(values)\n"
+        )
+        local_policy = root / "repository-local-policy.json"
+        local_policy.write_text("{}")
+        oci_policy = root / "repository-oci-policy.json"
+        oci_policy.write_text('{"schema_version":"apizr.execution/v2"}')
+        image_identity = (
+            json.loads(args.runtime_image_config.read_text())
+            if args.runtime_image_config
+            else {"image": "sha256:" + "0" * 64, "platform": "linux/amd64"}
+        )
+        for backend in ("direct", "local-process", "oci-container"):
+            readiness_config = root / "repository-readiness-policy.json"
+            readiness_config.write_text(json.dumps({"execution": {"modes": [backend]}}))
+            for transport in ("rest", "mcp"):
+                output = root / ("repository-" + backend + "-" + transport)
+                flags = [
+                    str(repository),
+                    "--interface",
+                    transport,
+                    "--execution-mode",
+                    backend,
+                    "--select",
+                    "python:billing:total",
+                    "--readiness-policy",
+                    str(readiness_config),
+                ]
+                planned = subprocess.run(
+                    [str(cli), "expose", "plan", *flags, "--plan"],
+                    cwd=root,
+                    check=True,
+                    capture_output=True,
+                    timeout=20,
+                )
+                assert (
+                    json.loads(planned.stdout)["capabilities"][0]["capability_id"]
+                    == "python:billing:total"
+                )
+                execution_flags = []
+                if backend != "direct":
+                    execution_flags = [
+                        "--execution-policy",
+                        str(local_policy if backend == "local-process" else oci_policy),
+                    ]
+                if backend == "oci-container":
+                    execution_flags += [
+                        "--runtime-image",
+                        image_identity["image"],
+                        "--runtime-platform",
+                        image_identity["platform"],
+                    ]
+                subprocess.run(
+                    [
+                        str(cli),
+                        "expose",
+                        "build",
+                        transport,
+                        *flags,
+                        *execution_flags,
+                        "--output-dir",
+                        str(output),
+                    ],
+                    cwd=root,
+                    check=True,
+                    capture_output=True,
+                    timeout=30,
+                )
+                manifest = json.loads(
+                    (output / f"apizr-repository-{transport}.json").read_bytes()
+                )
+                assert manifest["schema_version"] == f"apizr.repository-{transport}/v1"
+                if backend != "direct":
+                    assert (
+                        json.loads((output / "execution/bundle.json").read_bytes())[
+                            "backend"
+                        ]
+                        == backend
+                    )
+                if backend != "oci-container" or args.runtime_image_config:
+                    probe = (
+                        governed_probes[transport]
+                        .replace("/capabilities/total", "/capabilities/billing.total")
+                        .replace("call_tool('total'", "call_tool('billing.total'")
+                    )
+                    if backend == "direct" and transport == "rest":
+                        probe = probe.replace(
+                            "app = runpy.run_path(sys.argv[1])['app']",
+                            "from pathlib import Path\nsys.path.insert(0, str(Path(sys.argv[1]).parent))\napp = runpy.run_path(sys.argv[1])['app']",
+                        )
+                    subprocess.run(
+                        [
+                            str(rest_python if transport == "rest" else runtime_python),
+                            "-I",
+                            "-c",
+                            probe,
+                            str(
+                                output
+                                / ("app.py" if transport == "rest" else "server.py")
+                            ),
+                        ],
+                        cwd=root,
+                        check=True,
+                        timeout=30,
+                    )
+        print(
+            "Installed repository exposure planning and direct/local/OCI generation passed outside checkout."
+        )
         if args.runtime_image_config:
             image_config = json.loads(args.runtime_image_config.read_text())
             container_policy = root / "container-policy.json"

@@ -1,6 +1,7 @@
 """Consume validated exposure decisions; never select or reanalyze source."""
 
 from collections.abc import Mapping
+from typing import Literal
 
 from apizr.exposure import ExposurePlan, ExposurePolicy, plan_digest, validate_plan
 from apizr.exposure.policy import Interface
@@ -23,6 +24,7 @@ def plan_repository_interface(
     sources: Mapping[str, bytes],
     *,
     interface: Interface,
+    execution_mode: Literal["direct", "local-process", "oci-container"] = "direct",
 ) -> RepositoryInterface:
     sources = dict(sources)
     catalog = validated_inputs(catalog, sources)
@@ -31,8 +33,13 @@ def plan_repository_interface(
         raise BundleRefused("APIZR-BUNDLE-001: target interface is not planned")
     if not exposure.capabilities:
         raise BundleRefused("APIZR-BUNDLE-002: no public capabilities")
-    if any("direct" not in c.compatible_execution_modes for c in exposure.capabilities):
-        raise BundleRefused("APIZR-BUNDLE-003: direct execution is not permitted")
+    if any(
+        execution_mode not in c.compatible_execution_modes
+        for c in exposure.capabilities
+    ):
+        raise BundleRefused(
+            f"APIZR-BUNDLE-003: {execution_mode} execution is not permitted"
+        )
     units = {s.module: s for s in catalog.sources if s.inspection is not None}
     bundled: list[BundledSource] = []
     for module, unit in sorted(units.items(), key=lambda item: item[0] or ""):

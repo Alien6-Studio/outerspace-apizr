@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from importlib.resources import files
 
 from apizr.capabilities.model import Digest
+from apizr.execution.policy import ExecutionPolicy
 from apizr.exposure import ExposurePlan, ExposurePolicy, plan_bytes, policy_bytes
 from apizr.exposure.policy import Interface
 from apizr.generators.mcp.generator import REQUIREMENTS as MCP_REQUIREMENTS
@@ -15,6 +16,7 @@ from apizr.generators.rest.schema import openapi
 from apizr.graph import Graph, graph_bytes
 from apizr.interfaces.schema import request_schema
 from apizr.interfaces.serialization import json_bytes
+from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.repository import Catalog, catalog_bytes
 from apizr.repository.serialization import canonical_bytes
 from apizr.repository_readiness import RepositoryReadinessReport, report_bytes
@@ -48,10 +50,26 @@ def render_repository_bundle(
     sources: Mapping[str, bytes],
     *,
     interface: Interface,
+    execution_policy: ExecutionPolicy | ExecutionPolicyV2 | None = None,
+    runtime_image: RuntimeImage | None = None,
 ) -> dict[str, bytes]:
+    if isinstance(execution_policy, ExecutionPolicyV2):
+        if runtime_image is None:
+            raise ValueError("OCI requires image and platform")
+    elif runtime_image is not None:
+        raise ValueError("Runtime image requires OCI policy")
     sources = dict(sources)
     contract = plan_repository_interface(
-        catalog, graph, readiness, policy, exposure, sources, interface=interface
+        catalog,
+        graph,
+        readiness,
+        policy,
+        exposure,
+        sources,
+        interface=interface,
+        execution_mode=execution_policy.backend
+        if execution_policy is not None
+        else "direct",
     )
     contract_bytes = canonical_bytes(contract)
     contract_digest = Digest.of_bytes(contract_bytes)
@@ -141,4 +159,8 @@ def render_repository_bundle(
             },
         )
     artifacts["apizr-repository-" + interface + ".json"] = canonical_bytes(manifest)
+    if execution_policy is not None:
+        from apizr.governed_repository.embedding import govern
+
+        return govern(artifacts, execution_policy, runtime_image, interface)
     return dict(sorted(artifacts.items()))

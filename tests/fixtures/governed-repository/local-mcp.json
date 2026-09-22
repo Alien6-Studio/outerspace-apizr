@@ -1,0 +1,911 @@
+{
+  "bridge": {
+    "artifacts": {
+      "apizr_governed/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/capabilities/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/capabilities/model.py": {
+        "algorithm": "sha256",
+        "value": "aa3c654a9a2b8060c052d78908f1b358a91585459375d6e7d3b44961d2276367"
+      },
+      "apizr_governed/capabilities/types.py": {
+        "algorithm": "sha256",
+        "value": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+      },
+      "apizr_governed/execution/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/execution/invocation.py": {
+        "algorithm": "sha256",
+        "value": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+      },
+      "apizr_governed/execution/model.py": {
+        "algorithm": "sha256",
+        "value": "16b7514dacb10b20b6e68eec52f03423e7bb884642862567f84c232a75a31f05"
+      },
+      "apizr_governed/execution/policy.py": {
+        "algorithm": "sha256",
+        "value": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+      },
+      "apizr_governed/execution/protocol.py": {
+        "algorithm": "sha256",
+        "value": "12f18c62ff10b6932daf3a95de469736f9d79de806806707cff2d88a2fd1e9a5"
+      },
+      "apizr_governed/execution/serialization.py": {
+        "algorithm": "sha256",
+        "value": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+      },
+      "apizr_governed/execution/supervisor.py": {
+        "algorithm": "sha256",
+        "value": "4b7b6d1657429ed6d30f44f1b4d277bd73ce5da51705b51d5f8c43be0280a0f3"
+      },
+      "apizr_governed/generators/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/generators/mcp/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/generators/mcp/model.py": {
+        "algorithm": "sha256",
+        "value": "934ffdf782eac0e6c8e57ad4d00b4933ccc595fc282ac0589b2cd3c16658e353"
+      },
+      "apizr_governed/generators/rest/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/generators/rest/model.py": {
+        "algorithm": "sha256",
+        "value": "54eac069d7ae20da63a326aa97e3e1dd6b33ee83001fb47fb9cf2054f1e0e761"
+      },
+      "apizr_governed/governed_repository/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/governed_repository/mcp.py": {
+        "algorithm": "sha256",
+        "value": "f40a309defae9b9c08384799a70589d167305cfbd4523a3ea794a5017f4d0a56"
+      },
+      "apizr_governed/governed_repository/model.py": {
+        "algorithm": "sha256",
+        "value": "9efad8c8d9be8b07f52f716970eead3c578ac81d84b439a1754ec9fde81eb26b"
+      },
+      "apizr_governed/governed_repository/runtime.py": {
+        "algorithm": "sha256",
+        "value": "fc9bfe30e402d0207f0be47100aa86a9733f5ee91495906bb8d3c6aa8a47c1d1"
+      },
+      "apizr_governed/interfaces/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/interfaces/model.py": {
+        "algorithm": "sha256",
+        "value": "af6cbd6482694fc6ff29f54635425b6844aeae845fc90e7e8c74a4c81e1546fc"
+      },
+      "apizr_governed/interfaces/runtime.py": {
+        "algorithm": "sha256",
+        "value": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14"
+      },
+      "apizr_governed/interfaces/serialization.py": {
+        "algorithm": "sha256",
+        "value": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+      },
+      "apizr_governed/oci/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/oci/docker.py": {
+        "algorithm": "sha256",
+        "value": "1c2c88970078b55c78c407139f6ed7416375b1d6aa02513a870607cb43fe97f9"
+      },
+      "apizr_governed/oci/model.py": {
+        "algorithm": "sha256",
+        "value": "5c6c402568ac16abcce58e7b93c420710727a22805fad54b7362d2e36f4facb4"
+      },
+      "apizr_governed/oci/planner.py": {
+        "algorithm": "sha256",
+        "value": "55de811e888f00d22cb4f0696318e23564b7a7e98769083390b303715cf1524e"
+      },
+      "apizr_governed/oci/provider.py": {
+        "algorithm": "sha256",
+        "value": "275c1d560c5d11088582e824e2346cb5a8f4e4cfb678728be9efa57226718718"
+      },
+      "apizr_governed/repository/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/repository/policy.py": {
+        "algorithm": "sha256",
+        "value": "e19dd6640364754ded3ff7791197d83d9b8e5cbb3c459bcfac7e483953f6292c"
+      },
+      "apizr_governed/repository_execution/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/repository_execution/docker.py": {
+        "algorithm": "sha256",
+        "value": "d2efbd972f78eecc5fa78debc6a1aae819d8692a532ad346d53a12c4a6343deb"
+      },
+      "apizr_governed/repository_execution/model.py": {
+        "algorithm": "sha256",
+        "value": "06a6fcd8243c9241bbf08a12d71e366541ace090e8c31ae17e8fd5e4f641c423"
+      },
+      "apizr_governed/repository_execution/planner.py": {
+        "algorithm": "sha256",
+        "value": "d46964cf1478aee434e552cb0e5ab4bdfa061a47dd17ca4418f6da3a695e1176"
+      },
+      "apizr_governed/repository_execution/supervisor.py": {
+        "algorithm": "sha256",
+        "value": "1944b68e16a55bf347bb7f3ad6891b9e0522a2fddc0bd0295611d43251dec42b"
+      },
+      "apizr_governed/repository_execution/worker.py": {
+        "algorithm": "sha256",
+        "value": "6ed3536411e03cc5902f893fd376fecf1c7bd4c9de320b39c07410800b94f7bb"
+      },
+      "apizr_governed/repository_interfaces/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/repository_interfaces/model.py": {
+        "algorithm": "sha256",
+        "value": "d69721c1f49a1390ced3bc625936e98555c017dec0909158f0572334cb769633"
+      },
+      "apizr_governed/repository_interfaces/runtime.py": {
+        "algorithm": "sha256",
+        "value": "d34f3b6f84035a62c00929159a4ddec643d6e9dc618cfc6fd9ed64ca5c548f96"
+      },
+      "capability-catalog.json": {
+        "algorithm": "sha256",
+        "value": "3374226143f10b3dc4785074ecdf1c1c2d61011dda2a7757505d3e9db2b4617e"
+      },
+      "capability-graph.json": {
+        "algorithm": "sha256",
+        "value": "1e2c044360f6d4fcdc03ddf2c5a59b02743cb45d67329971e9db26b8a9c8974b"
+      },
+      "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
+        "algorithm": "sha256",
+        "value": "ddb2a0d44d06d065a94b89019e49fc15ec0e720f9fd2930feee820c9a5cae954"
+      },
+      "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json": {
+        "algorithm": "sha256",
+        "value": "522b89e29fa43cb2d34defc5f28521424bc4ed33d4305462f374538f44d0bb15"
+      },
+      "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json": {
+        "algorithm": "sha256",
+        "value": "b28ae7520409fbca671116989ed0f464a4d84276f19db94dbc25b2186e603483"
+      },
+      "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json": {
+        "algorithm": "sha256",
+        "value": "4dff8ee73632e81022981c3637fcd1ba291f950a70894cd76d3d578b771c2f03"
+      },
+      "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json": {
+        "algorithm": "sha256",
+        "value": "3fb5856587a8f73f99fdde386767feb6e605b720554c2fc0e1771b495df2fde1"
+      },
+      "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json": {
+        "algorithm": "sha256",
+        "value": "a76fe6f3d88389ade7d18ddbd0b070a81ea52dcf6df75812f6b696f12a5ce0a0"
+      },
+      "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json": {
+        "algorithm": "sha256",
+        "value": "0d3794a3d318c06292fd86504e52ea1298a8815335373c311866ccdddf3de6b0"
+      },
+      "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json": {
+        "algorithm": "sha256",
+        "value": "1db689e1a38dea27d509b2d6a041566a59acd3d20c74198f30ecca49a7e9ea28"
+      },
+      "execution/policy.json": {
+        "algorithm": "sha256",
+        "value": "e8b05fb2d6f3c81bb27a3a9fe4bca7d4ab28b001b3a73c2230e19314c5201d6b"
+      },
+      "execution/worker.py": {
+        "algorithm": "sha256",
+        "value": "cf4cff342062636f06f20610abc263b41e9f448e6db115f0b66d6902c338b9d5"
+      },
+      "exposure-plan.json": {
+        "algorithm": "sha256",
+        "value": "3da18ce9e980f0d5a244fac8d5352597c15f716198ea8ad743eab677c74957f5"
+      },
+      "exposure-policy.json": {
+        "algorithm": "sha256",
+        "value": "e985bfce45471a9ce7de02de9876dae34506e3903f6158c3c39d330f99387a69"
+      },
+      "mcp-tools.json": {
+        "algorithm": "sha256",
+        "value": "372e07bf1c06b28151f2d37429101d9452f7f15da838b14c4da83595f40ad7b9"
+      },
+      "repository-interface.json": {
+        "algorithm": "sha256",
+        "value": "6bbf5c5e665ffa2ffa9bbd10e1e09b346f0d6acd7e0515c60afe584a94de1b7f"
+      },
+      "repository-readiness.json": {
+        "algorithm": "sha256",
+        "value": "56fc50c15d8ef6a1b9987863457739f2f41c7325f2d9ba8edb3c7cdd726ac730"
+      },
+      "requirements.txt": {
+        "algorithm": "sha256",
+        "value": "42009f4975689001d808da1e28665597a23620d34819c0b2040c95149e1fe5b1"
+      },
+      "server.py": {
+        "algorithm": "sha256",
+        "value": "291daad318d1d54ca9abc5d37e6b4f6ba67296ee36cd291b164891817aa15c42"
+      },
+      "source/sample/__init__.py": {
+        "algorithm": "sha256",
+        "value": "c67eb7621f104d5712bdccb66cdc440d46d734036a3a2799b737451d1d4015ad"
+      },
+      "source/sample/admin.py": {
+        "algorithm": "sha256",
+        "value": "3bd8b5555291d64ba09d0e617472655fa58fbb8d62c8b274f7e92df4f493bd4b"
+      },
+      "source/sample/api.py": {
+        "algorithm": "sha256",
+        "value": "fbe9fa3c3db171e956d07755e1613bf7ba80b85c8e9bd6ccefa411b87dae8db5"
+      },
+      "source/sample/pricing.py": {
+        "algorithm": "sha256",
+        "value": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+      }
+    },
+    "backend": "local-process",
+    "backend_version": "apizr.local-process/v1",
+    "capabilities": {
+      "python:sample.api:counter": {
+        "digest": {
+          "algorithm": "sha256",
+          "value": "522b89e29fa43cb2d34defc5f28521424bc4ed33d4305462f374538f44d0bb15"
+        },
+        "path": "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json"
+      },
+      "python:sample.api:crash": {
+        "digest": {
+          "algorithm": "sha256",
+          "value": "3fb5856587a8f73f99fdde386767feb6e605b720554c2fc0e1771b495df2fde1"
+        },
+        "path": "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json"
+      },
+      "python:sample.api:environment": {
+        "digest": {
+          "algorithm": "sha256",
+          "value": "a76fe6f3d88389ade7d18ddbd0b070a81ea52dcf6df75812f6b696f12a5ce0a0"
+        },
+        "path": "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json"
+      },
+      "python:sample.api:fail": {
+        "digest": {
+          "algorithm": "sha256",
+          "value": "0d3794a3d318c06292fd86504e52ea1298a8815335373c311866ccdddf3de6b0"
+        },
+        "path": "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json"
+      },
+      "python:sample.api:large": {
+        "digest": {
+          "algorithm": "sha256",
+          "value": "ddb2a0d44d06d065a94b89019e49fc15ec0e720f9fd2930feee820c9a5cae954"
+        },
+        "path": "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json"
+      },
+      "python:sample.api:loop": {
+        "digest": {
+          "algorithm": "sha256",
+          "value": "1db689e1a38dea27d509b2d6a041566a59acd3d20c74198f30ecca49a7e9ea28"
+        },
+        "path": "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json"
+      },
+      "python:sample.api:run": {
+        "digest": {
+          "algorithm": "sha256",
+          "value": "b28ae7520409fbca671116989ed0f464a4d84276f19db94dbc25b2186e603483"
+        },
+        "path": "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json"
+      },
+      "python:sample.pricing:run": {
+        "digest": {
+          "algorithm": "sha256",
+          "value": "4dff8ee73632e81022981c3637fcd1ba291f950a70894cd76d3d578b771c2f03"
+        },
+        "path": "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json"
+      }
+    },
+    "contract_digest": {
+      "algorithm": "sha256",
+      "value": "839544eda032948db96d35a10b434845262fbe329b5682f60df38dce34f9b612"
+    },
+    "exposure_plan_digest": {
+      "algorithm": "sha256",
+      "value": "3da18ce9e980f0d5a244fac8d5352597c15f716198ea8ad743eab677c74957f5"
+    },
+    "policy_artifact": "execution/policy.json",
+    "policy_digest": {
+      "algorithm": "sha256",
+      "value": "e8b05fb2d6f3c81bb27a3a9fe4bca7d4ab28b001b3a73c2230e19314c5201d6b"
+    },
+    "policy_version": "apizr.execution/v1",
+    "repository_interface_digest": {
+      "algorithm": "sha256",
+      "value": "6bbf5c5e665ffa2ffa9bbd10e1e09b346f0d6acd7e0515c60afe584a94de1b7f"
+    },
+    "schema_version": "apizr.repository-execution-bundle/v1",
+    "transport": "mcp"
+  },
+  "manifest": {
+    "artifacts": {
+      "apizr_governed/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/capabilities/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/capabilities/model.py": {
+        "algorithm": "sha256",
+        "value": "aa3c654a9a2b8060c052d78908f1b358a91585459375d6e7d3b44961d2276367"
+      },
+      "apizr_governed/capabilities/types.py": {
+        "algorithm": "sha256",
+        "value": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+      },
+      "apizr_governed/execution/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/execution/invocation.py": {
+        "algorithm": "sha256",
+        "value": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+      },
+      "apizr_governed/execution/model.py": {
+        "algorithm": "sha256",
+        "value": "16b7514dacb10b20b6e68eec52f03423e7bb884642862567f84c232a75a31f05"
+      },
+      "apizr_governed/execution/policy.py": {
+        "algorithm": "sha256",
+        "value": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+      },
+      "apizr_governed/execution/protocol.py": {
+        "algorithm": "sha256",
+        "value": "12f18c62ff10b6932daf3a95de469736f9d79de806806707cff2d88a2fd1e9a5"
+      },
+      "apizr_governed/execution/serialization.py": {
+        "algorithm": "sha256",
+        "value": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+      },
+      "apizr_governed/execution/supervisor.py": {
+        "algorithm": "sha256",
+        "value": "4b7b6d1657429ed6d30f44f1b4d277bd73ce5da51705b51d5f8c43be0280a0f3"
+      },
+      "apizr_governed/generators/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/generators/mcp/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/generators/mcp/model.py": {
+        "algorithm": "sha256",
+        "value": "934ffdf782eac0e6c8e57ad4d00b4933ccc595fc282ac0589b2cd3c16658e353"
+      },
+      "apizr_governed/generators/rest/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/generators/rest/model.py": {
+        "algorithm": "sha256",
+        "value": "54eac069d7ae20da63a326aa97e3e1dd6b33ee83001fb47fb9cf2054f1e0e761"
+      },
+      "apizr_governed/governed_repository/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/governed_repository/mcp.py": {
+        "algorithm": "sha256",
+        "value": "f40a309defae9b9c08384799a70589d167305cfbd4523a3ea794a5017f4d0a56"
+      },
+      "apizr_governed/governed_repository/model.py": {
+        "algorithm": "sha256",
+        "value": "9efad8c8d9be8b07f52f716970eead3c578ac81d84b439a1754ec9fde81eb26b"
+      },
+      "apizr_governed/governed_repository/runtime.py": {
+        "algorithm": "sha256",
+        "value": "fc9bfe30e402d0207f0be47100aa86a9733f5ee91495906bb8d3c6aa8a47c1d1"
+      },
+      "apizr_governed/interfaces/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/interfaces/model.py": {
+        "algorithm": "sha256",
+        "value": "af6cbd6482694fc6ff29f54635425b6844aeae845fc90e7e8c74a4c81e1546fc"
+      },
+      "apizr_governed/interfaces/runtime.py": {
+        "algorithm": "sha256",
+        "value": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14"
+      },
+      "apizr_governed/interfaces/serialization.py": {
+        "algorithm": "sha256",
+        "value": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+      },
+      "apizr_governed/oci/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/oci/docker.py": {
+        "algorithm": "sha256",
+        "value": "1c2c88970078b55c78c407139f6ed7416375b1d6aa02513a870607cb43fe97f9"
+      },
+      "apizr_governed/oci/model.py": {
+        "algorithm": "sha256",
+        "value": "5c6c402568ac16abcce58e7b93c420710727a22805fad54b7362d2e36f4facb4"
+      },
+      "apizr_governed/oci/planner.py": {
+        "algorithm": "sha256",
+        "value": "55de811e888f00d22cb4f0696318e23564b7a7e98769083390b303715cf1524e"
+      },
+      "apizr_governed/oci/provider.py": {
+        "algorithm": "sha256",
+        "value": "275c1d560c5d11088582e824e2346cb5a8f4e4cfb678728be9efa57226718718"
+      },
+      "apizr_governed/repository/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/repository/policy.py": {
+        "algorithm": "sha256",
+        "value": "e19dd6640364754ded3ff7791197d83d9b8e5cbb3c459bcfac7e483953f6292c"
+      },
+      "apizr_governed/repository_execution/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/repository_execution/docker.py": {
+        "algorithm": "sha256",
+        "value": "d2efbd972f78eecc5fa78debc6a1aae819d8692a532ad346d53a12c4a6343deb"
+      },
+      "apizr_governed/repository_execution/model.py": {
+        "algorithm": "sha256",
+        "value": "06a6fcd8243c9241bbf08a12d71e366541ace090e8c31ae17e8fd5e4f641c423"
+      },
+      "apizr_governed/repository_execution/planner.py": {
+        "algorithm": "sha256",
+        "value": "d46964cf1478aee434e552cb0e5ab4bdfa061a47dd17ca4418f6da3a695e1176"
+      },
+      "apizr_governed/repository_execution/supervisor.py": {
+        "algorithm": "sha256",
+        "value": "1944b68e16a55bf347bb7f3ad6891b9e0522a2fddc0bd0295611d43251dec42b"
+      },
+      "apizr_governed/repository_execution/worker.py": {
+        "algorithm": "sha256",
+        "value": "6ed3536411e03cc5902f893fd376fecf1c7bd4c9de320b39c07410800b94f7bb"
+      },
+      "apizr_governed/repository_interfaces/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/repository_interfaces/model.py": {
+        "algorithm": "sha256",
+        "value": "d69721c1f49a1390ced3bc625936e98555c017dec0909158f0572334cb769633"
+      },
+      "apizr_governed/repository_interfaces/runtime.py": {
+        "algorithm": "sha256",
+        "value": "d34f3b6f84035a62c00929159a4ddec643d6e9dc618cfc6fd9ed64ca5c548f96"
+      },
+      "capability-catalog.json": {
+        "algorithm": "sha256",
+        "value": "3374226143f10b3dc4785074ecdf1c1c2d61011dda2a7757505d3e9db2b4617e"
+      },
+      "capability-graph.json": {
+        "algorithm": "sha256",
+        "value": "1e2c044360f6d4fcdc03ddf2c5a59b02743cb45d67329971e9db26b8a9c8974b"
+      },
+      "execution/bundle.json": {
+        "algorithm": "sha256",
+        "value": "741e329a9e89aba78676cdd13d63bd26cfff1d9834d8bf00947c34118761390e"
+      },
+      "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
+        "algorithm": "sha256",
+        "value": "ddb2a0d44d06d065a94b89019e49fc15ec0e720f9fd2930feee820c9a5cae954"
+      },
+      "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json": {
+        "algorithm": "sha256",
+        "value": "522b89e29fa43cb2d34defc5f28521424bc4ed33d4305462f374538f44d0bb15"
+      },
+      "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json": {
+        "algorithm": "sha256",
+        "value": "b28ae7520409fbca671116989ed0f464a4d84276f19db94dbc25b2186e603483"
+      },
+      "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json": {
+        "algorithm": "sha256",
+        "value": "4dff8ee73632e81022981c3637fcd1ba291f950a70894cd76d3d578b771c2f03"
+      },
+      "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json": {
+        "algorithm": "sha256",
+        "value": "3fb5856587a8f73f99fdde386767feb6e605b720554c2fc0e1771b495df2fde1"
+      },
+      "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json": {
+        "algorithm": "sha256",
+        "value": "a76fe6f3d88389ade7d18ddbd0b070a81ea52dcf6df75812f6b696f12a5ce0a0"
+      },
+      "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json": {
+        "algorithm": "sha256",
+        "value": "0d3794a3d318c06292fd86504e52ea1298a8815335373c311866ccdddf3de6b0"
+      },
+      "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json": {
+        "algorithm": "sha256",
+        "value": "1db689e1a38dea27d509b2d6a041566a59acd3d20c74198f30ecca49a7e9ea28"
+      },
+      "execution/policy.json": {
+        "algorithm": "sha256",
+        "value": "e8b05fb2d6f3c81bb27a3a9fe4bca7d4ab28b001b3a73c2230e19314c5201d6b"
+      },
+      "execution/worker.py": {
+        "algorithm": "sha256",
+        "value": "cf4cff342062636f06f20610abc263b41e9f448e6db115f0b66d6902c338b9d5"
+      },
+      "exposure-plan.json": {
+        "algorithm": "sha256",
+        "value": "3da18ce9e980f0d5a244fac8d5352597c15f716198ea8ad743eab677c74957f5"
+      },
+      "exposure-policy.json": {
+        "algorithm": "sha256",
+        "value": "e985bfce45471a9ce7de02de9876dae34506e3903f6158c3c39d330f99387a69"
+      },
+      "mcp-tools.json": {
+        "algorithm": "sha256",
+        "value": "372e07bf1c06b28151f2d37429101d9452f7f15da838b14c4da83595f40ad7b9"
+      },
+      "repository-interface.json": {
+        "algorithm": "sha256",
+        "value": "6bbf5c5e665ffa2ffa9bbd10e1e09b346f0d6acd7e0515c60afe584a94de1b7f"
+      },
+      "repository-readiness.json": {
+        "algorithm": "sha256",
+        "value": "56fc50c15d8ef6a1b9987863457739f2f41c7325f2d9ba8edb3c7cdd726ac730"
+      },
+      "requirements.txt": {
+        "algorithm": "sha256",
+        "value": "42009f4975689001d808da1e28665597a23620d34819c0b2040c95149e1fe5b1"
+      },
+      "server.py": {
+        "algorithm": "sha256",
+        "value": "291daad318d1d54ca9abc5d37e6b4f6ba67296ee36cd291b164891817aa15c42"
+      },
+      "source/sample/__init__.py": {
+        "algorithm": "sha256",
+        "value": "c67eb7621f104d5712bdccb66cdc440d46d734036a3a2799b737451d1d4015ad"
+      },
+      "source/sample/admin.py": {
+        "algorithm": "sha256",
+        "value": "3bd8b5555291d64ba09d0e617472655fa58fbb8d62c8b274f7e92df4f493bd4b"
+      },
+      "source/sample/api.py": {
+        "algorithm": "sha256",
+        "value": "fbe9fa3c3db171e956d07755e1613bf7ba80b85c8e9bd6ccefa411b87dae8db5"
+      },
+      "source/sample/pricing.py": {
+        "algorithm": "sha256",
+        "value": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+      }
+    },
+    "exposure_plan_digest": {
+      "algorithm": "sha256",
+      "value": "3da18ce9e980f0d5a244fac8d5352597c15f716198ea8ad743eab677c74957f5"
+    },
+    "protocol": {
+      "sdk": "mcp>=2.2,<3",
+      "target": "2026-07-28"
+    },
+    "repository_interface_digest": {
+      "algorithm": "sha256",
+      "value": "6bbf5c5e665ffa2ffa9bbd10e1e09b346f0d6acd7e0515c60afe584a94de1b7f"
+    },
+    "schema_version": "apizr.repository-mcp/v1",
+    "sources": [
+      {
+        "bundle_path": "source/sample/__init__.py",
+        "is_package": true,
+        "module": "sample",
+        "size": 41,
+        "source_digest": {
+          "algorithm": "sha256",
+          "value": "c67eb7621f104d5712bdccb66cdc440d46d734036a3a2799b737451d1d4015ad"
+        },
+        "source_path": "sample/__init__.py"
+      },
+      {
+        "bundle_path": "source/sample/admin.py",
+        "is_package": false,
+        "module": "sample.admin",
+        "size": 49,
+        "source_digest": {
+          "algorithm": "sha256",
+          "value": "3bd8b5555291d64ba09d0e617472655fa58fbb8d62c8b274f7e92df4f493bd4b"
+        },
+        "source_path": "sample/admin.py"
+      },
+      {
+        "bundle_path": "source/sample/api.py",
+        "is_package": false,
+        "module": "sample.api",
+        "size": 553,
+        "source_digest": {
+          "algorithm": "sha256",
+          "value": "fbe9fa3c3db171e956d07755e1613bf7ba80b85c8e9bd6ccefa411b87dae8db5"
+        },
+        "source_path": "sample/api.py"
+      },
+      {
+        "bundle_path": "source/sample/pricing.py",
+        "is_package": false,
+        "module": "sample.pricing",
+        "size": 129,
+        "source_digest": {
+          "algorithm": "sha256",
+          "value": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+        },
+        "source_path": "sample/pricing.py"
+      }
+    ],
+    "tools": [
+      {
+        "capability_id": "python:sample.api:counter",
+        "description": null,
+        "execution": "sync",
+        "input_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "default": {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "name": "counter",
+        "parameters": [
+          {
+            "kind": "positional_or_keyword",
+            "name": "default",
+            "required": false,
+            "type": {
+              "items": [
+                {
+                  "items": [],
+                  "kind": "int",
+                  "values": [],
+                  "variadic": false
+                }
+              ],
+              "kind": "list",
+              "values": [],
+              "variadic": false
+            }
+          }
+        ],
+        "returns": {
+          "items": [],
+          "kind": "any",
+          "values": [],
+          "variadic": false
+        },
+        "tool_name": "sample.api.counter"
+      },
+      {
+        "capability_id": "python:sample.api:crash",
+        "description": null,
+        "execution": "sync",
+        "input_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "required": [],
+          "type": "object"
+        },
+        "name": "crash",
+        "parameters": [],
+        "returns": {
+          "items": [],
+          "kind": "any",
+          "values": [],
+          "variadic": false
+        },
+        "tool_name": "sample.api.crash"
+      },
+      {
+        "capability_id": "python:sample.api:environment",
+        "description": null,
+        "execution": "sync",
+        "input_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "required": [],
+          "type": "object"
+        },
+        "name": "environment",
+        "parameters": [],
+        "returns": {
+          "items": [],
+          "kind": "any",
+          "values": [],
+          "variadic": false
+        },
+        "tool_name": "sample.api.environment"
+      },
+      {
+        "capability_id": "python:sample.api:fail",
+        "description": null,
+        "execution": "sync",
+        "input_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "required": [],
+          "type": "object"
+        },
+        "name": "fail",
+        "parameters": [],
+        "returns": {
+          "items": [],
+          "kind": "any",
+          "values": [],
+          "variadic": false
+        },
+        "tool_name": "sample.api.fail"
+      },
+      {
+        "capability_id": "python:sample.api:large",
+        "description": null,
+        "execution": "sync",
+        "input_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "n": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "n"
+          ],
+          "type": "object"
+        },
+        "name": "large",
+        "parameters": [
+          {
+            "kind": "positional_or_keyword",
+            "name": "n",
+            "required": true,
+            "type": {
+              "items": [],
+              "kind": "int",
+              "values": [],
+              "variadic": false
+            }
+          }
+        ],
+        "returns": {
+          "items": [],
+          "kind": "any",
+          "values": [],
+          "variadic": false
+        },
+        "tool_name": "sample.api.large"
+      },
+      {
+        "capability_id": "python:sample.api:loop",
+        "description": null,
+        "execution": "sync",
+        "input_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "required": [],
+          "type": "object"
+        },
+        "name": "loop",
+        "parameters": [],
+        "returns": {
+          "items": [],
+          "kind": "any",
+          "values": [],
+          "variadic": false
+        },
+        "tool_name": "sample.api.loop"
+      },
+      {
+        "capability_id": "python:sample.api:run",
+        "description": null,
+        "execution": "sync",
+        "input_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "a": {
+              "type": "integer"
+            },
+            "b": {
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "name": "run",
+        "parameters": [
+          {
+            "kind": "positional_only",
+            "name": "a",
+            "required": false,
+            "type": {
+              "items": [],
+              "kind": "int",
+              "values": [],
+              "variadic": false
+            }
+          },
+          {
+            "kind": "keyword_only",
+            "name": "b",
+            "required": false,
+            "type": {
+              "items": [],
+              "kind": "int",
+              "values": [],
+              "variadic": false
+            }
+          }
+        ],
+        "returns": {
+          "items": [],
+          "kind": "any",
+          "values": [],
+          "variadic": false
+        },
+        "tool_name": "sample.api.run"
+      },
+      {
+        "capability_id": "python:sample.pricing:run",
+        "description": null,
+        "execution": "async",
+        "input_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "x": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "x"
+          ],
+          "type": "object"
+        },
+        "name": "run",
+        "parameters": [
+          {
+            "kind": "positional_or_keyword",
+            "name": "x",
+            "required": true,
+            "type": {
+              "items": [],
+              "kind": "int",
+              "values": [],
+              "variadic": false
+            }
+          }
+        ],
+        "returns": {
+          "items": [],
+          "kind": "any",
+          "values": [],
+          "variadic": false
+        },
+        "tool_name": "sample.pricing.run"
+      }
+    ]
+  }
+}
