@@ -34,7 +34,8 @@ None of these static assessments grants trust or makes arbitrary Python safe.
 
 The legacy duplicate-definition/overload limitation remains open as
 [#28](https://github.com/Alien6-Studio/outerspace-apizr/issues/28). Class/method
-capabilities and absolute subprocess prohibition remain unsupported. See the
+capabilities remain unsupported. The 0.3 development line adds an opt-in
+[strict OCI subprocess-deny profile](../../architecture/subprocess-deny.md). See the
 [0.2.0 release notes](../../releases/0.2.0.md) for scope and boundaries.
 
 ## PyPI ownership

@@ -138,7 +138,8 @@ The execution backends remain **experimental**: policy contracts and refusal
 behavior are tested, but they are not a general untrusted-code service.
 A local process provides bounded execution, **not filesystem or network isolation**.
 OCI adds Linux container controls and requires a trusted Docker host and worker
-image; it is not a VM boundary. Absolute subprocess prohibition remains unsupported.
+image; it is not a VM boundary. The optional strict OCI profile can prohibit process and thread creation before
+project import; see the [subprocess-deny profile](https://apizr.outerspace.sh/architecture/subprocess-deny/).
 See the [execution guide](https://apizr.outerspace.sh/getting-started/user-guide/execute/).
 
 ## Legacy generation pipeline

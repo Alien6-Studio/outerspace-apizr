@@ -1,5 +1,10 @@
 # OCI container runtime v1
 
+The original backend contract described here is unchanged. The 0.3 development
+line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
+with a separate worker protocol; v1 static adapters retain their original guarantees.
+
+
 This second backend executes one selected READY capability in a fresh Linux
 container. It is available through `apizr execute` and `apizr.oci` Python APIs.
 [Governed REST/MCP OCI bundles](governed-oci-transports-v2.md) reuse this backend

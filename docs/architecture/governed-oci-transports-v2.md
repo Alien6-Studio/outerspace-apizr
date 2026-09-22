@@ -1,5 +1,10 @@
 # Governed OCI transport bridge v2
 
+The original backend contract described here is unchanged. The 0.3 development
+line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
+with a separate worker protocol; v1 static adapters retain their original guarantees.
+
+
 REST and MCP can explicitly select the existing OCI-container executor. This is a
 transport integration; the independently validated [OCI backend](oci-container-runtime-v1.md),
 Capability IR, Readiness and shared invocation contract retain their semantics.

@@ -28,6 +28,20 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "subprocess-deny-kernel-action",
+        "src/apizr/subprocess_guard/filter.py",
+        "DENIED = 0x00050000 | errno.EPERM",
+        "DENIED = 0x7FFF0000",
+        "tests/subprocess_guard/test_contract.py::test_bpf_denies_native_creation_compat_abis_and_x32_aliases",
+    ),
+    Mutation(
+        "subprocess-deny-worker-protocol",
+        "src/apizr/subprocess_guard/provider.py",
+        "if image.Id != runtime.image or image.Config.Labels.get(LABEL) != PROTOCOL:",
+        "if image.Id != runtime.image:",
+        "tests/subprocess_guard/test_contract.py::test_provider_requires_independent_protocol_label",
+    ),
+    Mutation(
         "analysis-executes-source",
         "src/apizr/capabilities/analyzer.py",
         '    tree = ast.parse(text, filename="<capability-source>")',

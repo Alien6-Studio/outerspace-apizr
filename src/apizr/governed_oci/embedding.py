@@ -61,7 +61,10 @@ def govern(
     runtime_image = RuntimeImage.model_validate(runtime_image.model_dump(mode="json"))
     plans: dict[str, PlanArtifact] = {}
     for contract in contracts:
-        runtime = plan(
+        selected_plan = plan
+        if policy.subprocess.mode == "deny":
+            from apizr.subprocess_guard.single import plan as selected_plan
+        runtime = selected_plan(
             inspection,
             source_bytes,
             contract["capability_id"],
@@ -74,7 +77,12 @@ def govern(
         plans[runtime.worker.capability_id] = PlanArtifact(
             path=path, digest=digest(runtime)
         )
-    artifacts.update(runtime_files(transport))
+    runtime_artifacts = runtime_files(transport)
+    if policy.subprocess.mode == "deny":
+        from apizr.subprocess_guard.embedding import strict_files
+
+        runtime_artifacts = strict_files(runtime_artifacts)
+    artifacts.update(runtime_artifacts)
     artifacts["execution/policy.json"] = canonical_bytes(policy)
     artifacts["requirements.txt"] += b"pydantic>=2.12,<3\n"
     bundle = ExecutionBundle(
