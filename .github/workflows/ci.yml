@@ -63,6 +63,8 @@ jobs:
       - run: uv run --locked coverage report --include='src/apizr/repository/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/graph/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/repository_readiness/*' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/exposure/*' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/exposure_cli.py' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/readiness_cli.py,src/apizr/repository_readiness_cli.py,src/apizr/repository_cli.py' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
 

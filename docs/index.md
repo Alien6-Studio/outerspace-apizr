@@ -12,10 +12,14 @@ Understand what existing Python code can expose before connecting it to an API o
 a tool client. Scan a codebase, inspect its capability graph, expose eligible
 functions through REST or MCP, and execute trusted code under explicit policies.
 
-**Python 3.11–3.14 · 0.2.0 · GPL-3.0-or-later**
+**Python 3.11–3.14 · Stable 0.2.1 · GPL-3.0-or-later**
+
+Development line: **0.3.0** (`0.3.0.dev0`).
+[Exposure planning](getting-started/user-guide/exposure.md) is available in the
+development checkout; it is not part of the stable PyPI release.
 
 [Start with a small Python project](getting-started/introduction.md){ .md-button .md-button--primary }
-[Read the 0.2.0 release notes](releases/0.2.0.md){ .md-button }
+[Read the 0.2.1 release notes](releases/0.2.1.md){ .md-button }
 
 ## Discover
 

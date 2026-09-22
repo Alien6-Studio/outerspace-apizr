@@ -1,12 +1,16 @@
 # Capability Compiler architecture
 
-Apizr 0.2.0 discovers capabilities in existing Python software, describes what is
+Stable Apizr 0.2.1 discovers capabilities in existing Python software, describes what is
 statically known, and generates interfaces for eligible contracts.
 
 ```text
 Python repository → Scanner → Capability Catalog → Capability Graph
 Scripts / notebooks ──────────────→ Capability IR + static readiness
 Catalog + Graph ─────────────────→ Repository Readiness (policy evidence)
+                                            ↓ + Exposure Policy (0.3 development)
+                                      Exposure Plan
+                                            ↓
+                              FUTURE repository REST/MCP bundle
 Capability IR + static readiness → Interface Contract → REST / MCP
                                                           ↓
                                       direct or governed execution
@@ -28,6 +32,15 @@ contracts. [Repository Readiness](repository-readiness-v1.md) combines catalog,
 graph and policy evidence, preserving declaration-level results and unknowns.
 It does not test runtime availability or grant access. `READY` never means safe.
 Imports are not calls, discovery is not trust, and unknown effects remain unknown.
+
+## Plan exposure (0.3 development)
+
+[Exposure Plan v1](exposure-plan-v1.md) records explicit operator selections
+against complete repository evidence. It binds the Catalog, Graph, Readiness and
+Exposure Policy digests, validates requested interfaces and execution modes,
+and retains direct relationships without automatically exposing dependencies.
+The development package is `0.3.0.dev0`; stable remains 0.2.1. Repository-level
+bundle generation is a future stage.
 
 ## Generate interfaces
 

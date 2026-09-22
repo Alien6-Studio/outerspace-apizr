@@ -92,6 +92,7 @@ nav:
       - Inspect capability relationships: getting-started/user-guide/graph.md
       - Inspect source without running it: getting-started/user-guide/inspect.md
       - Assess repository exposure evidence: getting-started/user-guide/repository-readiness.md
+      - Plan exposure (0.3 development): getting-started/user-guide/exposure.md
       - Generate a REST interface: getting-started/user-guide/rest.md
       - Generate an MCP server: getting-started/user-guide/mcp.md
       - Execute code with a policy: getting-started/user-guide/execute.md
@@ -118,6 +119,7 @@ nav:
           - Capability Compiler overview: architecture/overview.md
           - Repository Scanner and Catalog v1: architecture/repository-scanner-v1.md
           - Repository Readiness v1: architecture/repository-readiness-v1.md
+          - Exposure Plan v1 (0.3 development): architecture/exposure-plan-v1.md
           - Capability Graph v1: architecture/capability-graph-v1.md
           - Capability IR v1: architecture/capability-ir-v1.md
           - Static readiness v1: architecture/capability-readiness-v1.md

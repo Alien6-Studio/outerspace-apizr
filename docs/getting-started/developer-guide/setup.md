@@ -29,6 +29,8 @@ uv run coverage report --include='src/apizr/execution/*' --fail-under=90
 uv run coverage report --include='src/apizr/governed/*' --fail-under=90
 uv run coverage report --include='src/apizr/repository/*' --fail-under=90
 uv run coverage report --include='src/apizr/graph/*' --fail-under=90
+uv run coverage report --include='src/apizr/exposure/*' --fail-under=90
+uv run coverage report --include='src/apizr/exposure_cli.py' --fail-under=90
 uv run coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
 uv run pre-commit run --all-files
 uv build
@@ -42,8 +44,9 @@ of notebook conversion. Pyright uses standard mode on production/tooling code an
 strict mode for `apizr.capabilities`, `apizr.readiness` and `apizr.generators.rest`, targeting Python 3.11 syntax and APIs.
 Dynamic legacy metadata and pipeline state still have incomplete inferred types.
 
-Coverage has a global 55% branch-aware floor and a separate 90% floor for the
-capability, readiness and REST packages individually (including the REST runtime adapter). Generated applications are tested functionally; their temporary
+Coverage has a global 90% branch-aware floor, a separate 59.5% measured legacy
+floor, and 90% floors for modern packages including Exposure (see CI for the full
+list). Exposure also uses strict Pyright. Generated applications are tested functionally; their temporary
 files and subprocess execution are not included in the package coverage metric.
 Point-in-time coverage measurements belong in the [engineering archive](../../architecture/records.md).
 
