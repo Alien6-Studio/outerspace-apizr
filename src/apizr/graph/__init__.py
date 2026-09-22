@@ -1,7 +1,13 @@
 """Conservative static relationships over a digest-bound Capability Catalog."""
 
 from .analysis import GraphInputError
-from .builder import RepositoryGraph, build_graph, graph_repository
+from .builder import (
+    RepositoryEvidence,
+    RepositoryGraph,
+    analyze_repository,
+    build_graph,
+    graph_repository,
+)
 from .model import Code, Graph, RelationshipKind
 from .policy import GraphPolicy
 from .serialization import graph_bytes, graph_digest, policy_bytes, policy_digest
@@ -9,6 +15,8 @@ from .serialization import graph_bytes, graph_digest, policy_bytes, policy_diges
 __all__ = [
     "GraphInputError",
     "RepositoryGraph",
+    "RepositoryEvidence",
+    "analyze_repository",
     "build_graph",
     "graph_repository",
     "Code",

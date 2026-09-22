@@ -12,7 +12,7 @@ Catalog → Graph → Repository Readiness
                           ↓
                     Exposure Plan
                           ↓
-           FUTURE repository REST/MCP bundle
+           Direct repository REST/MCP bundle
 ```
 
 ## Independent contracts and pure boundary
@@ -92,7 +92,7 @@ An empty selection has no affected capability and remains valid.
 
 “Contract-compatible” does not mean runtime-available. The plan has no worker
 image, environment values, secrets, user identities, permissions or runtime
-configuration. Actual runtime choice/binding belongs to a future stage.
+configuration. Runtime binding belongs to the bundle/runtime stage.
 
 ## Complete evidence and fail-closed behavior
 
@@ -159,14 +159,16 @@ relocation, strictness, digest mutations, tampering and audit-hook non-execution
 ## CLI and future scope
 
 See the [exposure guide](../getting-started/user-guide/exposure.md). The CLI uses
-one `graph_repository` discovery for Catalog and Graph, assesses readiness once,
+one `analyze_repository` discovery for Catalog and Graph, assesses readiness once,
 then calls the pure planner. Verification recomputes readiness conclusions from
 those artifacts without rediscovery or source parsing.
 
 [#87](https://github.com/Alien6-Studio/outerspace-apizr/issues/87) covers planning.
-[#88](https://github.com/Alien6-Studio/outerspace-apizr/issues/88) is the deferred
-repository REST/MCP bundle stage. No `expose build`/`serve`, new transport, RBAC,
-approval service or dependency-stack split is implemented here. Existing issues
+[#88](https://github.com/Alien6-Studio/outerspace-apizr/issues/88) adds the
+[direct repository bundle stage](repository-bundle-v1.md) through `expose build`.
+Governed repository execution remains deferred to
+[#90](https://github.com/Alien6-Studio/outerspace-apizr/issues/90). There is no
+`expose serve`, RBAC, approval service or dependency-stack split. Existing issues
 [#28](https://github.com/Alien6-Studio/outerspace-apizr/issues/28),
 [#49](https://github.com/Alien6-Studio/outerspace-apizr/issues/49) and
 [#63](https://github.com/Alien6-Studio/outerspace-apizr/issues/63) remain open.

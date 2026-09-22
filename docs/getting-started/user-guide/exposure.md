@@ -106,8 +106,69 @@ incomplete evidence exit 1. All existing scan/graph bounds are available:
 relationship, call and import limits. Each source is discovered/read once;
 planning does not rescan it.
 
-`apizr expose build` and `apizr expose serve` do not exist yet. Continue to use
-the existing individual REST/MCP generators separately. Repository-level
-bundles are tracked in [#88](https://github.com/Alien6-Studio/outerspace-apizr/issues/88).
-See [Exposure Plan v1](../../architecture/exposure-plan-v1.md) for model, schema,
-serialization, digest and validation details.
+## Build a direct repository bundle
+
+Create `direct-readiness.json`:
+
+```json
+{"execution": {"modes": ["direct"]}}
+```
+
+Then build one interface for your explicitly selected eligible capabilities:
+
+```sh
+apizr expose build rest . --source-root src \
+  --readiness-policy direct-readiness.json \
+  --interface rest --execution-mode direct \
+  --select python:shop.api:run --select python:shop.pricing:run \
+  --output-dir .output/rest
+
+apizr expose build mcp . --source-root src \
+  --readiness-policy direct-readiness.json --policy direct-exposure.json \
+  --output-dir .output/mcp
+```
+
+For the second example, create `direct-exposure.json` with `interfaces: ["mcp"]`,
+`execution: {"allowed": ["direct"]}` and explicit selection IDs, using the
+Exposure Policy format above. The target must already be permitted by the policy.
+The builder cannot use the earlier OCI-only example or silently add direct mode.
+
+REST routes and MCP Tool names include the module, such as `shop.api.run` and
+`shop.pricing.run`. Only selected capabilities are public. All inspected sources
+under the scanner roots are copied, including unselected helpers and modules;
+use `--source-root` and `--exclude-dir` to keep tests or other code out of scope.
+Unrelated bundled modules are not imported simply because they are present.
+
+Run the generated artifacts in a prepared environment:
+
+```sh
+cd .output/rest
+python -m pip install -r requirements.txt
+uvicorn app:app --host 127.0.0.1 --port 8000
+```
+
+For MCP, use `python server.py --transport stdio` or
+`python server.py --transport streamable-http --port 8000` from its output directory.
+Transport requirements do not install your application's dependencies; provisioning
+those is an explicit operator responsibility. Generation never queries or installs
+them. Source/resources outside the scanned Python universe are not copied.
+
+These servers execute trusted code directly. Global state and mutable defaults
+persist across calls. Local-process/OCI repository execution is deferred to
+[#90](https://github.com/Alien6-Studio/outerspace-apizr/issues/90).
+
+Existing Readiness restrictions still apply. In particular, a local/relative
+import in a selected declaration or its module may make it ineligible;
+`--allow-conditional` cannot override the shared interface contract. Cross-module
+support is available for plans the existing pipeline actually accepts (for
+example, a selected function calling an unexposed helper with a relative import).
+There is no new dependency-closure or transitive safety claim.
+
+Build exits 0 on success, 1 on exposure/bundle refusal, and 2 on invalid or
+operational input. A valid empty Exposure Plan is refused for a server build.
+The output must be new or empty: staging and atomic publication prevent partial
+bundles and overwriting existing contents. There is no saved-plan CLI shortcut.
+
+See [Repository Bundle v1](../../architecture/repository-bundle-v1.md) for exact
+integrity, packaging and runtime semantics, and
+[Exposure Plan v1](../../architecture/exposure-plan-v1.md) for planning contracts.

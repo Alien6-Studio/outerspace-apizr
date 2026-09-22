@@ -5,7 +5,7 @@ from collections.abc import Mapping
 from pathlib import Path, PurePosixPath
 
 
-def _directory(parent: int, name: str) -> int:
+def open_directory(parent: int, name: str) -> int:
     try:
         os.mkdir(name, mode=0o755, dir_fd=parent)
     except FileExistsError:
@@ -35,7 +35,7 @@ def write_bundle(output: str | Path, artifacts: Mapping[str, bytes]) -> None:
     root = os.open(absolute.anchor, os.O_RDONLY | os.O_DIRECTORY)
     try:
         for part in absolute.parts[1:]:
-            child = _directory(root, part)
+            child = open_directory(root, part)
             os.close(root)
             root = child
         if os.listdir(root):
@@ -47,7 +47,7 @@ def write_bundle(output: str | Path, artifacts: Mapping[str, bytes]) -> None:
             try:
                 parts = PurePosixPath(name).parts
                 for part in parts[:-1]:
-                    child = _directory(parent, part)
+                    child = open_directory(parent, part)
                     os.close(parent)
                     parent = child
                 descriptor = os.open(
