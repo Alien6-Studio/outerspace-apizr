@@ -24,7 +24,7 @@ class NotebookTransformr:
         return await file.read()
 
     def convert_notebook(self, content):
-        from nbformat import ValidationError
+        from nbformat import ValidationError, reads, validate
 
         # nbformat assumes a mapping and otherwise raises an internal AttributeError.
         if isinstance(content, (str, Path)):
@@ -37,11 +37,44 @@ class NotebookTransformr:
         if not isinstance(json.loads(raw), dict):
             raise ValueError("Invalid notebook structure: expected a JSON object")
         try:
-            source, resources = (
-                self.exporter.from_filename(str(content))
-                if isinstance(content, (str, Path))
-                else self.exporter.from_file(content)
-            )
+            include = set(self.configuration.include_tags)
+            exclude = set(self.configuration.exclude_tags)
+            if include or exclude:
+                notebook = reads(raw, as_version=4)
+                validate(notebook)
+                known = {
+                    tag
+                    for cell in notebook.cells
+                    if cell.cell_type == "code"
+                    for tag in cell.metadata.get("tags", [])
+                }
+                missing = (include | exclude) - known
+                if missing:
+                    raise ValueError(
+                        "Notebook code-cell tags not found: "
+                        + ", ".join(sorted(missing))
+                    )
+                notebook.cells = [
+                    cell
+                    for cell in notebook.cells
+                    if cell.cell_type != "code"
+                    or (
+                        (
+                            not include
+                            or include.intersection(cell.metadata.get("tags", []))
+                        )
+                        and not exclude.intersection(cell.metadata.get("tags", []))
+                    )
+                ]
+                if not any(cell.cell_type == "code" for cell in notebook.cells):
+                    raise ValueError("Notebook selection contains no code cells")
+                source, resources = self.exporter.from_notebook_node(notebook)
+            else:
+                source, resources = (
+                    self.exporter.from_filename(str(content))
+                    if isinstance(content, (str, Path))
+                    else self.exporter.from_file(content)
+                )
         except ValidationError as exc:
             raise ValueError("Invalid notebook structure") from exc
         tree = ast.parse(source)

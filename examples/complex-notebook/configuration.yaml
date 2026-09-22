@@ -1,0 +1,7 @@
+notebook_transformr:
+  include_tags: [deploy]
+  exclude_tags: [explore]
+code_analyzr:
+  functions_to_analyze: quote
+requirements: requirements.txt
+include: [data]

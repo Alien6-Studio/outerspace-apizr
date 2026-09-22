@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -100,6 +101,37 @@ print(apizr.__file__)
         # Both inputs live outside the repository; the installed CLI must be sufficient.
         source = root / "sample.py"
         source.write_text("def total(values: list[int]) -> int: return sum(values)\n")
+        complex_root = root / "complex-notebook"
+        shutil.copytree(notebook.parent / "complex-notebook", complex_root)
+        complex_output = root / "complex-output"
+        subprocess.run(
+            [
+                str(cli),
+                "--notebook",
+                str(complex_root / "pricing.ipynb"),
+                "--configuration",
+                str(complex_root / "configuration.yaml"),
+                "--output-dir",
+                str(complex_output),
+            ],
+            cwd=root,
+            check=True,
+            stdout=subprocess.DEVNULL,
+        )
+        assert (complex_output / "data/prices.json").read_bytes() == (
+            complex_root / "data/prices.json"
+        ).read_bytes()
+        subprocess.run(
+            [
+                str(python),
+                "-I",
+                "-c",
+                "import sys; sys.path.insert(0, sys.argv[1]); from pricing import quote; assert quote('coffee', 2) == 7.0",
+                str(complex_output),
+            ],
+            cwd=root,
+            check=True,
+        )
         local_notebook = root / "sample.ipynb"
         local_notebook.write_text(
             json.dumps(
