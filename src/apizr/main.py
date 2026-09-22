@@ -113,7 +113,11 @@ def init_context(args):
     context.lang = args.lang
     context.prompt = False
     context.requirements_path = (
-        args.requirements.resolve() if args.requirements else None
+        args.requirements.resolve()
+        if args.requirements
+        else (context.input_path.parent / configuration.requirements).resolve()
+        if configuration.requirements is not None
+        else None
     )
     return context
 
@@ -128,7 +132,7 @@ def init_engine(args, context):
         ("FastApizrStep", not args.skip_fastapi, "fast_apizr"),
         (
             "RequirementsAnalyzrStep",
-            not args.skip_pipreqs or args.requirements is not None,
+            not args.skip_pipreqs or context.requirements_path is not None,
             "dockerizr",
         ),
         ("DockerizrStep", not args.skip_docker, "dockerizr"),
@@ -206,12 +210,12 @@ def run_pipeline(args):
         if args.skip_docker:
             raise ValueError("--build-image cannot be combined with --skip-docker")
     source_dir = (args.notebook or args.script).resolve().parent
-    files = resource_files(source_dir, args.include)
     context = init_context(args)
+    assert isinstance(context.config, MainConfiguration)
+    included = args.include or context.config.include
+    files = resource_files(source_dir, included)
     assert isinstance(context.output_dir, Path)
-    if any(
-        context.output_dir.is_relative_to(source_dir / name) for name in args.include
-    ):
+    if any(context.output_dir.is_relative_to(source_dir / name) for name in included):
         raise ValueError("Output directory must not be inside included resources")
     result = init_engine(args, context).run()
     copy_resources(files, context.output_dir)

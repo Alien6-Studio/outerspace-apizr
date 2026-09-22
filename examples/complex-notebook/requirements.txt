@@ -1,0 +1,2 @@
+# Application uses only the Python standard library.
+# Add reviewed, pinned application dependencies here.
