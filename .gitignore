@@ -131,6 +131,8 @@ env.bak/
 venv.bak/
 .DS_Store
 .output
+# Local-only video production: scripts, demo, recordings, fonts and voice sources.
+/examples/paris-route/
 .trunk/
 
 # Spyder project settings
