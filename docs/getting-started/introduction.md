@@ -12,19 +12,15 @@ is **Discover → Understand → Assess → Select → Expose → Execute**.
 
 ## Install
 
-**Latest published stable: 0.2.1. Release candidate in the repository: 0.3.0.**
-Use Python 3.11–3.14 in a virtual environment. Install stable with
-`python -m pip install outerspace-apizr==0.2.1`. For the candidate walkthrough:
+**Latest published stable: 0.3.0.** Use Python 3.11–3.14 in a virtual environment:
 
 ```sh
-git clone https://github.com/Alien6-Studio/outerspace-apizr.git
-cd outerspace-apizr
-python -m pip install .
+python -m pip install outerspace-apizr==0.3.0
 apizr --version
 ```
 
-The candidate is not published on PyPI. To work on Apizr itself, see
-[development setup](developer-guide/setup.md).
+Choose the `[notebook]`, `[http]`, `[mcp]` or `[legacy]` extras for optional workflows.
+To work on Apizr itself, see [development setup](developer-guide/setup.md).
 
 ## Walk through a small repository
 
@@ -125,7 +121,7 @@ Only `api.quote` and `inventory.available` appear in REST/MCP.
 | Use fresh local/OCI workers | [Governed repository execution](../architecture/governed-repository-runtime.md) |
 | Keep single-source workflows | [REST](user-guide/rest.md) / [MCP](user-guide/mcp.md) |
 | Use the historical notebook/script pipeline | [Legacy guide](user-guide/apizr.md) |
-| Migrate from 0.2.1 | [0.3 candidate notes](../releases/0.3.0.md) |
+| Migrate from 0.2.1 | [0.3 release notes](../releases/0.3.0.md) |
 
 Direct state persists in the transport interpreter. Governed local state resets in
 a fresh process per call; governed OCI state resets in a fresh container per call.

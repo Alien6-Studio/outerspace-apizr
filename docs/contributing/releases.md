@@ -3,13 +3,15 @@
 This is the maintainer procedure. Users should follow [Start here](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
-## 0.3.0 candidate
+## Published 0.3.0
 
-The repository declares **0.3.0**, while the latest published stable remains **0.2.1**.
-The exact post-merge master CI artifacts are the candidate. Do not rebuild for
-publication, create a version tag, sign a delivery receipt or upload without a
-separate deliberate release action. The existing guards and managed Apizr identity /
-RFC 3161 / offline verification procedure below remain authoritative.
+**0.3.0 was published on 22 September 2026** from commit
+`43f5626fe9e26b018aa323abd83b9611f7b2aba9`, tagged `v0.3.0`.
+Publication reused the exact master CI `35735875051` distributions. The managed
+receipt and Trusted Publishing workflow passed; public PyPI bytes were compared
+with the CI files. See the [release record and hashes](../releases/0.3.0.md#verified-delivery).
+Keep this tag and its distributions unchanged. The protected procedure below applies
+to a future explicitly authorized release.
 
 ## Published releases and verification builds
 
@@ -31,7 +33,7 @@ the distinction and the current validation evidence.
 The procedure below is for a future **explicitly authorized release**. Prepare
 each new version through a separate release PR; version metadata alone does not
 mean publication has occurred. The publication guard refuses any version
-already on PyPI, including `0.2.0` and `0.2.1`.
+already on PyPI, including `0.2.0`, `0.2.1` and `0.3.0`.
 
 <span id="pypi-ownership"></span>
 
@@ -196,3 +198,16 @@ preserves the evidence on the existing GitHub release. See the
 [verification guide](verification.md) for contents, commands and limitations.
 Never attach a later build's attestation to the original 0.2.0 files as if it were
 produced by the original build. Never replace the original distributions or tag.
+
+## Social link previews
+
+The site serves a static 1200 × 630 PNG at
+[`assets/images/social-card.png`](../assets/images/social-card.png). All pages include
+[Open Graph metadata](https://ogp.me/) and a Twitter large-image card in their HTML
+head, with the page title, description and absolute canonical URL. The homepage uses
+the same metadata through its custom layout. Crawlers do not need JavaScript, cookies
+or an authenticated request to read the metadata or image.
+
+After deployment, verify the homepage and a nested documentation URL, then use
+[LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) for links that
+LinkedIn has already cached. Other networks also control their own preview caches.
