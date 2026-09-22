@@ -42,7 +42,8 @@ def main() -> None:
         )
     for scope, options in (
         ("runtime", ["--no-default-groups"]),
-        ("validation", ["--all-groups"]),
+        ("extras", ["--no-default-groups", "--all-extras"]),
+        ("validation", ["--all-groups", "--all-extras"]),
     ):
         subprocess.run(
             [

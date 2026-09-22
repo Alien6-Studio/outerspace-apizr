@@ -30,7 +30,25 @@ python -m pip install outerspace-apizr
 ```
 
 For a uv-managed project: `uv add outerspace-apizr`. These instructions describe
-0.2.x; check the installed release with `apizr --version`.
+the published 0.2.x release; check the installed version with `apizr --version`.
+
+In the **0.3 development checkout**, `python -m pip install .` installs only the
+static compiler and Pydantic. Choose optional workflows explicitly:
+
+| Workflow | Checkout installation |
+| --- | --- |
+| Notebook inspection / generation | `python -m pip install ".[notebook]"` |
+| HTTP adapters | `python -m pip install ".[http]"` |
+| MCP adapters | `python -m pip install ".[mcp]"` |
+| Full historical notebook/script pipeline and web app | `python -m pip install ".[legacy]"` |
+
+Extras combine, for example `".[notebook,mcp]"`. This changes the default
+installation from 0.2.1: use `[legacy]` to retain its full dependency stack when
+installing a 0.3 wheel. Static scanning, graph, readiness, Python inspection and
+bundle generation need no notebook or web framework. Generated servers retain
+their own `requirements.txt`; install it before starting a server. Missing
+notebook or legacy dependencies produce an installation hint, never an automatic
+package installation.
 
 ## A 30-second example
 
