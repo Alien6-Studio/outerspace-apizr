@@ -1,7 +1,7 @@
 # Plan explicit repository exposure
 
-**Development feature: 0.3.0 (`0.3.0.dev0`). Latest stable: 0.2.1.**
-Use a development checkout for these commands; the public PyPI installation
+**Repository release candidate: 0.3.0. Latest published stable: 0.2.1.**
+Use a repository candidate for these commands; the public PyPI installation
 instructions continue to install the stable release. No 0.3 release is published.
 
 Readiness describes eligibility under a policy. Exposure records what the
@@ -9,6 +9,43 @@ operator explicitly selects for publication, through which interfaces and under
 which execution requirements. It does not generate or start a server.
 
 An exposure plan records an explicit publication decision over static evidence; it is not an authorization grant or runtime safety proof.
+
+## Three policies, three responsibilities
+
+| Input | Responsibility | Backend meaning |
+| --- | --- | --- |
+| `--readiness-policy` | Assess static evidence and execution-contract compatibility | Which modes/controls may satisfy readiness |
+| `--policy` (Exposure Policy) | Select exact public capability IDs and interfaces | Which compatible modes are permitted for this selection |
+| `--execution-policy` | Configure actual invocation controls | v1 chooses local-process; v2 chooses OCI; omission chooses direct |
+
+Readiness and exposure constrain eligibility; execution configures the boundary.
+The chosen backend must appear in every selected record's compatible modes. A
+mismatch refuses the whole bundle: no ranking, widening or fallback. An Exposure
+Plan may permit several modes, but a generated server uses exactly one.
+
+**READY does not mean exposed.** A helper/dependency stays private unless explicitly
+selected. Planning/building records a publication decision; it does not deploy or
+start the resulting service.
+
+## Committed small examples
+
+From the candidate checkout, use `examples/repository-shop` and the matching files
+in [examples/policies](https://github.com/Alien6-Studio/outerspace-apizr/tree/master/examples/policies):
+
+| Mode | Readiness | Exposure | Execution |
+| --- | --- | --- | --- |
+| Direct | `readiness-direct.json` | `exposure-direct.json` | Omit |
+| Local | `readiness-local.json` | `exposure-local.json` | `execution-local.json` |
+| OCI | `readiness-oci.json` | `exposure-oci.json` | `execution-oci.json` |
+
+```sh
+apizr expose build mcp examples/repository-shop --readiness-policy examples/policies/readiness-local.json --policy examples/policies/exposure-local.json --execution-policy examples/policies/execution-local.json --output-dir .output/shop-local
+```
+
+For OCI, choose the three `oci` files and add `--runtime-image sha256:<64hex>` and
+`--runtime-platform linux/amd64` (or `linux/arm64`). Replace the placeholder with an
+existing repository-worker image ID. The policies contain no secret or image value.
+No policy stack is merged implicitly, and application dependencies are not installed.
 
 ## Choose capabilities
 

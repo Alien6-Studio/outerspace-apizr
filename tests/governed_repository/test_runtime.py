@@ -44,6 +44,7 @@ def test_parent_never_imports_and_each_call_fresh(tmp_path, monkeypatch):
         "apizr_governed/repository_execution/worker.py",
         "repository-interface.json",
         "exposure-plan.json",
+        "exposure-policy.json",
         "capability-catalog.json",
         "capability-graph.json",
         "repository-readiness.json",

@@ -12,7 +12,7 @@ transformer.save_script(source, ".output/notebook", "pricing.ipynb")
 
 Dependency generation is a separate pipeline stage. Markdown, saved outputs and interactive execution state do not become API behavior. Models and external files must be provided explicitly.
 
-## Configure a multi-cell notebook (0.3 development)
+## Configure a multi-cell notebook (0.3 candidate)
 
 Install the `legacy` extra for the complete pipeline. The reviewed example in
 `examples/complex-notebook` contains interactive exploration, deployable functions,

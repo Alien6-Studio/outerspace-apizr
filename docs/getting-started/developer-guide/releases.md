@@ -2,6 +2,20 @@
 
 <span id="migration-and-releases"></span>
 
+## From 0.2.1 to the 0.3.0 candidate
+
+Latest published stable: **0.2.1**. Repository candidate: **0.3.0**, not yet published.
+Existing single-source and legacy commands remain available,
+and no canonical contract meanings change. Repository Exposure is an explicit new
+workflow; nothing is published or migrated automatically. See the
+[0.3 notes](../../releases/0.3.0.md) for policy composition, execution boundaries and
+known limitations. Use `[legacy]` to retain the combined notebook/legacy/web
+dependency stack. The default 0.3 installation is minimal;
+select `notebook`, `http`, `mcp` or `legacy` extras explicitly.
+
+The following environment and legacy notes include changes already present in 0.2;
+they are not additional breaking changes introduced by 0.3.
+
 ## Supported environments
 
 - **Python 3.11–3.14 only**, for both Apizr and generated targets.
@@ -32,9 +46,10 @@ evidence. Generate explicit REST/MCP interfaces with `apizr generate rest` or
 opt-in and experimental; inspect their policies and operational prerequisites.
 None of these static assessments grants trust or makes arbitrary Python safe.
 
-The legacy duplicate-definition/overload limitation remains open as
-[#28](https://github.com/Alien6-Studio/outerspace-apizr/issues/28). Class/method
-capabilities remain unsupported. The 0.3 development line adds an opt-in
+Selected legacy duplicate definitions/overload sets and duplicate routes now fail
+early ([#28](https://github.com/Alien6-Studio/outerspace-apizr/issues/28)); use an
+unambiguous wrapper or exclude the conflicting definitions. Class/method
+capabilities remain unsupported. The 0.3 candidate adds an opt-in
 [strict OCI subprocess-deny profile](../../architecture/subprocess-deny.md). See the
 [0.2.0 release notes](../../releases/0.2.0.md) for scope and boundaries.
 

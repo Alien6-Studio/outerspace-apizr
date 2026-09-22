@@ -1,11 +1,11 @@
 # Governed repository execution
 
-The original backend contract described here is unchanged. The 0.3 development
-line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
-with a separate worker protocol; v1 static adapters retain their original guarantees.
+The original backend contract remains unchanged. An opt-in
+[strict OCI subprocess-deny profile](subprocess-deny.md) adds a separate worker
+protocol; v1 static adapters retain their original guarantees.
 
 
-**Development: `0.3.0.dev0`; latest stable: 0.2.1.**
+**Repository release candidate: 0.3.0. Latest published stable: 0.2.1.**
 
 Repository exposure now supports direct, governed local-process and governed OCI
 REST/MCP bundles. The requested backend must be explicitly compatible with every
@@ -145,5 +145,5 @@ The mandatory OCI job runs those transports and reuses reviewed kernel isolation
 ordinary/detached descendant and repeated OOM probes. Both new packages have separate
 90% branch-aware coverage floors and strict Pyright checks.
 
-This completes the intended core 0.3 runtime flow. The next phase is a release-candidate
-and product pass, not another runtime feature or an automatic release.
+This completes the intended core 0.3 runtime flow. The repository is in its release-candidate
+and product pass; publication remains a separate deliberate action.

@@ -8,7 +8,10 @@ from pathlib import Path
 
 
 def main(argv: Sequence[str]) -> int:
-    parser = argparse.ArgumentParser(prog="apizr generate")
+    parser = argparse.ArgumentParser(
+        prog="apizr generate",
+        description="Generate REST/MCP for one Python source or notebook. For a repository, use apizr expose build.",
+    )
     targets = parser.add_subparsers(dest="target", required=True)
     for name in ("rest", "mcp"):
         target = targets.add_parser(

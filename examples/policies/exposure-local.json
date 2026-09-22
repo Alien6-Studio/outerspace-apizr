@@ -1,0 +1,17 @@
+{
+  "selection": {
+    "include": [
+      "python:api:quote",
+      "python:inventory:available"
+    ]
+  },
+  "interfaces": [
+    "rest",
+    "mcp"
+  ],
+  "execution": {
+    "allowed": [
+      "local-process"
+    ]
+  }
+}

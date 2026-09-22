@@ -1,6 +1,6 @@
 # OCI subprocess-deny profile
 
-The 0.3 development line adds the explicit worker protocol
+The 0.3 candidate adds the explicit worker protocol
 `apizr.subprocess-deny/v1`. In an OCI execution policy, set:
 
 ```json

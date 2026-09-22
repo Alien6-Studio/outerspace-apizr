@@ -1,56 +1,53 @@
 ---
 template: home.html
 title: Apizr — capability compiler for Python
-description: Discover Python capabilities, inspect their contracts and relationships, and generate REST or MCP interfaces with explicit execution policies.
+description: Discover capabilities, assess readiness, explicitly select public interfaces and execute Python repositories through REST or MCP.
 ---
 
 # Apizr
 
 **An open-source capability compiler for Python codebases.**
 
-Understand what existing Python code can expose before connecting it to an API or
-a tool client. Scan a codebase, inspect its capability graph, expose eligible
-functions through REST or MCP, and execute trusted code under explicit policies.
+Discover capabilities in existing Python code, assess their static readiness,
+explicitly choose what to expose, generate REST or MCP interfaces, and run them
+under direct or governed execution policies.
 
-**Python 3.11–3.14 · Stable 0.2.1 · GPL-3.0-or-later**
+**Latest published stable: 0.2.1 · Release candidate in the repository: 0.3.0**
 
-Development line: **0.3.0** (`0.3.0.dev0`).
-[Exposure planning](getting-started/user-guide/exposure.md) is available in the
-development checkout; it is not part of the stable PyPI release.
+Python 3.11–3.14 · GPL-3.0-or-later. The 0.3 candidate is not yet published on PyPI.
+It adds explicit Exposure Plans and multi-module repository bundles. Discovery,
+generation, direct servers and governed local workers need no Docker.
 
-[Start with a small Python project](getting-started/introduction.md){ .md-button .md-button--primary }
-[Read the 0.2.1 release notes](releases/0.2.1.md){ .md-button }
+[Try the repository walkthrough](getting-started/introduction.md){ .md-button .md-button--primary }
+[Read the 0.3 candidate notes](releases/0.3.0.md){ .md-button }
 
-## Discover
+## Discover → Understand → Assess
 
-`apizr scan .` inventories Python files without importing or executing them.
-[Scan your repository](getting-started/user-guide/scan.md).
+`apizr scan .` inventories Python source without executing it. `apizr graph .`
+explains static relationships. `apizr readiness .` evaluates evidence under policy.
+Unknown evidence remains unknown; **READY does not mean exposed**.
 
-## Understand
+## Select → Expose
 
-`apizr graph .` reports statically known relationships. `apizr inspect example.py`
-explains individual contracts; `apizr readiness .` assesses repository exposure
-evidence under a policy. Unknown evidence remains unknown.
-[Understand the architecture](architecture/overview.md).
+`apizr expose plan` records your explicit capability selection. `apizr expose build`
+creates one repository REST or MCP server. If selected A calls helper B, B is
+packaged as support and stays private. [Plan exposure](getting-started/user-guide/exposure.md).
 
-## Expose
+## Execute with an explicit boundary
 
-Generate REST and MCP interfaces from the same eligible contracts. Start with a
-small typed function; no Docker is required for discovery or generation.
-[Generate REST](getting-started/user-guide/rest.md) or
-[generate MCP](getting-started/user-guide/mcp.md).
+| Mode | Boundary | State |
+| --- | --- | --- |
+| Direct | Transport process | Persists |
+| Governed local | Fresh process per call | Resets |
+| Governed OCI | Fresh container per call | Resets |
 
-## Govern
+Local execution provides bounds and cleanup without filesystem/network isolation.
+OCI adds reviewed container controls with an explicit immutable worker image; it
+is not a VM or an untrusted-code guarantee. The optional
+[strict OCI profile](architecture/subprocess-deny.md) prohibits process/thread creation. Source and
+application dependencies must be trusted.
+[Understand execution boundaries](architecture/governed-repository-runtime.md).
 
-Choose direct execution or an explicit local-process/OCI policy. Static `READY`
-is not a safety guarantee. Local processes do not isolate filesystem/network
-access; OCI containers are not VMs. Execution remains experimental and requires
-trusted source and infrastructure.
-[Understand execution boundaries](getting-started/user-guide/execute.md).
-
-## Existing notebook workflows
-
-Scripts and notebooks remain supported for inspection and generation. The
-[Legacy generation pipeline](getting-started/user-guide/apizr.md) is
-retained. See [compatibility notes](getting-started/developer-guide/releases.md)
-for supported environments and output behavior.
+Single-source scripts/notebooks and the [legacy pipeline](getting-started/user-guide/apizr.md)
+remain supported. [Stable 0.2.1 notes](releases/0.2.1.md) ·
+[Compatibility and migration](getting-started/developer-guide/releases.md).

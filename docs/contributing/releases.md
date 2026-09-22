@@ -3,6 +3,14 @@
 This is the maintainer procedure. Users should follow [Start here](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
+## 0.3.0 candidate
+
+The repository declares **0.3.0**, while the latest published stable remains **0.2.1**.
+The exact post-merge master CI artifacts are the candidate. Do not rebuild for
+publication, create a version tag, sign a delivery receipt or upload without a
+separate deliberate release action. The existing guards and managed Apizr identity /
+RFC 3161 / offline verification procedure below remain authoritative.
+
 ## Published releases and verification builds
 
 **0.2.0 was published on 21 September 2026**, from commit

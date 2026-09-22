@@ -149,7 +149,7 @@ CI retains JUnit, branch-coverage and mutation reports. See
 [build verification](../../contributing/verification.md) and
 [dependency maintenance](../../contributing/dependencies.md).
 
-## Optional installation paths (0.3 development)
+## Optional installation paths (0.3 candidate)
 
 The base wheel depends only on Pydantic. Select `notebook`, `http`, `mcp`, or
 `legacy` extras for their respective workflows; extras can be combined.

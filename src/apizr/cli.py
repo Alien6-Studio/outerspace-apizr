@@ -95,32 +95,30 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print("Apizr — an open-source capability compiler for Python codebases.\n")
         print("Version: apizr --version")
         print(
-            "\nStatic inspection: apizr inspect SOURCE [--format json | --ir] [--module-name NAME]"
+            "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
+        )
+        print("Discover: apizr scan ROOT [--source-root DIR] [--catalog]")
+        print("Understand: apizr graph ROOT [--source-root DIR] [--graph]")
+        print("Assess: apizr readiness ROOT [--policy READINESS.json] [--report]")
+        print("Select: apizr expose plan ROOT --policy EXPOSURE.json [--plan]")
+        print(
+            "Expose: apizr expose build {rest,mcp} ROOT --policy EXPOSURE.json --output-dir DIR"
         )
         print(
-            "Modern REST generation: apizr generate rest SOURCE --output-dir DIR [--select NAMES]"
+            "  Add --execution-policy EXECUTION.json for fresh local/OCI workers; default: direct."
         )
         print(
-            "Modern MCP generation: apizr generate mcp SOURCE --output-dir DIR [--select NAMES]"
+            "  READY does not mean exposed. Supporting dependencies are not automatically public."
+        )
+        print("\nSingle-source workflows (Python or notebook):")
+        print("  apizr inspect SOURCE [--format json | --ir] [--module-name NAME]")
+        print("  apizr generate {rest,mcp} SOURCE --output-dir DIR [--select NAMES]")
+        print("  apizr execute SOURCE CAPABILITY --arguments FILE --policy FILE")
+        print(
+            "  Execution is trusted-code oriented; local processes are not filesystem/network sandboxes."
         )
         print(
-            "Experimental trusted execution: apizr execute SOURCE CAPABILITY --arguments FILE --policy FILE"
-        )
-        print(
-            "\nStatic repository inventory: apizr scan ROOT [--source-root DIR] [--format json | --catalog]"
-        )
-        print(
-            "Static capability relationships: apizr graph ROOT [--source-root DIR] [--format json | --graph]"
-        )
-        print(
-            "Repository exposure evidence: apizr repository-readiness CATALOG GRAPH [--policy FILE] [--format json]"
-        )
-        print(
-            "Repository readiness: apizr readiness ROOT [--source-root DIR] [--policy FILE] [--report]"
-        )
-        print("Exposure planning: apizr expose plan ROOT --policy FILE [--plan]")
-        print(
-            "Repository bundles: apizr expose build {rest,mcp} ROOT --policy FILE --output-dir DIR"
+            "Artifact-first readiness: apizr repository-readiness CATALOG GRAPH --policy FILE"
         )
         print("\nLegacy generation pipeline (retained for compatibility):")
         if not available(

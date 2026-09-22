@@ -1,81 +1,82 @@
 # Capability Compiler architecture
 
-Stable Apizr 0.2.1 discovers capabilities in existing Python software, describes what is
-statically known, and generates interfaces for eligible contracts.
+Apizr 0.3.0 is the repository release candidate; the latest published stable is
+0.2.1. The complete repository workflow is implemented:
 
 ```text
-Python repository → Scanner → Capability Catalog → Capability Graph
-Scripts / notebooks ──────────────→ Capability IR + static readiness
-Catalog + Graph ─────────────────→ Repository Readiness (policy evidence)
-                                            ↓ + Exposure Policy (0.3 development)
-                                      Exposure Plan
-                                            ↓
-                              FUTURE repository REST/MCP bundle
-Capability IR + static readiness → Interface Contract → REST / MCP
-                                                          ↓
-                                      direct or governed execution
-                                             local-process / OCI
+Repository
+    ↓ bounded static discovery
+Catalog
+    ↓
+Capability Graph
+    ↓ + Readiness policy
+Repository Readiness
+    ↓ + explicit Exposure policy
+Exposure Plan
+    ↓
+Repository Interface
+    ↓
+REST / MCP bundle
+    ↓
+direct | governed local-process | governed OCI
 ```
 
-## Discover and describe
+## Discover and understand
 
-The [scanner](repository-scanner-v1.md) inventories Python files under bounded
-source roots. [Capability IR](capability-ir-v1.md) records declarations and typed
-contracts; [the graph](capability-graph-v1.md) adds statically established
-relationships. Individual inspection also accepts notebooks. No input is
-imported or executed during these operations.
+The [scanner](repository-scanner-v1.md) inventories Python files without importing
+or executing them. [Capability IR](capability-ir-v1.md) describes top-level function
+contracts and [Graph](capability-graph-v1.md) records statically known relationships.
+Individual inspection also accepts notebooks. Neither stage installs dependencies.
 
-## Assess evidence
+## Assess and select
 
-[Static readiness](capability-readiness-v1.md) assesses individual interface
-contracts. [Repository Readiness](repository-readiness-v1.md) combines catalog,
-graph and policy evidence, preserving declaration-level results and unknowns.
-It does not test runtime availability or grant access. `READY` never means safe.
-Imports are not calls, discovery is not trust, and unknown effects remain unknown.
+[Repository Readiness](repository-readiness-v1.md) combines Catalog, Graph and policy
+evidence. **READY does not mean exposed**: eligibility is evidence, not publication,
+authorization or a runtime safety guarantee. Unknown effects remain unknown.
 
-## Plan exposure (0.3 development)
+[Exposure Plan](exposure-plan-v1.md) binds that evidence to the operator's explicit
+selection, interfaces and allowed execution contracts. It never exposes dependencies
+transitively. Selected A may call private helper B without B becoming public.
 
-[Exposure Plan v1](exposure-plan-v1.md) records explicit operator selections
-against complete repository evidence. It binds the Catalog, Graph, Readiness and
-Exposure Policy digests, validates requested interfaces and execution modes,
-and retains direct relationships without automatically exposing dependencies.
-The development package is `0.3.0.dev0`; stable remains 0.2.1. Repository-level
-bundle generation is a future stage.
+## Generate repository interfaces
 
-## Generate interfaces
-
-[REST](rest-generator-v1.md) and [MCP](mcp-generator-v1.md) consume shared
-[interface semantics](../getting-started/user-guide/mcp.md). Contracts precede
-transports. Deterministic artifacts and digests support review and comparison;
-they are attestable evidence, not signed attestations.
+[Repository Interface and bundles](repository-bundle-v1.md) bind each selected
+capability to the shared invocation contract and exact Python source universe.
+Qualified public names distinguish functions with the same bare name. Verified
+imports support packages, relative imports and private helpers. Bundling the scanned
+universe does not prove complete runtime dependency closure or include data files.
+Generation remains static, deterministic and atomic. Digests are reviewable integrity
+evidence, not publisher signatures.
 
 ## Execute explicitly
 
-A direct server imports and invokes trusted source in its own process.
-[Governed transports](governed-transport-runtime-v1.md) opt into an
-[execution policy](execution-policy-v1.md), separately from readiness policy.
+[Governed repository execution](governed-repository-runtime.md) adds independently
+versioned plans and bridges without changing the public transport contract.
 
-- **Local-process:** a fresh process with time, input/output and environment
-  limits. No host filesystem or network isolation.
-- **OCI-container:** Linux container namespaces and resource controls with a
-  trusted Docker daemon and explicit worker image. Not a VM boundary.
-- **Opt-in OCI:** [process/thread creation prohibition](subprocess-deny.md) with a strict worker image.
-- **Unsupported:** arbitrary untrusted-code
-  hosting, automatic trust decisions and an enterprise control plane.
+| Mode | Boundary | State | Controls |
+| --- | --- | --- | --- |
+| Direct | Transport process | Persists | Trusted in-process invocation |
+| Local-process | Fresh process per call | Resets | Time/input/output bounds, environment, fresh directory, process-group cleanup |
+| OCI | Fresh container per call | Resets | Reviewed network/filesystem/privilege/resource controls and teardown |
 
-Execution remains experimental: the contracts and refusal paths are tested,
-but the supplied backends require trusted code and operational prerequisites.
-See [OCI execution](oci-container-runtime-v1.md) and
-[governed OCI transports](governed-oci-transports-v2.md).
+Governed transports validate all artifacts before each call and never import project
+source. Only the worker installs the verified RepositoryLoader. Backend compatibility
+must hold for every selected capability; unavailable backends refuse without fallback.
+OCI requires an immutable image ID/platform and the repository-worker protocol label.
 
-## Compatibility and limits
+Local execution is not a filesystem/network sandbox. OCI is not a VM or a
+guarantee for untrusted code; its optional [strict profile](subprocess-deny.md)
+prohibits process/thread creation before project import. Both require trusted code,
+dependencies and infrastructure. Application dependencies remain a deployment concern.
+No RBAC, approvals, identity service or enterprise control plane is included.
 
-Top-level Python functions are the capability unit. Classes/methods, dynamic
-binding and effects are not automatically resolved. Repository scanning is
-Python-only; notebook support belongs to individual inspection/generation.
-The [legacy pipeline](../getting-started/user-guide/apizr.md) is independent and
-retained for compatibility, including its documented
-[behavior and limitations](legacy-behavior-contract.md).
+## Existing workflows and contracts
 
-Historical verification measurements live in the [engineering archive](records.md).
-They describe their recorded revisions rather than promising current test counts.
+The [single-source REST](rest-generator-v1.md), [MCP](mcp-generator-v1.md),
+[local execution](execution-policy-v1.md) and [OCI](oci-container-runtime-v1.md)
+workflows remain supported. The [legacy pipeline](../getting-started/user-guide/apizr.md)
+is independent and retains its [documented limitations](legacy-behavior-contract.md).
+No canonical contract meaning changes for 0.3 finalization.
+
+See [migration and known limitations](../releases/0.3.0.md). Historical measurements
+remain in the [engineering archive](records.md), scoped to their recorded revisions.
