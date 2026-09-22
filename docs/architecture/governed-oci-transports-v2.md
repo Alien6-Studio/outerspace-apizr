@@ -1,6 +1,6 @@
 # Governed OCI transport bridge v2
 
-The original backend contract described here is unchanged. The 0.3 development
+The original backend contract described here is unchanged. The 0.3 candidate
 line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
 with a separate worker protocol; v1 static adapters retain their original guarantees.
 

@@ -76,5 +76,5 @@ not all files and not Git history. Source/Inspection, policy, repository and cat
 have independent digests.
 
 See the [scanner contract](../../architecture/repository-scanner-v1.md) for schemas,
-diagnostic codes, exact bounds and hashing rules. A capability graph and import
-resolution are future work; the catalog does not contain dependency or call edges.
+diagnostic codes, exact bounds and hashing rules. The separate [Capability Graph](graph.md) records conservative import/call
+relationships; the catalog itself does not contain dependency or call edges.

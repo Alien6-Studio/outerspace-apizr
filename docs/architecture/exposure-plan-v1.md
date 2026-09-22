@@ -1,11 +1,11 @@
 # Exposure Plan v1
 
-The original backend contract described here is unchanged. The 0.3 development
-line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
-with a separate worker protocol; v1 static adapters retain their original guarantees.
+The original backend contract remains unchanged. An opt-in
+[strict OCI subprocess-deny profile](subprocess-deny.md) adds a separate worker
+protocol; v1 static adapters retain their original guarantees.
 
 
-**Development line: 0.3.0 (`0.3.0.dev0`). Latest stable: 0.2.1.**
+**Repository release candidate: 0.3.0. Latest published stable: 0.2.1.**
 This feature is not part of the published 0.2.1 package.
 
 An exposure plan records an explicit publication decision over static evidence; it is not an authorization grant or runtime safety proof.
@@ -161,7 +161,7 @@ unsupported and unrelated declarations unexposed. Tests compare committed bytes
 and schemas on every supported Python version, and exercise selection order,
 relocation, strictness, digest mutations, tampering and audit-hook non-execution.
 
-## CLI and future scope
+## CLI and scope
 
 See the [exposure guide](../getting-started/user-guide/exposure.md). The CLI uses
 one `analyze_repository` discovery for Catalog and Graph, assesses readiness once,
@@ -171,8 +171,8 @@ those artifacts without rediscovery or source parsing.
 [#87](https://github.com/Alien6-Studio/outerspace-apizr/issues/87) covers planning.
 [#88](https://github.com/Alien6-Studio/outerspace-apizr/issues/88) adds the
 [direct repository bundle stage](repository-bundle-v1.md) through `expose build`.
-Governed repository execution remains deferred to
-[#90](https://github.com/Alien6-Studio/outerspace-apizr/issues/90). There is no
+[Governed repository execution](governed-repository-runtime.md) is implemented
+by [#90](https://github.com/Alien6-Studio/outerspace-apizr/issues/90). There is no
 `expose serve`, RBAC, approval service or dependency-stack split. Existing issues
 [#28](https://github.com/Alien6-Studio/outerspace-apizr/issues/28),
 [#49](https://github.com/Alien6-Studio/outerspace-apizr/issues/49) and

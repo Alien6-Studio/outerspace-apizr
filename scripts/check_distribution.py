@@ -60,6 +60,24 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
             assert files["README.md"].decode() == readme
             assert "src/apizr/generators/rest/templates/preamble.txt" in files
             assert "LICENSE" in files
+        prefix = "" if artifact.suffix == ".whl" else "src/"
+        for required in (
+            "apizr/exposure/planner.py",
+            "apizr/repository_interfaces/generator.py",
+            "apizr/repository_interfaces/runtime.py",
+            "apizr/repository_interfaces/rest_runtime.py",
+            "apizr/repository_interfaces/mcp_runtime.py",
+            "apizr/repository_execution/worker.py",
+            "apizr/repository_execution/entrypoint.py",
+            "apizr/governed_repository/embedding.py",
+            "apizr/governed_repository/runtime.py",
+            "apizr/subprocess_guard/filter.py",
+            "apizr/subprocess_guard/entrypoint.py",
+            "apizr/subprocess_guard/repository_entrypoint.py",
+            "apizr/optional.py",
+            "apizr/extensions/plugins/api.py",
+        ):
+            assert prefix + required in files, required
         for name, data in files.items():
             assert not any(
                 part in {"..", "__pycache__", ".env", ".git", "tests"}
@@ -77,6 +95,8 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
             "Description-Content-Type": "text/markdown",
         }.items():
             assert metadata[key] == value, (key, metadata[key], value)
+        assert set(metadata.get_all("Classifier", [])) == set(project["classifiers"])
+        assert set(str(metadata["Keywords"]).split(",")) == set(project["keywords"])
         assert set(metadata.get_all("Project-URL", [])) == {
             f"{k}, {v}" for k, v in project["urls"].items()
         }

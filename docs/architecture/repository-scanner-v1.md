@@ -16,7 +16,7 @@ Capability Catalog (catalog/v1)
            ↓
 Capability Graph (graph/v1; separate consumer)
            ↓
-FUTURE Repository Readiness / Policy Analysis
+Repository Readiness / Policy Analysis
 ```
 
 ## Contracts and APIs

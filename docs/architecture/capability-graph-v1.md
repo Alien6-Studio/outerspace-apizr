@@ -10,7 +10,7 @@ Repository
 Catalog v1 + retained in-memory source manifest
     ↓ static relationship analysis
 Capability Graph v1
-    ↓ FUTURE
+    ↓
 Repository Readiness / Policy Analysis
 ```
 
@@ -274,10 +274,11 @@ Property tests cover relocation, input/enumeration order, aliases, topology,
 shadowing, collision and cycles. Real audit hooks reject source execution,
 repository writes, network, subprocesses and unwanted framework imports.
 
-## Deliberately deferred
+## Outside Graph v1
 
-No effects/permissions/readiness propagation, transitive stored edges, repository
-or agent scores, ranking, graph database, repository execution/generation,
-class/method capabilities, visualization UI or attestation integration.
-Repository-level governance/readiness questions remain tracked by issue #55.
+Graph v1 does not propagate effects/permissions/readiness, store transitive edges,
+rank repositories/agents or provide a graph database, class/method capabilities,
+visualization UI or attestation integration. Repository readiness (#55), exposure
+and repository execution/generation are implemented by separate
+[consumer layers](overview.md), not by extending Graph v1.
 Graph artifacts can be independently hashed without an attestation implementation.

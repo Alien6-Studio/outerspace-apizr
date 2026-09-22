@@ -45,6 +45,7 @@ def add_policy_arguments(command: argparse.ArgumentParser) -> None:
     command.add_argument("--interface", action="append", choices=("rest", "mcp"))
     command.add_argument(
         "--execution-mode",
+        help="Allow an execution contract in the Exposure Plan; does not start a backend",
         action="append",
         choices=("direct", "local-process", "oci-container"),
     )
@@ -80,8 +81,15 @@ def main(argv: Sequence[str]) -> int:
     build.add_argument("target_interface", choices=("rest", "mcp"))
     add_policy_arguments(build)
     build.add_argument("--output-dir", type=Path, required=True)
-    build.add_argument("--execution-policy", type=Path)
-    build.add_argument("--runtime-image")
+    build.add_argument(
+        "--execution-policy",
+        type=Path,
+        help="Execution controls: v1 selects local-process, v2 selects OCI; omitted means direct",
+    )
+    build.add_argument(
+        "--runtime-image",
+        help="Immutable local sha256 image ID; required with OCI, never pulled",
+    )
     build.add_argument("--runtime-platform", choices=("linux/amd64", "linux/arm64"))
     args = parser.parse_args(argv)
     execution_policy: ExecutionPolicy | ExecutionPolicyV2 | None = None

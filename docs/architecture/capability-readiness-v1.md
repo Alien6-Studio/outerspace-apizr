@@ -9,7 +9,7 @@ are exposed; readiness itself remains independent of that target.
 ```text
 source → Capability IR v1 → readiness policy → readiness report
                                                 |
-                                  REST v1 / future consumers
+                                  REST / MCP / runtime consumers
 ```
 
 ## Version and compatibility

@@ -6,7 +6,9 @@ import sys
 import time
 
 import anyio
+import httpx
 import httpx2
+from governed.helpers import SERVER, http_server
 from mcp import Client, StdioServerParameters
 
 from apizr.repository_interfaces.generator import render_repository_bundle
@@ -15,7 +17,9 @@ from apizr.repository_interfaces.output import write_bundle
 
 async def exercise(target):
     async with Client(target, read_timeout_seconds=10) as client:
-        assert len((await client.list_tools()).tools) == 3
+        names = {tool.name for tool in (await client.list_tools()).tools}
+        assert names == {"shop.api.run", "shop.pricing.run", "shop.inventory.available"}
+        assert (await client.call_tool("shop.api.helper", {})).is_error
         assert (await client.call_tool("shop.api.run", {})).structured_content == 7
         assert (
             await client.call_tool("shop.pricing.run", {"x": 4})
@@ -42,6 +46,33 @@ assert "shop.admin" not in sys.modules
         timeout=20,
     )
     assert result.returncode == 0, result.stderr.decode()
+
+
+def test_emitted_direct_rest_real_server(tmp_path, inputs, monkeypatch):
+    write_bundle(tmp_path, render_repository_bundle(*inputs, interface="rest"))
+    # Match the documented uvicorn --app-dir startup while using the shared
+    # bounded server lifecycle. Direct source import is deliberately permitted.
+    monkeypatch.setattr(
+        "governed.helpers.SERVER",
+        SERVER.replace(
+            "root=Path(sys.argv[1]).resolve()",
+            "root=Path(sys.argv[1]).resolve()\nsys.path.insert(0,str(root))",
+        ),
+    )
+    with http_server(tmp_path, "rest") as (url, process):
+        with httpx.Client(base_url=url, timeout=10) as client:
+            assert client.post("/capabilities/shop.api.run", json={}).json() == 7
+            assert (
+                client.post("/capabilities/shop.pricing.run", json={"x": 4}).json() == 5
+            )
+            assert (
+                client.post("/capabilities/shop.api.helper", json={}).status_code == 404
+            )
+            assert (
+                "/capabilities/shop.api.helper"
+                not in client.get("/openapi.json").json()["paths"]
+            )
+            assert process.poll() is None
 
 
 def test_emitted_mcp_stdio(tmp_path, inputs):

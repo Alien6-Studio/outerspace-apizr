@@ -595,8 +595,12 @@ asyncio.run(check())
         repository = root / "repository-smoke"
         repository.mkdir()
         (repository / "billing.py").write_text(
-            "def total(values: list[int]) -> int: return sum(values)\n"
+            "def total(values: list[int]) -> int: return _support(values)\ndef _support(values: list[int]):\n from pricing import subtotal\n return subtotal(values)\n"
         )
+        (repository / "pricing.py").write_text(
+            "def subtotal(values: list[int]) -> int: return sum(values)\n"
+        )
+        (repository / "stock.py").write_text("def available() -> bool: return True\n")
         local_policy = root / "repository-local-policy.json"
         local_policy.write_text("{}")
         oci_policy = root / "repository-oci-policy.json"
@@ -663,6 +667,8 @@ asyncio.run(check())
                     backend,
                     "--select",
                     "python:billing:total",
+                    "--select",
+                    "python:stock:available",
                     "--readiness-policy",
                     str(readiness_config),
                 ]
@@ -710,6 +716,11 @@ asyncio.run(check())
                     (output / f"apizr-repository-{transport}.json").read_bytes()
                 )
                 assert manifest["schema_version"] == f"apizr.repository-{transport}/v1"
+                entries = manifest["endpoints" if transport == "rest" else "tools"]
+                assert {entry["capability_id"] for entry in entries} == {
+                    "python:billing:total",
+                    "python:stock:available",
+                }
                 if backend != "direct":
                     assert (
                         json.loads((output / "execution/bundle.json").read_bytes())[

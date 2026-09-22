@@ -16,12 +16,13 @@ this new domain. The existing generation pipeline remains unchanged.
             |                         |
      CodeAnalyzr JSON          Capability IR v1
             |                         |
-      FastAPI / Docker              FUTURE
+      FastAPI / Docker            Consumers
                                   /   |   \
                                REST  MCP  Runtime
 ```
 
-Only the right-hand analyzer and IR exist in this change. A capability is a
+The original IR change introduced the right-hand analyzer and IR. Current
+[repository and runtime consumers](overview.md) are separate layers. A capability is a
 lexically observed module-level function contract, not a promise that importing,
 binding, invoking or serializing it will succeed. Classes, nested functions,
 repository resolution, generators consuming the IR, effect inference, runtime
@@ -202,10 +203,10 @@ additive optional fields require coordinated reader upgrades and a compatibility
 review before emission; they are not automatically backward compatible. Package
 releases do not rename the schema. The generated
 [JSON Schema](../specs/apizr-capability-v1.schema.json) and single golden document
-are tested against the models/serializer. Compatibility CI retains the global 55% coverage floor and additionally requires
+are tested against the models/serializer. Compatibility CI retains the global 90% branch-aware coverage floor and additionally requires
 90% branch-aware coverage for `apizr.capabilities`.
-The existing CLI stays unchanged; a
-subcommand design and all IR-consuming generators are deferred.
+The CLI exposes `inspect` and repository/interface/runtime commands as separate
+consumers; none changes the IR v1 meaning.
 
 Known limits include lexical binding/reachability, unsupported variadics and
 classes, no type/alias/runtime resolution, conservative overload association, no
@@ -214,7 +215,7 @@ Python version. These are explicit boundaries rather than inferred safety claims
 
 Problem tracking: [#30](https://github.com/Alien6-Studio/outerspace-apizr/issues/30)
 covers information loss for independent consumers;
-[#31](https://github.com/Alien6-Studio/outerspace-apizr/issues/31) tracks the deferred
-gap between lexical discovery and callable availability. The historical duplicate
+[#31](https://github.com/Alien6-Studio/outerspace-apizr/issues/31) was addressed by the separate Readiness layer; lexical discovery alone still
+does not establish callable availability. The historical duplicate
 behavior in [#28](https://github.com/Alien6-Studio/outerspace-apizr/issues/28) remains
 open for the legacy pipeline.

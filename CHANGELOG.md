@@ -2,29 +2,44 @@
 
 ## 0.3.0 — Unreleased
 
-- Build a notebook/script Docker image with `--build-image`, preserving explicit
-  application requirements, generation configuration and selected `--include`
-  data/config files, with an image ID or actionable failure (#1).
-- Load independently packaged legacy pipeline plugins only through explicit
-  `--plugin` selection, with versioned entry points and per-plugin options (#15).
+Repository release candidate: **0.3.0**. Latest published stable: **0.2.1**.
 
-- Discover class declarations and method signatures in a separate static legacy
-  inventory, without changing top-level capability/exposure contracts (#5).
-- Reject ambiguous selected legacy definitions and duplicate generated routes,
-  including overload sets, before runtime import (#28). Previously these could
-  disagree with OpenAPI or fail at startup; use one explicit wrapper or exclusion.
+### Added
 
-- Begin development at `0.3.0.dev0`; the latest published stable release remains 0.2.1.
-- Add Exposure Policy v1 and Exposure Plan v1 with explicit selection, digest-bound
-  static evidence, fail-closed interface/execution checks and `apizr expose plan`.
-- Add deterministic direct repository REST/MCP bundles from validated Exposure
-  Plans, complete verified source packaging, qualified names and transactional
-  `apizr expose build` output (#88). Existing Readiness eligibility remains
-  unchanged.
-- Add governed repository REST/MCP execution (#90): independently versioned
-  multi-source plans and bridges, fresh local/OCI workers, per-call integrity
-  validation, explicit repository worker image compatibility and shared Docker
-  controls. Direct and single-source artifact bytes remain unchanged.
+- Explicit Exposure Policy/Plan v1 over digest-bound repository evidence.
+- Multi-module repository REST/MCP bundles with qualified public names, verified
+  source imports, private helpers and atomic generation.
+- Governed repository local/OCI execution with independent runtime/bridge v1/v2
+  contracts, fresh workers per invocation and per-call artifact verification.
+- Optional notebook/HTTP/MCP/legacy dependency extras with an isolated minimal compiler install (#63).
+- Declarative notebook cell tags, requirements and data files, with a complete conversion example (#16).
+- Explicit legacy Docker builds/resource packaging and installed pipeline plugins (#1, #15).
+- Separate lexical class/method inventory; no change to top-level capability exposure (#5).
+- Opt-in Linux OCI subprocess-deny worker profile, including thread prohibition (#49).
+
+### Changed
+
+- Make discovery → readiness → explicit selection → exposure → execution the main
+  README, Start Here, homepage and CLI journey; add small policy examples.
+- Prepare final package metadata and release/migration notes without publication.
+
+### Security / execution boundaries
+
+- Reuse reviewed process cleanup and Docker controls; require the repository worker
+  image protocol and immutable identity. OOM classification requires provider evidence.
+- Preserve trusted-code boundaries: local processes do not isolate filesystem/network;
+  OCI is not a VM. Its strict opt-in worker profile prohibits process/thread creation
+  before project imports; default allow mode and local mode retain their behavior.
+- Preserve the 18 security mutants and add two targeted strict-profile mutations.
+
+### Compatibility
+
+- Preserve direct repository artifacts, all single-source contracts/goldens, existing
+  Readiness eligibility and default notebook conversion.
+- Default installation is now minimal: select `[legacy]` to keep the full 0.2.1
+  dependency stack. Existing dependency versions and archive hashes stay frozen.
+- Selected ambiguous legacy definitions/overloads and duplicate routes now fail
+  before generation; select a single wrapper or exclude ambiguity (#28).
 
 ## 0.2.1 — 2026-09-21
 
