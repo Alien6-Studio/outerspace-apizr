@@ -4,6 +4,7 @@ import ast
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 
 from apizr.capabilities.model import Digest, Severity
 from apizr.readiness import State
@@ -250,12 +251,19 @@ class RepositoryGraph:
     graph: Graph
 
 
-def graph_repository(
+@dataclass(frozen=True)
+class RepositoryEvidence(RepositoryGraph):
+    """Noncanonical session retaining the exact bounded discovery bytes."""
+
+    sources: Mapping[str, bytes]
+
+
+def analyze_repository(
     root: str | Path,
     *,
     scan_policy: ScanPolicy | None = None,
     graph_policy: GraphPolicy | None = None,
-) -> RepositoryGraph:
+) -> RepositoryEvidence:
     """One bounded discovery; Catalog and Graph consume the SAME source bytes."""
     selected = (
         ScanPolicy()
@@ -268,4 +276,21 @@ def graph_repository(
     sources = {
         s.path: s.content for s in manifest if s.path in paths and s.content is not None
     }
-    return RepositoryGraph(catalog, build_graph(catalog, sources, policy=graph_policy))
+    return RepositoryEvidence(
+        catalog,
+        build_graph(catalog, sources, policy=graph_policy),
+        MappingProxyType(sources),
+    )
+
+
+def graph_repository(
+    root: str | Path,
+    *,
+    scan_policy: ScanPolicy | None = None,
+    graph_policy: GraphPolicy | None = None,
+) -> RepositoryGraph:
+    """Compatible Catalog/Graph API; callers needing bytes use analyze_repository."""
+    evidence = analyze_repository(
+        root, scan_policy=scan_policy, graph_policy=graph_policy
+    )
+    return RepositoryGraph(evidence.catalog, evidence.graph)

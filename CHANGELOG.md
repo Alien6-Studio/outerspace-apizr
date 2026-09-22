@@ -5,7 +5,10 @@
 - Begin development at `0.3.0.dev0`; the latest published stable release remains 0.2.1.
 - Add Exposure Policy v1 and Exposure Plan v1 with explicit selection, digest-bound
   static evidence, fail-closed interface/execution checks and `apizr expose plan`.
-  Repository-level REST/MCP bundle generation remains deferred (#88).
+- Add deterministic direct repository REST/MCP bundles from validated Exposure
+  Plans, complete verified source packaging, qualified names and transactional
+  `apizr expose build` output (#88). Existing Readiness eligibility remains
+  unchanged; governed repository execution is deferred (#90).
 
 ## 0.2.1 — 2026-09-21
 

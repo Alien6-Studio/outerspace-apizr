@@ -111,6 +111,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             "Repository readiness: apizr readiness ROOT [--source-root DIR] [--policy FILE] [--report]"
         )
         print("Exposure planning: apizr expose plan ROOT --policy FILE [--plan]")
+        print(
+            "Repository bundles: apizr expose build {rest,mcp} ROOT --policy FILE --output-dir DIR"
+        )
         print("\nLegacy generation pipeline (retained for compatibility):")
         try:
             generate(arguments)

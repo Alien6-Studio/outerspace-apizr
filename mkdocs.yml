@@ -120,6 +120,7 @@ nav:
           - Repository Scanner and Catalog v1: architecture/repository-scanner-v1.md
           - Repository Readiness v1: architecture/repository-readiness-v1.md
           - Exposure Plan v1 (0.3 development): architecture/exposure-plan-v1.md
+          - Repository Bundle v1 (0.3 development): architecture/repository-bundle-v1.md
           - Capability Graph v1: architecture/capability-graph-v1.md
           - Capability IR v1: architecture/capability-ir-v1.md
           - Static readiness v1: architecture/capability-readiness-v1.md

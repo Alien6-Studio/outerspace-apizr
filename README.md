@@ -96,13 +96,17 @@ execution policies control explicit invocation. Neither discovery nor a `READY`
 assessment grants trust or proves runtime safety. Unknown effects remain unknown.
 See the [architecture overview](https://apizr.outerspace.sh/architecture/overview/).
 
-## Exposure planning (0.3 development)
+## Repository exposure (0.3 development)
 
 The development checkout adds `apizr expose plan ROOT --policy exposure.json`.
 An Exposure Plan records explicitly selected capabilities, intended REST/MCP
 interfaces and contract-compatible execution modes over digest-bound repository
-evidence. It does not generate a repository server. The stable PyPI release
-remains **0.2.1**. See the [development exposure guide](https://apizr.outerspace.sh/getting-started/user-guide/exposure/).
+evidence. `apizr expose build {rest,mcp} ROOT --policy exposure.json
+--readiness-policy readiness.json --output-dir DIR` generates one direct server
+for the selected eligible capabilities, with verified multi-source packaging and
+module-qualified public names. Both policies must explicitly permit direct execution.
+Governed repository execution remains deferred; existing Readiness eligibility
+restrictions still apply. The stable PyPI release remains **0.2.1**. See the [development exposure guide](https://apizr.outerspace.sh/getting-started/user-guide/exposure/).
 
 ## Governed execution
 
