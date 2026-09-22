@@ -104,11 +104,11 @@
   },
   {
     "id": "methods",
-    "classification": "FUTURE CANDIDATE",
+    "classification": "SUPPORTED",
     "source": "from abc import abstractmethod\nclass Service:\n    @abstractmethod\n    def abstract(self): pass\n    @staticmethod\n    def static(): pass\n    @classmethod\n    def cls(cls): pass\n    def instance(self): pass\n",
     "names": [],
     "error": null,
-    "note": "Class bodies are intentionally not traversed; issue #5 remains open."
+    "note": "0.3 inventories class declarations separately; methods never enter the exposed functions list. See #5."
   },
   {
     "id": "generator",
@@ -132,26 +132,19 @@
   },
   {
     "id": "overloads",
-    "classification": "LEGACY OBSERVED",
+    "classification": "EXPLICITLY REJECTED",
     "source": "from typing import overload\n@overload\ndef call(x: int) -> int: ...\n@overload\ndef call(x: str) -> str: ...\ndef call(x):\n    return x\n",
-    "names": [
-      "call",
-      "call",
-      "call"
-    ],
-    "error": null,
-    "note": "Overload stubs are independently discovered like duplicate definitions."
+    "names": [],
+    "error": "Ambiguous function definitions",
+    "note": "0.3 rejects ambiguity before generation; see #28."
   },
   {
     "id": "duplicate_definitions",
-    "classification": "LEGACY OBSERVED",
+    "classification": "EXPLICITLY REJECTED",
     "source": "def calculate(x: int):\n    return x\ndef calculate(x: str):\n    return x\n",
-    "names": [
-      "calculate",
-      "calculate"
-    ],
-    "error": null,
-    "note": "Two metadata records/routes; runtime resolves the final binding."
+    "names": [],
+    "error": "Ambiguous function definitions",
+    "note": "0.3 rejects ambiguity before generation; see #28."
   },
   {
     "id": "conditional_definition",

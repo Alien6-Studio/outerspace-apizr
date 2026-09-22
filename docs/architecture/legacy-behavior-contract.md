@@ -1,5 +1,11 @@
 # Legacy behavior contract
 
+**0.3 update:** the historical observations below remain as migration evidence.
+Current CodeAnalyzr adds a separate class/method inventory (#5), and ambiguous
+selected definitions/overload sets are now rejected before generation (#28).
+See [current behavior](../modules/code-analyzr.md). Corresponding executable
+characterizations have been updated to assert these deliberate changes.
+
 This is an engineering characterization of the historical Apizr pipeline, based
 on commit `f7286c3301f13b0b058ac64b1ef85b637c26ff05` (2026-09-20). It is the
 reference for a later metadata-model migration, not a new capability schema.

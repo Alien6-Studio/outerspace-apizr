@@ -2,6 +2,12 @@
 
 ## 0.3.0 — Unreleased
 
+- Discover class declarations and method signatures in a separate static legacy
+  inventory, without changing top-level capability/exposure contracts (#5).
+- Reject ambiguous selected legacy definitions and duplicate generated routes,
+  including overload sets, before runtime import (#28). Previously these could
+  disagree with OpenAPI or fail at startup; use one explicit wrapper or exclusion.
+
 - Begin development at `0.3.0.dev0`; the latest published stable release remains 0.2.1.
 - Add Exposure Policy v1 and Exposure Plan v1 with explicit selection, digest-bound
   static evidence, fail-closed interface/execution checks and `apizr expose plan`.
