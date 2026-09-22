@@ -5,18 +5,18 @@ import io
 import json
 from pathlib import Path
 
-from black import FileMode, format_str
-from nbconvert import PythonExporter
-from nbformat import ValidationError
-
 from apizr.modules.notebook_transformr.configuration import (
     NotebookTransformrConfiguration,
 )
+from apizr.optional import require
 from apizr.output import write_new_text
 
 
 class NotebookTransformr:
     def __init__(self, configuration=None):
+        require("notebook", "nbconvert", "nbformat", "black", "IPython")
+        from nbconvert import PythonExporter
+
         self.configuration = configuration or NotebookTransformrConfiguration()
         self.exporter = PythonExporter()
 
@@ -24,6 +24,8 @@ class NotebookTransformr:
         return await file.read()
 
     def convert_notebook(self, content):
+        from nbformat import ValidationError
+
         # nbformat assumes a mapping and otherwise raises an internal AttributeError.
         if isinstance(content, (str, Path)):
             raw = Path(content).read_text(encoding="utf-8")
@@ -55,6 +57,8 @@ class NotebookTransformr:
         return source, resources
 
     def save_script(self, source, output_directory, filename):
+        from black import FileMode, format_str
+
         directory = Path(output_directory)
         directory.mkdir(parents=True, exist_ok=True)
         if Path(filename).name != filename or "\\" in filename:

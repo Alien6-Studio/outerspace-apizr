@@ -88,9 +88,24 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
         # Compare requirement semantics, because the build backend normalizes ordering.
         from packaging.requirements import Requirement
 
-        assert {Requirement(v) for v in metadata.get_all("Requires-Dist", [])} == {
-            Requirement(v) for v in project["dependencies"]
-        }
+        expected_requirements = {Requirement(v) for v in project["dependencies"]}
+        extras = project.get("optional-dependencies", {})
+        assert set(metadata.get_all("Provides-Extra", [])) == set(extras)
+        for extra, requirements in extras.items():
+            for value in requirements:
+                requirement = Requirement(value)
+                from packaging.markers import Marker
+
+                marker = (
+                    f'({requirement.marker}) and extra == "{extra}"'
+                    if requirement.marker
+                    else f'extra == "{extra}"'
+                )
+                requirement.marker = Marker(marker)
+                expected_requirements.add(requirement)
+        assert {
+            Requirement(v) for v in metadata.get_all("Requires-Dist", [])
+        } == expected_requirements
         payload = metadata.get_payload()
         assert isinstance(payload, str)
         assert payload.strip() == readme.strip()

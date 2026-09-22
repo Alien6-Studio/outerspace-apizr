@@ -42,7 +42,8 @@ def main():
         python = bin_dir / "python"
         cli = bin_dir / "apizr"
         subprocess.run(
-            ["uv", "pip", "install", "--python", str(python), str(wheel)], check=True
+            ["uv", "pip", "install", "--python", str(python), str(wheel) + "[legacy]"],
+            check=True,
         )
         subprocess.run(
             [

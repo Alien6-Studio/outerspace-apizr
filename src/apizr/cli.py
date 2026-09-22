@@ -6,6 +6,8 @@ from importlib.metadata import version
 from pathlib import Path
 from typing import Sequence
 
+from apizr.optional import MissingExtra, available, require
+
 
 def _inspect(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(
@@ -47,6 +49,14 @@ def _inspect(argv: Sequence[str]) -> int:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    try:
+        return _main(argv)
+    except MissingExtra as error:
+        print(f"apizr: {error}", file=sys.stderr)
+        return 2
+
+
+def _main(argv: Sequence[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
     if arguments == ["--version"]:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
@@ -81,8 +91,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         from apizr.generate_cli import main as generate_modern
 
         return generate_modern(arguments[1:])
-    from apizr.main import main as generate
-
     if arguments in (["--help"], ["-h"]):
         print("Apizr — an open-source capability compiler for Python codebases.\n")
         print("Version: apizr --version")
@@ -115,12 +123,27 @@ def main(argv: Sequence[str] | None = None) -> int:
             "Repository bundles: apizr expose build {rest,mcp} ROOT --policy FILE --output-dir DIR"
         )
         print("\nLegacy generation pipeline (retained for compatibility):")
+        if not available(
+            "yaml", "questionary", "jinja2", "packaging", "nbconvert", "black"
+        ):
+            print("  apizr --script FILE | --notebook FILE --output-dir DIR")
+            print(
+                "  Install outerspace-apizr[legacy] for legacy generation and its full help."
+            )
+            return 0
+        from apizr.main import main as generate
+
         try:
             generate(arguments)
         except SystemExit as exc:
             if exc.code != 0:
                 raise
         return 0
+    require(
+        "legacy", "yaml", "questionary", "jinja2", "packaging", "nbconvert", "black"
+    )
+    from apizr.main import main as generate
+
     generate(arguments)
     return 0
 

@@ -148,3 +148,15 @@ local-process supervision and safe output creation depend on POSIX facilities.
 CI retains JUnit, branch-coverage and mutation reports. See
 [build verification](../../contributing/verification.md) and
 [dependency maintenance](../../contributing/dependencies.md).
+
+## Optional installation paths (0.3 development)
+
+The base wheel depends only on Pydantic. Select `notebook`, `http`, `mcp`, or
+`legacy` extras for their respective workflows; extras can be combined.
+For example, `python -m pip install ".[legacy]"` retains the full historical
+0.2.1 pipeline dependency stack from this checkout. `uv sync --locked` installs
+the development group, which includes all optional dependencies for validation.
+
+The package job tests the base wheel and each extra in separate environments on
+Python 3.11 and 3.14. Security audits cover the base, each extra, and validation
+groups; archived SBOMs distinguish the base and combined optional runtime.
