@@ -370,13 +370,13 @@ def test_cli_failures_and_interruption(wheel_factory, tmp_path, capsys, monkeypa
 
     monkeypatch.setattr(
         cli,
-        "install_extension",
+        "install_from_source",
         lambda *a, **k: (_ for _ in ()).throw(PluginError("uv_not_found")),
     )
     assert main(args) == 2 and "uv_not_found" in capsys.readouterr().err
     monkeypatch.setattr(
         cli,
-        "install_extension",
+        "install_from_source",
         lambda *a, **k: (_ for _ in ()).throw(KeyboardInterrupt()),
     )
     assert main(args) == 130 and "interrupted" in capsys.readouterr().err
