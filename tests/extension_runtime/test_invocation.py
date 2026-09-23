@@ -107,6 +107,10 @@ def test_plugin_failure_redacted_then_recovery(extension_python, mode):
         invoke(extension_python, {"mode": mode, "secret": secret})
     assert secret not in "".join(traceback.format_exception(caught.value))
     assert secret not in repr(caught.value)
+    assert "PLUGIN-DIAGNOSTIC-SENTINEL" not in "".join(
+        traceback.format_exception(caught.value)
+    )
+    assert "PLUGIN-DIAGNOSTIC-SENTINEL" not in repr(caught.value)
     recover(extension_python)
 
 

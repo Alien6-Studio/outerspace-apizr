@@ -39,13 +39,13 @@ def main():
         os.write(1, b"\xff")
         return
     elif mode == "fail":
-        print(args.get("secret", "failed"), file=sys.stderr)
+        print("PLUGIN-DIAGNOSTIC-SENTINEL", file=sys.stderr)
         sys.exit(7)
     elif mode == "error":
         del response["result"]
         response.update(
             status="error",
-            error={"code": "private-code", "message": args.get("secret", "failed")},
+            error={"code": "private-code", "message": "PLUGIN-DIAGNOSTIC-SENTINEL"},
         )
     elif mode == "sleep":
         time.sleep(30)
