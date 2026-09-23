@@ -115,22 +115,48 @@ def main() -> None:
     plugin_hash = hashlib.sha256(plugin_wheel.read_bytes()).hexdigest()
     plugin_store = work / "plugins"
 
+    def plugin_command(*arguments: str) -> list[str]:
+        return [
+            str(core_python),
+            "-I",
+            "-B",
+            "-m",
+            "apizr.cli",
+            "plugins",
+            *arguments,
+            "--plugins-dir",
+            str(plugin_store),
+        ]
+
     def plugins(*arguments: str) -> str:
-        return run(
-            [
-                str(core_python),
-                "-I",
-                "-B",
-                "-m",
-                "apizr.cli",
-                "plugins",
-                *arguments,
-                "--plugins-dir",
-                str(plugin_store),
-            ],
-            work,
-            env,
+        return run(plugin_command(*arguments), work, env)
+
+    arguments_file = work / "arguments.json"
+    arguments_file.write_text('{"source_digest":"explicit-active-example"}\n')
+
+    def require_inactive() -> None:
+        refused = subprocess.run(
+            plugin_command(
+                "run",
+                "apizr-extension-probe",
+                "describe",
+                "--arguments",
+                str(arguments_file),
+            ),
+            cwd=work,
+            env=env,
+            text=True,
+            capture_output=True,
+            timeout=15,
         )
+        if (
+            refused.returncode != 2
+            or refused.stdout
+            or refused.stderr.strip() != "apizr plugins: plugin_inactive"
+        ):
+            raise RuntimeError("Expected inactive plugin refusal")
+        if json.loads(plugins("list", "--active", "--json"))["installations"]:
+            raise RuntimeError("Unexpected active installation")
 
     if json.loads(plugins("list", "--json"))["installations"]:
         raise RuntimeError("Expected an empty local inventory")
@@ -145,6 +171,38 @@ def main() -> None:
     plugins("install", str(plugin_wheel), "--sha256", plugin_hash)
     if json.loads(plugins("list", "--json")) != installation_inventory:
         raise RuntimeError("Identical reinstallation changed the inventory")
+    require_inactive()
+    plugins("enable", "apizr-extension-probe", "--version", "0.0.0")
+    plugins("enable", "apizr-extension-probe", "--version", "0.0.0")
+    if json.loads(plugins("list", "--active", "--json")) != installation_inventory:
+        raise RuntimeError("Active filter changed the inventory format")
+    active_invocation = json.loads(
+        plugins(
+            "run",
+            "apizr-extension-probe",
+            "describe",
+            "--arguments",
+            str(arguments_file),
+        )
+    )
+    if (
+        active_invocation["operation"] != "describe"
+        or active_invocation["result"]["source_digest"] != "explicit-active-example"
+    ):
+        raise RuntimeError("Active invocation result mismatch")
+    active_example = work / "invoke_active.py"
+    shutil.copyfile(REPO / "examples/extension-probe/invoke_active.py", active_example)
+    active_python_invocation = json.loads(
+        run(
+            [str(core_python), "-I", "-B", str(active_example), str(plugin_store)],
+            work,
+            env,
+        )
+    )
+    plugins("disable", "apizr-extension-probe")
+    require_inactive()
+    if json.loads(plugins("list", "--json")) != installation_inventory:
+        raise RuntimeError("Activation changed the installation inventory")
     installed_example = work / "invoke_installed.py"
     shutil.copyfile(
         REPO / "examples/extension-probe/invoke_installed.py", installed_example
@@ -275,6 +333,9 @@ def main() -> None:
         "invocation": invocation,
         "installation_inventory": installation_inventory,
         "installed_invocation": installed_invocation,
+        "active_invocation": active_invocation,
+        "active_python_invocation": active_python_invocation,
+        "activation_lifecycle_verified": True,
         "incompatible_protocol_rejected": True,
         "before": before,
         "after": after,

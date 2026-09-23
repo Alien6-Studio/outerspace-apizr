@@ -7,14 +7,18 @@ from pathlib import Path
 from uuid import uuid4
 
 from . import backend, store
+from .activation import active_inventory
 from .models import Installation, Inventory, PluginError
 from .wheel import inspect_wheel
 
 
-def list_extensions(*, directory: Path | None = None) -> Inventory:
+def list_extensions(
+    *, directory: Path | None = None, active: bool = False
+) -> Inventory:
     """Read local records only. No uv, subprocess, import or network operation."""
     try:
-        return store.read_inventory(store.storage_directory(directory))
+        root = store.storage_directory(directory)
+        return active_inventory(root) if active else store.read_inventory(root)
     except OSError:
         raise PluginError("inventory_unavailable") from None
 
