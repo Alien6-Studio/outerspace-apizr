@@ -1,0 +1,7 @@
+{
+  "schema": "apizr.extension-manifest/v1",
+  "name": "apizr-extension-probe",
+  "version": "0.0.0",
+  "module": "apizr_extension_probe.runtime",
+  "protocol": "apizr.extension/v1"
+}

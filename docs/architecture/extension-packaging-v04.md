@@ -1,5 +1,9 @@
 # V04-01 — Separate extension packaging
 
+Implementation updates: [controlled invocation](../reference/extension-invocation.md)
+and [local installation/inventory](../reference/local-extensions.md) now provide
+reusable operations. The record below describes the original packaging experiment.
+
 Status: proposed 0.4 architecture, demonstrated by a private experiment; **not a
 production plugin runtime**. See the [roadmap and qualification record](../contributing/0.4-roadmap.md).
 The package version remains 0.3.0. No public CLI command is added.

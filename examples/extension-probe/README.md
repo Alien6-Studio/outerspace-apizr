@@ -23,3 +23,9 @@ The `apizr_extension_probe.runtime` module also implements the reusable
 The original module entry point remains available for the packaging prototype.
 See [the invocation API](../../docs/reference/extension-invocation.md) for the
 protocol, cancellation, failure codes and process-cleanup limits.
+
+The wheel also contains the versioned `apizr-extension.json` manifest. The
+packaging proof installs it through `apizr plugins install`, lists its record,
+and runs `invoke_installed.py` outside the checkout. See
+[local installation](../../docs/reference/local-extensions.md) for the commands,
+offline constraints and atomic inventory behavior.
