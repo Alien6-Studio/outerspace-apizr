@@ -6,6 +6,7 @@ This reference is for using individual interfaces or understanding their contrac
 
 | What you need | Where to look |
 | --- | --- |
+| Call repository readiness, planning and generation from Python | [Compiler API](compiler-api.md) |
 | Inventory a Python repository | [Scanner](../getting-started/user-guide/scan.md), [graph](../getting-started/user-guide/graph.md) and [repository readiness](../getting-started/user-guide/repository-readiness.md) |
 | Expose MCP tools | [MCP guide](../getting-started/user-guide/mcp.md) |
 | Execute under a policy | [Local and OCI execution](../getting-started/user-guide/execute.md) |

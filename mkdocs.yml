@@ -95,6 +95,7 @@ nav:
       - Inspect source without running it: getting-started/user-guide/inspect.md
       - Assess repository exposure evidence: getting-started/user-guide/repository-readiness.md
       - Plan exposure: getting-started/user-guide/exposure.md
+      - Call the compiler from Python: reference/compiler-api.md
       - Generate a REST interface: getting-started/user-guide/rest.md
       - Generate an MCP server: getting-started/user-guide/mcp.md
       - Execute code with a policy: getting-started/user-guide/execute.md

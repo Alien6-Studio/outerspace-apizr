@@ -7,16 +7,15 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import cast
 
+from apizr.compiler import prepare_exposure, render_bundle
 from apizr.execution.policy import ExecutionPolicy, PolicyRefused
 from apizr.exposure import (
     ExposurePolicy,
     ExposureRefused,
     plan_bytes,
-    plan_exposure,
     refusal_report,
     text_report,
 )
-from apizr.graph import analyze_repository
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.repository_cli import (
     add_graph_arguments,
@@ -25,7 +24,6 @@ from apizr.repository_cli import (
     scan_policy,
 )
 from apizr.repository_interfaces import BundleRefused
-from apizr.repository_readiness import assess_repository
 from apizr.repository_readiness_cli import load_policy
 
 
@@ -128,17 +126,15 @@ def main(argv: Sequence[str]) -> int:
                 }
             )
         readiness_policy = load_policy(args.readiness_policy)
-        artifacts = analyze_repository(
-            args.root, scan_policy=scan_policy(args), graph_policy=graph_policy(args)
+        prepared = prepare_exposure(
+            args.root,
+            policy=policy,
+            scan_policy=scan_policy(args),
+            graph_policy=graph_policy(args),
+            readiness_policy=readiness_policy,
         )
-        readiness = assess_repository(
-            artifacts.catalog, artifacts.graph, policy=readiness_policy
-        )
-        plan = plan_exposure(
-            artifacts.catalog, artifacts.graph, readiness, policy=policy
-        )
+        readiness, plan = prepared.readiness, prepared.plan
         if args.command == "build":
-            from apizr.repository_interfaces.generator import render_repository_bundle
             from apizr.repository_interfaces.output import write_bundle
 
             if args.execution_policy is not None:
@@ -162,13 +158,8 @@ def main(argv: Sequence[str]) -> int:
                     execution_policy = ExecutionPolicy.model_validate_json(raw_policy)
             if runtime_image is None and (args.runtime_image or args.runtime_platform):
                 raise ValueError("Runtime image requires OCI policy")
-            bundle = render_repository_bundle(
-                artifacts.catalog,
-                artifacts.graph,
-                readiness,
-                policy,
-                plan,
-                artifacts.sources,
+            bundle = render_bundle(
+                prepared,
                 interface=args.target_interface,
                 execution_policy=execution_policy,
                 runtime_image=runtime_image,
