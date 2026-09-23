@@ -216,6 +216,10 @@ def test_missing_interpreter_and_redirected_environment(installed, tmp_path):
     old.symlink_to(moved, target_is_directory=True)
     with pytest.raises(PluginError, match="invalid_inventory"):
         run_extension(record.name, "describe", {}, directory=root)
+    old.unlink()
+    old.symlink_to(old.name, target_is_directory=True)
+    with pytest.raises(PluginError, match="invalid_inventory"):
+        run_extension(record.name, "describe", {}, directory=root)
 
 
 @pytest.mark.parametrize(

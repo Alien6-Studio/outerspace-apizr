@@ -88,7 +88,13 @@ def _interpreter(record: Installation, root: Path) -> None:
     environment = root / "environments" / record.environment_id
     # The interpreter itself is normally a symlink to the prepared Python.
     # Its containing environment must not have been redirected elsewhere.
-    if python.parent.resolve() != environment / "venv/bin":
+    try:
+        resolved_parent = python.parent.resolve(strict=True)
+    except FileNotFoundError:
+        raise PrerequisiteMissing() from None
+    except (OSError, RuntimeError):  # Symlink loops differ between Python versions.
+        raise PluginError("invalid_inventory") from None
+    if resolved_parent != environment / "venv/bin":
         raise PluginError("invalid_inventory")
     if not python.is_file() or not os.access(python, os.X_OK):
         raise PrerequisiteMissing()
