@@ -4,14 +4,13 @@ import argparse
 import sys
 from collections.abc import Sequence
 
-from apizr.graph import graph_repository
+from apizr.compiler import assess_readiness
 from apizr.repository_cli import (
     add_graph_arguments,
     add_scan_arguments,
     graph_policy,
     scan_policy,
 )
-from apizr.repository_readiness import assess_repository
 from apizr.repository_readiness_cli import (
     add_assessment_arguments,
     load_policy,
@@ -30,10 +29,12 @@ def main(argv: Sequence[str]) -> int:
     args = parser.parse_args(argv)
     try:
         policy = load_policy(args.policy)
-        artifacts = graph_repository(
-            args.root, scan_policy=scan_policy(args), graph_policy=graph_policy(args)
+        report = assess_readiness(
+            args.root,
+            scan_policy=scan_policy(args),
+            graph_policy=graph_policy(args),
+            readiness_policy=policy,
         )
-        report = assess_repository(artifacts.catalog, artifacts.graph, policy=policy)
     except (OSError, ValueError, UnicodeError, RecursionError):
         print(
             "apizr readiness: invalid policy/input or inaccessible repository root; check roots and bounds",
