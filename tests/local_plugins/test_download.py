@@ -77,7 +77,7 @@ def endpoint(tls, wheel_factory, request):
                     self.end_headers()
                     return
                 redirects = {
-                    "/loop/": self.path,
+                    "/loop/": f"/loop/{wheel.name}",
                     "/http/": "http://localhost/never.whl",
                     "/credentials/": "https://user:secret@localhost/never.whl",
                     "/bad-location/": "https://localhost:bad/never.whl",
