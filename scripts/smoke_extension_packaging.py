@@ -142,6 +142,27 @@ def main() -> None:
             env,
         )
     )
+    # Keep the original packaging proof, and exercise the reusable API with the
+    # same two real installations. The example itself runs outside the checkout.
+    example = work / "invoke.py"
+    shutil.copyfile(REPO / "examples/extension-probe/invoke.py", example)
+    invocation = json.loads(
+        core(
+            "import sys, runpy, importlib.metadata\n"
+            "def audit(event, args):\n"
+            "    if event == 'import' and (args[0].split('.')[0] in "
+            "{'fastapi', 'mcp', 'nbconvert', 'IPython', 'black', 'questionary', "
+            "'uvicorn', 'docker', 'apizr_extension_probe'} or "
+            "args[0].startswith('apizr.extensions.plugins')):\n"
+            "        raise AssertionError('Unexpected optional/plugin import')\n"
+            "def forbidden(*args, **kwargs):\n"
+            "    raise AssertionError('Unexpected plugin discovery')\n"
+            "sys.addaudithook(audit)\n"
+            "importlib.metadata.entry_points = forbidden\n"
+            f"sys.argv = [{str(example)!r}, {str(plugin_python)!r}]\n"
+            f"runpy.run_path({str(example)!r}, run_name='__main__')"
+        )
+    )
     core(
         "import importlib.util; assert importlib.util.find_spec('apizr_extension_probe') is None"
     )
@@ -183,6 +204,31 @@ def main() -> None:
         "except ValidationError: pass\n"
         "else: raise AssertionError('Incompatible response accepted')"
     )
+    invocation_request = {
+        "protocol": "apizr.extension/v1",
+        "request_id": invocation["request_id"],
+        "operation": "describe",
+        "arguments": {"source_digest": digest},
+    }
+    bad_invocation = subprocess.run(
+        [str(plugin_python), "-I", "-B", "-m", "apizr_extension_probe.runtime"],
+        input=json.dumps(dict(invocation_request, protocol="apizr.extension/v999")),
+        text=True,
+        capture_output=True,
+        cwd=work,
+        env=env,
+        timeout=10,
+    )
+    if bad_invocation.returncode != 2:
+        raise RuntimeError("Extension accepted incompatible invocation protocol")
+    core(
+        "from apizr.extension_runtime import Request, ProtocolInvalid; "
+        "from apizr.extension_runtime.protocol import validate_response; "
+        f"request=Request.model_validate({invocation_request!r})\n"
+        f"try: validate_response({json.dumps(dict(invocation, protocol='apizr.extension/v999')).encode()!r}, request)\n"
+        "except ProtocolInvalid: pass\n"
+        "else: raise AssertionError('Incompatible invocation response accepted')"
+    )
     after = snapshot(core_root)
     after_distributions = core(inventory_code)
     evidence = {
@@ -198,6 +244,7 @@ def main() -> None:
         "python": core("import sys; print(sys.version)"),
         "plugin_python": str(plugin_python),
         "result": result,
+        "invocation": invocation,
         "incompatible_protocol_rejected": True,
         "before": before,
         "after": after,
