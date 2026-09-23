@@ -13,7 +13,7 @@ from pathlib import Path, PurePosixPath
 
 from apizr.extension_runtime.protocol import unique_object
 
-from .models import Manifest, PluginError, canonical_name
+from .models import LockedDistribution, Manifest, PluginError, canonical_name
 
 MAX_WHEEL_BYTES = 64 * 1024 * 1024
 MAX_EXPANDED_BYTES = 256 * 1024 * 1024
@@ -21,7 +21,25 @@ MAX_METADATA_BYTES = 65536
 MANIFEST = "apizr-extension.json"
 
 
-def inspect_wheel(path: Path, sha256: str) -> tuple[bytes, Manifest]:
+def inspect_wheel(
+    path: Path, sha256: str, *, allow_dependencies: bool = False
+) -> tuple[bytes, Manifest]:
+    data, metadata = _inspect(
+        path, sha256, plugin=True, allow_dependencies=allow_dependencies
+    )
+    assert isinstance(metadata, Manifest)
+    return data, metadata
+
+
+def inspect_dependency(path: Path, sha256: str) -> tuple[bytes, LockedDistribution]:
+    data, metadata = _inspect(path, sha256, plugin=False, allow_dependencies=True)
+    assert isinstance(metadata, LockedDistribution)
+    return data, metadata
+
+
+def _inspect(
+    path: Path, sha256: str, *, plugin: bool, allow_dependencies: bool
+) -> tuple[bytes, Manifest | LockedDistribution]:
     if not re.fullmatch(r"[0-9a-fA-F]{64}", sha256):
         raise PluginError("invalid_sha256")
     if path.suffix != ".whl":
@@ -39,7 +57,9 @@ def inspect_wheel(path: Path, sha256: str) -> tuple[bytes, Manifest]:
             raise PluginError("wheel_too_large")
         if hashlib.sha256(data).hexdigest() != sha256.lower():
             raise PluginError("hash_mismatch")
-        return data, _manifest(data, path.name)
+        return data, _manifest(
+            data, path.name, sha256.lower(), plugin, allow_dependencies
+        )
     except (
         OSError,
         ValueError,
@@ -52,7 +72,9 @@ def inspect_wheel(path: Path, sha256: str) -> tuple[bytes, Manifest]:
         raise PluginError("invalid_wheel") from None
 
 
-def _manifest(data: bytes, filename: str) -> Manifest:
+def _manifest(
+    data: bytes, filename: str, digest: str, plugin: bool, allow_dependencies: bool
+) -> Manifest | LockedDistribution:
     with zipfile.ZipFile(io.BytesIO(data)) as archive:
         entries = archive.infolist()
         names = [entry.filename for entry in entries]
@@ -74,8 +96,11 @@ def _manifest(data: bytes, filename: str) -> Manifest:
                 != entry.filename.rstrip("/")
                 or kind not in (0, stat.S_IFREG, stat.S_IFDIR)
                 or entry.flag_bits & 1
-                or entry.filename.endswith(".pth")
-                or parts[-1] in ("sitecustomize.py", "usercustomize.py")
+                or entry.filename.lower().endswith(".pth")
+                or any(
+                    part.lower().split(".", 1)[0] in ("sitecustomize", "usercustomize")
+                    for part in parts
+                )
             ):
                 raise PluginError("unsupported_wheel_layout")
 
@@ -85,12 +110,6 @@ def _manifest(data: bytes, filename: str) -> Manifest:
                 raise PluginError("metadata_too_large")
             return archive.read(entry).decode("utf-8")
 
-        try:
-            manifest = Manifest.model_validate(
-                json.loads(read(MANIFEST), object_pairs_hook=unique_object), strict=True
-            )
-        except (ValueError, KeyError, RecursionError):
-            raise PluginError("invalid_manifest") from None
         metadata_paths = [
             name for name in names if name.endswith(".dist-info/METADATA")
         ]
@@ -102,23 +121,42 @@ def _manifest(data: bytes, filename: str) -> Manifest:
             for key in ("Name", "Version", "Metadata-Version")
         ):
             raise PluginError("invalid_wheel")
-        if metadata.get_all("Requires-Dist"):
-            # Even conditional/extra dependencies are outside this iteration.
+        if metadata.get_all("Requires-Dist") and not allow_dependencies:
+            # The original single-wheel path remains dependency-free.
             raise PluginError("dependencies_not_supported")
+        # No direct references from wheel metadata either: dependencies must be
+        # resolved exclusively from the verified local snapshot.
+        if allow_dependencies and any(
+            "@" in value for value in metadata.get_all("Requires-Dist", [])
+        ):
+            raise PluginError("unsupported_dependency_reference")
+        identity = LockedDistribution(
+            name=canonical_name(str(metadata["Name"])),
+            version=str(metadata["Version"]),
+            sha256=digest,
+        )
         components = filename.removesuffix(".whl").split("-")
         dist_info = metadata_paths[0].split("/")[0]
         if (
             len(components) not in (5, 6)
-            or canonical_name(str(metadata["Name"])) != manifest.name
-            or str(metadata["Version"]) != manifest.version
-            or canonical_name(components[0]) != manifest.name
-            or components[1] != manifest.version
+            or canonical_name(components[0]) != identity.name
+            or components[1] != identity.version
             or dist_info != f"{components[0]}-{components[1]}.dist-info"
         ):
             raise PluginError("inconsistent_metadata")
         wheel = Parser(policy=policy.default).parsestr(read(dist_info + "/WHEEL"))
         if wheel.get("Wheel-Version") != "1.0" or dist_info + "/RECORD" not in names:
             raise PluginError("unsupported_wheel_layout")
+        if not plugin:
+            return identity
+        try:
+            manifest = Manifest.model_validate(
+                json.loads(read(MANIFEST), object_pairs_hook=unique_object), strict=True
+            )
+        except (ValueError, KeyError, RecursionError):
+            raise PluginError("invalid_manifest") from None
+        if (manifest.name, manifest.version) != (identity.name, identity.version):
+            raise PluginError("inconsistent_metadata")
         entry = manifest.module.replace(".", "/")
         if entry + ".py" not in names and entry + "/__main__.py" not in names:
             raise PluginError("missing_entry_module")

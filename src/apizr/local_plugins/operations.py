@@ -1,4 +1,4 @@
-"""Install and enumerate dependency-free local wheels without activating them."""
+"""Install and enumerate verified local wheels without activating them."""
 
 import os
 import shutil
@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from uuid import uuid4
 
-from . import backend, store
+from . import backend, locking, store
 from .activation import active_inventory
 from .models import Installation, Inventory, PluginError
 from .wheel import inspect_wheel
@@ -29,8 +29,12 @@ def install_extension(
     *,
     directory: Path | None = None,
     python: Path | None = None,
+    requirements: Path | None = None,
+    wheelhouse: Path | None = None,
 ) -> Installation:
     """Install one verified wheel offline; publication alone makes it visible."""
+    locking.check_options(requirements, wheelhouse)
+    lock = locking.read_lock(requirements) if requirements is not None else None
     uv = backend.require_uv()  # Before any filesystem modification, even a lock.
     python = python if python is not None else Path(sys.executable)
     if (
@@ -39,7 +43,7 @@ def install_extension(
         or not os.access(python, os.X_OK)
     ):
         raise PluginError("python_unavailable")
-    data, manifest = inspect_wheel(wheel, sha256)
+    data, manifest = inspect_wheel(wheel, sha256, allow_dependencies=lock is not None)
     try:
         root = store.storage_directory(directory)
         with store.installation_lock(root):
@@ -49,7 +53,20 @@ def install_extension(
                     manifest.name,
                     manifest.version,
                 ):
-                    if existing.sha256 != sha256.lower():
+                    if (
+                        existing.sha256 != sha256.lower()
+                        or existing.lock_sha256 != (lock.sha256 if lock else None)
+                        or existing.dependencies
+                        != (
+                            [
+                                item
+                                for item in lock.packages
+                                if item.name != manifest.name
+                            ]
+                            if lock
+                            else []
+                        )
+                    ):
                         raise PluginError("installation_conflict")
                     if not Path(existing.python).is_file():
                         raise PluginError("installed_python_unavailable")
@@ -66,13 +83,25 @@ def install_extension(
             try:
                 work = generation / "input"
                 work.mkdir(mode=0o700)
-                snapshot = work / wheel.name
-                snapshot.write_bytes(data)
-                requirements = work / "requirements.txt"
-                requirements.write_text(
-                    f"{manifest.name} @ {snapshot.as_uri()} --hash=sha256:{sha256.lower()}\n",
-                    encoding="utf-8",
-                )
+                dependencies = []
+                if lock is not None:
+                    assert wheelhouse is not None
+                    dependencies = locking.prepare(
+                        lock, wheelhouse, manifest, sha256, data, wheel.name, work
+                    )
+                    dependency_options = [
+                        "--find-links",
+                        str(work / "wheels"),
+                        "--strict",
+                    ]
+                else:
+                    snapshot = work / wheel.name
+                    snapshot.write_bytes(data)
+                    (work / "requirements.txt").write_text(
+                        f"{manifest.name} @ {snapshot.as_uri()} --hash=sha256:{sha256.lower()}\n",
+                        encoding="utf-8",
+                    )
+                    dependency_options = ["--no-deps"]
                 backend.run_uv(
                     uv,
                     [
@@ -94,25 +123,29 @@ def install_extension(
                         str(interpreter),
                         "--no-python-downloads",
                         "--no-index",
-                        "--no-deps",
+                        *dependency_options,
                         "--no-build",
                         "--no-sources",
                         "--require-hashes",
                         "--link-mode",
                         "copy",
                         "--requirements",
-                        str(requirements),
+                        str(work / "requirements.txt"),
                     ],
                     work,
                 )
                 if not interpreter.is_file():
                     raise PluginError("uv_install_failed")
+                if lock is not None:
+                    locking.verify_installed(generation / "venv", lock)
                 record = Installation.model_validate(
                     {
                         **manifest.model_dump(by_alias=True),
                         "sha256": sha256.lower(),
                         "environment_id": identifier,
                         "python": str(interpreter),
+                        "lock_sha256": lock.sha256 if lock else None,
+                        "dependencies": [item.model_dump() for item in dependencies],
                     }
                 )
                 # Discard installer scratch files before publishing, never after.

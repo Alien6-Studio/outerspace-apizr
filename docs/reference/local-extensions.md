@@ -1,7 +1,7 @@
 # Install and use extensions
 
 Available in the development checkout; not yet part of published 0.3.0.
-Install an explicitly trusted, dependency-free wheel into its own Python
+Install an explicitly trusted wheel into its own Python
 virtual environment. Installation does not activate or invoke it, and project
 configuration cannot install or load extensions. Historical `apizr.pipeline.v1`
 plugins keep their existing behavior.
@@ -44,7 +44,8 @@ to uv, so an existing venv retains its identity. The new environment has no acce
 to the core's site-packages. Nothing is injected into uv tool, pipx or Homebrew.
 
 The local path stays entirely offline. Neither path enables an index, Python
-download, source build, dependency resolution or installer fallback. uv receives
+download, source build or installer fallback. Dependency resolution is limited
+to explicitly locked local wheels when both dependency options are supplied. uv receives
 an isolated environment and explicit
 `--offline`, `--no-config`, `--no-cache`, `--no-python-downloads`, `--no-index`,
 `--no-deps`, `--no-build`, `--no-sources` and hash checking where applicable.
@@ -53,14 +54,68 @@ backend switches. Parent `UV_*`, `PIP_*`, Python settings and credentials are no
 forwarded. uv output is discarded; CLI diagnostics contain fixed failure codes.
 A missing backend is detected before any filesystem modification.
 
-This iteration rejects directories, non-HTTPS URLs, source archives, any `Requires-Dist`
-entry (including conditional or extra dependencies), malformed/incompatible
+Without `--requirements` and `--wheelhouse`, any `Requires-Dist` entry (including
+conditional or extra dependencies) remains refused. Both paths reject directories,
+non-HTTPS URLs, source archives, malformed/incompatible
 manifests, startup `.pth`/`sitecustomize.py`/`usercustomize.py` files, and unsafe
 archive paths or links. Native compatibility and `Requires-Python` are checked
 by uv; an incompatible wheel is a failed installation, never an available record.
 Wheels are limited to 64 MiB, expanded content to 256 MiB / 10,000 archive entries,
 and individual metadata files to 64 KiB. The module must be a Python file or a
 package with `__main__.py` in the wheel's site-packages root.
+
+## Locked local dependencies
+
+Supply both options together; the plugin may be a local wheel or an HTTPS URL:
+
+```sh
+apizr plugins install ./plugin-1.0.0-py3-none-any.whl --sha256 EXPECTED_SHA256 \
+  --requirements requirements.lock --wheelhouse ./wheels
+```
+
+The accepted requirements subset is deliberately small: one `name==version`
+with exactly one `--hash=sha256:HEX` per distribution, including the plugin and
+**all transitive dependencies**. Blank lines, `#` comments and backslash line
+continuations are supported. Names are normalized; duplicates are rejected.
+Extras, markers, wildcard/range pins, multiple hashes, URLs, local paths,
+editable installs, file inclusions and every other requirements option are
+rejected. Prepare one lock/wheelhouse for the intended Python/platform target;
+uv checks dependency constraints, wheel tags and `Requires-Python`.
+
+```text
+example-plugin==1.0.0 --hash=sha256:PLUGIN_SHA256
+example-helper==2.0.0 --hash=sha256:HELPER_SHA256
+example-leaf==3.0.0 --hash=sha256:LEAF_SHA256
+```
+
+Use real 64-character digests instead of these placeholders. The wheelhouse
+must contain exactly one wheel for each locked dependency. Unlocked or ambiguous
+dependency wheels are rejected. The plugin's optional wheelhouse copy is ignored:
+its explicit source and `--sha256` determine the installed bytes. Other files are
+ignored and never passed to uv. Dependency wheels do not need an Apizr manifest;
+all wheels undergo the same archive and startup-file checks. Direct references
+in wheel dependency metadata are also refused.
+
+The lock is limited to 64 KiB and 128 distributions including the plugin.
+Wheelhouse enumeration is bounded to 128 entries; selected wheels total at most
+256 MiB compressed and 512 MiB expanded, in addition to the per-wheel limits.
+Apizr copies validated bytes into a private snapshot. uv resolves only against
+that snapshot with `--require-hashes`, `--no-index`, `--offline`, `--no-build`
+and `--strict`; this path does **not** use `--no-deps`. Missing transitives,
+conflicting versions and incompatible Python/platform constraints fail before
+an installation becomes available. Validation does not import plugin code.
+
+The recorded lock identity is SHA-256 of the original lock bytes (including
+comments/whitespace); dependency records contain the exact installed versions
+and wheel digests. Changing either the lock or dependencies for an existing
+name/version raises `installation_conflict`. There are no implicit updates.
+The existing activation remains unchanged, and a newly installed version starts
+inactive. Files/distributions in the core environment remain untouched.
+
+The Python operations `install_extension`, `install_from_source` and
+`install_from_url` accept the same `requirements=Path(...)` and
+`wheelhouse=Path(...)` keyword arguments. Their existing return types, errors,
+HTTPS limits and interruption behavior are retained.
 
 ## HTTPS wheels
 
@@ -151,7 +206,8 @@ For Hatch, the demonstration includes the file with:
 ## Python operations and inventory
 
 `apizr.local_plugins.install_extension(wheel: Path, sha256: str, *,
-directory: Path | None = None, python: Path | None = None) -> Installation`
+directory: Path | None = None, python: Path | None = None,
+requirements: Path | None = None, wheelhouse: Path | None = None) -> Installation`
 performs the operation. `list_extensions(*, directory: Path | None = None) ->
 Inventory` reads local metadata only, without invoking uv or any interpreter.
 Pass `active=True` to filter it to the explicitly selected versions. These
@@ -162,7 +218,9 @@ The CLI returns 2 on failure, 130 on keyboard interruption, and 0 on success.
 
 `list --json` emits `apizr.installed-extensions/v1` with an `installations` array.
 Records contain manifest fields plus `sha256`, `environment_id` and the absolute
-`python` path. Listing is an inventory, not an interpreter health check: external
+`python` path. New records also include `lock_sha256` (null for single-wheel
+installs) and `dependencies` (name, version and wheel SHA-256). Existing records
+without those fields remain readable. Listing is an inventory, not an interpreter health check: external
 removal/upgrades of Python can invalidate an existing environment. No automatic
 repair or download occurs. A corrupt local inventory fails closed.
 
@@ -239,7 +297,7 @@ wait. A successful install is committed by an atomic replacement of
 `installations.json`; readers see either complete inventory, without taking a
 write lock. At most 1,000 records / 1 MiB of inventory are supported.
 
-The same canonical name, version and digest is idempotent. Different bytes under
+The same canonical name, version, digest and lock identity is idempotent. Different bytes under
 an existing name/version are refused. A different version gets another independent
 environment, without activation, switching or an implicit upgrade.
 
@@ -324,3 +382,43 @@ It explicitly selects the demonstration record and calls `invoke_extension` with
 that record's interpreter and module. Listing itself does not invoke anything.
 Run installation proofs only in disposable environments; do not update workstation
 Homebrew dependencies to reproduce the CI job. No publication is performed.
+
+### Example with transitive dependencies
+
+The reviewed local fixture in `examples/extension-locked` contains three packages:
+`apizr-locked-probe` imports `apizr-locked-helper`, which imports
+`apizr-locked-leaf`. Neither dependency has a plugin manifest.
+From the checkout, prepare these trusted example wheels and their lock:
+
+```sh
+uv run --locked python scripts/prepare_locked_extension.py \
+  --wheelhouse /tmp/apizr-locked-example/wheels
+```
+
+This explicit **preparation** step builds the three example projects and may
+fetch their build backend; plugin installation itself never builds or downloads
+dependencies. The script prints the plugin wheel, SHA-256 and lock paths. For
+other plugins, obtain trusted compatible wheels beforehand and write a lock
+containing every exact version and its independently verified SHA-256.
+
+Using a separately installed Apizr development wheel, run from outside the checkout:
+
+```sh
+apizr plugins install /tmp/apizr-locked-example/wheels/apizr_locked_probe-1.0.0-py3-none-any.whl \
+  --sha256 PRINTED_SHA256 --requirements /tmp/apizr-locked-example/requirements.lock \
+  --wheelhouse /tmp/apizr-locked-example/wheels --plugins-dir /tmp/apizr-locked-store
+apizr plugins enable apizr-locked-probe --version 1.0.0 --plugins-dir /tmp/apizr-locked-store
+printf '%s\n' '{}' > /tmp/apizr-locked-example/arguments.json
+apizr plugins run apizr-locked-probe answer --arguments /tmp/apizr-locked-example/arguments.json \
+  --plugins-dir /tmp/apizr-locked-store
+```
+
+The response contains `"result": {"answer": 42}`. The existing installed-wheel
+proof executes this sequence on disposable uv/Homebrew runners and records
+`locked_dependencies_verified`, the dependency inventory and invocation response.
+Its before/after core file and distribution comparisons cover this sequence too:
+
+```sh
+uv run --locked python scripts/smoke_extension_packaging.py \
+  --work-dir /tmp/apizr-locked-proof
+```
