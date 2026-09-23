@@ -48,6 +48,14 @@ def tls(tmp_path_factory):
     return certificate(tmp_path_factory.mktemp("https-cert"))
 
 
+def test_local_https_fixture_never_reverse_resolves(tls, monkeypatch):
+    monkeypatch.setattr(
+        socket, "getfqdn", lambda *args: pytest.fail("fixture reverse DNS")
+    )
+    with https_server(*tls, BaseHTTPRequestHandler) as url:
+        assert url.startswith("https://localhost:")
+
+
 @pytest.fixture
 def endpoint(tls, wheel_factory, request):
     wheel, digest = wheel_factory(**getattr(request, "param", {}))

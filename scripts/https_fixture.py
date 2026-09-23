@@ -6,6 +6,16 @@ import threading
 from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from socketserver import TCPServer
+
+
+class LocalHTTPServer(ThreadingHTTPServer):
+    def server_bind(self) -> None:
+        # HTTPServer normally reverse-resolves the bind address. A loopback
+        # fixture already knows its name and must not depend on runner DNS.
+        TCPServer.server_bind(self)
+        self.server_name = "localhost"
+        self.server_port = self.server_address[1]
 
 
 def certificate(directory: Path) -> tuple[Path, Path]:
@@ -50,7 +60,7 @@ def https_server(cert: Path, key: Path, handler: type[BaseHTTPRequestHandler]):
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.minimum_version = ssl.TLSVersion.TLSv1_2
     context.load_cert_chain(cert, key)
-    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    server = LocalHTTPServer(("127.0.0.1", 0), handler)
     server.daemon_threads = True
     # Bound even malformed clients/handshakes in this test-only server.
     server.socket.settimeout(2)
