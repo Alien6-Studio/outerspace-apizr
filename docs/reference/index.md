@@ -6,6 +6,7 @@ This reference is for using individual interfaces or understanding their contrac
 
 | What you need | Where to look |
 | --- | --- |
+| Invoke an already installed extension | [Extension invocation](extension-invocation.md) |
 | Configure readiness and exposure with a project file | [Project configuration](../getting-started/user-guide/project.md) |
 | Call repository readiness, planning and generation from Python | [Compiler API](compiler-api.md) |
 | Inventory a Python repository | [Scanner](../getting-started/user-guide/scan.md), [graph](../getting-started/user-guide/graph.md) and [repository readiness](../getting-started/user-guide/repository-readiness.md) |
