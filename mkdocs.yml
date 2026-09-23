@@ -145,6 +145,8 @@ nav:
       - Overview: about/CONTRIBUTING.md
       - Development and checks: getting-started/developer-guide/setup.md
       - Legacy pipeline plugins: getting-started/developer-guide/plugins.md
+      - 0.4.0 roadmap (planned): contributing/0.4-roadmap.md
+      - V04-01 extension packaging ADR: architecture/extension-packaging-v04.md
       - Publish a release: contributing/releases.md
       - Verify builds and releases: contributing/verification.md
       - Managed Attest identity: contributing/attest.md
