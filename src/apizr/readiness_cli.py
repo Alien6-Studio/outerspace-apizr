@@ -8,6 +8,7 @@ from apizr.compiler import assess_readiness
 from apizr.repository_cli import (
     add_graph_arguments,
     add_scan_arguments,
+    apply_project,
     graph_policy,
     scan_policy,
 )
@@ -23,11 +24,12 @@ def main(argv: Sequence[str]) -> int:
         prog="apizr readiness",
         description="Assess static repository exposure evidence with one bounded discovery.",
     )
-    add_scan_arguments(parser)
-    add_graph_arguments(parser)
+    add_scan_arguments(parser, project=True)
+    add_graph_arguments(parser, project=True)
     add_assessment_arguments(parser)
     args = parser.parse_args(argv)
     try:
+        apply_project(parser, args)
         policy = load_policy(args.policy)
         report = assess_readiness(
             args.root,

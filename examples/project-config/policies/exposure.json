@@ -1,0 +1,9 @@
+{
+  "selection": {
+    "include": ["python:calculator:add"]
+  },
+  "interfaces": ["rest", "mcp"],
+  "execution": {
+    "allowed": ["direct"]
+  }
+}

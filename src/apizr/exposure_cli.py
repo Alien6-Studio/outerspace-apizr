@@ -20,6 +20,7 @@ from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.repository_cli import (
     add_graph_arguments,
     add_scan_arguments,
+    apply_project,
     graph_policy,
     scan_policy,
 )
@@ -28,8 +29,8 @@ from apizr.repository_readiness_cli import load_policy
 
 
 def add_policy_arguments(command: argparse.ArgumentParser) -> None:
-    add_scan_arguments(command)
-    add_graph_arguments(command)
+    add_scan_arguments(command, project=True)
+    add_graph_arguments(command, project=True)
     command.add_argument(
         "--policy",
         type=Path,
@@ -95,6 +96,7 @@ def main(argv: Sequence[str]) -> int:
     bundle: dict[str, bytes] = {}
     policy: ExposurePolicy | None = None
     try:
+        apply_project(parser, args, exposure=True)
         if args.policy:
             if any(
                 (
