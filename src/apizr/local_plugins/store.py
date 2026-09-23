@@ -55,6 +55,10 @@ def storage_directory(directory: Path | None = None) -> Path:
 
 def private_directory(path: Path) -> None:
     path.mkdir(mode=0o700, parents=True, exist_ok=True)
+    validate_directory(path)
+
+
+def validate_directory(path: Path) -> None:
     value = path.lstat()
     if (
         not stat.S_ISDIR(value.st_mode)
@@ -65,12 +69,17 @@ def private_directory(path: Path) -> None:
 
 
 @contextmanager
-def installation_lock(root: Path) -> Generator[None]:
+def installation_lock(root: Path, *, create: bool = True) -> Generator[None]:
     import fcntl
 
-    private_directory(root)
+    if create:
+        private_directory(root)
+    else:
+        validate_directory(root)
     descriptor = os.open(
-        root / ".install.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600
+        root / ".install.lock",
+        os.O_RDWR | (os.O_CREAT if create else 0) | os.O_NOFOLLOW,
+        0o600,
     )
     try:
         if not stat.S_ISREG(os.fstat(descriptor).st_mode):
@@ -122,6 +131,11 @@ def publish(root: Path, inventory: Inventory) -> None:
     raw = inventory.model_dump_json(by_alias=True).encode() + b"\n"
     if len(raw) > MAX_INVENTORY_BYTES:
         raise PluginError("inventory_full")
+    atomic_write(root / "installations.json", raw)
+
+
+def atomic_write(path: Path, raw: bytes) -> None:
+    root = path.parent
     temporary = root / (".inventory-" + uuid4().hex)
     try:
         descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -129,7 +143,7 @@ def publish(root: Path, inventory: Inventory) -> None:
             target.write(raw)
             target.flush()
             os.fsync(target.fileno())
-        os.replace(temporary, root / "installations.json")
+        os.replace(temporary, path)
         # Atomic visibility is the commit point. Nothing fallible follows it:
         # interruption must never delete an environment already in the inventory.
     finally:

@@ -98,9 +98,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments in (["--help"], ["-h"]):
         print("Apizr — an open-source capability compiler for Python codebases.\n")
         print("Version: apizr --version")
-        print(
-            "Extensions: apizr plugins install WHEEL --sha256 HASH | apizr plugins list [--json]"
-        )
+        print("Extensions: apizr plugins {install,list,enable,disable,run} --help")
         print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
         )
