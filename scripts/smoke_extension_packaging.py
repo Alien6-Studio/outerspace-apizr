@@ -111,22 +111,50 @@ def main() -> None:
         work,
         env,
     )
-    plugin_root = work / "plugins" / "probe-v1"
-    plugin_python = plugin_root / "bin" / "python"
-    run([uv, "venv", "--python", args.python, str(plugin_root)], work, env)
-    run(
-        [
-            uv,
-            "pip",
-            "install",
-            "--python",
-            str(plugin_python),
-            "--no-deps",
-            "--no-index",
-            str(next(wheels.glob("apizr_extension_probe-*.whl"))),
-        ],
-        work,
-        env,
+    plugin_wheel = next(wheels.glob("apizr_extension_probe-*.whl"))
+    plugin_hash = hashlib.sha256(plugin_wheel.read_bytes()).hexdigest()
+    plugin_store = work / "plugins"
+
+    def plugins(*arguments: str) -> str:
+        return run(
+            [
+                str(core_python),
+                "-I",
+                "-B",
+                "-m",
+                "apizr.cli",
+                "plugins",
+                *arguments,
+                "--plugins-dir",
+                str(plugin_store),
+            ],
+            work,
+            env,
+        )
+
+    if json.loads(plugins("list", "--json"))["installations"]:
+        raise RuntimeError("Expected an empty local inventory")
+    plugins("install", str(plugin_wheel), "--sha256", plugin_hash)
+    installation_inventory = json.loads(plugins("list", "--json"))
+    installed = installation_inventory["installations"][0]
+    if installed[
+        "sha256"
+    ] != plugin_hash or "apizr-extension-probe 0.0.0" not in plugins("list"):
+        raise RuntimeError("Installed inventory does not match the requested wheel")
+    plugin_python = Path(installed["python"])
+    plugins("install", str(plugin_wheel), "--sha256", plugin_hash)
+    if json.loads(plugins("list", "--json")) != installation_inventory:
+        raise RuntimeError("Identical reinstallation changed the inventory")
+    installed_example = work / "invoke_installed.py"
+    shutil.copyfile(
+        REPO / "examples/extension-probe/invoke_installed.py", installed_example
+    )
+    installed_invocation = json.loads(
+        run(
+            [str(core_python), "-I", "-B", str(installed_example), str(plugin_store)],
+            work,
+            env,
+        )
     )
     result = json.loads(
         run(
@@ -245,6 +273,8 @@ def main() -> None:
         "plugin_python": str(plugin_python),
         "result": result,
         "invocation": invocation,
+        "installation_inventory": installation_inventory,
+        "installed_invocation": installed_invocation,
         "incompatible_protocol_rejected": True,
         "before": before,
         "after": after,

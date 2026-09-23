@@ -60,6 +60,7 @@ jobs:
       - run: uv run --locked coverage report --include='src/apizr/interfaces/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/execution/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/extension_runtime/*' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/local_plugins/*,src/apizr/plugins_cli.py' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/governed/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/repository/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/graph/*' --fail-under=90
