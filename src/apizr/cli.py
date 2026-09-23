@@ -61,6 +61,10 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments == ["--version"]:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
         return 0
+    if arguments and arguments[0] == "plugins":
+        from apizr.plugins_cli import main as plugins_command
+
+        return plugins_command(arguments[1:])
     if arguments and arguments[0] == "expose":
         from apizr.exposure_cli import main as exposure_command
 
@@ -94,6 +98,9 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments in (["--help"], ["-h"]):
         print("Apizr — an open-source capability compiler for Python codebases.\n")
         print("Version: apizr --version")
+        print(
+            "Extensions: apizr plugins install WHEEL --sha256 HASH | apizr plugins list [--json]"
+        )
         print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
         )

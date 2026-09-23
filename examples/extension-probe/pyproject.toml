@@ -12,3 +12,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/apizr_extension_probe"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"apizr-extension.json" = "apizr-extension.json"
