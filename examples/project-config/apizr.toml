@@ -1,0 +1,12 @@
+schema_version = "apizr.project/v1"
+root = "."
+readiness_policy = "policies/readiness.json"
+exposure_policy = "policies/exposure.json"
+
+[scan]
+source_roots = ["src"]
+excluded_directories = ["ignored"]
+max_file_bytes = 4096
+
+[graph]
+max_ast_nodes = 10000

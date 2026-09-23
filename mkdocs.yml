@@ -94,6 +94,7 @@ nav:
       - Inspect capability relationships: getting-started/user-guide/graph.md
       - Inspect source without running it: getting-started/user-guide/inspect.md
       - Assess repository exposure evidence: getting-started/user-guide/repository-readiness.md
+      - Configure a project: getting-started/user-guide/project.md
       - Plan exposure: getting-started/user-guide/exposure.md
       - Call the compiler from Python: reference/compiler-api.md
       - Generate a REST interface: getting-started/user-guide/rest.md

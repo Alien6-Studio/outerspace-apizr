@@ -2,10 +2,87 @@
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
+
+
+def project_example(
+    root: Path,
+    command: Callable[..., subprocess.CompletedProcess[str]],
+    probe: Callable[[str], None],
+) -> None:
+    """Exercise the committed project example from an unrelated working directory."""
+    checkout = Path(__file__).resolve().parents[1]
+    example = root / "examples/project-config"
+    shutil.copytree(checkout / "examples/project-config", example)
+    project = example / "apizr.toml"
+    scan = [
+        example,
+        "--source-root",
+        "src",
+        "--exclude-dir",
+        "ignored",
+        "--max-file-bytes",
+        "4096",
+        "--max-ast-nodes",
+        "10000",
+    ]
+    readiness = example / "policies/readiness.json"
+    exposure = example / "policies/exposure.json"
+    configured = command("readiness", "--project", project, "--report")
+    explicit = command("readiness", *scan, "--policy", readiness, "--report")
+    assert configured.stdout == explicit.stdout
+    configured = command("expose", "plan", "--project", project, "--plan")
+    explicit = command(
+        "expose",
+        "plan",
+        *scan,
+        "--policy",
+        exposure,
+        "--readiness-policy",
+        readiness,
+        "--plan",
+    )
+    assert configured.stdout == explicit.stdout
+    for target in ("rest", "mcp"):
+        actual, expected = root / ("project-" + target), root / ("explicit-" + target)
+        command("expose", "build", target, "--project", project, "--output-dir", actual)
+        command(
+            "expose",
+            "build",
+            target,
+            *scan,
+            "--policy",
+            exposure,
+            "--readiness-policy",
+            readiness,
+            "--output-dir",
+            expected,
+        )
+        assert {
+            p.relative_to(actual): p.read_bytes()
+            for p in actual.rglob("*")
+            if p.is_file()
+        } == {
+            p.relative_to(expected): p.read_bytes()
+            for p in expected.rglob("*")
+            if p.is_file()
+        }
+    documentation = (checkout / "docs/getting-started/user-guide/project.md").read_text(
+        encoding="utf-8"
+    )
+    probe(
+        documentation.split("```python\n", 1)[1].split("```", 1)[0]
+        + """
+import sys
+assert not any(name == "apizr.cli" or name.endswith("_cli") or name.startswith("apizr.extensions.plugins") for name in sys.modules)
+print("PASS project configuration: documented Python example and four CLI commands outside checkout")
+"""
+    )
 
 
 def main():
@@ -97,6 +174,7 @@ def main():
                 probe(
                     "from importlib.metadata import distributions; names={d.metadata['Name'].lower().replace('_','-') for d in distributions()}; assert names == {'outerspace-apizr','pydantic','pydantic-core','annotated-types','typing-extensions','typing-inspection'}, names; print('Base installation: exactly 5 dependencies')"
                 )
+                project_example(root, command, probe)
                 for cmd, flag in (
                     ("scan", "--catalog"),
                     ("graph", "--graph"),

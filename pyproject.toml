@@ -115,7 +115,7 @@ select = ["E4", "E7", "E9", "F", "I", "B", "C4", "PIE", "RUF100"]
 [tool.pyright]
 include = ["src/apizr", "scripts"]
 typeCheckingMode = "standard"
-strict = ["src/apizr/compiler.py", "src/apizr/subprocess_guard", "src/apizr/repository_execution", "src/apizr/governed_repository", "src/apizr/repository_interfaces", "src/apizr/exposure", "src/apizr/exposure_cli.py", "src/apizr/capabilities", "src/apizr/readiness", "src/apizr/generators/rest", "src/apizr/interfaces", "src/apizr/generators/mcp", "src/apizr/execution", "src/apizr/governed", "src/apizr/oci", "src/apizr/governed_oci", "src/apizr/repository", "src/apizr/scan_cli.py", "src/apizr/graph", "src/apizr/graph_cli.py", "src/apizr/repository_readiness", "src/apizr/repository_readiness_cli.py", "src/apizr/readiness_cli.py", "src/apizr/repository_cli.py"]
+strict = ["src/apizr/project.py", "src/apizr/compiler.py", "src/apizr/subprocess_guard", "src/apizr/repository_execution", "src/apizr/governed_repository", "src/apizr/repository_interfaces", "src/apizr/exposure", "src/apizr/exposure_cli.py", "src/apizr/capabilities", "src/apizr/readiness", "src/apizr/generators/rest", "src/apizr/interfaces", "src/apizr/generators/mcp", "src/apizr/execution", "src/apizr/governed", "src/apizr/oci", "src/apizr/governed_oci", "src/apizr/repository", "src/apizr/scan_cli.py", "src/apizr/graph", "src/apizr/graph_cli.py", "src/apizr/repository_readiness", "src/apizr/repository_readiness_cli.py", "src/apizr/readiness_cli.py", "src/apizr/repository_cli.py"]
 pythonVersion = "3.11"
 
 [tool.coverage.run]
