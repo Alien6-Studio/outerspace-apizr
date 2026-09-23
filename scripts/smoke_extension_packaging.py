@@ -315,6 +315,52 @@ def main() -> None:
         "except ProtocolInvalid: pass\n"
         "else: raise AssertionError('Incompatible invocation response accepted')"
     )
+    # The same installed core also exercises HTTPS acquisition in a fresh store.
+    # Trust only this disposable fixture's certificate; verification stays enabled.
+    from http.server import BaseHTTPRequestHandler
+
+    from https_fixture import certificate, https_server
+
+    certificate_dir = work / "tls"
+    certificate_dir.mkdir(mode=0o700)
+    cert, key = certificate(certificate_dir)
+    served_wheel = plugin_wheel.read_bytes()
+
+    class WheelHandler(BaseHTTPRequestHandler):
+        def log_message(self, format: str, *arguments: object) -> None:
+            pass
+
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(served_wheel)))
+            self.end_headers()
+            self.wfile.write(served_wheel)
+
+    plugin_store = work / "https-plugins"
+    with https_server(cert, key, WheelHandler) as address:
+        trusted_env = dict(env, SSL_CERT_FILE=str(cert))
+        run(
+            plugin_command(
+                "install", f"{address}/{plugin_wheel.name}", "--sha256", plugin_hash
+            ),
+            work,
+            trusted_env,
+        )
+    # No server remains for inventory, activation or invocation.
+    require_inactive()
+    plugins("enable", "apizr-extension-probe", "--version", "0.0.0")
+    https_invocation = json.loads(
+        plugins(
+            "run",
+            "apizr-extension-probe",
+            "describe",
+            "--arguments",
+            str(arguments_file),
+        )
+    )
+    if https_invocation["result"]["source_digest"] != "explicit-active-example":
+        raise RuntimeError("HTTPS-installed invocation mismatch")
+    https_inventory = json.loads(plugins("list", "--json"))
     after = snapshot(core_root)
     after_distributions = core(inventory_code)
     evidence = {
@@ -336,6 +382,9 @@ def main() -> None:
         "active_invocation": active_invocation,
         "active_python_invocation": active_python_invocation,
         "activation_lifecycle_verified": True,
+        "https_lifecycle_verified": True,
+        "https_invocation": https_invocation,
+        "https_inventory": https_inventory,
         "incompatible_protocol_rejected": True,
         "before": before,
         "after": after,

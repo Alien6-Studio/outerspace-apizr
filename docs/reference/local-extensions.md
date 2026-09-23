@@ -1,4 +1,4 @@
-# Install and use local extensions
+# Install and use extensions
 
 Available in the development checkout; not yet part of published 0.3.0.
 Install an explicitly trusted, dependency-free wheel into its own Python
@@ -13,6 +13,8 @@ trust:
 
 ```sh
 apizr plugins install ./extension.whl --sha256 EXPECTED_SHA256
+apizr plugins install https://example.org/example_plugin-1.0.0-py3-none-any.whl \
+  --sha256 EXPECTED_SHA256
 apizr plugins list
 apizr plugins list --json
 apizr plugins enable example-plugin --version 1.0.0
@@ -41,8 +43,9 @@ installed interpreter. The interpreter symlink is not resolved before passing it
 to uv, so an existing venv retains its identity. The new environment has no access
 to the core's site-packages. Nothing is injected into uv tool, pipx or Homebrew.
 
-No index, network access, Python download, source build, dependency resolution or
-installer fallback is enabled. uv receives an isolated environment and explicit
+The local path stays entirely offline. Neither path enables an index, Python
+download, source build, dependency resolution or installer fallback. uv receives
+an isolated environment and explicit
 `--offline`, `--no-config`, `--no-cache`, `--no-python-downloads`, `--no-index`,
 `--no-deps`, `--no-build`, `--no-sources` and hash checking where applicable.
 See the [uv command reference](https://docs.astral.sh/uv/reference/cli/) for those
@@ -50,7 +53,7 @@ backend switches. Parent `UV_*`, `PIP_*`, Python settings and credentials are no
 forwarded. uv output is discarded; CLI diagnostics contain fixed failure codes.
 A missing backend is detected before any filesystem modification.
 
-This iteration rejects directories, URLs, source archives, any `Requires-Dist`
+This iteration rejects directories, non-HTTPS URLs, source archives, any `Requires-Dist`
 entry (including conditional or extra dependencies), malformed/incompatible
 manifests, startup `.pth`/`sitecustomize.py`/`usercustomize.py` files, and unsafe
 archive paths or links. Native compatibility and `Requires-Python` are checked
@@ -58,6 +61,64 @@ by uv; an incompatible wheel is a failed installation, never an available record
 Wheels are limited to 64 MiB, expanded content to 256 MiB / 10,000 archive entries,
 and individual metadata files to 64 KiB. The module must be a Python file or a
 package with `__main__.py` in the wheel's site-packages root.
+
+## HTTPS wheels
+
+The expected SHA-256 is mandatory and its format is checked before any network
+request. HTTPS acquisition downloads into a private temporary directory, checks
+the digest, and hands those same bytes to the existing local installer. Its
+manifest, protocol, package metadata and dependency checks still apply, and uv
+remains offline. An installation stays inactive; existing activation choices are
+never changed by downloading or installing another version.
+
+Certificate chains and hostnames are verified using Python's default TLS trust
+store (including explicitly configured `SSL_CERT_FILE` / `SSL_CERT_DIR`). There
+is no insecure TLS option. At most five redirects are followed, including across
+hosts, and every target must use HTTPS without embedded credentials. HTTP and
+other schemes, URL user information, fragments, control characters and malformed
+ports are refused. URLs must use ASCII encoding (percent-encoding for paths and
+queries, IDNA for international hostnames). Invalid URLs never fall back to local
+paths. Query parameters may be used, but diagnostics never echo the URL.
+
+The initial URL must end in a safe wheel filename, such as
+`example_plugin-1.0.0-py3-none-any.whl`; this name is checked against the package
+metadata. Redirect filenames and `Content-Disposition` cannot choose a local
+destination. Files are created exclusively in a private directory. Transfers
+read at most 64 KiB at a time and enforce the existing 64 MiB wheel limit on
+received bytes, even without `Content-Length`. Compressed HTTP content is refused;
+the wheel's own ZIP compression is supported by the local validator.
+
+Defaults are 5 seconds for connection/TLS handshake, 10 seconds per blocking
+read and 60 seconds for the whole transfer across redirects. A supervised stdlib
+worker makes the total deadline and cancellation effective even during DNS or
+slow response headers. On timeout or Ctrl-C, the worker is killed and reaped
+(up to 2 seconds for cleanup), closing its sockets; the temporary directory is
+removed before returning. No installation record or activation is written until
+the existing installer succeeds. As with local installs, abrupt host loss or
+SIGKILL can leave unregistered temporary files. OS operations stuck in an
+uninterruptible state remain outside the normal cleanup guarantee.
+
+The client sends no inherited cookies, authentication, proxy credentials or
+`.netrc` data. It ignores proxy environment variables and does not offer private
+repository authentication. This is explicit user-directed network access, not
+an SSRF boundary for untrusted URLs supplied by other users; private HTTPS hosts
+are permitted. Trust in the author still requires an independent decision.
+
+The Python API `install_from_source(source, sha256, *, directory=None, python=None)`
+dispatches explicit paths or URLs. `install_from_url(url, sha256, *, directory=None,
+python=None, limits=DownloadLimits(), cancel=None, ca_file=None)` exposes typed
+timeouts, a `threading.Event` for transfer cancellation, and an optional explicitly
+trusted CA file. It returns the existing `Installation`. Cancellation covers
+acquisition; once installation begins, existing installer interruption rules
+apply. `DownloadCancelled` and fixed `PluginError` codes such as
+`download_timeout`, `download_tls_failed`, `download_incomplete`, `wheel_too_large`
+or `hash_mismatch` contain no server messages or URL parameters. No download is
+performed by `list`, `enable`, `disable` or `run`, and `apizr.toml` is not consulted.
+
+The transfer uses the standard library's
+[`HTTPSConnection`](https://docs.python.org/3/library/http.client.html#http.client.HTTPSConnection)
+and [`create_default_context`](https://docs.python.org/3/library/ssl.html#ssl.create_default_context);
+no new runtime dependency is required.
 
 ## Declarative wheel manifest
 
@@ -230,6 +291,27 @@ and verifies both refusals and the successful activated call. While enabled, it
 also copies and runs
 [`invoke_active.py`](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/examples/extension-probe/invoke_active.py)
 outside the checkout, using the Python API example above.
+
+The same workflow also starts a disposable localhost HTTPS server, generates its
+test certificate with OpenSSL, and explicitly trusts that certificate via
+`SSL_CERT_FILE` for one installed-core command. It downloads and installs the demo
+into a fresh store, verifies that invocation is refused while inactive, then
+enables and invokes it. The server is stopped before activation and invocation.
+The final core snapshot covers both the local and HTTPS paths. No test disables
+TLS verification, and no workstation Homebrew installation is changed.
+
+For a wheel at a trusted HTTPS endpoint, the equivalent user commands are:
+
+```sh
+apizr plugins install https://example.org/apizr_extension_probe-0.0.0-py3-none-any.whl \
+  --sha256 EXPECTED_SHA256 --plugins-dir /temporary/apizr-plugins
+apizr plugins list --active --json --plugins-dir /temporary/apizr-plugins
+# The new installation is inactive; enable it explicitly before run.
+apizr plugins enable apizr-extension-probe --version 0.0.0 \
+  --plugins-dir /temporary/apizr-plugins
+apizr plugins run apizr-extension-probe describe --arguments arguments.json \
+  --plugins-dir /temporary/apizr-plugins
+```
 
 [`examples/extension-probe/invoke_installed.py`](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/examples/extension-probe/invoke_installed.py)
 is copied outside the checkout and run by that installed core:

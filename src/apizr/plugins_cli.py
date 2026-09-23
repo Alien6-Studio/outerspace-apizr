@@ -7,10 +7,11 @@ from typing import Sequence
 
 from apizr.extension_runtime import ExtensionError, InvocationCancelled, Limits
 from apizr.local_plugins import (
+    DownloadCancelled,
     PluginError,
     disable_extension,
     enable_extension,
-    install_extension,
+    install_from_source,
     list_extensions,
     read_arguments,
     run_extension,
@@ -21,9 +22,9 @@ def main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(prog="apizr plugins")
     commands = parser.add_subparsers(dest="command", required=True)
     install = commands.add_parser(
-        "install", help="Install a trusted local wheel offline"
+        "install", help="Install a trusted local or HTTPS wheel by its SHA-256"
     )
-    install.add_argument("wheel", type=Path)
+    install.add_argument("wheel", help="Local wheel path or HTTPS URL")
     install.add_argument(
         "--sha256",
         required=True,
@@ -61,7 +62,7 @@ def main(argv: Sequence[str]) -> int:
     args = parser.parse_args(argv)
     try:
         if args.command == "install":
-            installed = install_extension(
+            installed = install_from_source(
                 args.wheel, args.sha256, directory=args.plugins_dir, python=args.python
             )
             print(f"Installed {installed.name} {installed.version}")
@@ -93,7 +94,7 @@ def main(argv: Sequence[str]) -> int:
                 for item in inventory.installations:
                     print(f"{item.name} {item.version}  {item.protocol}  {item.module}")
         return 0
-    except InvocationCancelled as error:
+    except (InvocationCancelled, DownloadCancelled) as error:
         print(f"apizr plugins: {error}", file=sys.stderr)
         return 130
     except (PluginError, ExtensionError) as error:
