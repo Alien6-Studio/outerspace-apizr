@@ -117,16 +117,38 @@ class GitRunner:
                 raise GitSourceError("git_unavailable") from None
             assert process.stdout is not None and process.stderr is not None
             signalled = False
+            cleanup_deadline: float | None = None
             received = bytearray()
             errors = 0
 
             def signal_group() -> None:
-                nonlocal signalled
-                try:
-                    os.killpg(process.pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-                signalled = True
+                nonlocal signalled, cleanup_deadline
+                if cleanup_deadline is None:
+                    cleanup_deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        os.killpg(process.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    except PermissionError:
+                        # A helper can exit before our FIRST signal: macOS then
+                        # rejects a zombie-only group until its parent reaps it.
+                        # Confirm success/ESRCH within the existing cleanup budget;
+                        # EPERM itself never confirms termination.
+                        if process.poll() is None:
+                            process.kill()
+                        process.wait(
+                            timeout=max(0, cleanup_deadline - time.monotonic())
+                        )
+                        remaining = cleanup_deadline - time.monotonic()
+                        if remaining <= 0:
+                            raise
+                        # No waitpid is available for a non-child group member.
+                        # Poll the kernel signal result, bounded by the same 2s.
+                        time.sleep(min(0.02, remaining))
+                        continue
+                    signalled = True
+                    return
 
             try:
                 with selectors.DefaultSelector() as selector:
@@ -160,21 +182,11 @@ class GitRunner:
                 return bytes(received)
             finally:
                 failed = False
-                cleanup_deadline = time.monotonic() + 2
+                if cleanup_deadline is None:
+                    cleanup_deadline = time.monotonic() + 2
                 try:
                     if not signalled:
-                        try:
-                            signal_group()
-                        except PermissionError:
-                            # macOS can reject a signal to an unreaped zombie.
-                            # Reap our direct child, then confirm the group signal;
-                            # its exit alone never confirms descendant cleanup.
-                            if process.poll() is None:
-                                process.kill()
-                            process.wait(
-                                timeout=max(0, cleanup_deadline - time.monotonic())
-                            )
-                            signal_group()
+                        signal_group()
                 except (OSError, subprocess.TimeoutExpired):
                     failed = True
                 try:

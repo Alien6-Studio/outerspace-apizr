@@ -32,3 +32,36 @@ jobs:
           path: ${{ runner.temp }}/extension-cleanup
           if-no-files-found: error
           retention-days: 90
+
+  git-worker-cleanup:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        python: ['3.11', '3.14']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: ${{ matrix.python }}
+      - name: Prepare disposable SSH integration prerequisites
+        if: runner.os == 'Linux'
+        run: |
+          if ! test -x /usr/sbin/sshd; then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends openssh-server
+          fi
+          sudo install -d -m 755 /run/sshd
+      - run: uv sync --locked
+      - name: Run the fixed 25 SSH and worker cleanup repetitions
+        run: uv run --locked python scripts/repeat_extension_cleanup.py --suite git-worker --repetitions 25 --output "$RUNNER_TEMP/git-worker-cleanup"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: git-worker-cleanup-${{ matrix.os }}-${{ matrix.python }}
+          path: ${{ runner.temp }}/git-worker-cleanup
+          if-no-files-found: error
+          retention-days: 90
