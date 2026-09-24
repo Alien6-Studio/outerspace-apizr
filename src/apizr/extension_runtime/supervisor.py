@@ -5,7 +5,7 @@ import selectors
 import signal
 import subprocess
 import time
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Event
@@ -46,7 +46,12 @@ def _signal_group(process: subprocess.Popen[bytes]) -> None:
         pass
 
 
-def _cleanup(process: subprocess.Popen[bytes], milliseconds: int) -> None:
+def _cleanup(
+    process: subprocess.Popen[bytes],
+    milliseconds: int,
+    *,
+    group_signalled: bool = False,
+) -> None:
     """Kill the owned group and reap the direct child within a separate budget.
 
     Unlike the existing worker helper, waiting here must be bounded. Other
@@ -54,17 +59,18 @@ def _cleanup(process: subprocess.Popen[bytes], milliseconds: int) -> None:
     """
     failed = False
     deadline = time.monotonic() + milliseconds / 1000
-    try:
+    if not group_signalled:
         try:
-            _signal_group(process)
-        except PermissionError:
-            # macOS may report EPERM for a group containing an unreaped zombie.
-            if process.poll() is None:
-                process.kill()
-            process.wait(timeout=max(0, deadline - time.monotonic()))
-            _signal_group(process)
-    except (OSError, subprocess.TimeoutExpired):
-        failed = True
+            try:
+                _signal_group(process)
+            except PermissionError:
+                # macOS may report EPERM for a group containing an unreaped zombie.
+                if process.poll() is None:
+                    process.kill()
+                process.wait(timeout=max(0, deadline - time.monotonic()))
+                _signal_group(process)
+        except (OSError, subprocess.TimeoutExpired):
+            failed = True
     try:
         # A group signalling failure must not skip cleanup of the direct child.
         if process.poll() is None:
@@ -86,6 +92,7 @@ def _exchange(
     limits: Limits,
     deadline: float,
     cancel: Event | None,
+    signal_group: Callable[[], None],
 ) -> bytes:
     assert (
         process.stdin is not None
@@ -118,7 +125,7 @@ def _exchange(
                 raise InvocationTimeout()
             if process.poll() is not None and not group_signalled:
                 # A normal descendant may still hold either output stream open.
-                _signal_group(process)
+                signal_group()
                 group_signalled = True
             if not selector.get_map():
                 time.sleep(min(remaining, 0.05))
@@ -220,10 +227,23 @@ def invoke_extension(
                 )
             except OSError:
                 raise PrerequisiteMissing() from None
+            group_signalled = False
+
+            def signal_group() -> None:
+                nonlocal group_signalled
+                _signal_group(process)
+                # Record success only. A later cleanup must not signal a group
+                # again after its members have become zombies (macOS EPERM).
+                group_signalled = True
+
             try:
-                raw = _exchange(process, payload, limits, deadline, cancel)
+                raw = _exchange(
+                    process, payload, limits, deadline, cancel, signal_group
+                )
             finally:
-                _cleanup(process, limits.cleanup_time_ms)
+                _cleanup(
+                    process, limits.cleanup_time_ms, group_signalled=group_signalled
+                )
             return validate_response(raw, request)
     except ExtensionError:
         raise

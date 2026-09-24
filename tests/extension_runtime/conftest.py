@@ -30,6 +30,9 @@ def extension_python(tmp_path_factory):
     )
     source = Path(__file__).parent / "fixture_plugin.py"
     (purelib / "invocation_fixture.py").write_bytes(source.read_bytes())
+    (purelib / "held_group.py").write_bytes(
+        (Path(__file__).parent / "held_group.py").read_bytes()
+    )
     demo = (
         Path(__file__).parents[2]
         / "examples/extension-probe/src/apizr_extension_probe/runtime.py"
