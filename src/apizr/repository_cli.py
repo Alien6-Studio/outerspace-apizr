@@ -83,14 +83,18 @@ def add_graph_arguments(
 
 
 def apply_project(
-    parser: argparse.ArgumentParser, args: argparse.Namespace, *, exposure: bool = False
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+    *,
+    exposure: bool = False,
+    root_required: bool = True,
 ) -> None:
     """Fill only absent CLI options; preserve additive directory exclusions.
 
     Policy files are selected whole, never merged. The exposure parser retains
     its existing rejection of policy files combined with inline choices.
     """
-    if args.root is None and args.project is None:
+    if root_required and args.root is None and args.project is None:
         parser.error("the following arguments are required: root")
     from apizr.project import load_project
 

@@ -16,11 +16,12 @@ from apizr.exposure import (
     refusal_report,
     text_report,
 )
+from apizr.git_source import GitSourceError
+from apizr.git_source_cli import add_git_arguments, apply_input, input_root
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.repository_cli import (
     add_graph_arguments,
     add_scan_arguments,
-    apply_project,
     graph_policy,
     scan_policy,
 )
@@ -31,6 +32,7 @@ from apizr.repository_readiness_cli import load_policy
 def add_policy_arguments(command: argparse.ArgumentParser) -> None:
     add_scan_arguments(command, project=True)
     add_graph_arguments(command, project=True)
+    add_git_arguments(command)
     command.add_argument(
         "--policy",
         type=Path,
@@ -96,7 +98,7 @@ def main(argv: Sequence[str]) -> int:
     bundle: dict[str, bytes] = {}
     policy: ExposurePolicy | None = None
     try:
-        apply_project(parser, args, exposure=True)
+        apply_input(parser, args, exposure=True)
         if args.policy:
             if any(
                 (
@@ -128,13 +130,14 @@ def main(argv: Sequence[str]) -> int:
                 }
             )
         readiness_policy = load_policy(args.readiness_policy)
-        prepared = prepare_exposure(
-            args.root,
-            policy=policy,
-            scan_policy=scan_policy(args),
-            graph_policy=graph_policy(args),
-            readiness_policy=readiness_policy,
-        )
+        with input_root(args) as root:
+            prepared = prepare_exposure(
+                root,
+                policy=policy,
+                scan_policy=scan_policy(args),
+                graph_policy=graph_policy(args),
+                readiness_policy=readiness_policy,
+            )
         readiness, plan = prepared.readiness, prepared.plan
         if args.command == "build":
             from apizr.repository_interfaces.output import write_bundle
@@ -167,6 +170,14 @@ def main(argv: Sequence[str]) -> int:
                 runtime_image=runtime_image,
             )
             write_bundle(args.output_dir, bundle)
+    except KeyboardInterrupt:
+        if args.git is None:
+            raise
+        print(f"apizr expose {args.command}: git_cancelled", file=sys.stderr)
+        return 130
+    except GitSourceError as error:
+        print(f"apizr expose {args.command}: {error}", file=sys.stderr)
+        return 2
     except PolicyRefused as error:
         print(
             f"apizr expose build: execution policy refused ({error})", file=sys.stderr

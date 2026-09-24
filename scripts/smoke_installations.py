@@ -9,6 +9,8 @@ import tempfile
 from collections.abc import Callable
 from pathlib import Path
 
+from smoke_git_source import exercise as git_example
+
 
 def project_example(
     root: Path,
@@ -175,6 +177,7 @@ def main():
                     "from importlib.metadata import distributions; names={d.metadata['Name'].lower().replace('_','-') for d in distributions()}; assert names == {'outerspace-apizr','pydantic','pydantic-core','annotated-types','typing-extensions','typing-inspection'}, names; print('Base installation: exactly 5 dependencies')"
                 )
                 project_example(root, command, probe)
+                git_example(python, cli, root)
                 for cmd, flag in (
                     ("scan", "--catalog"),
                     ("graph", "--graph"),
