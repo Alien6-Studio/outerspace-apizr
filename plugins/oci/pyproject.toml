@@ -1,0 +1,17 @@
+[project]
+name = "apizr-oci"
+version = "0.0.0"
+description = "Official Apizr plugin for building local REST and MCP service images"
+requires-python = ">=3.11,<3.15"
+license = "GPL-3.0-or-later"
+dependencies = ["outerspace-apizr==0.3.0"]
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/apizr_oci"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"apizr-extension.json" = "apizr-extension.json"

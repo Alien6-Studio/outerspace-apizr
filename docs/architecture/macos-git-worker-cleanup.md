@@ -13,8 +13,9 @@ invocation result. Those historical values cannot be reconstructed from the logs
 A fixed exploratory series of 25 original scenarios on each of macOS/Python 3.11
 and 3.14 passed: this does not resolve either failure or establish its cause.
 The controlled real-process regressions below demonstrate reproducible failure
-mechanisms; their exact correspondence to the two historical jobs remains an
-open criterion in #130. The earlier green checks on #129 are not evidence for
+mechanisms. Their exact correspondence to the historical jobs is a diagnostic
+uncertainty, not an outstanding defect. #130 is closed after #131 and successful
+post-merge validation on master. The earlier green checks on #129 are not evidence for
 this correction.
 
 ## Git: zombie-only group before its first signal

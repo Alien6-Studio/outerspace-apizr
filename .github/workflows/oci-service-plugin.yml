@@ -1,0 +1,41 @@
+name: OCI service plugin
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  service-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: '3.14'
+      - run: uv sync --locked
+      - name: Check optional plugin coverage separately
+        run: uv run --locked pytest tests/oci_plugin --cov=apizr_oci --cov-report=term-missing --cov-report=json:plugin-coverage.json --junitxml=plugin-tests.xml
+      - name: Build and call real REST/MCP images from installed wheels
+        env:
+          PROOF_DIR: ${{ runner.temp }}/oci-service-proof
+        run: uv run --locked python scripts/smoke_oci_plugin.py --work-dir "$PROOF_DIR" --docker-socket /var/run/docker.sock > oci-service-proof.log 2>&1
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: oci-service-proof
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            plugin-coverage.json
+            plugin-tests.xml
+            oci-service-proof.log
+            ${{ runner.temp }}/oci-service-proof/results.json
+            ${{ runner.temp }}/oci-service-proof/interruption.json
+            ${{ runner.temp }}/oci-service-proof/refusals.json
+            ${{ runner.temp }}/oci-service-proof/*-build.json
+            ${{ runner.temp }}/oci-service-proof/*.lock
