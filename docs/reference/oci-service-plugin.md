@@ -217,8 +217,10 @@ by your user. This first version accepts exactly one `auths` entry, keyed by the
 exact registry hostname and optional port. Its only field is `auth`: the base64
 encoding of `username:password-or-token`. Base64 is not encryption. Credential
 helpers, identity-token records, other registries and other Docker configuration
-keys are refused. Apizr never performs `docker login` or modifies your Docker
-configuration. Do not commit this file or print its contents.
+keys are refused. For `docker.io` (or its `index.docker.io` alias), the selected
+record is copied under Docker's historical `https://index.docker.io/v1/` key in
+the private configuration. Apizr never performs `docker login` or modifies your
+Docker configuration. Do not commit this file or print its contents.
 
 With the identity values from your build, a complete `/work/push.json` is:
 

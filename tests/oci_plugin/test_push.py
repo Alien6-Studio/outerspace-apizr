@@ -425,3 +425,41 @@ def test_explicit_ca_environment_without_parent_credentials(
     assert run(
         request, tmp_path, ["-c", code], time.monotonic() + 2
     ).decode().strip() == str(tmp_path / "registry-ca.pem")
+
+
+@pytest.mark.parametrize("registry", ["docker.io", "index.docker.io"])
+def test_selected_hub_credentials_use_docker_canonical_key(
+    request_data, tmp_path, registry
+):
+    config = Path(request_data["authentication"]["config_file"])
+    selected = json.loads(config.read_text())["auths"][REGISTRY]
+    config.write_text(json.dumps({"auths": {registry: selected}}))
+    request_data["destination"] = registry + "/services/rest:v1"
+    authentication(PushRequest.model_validate(request_data), tmp_path)
+    copied = json.loads((tmp_path / "docker-config/config.json").read_text())
+    assert copied == {"auths": {"https://index.docker.io/v1/": selected}}
+    assert json.loads(config.read_text()) == {"auths": {registry: selected}}
+
+
+def test_hub_alias_absence_uses_docker_normalized_reference(
+    request_data, tmp_path, monkeypatch
+):
+    calls = []
+
+    def inspect(req, work, args, deadline, cancel=None, **kwargs):
+        calls.append((args[-1], kwargs["absent_reference"]))
+        return b"null"
+
+    monkeypatch.setattr(mod, "run", inspect)
+    assert (
+        mod.remote_identity(
+            PushRequest.model_validate(request_data),
+            tmp_path,
+            "index.docker.io/services/rest:v1",
+            time.monotonic() + 1,
+            None,
+            absent=True,
+        )
+        is None
+    )
+    assert calls == [("docker.io/services/rest:v1", "docker.io/services/rest:v1")]

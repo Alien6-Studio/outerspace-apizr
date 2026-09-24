@@ -63,7 +63,15 @@ def authentication(request: PushRequest, work: Path) -> None:
     with open(
         directory / "config.json", "x", opener=lambda p, f: os.open(p, f, 0o600)
     ) as stream:
-        json.dump(config, stream)
+        # Docker uses this historical key for Hub, including explicitly named
+        # docker.io images. Normalize only the caller-selected record; never
+        # consult another credential store or inherit a Docker configuration.
+        key = (
+            "https://index.docker.io/v1/"
+            if registry in {"docker.io", "index.docker.io"}
+            else registry
+        )
+        json.dump({"auths": {key: record}}, stream)
     if request.authentication.ca_file is not None:
         ca = Path(request.authentication.ca_file)
         (work / "registry-ca.pem").write_bytes(read(ca.parent, ca.name, 1048576))
@@ -121,6 +129,9 @@ def remote_identity(
     *,
     absent=False,
 ):
+    # Docker normalizes this documented Hub alias before producing diagnostics.
+    if reference.startswith("index.docker.io/"):
+        reference = "docker.io/" + reference.removeprefix("index.docker.io/")
     raw = run(
         request,
         work,
