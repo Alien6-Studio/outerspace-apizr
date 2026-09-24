@@ -130,8 +130,9 @@ def remote_identity(
     absent=False,
 ):
     # Docker normalizes this documented Hub alias before producing diagnostics.
-    if reference.startswith("index.docker.io/"):
-        reference = "docker.io/" + reference.removeprefix("index.docker.io/")
+    registry, separator, repository = reference.partition("/")
+    if registry == "index.docker.io" and separator:
+        reference = "docker.io/" + repository
     raw = run(
         request,
         work,

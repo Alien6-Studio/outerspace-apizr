@@ -441,8 +441,22 @@ def test_selected_hub_credentials_use_docker_canonical_key(
     assert json.loads(config.read_text()) == {"auths": {registry: selected}}
 
 
+@pytest.mark.parametrize(
+    "reference,expected",
+    [
+        ("index.docker.io/services/rest:v1", "docker.io/services/rest:v1"),
+        (
+            "index.docker.io.evil.test/services/rest:v1",
+            "index.docker.io.evil.test/services/rest:v1",
+        ),
+        (
+            "registry.test/services/index.docker.io/rest:v1",
+            "registry.test/services/index.docker.io/rest:v1",
+        ),
+    ],
+)
 def test_hub_alias_absence_uses_docker_normalized_reference(
-    request_data, tmp_path, monkeypatch
+    request_data, tmp_path, monkeypatch, reference, expected
 ):
     calls = []
 
@@ -455,11 +469,11 @@ def test_hub_alias_absence_uses_docker_normalized_reference(
         mod.remote_identity(
             PushRequest.model_validate(request_data),
             tmp_path,
-            "index.docker.io/services/rest:v1",
+            reference,
             time.monotonic() + 1,
             None,
             absent=True,
         )
         is None
     )
-    assert calls == [("docker.io/services/rest:v1", "docker.io/services/rest:v1")]
+    assert calls == [(expected, expected)]
