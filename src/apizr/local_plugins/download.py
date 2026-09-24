@@ -15,7 +15,7 @@ from pydantic import ConfigDict, Field
 
 from apizr.capabilities.types import ValueModel
 
-from . import _download_worker, backend, wheel
+from . import _download_worker, backend, locking, wheel
 from .models import Installation, PluginError
 from .operations import install_extension
 
@@ -107,11 +107,14 @@ def install_from_url(
     *,
     directory: Path | None = None,
     python: Path | None = None,
+    requirements: Path | None = None,
+    wheelhouse: Path | None = None,
     limits: DownloadLimits = DEFAULT_LIMITS,
     cancel: Event | None = None,
     ca_file: Path | None = None,
 ) -> Installation:
     """Verify a complete HTTPS wheel before delegating; cancellation covers acquisition."""
+    locking.check_options(requirements, wheelhouse)
     if not re.fullmatch(r"[0-9a-fA-F]{64}", sha256):
         raise PluginError("invalid_sha256")
     try:
@@ -143,7 +146,14 @@ def install_from_url(
             _check_cancel(cancel)
             # inspect_wheel snapshots and rechecks these same private file bytes.
             # uv only receives that hash-checked snapshot, and stays offline.
-            return install_extension(path, sha256, directory=directory, python=python)
+            return install_extension(
+                path,
+                sha256,
+                directory=directory,
+                python=python,
+                requirements=requirements,
+                wheelhouse=wheelhouse,
+            )
     except OSError:
         raise PluginError("download_failed") from None
 
@@ -154,12 +164,29 @@ def install_from_source(
     *,
     directory: Path | None = None,
     python: Path | None = None,
+    requirements: Path | None = None,
+    wheelhouse: Path | None = None,
 ) -> Installation:
     """Keep paths offline; reject unsupported/malformed URL schemes explicitly."""
+    locking.check_options(requirements, wheelhouse)
     if isinstance(source, str) and (
         re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", source.lstrip())
         or "://" in source
         or source.startswith("//")
     ):
-        return install_from_url(source, sha256, directory=directory, python=python)
-    return install_extension(Path(source), sha256, directory=directory, python=python)
+        return install_from_url(
+            source,
+            sha256,
+            directory=directory,
+            python=python,
+            requirements=requirements,
+            wheelhouse=wheelhouse,
+        )
+    return install_extension(
+        Path(source),
+        sha256,
+        directory=directory,
+        python=python,
+        requirements=requirements,
+        wheelhouse=wheelhouse,
+    )

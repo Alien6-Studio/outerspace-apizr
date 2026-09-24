@@ -361,6 +361,53 @@ def main() -> None:
     if https_invocation["result"]["source_digest"] != "explicit-active-example":
         raise RuntimeError("HTTPS-installed invocation mismatch")
     https_inventory = json.loads(plugins("list", "--json"))
+    # Same installed core, now with a plugin -> helper -> leaf dependency chain.
+    from prepare_locked_extension import prepare
+
+    locked_wheelhouse = work / "locked-wheels"
+    locked_plugin, locked_hash, requirements = prepare(locked_wheelhouse, uv, env)
+    plugin_store = work / "locked-plugins"
+    plugins(
+        "install",
+        str(locked_plugin),
+        "--sha256",
+        locked_hash,
+        "--requirements",
+        str(requirements),
+        "--wheelhouse",
+        str(locked_wheelhouse),
+    )
+    if json.loads(plugins("list", "--active", "--json"))["installations"]:
+        raise RuntimeError("Locked plugin unexpectedly activated")
+    plugins("enable", "apizr-locked-probe", "--version", "1.0.0")
+    locked_invocation = json.loads(
+        plugins(
+            "run", "apizr-locked-probe", "answer", "--arguments", str(arguments_file)
+        )
+    )
+    if locked_invocation["result"] != {"answer": 42}:
+        raise RuntimeError("Transitive dependency invocation mismatch")
+    locked_inventory = json.loads(plugins("list", "--json"))
+    locked_record = locked_inventory["installations"][0]
+    expected_dependencies = [
+        {
+            "name": name,
+            "version": "1.0.0",
+            "sha256": hashlib.sha256(
+                (
+                    locked_wheelhouse
+                    / f"{name.replace('-', '_')}-1.0.0-py3-none-any.whl"
+                ).read_bytes()
+            ).hexdigest(),
+        }
+        for name in ("apizr-locked-helper", "apizr-locked-leaf")
+    ]
+    if (
+        locked_record["dependencies"] != expected_dependencies
+        or locked_record["lock_sha256"]
+        != hashlib.sha256(requirements.read_bytes()).hexdigest()
+    ):
+        raise RuntimeError("Locked inventory does not match verified wheels")
     after = snapshot(core_root)
     after_distributions = core(inventory_code)
     evidence = {
@@ -385,6 +432,9 @@ def main() -> None:
         "https_lifecycle_verified": True,
         "https_invocation": https_invocation,
         "https_inventory": https_inventory,
+        "locked_dependencies_verified": True,
+        "locked_invocation": locked_invocation,
+        "locked_inventory": locked_inventory,
         "incompatible_protocol_rejected": True,
         "before": before,
         "after": after,

@@ -21,6 +21,7 @@ def wheel_factory(tmp_path):
         files=None,
         manifest_raw=None,
         filename=None,
+        plugin=True,
     ):
         normalized = name.replace("-", "_")
         info = f"{normalized}-{version}.dist-info"
@@ -40,6 +41,9 @@ def wheel_factory(tmp_path):
             f"{info}/METADATA": f"Metadata-Version: 2.3\nName: {name}\nVersion: {version}\n{metadata_extra}\n".encode(),
             f"{info}/WHEEL": b"Wheel-Version: 1.0\nGenerator: apizr-tests\nRoot-Is-Purelib: true\nTag: py3-none-any\n",
         }
+        if not plugin:
+            del content["apizr-extension.json"]
+            del content["local_probe.py"]
         content.update(files or {})
         record = io.StringIO()
         writer = csv.writer(record, lineterminator="\n")

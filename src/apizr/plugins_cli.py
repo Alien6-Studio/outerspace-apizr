@@ -33,6 +33,14 @@ def main(argv: Sequence[str]) -> int:
     install.add_argument(
         "--python", type=Path, help="Absolute path to an already installed Python"
     )
+    install.add_argument(
+        "--requirements", type=Path, help="Exact versions and SHA-256 requirements lock"
+    )
+    install.add_argument(
+        "--wheelhouse",
+        type=Path,
+        help="Local wheel directory (requires --requirements)",
+    )
     listing = commands.add_parser("list", help="Read the local installation inventory")
     listing.add_argument(
         "--json", action="store_true", help="Emit the versioned inventory"
@@ -63,7 +71,12 @@ def main(argv: Sequence[str]) -> int:
     try:
         if args.command == "install":
             installed = install_from_source(
-                args.wheel, args.sha256, directory=args.plugins_dir, python=args.python
+                args.wheel,
+                args.sha256,
+                directory=args.plugins_dir,
+                python=args.python,
+                requirements=args.requirements,
+                wheelhouse=args.wheelhouse,
             )
             print(f"Installed {installed.name} {installed.version}")
         elif args.command == "enable":
