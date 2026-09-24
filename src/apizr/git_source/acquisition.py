@@ -1,4 +1,4 @@
-"""Acquire exactly one public HTTPS Git revision without checking out code."""
+"""Acquire exactly one HTTPS/SSH Git revision without checking out code."""
 
 import os
 import re
@@ -12,6 +12,7 @@ from urllib.parse import unquote, urlsplit
 
 from .models import AcquisitionLimits, GitSnapshot, GitSourceError
 from .process import GitRunner
+from .ssh import configure_ssh, is_ssh, validate_ssh_url
 
 OID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
 
@@ -162,6 +163,8 @@ def acquire_snapshot(
     limits: AcquisitionLimits | None = None,
     cancel: Event | None = None,
     ca_file: Path | None = None,
+    ssh_agent_socket: Path | None = None,
+    ssh_known_hosts: Path | None = None,
 ) -> Generator[GitSnapshot, None, None]:
     """Resolve/fetch once, export literal blobs, then remove all temporary data.
 
@@ -169,7 +172,17 @@ def acquire_snapshot(
     helpers; this is not a sandbox. ``ca_file`` explicitly adds test/private-CA
     trust, never disables TLS verification. No parent credentials are inherited.
     """
-    validate_url(repository)
+    ssh = is_ssh(repository)
+    if ssh:
+        validate_ssh_url(repository)
+        if ssh_agent_socket is None or ssh_known_hosts is None:
+            raise GitSourceError("git_ssh_options_required")
+        if ca_file is not None:
+            raise GitSourceError("git_ssh_ca_unsupported")
+    else:
+        validate_url(repository)
+        if ssh_agent_socket is not None or ssh_known_hosts is not None:
+            raise GitSourceError("git_ssh_options_unsupported")
     validate_ref(reference)
     selected = relative_path(subdir)
     policy = AcquisitionLimits.model_validate(
@@ -186,6 +199,12 @@ def acquire_snapshot(
             runner = GitRunner(
                 str(Path(executable).absolute()), work, policy, cancel, ca_file
             )
+            if ssh:
+                assert ssh_agent_socket is not None and ssh_known_hosts is not None
+                runner.environment.update(
+                    configure_ssh(work, ssh_agent_socket, ssh_known_hosts)
+                )
+                runner.command.extend(("-c", "protocol.ssh.allow=always"))
             oid = _resolve(
                 runner.run(["ls-remote", "--quiet", "--", repository]), reference
             )

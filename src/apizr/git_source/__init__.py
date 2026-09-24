@@ -1,4 +1,4 @@
-"""Static public HTTPS Git input; no plugins or optional dependencies."""
+"""Static HTTPS/SSH Git input; no plugins or optional dependencies."""
 
 from .acquisition import acquire_snapshot
 from .models import AcquisitionLimits, GitSnapshot, GitSourceError

@@ -1,4 +1,5 @@
 import importlib.util
+import sys
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,7 @@ def load(name):
     path = Path(__file__).resolve().parents[2] / "scripts" / f"{name}.py"
     spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
     spec.loader.exec_module(module)
     return module
 
@@ -43,3 +45,12 @@ def scratch(tmp_path, monkeypatch):
     monkeypatch.setattr(tempfile, "tempdir", str(directory))
     yield directory
     assert not list(directory.iterdir())
+
+
+ssh_fixture = load("git_ssh_fixture")
+
+
+@pytest.fixture
+def ssh_remote(tmp_path):
+    with ssh_fixture.server(tmp_path / "ssh") as remote:
+        yield remote

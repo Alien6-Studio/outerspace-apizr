@@ -10,6 +10,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from smoke_git_source import exercise as git_example
+from smoke_git_ssh import exercise as ssh_example
 
 
 def project_example(
@@ -178,6 +179,7 @@ def main():
                 )
                 project_example(root, command, probe)
                 git_example(python, cli, root)
+                ssh_example(python, cli, root)
                 for cmd, flag in (
                     ("scan", "--catalog"),
                     ("graph", "--graph"),

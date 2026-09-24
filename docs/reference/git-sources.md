@@ -1,6 +1,7 @@
 # Analyze a public Git repository
 
 Readiness and exposure can acquire a public **HTTPS** Git repository directly.
+[Private repositories through an explicit SSH agent](git-ssh.md) use the same snapshot API.
 Install Git separately; this adapter is included in the minimal Apizr core and
 does not install or invoke plugins. Python 3.11–3.14 on macOS/Linux is supported.
 
@@ -96,7 +97,8 @@ are not echoed in errors. Compiler policy refusals retain their existing codes.
 
 Git runs without a shell, with a fresh environment, private HOME, empty template,
 disabled hooks, credentials, inherited configuration, URL rewriting, proxies,
-automatic maintenance and submodule recursion. Only HTTPS transport is enabled.
+automatic maintenance and submodule recursion. Only the explicitly selected
+HTTPS or SSH transport is enabled.
 TLS verification is mandatory. Embedded credentials, query strings, fragments
 and redirects are refused; use the final canonical public repository URL.
 The executable found on PATH and its installed Git helpers must be trusted.
@@ -133,7 +135,7 @@ the direct child is reaped on errors/interruption; detached descendants and
 uninterruptible kernel work cannot be guaranteed terminated. Cleanup failure is
 explicit (`git_cleanup_failed`).
 
-There is no SSH, private authentication, persistent cache, remote policy loading,
+There is no HTTPS authentication, persistent cache, remote policy loading,
 submodule/LFS acquisition, or remote publication in this iteration. Rendering
 REST/MCP bundles does not start either server or execute their source code.
 
