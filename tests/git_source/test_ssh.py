@@ -160,7 +160,17 @@ def test_api_transport_options():
 
 @pytest.mark.parametrize(
     "failure",
-    ["absent", "regular", "empty", "wrong", "access", "unknown", "changed", "revoked"],
+    [
+        "absent",
+        "loop",
+        "regular",
+        "empty",
+        "wrong",
+        "access",
+        "unknown",
+        "changed",
+        "revoked",
+    ],
 )
 def test_authentication_refusals_clean_and_recover(
     ssh_remote, scratch, tmp_path, monkeypatch, failure
@@ -173,6 +183,10 @@ def test_authentication_refusals_clean_and_recover(
     with ssh_fixture.agent(tmp_path, None) as empty:
         if failure == "absent":
             kwargs["ssh_agent_socket"] = tmp_path / "absent"
+        elif failure == "loop":
+            loop = tmp_path / "agent-loop"
+            loop.symlink_to(loop)
+            kwargs["ssh_agent_socket"] = loop
         elif failure == "regular":
             kwargs["ssh_agent_socket"] = remote.known_hosts
         elif failure in ("empty", "wrong"):

@@ -65,7 +65,8 @@ def configure_ssh(work: Path, agent_socket: Path, known_hosts: Path) -> dict[str
         agent = agent_socket.resolve(strict=True)
         if not stat.S_ISSOCK(agent.stat().st_mode):
             raise OSError
-    except OSError:
+    except (OSError, RuntimeError):
+        # Path.resolve raises RuntimeError for symlink loops on Python 3.11.
         raise GitSourceError("git_ssh_agent_unavailable") from None
     try:
         # Reject special files before reading; O_NONBLOCK also bounds a FIFO race.
