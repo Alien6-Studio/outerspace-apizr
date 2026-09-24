@@ -404,11 +404,15 @@ def main():
             assert inspect["Config"]["User"] == "65532:65532"
             assert not inspect["Config"].get("Volumes")
             results.append(result)
+        service_images = [item["result"]["tag"] for item in results]
         registry_proof = os.environ.get("APIZR_REGISTRY_PROOF") == "1"
         if registry_proof:
             from smoke_oci_push import exercise as publish
 
-            images = publish(python, store, work, results, command, engine, environment)
+            service_images = publish(
+                python, store, work, results, command, engine, environment
+            )
+            images = service_images
             docker_flags[:] = [docker, "--host", "unix:///proof/consumer.sock"]
         shutil.rmtree(work / "git-proof")
         assert not (work / "git-proof").exists()
@@ -418,7 +422,7 @@ def main():
             "--detach",
             "--publish",
             "0.0.0.0::8000" if registry_proof else "127.0.0.1::8000",
-            images[0],
+            service_images[0],
         )
         containers.append(container)
         address = engine("port", container, "8000/tcp").splitlines()[0]
@@ -467,7 +471,7 @@ asyncio.run(check())
             docker,
             docker_flags[2],
             name,
-            images[1],
+            service_images[1],
             timeout=45,
         )
         assert snapshot(core_env) == before
