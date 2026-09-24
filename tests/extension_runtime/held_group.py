@@ -45,6 +45,7 @@ def hold(args):
     os.close(write_ready)
     os.close(write_live)
     channel = socket.socket(socket.AF_UNIX)
+    reaped = False
     try:
         assert select.select([read_ready], [], [], 5)[0]
         assert os.read(read_ready, 5) == b"ready"
@@ -67,16 +68,18 @@ def hold(args):
         # the zombie and exercises cleanup before acknowledging release.
         assert receive(channel) == "reap"
         pid, status = os.waitpid(child, 0)
+        reaped = True
         send(channel, {"event": "reaped", "pid": pid, "status": status})
     finally:
-        try:
-            os.kill(child, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
-        try:
-            os.waitpid(child, 0)
-        except ChildProcessError:
-            pass
+        if not reaped:
+            try:
+                os.kill(child, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            try:
+                os.waitpid(child, 0)
+            except ChildProcessError:
+                pass
         os.close(read_live)
         channel.close()
     os._exit(0)

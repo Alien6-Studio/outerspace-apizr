@@ -36,6 +36,7 @@ def test_cleanup_after_group_signal(
     real_killpg = os.killpg
     exchange = supervisor._exchange
     connection = None
+    child_reaped = helper_terminal = False
     marker = tmp_path / "state"
     marker.write_text("test-owned fixture")
     fifo = tmp_path / "release"
@@ -119,6 +120,7 @@ def test_cleanup_after_group_signal(
                             send(connection, "reap")
                             reaped = receive(connection)
                             assert reaped["event"] == "reaped"
+                            child_reaped = True
                             assert reaped["pid"] == state["child"]
                             assert os.WIFSIGNALED(reaped["status"])
                             assert os.WTERMSIG(reaped["status"]) == signal.SIGKILL
@@ -127,11 +129,17 @@ def test_cleanup_after_group_signal(
                             wait_for_terminal_process(
                                 state["helper"], state["helper"], marker
                             )
+                            helper_terminal = True
                             assert process_state(state["child"]) is None
                     finally:
                         os.close(release)
-                        for pid in (state.get("child"), state.get("helper")):
-                            if pid:
+                        if connection is not None:
+                            connection.close()
+                        for pid, done in (
+                            (state.get("child"), child_reaped),
+                            (state.get("helper"), helper_terminal),
+                        ):
+                            if pid and not done:
                                 try:
                                     os.kill(pid, signal.SIGKILL)
                                 except ProcessLookupError:
