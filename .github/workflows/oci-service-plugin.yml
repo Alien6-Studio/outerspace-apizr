@@ -39,3 +39,18 @@ jobs:
             ${{ runner.temp }}/oci-service-proof/refusals.json
             ${{ runner.temp }}/oci-service-proof/*-build.json
             ${{ runner.temp }}/oci-service-proof/*.lock
+
+  registry-publication:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Publish to a disposable authenticated HTTPS registry and pull by digest
+        run: python3 scripts/smoke_oci_registry.py --output "$RUNNER_TEMP/oci-registry-proof"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: oci-registry-proof
+          retention-days: 90
+          if-no-files-found: error
+          path: ${{ runner.temp }}/oci-registry-proof
