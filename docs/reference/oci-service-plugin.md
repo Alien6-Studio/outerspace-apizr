@@ -1,8 +1,9 @@
-# Build REST and MCP service images
+# Build and publish REST and MCP service images
 
 The official `apizr-oci` extension builds a **local service image** from a direct
-repository exposure bundle. It does not build a governed execution worker, push
-to a registry or install business dependencies. Install and enable it explicitly;
+repository exposure bundle and publishes it through a separate, explicit `push`
+operation. It does not build governed execution workers or install business
+dependencies. Install and enable it explicitly;
 the minimal Apizr environment does not acquire Docker, REST or MCP dependencies.
 This first package is version `0.0.0`, available from the checkout, not published.
 
@@ -109,7 +110,7 @@ checks. The resolved server dependency closure must equal the lock; additional
 business packages are refused. Installations require hashes, no index, no source
 builds and no network in Dockerfile `RUN` instructions. Base-image resolution may
 still contact its registry even when layers are cached; `--network=none` does
-not prevent that. Registry credentials and private bases are outside this pass.
+not prevent that. The build operation does not accept registry credentials or private base images.
 
 ## Build and run
 
@@ -198,8 +199,9 @@ The [proof script](https://github.com/Alien6-Studio/outerspace-apizr/blob/master
 installs both packages outside the checkout, acquires a real HTTPS Git fixture,
 builds and calls REST/MCP after removing sources and bundles, interrupts after an
 explicit Docker progress handshake, and compares all core files/distributions.
-The dedicated CI runner preserves its results, locks and build inputs. No image
-is published; only named test containers/images are removed.
+The dedicated CI runner preserves its results, locks and build inputs. In this
+script's default build-only mode, no image is published; only named test
+containers/images are removed. The separate publication proof is described below.
 
 References: [Docker build metadata and network semantics](https://docs.docker.com/reference/cli/docker/buildx/build/),
 [pip hash-checked installs](https://pip.pypa.io/en/stable/topics/secure-installs/).
