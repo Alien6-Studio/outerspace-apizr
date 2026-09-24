@@ -59,6 +59,17 @@ def main():
             while True:
                 os.write(fd, b"private-output" * 1024)
         os.write(fd, b"x" * args["count"])
+    elif mode == "held-child":
+        from held_group import hold
+
+        helper = os.fork()
+        if helper == 0:
+            hold(args)
+        # Child readiness is coordinated by the host before it lets us finish.
+        ready = Path(args["leader_release"])
+        with ready.open("rb", buffering=0) as channel:
+            if channel.read(1) != b"x":
+                raise RuntimeError("invalid leader release")
     elif mode in ("child", "child-sleep", "detached"):
         child = subprocess.Popen(
             [sys.executable, "-I", "-B", "-c", "import time; time.sleep(30)"],
@@ -68,6 +79,8 @@ def main():
         if mode == "child-sleep":
             time.sleep(30)
     sys.stdout.write(json.dumps(response, separators=(",", ":")) + "\n")
+    if mode == "held-child" and args.get("fail"):
+        sys.exit(7)
 
 
 if __name__ == "__main__":
