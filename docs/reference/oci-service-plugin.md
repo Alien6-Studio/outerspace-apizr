@@ -96,7 +96,7 @@ base=python@sha256:caaf356f40667c496d405780745b9ac25771c189a51dfcc42430d531ea09f
 platform=linux/amd64
 mkdir rest-wheels
 docker pull --platform "$platform" "$base"
-docker run --rm --platform "$platform" \
+docker run --rm --user "$(id -u):$(id -g)" --env HOME=/tmp --platform "$platform" \
   --mount "type=bind,src=$work/rest-wheels,dst=/wheels" \
   --mount "type=bind,src=$work/rest-bundle/requirements.txt,dst=/requirements.txt,readonly" \
   "$base" python -m pip download --only-binary=:all: --dest /wheels -r /requirements.txt

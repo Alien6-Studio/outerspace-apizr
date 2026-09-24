@@ -333,6 +333,10 @@ def main():
             engine(
                 "run",
                 "--rm",
+                "--user",
+                f"{os.getuid()}:{os.getgid()}",
+                "--env",
+                "HOME=/tmp",
                 "--platform",
                 platform,
                 "--mount",
