@@ -245,3 +245,18 @@ def test_backend_timeout_and_spawn_failure(tmp_path, monkeypatch):
     monkeypatch.setattr(backend.subprocess, "Popen", Mock(side_effect=OSError()))
     with pytest.raises(PluginError, match="uv_unavailable"):
         backend.run_uv("uv", [], tmp_path)
+
+
+def test_large_description_keeps_header_and_archive_bounds(wheel_factory):
+    from apizr.local_plugins.wheel import inspect_dependency, metadata_headers
+
+    wheel, digest = wheel_factory(
+        plugin=False, metadata_extra="\n" + "description " * 10000
+    )
+    _, distribution = inspect_dependency(wheel, digest)
+    assert distribution.name == "local-probe"
+    with pytest.raises(PluginError, match="metadata_too_large"):
+        metadata_headers(b"X-Large: " + b"x" * 65536)
+    assert "Requires-Dist" not in metadata_headers(
+        b"Name: example\r\n\r\nRequires-Dist: evil"
+    )

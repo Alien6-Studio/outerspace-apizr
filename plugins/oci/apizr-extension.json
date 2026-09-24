@@ -1,0 +1,7 @@
+{
+  "schema": "apizr.extension-manifest/v1",
+  "name": "apizr-oci",
+  "version": "0.0.0",
+  "module": "apizr_oci.protocol",
+  "protocol": "apizr.extension/v1"
+}

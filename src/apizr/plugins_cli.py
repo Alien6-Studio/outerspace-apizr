@@ -18,6 +18,15 @@ from apizr.local_plugins import (
 )
 
 
+def timeout_ms(value: str) -> int:
+    try:
+        return Limits(wall_time_ms=int(value)).wall_time_ms
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            "expected an integer from 1 to 600000 ms"
+        ) from None
+
+
 def main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(prog="apizr plugins")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -61,6 +70,12 @@ def main(argv: Sequence[str]) -> int:
     run.add_argument(
         "--arguments", type=Path, required=True, help="Bounded JSON object file"
     )
+    run.add_argument(
+        "--timeout-ms",
+        type=timeout_ms,
+        default=Limits().wall_time_ms,
+        help="Explicit invocation deadline in milliseconds (1–600000; default 10000)",
+    )
     for command in (install, listing, enable, disable, run):
         command.add_argument(
             "--plugins-dir",
@@ -88,7 +103,7 @@ def main(argv: Sequence[str]) -> int:
             disable_extension(args.name, directory=args.plugins_dir)
             print("Plugin disabled.")
         elif args.command == "run":
-            limits = Limits()
+            limits = Limits(wall_time_ms=args.timeout_ms)
             response = run_extension(
                 args.name,
                 args.operation,
