@@ -21,6 +21,18 @@ MAX_METADATA_BYTES = 65536
 MANIFEST = "apizr-extension.json"
 
 
+def metadata_headers(raw: bytes) -> str:
+    """Bound identity/dependency headers, not the unused PyPI description body.
+
+    Callers read at most MAX_METADATA_BYTES + 1 bytes, even for large METADATA.
+    No declaration after the RFC-style blank line is a metadata header.
+    """
+    headers = re.split(b"\r?\n\r?\n", raw, maxsplit=1)[0]
+    if len(headers) > MAX_METADATA_BYTES:
+        raise PluginError("metadata_too_large")
+    return headers.decode("utf-8") + "\n\n"
+
+
 def inspect_wheel(
     path: Path, sha256: str, *, allow_dependencies: bool = False
 ) -> tuple[bytes, Manifest]:
@@ -106,6 +118,9 @@ def _manifest(
 
         def read(name: str) -> str:
             entry = archive.getinfo(name)
+            if name.endswith(".dist-info/METADATA"):
+                with archive.open(entry) as stream:
+                    return metadata_headers(stream.read(MAX_METADATA_BYTES + 1))
             if entry.file_size > MAX_METADATA_BYTES:
                 raise PluginError("metadata_too_large")
             return archive.read(entry).decode("utf-8")

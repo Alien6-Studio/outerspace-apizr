@@ -12,7 +12,7 @@ from email.parser import Parser
 from pathlib import Path
 
 from .models import LockedDistribution, Manifest, PluginError, canonical_name
-from .wheel import MAX_METADATA_BYTES, inspect_dependency
+from .wheel import MAX_METADATA_BYTES, inspect_dependency, metadata_headers
 
 MAX_LOCK_BYTES = 65536
 MAX_WHEELS = 128
@@ -156,9 +156,7 @@ def verify_installed(venv: Path, lock: Lock) -> None:
     for path in (venv / "lib").glob("python*/site-packages/*.dist-info/METADATA"):
         with path.open("rb") as source:
             raw = source.read(MAX_METADATA_BYTES + 1)
-        if len(raw) > MAX_METADATA_BYTES:
-            raise PluginError("installed_dependencies_mismatch")
-        metadata = Parser(policy=policy.default).parsestr(raw.decode("utf-8"))
+        metadata = Parser(policy=policy.default).parsestr(metadata_headers(raw))
         name = canonical_name(str(metadata["Name"]))
         if name in found:
             raise PluginError("installed_dependencies_mismatch")
