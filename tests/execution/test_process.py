@@ -1,6 +1,4 @@
-import json
 import os
-import signal
 import sys
 import time
 
@@ -13,7 +11,6 @@ from apizr.execution.policy import Environment
 from apizr.execution.supervisor import exchange, worker_environment
 
 from .helpers import planned
-from .observation import process_state, wait_for_terminal_process
 
 pytestmark = pytest.mark.timeout(20)
 
@@ -300,32 +297,11 @@ def test_actual_worker_environment_property(parent):
         assert invoke(source, environment={"allow": names[::2]}).value == names[::2]
 
 
-def test_ordinary_descendant_is_stopped_with_worker(tmp_path):
-    marker = tmp_path / "descendant"
-    heartbeat = tmp_path / "heartbeat"
-    child = f"import time\nfrom pathlib import Path\nwhile True:\n Path({str(heartbeat)!r}).write_text(str(time.monotonic()))\n time.sleep(.02)"
-    source = f"import json\nimport os\nimport subprocess\nimport sys\nimport time\nfrom pathlib import Path\ndef f():\n    child=subprocess.Popen([sys.executable,'-I','-c',{child!r}])\n    Path({str(marker)!r}).write_text(json.dumps({{'pid':child.pid,'pgid':os.getpgrp(),'worker':os.getpid()}}))\n    time.sleep(3600)\n"
-    result = invoke(source, limits={"wall_time_ms": 1200})
-    identity = json.loads(marker.read_text())
-    pid, pgid = identity["pid"], identity["pgid"]
-    try:
-        assert result.status == "timeout"
-        assert pgid == identity["worker"]
-        # Observe asynchronous descendant termination, not a fixed-delay snapshot.
-        # An unchanged heartbeat or D state alone is never sufficient evidence.
-        wait_for_terminal_process(pid, pgid, heartbeat)
-        last = heartbeat.read_bytes()
-        time.sleep(0.1)
-        assert heartbeat.read_bytes() == last
-    finally:
-        # A deliberately broken kill-group mutant must fail without leaving its
-        # test child running. This happens after the assertion and cannot pass it.
-        state = process_state(pid)
-        if state and state["pgid"] == pgid and not state["state"].startswith("Z"):
-            try:
-                os.kill(pid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
+def test_ordinary_descendant_is_stopped_with_worker(tmp_path, monkeypatch, request):
+    from .descendant import assert_descendant_cleanup
+
+    assert_descendant_cleanup(invoke, tmp_path, monkeypatch, request)
+    assert invoke("def f(): return 42").value == 42
 
 
 def test_closed_pipes_do_not_evade_wall_deadline(tmp_path):
@@ -342,3 +318,16 @@ def test_invalid_failure_value_is_never_public(tmp_path):
     code = 'import sys,struct; sys.stdin.buffer.read(); b=b\'{"schema_version":"apizr.execution-result/v1","status":"timeout","value":"secret"}\'; sys.stdout.buffer.write(struct.pack("!Q",len(b))+b)'
     result = exchange([sys.executable, "-I", "-c", code], b"x", tmp_path, {}, 1000, 128)
     assert result.status == "worker_failed" and result.value is None
+
+
+def test_descendant_fixture_cleans_failed_preparation(tmp_path, monkeypatch, request):
+    from . import descendant
+
+    def failed_handshake(*args):
+        raise RuntimeError("deliberate preparation failure")
+
+    with monkeypatch.context() as patch:
+        patch.setattr(descendant, "receive", failed_handshake)
+        with pytest.raises(RuntimeError, match="deliberate preparation failure"):
+            descendant.assert_descendant_cleanup(invoke, tmp_path, patch, request)
+    assert invoke("def f(): return 42").value == 42

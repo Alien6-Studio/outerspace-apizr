@@ -16,11 +16,30 @@ TESTS = [
 ]
 
 
+GIT_WORKER_TESTS = [
+    "tests/git_source/test_cleanup.py",
+    *[
+        "tests/git_source/test_ssh.py::test_authentication_refusals_clean_and_recover["
+        + case
+        + "]"
+        for case in ("unknown", "changed", "revoked")
+    ],
+    "tests/execution/test_process.py::test_ordinary_descendant_is_stopped_with_worker",
+    "tests/execution/test_process.py::test_descendant_fixture_cleans_failed_preparation",
+    "tests/repository_execution/test_cleanup.py",
+]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--repetitions", type=int, default=25, choices=range(1, 101))
+    parser.add_argument(
+        "--suite", choices=("extension", "git-worker"), default="extension"
+    )
     args = parser.parse_args()
+    tests = GIT_WORKER_TESTS if args.suite == "git-worker" else TESTS
+    expected_tests = 9 if args.suite == "git-worker" else 7
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     results: list[dict[str, object]] = []
@@ -28,7 +47,7 @@ def main() -> int:
         "python": sys.version,
         "platform": platform.platform(),
         "repetitions": args.repetitions,
-        "tests": TESTS,
+        "tests": tests,
         "results": results,
     }
     for iteration in range(1, args.repetitions + 1):
@@ -42,7 +61,7 @@ def main() -> int:
                         "pytest",
                         "-q",
                         "--no-cov",
-                        *TESTS,
+                        *tests,
                         f"--junitxml={output / (name + '.xml')}",
                     ],
                     cwd=Path(__file__).resolve().parents[1],
@@ -61,7 +80,7 @@ def main() -> int:
                 for key in ("tests", "failures", "errors", "skipped"):
                     counts[key] = counts.get(key, 0) + int(suite.attrib[key])
             if code == 0 and (
-                counts.get("tests", 0) < 7
+                counts.get("tests", 0) != expected_tests
                 or any(counts.get(key, 0) for key in ("failures", "errors", "skipped"))
             ):
                 code = "incomplete_report"
