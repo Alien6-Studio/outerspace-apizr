@@ -49,6 +49,13 @@ jobs:
           version: '0.12.0'
           python-version: ${{ matrix.python }}
           enable-cache: true
+      - name: Prepare disposable SSH integration prerequisites
+        run: |
+          if ! test -x /usr/sbin/sshd; then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends openssh-server
+          fi
+          sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
       - run: uv run --locked pytest --cov --cov-report=term-missing --cov-report=json:coverage.json --cov-report=xml:coverage.xml --junitxml=tests.xml
       - name: Protect the measured legacy coverage separately
@@ -140,6 +147,13 @@ jobs:
           version: '0.12.0'
           python-version: '3.14'
           enable-cache: true
+      - name: Prepare disposable SSH integration prerequisites
+        run: |
+          if ! test -x /usr/sbin/sshd; then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends openssh-server
+          fi
+          sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
       - run: uv build
       - run: uv run --locked python scripts/check_distribution.py dist --manifest SHA256SUMS.json
