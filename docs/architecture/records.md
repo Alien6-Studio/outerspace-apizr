@@ -6,6 +6,7 @@ current checkout. Their published URLs remain available for existing links.
 
 | Record | What it documents |
 | --- | --- |
+| [macOS extension cleanup](extension-cleanup-macos.md) | Synchronized reproduction of redundant group signalling and the bounded cleanup regression |
 | [Original 0.2 baseline](0.2-baseline.md) | The starting pipeline and quality results before foundation hardening |
 | [Foundation verification](0.2-hardening.md) | Package normalization, tests and the findings still open at that stage |
 | [Historical dependency audit](foundation-security-audit.md) | Vulnerabilities in the earlier dependency graph before runtime rationalization |

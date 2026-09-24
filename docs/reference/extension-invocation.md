@@ -148,7 +148,14 @@ On success or failure, the supervisor sends SIGKILL to the owned process group,
 closes all three streams and reaps the direct child within the cleanup budget.
 If the leader exits while ordinary descendants retain stdout/stderr, the group
 is terminated and remaining bounded pipe data is drained. Cleanup failure is
-reported even when another error first ended the exchange.
+reported even when another error first ended the exchange. A successful group
+signal during the exchange is retained through final cleanup, including on error
+or cancellation. It is not sent again to an already signalled group: macOS can
+return `EPERM` while that group contains only unreaped zombies. This does not
+suppress a failed signal; without a prior successful group signal (or `ESRCH`),
+permission/reaping failures still produce `CleanupFailed`. Direct-child exit
+alone never counts as successful group signalling. See the
+[macOS cleanup diagnosis](../architecture/extension-cleanup-macos.md).
 
 This is **not a sandbox**. Extensions run with the user's permissions and can
 access files, network and processes available to that user, including the core's
