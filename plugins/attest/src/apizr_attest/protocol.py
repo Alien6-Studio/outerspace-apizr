@@ -7,6 +7,7 @@ from pathlib import Path
 from apizr_oci.model import BuildError
 
 from apizr.extension_runtime.protocol import Request, unique_object
+from apizr.local_plugins.models import PluginError
 
 from .delivery import execute_attest, execute_verify
 from .model import AttestError, AttestRequest, VerifyRequest
@@ -38,6 +39,7 @@ def main() -> int:
         response.update(status="ok", result=result.model_dump(by_alias=True))
     except (
         AttestError,
+        PluginError,
         BuildError,
         OSError,
         ValueError,

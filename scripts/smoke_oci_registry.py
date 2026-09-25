@@ -46,6 +46,7 @@ FROM ubuntu:24.04
 RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-venv python3-pip git openssl apache2-utils ca-certificates curl iptables util-linux pigz xz-utils && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages uv==0.12.0
 COPY --from=docker /usr/local/bin/ /usr/local/bin/
 COPY --from=docker /usr/local/libexec/ /usr/local/libexec/
+VOLUME /var/lib/docker
 RUN mkdir /opt/attest && curl -fL --max-time 90 https://github.com/Alien6-Studio/continuum-attest/releases/download/v0.1.0/attest-v0.1.0-linux-x86_64.tar.gz -o /opt/attest/archive.tar.gz && echo 'f51201745b30be356e066cd615a7ef41fed92b17cf720ceb03e7f2a4d58505ad  /opt/attest/archive.tar.gz' | sha256sum -c - && tar -xzf /opt/attest/archive.tar.gz -C /opt/attest attest && /opt/attest/attest --version
 """)
             command(

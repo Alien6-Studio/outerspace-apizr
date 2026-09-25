@@ -271,7 +271,7 @@ def test_independent_bounded_public_trust(tmp_path, fault):
     if fault == "symlink":
         (source / "one.pub").symlink_to("/etc/passwd")
     if fault == "private":
-        (source / "one.pub").write_text("BEGIN PRIVATE KEY")
+        (source / "one.pub").write_text("PRIVATE KEY sentinel")
     if fault == "special":
         os.mkfifo(source / "one.pub")
     if fault == "too-many":

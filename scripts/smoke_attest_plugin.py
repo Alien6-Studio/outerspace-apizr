@@ -186,55 +186,63 @@ def exercise(python, store, work, builds, command, environment):
         invoke("attest", arguments, refused=True)  # never overwrite
         # Synchronize cancellation on an actual RFC3161 request, while a private
         # copy of the signing key exists. The core owns all ordinary descendants.
-        received, release = Event(), Event()
-        with authority(work / "blocked-tsa", received=received, release=release) as (
-            blocked_url,
-            blocked_ca,
-            _,
-        ):
-            shutil.copyfile(blocked_ca, trust / "tsa/blocked.crt")
-            blocked = arguments | {
-                "tsa_url": blocked_url,
-                "output_dir": str(work / "interrupted-proof"),
-            }
-            blocked_file = work / "blocked-arguments.json"
-            blocked_file.write_text(json.dumps(blocked))
-            with tempfile.TemporaryDirectory(dir=work) as runtimes:
-                process = subprocess.Popen(
-                    [
-                        *base,
-                        "run",
-                        "apizr-attest",
-                        "attest",
-                        "--arguments",
-                        str(blocked_file),
-                        "--plugins-dir",
-                        str(store),
-                        "--timeout-ms",
-                        "360000",
-                    ],
-                    cwd=work,
-                    env=environment | {"TMPDIR": runtimes},
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                )
-                try:
-                    assert received.wait(30), "signer did not reach local TSA"
-                    assert list(Path(runtimes).rglob("*.key"))
-                    process.send_signal(signal.SIGINT)
-                    stdout, stderr = process.communicate(timeout=10)
-                    assert process.returncode == 130 and not stdout
-                    assert not any(secret in stderr for secret in secrets)
-                    assert not list(Path(runtimes).iterdir())
-                    assert not (work / "interrupted-proof").exists()
-                    refusals.append(
-                        {"case": "interruption-key-cleanup", "refused": True}
+        for mode in ("timeout", "interruption"):
+            received, release = Event(), Event()
+            with authority(
+                work / (mode + "-tsa"), received=received, release=release
+            ) as (
+                blocked_url,
+                blocked_ca,
+                _,
+            ):
+                shutil.copyfile(blocked_ca, trust / "tsa/blocked.crt")
+                blocked = arguments | {
+                    "tsa_url": blocked_url,
+                    "timeout_ms": 10000 if mode == "timeout" else 300000,
+                    "output_dir": str(work / (mode + "-proof")),
+                }
+                blocked_file = work / "blocked-arguments.json"
+                blocked_file.write_text(json.dumps(blocked))
+                with tempfile.TemporaryDirectory(dir=work) as runtimes:
+                    process = subprocess.Popen(
+                        [
+                            *base,
+                            "run",
+                            "apizr-attest",
+                            "attest",
+                            "--arguments",
+                            str(blocked_file),
+                            "--plugins-dir",
+                            str(store),
+                            "--timeout-ms",
+                            "360000",
+                        ],
+                        cwd=work,
+                        env=environment | {"TMPDIR": runtimes},
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
                     )
-                finally:
-                    release.set()
-                    if process.poll() is None:
-                        process.kill()
-                    process.communicate(timeout=5)
+                    try:
+                        assert received.wait(30), "signer did not reach local TSA"
+                        assert list(Path(runtimes).rglob("*.key"))
+                        if mode == "interruption":
+                            process.send_signal(signal.SIGINT)
+                        stdout, stderr = process.communicate(timeout=15)
+                        assert (
+                            process.returncode == (130 if mode == "interruption" else 2)
+                            and not stdout
+                        )
+                        assert not any(secret in stderr for secret in secrets)
+                        assert not list(Path(runtimes).iterdir())
+                        assert not (work / (mode + "-proof")).exists()
+                        refusals.append(
+                            {"case": mode + "-key-cleanup", "refused": True}
+                        )
+                    finally:
+                        release.set()
+                        if process.poll() is None:
+                            process.kill()
+                        process.communicate(timeout=5)
         recovered = arguments | {"output_dir": str(work / "recovered-proof")}
         assert invoke("attest", recovered) is not None
         shutil.rmtree(work / "recovered-proof")
@@ -271,6 +279,7 @@ def exercise(python, store, work, builds, command, environment):
             "missing-timestamp",
             "invalid-timestamp",
             "proof-trust",
+            "rebound-result",
         ):
             altered = work / "altered-proof"
             shutil.copytree(copied, altered)
@@ -297,6 +306,21 @@ def exercise(python, store, work, builds, command, environment):
                     )
                 else:
                     path.write_bytes(path.read_bytes() + b" ")
+            if name == "rebound-result":
+                # Keep all application hashes internally consistent, but change a
+                # signed declaration. Native recomputation must reject it.
+                path = altered / "delivery/build.json"
+                value = json.loads(path.read_bytes())
+                value["tag"] = "other:declaration"
+                path.write_text(json.dumps(value))
+                path = altered / "delivery/manifest.json"
+                value = json.loads(path.read_bytes())
+                value["files"]["build.json"] = hashlib.sha256(
+                    (altered / "delivery/build.json").read_bytes()
+                ).hexdigest()
+                path.write_text(
+                    json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n"
+                )
             if name == "other-image":
                 selected["expected_reference"] = pushes[1]["digest_reference"]
             if name == "signer":

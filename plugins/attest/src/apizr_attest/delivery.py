@@ -280,7 +280,8 @@ def execute_attest(request: AttestRequest, work: Path) -> DeliveryResult:
         workspace=work,
     )
     if (
-        observation.manifest_digest != pushed.manifest_digest
+        len(observation.manifest) > MAX_FILE
+        or observation.manifest_digest != pushed.manifest_digest
         or observation.config_digest != pushed.config_digest
     ):
         raise AttestError("delivery_identity_mismatch")
