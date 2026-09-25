@@ -61,6 +61,10 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments == ["--version"]:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
         return 0
+    if arguments and arguments[0] == "mcp":
+        from apizr.mcp_cli import main as mcp_command
+
+        return mcp_command(arguments[1:])
     if arguments and arguments[0] == "plugins":
         from apizr.plugins_cli import main as plugins_command
 
@@ -98,6 +102,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments in (["--help"], ["-h"]):
         print("Apizr — an open-source capability compiler for Python codebases.\n")
         print("Version: apizr --version")
+        print("Local MCP analysis server (optional plugin): apizr mcp serve --help")
         print("Extensions: apizr plugins {install,list,enable,disable,run} --help")
         print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"

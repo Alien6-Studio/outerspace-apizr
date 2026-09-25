@@ -163,15 +163,14 @@ def active_inventory(root: Path) -> Inventory:
         )
 
 
-def run_extension(
-    name: str,
-    operation: str,
-    arguments: dict[str, JsonValue],
-    *,
-    directory: Path | None = None,
-    limits: Limits = DEFAULT_LIMITS,
-    cancel: Event | None = None,
-) -> Response:
+def resolve_active_extension(
+    name: str, *, directory: Path | None = None
+) -> Installation:
+    """Admit one active installation under the existing inventory lock.
+
+    The returned binding is a snapshot: a subsequent disable blocks later
+    admissions, not an already admitted invocation or server session.
+    """
     name = _name(name)
     try:
         root = store.storage_directory(directory)
@@ -188,6 +187,22 @@ def run_extension(
                 raise PluginError("plugin_inactive")
             _validate_binding(record, inventory)
             _interpreter(record, root)
+        return record
+    except OSError:
+        raise PluginError("activation_unavailable") from None
+
+
+def run_extension(
+    name: str,
+    operation: str,
+    arguments: dict[str, JsonValue],
+    *,
+    directory: Path | None = None,
+    limits: Limits = DEFAULT_LIMITS,
+    cancel: Event | None = None,
+) -> Response:
+    record = resolve_active_extension(name, directory=directory)
+    try:
         # Admission is linearized under the lock; disable blocks later admissions,
         # but cannot revoke this already admitted invocation or hold up its cleanup.
         return invoke_extension(
