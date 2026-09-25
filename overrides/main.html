@@ -2,6 +2,7 @@
 
 {% block extrahead %}
   {{ super() }}
+  <link rel="describedby" type="application/json" href="{{ 'build-info.json' | url }}" />
   <meta name="apizr-source-commit" content="{{ config.extra.docs_build.source_commit }}" />
   <meta name="apizr-docs-status" content="{{ config.extra.docs_build.status }}" />
   {% set share_title = config.site_name if not page or page.is_homepage else page.title ~ " · " ~ config.site_name %}
@@ -24,13 +25,4 @@
   <meta name="twitter:description" content="{{ share_description | e }}" />
   <meta name="twitter:image" content="{{ share_image | e }}" />
   <meta name="twitter:image:alt" content="{{ share_alt | e }}" />
-{% endblock %}
-
-{% block footer %}
-  {{ super() }}
-  <div class="md-footer-meta md-typeset">
-    <div class="md-grid">
-      <a href="{{ 'build-info.json' | url }}">Documentation build · development (unreleased)</a>
-    </div>
-  </div>
 {% endblock %}
