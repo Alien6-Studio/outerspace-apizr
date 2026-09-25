@@ -73,7 +73,7 @@ else:
 
 
 @contextmanager
-def http_server(root, transport, *, server=SERVER):
+def http_server(root, transport, *, server=None):
     with socket.socket() as listener:
         listener.bind(("127.0.0.1", 0))
         port = listener.getsockname()[1]
@@ -81,7 +81,7 @@ def http_server(root, transport, *, server=SERVER):
         sys.executable,
         "-I",
         "-c",
-        server,
+        SERVER if server is None else server,
         str(root),
         "rest" if transport == "rest" else "streamable-http",
     ]

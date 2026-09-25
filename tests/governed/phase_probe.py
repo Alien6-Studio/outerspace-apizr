@@ -5,6 +5,7 @@ Only fixed phase names, timings, process/pipe state and interpreter identity are
 recorded in separate files; no request, result, environment or exception text.
 """
 
+import atexit
 import importlib.machinery
 import json
 import os
@@ -91,6 +92,7 @@ def instrument_worker(module, trace):
 def worker(directory, script):
     trace = Trace(directory)
     trace.identity("worker_boot")
+    atexit.register(trace.emit, "interpreter_atexit")
 
     class Finder:
         @staticmethod
@@ -148,6 +150,13 @@ def install_server(root):
             super().__init__(*args, **kwargs)
             current["process"] = self
             emit("launch_end", child=self.pid)
+
+        def wait(self, *args, **kwargs):
+            emit("wait_begin", child=self.pid)
+            try:
+                return super().wait(*args, **kwargs)
+            finally:
+                emit("wait_end", child=self.pid, returncode=self.returncode)
 
     class ObservedOS:
         def __getattr__(self, name):

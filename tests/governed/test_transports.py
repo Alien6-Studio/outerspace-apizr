@@ -165,7 +165,10 @@ def test_real_governed_mcp_survives_failures(tmp_path, monkeypatch, transport, r
         tmp_path / "mcp",
         "mcp",
         policy=ExecutionPolicy.model_validate(
-            {"limits": {"wall_time_ms": 1000, "max_output_bytes": 256}}
+            # Functional recovery is not a one-second cold-process benchmark.
+            # Measured macOS exchange: 974 ms, calculation: 0.143 ms.
+            # Short deadlines (including Popen) have dedicated real-process tests.
+            {"limits": {"wall_time_ms": 5000, "max_output_bytes": 256}}
         ),
     )
     history = []

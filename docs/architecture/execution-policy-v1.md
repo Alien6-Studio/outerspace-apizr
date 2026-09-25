@@ -60,7 +60,10 @@ bytes so controlled error envelopes fit. Maximum configurable input/output is
 64 MiB ceiling because it also carries the bound planning evidence.
 
 A timeout is process termination, not coroutine cancellation. Timing includes
-worker startup and protocol exchange; operating-system process creation and
+worker startup and protocol exchange: the deadline is set before `Popen`, not
+after imports. A deadline already exhausted when `Popen` returns is not restarted;
+cleanup still reaps the direct child and closes its streams. A successful reply
+also requires waiting for the worker's exit. Operating-system process creation and
 scheduling are not real-time guarantees. The parent kills ordinary descendants
 remaining in the worker's process group and waits for the direct child. A
 subprocess deliberately creating a separate session can escape that group:

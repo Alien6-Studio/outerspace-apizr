@@ -276,8 +276,27 @@ generated artifacts, public protocol or production defaults. Its overhead is
 included in timings; local and runner interpreter identities must be compared
 explicitly before drawing conclusions.
 
-The recovery test currently retains its 1,000 ms policy, measured **before
-process creation**, including interpreter startup/imports. A timeout of an
-ordinary call does not by itself establish a runtime defect. Issue
-[#142](https://github.com/Alien6-Studio/outerspace-apizr/issues/142) retains the
-historical failures and the measured qualification status.
+The functional recovery test uses a fixed 5,000 ms policy (the existing execution
+policy default), measured **before process creation**, including interpreter
+startup/imports and waiting for process exit. Infinite loops and blocked calls
+still produce real timeouts; crashes, output overflow, artifact tampering and
+subsequent successful calls remain asserted. Dedicated tests in
+`tests/execution/test_deadline.py` retain real 100 ms deadlines, prove that a
+budget consumed inside `Popen` is not restarted, and check reaping and closed
+pipes before recovery.
+
+The former 1,000 ms functional budget conflated recovery with cold-process
+performance. In the initial measured macOS 3.11.9 series, an expected `fail`
+exchange took 974.489 ms although calculation took 0.143 ms: imports took
+344.340 ms, the response was available around 521 ms, and cleanup began around
+951 ms. Linux 3.11.15's slowest non-timeout exchange took 183.896 ms; local
+macOS 3.11.14 measured 225.503 ms. These are different interpreters/environments,
+not interchangeable benchmarks. The existing 5-second default gives the
+functional checks margin above this measured near-boundary exchange, while the
+separate short-deadline tests retain the timing contract. Production defaults
+and the start of deadline measurement are unchanged.
+
+[Issue #142](https://github.com/Alien6-Studio/outerspace-apizr/issues/142) retains
+all historical failures and per-commit qualification links. The old logs did not
+measure internal phases: their exact startup/shutdown split cannot be recovered.
+No specific OS scheduling or interpreter defect is claimed from those logs.
