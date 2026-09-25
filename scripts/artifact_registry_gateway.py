@@ -24,19 +24,23 @@ class Handler(BaseHTTPRequestHandler):
 
     def send(self, status, body=b"", headers=None):
         self.send_response(status)
-        for name, value in (headers or {}).items():
-            if name.lower() not in {
-                "connection",
-                "transfer-encoding",
-                "content-length",
-            }:
-                self.send_header(name, value)
-        self.send_header(
-            "Content-Length",
-            (headers or {}).get("Content-Length", "0")
+        headers = {name.lower(): value for name, value in (headers or {}).items()}
+        for name in (
+            "content-type",
+            "docker-content-digest",
+            "www-authenticate",
+            "link",
+        ):
+            if name in headers:
+                self.send_header(
+                    name, headers[name].replace("\r", "").replace("\n", "")
+                )
+        length = (
+            int(headers.get("content-length", "0"))
             if self.command == "HEAD"
-            else str(len(body)),
+            else len(body)
         )
+        self.send_header("Content-Length", str(length))
         self.end_headers()
         if self.command != "HEAD":
             self.wfile.write(body)
@@ -108,6 +112,7 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     server = ThreadingHTTPServer(("0.0.0.0", 5443), Handler)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.minimum_version = ssl.TLSVersion.TLSv1_2
     context.load_cert_chain("/proof/certs/ca.crt", "/proof/certs/key.pem")
     server.socket = context.wrap_socket(server.socket, server_side=True)
     server.serve_forever()

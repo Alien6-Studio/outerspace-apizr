@@ -181,3 +181,33 @@ def test_explicit_tool_and_api_refusals(client, tmp_path, monkeypatch, fault):
     target.mkdir()
     with pytest.raises(BuildError):
         oras.Registry(transport, REF, target, time.monotonic() + 10)
+
+
+def test_fixture_gateway_does_not_relay_injected_headers(monkeypatch):
+    import io
+    import runpy
+    import ssl
+
+    monkeypatch.setattr(ssl, "create_default_context", lambda **kwargs: None)
+    namespace = runpy.run_path(
+        str(
+            Path(__file__).resolve().parents[2] / "scripts/artifact_registry_gateway.py"
+        )
+    )
+    handler = object.__new__(namespace["Handler"])
+    handler.command = "GET"
+    handler.request_version = "HTTP/1.1"
+    handler.log_request = lambda *args: None
+    handler.wfile = io.BytesIO()
+    handler.send(
+        200,
+        b"public",
+        {
+            "Link": "</next>\r\nInjected: secret",
+            "X-Unrelated": "not forwarded",
+            "Content-Length": "999",
+        },
+    )
+    response = handler.wfile.getvalue()
+    assert b"\r\nInjected:" not in response and b"X-Unrelated" not in response
+    assert b"Content-Length: 6\r\n" in response
