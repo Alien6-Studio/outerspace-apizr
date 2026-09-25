@@ -241,3 +241,43 @@ The dedicated CI matrix covers Linux 3.11–3.14 and macOS 3.11/3.14 and preserv
 logs and separate plugin coverage. Linux repeats the installed proof with network
 access removed by a disposable network namespace. These are development proofs,
 not tests of a graphical client or a claim that 0.4 has been published.
+
+## Qualification evidence
+
+The `MCP server plugin` workflow has two independent jobs, with no dependency
+between them:
+
+- `stdio`: the installed analysis plugin and official SDK client, including
+  separate plugin coverage and the Linux proof without network access, on Linux
+  Python 3.11–3.14 and macOS 3.11/3.14;
+- `generated-recovery`: ten predetermined repetitions **per transport** of the
+  generated business MCP server recovery test, on Linux/macOS Python 3.11.
+
+An error in either job does not prevent the other from running. Both jobs and
+the general CI must succeed on the same final commit to complete qualification.
+A prior green run, skipped job or successful later call is not a replacement for
+that evidence. Artifacts are retained on failure; repetitions are never retried
+until green.
+
+Run the recovery series with a fresh output directory:
+
+```sh
+uv run --locked python scripts/repeat_mcp_transports.py --output /tmp/mcp-recovery
+```
+
+Each JUnit report contains redacted call history and bounded `execution_phases`:
+process launch, worker bootstrap/import completion, request reception/validation,
+source binding, calculation, response and cleanup. Every completed exchange must
+show a reaped direct child and closed stdin/stdout; the test also checks that the
+recorded worker PIDs no longer exist. Records contain interpreter path, version,
+architecture, timestamps and process/pipe state, never arguments or business
+results. The test-only observer wraps the embedded runtime without changing the
+generated artifacts, public protocol or production defaults. Its overhead is
+included in timings; local and runner interpreter identities must be compared
+explicitly before drawing conclusions.
+
+The recovery test currently retains its 1,000 ms policy, measured **before
+process creation**, including interpreter startup/imports. A timeout of an
+ordinary call does not by itself establish a runtime defect. Issue
+[#142](https://github.com/Alien6-Studio/outerspace-apizr/issues/142) retains the
+historical failures and the measured qualification status.

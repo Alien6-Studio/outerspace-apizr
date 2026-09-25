@@ -20,6 +20,8 @@ def main() -> int:
     results = []
     summary = {
         "python": sys.version,
+        "executable": sys.executable,
+        "architecture": platform.machine(),
         "platform": platform.platform(),
         "repetitions": REPETITIONS,
         "test": TEST,

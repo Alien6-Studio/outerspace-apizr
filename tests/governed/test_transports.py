@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import time
+from pathlib import Path
 
 import anyio
 import httpx
@@ -81,7 +82,11 @@ async def exercise_mcp(target, root, history):
         async def call(name, args=None):
             # Test-owned names/timings only: retain the preceding failure and the
             # recovery attempt in JUnit even when an ExceptionGroup hides locals.
-            event = {"tool": name, "outcome": "exception"}
+            event = {
+                "tool": name,
+                "outcome": "exception",
+                "started_ns": time.monotonic_ns(),
+            }
             started = time.monotonic()
             try:
                 result = await client.call_tool(name, {} if args is None else args)
@@ -102,6 +107,7 @@ async def exercise_mcp(target, root, history):
                     )
                 return result
             finally:
+                event["finished_ns"] = time.monotonic_ns()
                 event["elapsed_ms"] = round((time.monotonic() - started) * 1000, 3)
                 history.append(event)
 
@@ -163,17 +169,41 @@ def test_real_governed_mcp_survives_failures(tmp_path, monkeypatch, transport, r
         ),
     )
     history = []
+    probe = str(Path(__file__).with_name("phase_probe.py").resolve())
+    server = SERVER.replace(
+        "sys.addaudithook(audit)\n",
+        "sys.addaudithook(audit)\n"
+        + f"runpy.run_path({probe!r})['install_server'](root)\n",
+    )
     try:
         if transport == "stdio":
             params = StdioServerParameters(
                 command=sys.executable,
-                args=["-I", "-c", SERVER, str(root), "stdio"],
+                args=["-I", "-c", server, str(root), "stdio"],
                 cwd=root,
                 env=dict(os.environ),
             )
             anyio.run(exercise_mcp, params, root, history)
         else:
-            with http_server(root, "mcp") as (url, _):
+            with http_server(root, "mcp", server=server) as (url, _):
                 anyio.run(exercise_mcp, url + "/mcp", root, history)
     finally:
         request.node.user_properties.append(("mcp_call_history", json.dumps(history)))
+        events = []
+        paths = sorted((tmp_path / "phases").glob("*.jsonl"))
+        assert len(paths) <= 129
+        for path in paths:
+            with path.open("rb") as trace:
+                raw = trace.read(65537)
+            assert len(raw) <= 65536
+            events.extend(json.loads(line) for line in raw.splitlines())
+        request.node.user_properties.append(("execution_phases", json.dumps(events)))
+        assert "super-secret" not in json.dumps(events)
+        assert "Hello Ada" not in json.dumps(events)
+        assert not any(event["phase"] == "trace_limit" for event in events)
+        exchanges = [event for event in events if event["phase"] == "exchange_end"]
+        assert exchanges, "no measured worker invocation"
+        for event in exchanges:
+            assert event["reaped"] and event["stdin_closed"] and event["stdout_closed"]
+            with pytest.raises(ProcessLookupError):
+                os.kill(event["child"], 0)
