@@ -52,7 +52,12 @@ def recover(root, processes):
         encode(ExecutionResult(status="success", value=7).model_dump(), 128)
     )
     result = supervisor.exchange(
-        [sys.executable, "-I", "-c", f"import os; os.write(1, {response!r})"],
+        [
+            sys.executable,
+            "-I",
+            "-c",
+            f"import os; assert os.read(0, 1) == b'x'; os.write(1, {response!r})",
+        ],
         b"x",
         root,
         {},
