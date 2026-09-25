@@ -99,6 +99,7 @@ nav:
       - SSH Git sources: reference/git-ssh.md
       - OCI service plugin: reference/oci-service-plugin.md
       - Attest delivery plugin: reference/attest-delivery-plugin.md
+      - Attest OCI artifacts: reference/attest-oci-artifacts.md
       - Plan exposure: getting-started/user-guide/exposure.md
       - Call the compiler from Python: reference/compiler-api.md
       - Invoke an installed extension: reference/extension-invocation.md

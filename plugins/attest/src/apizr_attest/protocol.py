@@ -1,4 +1,4 @@
-"""Two operations over the existing extension protocol; no raw native diagnostics."""
+"""Receipt operations over the existing extension protocol; no raw native diagnostics."""
 
 import json
 import sys
@@ -9,8 +9,16 @@ from apizr_oci.model import BuildError
 from apizr.extension_runtime.protocol import Request, unique_object
 from apizr.local_plugins.models import PluginError
 
+from .artifacts import execute_discover, execute_fetch, execute_publish
 from .delivery import execute_attest, execute_verify
-from .model import AttestError, AttestRequest, VerifyRequest
+from .model import (
+    AttestError,
+    AttestRequest,
+    DiscoverRequest,
+    FetchRequest,
+    PublishRequest,
+    VerifyRequest,
+)
 
 
 def main() -> int:
@@ -33,6 +41,18 @@ def main() -> int:
         elif request.operation == "verify":
             result = execute_verify(
                 VerifyRequest.model_validate(request.arguments), Path.cwd()
+            )
+        elif request.operation == "publish":
+            result = execute_publish(
+                PublishRequest.model_validate(request.arguments), Path.cwd()
+            )
+        elif request.operation == "discover":
+            result = execute_discover(
+                DiscoverRequest.model_validate(request.arguments), Path.cwd()
+            )
+        elif request.operation == "fetch":
+            result = execute_fetch(
+                FetchRequest.model_validate(request.arguments), Path.cwd()
             )
         else:
             raise AttestError("unsupported_operation")

@@ -26,7 +26,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--attest", action="store_true")
+    parser.add_argument("--artifacts", action="store_true")
     args = parser.parse_args()
+    if args.artifacts:
+        args.attest = True
     args.output.mkdir(parents=True, exist_ok=False)
     prefix = "apizr-registry-" + uuid.uuid4().hex[:12]
     network, volume = prefix + "-net", prefix + "-data"
@@ -49,6 +52,11 @@ COPY --from=docker /usr/local/libexec/ /usr/local/libexec/
 VOLUME /var/lib/docker
 RUN mkdir /opt/attest && curl -fL --max-time 90 https://github.com/Alien6-Studio/continuum-attest/releases/download/v0.1.0/attest-v0.1.0-linux-x86_64.tar.gz -o /opt/attest/archive.tar.gz && echo 'f51201745b30be356e066cd615a7ef41fed92b17cf720ceb03e7f2a4d58505ad  /opt/attest/archive.tar.gz' | sha256sum -c - && tar -xzf /opt/attest/archive.tar.gz -C /opt/attest attest && /opt/attest/attest --version
 """)
+            if args.artifacts:
+                with (context / "Dockerfile").open("a") as stream:
+                    stream.write(
+                        "RUN mkdir /opt/oras && curl -fL --max-time 90 https://github.com/oras-project/oras/releases/download/v1.3.4/oras_1.3.4_linux_amd64.tar.gz -o /opt/oras/archive.tar.gz && echo 'f27adb935022d94df8dc77719c322dda592c78a0d57a6f7dcdd8d900b248c454  /opt/oras/archive.tar.gz' | sha256sum -c - && tar -xzf /opt/oras/archive.tar.gz -C /opt/oras oras && /opt/oras/oras version\n"
+                    )
             command(
                 "docker",
                 "build",
@@ -62,7 +70,7 @@ RUN mkdir /opt/attest && curl -fL --max-time 90 https://github.com/Alien6-Studio
 mkdir -p /proof/certs /proof/auth /proof/bin
 cp /repo/scripts/oci_build_observer.py /proof/bin/docker
 chmod 700 /proof/bin/docker
-openssl req -x509 -newkey rsa:2048 -nodes -keyout /proof/certs/key.pem -out /proof/certs/ca.crt -days 1 -subj /CN=registry.test -addext subjectAltName=DNS:registry.test,DNS:registry-untrusted.test >/dev/null 2>&1
+openssl req -x509 -newkey rsa:2048 -nodes -keyout /proof/certs/key.pem -out /proof/certs/ca.crt -days 1 -subj /CN=registry.test -addext subjectAltName=DNS:registry.test,DNS:registry-untrusted.test,DNS:registry-backend.test >/dev/null 2>&1
 python3 - <<'PY'
 import base64,json,secrets,subprocess
 from pathlib import Path
@@ -72,6 +80,11 @@ p.write_text(json.dumps({'auths':{'registry.test:5443':{'auth':base64.b64encode(
 p.chmod(0o600)
 r=subprocess.run(['htpasswd','-Bni','fixture'],input=password+'\\n',text=True,capture_output=True,check=True)
 Path('/proof/auth/htpasswd').write_text(r.stdout)
+password=secrets.token_hex(24)
+Path('/proof/auth/read-config.json').write_text(json.dumps({'auths':{'registry.test:5443':{'auth':base64.b64encode(('reader:'+password).encode()).decode()}}}))
+r=subprocess.run(['htpasswd','-Bni','reader'],input=password+'\\n',text=True,capture_output=True,check=True)
+with Path('/proof/auth/htpasswd').open('a') as out: out.write(r.stdout)
+Path('/proof/zot.json').write_text(json.dumps({'distSpecVersion':'1.1.1','storage':{'rootDirectory':'/var/lib/registry'},'http':{'address':'0.0.0.0','port':'5443','tls':{'cert':'/proof/certs/ca.crt','key':'/proof/certs/key.pem'},'auth':{'htpasswd':{'path':'/proof/auth/htpasswd'}},'accessControl':{'repositories':{'**':{'policies':[{'users':['fixture'],'actions':['read','create','update','delete']},{'users':['reader'],'actions':['read']}]}}}},'log':{'level':'error'}}))
 PY
 """
         command(
@@ -102,6 +115,8 @@ PY
             "registry.test",
             "--network-alias",
             "registry-untrusted.test",
+            "--network-alias",
+            "registry-backend.test",
             "--mount",
             f"type=volume,src={volume},dst=/proof,readonly",
             "--env",
@@ -116,7 +131,15 @@ PY
             "REGISTRY_AUTH_HTPASSWD_REALM=fixture",
             "--env",
             "REGISTRY_AUTH_HTPASSWD_PATH=/proof/auth/htpasswd",
-            "registry:3",
+            *(
+                [
+                    "ghcr.io/project-zot/zot:v2.1.21@sha256:6b69512c00dceaad05b1144e6079aac6aa7309d7fd200f9947ecb1de09cf48c8",
+                    "serve",
+                    "/proof/zot.json",
+                ]
+                if args.artifacts
+                else ["registry:3"]
+            ),
         )
         for role in ("builder", "consumer"):
             name = prefix + "-" + role
@@ -148,21 +171,24 @@ PY
         deadline = time.monotonic() + 60
         for role in ("builder", "consumer"):
             while True:
-                result = subprocess.run(
-                    [
-                        "docker",
-                        "exec",
-                        builder,
-                        "docker",
-                        "--host",
-                        "unix:///proof/" + role + ".sock",
-                        "info",
-                    ],
-                    capture_output=True,
-                    timeout=5,
-                )
-                if result.returncode == 0:
-                    break
+                try:
+                    result = subprocess.run(
+                        [
+                            "docker",
+                            "exec",
+                            builder,
+                            "docker",
+                            "--host",
+                            "unix:///proof/" + role + ".sock",
+                            "info",
+                        ],
+                        capture_output=True,
+                        timeout=5,
+                    )
+                    if result.returncode == 0:
+                        break
+                except subprocess.TimeoutExpired:
+                    pass  # readiness probe timed out; the original deadline still applies
                 if time.monotonic() >= deadline:
                     raise RuntimeError("fixture daemon unavailable")
                 time.sleep(0.2)
@@ -175,6 +201,8 @@ PY
                     "APIZR_REGISTRY_PROOF=1",
                     "--env",
                     "APIZR_ATTEST_PROOF=" + ("1" if args.attest else "0"),
+                    "--env",
+                    "APIZR_ARTIFACT_PROOF=" + ("1" if args.artifacts else "0"),
                     "--env",
                     "PATH=/proof/bin:/usr/local/bin:/usr/bin:/bin",
                     builder,
@@ -191,7 +219,13 @@ PY
                 stderr=subprocess.STDOUT,
                 timeout=1500,
             )
+        if args.artifacts and result.returncode == 0:
+            from smoke_artifact_consumer import consume
+
+            consume(command, args.output, prefix, network, volume, image, REPO)
         for name in (
+            "artifact-results.json",
+            "artifact-refusals.json",
             "results.json",
             "build-diagnostic.log",
             "build-observation.json",
