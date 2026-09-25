@@ -10,7 +10,9 @@ under direct or governed execution policies.
 
 **Preparing 0.4 — not released.** `master` already includes project configuration,
 the Python compiler API, Git HTTPS/SSH sources, isolated plugins, OCI service
-build/push and signed Attest proof publication/retrieval.
+build/push, signed Attest proof publication/retrieval, and the optional
+[local stdio MCP server](https://apizr.outerspace.sh/reference/apizr-mcp-server/) for read-only analysis
+and exposure planning.
 [Try the development build and complete delivery walkthrough](https://apizr.outerspace.sh/development/0.4/).
 The stable installation below does not include those additions.
 

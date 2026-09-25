@@ -4,6 +4,7 @@ from .activation import (
     disable_extension,
     enable_extension,
     read_arguments,
+    resolve_active_extension,
     run_extension,
 )
 from .download import (
@@ -24,6 +25,7 @@ __all__ = [
     "disable_extension",
     "run_extension",
     "read_arguments",
+    "resolve_active_extension",
     "Installation",
     "Inventory",
     "Manifest",

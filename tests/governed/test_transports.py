@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import time
@@ -73,12 +74,36 @@ def test_real_governed_rest_survives_failures_and_tampering(tmp_path, monkeypatc
             assert call("total", {"a": 1}).json() == 6
 
 
-async def exercise_mcp(target, root):
+async def exercise_mcp(target, root, history):
     async with Client(target, read_timeout_seconds=8) as client:
         assert client.protocol_version == "2026-07-28"
 
         async def call(name, args=None):
-            return await client.call_tool(name, {} if args is None else args)
+            # Test-owned names/timings only: retain the preceding failure and the
+            # recovery attempt in JUnit even when an ExceptionGroup hides locals.
+            event = {"tool": name, "outcome": "exception"}
+            started = time.monotonic()
+            try:
+                result = await client.call_tool(name, {} if args is None else args)
+                event["outcome"] = "error" if result.is_error else "success"
+                if result.is_error:
+                    text = (
+                        getattr(result.content[0], "text", "") if result.content else ""
+                    )
+                    event["error"] = (
+                        text
+                        if text
+                        in {
+                            "Invalid tool arguments",
+                            "Tool execution timed out",
+                            "Tool execution failed",
+                        }
+                        else "unexpected_tool_error"
+                    )
+                return result
+            finally:
+                event["elapsed_ms"] = round((time.monotonic() - started) * 1000, 3)
+                history.append(event)
 
         assert (await call("total", {"a": 1})).structured_content == 6
         assert (await call("greet", {"name": "Ada"})).structured_content == "Hello Ada"
@@ -128,7 +153,7 @@ async def exercise_mcp(target, root):
 
 
 @pytest.mark.parametrize("transport", ["stdio", "streamable-http"])
-def test_real_governed_mcp_survives_failures(tmp_path, monkeypatch, transport):
+def test_real_governed_mcp_survives_failures(tmp_path, monkeypatch, transport, request):
     monkeypatch.setenv("APIZR_TEST_SECRET", "super-secret")
     root = bundle(
         tmp_path / "mcp",
@@ -137,14 +162,18 @@ def test_real_governed_mcp_survives_failures(tmp_path, monkeypatch, transport):
             {"limits": {"wall_time_ms": 1000, "max_output_bytes": 256}}
         ),
     )
-    if transport == "stdio":
-        params = StdioServerParameters(
-            command=sys.executable,
-            args=["-I", "-c", SERVER, str(root), "stdio"],
-            cwd=root,
-            env=dict(os.environ),
-        )
-        anyio.run(exercise_mcp, params, root)
-    else:
-        with http_server(root, "mcp") as (url, _):
-            anyio.run(exercise_mcp, url + "/mcp", root)
+    history = []
+    try:
+        if transport == "stdio":
+            params = StdioServerParameters(
+                command=sys.executable,
+                args=["-I", "-c", SERVER, str(root), "stdio"],
+                cwd=root,
+                env=dict(os.environ),
+            )
+            anyio.run(exercise_mcp, params, root, history)
+        else:
+            with http_server(root, "mcp") as (url, _):
+                anyio.run(exercise_mcp, url + "/mcp", root, history)
+    finally:
+        request.node.user_properties.append(("mcp_call_history", json.dumps(history)))

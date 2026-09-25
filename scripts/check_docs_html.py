@@ -55,6 +55,7 @@ def check(site: Path) -> None:
                 if anchor != "__consent" and anchor not in pages[target].targets:
                     failures.append(f"{name}: missing anchor {link}")
     for name in (
+        "reference/apizr-mcp-server",
         "reference/git-sources",
         "reference/git-ssh",
         "reference/compiler-api",
