@@ -1,6 +1,8 @@
 """DCO enforcement must reject missing, spoofed and unsubstantiated declarations."""
 
 import runpy
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -71,3 +73,65 @@ def test_grandfathering_is_an_exact_pre_adoption_commit_not_a_date_or_author():
     CHECK["validate"]([previous])
     with pytest.raises(ValueError, match="Missing DCO"):
         CHECK["validate"]([previous, commit(message="New unsigned change")])
+
+
+def test_published_squash_repair_and_later_commits_remain_audited(tmp_path):
+    """A signed correction certifies history without excusing new unsigned work."""
+    script = Path(__file__).parents[1] / "scripts/check_dco.py"
+
+    def git(*args):
+        return subprocess.check_output(
+            [
+                "git",
+                "-c",
+                "user.name=Ada",
+                "-c",
+                "user.email=ada@example.test",
+                "-c",
+                "commit.gpgsign=false",
+                "-c",
+                f"core.hooksPath={tmp_path / 'no-hooks'}",
+                *args,
+            ],
+            cwd=tmp_path,
+            text=True,
+            timeout=10,
+        ).strip()
+
+    def audit(base):
+        return subprocess.run(
+            [sys.executable, str(script), "--base", base],
+            cwd=tmp_path,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+    git("init")
+    git("commit", "--allow-empty", "-m", "Audited baseline", "-s")
+    baseline = git("rev-parse", "HEAD")
+    git(
+        "commit",
+        "--allow-empty",
+        "-m",
+        "Squash\n\nSigned-off-by: alias <ada@example.test>",
+    )
+    squash = git("rev-parse", "HEAD")
+    failed = audit(baseline)
+    assert failed.returncode != 0 and squash in failed.stderr
+    git(
+        "commit",
+        "--allow-empty",
+        "-m",
+        "Certify published squash\n\nDCO-sign-off-for: " + squash,
+        "-s",
+    )
+    # The original event range cannot substantiate the historical reference.
+    assert "references no commit" in audit(squash).stderr
+    # Widening the range checks both declarations with the unchanged validator.
+    assert audit(baseline).returncode == 0
+    git("commit", "--allow-empty", "-m", "Later signed contribution", "-s")
+    assert audit(baseline).returncode == 0
+    git("commit", "--allow-empty", "-m", "Later unsigned contribution")
+    failed = audit(baseline)
+    assert failed.returncode != 0 and git("rev-parse", "HEAD") in failed.stderr
