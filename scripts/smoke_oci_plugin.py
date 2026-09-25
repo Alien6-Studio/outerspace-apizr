@@ -404,12 +404,30 @@ def main():
             assert inspect["Config"]["User"] == "65532:65532"
             assert not inspect["Config"].get("Volumes")
             results.append(result)
+        service_images = [item["result"]["tag"] for item in results]
+        registry_proof = os.environ.get("APIZR_REGISTRY_PROOF") == "1"
+        if registry_proof:
+            from smoke_oci_push import exercise as publish
+
+            service_images = publish(
+                python, store, work, results, command, engine, environment
+            )
+            images = service_images
+            docker_flags[:] = [docker, "--host", "unix:///proof/consumer.sock"]
         shutil.rmtree(work / "git-proof")
         assert not (work / "git-proof").exists()
         # REST can be called after both source and bundle have gone.
-        container = engine("run", "--detach", "--publish", "127.0.0.1::8000", images[0])
+        container = engine(
+            "run",
+            "--detach",
+            "--publish",
+            "0.0.0.0::8000" if registry_proof else "127.0.0.1::8000",
+            service_images[0],
+        )
         containers.append(container)
         address = engine("port", container, "8000/tcp").splitlines()[0]
+        if registry_proof:
+            address = "consumer.test:" + address.rsplit(":", 1)[1]
         deadline = time.monotonic() + 30
         while True:
             try:
@@ -451,9 +469,9 @@ async def check():
 asyncio.run(check())
 """,
             docker,
-            "unix://" + str(args.docker_socket),
+            docker_flags[2],
             name,
-            results[1]["result"]["tag"],
+            service_images[1],
             timeout=45,
         )
         assert snapshot(core_env) == before

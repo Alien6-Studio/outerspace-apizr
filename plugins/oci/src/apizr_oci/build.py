@@ -127,10 +127,12 @@ def build(
             if re.fullmatch(r"sha256:[0-9a-f]{64}", image_id) is None:
                 raise BuildError("image_unverified")
             metadata = json.loads(read(work, "build-metadata.json", 1048576))
-            identities = {
-                metadata["containerimage.config.digest"],
-                metadata["containerimage.digest"],
-            }
+            identities = {metadata["containerimage.digest"]}
+            # Recent Buildx/containerd exporters omit the config digest. In that
+            # case both iidfile and local inspect must equal the manifest digest;
+            # an unrelated config ID is never admitted without its metadata.
+            if "containerimage.config.digest" in metadata:
+                identities.add(metadata["containerimage.config.digest"])
             if (
                 any(
                     re.fullmatch(r"sha256:[0-9a-f]{64}", value) is None

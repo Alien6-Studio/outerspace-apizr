@@ -7,15 +7,17 @@ import time
 from pathlib import Path
 from threading import Event
 
-from .model import BuildError, BuildRequest
+from .model import BuildError, BuildRequest, PushRequest
 
 
 def run(
-    request: BuildRequest,
+    request: BuildRequest | PushRequest,
     work: Path,
     arguments: list[str],
     deadline: float,
     cancel: Event | None = None,
+    *,
+    absent_reference: str | None = None,
 ) -> bytes:
     config = work / "docker-config"
     config.mkdir(exist_ok=True)
@@ -37,6 +39,8 @@ def run(
         "DOCKER_BUILDKIT": "1",
         "BUILDX_NO_DEFAULT_ATTESTATIONS": "1",
     }
+    if isinstance(request, PushRequest) and request.authentication.ca_file is not None:
+        environment["SSL_CERT_FILE"] = str(work / "registry-ca.pem")
     process = None
     try:
         if cancel is not None and cancel.is_set():
@@ -57,6 +61,7 @@ def run(
         )
         assert process.stdout is not None and process.stderr is not None
         result = bytearray()
+        errors = bytearray()
         count = 0
         with selectors.DefaultSelector() as selector:
             for stream in (process.stdout, process.stderr):
@@ -78,7 +83,18 @@ def run(
                             raise BuildError("docker_output_limit_daemon_state_unknown")
                         if key.fileobj is process.stdout:
                             result.extend(raw)
+                        else:
+                            errors.extend(raw)
         if process.returncode:
+            # Only Docker's exact manifest-not-found diagnostic admits absence.
+            # Authentication, TLS, transport and all other failures remain errors.
+            if (
+                absent_reference is not None
+                and bytes(errors).strip()
+                == ("no such manifest: " + absent_reference).encode()
+                and not result
+            ):
+                return b"null"
             raise BuildError("docker_command_failed")
         return bytes(result)
     except OSError:

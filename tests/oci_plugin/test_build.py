@@ -535,3 +535,20 @@ def test_wheelhouse_global_bounds(tmp_path, wheel_factory, monkeypatch):
     (house / wheel.name).unlink()
     with pytest.raises(BuildError, match="missing_locked_wheel"):
         wheels_snapshot(lock, house, target)
+
+
+def test_manifest_only_build_metadata(build_inputs, tmp_path):
+    fake = Path(build_inputs.docker.executable)
+    original = fake.read_text()
+    fake.write_text(
+        original.replace(
+            "'containerimage.config.digest':'sha256:'+'b'*64,", ""
+        ).replace("'c'*64", "'b'*64")
+    )
+    assert build(build_inputs, workspace=tmp_path).image_id == "sha256:" + "b" * 64
+    # Omitting the config field never authorizes a different local identity.
+    fake.write_text(
+        original.replace("'containerimage.config.digest':'sha256:'+'b'*64,", "")
+    )
+    with pytest.raises(BuildError, match="image_unverified"):
+        build(build_inputs, workspace=tmp_path)

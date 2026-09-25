@@ -1,8 +1,9 @@
-# Build REST and MCP service images
+# Build and publish REST and MCP service images
 
 The official `apizr-oci` extension builds a **local service image** from a direct
-repository exposure bundle. It does not build a governed execution worker, push
-to a registry or install business dependencies. Install and enable it explicitly;
+repository exposure bundle and publishes it through a separate, explicit `push`
+operation. It does not build governed execution workers or install business
+dependencies. Install and enable it explicitly;
 the minimal Apizr environment does not acquire Docker, REST or MCP dependencies.
 This first package is version `0.0.0`, available from the checkout, not published.
 
@@ -109,7 +110,7 @@ checks. The resolved server dependency closure must equal the lock; additional
 business packages are refused. Installations require hashes, no index, no source
 builds and no network in Dockerfile `RUN` instructions. Base-image resolution may
 still contact its registry even when layers are cached; `--network=none` does
-not prevent that. Registry credentials and private bases are outside this pass.
+not prevent that. The build operation does not accept registry credentials or private base images.
 
 ## Build and run
 
@@ -198,8 +199,131 @@ The [proof script](https://github.com/Alien6-Studio/outerspace-apizr/blob/master
 installs both packages outside the checkout, acquires a real HTTPS Git fixture,
 builds and calls REST/MCP after removing sources and bundles, interrupts after an
 explicit Docker progress handshake, and compares all core files/distributions.
-The dedicated CI runner preserves its results, locks and build inputs. No image
-is published; only named test containers/images are removed.
+The dedicated CI runner preserves its results, locks and build inputs. In this
+script's default build-only mode, no image is published; only named test
+containers/images are removed. The separate publication proof is described below.
 
 References: [Docker build metadata and network semantics](https://docs.docker.com/reference/cli/docker/buildx/build/),
 [pip hash-checked installs](https://pip.pypa.io/en/stable/topics/secure-installs/).
+
+## Publish a verified service image
+
+The same installed plugin accepts `push`. It never rebuilds the image, imports
+its sources or installs dependencies. Keep the complete `build` result, including
+`image_id`, `platform` and `inputs_sha256`; `build` still returns `published:false`.
+
+Prepare a dedicated Docker authentication file outside the project, readable only
+by your user. This first version accepts exactly one `auths` entry, keyed by the
+exact registry hostname and optional port. Its only field is `auth`: the base64
+encoding of `username:password-or-token`. Base64 is not encryption. Credential
+helpers, identity-token records, other registries and other Docker configuration
+keys are refused. For `docker.io` (or its `index.docker.io` alias), the selected
+record is copied under Docker's historical `https://index.docker.io/v1/` key in
+the private configuration. Apizr never performs `docker login` or modifies your
+Docker configuration. Do not commit this file or print its contents.
+
+With the identity values from your build, a complete `/work/push.json` is:
+
+```json
+{
+  "schema": "apizr.oci-push/v1",
+  "image_id": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "platform": "linux/amd64",
+  "inputs_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "destination": "registry.example.com:5443/services/calculator:0.4-test",
+  "docker": {
+    "executable": "/usr/bin/docker",
+    "socket": "/var/run/docker.sock",
+    "buildx": "/usr/libexec/docker/cli-plugins/docker-buildx"
+  },
+  "authentication": {
+    "config_file": "/work/credentials/registry-auth.json",
+    "ca_file": "/work/credentials/registry-ca.pem"
+  },
+  "timeout_ms": 300000,
+  "max_log_bytes": 1048576
+}
+```
+
+Replace the example digests and absolute paths with your actual build result and
+Docker installation. `ca_file` is optional for a registry using a publicly trusted
+certificate. A supplied PEM file adds explicit trust for Docker's registry clients;
+it never disables certificate or hostname validation. The explicitly selected
+Docker daemon must independently trust the registry CA. Configure that trust before
+invocation; the plugin does not modify the daemon. Daemons with explicitly insecure
+registries or non-default insecure CIDRs are refused. The daemon and its network
+configuration remain trusted prerequisites; do not resolve registry names to the
+daemon's implicitly insecure loopback network.
+
+```bash
+apizr plugins run apizr-oci push --arguments /work/push.json --timeout-ms 360000
+```
+
+The Python API is `apizr_oci.push(PushRequest.model_validate(document),
+workspace=owned_directory, cancel=event)`, inside the installed plugin environment.
+Use the existing extension runtime to supervise it from the core.
+
+Publication requires Docker Engine API 1.46+ and Buildx. Destination references
+must include a DNS registry name (optionally a port), a namespace, an image and an
+explicit tag. IP literals, URL schemes, credentials in references and implicit
+`latest` are not accepted. There is no authentication fallback.
+
+### Identity and publication states
+
+The local image is inspected by its immutable ID; its platform, non-root user and
+Apizr input label must match. Docker's upload command requires a tag, so the plugin
+creates a fresh `apizr-upload-<random>` staging alias from that ID, uploads it, and
+verifies its remote identity before promoting its **digest** with Buildx. Moving
+the original build tag cannot change the selected image. Staging tags can remain
+locally and remotely, including after interruption. No remote deletion is attempted.
+
+An existing destination is accepted only when it identifies the expected image.
+A different image is refused. Only Docker's exact manifest-not-found diagnostic is
+accepted as absence; authorization, certificate, network and other errors fail
+closed. The tag is checked again immediately before promotion. These checks are
+**not a registry lock**: another writer can race them or later change the tag.
+Use registry-enforced immutable tags or exclusive write permissions when needed.
+
+The versioned `apizr.oci-push-result/v1` result includes:
+
+- `destination`: the requested tag;
+- `digest_reference`: `registry/namespace/image@sha256:...`, usable for pulling;
+- `image_id`: the requested immutable local ID;
+- `config_digest`: the remote image configuration digest;
+- `manifest_digest`: the verified single-platform manifest digest;
+- `index_digest`: `null` (indexes and multiarchitecture publication are refused);
+- `platform`, `inputs_sha256` and `published:true`.
+
+Classic Docker uses a configuration digest as the local ID; containerd-backed
+Docker can use a manifest digest. These identities are checked separately.
+The plugin validates Docker's structured manifest response and its raw-byte
+SHA-256, then verifies both the destination and digest-pinned retrieval reference.
+It reports `published:true` only after all checks succeed.
+
+Any failure after upload starts produces `remote_state_unconfirmed` in the plugin
+protocol/Python API. The core CLI deliberately redacts plugin failures to
+`plugin_failed`; **a CLI failure is not evidence that nothing was published**.
+Cancellation also cannot prove that the daemon stopped or that the registry rolled
+back a transfer. Inspect the registry before deciding what to do next. No rollback
+or deletion is promised, and no logs or credentials are returned as diagnostics.
+
+### Disposable integration proof
+
+```bash
+uv run --locked python scripts/smoke_oci_registry.py --output /tmp/apizr-registry-proof
+```
+
+This requires Docker with privileged disposable containers. It creates an isolated
+network, a fresh authenticated HTTPS registry, a dedicated certificate, and two
+independent Docker daemons. It installs the core and plugin wheels outside the
+checkout, builds and publishes REST/MCP services, pulls by digest into the second
+daemon, removes the sources and bundles, and calls both services. It compares the
+core files and distributions before and after. Only the fixture's own resources
+are removed. Certificate keys and credentials stay in its disposable volume and
+are excluded from retained proof artifacts. Image/base/package downloads occur
+only as explicit fixture preparation; test pushes target only this local registry.
+
+Docker semantics used here are documented in
+[image push](https://docs.docker.com/reference/cli/docker/image/push/),
+[manifest inspect](https://docs.docker.com/reference/cli/docker/manifest/inspect/)
+and [Buildx imagetools create](https://docs.docker.com/reference/cli/docker/buildx/imagetools/create/).
