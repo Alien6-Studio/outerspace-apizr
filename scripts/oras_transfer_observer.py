@@ -22,7 +22,9 @@ if not args or args[0] != "attach":
 result = subprocess.run(["/opt/oras/oras", *args], capture_output=True, timeout=60)
 if result.returncode:
     raise SystemExit(result.returncode)
-(ROOT / "observed-attach.json").write_bytes(result.stdout)
+pending = ROOT / "observed-attach.pending"
+pending.write_bytes(result.stdout)
+pending.replace(ROOT / "observed-attach.json")
 if mode == "interruption":
     deadline = time.monotonic() + 30
     while not (ROOT / "oras-observer-release").exists():

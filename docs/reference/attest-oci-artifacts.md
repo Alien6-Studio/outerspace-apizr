@@ -29,6 +29,10 @@ The following complete Linux examples use illustrative image/artifact digests
 and a signer. Replace those identities independently, paths and credentials
 with your actual values. Install and enable the plugin as on the signing page.
 The consumer only needs registry pull permissions, no Docker daemon or image.
+If following the signing page's custom installation directory, append
+`--plugins-dir "$work/plugins"` to each command below; otherwise they use the
+default plugin store. Run the Python example in the separate environment where
+`apizr-attest` is installed, not in the minimal core environment.
 
 ## Publish an existing proof
 
