@@ -54,6 +54,23 @@ def check(site: Path) -> None:
                 # Material injects its consent dialog at runtime.
                 if anchor != "__consent" and anchor not in pages[target].targets:
                     failures.append(f"{name}: missing anchor {link}")
+    for name in (
+        "reference/git-sources",
+        "reference/git-ssh",
+        "reference/compiler-api",
+        "reference/local-extensions",
+        "reference/extension-invocation",
+        "reference/oci-service-plugin",
+        "reference/attest-delivery-plugin",
+        "reference/attest-oci-artifacts",
+        "getting-started/user-guide/project",
+    ):
+        text = (site / name / "index.html").read_text()
+        if (
+            "0.4 development — not released" not in text
+            or "development/0.4/#install-a-development-wheel" not in text
+        ):
+            failures.append(f"{name}: missing development status/installation link")
     home = (site / "index.html").read_text()
     for required in (
         "development/0.4/",
