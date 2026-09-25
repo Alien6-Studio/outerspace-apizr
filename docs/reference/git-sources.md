@@ -1,5 +1,10 @@
 # Analyze a public Git repository
 
+!!! warning "0.4 development — not released"
+
+    These commands require a wheel built from the development source, not the
+    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+
 Readiness and exposure can acquire a public **HTTPS** Git repository directly.
 [Private repositories through an explicit SSH agent](git-ssh.md) use the same snapshot API.
 Install Git separately; this adapter is included in the minimal Apizr core and

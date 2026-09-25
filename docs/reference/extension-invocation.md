@@ -1,6 +1,10 @@
 # Invoke an installed extension
 
-Available in the development checkout; not yet part of published 0.3.0.
+!!! warning "0.4 development — not released"
+
+    These commands require a wheel built from the development source, not the
+    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+
 `apizr.extension_runtime` invokes a **trusted, already installed** Python module
 in a fresh process. It is independent of the CLI, `apizr.compiler`, project
 configuration and historical `apizr.pipeline.v1` plugins.

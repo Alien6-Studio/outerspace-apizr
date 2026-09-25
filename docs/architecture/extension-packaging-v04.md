@@ -1,5 +1,10 @@
 # V04-01 — Separate extension packaging
 
+!!! note "Prototype architecture record"
+
+    This page preserves the original separation experiment. For the current,
+    unreleased installation/runtime commands use the [0.4 development guide](../development/0.4.md).
+
 Implementation updates: [controlled invocation](../reference/extension-invocation.md)
 and [local installation/inventory](../reference/local-extensions.md) now provide
 reusable operations. The record below describes the original packaging experiment.

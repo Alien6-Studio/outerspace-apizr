@@ -1,5 +1,10 @@
 # Analyze a private Git repository through SSH
 
+!!! warning "0.4 development — not released"
+
+    These commands require a wheel built from the development source, not the
+    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+
 The Git adapter accepts `git@host:organization/project.git` and
 `ssh://git@host:2222/organization/project.git`. Install Git and OpenSSH separately.
 Prepare an SSH agent with an authorized identity and a trusted `known_hosts` file

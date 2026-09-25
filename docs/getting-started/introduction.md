@@ -19,6 +19,10 @@ python -m pip install outerspace-apizr==0.3.0
 apizr --version
 ```
 
+For Git sources, project configuration, isolated plugins and OCI/Attest delivery,
+use the separate [unreleased 0.4 walkthrough](../development/0.4.md). The stable
+commands on this page remain available in 0.3.0.
+
 Choose the `[notebook]`, `[http]`, `[mcp]` or `[legacy]` extras for optional workflows.
 To work on Apizr itself, see [development setup](developer-guide/setup.md).
 

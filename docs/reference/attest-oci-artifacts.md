@@ -1,5 +1,10 @@
 # Publish, discover and fetch delivery proofs
 
+!!! warning "0.4 development — not released"
+
+    These commands require a wheel built from the development source, not the
+    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+
 After [signing a delivery proof](attest-delivery-plugin.md), the optional
 `apizr-attest` plugin can store its existing six public files alongside the
 image. It does not rebuild, retag, re-sign or timestamp anything. The image and

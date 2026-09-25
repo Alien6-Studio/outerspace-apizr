@@ -1,5 +1,10 @@
 # Build and publish REST and MCP service images
 
+!!! warning "0.4 development — not released"
+
+    These commands require a wheel built from the development source, not the
+    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+
 The official `apizr-oci` extension builds a **local service image** from a direct
 repository exposure bundle and publishes it through a separate, explicit `push`
 operation. It does not build governed execution workers or install business

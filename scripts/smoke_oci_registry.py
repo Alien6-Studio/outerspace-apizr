@@ -253,6 +253,10 @@ PY
         )
         if result.returncode:
             raise RuntimeError("installed registry proof failed; see proof.log")
+        if args.artifacts:
+            from smoke_readme import delivery_results
+
+            delivery_results(args.output)
         print(
             "PASS authenticated HTTPS push and digest retrieval in independent Docker environments"
         )

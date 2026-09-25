@@ -1,6 +1,10 @@
 # Call the repository compiler from Python
 
-Available in the development checkout; not yet part of published 0.3.0.
+!!! warning "0.4 development — not released"
+
+    These commands require a wheel built from the development source, not the
+    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+
 `apizr.compiler` provides the orchestration used by `apizr readiness`,
 `apizr expose plan` and `apizr expose build rest|mcp`. It requires only the base
 installation. It does not discover plugins or import optional transport servers.

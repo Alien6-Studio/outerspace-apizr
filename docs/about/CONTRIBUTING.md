@@ -17,3 +17,7 @@ using the submitter's own sign-off. The required CI check enforces this policy;
 existing history is not rewritten.
 See the [Code of Conduct](CODE_OF_CONDUCT.md), [license](LICENSE.md) and
 [private vulnerability reporting policy](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/SECURITY.md).
+
+Before submitting a PR, confirm that changes to commands, prerequisites, contracts
+or limits update the affected documentation, or explain in the PR why no
+documentation change is needed.

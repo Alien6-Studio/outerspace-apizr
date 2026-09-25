@@ -20,13 +20,31 @@ jobs:
           python-version: '3.11'
       - run: uv sync --locked --group docs
       - run: uv run --locked --group docs mkdocs build --strict
+      - run: uv run --locked python scripts/check_docs_html.py
+      - name: Check examples with stable and development wheels outside the checkout
+        run: |
+          uv build --wheel --out-dir "$RUNNER_TEMP/docs-wheel"
+          uv venv --python 3.11 "$RUNNER_TEMP/docs-stable"
+          uv pip install --python "$RUNNER_TEMP/docs-stable/bin/python" outerspace-apizr==0.3.0
+          uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-stable/bin/apizr"
+          uv venv --python 3.11 "$RUNNER_TEMP/docs-dev"
+          uv pip install --python "$RUNNER_TEMP/docs-dev/bin/python" "$RUNNER_TEMP"/docs-wheel/*.whl
+          uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-dev/bin/apizr" --development
 
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: build
+    # Serialize deployment AND observation. Never cancel after gh-pages is pushed.
+    concurrency:
+      group: documentation-publication
+      cancel-in-progress: false
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: read
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
@@ -34,4 +52,31 @@ jobs:
           version: '0.12.0'
           python-version: '3.11'
       - run: uv sync --locked --group docs
-      - run: uv run --locked --group docs mkdocs gh-deploy --force --clean
+      - name: Ignore superseded queued deployments explicitly
+        id: current
+        env:
+          EXPECTED_COMMIT: ${{ github.sha }}
+        run: |
+          actual=$(gh api "repos/$GITHUB_REPOSITORY/commits/master" --jq .sha)
+          if test "$actual" = "$EXPECTED_COMMIT"; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Superseded by $actual; no deployment or public confirmation for $EXPECTED_COMMIT." >> "$GITHUB_STEP_SUMMARY"
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Deploy source to gh-pages
+        if: steps.current.outputs.deploy == 'true'
+        id: deployment
+        run: |
+          uv run --locked --group docs mkdocs gh-deploy --force --clean
+          generated=$(gh api "repos/$GITHUB_REPOSITORY/commits/gh-pages" --jq .sha)
+          echo "commit=$generated" >> "$GITHUB_OUTPUT"
+      - name: Verify GitHub Pages publication and exact public HTTPS content
+        if: steps.current.outputs.deploy == 'true'
+        env:
+          DEPLOYMENT_COMMIT: ${{ steps.deployment.outputs.commit }}
+        run: |
+          uv run --locked python scripts/check_docs_site.py --site site \
+            --repository "$GITHUB_REPOSITORY" --deployment-commit "$DEPLOYMENT_COMMIT" \
+            --timeout 600
+          echo "Confirmed source $GITHUB_SHA via Pages commit $DEPLOYMENT_COMMIT and https://apizr.outerspace.sh/." >> "$GITHUB_STEP_SUMMARY"
