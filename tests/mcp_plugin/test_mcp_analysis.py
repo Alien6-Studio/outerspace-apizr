@@ -67,6 +67,8 @@ def test_readiness_nonzero_is_business_report_and_no_import(project):
     result = calculate(job(scope, "readiness"))
     assert result["ok"] and result["value"]["exit_code"] == 1
     assert not marker.exists()
+    refused = calculate(job(scope, "plan"))
+    assert refused["error"]["code"] == "exposure_refused"
 
 
 def test_frozen_policy_proposal_and_digest(project):
