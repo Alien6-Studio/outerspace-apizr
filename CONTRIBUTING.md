@@ -24,14 +24,23 @@ For an omission in your own unmerged commit, amend it with `git commit --amend -
 and update your PR safely. Alternatively, a responsible submitter who can make
 the DCO declaration for the referenced work may add a follow-up commit containing
 their own sign-off and one `DCO-sign-off-for: FULL_COMMIT_SHA` trailer per earlier
-commit in the PR. This is an explicit declaration by that submitter, not a
+commit in the audited range. This is an explicit declaration by that submitter, not a
 fabricated signature of the original author. It also permits a maintainer to
 review and take responsibility for automated dependency updates without changing
 their original authorship. Bots receive no automatic exemption. A remediation
 without the submitter's matching sign-off, or referring outside the checked range,
-fails. A squash merge creates a new commit: give it the responsible submitter's
-own sign-off; retain earlier declarations in the PR history, without copying
-range-specific remediation references into the new squash commit.
+fails. CI retains the audit range after `83e28cb5d8ffbb4cb820122e125b03695e10fda8`
+for branches based on that history. This includes the published #143 squash and
+its subsequent corrective declaration in every audit, without rewriting history
+or exempting the original commit. Branches predating that baseline retain their
+event-specific range.
+
+A squash merge creates a new commit. Its sign-off must match the **resulting
+commit author's name and email**, which GitHub may choose from the account profile
+rather than local Git configuration. Verify that identity before merging. Retain
+a remediation trailer in the squash message when its target remains in the
+audited history; omit references to replaced branch commits. Never amend or
+force-push an already published commit to repair its declaration.
 
 ## Development workflow
 

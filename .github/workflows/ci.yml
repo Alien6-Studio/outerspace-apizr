@@ -27,7 +27,14 @@ jobs:
         env:
           DCO_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
           DCO_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: uv run --locked python scripts/check_dco.py --base "$DCO_BASE" --head "$DCO_HEAD"
+          # Keep the published #143 squash and its corrective declaration in
+          # the same audit range, including in later PRs and push events.
+          DCO_AUDIT_BASE: 83e28cb5d8ffbb4cb820122e125b03695e10fda8
+        run: |
+          if git merge-base --is-ancestor "$DCO_AUDIT_BASE" "$DCO_BASE"; then
+            DCO_BASE="$DCO_AUDIT_BASE"
+          fi
+          uv run --locked python scripts/check_dco.py --base "$DCO_BASE" --head "$DCO_HEAD"
       - run: uv run --locked ruff check .
       - run: uv run --locked ruff format --check .
       - run: uv run --locked pyright
