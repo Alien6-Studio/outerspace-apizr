@@ -4,6 +4,8 @@
 OCI delivery to a user-selected Continuum Attest identity and RFC 3161 authority.
 Its scope is **verified OCI delivery; build not supervised by Attest**. It does
 not rebuild an image, certify SLSA, prove reproducibility, or upload the receipt.
+Use the separate [publish, discover and fetch operations](attest-oci-artifacts.md)
+to transport an existing verified proof through an OCI registry.
 
 ## Install explicitly
 

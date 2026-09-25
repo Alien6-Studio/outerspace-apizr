@@ -241,8 +241,7 @@ def execute_verify(request: VerifyRequest, work: Path) -> DeliveryResult:
     deadline = time.monotonic() + request.timeout_ms / 1000
     source = Path(request.proof_dir)
     proof = work / "proof"
-    for name in FILES:
-        write(proof / name, read(source, name, MAX_FILE))
+    snapshot(source, proof)
     trust = work / "trust"
     trust_snapshot(Path(request.trust_store), trust, source)
     executable = tool(request, work, deadline)
@@ -322,6 +321,16 @@ def execute_attest(request: AttestRequest, work: Path) -> DeliveryResult:
         raise AttestError("fresh_receipt_required")
     write(proof / "receipt.yaml", read(receipts[0].parent, receipts[0].name, MAX_FILE))
     result = verified(request, executable, proof, trust, deadline)
+    export(proof, output)
+    return result
+
+
+def snapshot(source: Path, target: Path) -> None:
+    for name in FILES:
+        write(target / name, read(source, name, MAX_FILE))
+
+
+def export(proof: Path, output: Path) -> None:
     # Publish only the public allowlist, after full validation, under the existing
     # cooperative lock. The parent must be user-owned and not group/world writable.
     with installation_lock(output.parent):
@@ -334,4 +343,3 @@ def execute_attest(request: AttestRequest, work: Path) -> DeliveryResult:
             for name in FILES:
                 write(stage / name, read(proof, name, MAX_FILE))
             stage.rename(output)
-    return result

@@ -20,8 +20,8 @@ jobs:
       - run: uv sync --locked
       - name: Optional plugin coverage
         run: uv run --locked pytest tests/attest_plugin --cov=apizr_attest --cov-report=term-missing --cov-report=json:attest-coverage.json --junitxml=attest-tests.xml
-      - name: Real signed delivery with a disposable registry and timestamp authority
-        run: python3 scripts/smoke_oci_registry.py --attest --output "$RUNNER_TEMP/attest-delivery-proof"
+      - name: Signed delivery, OCI artifacts and isolated read-only consumer
+        run: python3 scripts/smoke_oci_registry.py --artifacts --output "$RUNNER_TEMP/attest-delivery-proof"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:

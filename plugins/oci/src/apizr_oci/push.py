@@ -20,7 +20,7 @@ from threading import Event
 
 from apizr.extension_runtime.protocol import unique_object
 
-from .model import BuildError, PushRequest, PushResult
+from .model import Authentication, BuildError, PushRequest, PushResult
 from .process import run
 from .snapshot import read
 
@@ -38,9 +38,15 @@ def document(raw: bytes):
 
 def authentication(request: PushRequest, work: Path) -> None:
     """Copy only a bounded, explicit auth record. No helper/config inheritance."""
-    source = Path(request.authentication.config_file)
+    registry_authentication(
+        request.authentication, request.destination.split("/", 1)[0], work
+    )
+
+
+def registry_authentication(auth: Authentication, registry: str, work: Path) -> None:
+    """Shared explicit credentials snapshot for Docker and ORAS; no helpers."""
+    source = Path(auth.config_file)
     config = document(read(source.parent, source.name, 65536))
-    registry = request.destination.split("/", 1)[0]
     if not isinstance(config, dict) or set(config) != {"auths"}:
         raise BuildError("invalid_registry_authentication")
     auths = config["auths"]
@@ -72,8 +78,8 @@ def authentication(request: PushRequest, work: Path) -> None:
             else registry
         )
         json.dump({"auths": {key: record}}, stream)
-    if request.authentication.ca_file is not None:
-        ca = Path(request.authentication.ca_file)
+    if auth.ca_file is not None:
+        ca = Path(auth.ca_file)
         (work / "registry-ca.pem").write_bytes(read(ca.parent, ca.name, 1048576))
 
 

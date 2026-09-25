@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import os
 import shutil
 import signal
 import subprocess
@@ -245,6 +246,19 @@ def exercise(python, store, work, builds, command, environment):
                         process.communicate(timeout=5)
         recovered = arguments | {"output_dir": str(work / "recovered-proof")}
         assert invoke("attest", recovered) is not None
+        if os.environ.get("APIZR_ARTIFACT_PROOF") == "1":
+            from smoke_artifact_publish import exercise
+
+            exercise(
+                python,
+                store,
+                work,
+                output,
+                work / "recovered-proof",
+                arguments,
+                command,
+                environment,
+            )
         shutil.rmtree(work / "recovered-proof")
         copied = work / "transported-proof"
         shutil.copytree(output, copied)
