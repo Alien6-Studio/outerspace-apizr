@@ -30,6 +30,9 @@ jobs:
       - run: uv sync --locked
       - name: Separate plugin branch coverage
         run: uv run --locked pytest tests/test_mcp_cli.py tests/mcp_plugin --cov=apizr_mcp --cov-report=term-missing --cov-report=json:mcp-coverage.json --junitxml=mcp-tests.xml
+      - name: Fixed generated-business-MCP recovery series (stdio and HTTP)
+        if: matrix.python == '3.11'
+        run: uv run --locked python scripts/repeat_mcp_transports.py --output "$RUNNER_TEMP/mcp-recovery"
       - name: Installed core, plugin and official stdio client
         run: uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-proof"
       - name: Installed protocol proof without network access
@@ -46,6 +49,7 @@ jobs:
           if-no-files-found: error
           path: |
             mcp-tests.xml
+            ${{ runner.temp }}/mcp-recovery
             mcp-coverage.json
             ${{ runner.temp }}/mcp-proof/*.log
             ${{ runner.temp }}/mcp-proof/*.json
