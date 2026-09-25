@@ -25,6 +25,7 @@ def command(*args, timeout=600):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--attest", action="store_true")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     prefix = "apizr-registry-" + uuid.uuid4().hex[:12]
@@ -39,7 +40,22 @@ def main():
             (context / "Dockerfile").write_text("""FROM docker:29-dind
 RUN apk add --no-cache python3 py3-pip git git-daemon openssl apache2-utils && python3 -m pip install --break-system-packages uv==0.12.0
 """)
-            command("docker", "build", "--tag", image, context)
+            if args.attest:
+                (context / "Dockerfile").write_text("""FROM docker:29-dind AS docker
+FROM ubuntu:24.04
+RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-venv python3-pip git openssl apache2-utils ca-certificates curl iptables util-linux pigz xz-utils && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages uv==0.12.0
+COPY --from=docker /usr/local/bin/ /usr/local/bin/
+COPY --from=docker /usr/local/libexec/ /usr/local/libexec/
+RUN mkdir /opt/attest && curl -fL --max-time 90 https://github.com/Alien6-Studio/continuum-attest/releases/download/v0.1.0/attest-v0.1.0-linux-x86_64.tar.gz -o /opt/attest/archive.tar.gz && echo 'f51201745b30be356e066cd615a7ef41fed92b17cf720ceb03e7f2a4d58505ad  /opt/attest/archive.tar.gz' | sha256sum -c - && tar -xzf /opt/attest/archive.tar.gz -C /opt/attest attest && /opt/attest/attest --version
+""")
+            command(
+                "docker",
+                "build",
+                *(["--platform", "linux/amd64"] if args.attest else []),
+                "--tag",
+                image,
+                context,
+            )
         # Credentials are generated and remain inside the disposable volume.
         preparation = """set -eu
 mkdir -p /proof/certs /proof/auth /proof/bin
@@ -157,6 +173,8 @@ PY
                     "--env",
                     "APIZR_REGISTRY_PROOF=1",
                     "--env",
+                    "APIZR_ATTEST_PROOF=" + ("1" if args.attest else "0"),
+                    "--env",
                     "PATH=/proof/bin:/usr/local/bin:/usr/bin:/bin",
                     builder,
                     "python3",
@@ -170,13 +188,16 @@ PY
                 ],
                 stdout=log,
                 stderr=subprocess.STDOUT,
-                timeout=1000,
+                timeout=1500,
             )
         for name in (
             "results.json",
             "build-diagnostic.log",
             "build-observation.json",
             "push-results.json",
+            "attest-results.json",
+            "attest-refusals.json",
+            "attest-tool.json",
             "push-refusals.json",
             "push-interruption.json",
             "refusals.json",

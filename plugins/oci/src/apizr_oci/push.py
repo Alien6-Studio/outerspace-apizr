@@ -120,7 +120,7 @@ def secure_daemon(request: PushRequest, work: Path, deadline: float, cancel) -> 
         raise BuildError("insecure_registry_configuration")
 
 
-def remote_identity(
+def remote_observation(
     request: PushRequest,
     work: Path,
     reference: str,
@@ -172,7 +172,14 @@ def remote_identity(
         raise BuildError("remote_image_conflict")
     # The registry client fetches the config to populate platform; either the
     # classic config ID or containerd manifest ID ties these bytes to local inspect.
-    return config_digest, manifest_digest
+    return config_digest, manifest_digest, payload
+
+
+def remote_identity(request, work, reference, deadline, cancel, *, absent=False):
+    value = remote_observation(
+        request, work, reference, deadline, cancel, absent=absent
+    )
+    return value[:2] if value is not None else None
 
 
 def push(
