@@ -291,7 +291,7 @@ def main():
         "-I",
         "-B",
         "-c",
-        "import importlib.util as u; assert all(u.find_spec(n) is None for n in ('apizr_oci','fastapi','mcp','uvicorn'))",
+        "import importlib.util as u; assert all(u.find_spec(n) is None for n in ('apizr_oci','apizr_attest','fastapi','mcp','uvicorn'))",
     )
     store = work / "plugins"
     cli(
@@ -412,6 +412,10 @@ def main():
             service_images = publish(
                 python, store, work, results, command, engine, environment
             )
+            if os.environ.get("APIZR_ATTEST_PROOF") == "1":
+                from smoke_attest_plugin import exercise as attest_delivery
+
+                attest_delivery(python, store, work, results, command, environment)
             images = service_images
             docker_flags[:] = [docker, "--host", "unix:///proof/consumer.sock"]
         shutil.rmtree(work / "git-proof")

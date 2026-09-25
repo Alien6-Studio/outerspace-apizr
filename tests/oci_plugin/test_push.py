@@ -477,3 +477,32 @@ def test_hub_alias_absence_uses_docker_normalized_reference(
         is None
     )
     assert calls == [(expected, expected)]
+
+
+def test_read_only_observation_preserves_exact_bytes_and_ignores_tag(
+    transport, tmp_path
+):
+    from apizr_oci.observe import observe
+
+    request, calls, remote, image = transport
+    result = push(request, workspace=tmp_path)
+    remote[DESTINATION] = BuildError("tag moved")
+    calls.clear()
+    observation = observe(request, result.digest_reference, workspace=tmp_path)
+    assert observation.manifest == RAW
+    assert observation.manifest_digest == DIGEST
+    assert observation.config_digest == CONFIG
+    assert all(
+        call[:2] in (["image", "inspect"], ["manifest", "inspect"]) or call[0] == "info"
+        for call in calls
+    )
+    assert not list(tmp_path.glob("oci-observe-*"))
+    for reference in (
+        DESTINATION,
+        result.digest_reference.replace("/services/", "/other/"),
+    ):
+        with pytest.raises(BuildError):
+            observe(request, reference, workspace=tmp_path)
+    remote[result.digest_reference]["Descriptor"]["digest"] = "sha256:" + "0" * 64
+    with pytest.raises(BuildError):
+        observe(request, result.digest_reference, workspace=tmp_path)
