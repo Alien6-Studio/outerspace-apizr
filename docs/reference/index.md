@@ -3,9 +3,15 @@
 For your first project, follow [Start here](../getting-started/introduction.md).
 Read the [Capability Compiler overview](../architecture/overview.md) for the full flow.
 This reference is for using individual interfaces or understanding their contracts.
+The site follows `master`; pages marked **0.4 development** require the
+[development installation](../development/0.4.md), not published 0.3.0.
+The [stable release notes](../releases/0.3.0.md) describe the released scope.
 
 | What you need | Where to look |
 | --- | --- |
+| Acquire a Git snapshot | [HTTPS](git-sources.md) / [SSH](git-ssh.md) |
+| Build and publish service images | [OCI plugin](oci-service-plugin.md) |
+| Sign and transport delivery proofs | [Attest](attest-delivery-plugin.md) / [OCI proofs](attest-oci-artifacts.md) |
 | Invoke an already installed extension | [Extension invocation](extension-invocation.md) |
 | Install and list local extensions offline | [Local extensions](local-extensions.md) |
 | Configure readiness and exposure with a project file | [Project configuration](../getting-started/user-guide/project.md) |

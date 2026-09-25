@@ -140,7 +140,7 @@ Complete against the final commit; historical green runs are not sufficient.
 
 Documentation is independent of PyPI and follows `master`; it is not a frozen
 versioned documentation site. For the exact published source documentation, use
-the [v0.2.0 tag](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.2.0/docs).
+the [v0.3.0 tag](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.3.0/docs).
 Release notes distinguish shipped behavior from subsequent maintenance.
 Material's native repository component displays the latest GitHub release tag,
 stars and forks using `repo_url` and `repo_name`. On desktop it appears beside
@@ -153,6 +153,28 @@ PRs run a strict MkDocs build. A master
 push builds and publishes the site to `gh-pages`, served at
 [apizr.outerspace.sh](https://apizr.outerspace.sh/). Keep this active publication
 branch; edit Markdown and MkDocs configuration, not generated files.
+
+The generated `build-info.json` records the full **source** commit, whether the
+checkout was dirty, development status, stable release and fingerprints of the
+home page, Git/OCI/Attest pages and home assets. The footer links to it. It is not
+the generated `gh-pages` commit; no source hash is maintained by hand. A local
+dirty build is a preview and cannot pass publication confirmation.
+
+The workflow checks four distinct stages: strict construction and HTML validation,
+`gh-deploy`, the GitHub Pages build for the generated commit, then exact content
+served over HTTPS. The final check requires the expected marker and matching page
+and asset hashes, not just HTTP 200. TLS and hostname validation remain enabled;
+redirects are refused. Probe subprocesses bound DNS, connection and body reads;
+responses are capped at 8 MiB and propagation at 600 seconds total. Failure retains
+attempt diagnostics and fails the deployment job.
+
+Deployment plus verification is serialized without cancellation once running.
+A queued job whose source is no longer `master` is explicitly reported as
+superseded, not published. A different marker (including a newer source) cannot
+satisfy an older job. The marker is checked again after reading pages to detect a
+switch during observation. This is point-in-time evidence, not an uptime monitor.
+No PR deploys; new pages remain **ready in the PR** until an authorized merge and
+successful public verification. Never edit `gh-pages` directly to bypass review.
 
 ## Repository protections
 

@@ -4,6 +4,9 @@ site_author: Ludovic FERNANDEZ, Alien6
 site_description: >-
   Open-source capability compiler for Python codebases.
 
+hooks:
+  - scripts/docs_build.py
+
 # Repository
 repo_name: alien6-studio/outerspace-apizr
 repo_url: https://github.com/alien6-studio/outerspace-apizr
@@ -88,6 +91,7 @@ extra_javascript:
 # Organize by reader task; keep published page paths stable.
 nav:
   - Home: index.md
+  - 0.4 in development: development/0.4.md
   - Guides:
       - Start here: getting-started/introduction.md
       - Inventory a Python project: getting-started/user-guide/scan.md
@@ -154,14 +158,14 @@ nav:
       - Overview: about/CONTRIBUTING.md
       - Development and checks: getting-started/developer-guide/setup.md
       - Legacy pipeline plugins: getting-started/developer-guide/plugins.md
-      - 0.4.0 roadmap (planned): contributing/0.4-roadmap.md
-      - V04-01 extension packaging ADR: architecture/extension-packaging-v04.md
+      - Extension packaging ADR: architecture/extension-packaging-v04.md
       - Publish a release: contributing/releases.md
       - Verify builds and releases: contributing/verification.md
       - Managed Attest identity: contributing/attest.md
       - Dependency maintenance: contributing/dependencies.md
       - Engineering archive:
           - Read these records: architecture/records.md
+          - Initial 0.4 planning (historical): contributing/0.4-roadmap.md
           - Original 0.2 baseline: architecture/0.2-baseline.md
           - Foundation verification: architecture/0.2-hardening.md
           - Historical dependency audit: architecture/foundation-security-audit.md

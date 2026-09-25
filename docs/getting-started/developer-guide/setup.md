@@ -2,8 +2,10 @@
 
 <span id="development-setup"></span>
 
-Follow [Start here](../introduction.md#install) to install
-Python 3.11–3.14, uv and a checkout. This page covers work on Apizr itself.
+Use Python 3.11–3.14, Git and uv already installed on your workstation.
+This page covers work on Apizr itself; the [development installation](../../development/0.4.md#install-a-development-wheel)
+shows how to acquire a checkout and test an unreleased wheel separately.
+For the published 0.3.0 package, use [Start here](../introduction.md#install).
 
 `pyproject.toml` defines the package and dependency groups; `uv.lock` is the only
 lockfile. Use `uv lock --upgrade` deliberately for dependency updates and commit

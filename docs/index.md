@@ -14,6 +14,12 @@ under direct or governed execution policies.
 
 **Latest published stable: 0.3.0 · Released 22 September 2026**
 
+**Preparing 0.4 — not released.** `master` already includes project configuration,
+the Python compiler API, Git HTTPS/SSH sources, isolated plugins, OCI service
+build/push and signed Attest proof publication/retrieval.
+[Try the development build and complete delivery walkthrough](development/0.4.md).
+The stable installation below does not include those additions.
+
 Python 3.11–3.14 · GPL-3.0-or-later. Install with `python -m pip install outerspace-apizr==0.3.0`.
 It adds explicit Exposure Plans and multi-module repository bundles. Discovery,
 generation, direct servers and governed local workers need no Docker.

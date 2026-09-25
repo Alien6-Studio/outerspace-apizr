@@ -56,7 +56,12 @@ newer for security tooling. Ruff formats repository code; Black is a runtime
 notebook-formatting dependency and is not the repository formatter.
 
 Keep changes scoped, add regression tests for changed behavior and update the
-relevant documentation. Preserve legacy golden fixtures; integrity hooks exclude
+relevant documentation. Before submitting a PR, check:
+
+- [ ] Changes to commands, prerequisites, contracts or limits update the affected
+  documentation, or the PR explains why no documentation change is needed.
+
+Preserve legacy golden fixtures; integrity hooks exclude
 them from automatic rewriting. Do not execute untrusted generated applications.
 Submit a pull request explaining the problem, behavior and validation; retain
 historical issues unless their acceptance criteria are actually satisfied.

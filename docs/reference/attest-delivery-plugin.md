@@ -1,9 +1,16 @@
 # Sign and verify an OCI delivery receipt
 
+!!! warning "0.4 development — not released"
+
+    These commands require a wheel built from the development source, not the
+    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+
 `apizr-attest` is an optional, separately installed extension. It binds a verified
 OCI delivery to a user-selected Continuum Attest identity and RFC 3161 authority.
-Its scope is **verified OCI delivery; build not supervised by Attest**. It does
-not rebuild an image, certify SLSA, prove reproducibility, or upload the receipt.
+Its scope is **verified OCI delivery; build not supervised by Attest**. The
+`attest` and `verify` operations do not rebuild an image, certify SLSA, prove
+reproducibility, or upload the receipt. The plugin also provides explicit
+`publish`, `discover` and `fetch` operations.
 Use the separate [publish, discover and fetch operations](attest-oci-artifacts.md)
 to transport an existing verified proof through an OCI registry.
 

@@ -1,6 +1,8 @@
 # Plan explicit repository exposure
 
-**Available in published stable 0.3.0.**
+**Available in published stable 0.3.0.** The `--project` and `--git` additions
+require the [unreleased development build](../../development/0.4.md); they are
+documented separately in the project and Git guides.
 Use a repository candidate for these commands; the public PyPI installation
 instructions continue to install the stable release. No 0.3 release is published.
 

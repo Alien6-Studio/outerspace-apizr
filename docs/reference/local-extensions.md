@@ -1,6 +1,10 @@
 # Install and use extensions
 
-Available in the development checkout; not yet part of published 0.3.0.
+!!! warning "0.4 development — not released"
+
+    These commands require a wheel built from the development source, not the
+    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+
 Install an explicitly trusted wheel into its own Python
 virtual environment. Installation does not activate or invoke it, and project
 configuration cannot install or load extensions. Historical `apizr.pipeline.v1`

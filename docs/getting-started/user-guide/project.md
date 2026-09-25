@@ -1,6 +1,10 @@
 # Configure a repository workflow
 
-Available in the development checkout; not yet part of published 0.3.0.
+!!! warning "0.4 development — not released"
+
+    These commands require a wheel built from the development source, not the
+    published `0.3.0` package. Follow the [development installation](../../development/0.4.md#install-a-development-wheel) and record its source commit.
+
 Use `--project` to share readiness and exposure settings in a versioned
 `apizr.toml`. Apizr never searches for or loads this file automatically.
 Existing commands without `--project` and the historical pipeline's YAML

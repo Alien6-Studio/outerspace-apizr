@@ -1,5 +1,9 @@
 # Assess repository exposure evidence
 
+The local commands below are available in stable 0.3.0. For the unreleased
+`--project` and `--git` options, follow the [0.4 development installation](../../development/0.4.md)
+and the linked project/Git references.
+
 Repository readiness evaluates existing static evidence under a declared policy.
 It is **not a runtime guarantee or an authorization to give an agent access**.
 
@@ -18,7 +22,7 @@ expands the human report beyond 20 declarations. Repeat `--source-root` for disj
 roots or `--exclude-dir` for additional excluded directory basenames. Bounds are
 shared with Scan/Graph: `--max-file-bytes`, `--max-source-files`, `--max-total-bytes`,
 `--max-entries`, `--max-depth`, `--max-ast-nodes`, `--max-relationships`, `--max-calls`
-and `--max-imports`. No project modules execute, and no network, subprocess, Git,
+and `--max-imports`. For this local-source workflow, no project modules execute, and no network, subprocess, Git,
 package installer or Docker operation is invoked.
 
 For offline evaluation or artifact pipelines, the existing artifact-first command
