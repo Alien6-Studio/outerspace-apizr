@@ -84,7 +84,7 @@ password=secrets.token_hex(24)
 Path('/proof/auth/read-config.json').write_text(json.dumps({'auths':{'registry.test:5443':{'auth':base64.b64encode(('reader:'+password).encode()).decode()}}}))
 r=subprocess.run(['htpasswd','-Bni','reader'],input=password+'\\n',text=True,capture_output=True,check=True)
 with Path('/proof/auth/htpasswd').open('a') as out: out.write(r.stdout)
-Path('/proof/zot.json').write_text(json.dumps({'distSpecVersion':'1.1.1','storage':{'rootDirectory':'/var/lib/registry'},'http':{'address':'0.0.0.0','port':'5443','tls':{'cert':'/proof/certs/ca.crt','key':'/proof/certs/key.pem'},'auth':{'htpasswd':{'path':'/proof/auth/htpasswd'}}},'log':{'level':'error'}}))
+Path('/proof/zot.json').write_text(json.dumps({'distSpecVersion':'1.1.1','storage':{'rootDirectory':'/var/lib/registry'},'http':{'address':'0.0.0.0','port':'5443','tls':{'cert':'/proof/certs/ca.crt','key':'/proof/certs/key.pem'},'auth':{'htpasswd':{'path':'/proof/auth/htpasswd'}},'accessControl':{'repositories':{'**':{'policies':[{'users':['fixture'],'actions':['read','create','update','delete']},{'users':['reader'],'actions':['read']}]}}}},'log':{'level':'error'}}))
 PY
 """
         command(

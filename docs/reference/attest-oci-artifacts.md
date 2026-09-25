@@ -249,8 +249,8 @@ The fixture extends the existing build/push/sign tests with a real authenticated
 HTTPS Zot 2.1.21 registry, local TSA and pinned ORAS. It installs wheels
 outside the checkout, publishes two proofs, checks idempotence and direct ORAS
 interoperability, then deletes original proofs and private signing keys. A
-separate consumer has no Docker socket and only read access enforced by an HTTPS
-gateway. It fetches the selected digest, compares all six files, and verifies in
+separate consumer has no Docker socket and a registry identity restricted to
+read access by Zot policies, also enforced by its HTTPS test gateway. It fetches the selected digest, compares all six files, and verifies in
 a final networkless container with ORAS and registry credentials removed.
 The core's files/distributions are compared before and after. Public results and
 refusals are retained by CI. This fixture does not qualify Docker Hub or Trunx.

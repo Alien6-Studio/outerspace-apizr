@@ -285,6 +285,49 @@ def exercise(python, store, work, first, second, signing, command, environment):
     assert direct_result.returncode == 0, direct_result.stderr
     invalid_reference = json.loads(direct_result.stdout)["reference"]
     shutil.rmtree(malicious)
+    # Verify registry-side read-only authorization directly, before the gateway.
+    read_flags = [
+        "--registry-config",
+        "/proof/auth/read-config.json",
+        "--ca-file",
+        "/proof/certs/ca.crt",
+    ]
+    read_candidates = json.loads(
+        command(
+            oras,
+            "discover",
+            "--distribution-spec",
+            "v1.1-referrers-api",
+            "--depth",
+            "1",
+            "--format",
+            "json",
+            common["expected_reference"],
+            *read_flags,
+        )
+    )
+    assert len(read_candidates["referrers"]) == 3
+    denied = subprocess.run(
+        [
+            str(oras),
+            "attach",
+            "--distribution-spec",
+            "v1.1-referrers-api",
+            "--artifact-type",
+            "application/vnd.apizr.test.refused",
+            common["expected_reference"],
+            "receipt.yaml",
+            *read_flags,
+        ],
+        cwd=first,
+        capture_output=True,
+        timeout=30,
+    )
+    assert denied.returncode != 0 and any(
+        code in denied.stderr.lower()
+        for code in (b"403", b"401", b"denied", b"unauthorized")
+    ), denied.stderr
+    refusals.append("registry-reader-credential-cannot-publish")
     consumer = Path("/proof/artifact-consumer")
     consumer.mkdir(mode=0o700)
     shutil.copytree(work / "attest-wheels", consumer / "wheels")
