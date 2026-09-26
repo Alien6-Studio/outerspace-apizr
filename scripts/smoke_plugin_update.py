@@ -224,8 +224,58 @@ def prove(work: Path, core_root: Path) -> None:
     )
     assert before == after and distributions_before == distributions_after
     assert old_distributions_before == old_distributions_after
+    # The same minimal installed core now retires A after selecting B explicitly.
+    cli(
+        "enable",
+        "apizr-update-probe",
+        "--version",
+        "2.0.0",
+        *preference,
+        structured=False,
+    )
+    new_root = Path(switched["target_installation"]["python"]).parents[2]
+    new_before = snapshot(new_root)
+    remove = [
+        "uninstall",
+        "apizr-update-probe",
+        "--version",
+        "1.0.0",
+        *preference,
+        "--json",
+    ]
+    assert cli(*remove, "--dry-run")["state"] == "planned"
+    assert snapshot(old_root) == old_before
+    assert cli(*remove)["state"] == "complete"
+    assert not old_root.exists()
+    assert invoke()["result"] == {"answer": 73}
+    assert cli(*remove)["state"] == "absent"
+    assert (
+        cli(
+            "uninstall",
+            "apizr-update-probe",
+            "--version",
+            "2.0.0",
+            *preference,
+            "--json",
+            expected=1,
+        )["state"]
+        == "active"
+    )
+    assert snapshot(new_root) == new_before
+    assert snapshot(core_root) == before
+    assert (
+        subprocess.check_output(
+            [sys.executable, "-I", "-B", "-c", inventory], timeout=20
+        )
+        == distributions_before
+    )
+    assert network.read_bytes() == network_before
+    for path, data in inputs.items():
+        assert Path(path).read_bytes() == data
     summary = {
         "core_unchanged": True,
+        "uninstall_complete_and_idempotent": True,
+        "active_version_preserved": True,
         "old_environment_unchanged": True,
         "artifacts_unchanged": True,
         "dry_run_unchanged": True,

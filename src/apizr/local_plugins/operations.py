@@ -7,7 +7,7 @@ from functools import partial
 from pathlib import Path
 from uuid import uuid4
 
-from . import backend, locking, store
+from . import backend, locking, retirement, store
 from .activation import active_inventory
 from .control import InstallControl
 from .models import Installation, Inventory, PluginError
@@ -53,6 +53,7 @@ def install_extension(
     try:
         root = store.storage_directory(directory)
         with store.installation_lock(root, control=control):
+            retirement.refuse_pending(root, manifest.name, manifest.version)
             inventory = store.read_inventory(root)
             for existing in inventory.installations:
                 if (existing.name, existing.version) == (

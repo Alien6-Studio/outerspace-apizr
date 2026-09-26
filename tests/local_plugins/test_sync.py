@@ -480,3 +480,21 @@ def test_failed_final_probe_does_not_report_earlier_probe_as_current(
     assert not result.plugins[0].interpreter_verified
     assert len(list_extensions(directory=root).installations) == 2
     assert sync(project, root).exit_code == 0
+
+
+def test_sync_probes_hold_usage_leases(project, tmp_path, monkeypatch):
+    from apizr.local_plugins import uninstall_extension
+
+    root = tmp_path / "plugins"
+    original = probe._verify
+    seen = []
+
+    def verify(record, root, *args):
+        result = uninstall_extension(record.name, record.version, directory=root)
+        seen.append(result.state)
+        assert result.state == "busy"
+        return original(record, root, *args)
+
+    monkeypatch.setattr(probe, "_verify", verify)
+    result = sync_plugins(*project, directory=root)
+    assert result.state == "complete" and seen

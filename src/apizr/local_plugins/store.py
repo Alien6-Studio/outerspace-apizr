@@ -107,7 +107,7 @@ def installation_lock(
         os.close(descriptor)
 
 
-def read_inventory(root: Path) -> Inventory:
+def read_inventory(root: Path, *, include_retiring: bool = False) -> Inventory:
     path = root / "installations.json"
     try:
         descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
@@ -124,14 +124,40 @@ def read_inventory(root: Path) -> Inventory:
             json.loads(raw, object_pairs_hook=unique_object), strict=True
         )
         identities: set[tuple[str, str]] = set()
+        generations: set[str] = set()
         for item in result.installations:
             identity = (item.name, item.version)
-            if identity in identities or item.python != str(
-                root / "environments" / item.environment_id / "venv/bin/python"
+            if (
+                identity in identities
+                or item.environment_id in generations
+                or item.python
+                != str(root / "environments" / item.environment_id / "venv/bin/python")
             ):
                 raise PluginError("invalid_inventory")
             identities.add(identity)
-        return result
+            generations.add(item.environment_id)
+        from .retirement import read
+
+        pending = [item.installation for item in read(root).pending]
+        for record in pending:
+            if any(
+                item != record
+                and (
+                    (item.name, item.version) == (record.name, record.version)
+                    or item.environment_id == record.environment_id
+                )
+                for item in result.installations
+            ):
+                raise PluginError("removal_identity_conflict")
+        return (
+            result
+            if include_retiring
+            else Inventory(
+                installations=[
+                    item for item in result.installations if item not in pending
+                ]
+            )
+        )
     except (ValueError, RecursionError):
         raise PluginError("invalid_inventory") from None
 
