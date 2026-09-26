@@ -30,9 +30,6 @@ jobs:
       - run: uv sync --locked
       - name: Separate plugin branch coverage
         run: uv run --locked pytest tests/test_mcp_cli.py tests/mcp_plugin --cov=apizr_mcp --cov-report=term-missing --cov-report=json:mcp-coverage.json --junitxml=mcp-tests.xml
-      - name: Fixed generated-business-MCP recovery series (stdio and HTTP)
-        if: matrix.python == '3.11'
-        run: uv run --locked python scripts/repeat_mcp_transports.py --output "$RUNNER_TEMP/mcp-recovery"
       - name: Installed core, plugin and official stdio client
         run: uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-proof"
       - name: Installed protocol proof without network access
@@ -49,8 +46,32 @@ jobs:
           if-no-files-found: error
           path: |
             mcp-tests.xml
-            ${{ runner.temp }}/mcp-recovery
             mcp-coverage.json
             ${{ runner.temp }}/mcp-proof/*.log
             ${{ runner.temp }}/mcp-proof/*.json
             ${{ runner.temp }}/mcp-proof/*.lock
+
+  generated-recovery:
+    timeout-minutes: 20
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ['3.11']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: ${{ matrix.python }}
+      - run: uv sync --locked
+      - name: Fixed generated-business-MCP recovery series (stdio and HTTP)
+        run: uv run --locked python scripts/repeat_mcp_transports.py --output "$RUNNER_TEMP/mcp-recovery"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: mcp-recovery-${{ matrix.os }}-python-${{ matrix.python }}
+          retention-days: 90
+          if-no-files-found: error
+          path: ${{ runner.temp }}/mcp-recovery
