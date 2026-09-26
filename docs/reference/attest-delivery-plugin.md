@@ -74,7 +74,7 @@ The existing Apizr pin identifies these official archives/executables:
 Use your own previously prepared Attest key, its key ID, and its raw 32-byte
 public key as 64 lowercase hex characters (`expected_signer`). The private file
 uses Attest's PKCS#8 PEM convention. Key generation is never implicit. Do not use
-the Apizr release identity or `APIZR_ATTEST_SIGNING_KEY`.
+the Apizr release signing identity.
 
 Supply an independent native Attest trust directory containing `<key-id>.pub`,
 `trust.toml`, and `tsa/*.crt` (pinned issuing certificates). No trust is copied
