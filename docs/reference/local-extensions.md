@@ -426,3 +426,7 @@ Its before/after core file and distribution comparisons cover this sequence too:
 uv run --locked python scripts/smoke_extension_packaging.py \
   --work-dir /tmp/apizr-locked-proof
 ```
+
+## Portable project locks and local preferences
+
+Development 0.4 adds [project declarations, explicit user preferences and portable artifact locks](project-plugin-locks.md). Use `plugins lock create/check` before a separate explicit installation. `--user-config` selects local store preferences on all plugin commands and `mcp serve`; explicit `--plugins-dir` takes precedence. Neither project declarations nor locks activate anything. Synchronization, updates and removal remain future work.

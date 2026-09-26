@@ -109,6 +109,7 @@ nav:
       - Call the compiler from Python: reference/compiler-api.md
       - Invoke an installed extension: reference/extension-invocation.md
       - Install local extensions: reference/local-extensions.md
+      - Project plugin locks: reference/project-plugin-locks.md
       - Generate a REST interface: getting-started/user-guide/rest.md
       - Generate an MCP server: getting-started/user-guide/mcp.md
       - Execute code with a policy: getting-started/user-guide/execute.md

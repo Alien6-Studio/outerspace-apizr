@@ -16,6 +16,9 @@ from apizr.local_plugins import (
     read_arguments,
     run_extension,
 )
+from apizr.plugin_lock import LockError, Result, check_lock, create_lock
+from apizr.plugin_lock.models import Diagnostic
+from apizr.user_config import plugins_directory
 
 
 def timeout_ms(value: str) -> int:
@@ -76,7 +79,27 @@ def main(argv: Sequence[str]) -> int:
         default=Limits().wall_time_ms,
         help="Explicit invocation deadline in milliseconds (1–600000; default 10000)",
     )
-    for command in (install, listing, enable, disable, run):
+    lock = commands.add_parser(
+        "lock", help="Create or check portable project artifact locks"
+    )
+    lock_commands = lock.add_subparsers(dest="lock_command", required=True)
+    create = lock_commands.add_parser(
+        "create", help="Validate local artifacts and write a new lock"
+    )
+    check = lock_commands.add_parser(
+        "check", help="Check artifacts without rewriting the lock"
+    )
+    create.add_argument("--output", type=Path, required=True)
+    check.add_argument("--lock", type=Path, required=True)
+    check.add_argument("--installed", action="store_true")
+    for command in (create, check):
+        command.add_argument("--project", type=Path, required=True)
+        command.add_argument("--wheelhouse", type=Path, required=True)
+        command.add_argument("--json", action="store_true")
+    for command in (install, listing, enable, disable, run, create, check):
+        command.add_argument(
+            "--user-config", type=Path, help="Explicit operator preferences file"
+        )
         command.add_argument(
             "--plugins-dir",
             type=Path,
@@ -84,6 +107,21 @@ def main(argv: Sequence[str]) -> int:
         )
     args = parser.parse_args(argv)
     try:
+        args.plugins_dir = plugins_directory(args.plugins_dir, args.user_config)
+        if args.command == "lock":
+            result = (
+                create_lock(args.project, args.wheelhouse, args.output)
+                if args.lock_command == "create"
+                else check_lock(
+                    args.project,
+                    args.lock,
+                    args.wheelhouse,
+                    installed=args.installed,
+                    directory=args.plugins_dir,
+                )
+            )
+            _show_lock(result, args.json)
+            return 0 if result.valid else 1
         if args.command == "install":
             installed = install_from_source(
                 args.wheel,
@@ -122,10 +160,21 @@ def main(argv: Sequence[str]) -> int:
                 for item in inventory.installations:
                     print(f"{item.name} {item.version}  {item.protocol}  {item.module}")
         return 0
+    except LockError as error:
+        if args.json:
+            _show_lock(
+                Result(valid=False, diagnostics=(Diagnostic(code=error.code),)), True
+            )
+        print(f"apizr plugins: {error.code}", file=sys.stderr)
+        return 2
     except (InvocationCancelled, DownloadCancelled) as error:
         print(f"apizr plugins: {error}", file=sys.stderr)
         return 130
     except (PluginError, ExtensionError) as error:
+        if args.command == "lock" and args.json:
+            _show_lock(
+                Result(valid=False, diagnostics=(Diagnostic(code=str(error)),)), True
+            )
         print(f"apizr plugins: {error}", file=sys.stderr)
         return 2
     except KeyboardInterrupt:
@@ -134,3 +183,14 @@ def main(argv: Sequence[str]) -> int:
         )
         print(f"apizr plugins: {reason}", file=sys.stderr)
         return 130
+
+
+def _show_lock(result: Result, as_json: bool) -> None:
+    if as_json:
+        print(result.model_dump_json())
+    else:
+        print("Plugin lock valid." if result.valid else "Plugin lock differs.")
+        for diagnostic in result.diagnostics:
+            print(
+                f"{diagnostic.code}: {diagnostic.plugin or '-'} / {diagnostic.distribution or '-'}"
+            )

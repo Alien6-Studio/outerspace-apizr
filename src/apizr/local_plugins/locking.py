@@ -44,6 +44,16 @@ def read_lock(path: Path) -> Lock:
             raw = source.read(MAX_LOCK_BYTES + 1)
         if len(raw) > MAX_LOCK_BYTES:
             raise PluginError("requirements_lock_too_large")
+        return parse_lock(raw)
+    except (OSError, ValueError):
+        raise PluginError("invalid_requirements_lock") from None
+
+
+def parse_lock(raw: bytes) -> Lock:
+    """Validate retained original bytes; preserve their identity, including comments."""
+    if len(raw) > MAX_LOCK_BYTES:
+        raise PluginError("requirements_lock_too_large")
+    try:
         # uv-style comments and backslash line continuations, but no options,
         # markers, extras, URLs, paths, wildcard pins or nested requirements.
         logical = re.sub(r"\\\r?\n", " ", raw.decode("utf-8"))
@@ -70,7 +80,7 @@ def read_lock(path: Path) -> Lock:
             hashlib.sha256(raw).hexdigest(),
             tuple(packages[key] for key in sorted(packages)),
         )
-    except (OSError, ValueError):
+    except (ValueError, UnicodeError):
         raise PluginError("invalid_requirements_lock") from None
 
 
