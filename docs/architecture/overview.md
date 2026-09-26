@@ -77,5 +77,4 @@ workflows remain supported. The [legacy pipeline](../getting-started/user-guide/
 is independent and retains its [documented limitations](legacy-behavior-contract.md).
 No canonical contract meaning changes for 0.3 finalization.
 
-See [migration and known limitations](../releases/0.3.0.md). Historical measurements
-remain in the [engineering archive](records.md), scoped to their recorded revisions.
+See [migration and known limitations](../releases/0.3.0.md).

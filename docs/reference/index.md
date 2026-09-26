@@ -54,9 +54,7 @@ application exposes its own `/docs` schema when started.
 
 The historical pipeline and Capability IR remain independent. The new REST
 generator consumes IR and readiness; legacy FastApizr and Dockerizr retain their
-existing analysis and output. Historical measurements and
-audit reports are kept in the [engineering archive](../architecture/records.md),
-separate from the current contracts.
+existing analysis and output.
 
 ## Policies and formats
 

@@ -158,8 +158,7 @@ or cancellation. It is not sent again to an already signalled group: macOS can
 return `EPERM` while that group contains only unreaped zombies. This does not
 suppress a failed signal; without a prior successful group signal (or `ESRCH`),
 permission/reaping failures still produce `CleanupFailed`. Direct-child exit
-alone never counts as successful group signalling. See the
-[macOS cleanup diagnosis](../architecture/extension-cleanup-macos.md).
+alone never counts as successful group signalling.
 
 This is **not a sandbox**. Extensions run with the user's permissions and can
 access files, network and processes available to that user, including the core's

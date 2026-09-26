@@ -1,4 +1,4 @@
-# V04-01 — Separate extension packaging
+# Separate extension packaging
 
 !!! note "Prototype architecture record"
 
@@ -10,7 +10,7 @@ and [local installation/inventory](../reference/local-extensions.md) now provide
 reusable operations. The record below describes the original packaging experiment.
 
 Status: proposed 0.4 architecture, demonstrated by a private experiment; **not a
-production plugin runtime**. See the [roadmap and qualification record](../contributing/0.4-roadmap.md).
+production plugin runtime**.
 The package version remains 0.3.0. No public CLI command is added.
 
 ## Decision and boundaries
@@ -172,8 +172,8 @@ then clean up with `brew uninstall apizr-v04-probe` and
 | macOS / Homebrew Python 3.14 | Real local formula installation and full prefix inventory |
 | Linux Homebrew, pipx, Windows | Compatible design where applicable, not yet qualified |
 
-The [qualification record](../contributing/0.4-roadmap.md) distinguishes actual
-results from prepared CI. A simulated Cellar directory is never Homebrew evidence.
+Prepared CI is not a completed validation. A simulated Cellar directory is never
+Homebrew evidence.
 
 References: [uv tool environment ownership](https://docs.astral.sh/uv/concepts/tools/),
 [Homebrew Python guidance](https://docs.brew.sh/Python-for-Formula-Authors).

@@ -8,7 +8,6 @@ conversion, start with the [user guides](../getting-started/introduction.md).
 | Set up a checkout and validate a change | [Development and checks](../getting-started/developer-guide/setup.md) |
 | Understand an interface or architecture contract | [Technical reference](../reference/index.md) |
 | Publish a package or understand site deployment | [Publishing a release](../contributing/releases.md) |
-| Investigate results from an earlier revision | [Engineering archive](../architecture/records.md) |
 
 The canonical [contribution guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/CONTRIBUTING.md)
 at the repository root describes issue reporting and pull request expectations.

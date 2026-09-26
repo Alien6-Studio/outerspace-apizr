@@ -103,12 +103,6 @@ no hand-maintained requirements file or additional transitive pin.
 
 ## Audit evidence and scope
 
-Before changing production code, the foundation audit was reproduced:
-**243 external package/version entries, 29 affected entries across 18 packages,
-79 distinct package/version/advisory combinations** (140 raw records include
-repeated IDs). Exit status was 1. The complete historical finding list remains
-in the [foundation audit record](foundation-security-audit.md).
-
 The new audit exports PEP 751 lockfiles from the actual `uv.lock`, separately
 for each scope, retaining all Python/platform variants. Every scope is blocking,
 including audit collection errors. There are no ignored advisories. A regression
