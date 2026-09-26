@@ -1,4 +1,8 @@
-# Generate an MCP server
+# Generate MCP from a Python file or notebook {#generate-an-mcp-server}
+
+For a multi-module repository, use [REST/MCP from a repository](exposure.md)
+or the [repository Quickstart](../quickstart.md). This guide takes one Python file
+or notebook as its input.
 
 `apizr generate mcp` exposes readiness-approved functions as Tools for MCP clients.
 It consumes the same static capability and input contracts as REST generation.

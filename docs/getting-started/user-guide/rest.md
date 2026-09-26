@@ -1,4 +1,8 @@
-# Generate a REST interface
+# Generate REST from a Python file or notebook {#generate-a-rest-interface}
+
+For a multi-module repository, use [REST/MCP from a repository](exposure.md)
+or the [repository Quickstart](../quickstart.md). This guide takes one Python file
+or notebook as its input.
 
 `apizr generate rest` turns eligible Capability IR declarations into a standalone
 FastAPI application, static OpenAPI document and artifact manifest. Generation

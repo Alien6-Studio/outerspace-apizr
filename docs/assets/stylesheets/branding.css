@@ -122,3 +122,28 @@
 .apizr-demo-transcript__body {
   padding: 0 1rem 0.5rem;
 }
+
+/* Put the homepage proposition and actions before the existing artwork. */
+.apizr-home-intro h1 {
+  margin-bottom: 0.8rem;
+  color: var(--md-default-fg-color);
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.apizr-home-actions p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.apizr-home-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 8rem;
+  margin: 1.2rem 0;
+  object-fit: cover;
+  object-position: center 40%;
+}

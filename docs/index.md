@@ -1,21 +1,29 @@
 ---
 template: home.html
-title: Apizr — capability compiler for Python
-description: Discover capabilities, assess readiness, explicitly select public interfaces and execute Python repositories through REST or MCP.
+title: Connect Python functions to AI agents and REST APIs
+description: Connect selected Python functions to AI agents through MCP, or expose them as REST APIs. Start with a working example and choose the interfaces you need.
 ---
 
-# Apizr
+<div class="apizr-home-intro" markdown="1">
 
-Connect selected Python functions to AI agents through MCP,
-or expose them as REST APIs.
+<span id="apizr"></span>
 
-Apizr is an **open-source capability compiler**. It analyzes existing Python code,
-lets you choose the public functions, generates their interfaces, and lets you
-define how they execute. Keep your business logic in Python and connect it to
-agents or applications.
+# Connect selected Python functions to AI agents through MCP, or expose them as REST APIs.
+
+Apizr is an **open-source capability compiler**. Analyze existing Python, choose
+the public functions, generate their interfaces and define how calls execute.
+Your business logic stays in Python.
+
+<div class="apizr-home-actions" markdown="1">
 
 [Quickstart: MCP and REST calls](getting-started/quickstart.md){ .md-button .md-button--primary }
 [The full journey](getting-started/introduction.md){ .md-button }
+
+</div>
+
+<img class="apizr-home-art" src="assets/images/illustration.png" alt="OuterSpace Apizr: a space explorer in an orange suit in front of a yellow spacecraft" width="2048" height="642" />
+
+</div>
 
 **Latest published stable: 0.3.0 · Released 22 September 2026**
 

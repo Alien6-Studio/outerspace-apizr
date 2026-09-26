@@ -1,10 +1,10 @@
-# Plan explicit repository exposure
+# Plan and build REST/MCP from a repository {#plan-explicit-repository-exposure}
 
 **Available in published stable 0.3.0.** The `--project` and `--git` additions
 require the [unreleased development build](../../development/0.4.md); they are
 documented separately in the project and Git guides.
-Use a repository candidate for these commands; the public PyPI installation
-instructions continue to install the stable release. No 0.3 release is published.
+For one Python file or notebook, use the [REST](rest.md) or [MCP](mcp.md)
+single-source guide. This page covers repository-level selection and bundles.
 
 Readiness describes eligibility under a policy. Exposure records what the
 operator explicitly selects for publication, through which interfaces and under
