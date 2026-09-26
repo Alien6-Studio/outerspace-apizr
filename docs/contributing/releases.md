@@ -26,9 +26,7 @@ not replace those files. **0.2.1 was published on 21 September 2026**, from
 `8ab471de436b1ca92a3b213c40402c5241926d5a`, tagged `v0.2.1`.
 Its [maintenance notes](../releases/0.2.1.md) record the verified delivery and
 signed timestamped receipt. Keep its tag and distributions unchanged too. Build attestations
-apply only to their exact subjects and source commit. The
-[post-release audit](../architecture/0.2.0-post-release-verification.md) records
-the distinction and the current validation evidence.
+apply only to their exact subjects and source commit.
 
 The procedure below is for a future **explicitly authorized release**. Prepare
 each new version through a separate release PR; version metadata alone does not

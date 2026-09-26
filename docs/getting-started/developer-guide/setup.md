@@ -50,7 +50,6 @@ Coverage has a global 90% branch-aware floor, a separate 59.5% measured legacy
 floor, and 90% floors for modern packages including Exposure (see CI for the full
 list). Exposure also uses strict Pyright. Generated applications are tested functionally; their temporary
 files and subprocess execution are not included in the package coverage metric.
-Point-in-time coverage measurements belong in the [engineering archive](../../architecture/records.md).
 
 The security audit exports the resolved `uv.lock` graph for runtime, development,
 documentation and security-tooling scopes, then runs `pip-audit --locked`. Findings
@@ -104,8 +103,9 @@ uv run --group docs mkdocs build --strict
 ```
 
 Keep user workflows in **Guides**, interface details and current contracts in
-**Reference**, and maintainer tasks in **Contributing**. Place dated audits and
-verification reports in the **Engineering archive**, with links to current policy.
+**Reference**, and maintainer tasks in **Contributing**. Keep documentation focused
+on supported behavior, reproducible checks and current policy; do not commit
+work-session journals or workstation inventories.
 Preserve published page URLs where possible. Reuse a canonical explanation with
 cross-links rather than copying it into several audience sections.
 
