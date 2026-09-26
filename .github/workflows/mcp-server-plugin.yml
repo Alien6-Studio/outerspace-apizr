@@ -38,6 +38,11 @@ jobs:
           sudo unshare --net --setgid "$(id -g)" --setuid "$(id -u)" \
             env PYTHONDONTWRITEBYTECODE=1 "$RUNNER_TEMP/mcp-proof/client/bin/python" \
             scripts/mcp_client_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/network-isolated.log" 2>&1
+      - name: Refuse removal during a real installed MCP session, then remove
+        run: >-
+          "$RUNNER_TEMP/mcp-proof/client/bin/python" -B
+          scripts/mcp_uninstall_proof.py "$RUNNER_TEMP/mcp-proof"
+          > "$RUNNER_TEMP/mcp-proof/uninstall.log" 2>&1
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:

@@ -15,8 +15,11 @@ from .download import (
 )
 from .models import Installation, Inventory, Manifest, PluginError
 from .operations import install_extension, list_extensions
+from .uninstall import UninstallResult, uninstall_extension
 
 __all__ = [
+    "UninstallResult",
+    "uninstall_extension",
     "DownloadCancelled",
     "DownloadLimits",
     "install_from_source",

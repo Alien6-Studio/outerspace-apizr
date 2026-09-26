@@ -3,6 +3,8 @@
 import json
 import os
 import stat
+from collections.abc import Generator
+from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from threading import Event
 from typing import Literal
@@ -12,6 +14,7 @@ from pydantic import ConfigDict, Field, JsonValue
 from apizr.capabilities.types import ValueModel
 from apizr.execution.protocol import finite_json
 from apizr.extension_runtime import (
+    CleanupFailed,
     InvalidInvocation,
     Limits,
     PrerequisiteMissing,
@@ -21,7 +24,7 @@ from apizr.extension_runtime import (
 )
 from apizr.extension_runtime.protocol import unique_object
 
-from . import store
+from . import retirement, store, usage
 from .control import InstallControl
 from .models import Installation, Inventory, PluginError, canonical_name
 
@@ -84,6 +87,14 @@ def _validate_binding(record: Installation, inventory: Inventory) -> None:
         raise PluginError("activation_mismatch")
 
 
+def validated_activations(root: Path, inventory: Inventory) -> Activations:
+    """Read bindings and reject any record detached from its installation."""
+    state = _read(root)
+    for record in state.activations:
+        _validate_binding(record, inventory)
+    return state
+
+
 def _interpreter(record: Installation, root: Path) -> None:
     python = Path(record.python)
     environment = root / "environments" / record.environment_id
@@ -110,6 +121,7 @@ def enable_extension(
         if not root.exists():
             raise PluginError("plugin_not_installed")
         with store.installation_lock(root, create=False):
+            retirement.refuse_pending(root, name, version)
             inventory = store.read_inventory(root)
             selected = next(
                 (
@@ -202,21 +214,53 @@ def run_extension(
     limits: Limits = DEFAULT_LIMITS,
     cancel: Event | None = None,
 ) -> Response:
-    record = resolve_active_extension(name, directory=directory)
     try:
-        # Admission is linearized under the lock; disable blocks later admissions,
-        # but cannot revoke this already admitted invocation or hold up its cleanup.
-        return invoke_extension(
-            record.python,
-            record.module,
-            operation,
-            arguments,
-            limits=limits,
-            environment={},
-            cancel=cancel,
-        )
+        with admitted_extension(name, directory=directory) as (record, usage_fd):
+            return invoke_extension(
+                record.python,
+                record.module,
+                operation,
+                arguments,
+                limits=limits,
+                environment={},
+                cancel=cancel,
+                usage_fd=usage_fd,
+            )
     except OSError:
         raise PluginError("activation_unavailable") from None
+
+
+@contextmanager
+def admitted_extension(
+    name: str, *, directory: Path | None = None, inherit: bool = False
+) -> Generator[tuple[Installation, int]]:
+    """Resolve and protect atomically; exec launchers may inherit the lease FD."""
+    name = _name(name)
+    root = store.storage_directory(directory)
+    if not root.exists():
+        raise PluginError("plugin_not_installed")
+    with ExitStack() as stack:
+        with store.installation_lock(root, create=False):
+            inventory, state = store.read_inventory(root), _read(root)
+            if not any(item.name == name for item in inventory.installations):
+                raise PluginError("plugin_not_installed")
+            record = next((r for r in state.activations if r.name == name), None)
+            if record is None:
+                raise PluginError("plugin_inactive")
+            _validate_binding(record, inventory)
+            _interpreter(record, root)
+            fd = stack.enter_context(usage.lock(root, record))
+        try:
+            assert fd is not None
+            if inherit:
+                os.set_inheritable(fd, True)
+            yield record, fd
+        except CleanupFailed:
+            store.atomic_write(
+                root / ".usage" / (record.environment_id + ".unconfirmed"),
+                b"cleanup_unconfirmed\n",
+            )
+            raise
 
 
 def read_arguments(

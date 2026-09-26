@@ -7,7 +7,8 @@ from pathlib import Path
 from typing import Sequence
 
 from apizr.extension_runtime import ExtensionError
-from apizr.local_plugins import PluginError, resolve_active_extension
+from apizr.local_plugins import PluginError
+from apizr.local_plugins.activation import admitted_extension
 from apizr.user_config import plugins_directory
 
 
@@ -28,31 +29,34 @@ def main(argv: Sequence[str]) -> int:
         if not args.project.is_absolute():
             raise PluginError("absolute_project_required")
         directory = plugins_directory(args.plugins_dir, args.user_config)
-        record = resolve_active_extension("apizr-mcp", directory=directory)
-        if record.module != "apizr_mcp":
-            raise PluginError("mcp_entrypoint_mismatch")
-        # Replace this process, preserving the client's stdio/signals. No shell,
-        # parent secrets, plugin import, or extension-protocol envelope is used.
-        os.execve(
-            record.python,
-            [
+        with admitted_extension("apizr-mcp", directory=directory, inherit=True) as (
+            record,
+            _,
+        ):
+            if record.module != "apizr_mcp":
+                raise PluginError("mcp_entrypoint_mismatch")
+            # Replace this process, preserving the client's stdio/signals. No shell,
+            # parent secrets, plugin import, or extension-protocol envelope is used.
+            os.execve(
                 record.python,
-                "-I",
-                "-B",
-                "-m",
-                record.module,
-                "serve",
-                "--project",
-                str(args.project),
-                "--timeout-ms",
-                str(args.timeout_ms),
-                "--max-request-bytes",
-                str(args.max_request_bytes),
-                "--max-response-bytes",
-                str(args.max_response_bytes),
-            ],
-            {},
-        )
+                [
+                    record.python,
+                    "-I",
+                    "-B",
+                    "-m",
+                    record.module,
+                    "serve",
+                    "--project",
+                    str(args.project),
+                    "--timeout-ms",
+                    str(args.timeout_ms),
+                    "--max-request-bytes",
+                    str(args.max_request_bytes),
+                    "--max-response-bytes",
+                    str(args.max_response_bytes),
+                ],
+                {},
+            )
     except (PluginError, ExtensionError) as error:
         print(f"apizr mcp: {error}", file=sys.stderr)
     except OSError:

@@ -167,6 +167,7 @@ def invoke_extension(
     limits: Limits,
     environment: Mapping[str, str],
     cancel: Event | None = None,
+    usage_fd: int | None = None,
 ) -> Response:
     """Invoke an explicitly chosen installed module without importing it here.
 
@@ -175,6 +176,13 @@ def invoke_extension(
     Each call uses a fresh temporary CWD and a fresh session/process group.
     """
     try:
+        if usage_fd is not None:
+            if type(usage_fd) is not int or usage_fd < 3:
+                raise InvalidInvocation()
+            try:
+                os.fstat(usage_fd)
+            except OSError:
+                raise InvalidInvocation() from None
         limits = Limits.model_validate(limits.model_dump(), strict=True)
         if logical_module(module) != module:
             raise ValueError("Invalid module")
@@ -223,6 +231,7 @@ def invoke_extension(
                     env=env,
                     start_new_session=True,
                     close_fds=True,
+                    pass_fds=() if usage_fd is None else (usage_fd,),
                     bufsize=0,
                 )
             except OSError:

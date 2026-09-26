@@ -24,6 +24,7 @@ from apizr.local_plugins.control import (
     InstallControl,
 )
 from apizr.local_plugins.models import Installation, PluginError
+from apizr.local_plugins.usage import protect
 from apizr.plugin_lock.models import Target
 
 PROGRAM = """import sys
@@ -49,6 +50,21 @@ def verify_interpreter(
     work: Path,
     control: InstallControl,
 ) -> None:
+    try:
+        with protect(record, root, control) as usage_fd:
+            _verify(record, root, target, work, control, usage_fd)
+    except CleanupFailed:
+        raise PluginError("installation_cleanup_failed") from None
+
+
+def _verify(
+    record: Installation,
+    root: Path,
+    target: Target,
+    work: Path,
+    control: InstallControl,
+    usage_fd: int,
+) -> None:
     control.check()
     try:
         _interpreter(record, root)
@@ -61,6 +77,7 @@ def verify_interpreter(
             stderr=subprocess.PIPE,
             start_new_session=True,
             close_fds=True,
+            pass_fds=(usage_fd,),
             bufsize=0,
         )
         signalled = False
@@ -92,6 +109,6 @@ def verify_interpreter(
             raise InstallationTimeout() from None
         raise PluginError("interpreter_probe_timeout") from None
     except CleanupFailed:
-        raise PluginError("installation_cleanup_failed") from None
+        raise
     except (OSError, ValueError, ExtensionError):
         raise PluginError("installed_interpreter_unavailable") from None

@@ -363,11 +363,11 @@ def test_user_preferences_cli_precedence_and_mcp(tmp_path, monkeypatch, capsys):
     assert not (tmp_path / "store").exists()
     seen = []
 
-    def refuse(name, directory):
+    def refuse(name, directory, inherit):
         seen.append(directory)
         raise operations.PluginError("plugin_not_installed")
 
-    monkeypatch.setattr(mcp_cli, "resolve_active_extension", refuse)
+    monkeypatch.setattr(mcp_cli, "admitted_extension", refuse)
     for extra in ([], ["--plugins-dir", "/explicit"]):
         assert (
             main(

@@ -390,3 +390,19 @@ By default, update only prepares the target; activation is unchanged. With
 the already conforming target. A conditional atomic comparison protects operator
 changes made during installation. See the linked complete installed-wheel example
 for simulation, retry, activation and an explicit return to the retained source.
+
+## Remove an installed version without changing its declaration
+
+[`plugins uninstall NAME --version VERSION`](local-extensions.md#remove-one-unused-version)
+removes one inactive, unused installed generation. Preview it with `--dry-run
+--json`; apply and resume with the same command without `--dry-run`. It does not
+edit `apizr.toml`, requirements or the plugin lock: **a subsequent sync can
+reinstall a still-declared version**. Edit declarations separately if you no
+longer want that version in the project.
+
+Interpreter probes hold per-installation usage protection until their process
+cleanup completes. Activation transitions revalidate full records under the store
+lock. A concurrently removed source/target causes refusal, not an implicit repair
+or activation of a replacement. A pending cleanup cannot be reused or installed
+over; complete its exact-generation removal first. A dry-run is only an observed
+plan, and every application rechecks state under the lock.

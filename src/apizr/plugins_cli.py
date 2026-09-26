@@ -9,13 +9,16 @@ from apizr.extension_runtime import ExtensionError, InvocationCancelled, Limits
 from apizr.local_plugins import (
     DownloadCancelled,
     PluginError,
+    UninstallResult,
     disable_extension,
     enable_extension,
     install_from_source,
     list_extensions,
     read_arguments,
     run_extension,
+    uninstall_extension,
 )
+from apizr.local_plugins.uninstall import UninstallDiagnostic
 from apizr.plugin_lock import LockError, Result, check_lock, create_lock
 from apizr.plugin_lock.models import Diagnostic
 from apizr.plugin_sync import SyncLimits, SyncResult, sync_plugins
@@ -134,7 +137,17 @@ def main(argv: Sequence[str]) -> int:
         default=SyncLimits().timeout_ms,
         help="Total update deadline (1–600000 ms; default 120000)",
     )
+    uninstall = commands.add_parser(
+        "uninstall",
+        help="Remove one inactive, unused plugin version; resume pending cleanup",
+    )
+    uninstall.add_argument("name")
+    uninstall.add_argument("--version", required=True)
+    uninstall.add_argument("--dry-run", action="store_true")
+    uninstall.add_argument("--json", action="store_true")
+    uninstall.add_argument("--timeout-ms", type=timeout_ms, default=30000)
     for command in (
+        uninstall,
         install,
         listing,
         enable,
@@ -156,6 +169,22 @@ def main(argv: Sequence[str]) -> int:
     args = parser.parse_args(argv)
     try:
         args.plugins_dir = plugins_directory(args.plugins_dir, args.user_config)
+        if args.command == "uninstall":
+            removed = uninstall_extension(
+                args.name,
+                args.version,
+                directory=args.plugins_dir,
+                dry_run=args.dry_run,
+                timeout_ms=args.timeout_ms,
+            )
+            print(
+                removed.model_dump_json()
+                if args.json
+                else f"Plugin uninstall: {removed.state}."
+            )
+            for problem in removed.diagnostics:
+                print(f"apizr plugins: {problem.code}", file=sys.stderr)
+            return removed.exit_code
         if args.command == "update":
             updated = update_plugin(
                 args.name,
@@ -261,6 +290,13 @@ def main(argv: Sequence[str]) -> int:
         print(f"apizr plugins: {error}", file=sys.stderr)
         return 130
     except (PluginError, ExtensionError) as error:
+        if args.command == "uninstall" and args.json:
+            print(
+                UninstallResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    diagnostics=(UninstallDiagnostic(code=str(error)),),
+                ).model_dump_json()
+            )
         if args.command == "update" and args.json:
             print(
                 UpdateResult(

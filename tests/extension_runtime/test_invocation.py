@@ -414,3 +414,10 @@ def test_signal_failure_still_reaps_direct_child_and_closes_streams(monkeypatch)
     process.wait.assert_called_once()
     for stream in (process.stdin, process.stdout, process.stderr):
         stream.close.assert_called_once()
+
+
+@pytest.mark.parametrize("descriptor", [True, -1, 0, 999999])
+def test_invalid_usage_descriptor_refused_before_launch(extension_python, descriptor):
+    with pytest.raises(InvalidInvocation):
+        invoke(extension_python, usage_fd=descriptor)
+    recover(extension_python)

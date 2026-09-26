@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -22,7 +23,7 @@ def test_mcp_launcher_refusal(monkeypatch, capsys, error):
     def resolve(*a, **k):
         raise error
 
-    monkeypatch.setattr(mcp_cli, "resolve_active_extension", resolve)
+    monkeypatch.setattr(mcp_cli, "admitted_extension", resolve)
     assert mcp_cli.main(["serve", "--project", "/project/apizr.toml"]) == 2
     assert capsys.readouterr().out == ""
 
@@ -32,8 +33,8 @@ def test_mcp_launcher_exact_admitted_interpreter_and_empty_environment(monkeypat
     seen = []
     monkeypatch.setattr(
         mcp_cli,
-        "resolve_active_extension",
-        lambda name, **kw: seen.append((name, kw)) or record,
+        "admitted_extension",
+        lambda name, **kw: seen.append((name, kw)) or nullcontext((record, 42)),
     )
 
     class Executed(Exception):
@@ -58,14 +59,14 @@ def test_mcp_launcher_exact_admitted_interpreter_and_empty_environment(monkeypat
                 "/plugins",
             ]
         )
-    assert seen == [("apizr-mcp", {"directory": Path("/plugins")})]
+    assert seen == [("apizr-mcp", {"directory": Path("/plugins"), "inherit": True})]
 
 
 def test_entrypoint_and_relative_root_refused(monkeypatch, capsys):
     monkeypatch.setattr(
         mcp_cli,
-        "resolve_active_extension",
-        lambda *a, **k: SimpleNamespace(module="other"),
+        "admitted_extension",
+        lambda *a, **k: nullcontext((SimpleNamespace(module="other"), 42)),
     )
     assert mcp_cli.main(["serve", "--project", "apizr.toml"]) == 2
     assert "absolute_project_required" in capsys.readouterr().err

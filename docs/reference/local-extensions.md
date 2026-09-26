@@ -172,7 +172,7 @@ acquisition; once installation begins, existing installer interruption rules
 apply. `DownloadCancelled` and fixed `PluginError` codes such as
 `download_timeout`, `download_tls_failed`, `download_incomplete`, `wheel_too_large`
 or `hash_mismatch` contain no server messages or URL parameters. No download is
-performed by `list`, `enable`, `disable` or `run`, and `apizr.toml` is not consulted.
+performed by `list`, `enable`, `disable`, `run` or `uninstall`, and `apizr.toml` is not consulted.
 
 The transfer uses the standard library's
 [`HTTPSConnection`](https://docs.python.org/3/library/http.client.html#http.client.HTTPSConnection)
@@ -309,7 +309,7 @@ Ordinary failures and Ctrl-C remove unpublished environments and preserve earlie
 records. SIGKILL, machine loss or filesystem errors may leave unregistered files;
 these do not appear in `list`. Cleanup does not delete a fully installed environment
 whose record became visible just before an interruption. There is no garbage
-collection or uninstall command in this iteration. Atomic visibility is not a
+collection; use the explicit version removal described below. Atomic visibility is not a
 promise of durability across power loss or a broken filesystem.
 
 This is **not a sandbox**: approved extensions, uv and Python have the user's
@@ -618,5 +618,112 @@ transition/repetition with uv absent, explicit rollback, original-environment an
 core file/distribution equality. OS network isolation covers Python and uv children.
 Concurrent activation races, interruption reconciliation and in-flight calls are
 also covered by explicitly synchronized tests. No Homebrew changes are needed on
-the developer machine. Catalogue, automatic selection/download and uninstall remain
-separate work; `--activate` is not a general permission engine.
+the developer machine. Catalogue and automatic selection/download remain separate work; `--activate` is not a general permission engine.
+
+## Remove one unused version
+
+`disable` blocks future admissions; it does not stop an already admitted call or
+MCP session. `uninstall` removes one exact version only after it is inactive and
+no protected user remains. It never disables a plugin, kills its users, launches
+an interpreter, contacts the network or invokes uv. There is no `--force` option.
+
+For a plugin whose versions `1.0.0` and `2.0.0` are already installed, first select
+and test the version you intend to retain, then preview and remove the old one:
+
+```sh
+apizr plugins enable my-plugin --version 2.0.0 --plugins-dir /absolute/plugin-store
+apizr plugins uninstall my-plugin --version 1.0.0 --dry-run --json --plugins-dir /absolute/plugin-store
+apizr plugins uninstall my-plugin --version 1.0.0 --json --plugins-dir /absolute/plugin-store
+apizr plugins uninstall my-plugin --version 1.0.0 --json --plugins-dir /absolute/plugin-store
+```
+
+Replace `my-plugin` and the store with your installed plugin's actual name and
+location. The preview reports `planned`; successful removal reports `complete`;
+the repeated removal reports `absent`. To remove the active version instead,
+explicitly run `plugins disable my-plugin`, close its sessions and wait for its
+calls to finish. An ongoing use reports `busy` without terminating anything.
+`--user-config` remains explicit, and `--plugins-dir` overrides its store setting.
+
+### Usage protection and migration
+
+Apizr coordinates admission and removal under the store lock. A separate shared
+lock belongs to each installed generation; the global store lock is released
+before an invocation or session. The usage descriptor survives the MCP launcher's
+`execve` and is passed to extension processes and interpreter probes. Removal
+checks an exclusive usage lock without waiting for users to exit. Lock files
+remain as small, stable metadata after removal to prevent lock-identity races.
+
+This covers calls and sessions admitted by this implementation. **Before first
+using uninstall after upgrading**, stop sessions opened by older Apizr launchers
+and processes launched directly with a plugin interpreter. Restart managed
+sessions with the upgraded launcher. Apizr cannot universally detect these
+unprotected processes. Trusted plugins must not deliberately close the inherited
+usage descriptor. These locks coordinate cooperating local processes; they are
+not a sandbox or a defense against a user who can rewrite the store itself.
+
+A supervisor cleanup failure leaves a conservative `plugin_usage_unconfirmed`
+guard. Removal is refused until the actual process/store state has been reviewed;
+there is no automatic repair or assumption that the process has stopped.
+
+### Interruption and exact cleanup
+
+Removal writes a persistent cleanup intent containing the full installation
+record and the environment directory identity. It then retires the inventory
+record and erases that generation through directory descriptors. Internal
+symlinks are unlinked, never followed; the shared Python used by a virtualenv is
+not deleted. A redirected environment or inconsistent record is refused.
+
+**Inventory retirement and file deletion are separate steps, not an atomic
+transaction.** A pending generation cannot be enabled, invoked or reused by
+install/sync/update, including after interruption between those steps. Rerun the
+same `uninstall NAME --version VERSION` to resume. It refuses a changed generation
+rather than deleting a new installation with the same name/version. Other plugins,
+active versions, project declarations and locks are untouched. A later `sync`
+can reinstall a removed version that remains declared in the project lock.
+
+`--timeout-ms` bounds cooperative lock waiting and traversal (default 30000,
+range 1–600000). One attempt traverses at most 100000 entries and 64 directory
+levels; a limit leaves cleanup pending. A failure may use up to two additional
+seconds to observe committed state. An OS filesystem call itself may block;
+these are not hard real-time or filesystem quota guarantees.
+
+`--json` returns `apizr.plugin-uninstall/v1`: `mode`, `state`, `exit_code`,
+`plugin`, `version`, the exact `target`, `inventory_removed`,
+`environment_removed`, `cleanup_pending`, `effects` and fixed-code `diagnostics`.
+Preview effects describe intended changes; apply effects describe observed ones.
+
+| State | Meaning | Exit |
+| --- | --- | --- |
+| `planned` | Preview allowed; no removal performed | 0 |
+| `complete` | Record retired, environment removed, intent cleared | 0 |
+| `absent` | No matching installation or pending cleanup | 0 |
+| `active` / `busy` | Explicit disable or end of current use required | 1 |
+| `refused` | Invalid input, identity/state mismatch or unavailable storage | 2 |
+| `incomplete` | Cleanup did not finish; inspect effects and retry | 2 |
+| `interrupted` | Cancellation; inspect persisted progress | 130 |
+| `unconfirmed` | Process cleanup or final store state cannot be established | 2, or 130 after cancellation |
+
+The typed API performs the same operation without printing or exiting:
+
+```python
+from pathlib import Path
+from threading import Event
+from apizr.local_plugins import uninstall_extension
+
+cancel = Event()  # Another thread can set this to cancel cooperatively.
+result = uninstall_extension(
+    "my-plugin",
+    "1.0.0",
+    directory=Path("/absolute/plugin-store"),
+    dry_run=True,
+    timeout_ms=30000,
+    cancel=cancel,
+)
+print(result.model_dump_json())
+```
+
+The installed-wheel update proof above also exercises A → update to B → select B
+→ remove A → invoke B → repeat removal, with OS network denial and before/after
+core inventories. The installed MCP proof uses a real SDK session: disable,
+refuse removal while connected, complete another call, close, then remove.
+Homebrew installation qualification runs only on disposable CI runners.

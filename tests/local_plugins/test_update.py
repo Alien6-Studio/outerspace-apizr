@@ -568,3 +568,48 @@ def test_real_uv_timeout_or_cancel_cleans_up_then_recovers(
     with pytest.raises(ProcessLookupError):
         os.kill(int(marker.read_text()), 0)
     assert update(setup, activate=True).exit_code == 0
+
+
+def test_update_probe_and_transition_coordinate_with_uninstall(setup, monkeypatch):
+    from apizr.local_plugins import uninstall_extension
+    from apizr.plugin_sync import probe
+
+    original = probe._verify
+    seen = []
+
+    def verify(record, root, *args):
+        result = uninstall_extension(record.name, record.version, directory=root)
+        seen.append(result.state)
+        assert result.state == "busy"
+        return original(record, root, *args)
+
+    monkeypatch.setattr(probe, "_verify", verify)
+    result = update(setup, activate=True)
+    assert result.state == "complete" and seen
+    projects, root, source = setup
+    assert (
+        uninstall_extension(source.name, source.version, directory=root).state
+        == "complete"
+    )
+    assert run_extension(source.name, "answer", {}, directory=root).result == 20
+
+
+def test_update_refuses_target_retired_between_probe_and_activation(setup, monkeypatch):
+    from apizr.local_plugins import uninstall_extension
+
+    original = operations.verify_interpreter
+
+    def verify(record, root, *args):
+        original(record, root, *args)
+        assert (
+            uninstall_extension(record.name, record.version, directory=root).state
+            == "complete"
+        )
+
+    monkeypatch.setattr(operations, "verify_interpreter", verify)
+    result = update(setup, activate=True)
+    assert (
+        result.exit_code != 0 and result.diagnostics[0].code == "update_target_changed"
+    )
+    assert active(setup[1]) == setup[2]
+    assert run_extension("update-probe", "answer", {}, directory=setup[1]).result == 10
