@@ -1,0 +1,302 @@
+{
+  "$defs": {
+    "BundledSource": {
+      "additionalProperties": false,
+      "properties": {
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "source_path": {
+          "title": "Source Path",
+          "type": "string"
+        },
+        "bundle_path": {
+          "title": "Bundle Path",
+          "type": "string"
+        },
+        "source_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "is_package": {
+          "title": "Is Package",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "module",
+        "source_path",
+        "bundle_path",
+        "source_digest",
+        "size",
+        "is_package"
+      ],
+      "title": "BundledSource",
+      "type": "object"
+    },
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "Input": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ParameterKind"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "type": {
+          "$ref": "#/$defs/TypeSpec"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "required",
+        "type"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ParameterKind": {
+      "enum": [
+        "positional_only",
+        "positional_or_keyword",
+        "keyword_only"
+      ],
+      "title": "ParameterKind",
+      "type": "string"
+    },
+    "Protocol": {
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "const": "2026-07-28",
+          "default": "2026-07-28",
+          "title": "Target",
+          "type": "string"
+        },
+        "sdk": {
+          "const": "mcp>=2.2,<3",
+          "default": "mcp>=2.2,<3",
+          "title": "Sdk",
+          "type": "string"
+        }
+      },
+      "title": "Protocol",
+      "type": "object"
+    },
+    "ToolContract": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "execution": {
+          "enum": [
+            "sync",
+            "async"
+          ],
+          "title": "Execution",
+          "type": "string"
+        },
+        "parameters": {
+          "items": {
+            "$ref": "#/$defs/Input"
+          },
+          "title": "Parameters",
+          "type": "array"
+        },
+        "returns": {
+          "$ref": "#/$defs/TypeSpec"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "tool_name": {
+          "title": "Tool Name",
+          "type": "string"
+        },
+        "input_schema": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Input Schema",
+          "type": "object"
+        }
+      },
+      "required": [
+        "capability_id",
+        "name",
+        "execution",
+        "parameters",
+        "returns",
+        "tool_name",
+        "input_schema"
+      ],
+      "title": "ToolContract",
+      "type": "object"
+    },
+    "TypeSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "any",
+            "int",
+            "str",
+            "float",
+            "bool",
+            "null",
+            "list",
+            "dict",
+            "tuple",
+            "set",
+            "union",
+            "literal"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "items": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TypeSpec"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "values": {
+          "default": [],
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Values",
+          "type": "array"
+        },
+        "variadic": {
+          "default": false,
+          "title": "Variadic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "TypeSpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "repository_interface_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "exposure_plan_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/BundledSource"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "artifacts": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Digest"
+      },
+      "title": "Artifacts",
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "apizr.repository-mcp/v1",
+      "default": "apizr.repository-mcp/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "protocol": {
+      "$ref": "#/$defs/Protocol",
+      "default": {
+        "target": "2026-07-28",
+        "sdk": "mcp>=2.2,<3"
+      }
+    },
+    "tools": {
+      "items": {
+        "$ref": "#/$defs/ToolContract"
+      },
+      "title": "Tools",
+      "type": "array"
+    }
+  },
+  "required": [
+    "repository_interface_digest",
+    "exposure_plan_digest",
+    "sources",
+    "artifacts",
+    "tools"
+  ],
+  "title": "MCPManifest",
+  "type": "object"
+}

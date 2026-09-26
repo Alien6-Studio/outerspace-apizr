@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#ffffff"/>
+  <rect width="16" height="630" fill="#ffbf00"/>
+  <path d="M870 0H1200V630H1120Z" fill="#fff8df"/>
+  <image x="710" y="55" width="440" height="440" xlink:href="logo.png"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#211b26">
+    <text x="68" y="98" font-size="24" letter-spacing="6" font-weight="700">OUTERSPACE</text>
+    <text x="63" y="229" font-size="122" font-weight="700" letter-spacing="-5">Apizr</text>
+    <rect x="68" y="259" width="82" height="7" rx="3.5" fill="#ffbf00"/>
+    <text x="68" y="337" font-size="44" font-weight="700">Python code to</text>
+    <text x="68" y="392" font-size="44" font-weight="700">REST and MCP.</text>
+    <text x="68" y="447" font-size="23" fill="#615b67">Open-source capability compiler</text>
+    <path d="M68 509H1132" stroke="#e4dfe7"/>
+    <text x="68" y="563" font-size="20" fill="#615b67">Discover · Select · Expose · Execute</text>
+    <text x="1132" y="563" text-anchor="end" font-size="23" font-weight="700">apizr.outerspace.sh</text>
+  </g>
+</svg>

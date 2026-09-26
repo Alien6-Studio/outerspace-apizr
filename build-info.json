@@ -1,0 +1,25 @@
+{
+  "schema": "apizr.docs-build/v1",
+  "source_commit": "6376eb54cd855e8f98a79f6bb65ba1ecbfac5842",
+  "source_dirty": false,
+  "status": "development",
+  "target_version": "0.4.0",
+  "stable_release": "0.3.0",
+  "files": {
+    "getting-started/quickstart/index.html": "e4521f4d1bed3f2875e0a28a7e0f84455c02e2d802b8a47697f968ac281a59ed",
+    "reference/project-plugin-locks/index.html": "4d5147eff596fd4cc4bd02fd3ae183a11922b093524ea9ae69e470e384d01aea",
+    "reference/apizr-mcp-server/index.html": "770d042733d3a731eef557f5ec39682dd2bfb0f5174406b51141899d8057d570",
+    "index.html": "a8b73d7a8b07fdc87ad36276e6786e1fd2bf4ae915435f2a88ca4b860ce84077",
+    "development/0.4/index.html": "ab462b2a3223ed11b4d7cb1b0d18721ad46c0fbc47f6e4342c3895fc696c1b23",
+    "reference/git-sources/index.html": "ce459912837a1b519cb270ec4a75b979f487d7e3ebf514602ef8d2e23eaec652",
+    "reference/git-ssh/index.html": "c025a3bb713b7a1444bf8c2eae5616f2a1e28f2f507a9fc00e1dc196455fc935",
+    "reference/oci-service-plugin/index.html": "ad0e85ecebae6417caeff1a5bcd956fa644bbdb0f7d1a5b326b9cfc4ff422388",
+    "reference/attest-delivery-plugin/index.html": "84507a25e8f483591bfb31748d6bae38d129d154e6c64cac111ee443d6c9c5ed",
+    "reference/attest-oci-artifacts/index.html": "63c672ce5405ce422ae50a9c090b3f5088236cc85f845f8374250679611f4a7c",
+    "assets/images/logo.png": "8134533371f19daa41aa4da564881506349569959e2d481a866b1f7d8377030d",
+    "assets/images/illustration.png": "9b6462193b1697f59cb03765472f67405c5519f581955b7a5ad03d87e74724d6",
+    "assets/videos/paris-route.jpg": "3cca1002a5b11a0bd60cddd592a8997ab9e137b5cee7defce898c0f52afb9cf2",
+    "assets/stylesheets/branding.css": "1cde6a99a6e1cb5fabc30400df9345a7cbe7eb2e07ec8c386f3912f3ff6e9547",
+    "assets/javascripts/video.js": "450600a4b5350f43263a9f5965282fe764e2097b1dbdcba02186fee43b6dd457"
+  }
+}

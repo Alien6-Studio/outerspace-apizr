@@ -1,0 +1,128 @@
+{
+  "$defs": {
+    "EffectRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "require_false": {
+          "default": [],
+          "items": {
+            "enum": [
+              "filesystem_read",
+              "filesystem_write",
+              "network",
+              "environment",
+              "subprocess",
+              "state_mutation",
+              "secrets",
+              "external_service"
+            ],
+            "type": "string"
+          },
+          "title": "Require False",
+          "type": "array"
+        },
+        "require_known": {
+          "default": [],
+          "items": {
+            "enum": [
+              "filesystem_read",
+              "filesystem_write",
+              "network",
+              "environment",
+              "subprocess",
+              "state_mutation",
+              "secrets",
+              "external_service"
+            ],
+            "type": "string"
+          },
+          "title": "Require Known",
+          "type": "array"
+        }
+      },
+      "title": "EffectRequirements",
+      "type": "object"
+    },
+    "ExecutionRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "modes": {
+          "default": [
+            "local-process",
+            "oci-container"
+          ],
+          "items": {
+            "enum": [
+              "direct",
+              "local-process",
+              "oci-container"
+            ],
+            "type": "string"
+          },
+          "title": "Modes",
+          "type": "array"
+        },
+        "require_controls": {
+          "default": [],
+          "items": {
+            "enum": [
+              "wall_timeout",
+              "input_limit",
+              "output_limit",
+              "environment",
+              "working_directory",
+              "network_deny",
+              "filesystem_sandbox",
+              "subprocess_deny",
+              "memory_limit",
+              "cpu_limit",
+              "pid_limit"
+            ],
+            "type": "string"
+          },
+          "title": "Require Controls",
+          "type": "array"
+        }
+      },
+      "title": "ExecutionRequirements",
+      "type": "object"
+    },
+    "RelationshipRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "require_resolved": {
+          "default": true,
+          "title": "Require Resolved",
+          "type": "boolean"
+        }
+      },
+      "title": "RelationshipRequirements",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "effects": {
+      "$ref": "#/$defs/EffectRequirements"
+    },
+    "execution": {
+      "$ref": "#/$defs/ExecutionRequirements"
+    },
+    "relationships": {
+      "$ref": "#/$defs/RelationshipRequirements"
+    },
+    "require_interface": {
+      "default": false,
+      "title": "Require Interface",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "apizr.repository-readiness-policy/v1",
+      "default": "apizr.repository-readiness-policy/v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "title": "RepositoryReadinessPolicy",
+  "type": "object"
+}

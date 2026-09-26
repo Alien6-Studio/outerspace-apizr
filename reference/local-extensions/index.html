@@ -1,0 +1,4699 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs.">
+      
+      
+        <meta name="author" content="Ludovic FERNANDEZ, Alien6">
+      
+      
+        <link rel="canonical" href="https://apizr.outerspace.sh/reference/local-extensions/">
+      
+      
+        <link rel="prev" href="../project-plugin-locks/">
+      
+      
+        <link rel="next" href="../apizr-mcp-server/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Install, activate and update (0.4) - OuterSpace Apizr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/branding.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <link rel="describedby" type="application/json" href="../../build-info.json" />
+  <meta name="apizr-source-commit" content="6376eb54cd855e8f98a79f6bb65ba1ecbfac5842" />
+  <meta name="apizr-docs-status" content="development" />
+  
+  
+  
+  
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="OuterSpace Apizr" />
+  <meta property="og:title" content="Install, activate and update (0.4) · OuterSpace Apizr" />
+  <meta property="og:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta property="og:url" content="https://apizr.outerspace.sh/reference/local-extensions/" />
+  <meta property="og:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Install, activate and update (0.4) · OuterSpace Apizr" />
+  <meta name="twitter:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta name="twitter:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
+  <meta name="twitter:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="amber" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#install-and-use-extensions" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="OuterSpace Apizr" class="md-header__button md-logo" aria-label="OuterSpace Apizr" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OuterSpace Apizr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Install, activate and update (0.4)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="amber" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="amber" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alien6-studio/outerspace-apizr" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alien6-studio/outerspace-apizr
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/quickstart/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../getting-started/user-guide/scan/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/overview/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/user-guide/apizr/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Legacy pipeline — compatibility
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/0.4/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Releases
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../about/CONTRIBUTING/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OuterSpace Apizr" class="md-nav__button md-logo" aria-label="OuterSpace Apizr" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.png" alt="logo">
+
+    </a>
+    OuterSpace Apizr
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alien6-studio/outerspace-apizr" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alien6-studio/outerspace-apizr
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The full journey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compilation and interfaces
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Compilation and interfaces
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/scan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inventory a Python project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inspect capability relationships
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/inspect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inspect source without running it
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/repository-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Assess readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/exposure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST/MCP from a repository
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/rest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST from a Python file or notebook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP from a Python file or notebook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/execute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execute code with a policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git-sources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analyze a Git repository (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH Git sources (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configure a project (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project-plugin-locks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Declarations and plugin locks (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plugins
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install, activate and update (0.4)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install, activate and update (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#locked-local-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Locked local dependencies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#https-wheels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS wheels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#declarative-wheel-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declarative wheel manifest
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-operations-and-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python operations and inventory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explicit-activation-and-invocation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicit activation and invocation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#atomic-visibility-and-interruption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Atomic visibility and interruption
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installed-demonstration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installed demonstration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installed demonstration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-with-transitive-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example with transitive dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portable-project-locks-and-local-preferences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Portable project locks and local preferences
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controlled-locked-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controlled locked updates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Controlled locked updates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conditional-activation-and-concurrent-operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conditional activation and concurrent operators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result-and-failure-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Result and failure contract
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-installed-wheel-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete installed-wheel example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#remove-one-unused-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove one unused version
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Remove one unused version">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage-protection-and-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage protection and migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interruption-and-exact-cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interruption and exact cleanup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apizr-mcp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apizr analysis MCP server (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../oci-service-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCI service images (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../attest-delivery-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Attest delivery proofs (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../attest-oci-artifacts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Attest OCI artifacts (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compiler-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python compiler API (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extension-invocation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extension invocation API (0.4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/developer-guide/releases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compatibility notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capability Compiler overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/repository-scanner-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Repository Scanner and Catalog v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/repository-readiness-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Repository Readiness v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/exposure-plan-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exposure Plan v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/repository-bundle-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Repository Bundle v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/governed-repository-runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governed repository execution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/capability-graph-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capability Graph v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/capability-ir-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capability IR v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/capability-readiness-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Static readiness v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/rest-generator-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST generator v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp-generator-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP generator v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/execution-policy-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execution Policy v1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/oci-container-runtime-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCI container execution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/subprocess-deny/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Subprocess deny
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/governed-transport-runtime-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governed REST and MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/governed-oci-transports-v2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCI-governed REST and MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/artifact-principles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Artifact principles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/security-baseline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security baseline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy pipeline — compatibility
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Legacy pipeline — compatibility
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/apizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate a legacy API and container
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy standalone commands
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Legacy standalone commands
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/code-analyzr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analyze Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/fast-apizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate FastAPI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/dockerizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate Docker files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy pipeline components
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Legacy pipeline components
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/notebook-transformr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook conversion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/code-analyzr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/fast-apizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/dockerizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy HTTP generation service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Legacy HTTP generation service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/apizr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Service and project upload
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/code-analyzr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python analysis endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/fast-apizr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI generation endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/notebook-transformr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook conversion endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/dockerizr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker generation endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/developer-guide/plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/legacy-behavior-contract/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Behavior contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Releases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Releases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/0.4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4 in development — unreleased
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.3.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.3.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.2.1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.2.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.2.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.2.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/CONTRIBUTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/developer-guide/setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development and checks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/extension-packaging-v04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extension packaging ADR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/releases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/verification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Verify builds and releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/attest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Managed Attest identity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dependency maintenance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/CODE_OF_CONDUCT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code of conduct
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/LICENSE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    License
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#locked-local-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Locked local dependencies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#https-wheels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS wheels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#declarative-wheel-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declarative wheel manifest
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-operations-and-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python operations and inventory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explicit-activation-and-invocation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicit activation and invocation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#atomic-visibility-and-interruption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Atomic visibility and interruption
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installed-demonstration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installed demonstration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installed demonstration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-with-transitive-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example with transitive dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portable-project-locks-and-local-preferences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Portable project locks and local preferences
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controlled-locked-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controlled locked updates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Controlled locked updates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conditional-activation-and-concurrent-operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conditional activation and concurrent operators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result-and-failure-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Result and failure contract
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-installed-wheel-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete installed-wheel example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#remove-one-unused-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove one unused version
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Remove one unused version">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage-protection-and-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage protection and migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interruption-and-exact-cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interruption and exact cleanup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="install-and-use-extensions">Install and use extensions</h1>
+<div class="admonition warning">
+<p class="admonition-title">0.4 development — not released</p>
+<p>These commands require a wheel built from the development source, not the
+published <code>0.3.0</code> package. Follow the <a href="../../development/0.4/#install-a-development-wheel">development installation</a> and record its source commit.</p>
+</div>
+<p>Install an explicitly trusted wheel into its own Python
+virtual environment. Installation does not activate or invoke it, and project
+configuration cannot install or load extensions. Historical <code>apizr.pipeline.v1</code>
+plugins keep their existing behavior.</p>
+<h2 id="commands">Commands</h2>
+<p>With <strong>uv already installed</strong> and an expected SHA-256 obtained from a source you
+trust:</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span>install<span class="w"> </span>./extension.whl<span class="w"> </span>--sha256<span class="w"> </span>EXPECTED_SHA256
+apizr<span class="w"> </span>plugins<span class="w"> </span>install<span class="w"> </span>https://example.org/example_plugin-1.0.0-py3-none-any.whl<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--sha256<span class="w"> </span>EXPECTED_SHA256
+apizr<span class="w"> </span>plugins<span class="w"> </span>list
+apizr<span class="w"> </span>plugins<span class="w"> </span>list<span class="w"> </span>--json
+apizr<span class="w"> </span>plugins<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>example-plugin<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0
+apizr<span class="w"> </span>plugins<span class="w"> </span>list<span class="w"> </span>--active<span class="w"> </span>--json
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>example-plugin<span class="w"> </span>describe<span class="w"> </span>--arguments<span class="w"> </span>arguments.json
+apizr<span class="w"> </span>plugins<span class="w"> </span>disable<span class="w"> </span>example-plugin
+</code></pre></div>
+<p>The digest checks integrity of the exact wheel bytes, <strong>not trust in its author</strong>.
+The installer snapshots the local wheel before invoking uv. Both Apizr and uv's
+<code>--require-hashes</code> check those bytes; changing the original file afterward cannot
+change what is installed. A hash calculated from an untrusted file does not make
+that file trustworthy.</p>
+<p><code>--plugins-dir /absolute/user/directory</code> explicitly overrides storage on every
+command, particularly for disposable tests and CI. Defaults follow the packaging
+ADR: <code>$XDG_DATA_HOME/apizr/plugins</code> (otherwise <code>~/.local/share/apizr/plugins</code>) on
+Linux, and <code>~/Library/Application Support/apizr/plugins</code> on macOS. The store must
+be user-owned, not writable by other users, and outside the core and the current
+project (identified by an enclosing <code>.git</code> or <code>pyproject.toml</code>). An arbitrary
+unmarked directory cannot be recognized as a project; choose a dedicated store.</p>
+<p>Installation uses the running core's already installed interpreter to create a
+new environment. <code>--python /absolute/path/to/python</code> explicitly selects another
+installed interpreter. The interpreter symlink is not resolved before passing it
+to uv, so an existing venv retains its identity. The new environment has no access
+to the core's site-packages. Nothing is injected into uv tool, pipx or Homebrew.</p>
+<p>The local path stays entirely offline. Neither path enables an index, Python
+download, source build or installer fallback. Dependency resolution is limited
+to explicitly locked local wheels when both dependency options are supplied. uv receives
+an isolated environment and explicit
+<code>--offline</code>, <code>--no-config</code>, <code>--no-cache</code>, <code>--no-python-downloads</code>, <code>--no-index</code>,
+<code>--no-deps</code>, <code>--no-build</code>, <code>--no-sources</code> and hash checking where applicable.
+See the <a href="https://docs.astral.sh/uv/reference/cli/">uv command reference</a> for those
+backend switches. Parent <code>UV_*</code>, <code>PIP_*</code>, Python settings and credentials are not
+forwarded. uv output is discarded; CLI diagnostics contain fixed failure codes.
+A missing backend is detected before any filesystem modification.</p>
+<p>Without <code>--requirements</code> and <code>--wheelhouse</code>, any <code>Requires-Dist</code> entry (including
+conditional or extra dependencies) remains refused. Both paths reject directories,
+non-HTTPS URLs, source archives, malformed/incompatible
+manifests, startup <code>.pth</code>/<code>sitecustomize.py</code>/<code>usercustomize.py</code> files, and unsafe
+archive paths or links. Native compatibility and <code>Requires-Python</code> are checked
+by uv; an incompatible wheel is a failed installation, never an available record.
+Wheels are limited to 64 MiB, expanded content to 256 MiB / 10,000 archive entries,
+and individual metadata files to 64 KiB. The module must be a Python file or a
+package with <code>__main__.py</code> in the wheel's site-packages root.</p>
+<h2 id="locked-local-dependencies">Locked local dependencies</h2>
+<p>Supply both options together; the plugin may be a local wheel or an HTTPS URL:</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span>install<span class="w"> </span>./plugin-1.0.0-py3-none-any.whl<span class="w"> </span>--sha256<span class="w"> </span>EXPECTED_SHA256<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--requirements<span class="w"> </span>requirements.lock<span class="w"> </span>--wheelhouse<span class="w"> </span>./wheels
+</code></pre></div>
+<p>The accepted requirements subset is deliberately small: one <code>name==version</code>
+with exactly one <code>--hash=sha256:HEX</code> per distribution, including the plugin and
+<strong>all transitive dependencies</strong>. Blank lines, <code>#</code> comments and backslash line
+continuations are supported. Names are normalized; duplicates are rejected.
+Extras, markers, wildcard/range pins, multiple hashes, URLs, local paths,
+editable installs, file inclusions and every other requirements option are
+rejected. Prepare one lock/wheelhouse for the intended Python/platform target;
+uv checks dependency constraints, wheel tags and <code>Requires-Python</code>.</p>
+<div class="highlight"><pre><span></span><code>example-plugin==1.0.0 --hash=sha256:PLUGIN_SHA256
+example-helper==2.0.0 --hash=sha256:HELPER_SHA256
+example-leaf==3.0.0 --hash=sha256:LEAF_SHA256
+</code></pre></div>
+<p>Use real 64-character digests instead of these placeholders. The wheelhouse
+must contain exactly one wheel for each locked dependency. Unlocked or ambiguous
+dependency wheels are rejected. The plugin's optional wheelhouse copy is ignored:
+its explicit source and <code>--sha256</code> determine the installed bytes. Other files are
+ignored and never passed to uv. Dependency wheels do not need an Apizr manifest;
+all wheels undergo the same archive and startup-file checks. Direct references
+in wheel dependency metadata are also refused.</p>
+<p>The lock is limited to 64 KiB and 128 distributions including the plugin.
+Wheelhouse enumeration is bounded to 128 entries; selected wheels total at most
+256 MiB compressed and 512 MiB expanded, in addition to the per-wheel limits.
+Apizr copies validated bytes into a private snapshot. uv resolves only against
+that snapshot with <code>--require-hashes</code>, <code>--no-index</code>, <code>--offline</code>, <code>--no-build</code>
+and <code>--strict</code>; this path does <strong>not</strong> use <code>--no-deps</code>. Missing transitives,
+conflicting versions and incompatible Python/platform constraints fail before
+an installation becomes available. Validation does not import plugin code.</p>
+<p>The recorded lock identity is SHA-256 of the original lock bytes (including
+comments/whitespace); dependency records contain the exact installed versions
+and wheel digests. Changing either the lock or dependencies for an existing
+name/version raises <code>installation_conflict</code>. There are no implicit updates.
+The existing activation remains unchanged, and a newly installed version starts
+inactive. Files/distributions in the core environment remain untouched.</p>
+<p>The Python operations <code>install_extension</code>, <code>install_from_source</code> and
+<code>install_from_url</code> accept the same <code>requirements=Path(...)</code> and
+<code>wheelhouse=Path(...)</code> keyword arguments. Their existing return types, errors,
+HTTPS limits and interruption behavior are retained.</p>
+<h2 id="https-wheels">HTTPS wheels</h2>
+<p>The expected SHA-256 is mandatory and its format is checked before any network
+request. HTTPS acquisition downloads into a private temporary directory, checks
+the digest, and hands those same bytes to the existing local installer. Its
+manifest, protocol, package metadata and dependency checks still apply, and uv
+remains offline. An installation stays inactive; existing activation choices are
+never changed by downloading or installing another version.</p>
+<p>Certificate chains and hostnames are verified using Python's default TLS trust
+store (including explicitly configured <code>SSL_CERT_FILE</code> / <code>SSL_CERT_DIR</code>). There
+is no insecure TLS option. At most five redirects are followed, including across
+hosts, and every target must use HTTPS without embedded credentials. HTTP and
+other schemes, URL user information, fragments, control characters and malformed
+ports are refused. URLs must use ASCII encoding (percent-encoding for paths and
+queries, IDNA for international hostnames). Invalid URLs never fall back to local
+paths. Query parameters may be used, but diagnostics never echo the URL.</p>
+<p>The initial URL must end in a safe wheel filename, such as
+<code>example_plugin-1.0.0-py3-none-any.whl</code>; this name is checked against the package
+metadata. Redirect filenames and <code>Content-Disposition</code> cannot choose a local
+destination. Files are created exclusively in a private directory. Transfers
+read at most 64 KiB at a time and enforce the existing 64 MiB wheel limit on
+received bytes, even without <code>Content-Length</code>. Compressed HTTP content is refused;
+the wheel's own ZIP compression is supported by the local validator.</p>
+<p>Defaults are 5 seconds for connection/TLS handshake, 10 seconds per blocking
+read and 60 seconds for the whole transfer across redirects. A supervised stdlib
+worker makes the total deadline and cancellation effective even during DNS or
+slow response headers. On timeout or Ctrl-C, the worker is killed and reaped
+(up to 2 seconds for cleanup), closing its sockets; the temporary directory is
+removed before returning. No installation record or activation is written until
+the existing installer succeeds. As with local installs, abrupt host loss or
+SIGKILL can leave unregistered temporary files. OS operations stuck in an
+uninterruptible state remain outside the normal cleanup guarantee.</p>
+<p>The client sends no inherited cookies, authentication, proxy credentials or
+<code>.netrc</code> data. It ignores proxy environment variables and does not offer private
+repository authentication. This is explicit user-directed network access, not
+an SSRF boundary for untrusted URLs supplied by other users; private HTTPS hosts
+are permitted. Trust in the author still requires an independent decision.</p>
+<p>The Python API <code>install_from_source(source, sha256, *, directory=None, python=None)</code>
+dispatches explicit paths or URLs. <code>install_from_url(url, sha256, *, directory=None,
+python=None, limits=DownloadLimits(), cancel=None, ca_file=None)</code> exposes typed
+timeouts, a <code>threading.Event</code> for transfer cancellation, and an optional explicitly
+trusted CA file. It returns the existing <code>Installation</code>. Cancellation covers
+acquisition; once installation begins, existing installer interruption rules
+apply. <code>DownloadCancelled</code> and fixed <code>PluginError</code> codes such as
+<code>download_timeout</code>, <code>download_tls_failed</code>, <code>download_incomplete</code>, <code>wheel_too_large</code>
+or <code>hash_mismatch</code> contain no server messages or URL parameters. No download is
+performed by <code>list</code>, <code>enable</code>, <code>disable</code>, <code>run</code> or <code>uninstall</code>, and <code>apizr.toml</code> is not consulted.</p>
+<p>The transfer uses the standard library's
+<a href="https://docs.python.org/3/library/http.client.html#http.client.HTTPSConnection"><code>HTTPSConnection</code></a>
+and <a href="https://docs.python.org/3/library/ssl.html#ssl.create_default_context"><code>create_default_context</code></a>;
+no new runtime dependency is required.</p>
+<h2 id="declarative-wheel-manifest">Declarative wheel manifest</h2>
+<p>A wheel contains exactly one root <code>apizr-extension.json</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"schema"</span><span class="p">:</span><span class="w"> </span><span class="s2">"apizr.extension-manifest/v1"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"apizr-extension-probe"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.0"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"module"</span><span class="p">:</span><span class="w"> </span><span class="s2">"apizr_extension_probe.runtime"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"protocol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"apizr.extension/v1"</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>No plugin import is needed to read it. Fields and types are strict; unknown fields,
+duplicate JSON keys, unknown schema/protocol versions and invalid module names
+are rejected. <code>name</code> is the canonical distribution name (lowercase, runs of
+hyphens/underscores/dots normalized to a hyphen). Name/version must match wheel
+filename and distribution metadata. The manifest version is the package version;
+the schema and invocation protocol have independent versions.</p>
+<p>For Hatch, the demonstration includes the file with:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.hatch.build.targets.wheel.force-include]</span>
+<span class="s2">"apizr-extension.json"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"apizr-extension.json"</span>
+</code></pre></div>
+<h2 id="python-operations-and-inventory">Python operations and inventory</h2>
+<p><code>apizr.local_plugins.install_extension(wheel: Path, sha256: str, *,
+directory: Path | None = None, python: Path | None = None,
+requirements: Path | None = None, wheelhouse: Path | None = None) -&gt; Installation</code>
+performs the operation. <code>list_extensions(*, directory: Path | None = None) -&gt;
+Inventory</code> reads local metadata only, without invoking uv or any interpreter.
+Pass <code>active=True</code> to filter it to the explicitly selected versions. These
+functions do not print or exit the host. <code>PluginError</code> exposes a fixed message
+such as <code>hash_mismatch</code>, <code>invalid_manifest</code>, <code>dependencies_not_supported</code>,
+<code>installation_conflict</code>, <code>uv_not_found</code>, <code>uv_install_failed</code> or <code>uv_timeout</code>.
+The CLI returns 2 on failure, 130 on keyboard interruption, and 0 on success.</p>
+<p><code>list --json</code> emits <code>apizr.installed-extensions/v1</code> with an <code>installations</code> array.
+Records contain manifest fields plus <code>sha256</code>, <code>environment_id</code> and the absolute
+<code>python</code> path. New records also include <code>lock_sha256</code> (null for single-wheel
+installs) and <code>dependencies</code> (name, version and wheel SHA-256). Existing records
+without those fields remain readable. Listing is an inventory, not an interpreter health check: external
+removal/upgrades of Python can invalidate an existing environment. No automatic
+repair or download occurs. A corrupt local inventory fails closed.</p>
+<h2 id="explicit-activation-and-invocation">Explicit activation and invocation</h2>
+<p>Every installation starts inactive. <code>enable NAME --version VERSION</code> selects an
+exact installed version without running it. Names use the same normalization as
+the manifest. Repeating the same activation is idempotent; installing another
+version leaves the selection unchanged. Switching requires another explicit
+<code>enable</code> with the desired version. <code>disable NAME</code> is also idempotent.</p>
+<p><code>activations.json</code> is separate from <code>installations.json</code>. Its
+<code>apizr.active-extensions/v1</code> document stores the selected installation records,
+including name, version, SHA-256, environment ID, module, protocol and interpreter.
+Updates use the existing store lock and atomic replacement. Before admitting a
+call, Apizr checks that the selected record still matches the inventory and its
+interpreter exists in the expected environment. Missing, inactive, inconsistent
+or corrupt records fail closed, without repair. <code>list --active --json</code> validates
+the bindings and emits the unchanged inventory format; it does not run plugins,
+check interpreter health or contact the network.</p>
+<p>The lock is released once an invocation is admitted. Disabling blocks later
+admissions; an already admitted invocation may start or finish afterward. It does
+not hold the lock for the plugin's execution or cancel an existing call.</p>
+<p><code>run</code> accepts a regular UTF-8 JSON file containing an object. Reads are bounded;
+special files, duplicate keys, non-finite numbers and malformed JSON are refused.
+It uses the recorded interpreter/module and the existing
+<a href="../extension-invocation/">invocation runtime</a>, passing <strong>an empty environment</strong>.
+Parent secrets are not forwarded. No plugin discovery, installation, download
+or automatic <code>apizr.toml</code> loading takes place.</p>
+<p>The CLI uses runtime defaults: a 10-second invocation deadline, 1 MiB request
+and stdout limits, 64 KiB stderr limit and a 1-second cleanup deadline. The JSON
+file itself is limited to 1 MiB; the complete encoded request must also fit the
+request limit. These runtime deadlines begin after admission; acquiring the store
+lock has its own 30-second limit. A successful structured protocol response goes
+to stdout. Failures emit only fixed codes on stderr and return 2; Ctrl-C cleans
+up through the runtime and returns 130. Plugin diagnostics are not echoed.</p>
+<p>The Python API offers <code>enable_extension(name, version, *, directory=None)</code>,
+<code>disable_extension(name, *, directory=None)</code> and
+<code>run_extension(name, operation, arguments, *, directory=None, limits=Limits(),
+cancel=None)</code>. The latter returns the existing <code>Response</code>, raises the existing
+runtime errors, and accepts a <code>threading.Event</code> for cancellation. <code>read_arguments</code>
+provides the same bounded JSON reader independently of the CLI. No operation
+prints or exits Python. For example, after explicitly enabling the demo:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apizr.extension_runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">Limits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apizr.local_plugins</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_extension</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">run_extension</span><span class="p">(</span>
+    <span class="s2">"apizr-extension-probe"</span><span class="p">,</span>
+    <span class="s2">"describe"</span><span class="p">,</span>
+    <span class="p">{</span><span class="s2">"source_digest"</span><span class="p">:</span> <span class="s2">"explicit-active-example"</span><span class="p">},</span>
+    <span class="n">directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">"/temporary/apizr-plugins"</span><span class="p">),</span>
+    <span class="n">limits</span><span class="o">=</span><span class="n">Limits</span><span class="p">(</span><span class="n">wall_time_ms</span><span class="o">=</span><span class="mi">3000</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Activation is permission to use trusted code, <strong>not a sandbox</strong>. It does not
+authenticate the author or continuously verify installed file contents. The
+lower-level <code>invoke_extension</code> API remains an explicit caller-managed operation;
+it does not consult the activation store.</p>
+<h2 id="atomic-visibility-and-interruption">Atomic visibility and interruption</h2>
+<p>A POSIX file lock serializes writers (30-second acquisition limit). Each install
+gets a unique final <code>environments/ID/venv</code> path; the venv is never moved. uv commands
+have a 120-second deadline each, with process-group cleanup and a bounded child
+wait. A successful install is committed by an atomic replacement of
+<code>installations.json</code>; readers see either complete inventory, without taking a
+write lock. At most 1,000 records / 1 MiB of inventory are supported.</p>
+<p>The same canonical name, version, digest and lock identity is idempotent. Different bytes under
+an existing name/version are refused. A different version gets another independent
+environment, without activation, switching or an implicit upgrade.</p>
+<p>Ordinary failures and Ctrl-C remove unpublished environments and preserve earlier
+records. SIGKILL, machine loss or filesystem errors may leave unregistered files;
+these do not appear in <code>list</code>. Cleanup does not delete a fully installed environment
+whose record became visible just before an interruption. There is no garbage
+collection; use the explicit version removal described below. Atomic visibility is not a
+promise of durability across power loss or a broken filesystem.</p>
+<p>This is <strong>not a sandbox</strong>: approved extensions, uv and Python have the user's
+permissions. Storage is a local user trust boundary, not protection from a hostile
+process running as the same user. Detached subprocesses and uninterruptible OS
+operations have the limits documented for <a href="../extension-invocation/">extension invocation</a>.
+Only POSIX Linux/macOS are supported.</p>
+<h2 id="installed-demonstration">Installed demonstration</h2>
+<p>On disposable runners, the existing extension-packaging workflow builds real
+wheels, installs the minimal core separately (uv tool or Homebrew), then uses
+that <strong>installed core outside the checkout</strong> to run:</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span>install<span class="w"> </span>./apizr_extension_probe-0.0.0-py3-none-any.whl<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--sha256<span class="w"> </span>EXPECTED_SHA256<span class="w"> </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+apizr<span class="w"> </span>plugins<span class="w"> </span>list<span class="w"> </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+apizr<span class="w"> </span>plugins<span class="w"> </span>list<span class="w"> </span>--json<span class="w"> </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+<span class="nb">printf</span><span class="w"> </span><span class="s1">'%s\n'</span><span class="w"> </span><span class="s1">'{"source_digest":"explicit-active-example"}'</span><span class="w"> </span>&gt;<span class="w"> </span>arguments.json
+<span class="c1"># Refused: the installation is inactive.</span>
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>apizr-extension-probe<span class="w"> </span>describe<span class="w"> </span>--arguments<span class="w"> </span>arguments.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+apizr<span class="w"> </span>plugins<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>apizr-extension-probe<span class="w"> </span>--version<span class="w"> </span><span class="m">0</span>.0.0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+apizr<span class="w"> </span>plugins<span class="w"> </span>list<span class="w"> </span>--active<span class="w"> </span>--json<span class="w"> </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>apizr-extension-probe<span class="w"> </span>describe<span class="w"> </span>--arguments<span class="w"> </span>arguments.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+apizr<span class="w"> </span>plugins<span class="w"> </span>disable<span class="w"> </span>apizr-extension-probe<span class="w"> </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+<span class="c1"># Refused again after disabling.</span>
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>apizr-extension-probe<span class="w"> </span>describe<span class="w"> </span>--arguments<span class="w"> </span>arguments.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+</code></pre></div>
+<p>The fixture's digest is calculated by the test after building its reviewed local
+source. CI executes the CLI as <code>CORE_PYTHON -I -B -m apizr.cli</code> to exclude checkout
+imports and bytecode writes in the measured core. Before/after inventories include
+core file bytes, permissions, symlinks, additions/deletions and installed distributions.
+The proof retains the original packaging/runtime checks, exercises idempotence,
+and verifies both refusals and the successful activated call. While enabled, it
+also copies and runs
+<a href="https://github.com/Alien6-Studio/outerspace-apizr/blob/master/examples/extension-probe/invoke_active.py"><code>invoke_active.py</code></a>
+outside the checkout, using the Python API example above.</p>
+<p>The same workflow also starts a disposable localhost HTTPS server, generates its
+test certificate with OpenSSL, and explicitly trusts that certificate via
+<code>SSL_CERT_FILE</code> for one installed-core command. It downloads and installs the demo
+into a fresh store, verifies that invocation is refused while inactive, then
+enables and invokes it. The server is stopped before activation and invocation.
+The final core snapshot covers both the local and HTTPS paths. No test disables
+TLS verification, and no workstation Homebrew installation is changed.</p>
+<p>For a wheel at a trusted HTTPS endpoint, the equivalent user commands are:</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span>install<span class="w"> </span>https://example.org/apizr_extension_probe-0.0.0-py3-none-any.whl<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--sha256<span class="w"> </span>EXPECTED_SHA256<span class="w"> </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+apizr<span class="w"> </span>plugins<span class="w"> </span>list<span class="w"> </span>--active<span class="w"> </span>--json<span class="w"> </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+<span class="c1"># The new installation is inactive; enable it explicitly before run.</span>
+apizr<span class="w"> </span>plugins<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>apizr-extension-probe<span class="w"> </span>--version<span class="w"> </span><span class="m">0</span>.0.0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>apizr-extension-probe<span class="w"> </span>describe<span class="w"> </span>--arguments<span class="w"> </span>arguments.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--plugins-dir<span class="w"> </span>/temporary/apizr-plugins
+</code></pre></div>
+<p><a href="https://github.com/Alien6-Studio/outerspace-apizr/blob/master/examples/extension-probe/invoke_installed.py"><code>examples/extension-probe/invoke_installed.py</code></a>
+is copied outside the checkout and run by that installed core:</p>
+<div class="highlight"><pre><span></span><code>CORE_PYTHON<span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>/temporary/invoke_installed.py<span class="w"> </span>/temporary/apizr-plugins
+</code></pre></div>
+<p>It explicitly selects the demonstration record and calls <code>invoke_extension</code> with
+that record's interpreter and module. Listing itself does not invoke anything.
+Run installation proofs only in disposable environments; do not update workstation
+Homebrew dependencies to reproduce the CI job. No publication is performed.</p>
+<h3 id="example-with-transitive-dependencies">Example with transitive dependencies</h3>
+<p>The reviewed local fixture in <code>examples/extension-locked</code> contains three packages:
+<code>apizr-locked-probe</code> imports <code>apizr-locked-helper</code>, which imports
+<code>apizr-locked-leaf</code>. Neither dependency has a plugin manifest.
+From the checkout, prepare these trusted example wheels and their lock:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>--locked<span class="w"> </span>python<span class="w"> </span>scripts/prepare_locked_extension.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--wheelhouse<span class="w"> </span>/tmp/apizr-locked-example/wheels
+</code></pre></div>
+<p>This explicit <strong>preparation</strong> step builds the three example projects and may
+fetch their build backend; plugin installation itself never builds or downloads
+dependencies. The script prints the plugin wheel, SHA-256 and lock paths. For
+other plugins, obtain trusted compatible wheels beforehand and write a lock
+containing every exact version and its independently verified SHA-256.</p>
+<p>Using a separately installed Apizr development wheel, run from outside the checkout:</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span>install<span class="w"> </span>/tmp/apizr-locked-example/wheels/apizr_locked_probe-1.0.0-py3-none-any.whl<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--sha256<span class="w"> </span>PRINTED_SHA256<span class="w"> </span>--requirements<span class="w"> </span>/tmp/apizr-locked-example/requirements.lock<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--wheelhouse<span class="w"> </span>/tmp/apizr-locked-example/wheels<span class="w"> </span>--plugins-dir<span class="w"> </span>/tmp/apizr-locked-store
+apizr<span class="w"> </span>plugins<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>apizr-locked-probe<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--plugins-dir<span class="w"> </span>/tmp/apizr-locked-store
+<span class="nb">printf</span><span class="w"> </span><span class="s1">'%s\n'</span><span class="w"> </span><span class="s1">'{}'</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/apizr-locked-example/arguments.json
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>apizr-locked-probe<span class="w"> </span>answer<span class="w"> </span>--arguments<span class="w"> </span>/tmp/apizr-locked-example/arguments.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--plugins-dir<span class="w"> </span>/tmp/apizr-locked-store
+</code></pre></div>
+<p>The response contains <code>"result": {"answer": 42}</code>. The existing installed-wheel
+proof executes this sequence on disposable uv/Homebrew runners and records
+<code>locked_dependencies_verified</code>, the dependency inventory and invocation response.
+Its before/after core file and distribution comparisons cover this sequence too:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>--locked<span class="w"> </span>python<span class="w"> </span>scripts/smoke_extension_packaging.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--work-dir<span class="w"> </span>/tmp/apizr-locked-proof
+</code></pre></div>
+<h2 id="portable-project-locks-and-local-preferences">Portable project locks and local preferences</h2>
+<p>Development 0.4 adds <a href="../project-plugin-locks/">project declarations, explicit user preferences and portable artifact locks</a>. Use <code>plugins lock create/check</code> to validate artifacts and <code>plugins sync --project apizr.toml --lock apizr.plugins.lock.json --wheelhouse ./wheels --dry-run --json</code> to preview additive installation. Remove <code>--dry-run</code> to install the missing versions explicitly. <code>--user-config</code> selects local store preferences on all plugin commands and <code>mcp serve</code>; explicit <code>--plugins-dir</code> takes precedence. Neither project declarations nor locks activate anything. Synchronization keeps existing versions and activations; removal remains future work. See the linked page for partial results, resuming, cancellation and installed-wheel proofs.</p>
+<h2 id="controlled-locked-updates">Controlled locked updates</h2>
+<p>Development <strong>0.4 remains unreleased</strong>. <code>plugins update</code> prepares one explicitly
+locked version in a separate environment. It never modifies an existing
+environment in place or removes an older version. There is no automatic version
+selection, catalogue, dependency download or source build. A complete local
+wheelhouse and an already installed Python are required; uv is needed only when
+the target environment is missing.</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span>update<span class="w"> </span>NAME<span class="w"> </span>--from-version<span class="w"> </span>INSTALLED_VERSION<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project<span class="w"> </span>/path/next/apizr.toml<span class="w"> </span>--lock<span class="w"> </span>/path/next/apizr.plugins.lock.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--wheelhouse<span class="w"> </span>/path/wheels<span class="w"> </span>--dry-run<span class="w"> </span>--json
+</code></pre></div>
+<p>Remove <code>--dry-run</code> to prepare the target. Add <code>--activate</code> only when you also want
+to select it. <code>--plugins-dir</code> overrides the explicitly selected <code>--user-config</code>
+store, then the platform default. The project cannot choose the store or request
+activation. There is no implicit user-file discovery. <code>--timeout-ms</code> retains the
+sync default of 120000 ms and inclusive 1–600000 ms bounds; Python callers can
+supply a cancellation Event.</p>
+<p>The whole project/lock and artifact set must be coherent, but only NAME and its
+closure are installed. The source version must already be registered. The target
+comes exclusively from the project and lock. No version ordering is inferred,
+so an explicitly requested older version is allowed. A target equal to the source
+or already installed with the same complete identity is reused. Different hashes,
+manifest module/protocol or requirements/dependency identity under the same
+name/version are refused without replacement. Requirements retain their original
+byte identity; no normalization or rewriting takes place.</p>
+<p>Dry-run creates no absent store, changes no persistent state and starts neither
+uv nor a plugin interpreter. <code>interpreter_verified: false</code> records the remaining
+apply-time check. Apply retains the validated private snapshot used by sync,
+installs through its offline backend and probes the registered target using the
+same fixed, bounded <code>-I -S -B</code> standard-library program. It never imports the
+plugin or project and does not run a business-operation health check. Structural
+viability and Python target agreement do not prove functional compatibility with
+every project or cryptographic integrity of every virtualenv file.</p>
+<h3 id="conditional-activation-and-concurrent-operators">Conditional activation and concurrent operators</h3>
+<p>Without <code>--activate</code>, even an inactive plugin or a third active version remains
+exactly as selected. With <code>--activate</code>, the starting activation must match the
+complete source binding or the already matching target. Inactive plugins must
+first be selected with <code>enable</code>; a third selection is refused before installation.</p>
+<p>Update captures the source and activation under the store lock, releases it while
+preparing/probing the target, then reacquires it. It compares the complete source
+and target records (including environment IDs) and the expected activation before
+atomically writing the target selection. Other plugin activations are preserved.
+A concurrent disable or different selection causes a refusal, not an override.
+Identical concurrent requests can converge when the same verified target has
+already been selected. Competing requests for different targets cannot both use
+the same original active source. These are current-record comparisons, not a
+history of intervening operator actions.</p>
+<p>Installation and activation are separate steps, not a global transaction. An
+installer failure preserves A and its activation. If B installs successfully but
+the activation comparison fails, B remains installed and the current activation
+is retained. Correct the explicit precondition if appropriate and rerun the same
+command: the verified B is reused, including when uv is absent. Never rebuild or
+replace artifacts under the same locked identity to obtain a successful retry.</p>
+<p>An already admitted invocation or MCP session can finish on A after B is selected;
+A and its dependencies are retained. New admissions use the activation they
+observe. Explicit rollback is <code>plugins enable NAME --version OLD_VERSION</code>; update
+never initiates rollback based on executing a plugin operation.</p>
+<h3 id="result-and-failure-contract">Result and failure contract</h3>
+<p>The typed Python operation is independent of the CLI:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apizr.plugin_update</span><span class="w"> </span><span class="kn">import</span> <span class="n">update_plugin</span>
+
+<span class="n">cancel</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">update_plugin</span><span class="p">(</span>
+    <span class="s2">"apizr-update-probe"</span><span class="p">,</span>
+    <span class="s2">"1.0.0"</span><span class="p">,</span>
+    <span class="n">Path</span><span class="p">(</span><span class="s2">"2.0.0/apizr.toml"</span><span class="p">),</span>
+    <span class="n">Path</span><span class="p">(</span><span class="s2">"2.0.0/apizr.plugins.lock.json"</span><span class="p">),</span>
+    <span class="n">Path</span><span class="p">(</span><span class="s2">"wheels"</span><span class="p">),</span>
+    <span class="n">directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">"plugins"</span><span class="p">),</span>
+    <span class="n">activate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">timeout_ms</span><span class="o">=</span><span class="mi">120000</span><span class="p">,</span>
+    <span class="n">cancel</span><span class="o">=</span><span class="n">cancel</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">exit_code</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">diagnostics</span>
+</code></pre></div>
+<p><code>--json</code> keeps stdout exclusively <code>apizr.plugin-update/v1</code>, even for recoverable
+partial failure. The document includes:</p>
+<ul>
+<li><code>mode</code>, <code>state</code>, <code>exit_code</code>, plugin/source version, full captured <code>source</code>
+  installation, locked <code>target</code>, observed <code>target_installation</code>, <code>python_target</code>
+  and <code>lock_sha256</code>. Installation records reuse the existing contract, including
+  the local interpreter path and environment identity.</li>
+<li><code>installation</code>: <code>not_attempted</code>, <code>planned</code>, <code>reused</code>, <code>installed</code>, <code>failed</code> or
+  <code>unconfirmed</code>; <code>interpreter_verified</code> reports a completed target probe.</li>
+<li><code>activation_requested</code>, distinct <code>activation</code> outcome, and the observed
+  <code>active_before</code>/<code>active_after</code> records. A null activation with <code>before_known</code> or
+  <code>after_known</code> true means inactive; false means it could not be established.</li>
+<li>Stable redacted <code>diagnostics</code>; never raw uv output or the parent environment.</li>
+</ul>
+<p><code>activation</code> distinguishes <code>not_requested</code>, <code>not_attempted</code>, <code>planned</code>, <code>changed</code>,
+<code>unchanged</code>, <code>refused</code>, <code>observed_target</code> and <code>unconfirmed</code>. After interruption,
+<code>observed_target</code> only reports the selection seen during reconciliation; it does
+not convert that interrupted command into success or claim which writer selected
+it. On success, <code>changed</code> records this call's atomic write; the separate final
+observation must still agree with the requested target. No selection is reserved
+against future operator actions after the command returns.</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Exit</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>planned</code></td>
+<td>0</td>
+<td>Simulation without blocking divergence; no mutation</td>
+</tr>
+<tr>
+<td><code>complete</code></td>
+<td>0</td>
+<td>Target verified and, if requested, activation successful</td>
+</tr>
+<tr>
+<td><code>refused</code></td>
+<td>1 or 2</td>
+<td>Before mutation: divergence/precondition (1) or operational/input error (2)</td>
+</tr>
+<tr>
+<td><code>partial</code></td>
+<td>2</td>
+<td>Installation/activation work started but the full request failed</td>
+</tr>
+<tr>
+<td><code>interrupted</code></td>
+<td>130</td>
+<td>Cancellation; observed published progress retained</td>
+</tr>
+<tr>
+<td><code>unconfirmed</code></td>
+<td>2 or 130</td>
+<td>State/cleanup could not be confirmed; 130 retains user interruption</td>
+</tr>
+</tbody>
+</table>
+<p>The deadline spans preparation, bounded store waits, offline uv and the target
+probe. Existing per-command and size limits from sync apply. Cleanup has its
+separate two-second grace; reconciliation rereads published state under the lock
+with a further two-second budget, including around atomic activation writes.
+No successful environment is deleted on failure. Cancellation stops supervised
+work, reaps the direct process and releases the lock. SIGKILL, loss of the machine,
+detached descendants and noninterruptible OS operations retain the documented
+limits: a final report and immediate cleanup cannot be guaranteed in those cases.</p>
+<h3 id="complete-installed-wheel-example">Complete installed-wheel example</h3>
+<p>From the development checkout, use a fresh work directory outside it. Preparation
+may download the core/build dependencies; update itself is strictly offline.
+The trusted fixture uses the existing plugin → helper → leaf example, with
+versions A/B that return 42/73 through different transitive dependencies.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">work</span><span class="o">=</span><span class="k">$(</span>mktemp<span class="w"> </span>-d<span class="k">)</span>
+uv<span class="w"> </span>build<span class="w"> </span>--wheel<span class="w"> </span>--out-dir<span class="w"> </span><span class="s2">"</span><span class="nv">$work</span><span class="s2">/dist"</span>
+uv<span class="w"> </span>venv<span class="w"> </span>--no-python-downloads<span class="w"> </span>--python<span class="w"> </span>python3<span class="w"> </span><span class="s2">"</span><span class="nv">$work</span><span class="s2">/core"</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--python<span class="w"> </span><span class="s2">"</span><span class="nv">$work</span><span class="s2">/core/bin/python"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$work</span><span class="s2">"</span>/dist/outerspace_apizr-*.whl
+python3<span class="w"> </span>scripts/prepare_update_extensions.py<span class="w"> </span>--work-dir<span class="w"> </span><span class="s2">"</span><span class="nv">$work</span><span class="s2">/update"</span>
+<span class="nv">core_python</span><span class="o">=</span><span class="s2">"</span><span class="nv">$work</span><span class="s2">/core/bin/python"</span>
+<span class="nb">cd</span><span class="w"> </span><span class="s2">"</span><span class="nv">$work</span><span class="s2">/update"</span>
+<span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span>lock<span class="w"> </span>create<span class="w"> </span>--project<span class="w"> </span><span class="m">1</span>.0.0/apizr.toml<span class="w"> </span>--wheelhouse<span class="w"> </span>wheels<span class="w"> </span>--output<span class="w"> </span><span class="m">1</span>.0.0/apizr.plugins.lock.json<span class="w"> </span>--json
+<span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span>lock<span class="w"> </span>create<span class="w"> </span>--project<span class="w"> </span><span class="m">2</span>.0.0/apizr.toml<span class="w"> </span>--wheelhouse<span class="w"> </span>wheels<span class="w"> </span>--output<span class="w"> </span><span class="m">2</span>.0.0/apizr.plugins.lock.json<span class="w"> </span>--json
+<span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span>sync<span class="w"> </span>--project<span class="w"> </span><span class="m">1</span>.0.0/apizr.toml<span class="w"> </span>--lock<span class="w"> </span><span class="m">1</span>.0.0/apizr.plugins.lock.json<span class="w"> </span>--wheelhouse<span class="w"> </span>wheels<span class="w"> </span>--user-config<span class="w"> </span>user.toml<span class="w"> </span>--json
+<span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>apizr-update-probe<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--user-config<span class="w"> </span>user.toml
+<span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>apizr-update-probe<span class="w"> </span>answer<span class="w"> </span>--arguments<span class="w"> </span>arguments.json<span class="w"> </span>--user-config<span class="w"> </span>user.toml
+<span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span>update<span class="w"> </span>apizr-update-probe<span class="w"> </span>--from-version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--project<span class="w"> </span><span class="m">2</span>.0.0/apizr.toml<span class="w"> </span>--lock<span class="w"> </span><span class="m">2</span>.0.0/apizr.plugins.lock.json<span class="w"> </span>--wheelhouse<span class="w"> </span>wheels<span class="w"> </span>--user-config<span class="w"> </span>user.toml<span class="w"> </span>--dry-run<span class="w"> </span>--activate<span class="w"> </span>--json
+<span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span>update<span class="w"> </span>apizr-update-probe<span class="w"> </span>--from-version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--project<span class="w"> </span><span class="m">2</span>.0.0/apizr.toml<span class="w"> </span>--lock<span class="w"> </span><span class="m">2</span>.0.0/apizr.plugins.lock.json<span class="w"> </span>--wheelhouse<span class="w"> </span>wheels<span class="w"> </span>--user-config<span class="w"> </span>user.toml<span class="w"> </span>--json
+</code></pre></div>
+<p>The first invocation returns 42. Preparing B still leaves A active. The two locks
+have different output paths: <code>lock create</code> refuses to overwrite a different file.
+Do not rebuild wheels or edit original requirements after locking.</p>
+<div class="highlight"><pre><span></span><code><span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span>update<span class="w"> </span>apizr-update-probe<span class="w"> </span>--from-version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--project<span class="w"> </span><span class="m">2</span>.0.0/apizr.toml<span class="w"> </span>--lock<span class="w"> </span><span class="m">2</span>.0.0/apizr.plugins.lock.json<span class="w"> </span>--wheelhouse<span class="w"> </span>wheels<span class="w"> </span>--user-config<span class="w"> </span>user.toml<span class="w"> </span>--activate<span class="w"> </span>--json
+<span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>apizr-update-probe<span class="w"> </span>answer<span class="w"> </span>--arguments<span class="w"> </span>arguments.json<span class="w"> </span>--user-config<span class="w"> </span>user.toml
+</code></pre></div>
+<p>B now returns 73. Repeat the update command: both installation and activation are
+reused. To return explicitly to A without reinstallation:</p>
+<div class="highlight"><pre><span></span><code><span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>apizr-update-probe<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--user-config<span class="w"> </span>user.toml
+<span class="s2">"</span><span class="nv">$core_python</span><span class="s2">"</span><span class="w"> </span>-I<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>apizr.cli<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>apizr-update-probe<span class="w"> </span>answer<span class="w"> </span>--arguments<span class="w"> </span>arguments.json<span class="w"> </span>--user-config<span class="w"> </span>user.toml
+</code></pre></div>
+<p>The result is again 42. After an activation conflict, inspect <code>plugins list
+--active --json --user-config user.toml</code> and respect the current operator choice.
+If you intentionally restore A with that explicit enable command, rerunning
+update reuses B and attempts the conditional transition again.</p>
+<p>The existing packaging workflow runs these operations from installed wheels on
+Linux 3.11–3.14, macOS 3.11/3.14 and disposable Homebrew. It retains
+<code>update-evidence.json</code>, <code>backend-network.jsonl</code>, <code>update-summary.json</code> and
+<code>core-evidence.json</code>: dry-run equality, real uv failure/retry, prepare-only behavior,
+transition/repetition with uv absent, explicit rollback, original-environment and
+core file/distribution equality. OS network isolation covers Python and uv children.
+Concurrent activation races, interruption reconciliation and in-flight calls are
+also covered by explicitly synchronized tests. No Homebrew changes are needed on
+the developer machine. Catalogue and automatic selection/download remain separate work; <code>--activate</code> is not a general permission engine.</p>
+<h2 id="remove-one-unused-version">Remove one unused version</h2>
+<p><code>disable</code> blocks future admissions; it does not stop an already admitted call or
+MCP session. <code>uninstall</code> removes one exact version only after it is inactive and
+no protected user remains. It never disables a plugin, kills its users, launches
+an interpreter, contacts the network or invokes uv. There is no <code>--force</code> option.</p>
+<p>For a plugin whose versions <code>1.0.0</code> and <code>2.0.0</code> are already installed, first select
+and test the version you intend to retain, then preview and remove the old one:</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>my-plugin<span class="w"> </span>--version<span class="w"> </span><span class="m">2</span>.0.0<span class="w"> </span>--plugins-dir<span class="w"> </span>/absolute/plugin-store
+apizr<span class="w"> </span>plugins<span class="w"> </span>uninstall<span class="w"> </span>my-plugin<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--dry-run<span class="w"> </span>--json<span class="w"> </span>--plugins-dir<span class="w"> </span>/absolute/plugin-store
+apizr<span class="w"> </span>plugins<span class="w"> </span>uninstall<span class="w"> </span>my-plugin<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--json<span class="w"> </span>--plugins-dir<span class="w"> </span>/absolute/plugin-store
+apizr<span class="w"> </span>plugins<span class="w"> </span>uninstall<span class="w"> </span>my-plugin<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--json<span class="w"> </span>--plugins-dir<span class="w"> </span>/absolute/plugin-store
+</code></pre></div>
+<p>Replace <code>my-plugin</code> and the store with your installed plugin's actual name and
+location. The preview reports <code>planned</code>; successful removal reports <code>complete</code>;
+the repeated removal reports <code>absent</code>. To remove the active version instead,
+explicitly run <code>plugins disable my-plugin</code>, close its sessions and wait for its
+calls to finish. An ongoing use reports <code>busy</code> without terminating anything.
+<code>--user-config</code> remains explicit, and <code>--plugins-dir</code> overrides its store setting.</p>
+<h3 id="usage-protection-and-migration">Usage protection and migration</h3>
+<p>Apizr coordinates admission and removal under the store lock. A separate shared
+lock belongs to each installed generation; the global store lock is released
+before an invocation or session. The usage descriptor survives the MCP launcher's
+<code>execve</code> and is passed to extension processes and interpreter probes. Removal
+checks an exclusive usage lock without waiting for users to exit. Lock files
+remain as small, stable metadata after removal to prevent lock-identity races.</p>
+<p>This covers calls and sessions admitted by this implementation. <strong>Before first
+using uninstall after upgrading</strong>, stop sessions opened by older Apizr launchers
+and processes launched directly with a plugin interpreter. Restart managed
+sessions with the upgraded launcher. Apizr cannot universally detect these
+unprotected processes. Trusted plugins must not deliberately close the inherited
+usage descriptor. These locks coordinate cooperating local processes; they are
+not a sandbox or a defense against a user who can rewrite the store itself.</p>
+<p>A supervisor cleanup failure leaves a conservative <code>plugin_usage_unconfirmed</code>
+guard. Removal is refused until the actual process/store state has been reviewed;
+there is no automatic repair or assumption that the process has stopped.</p>
+<h3 id="interruption-and-exact-cleanup">Interruption and exact cleanup</h3>
+<p>Removal writes a persistent cleanup intent containing the full installation
+record and the environment directory identity. It then retires the inventory
+record and erases that generation through directory descriptors. Internal
+symlinks are unlinked, never followed; the shared Python used by a virtualenv is
+not deleted. A redirected environment or inconsistent record is refused.</p>
+<p><strong>Inventory retirement and file deletion are separate steps, not an atomic
+transaction.</strong> A pending generation cannot be enabled, invoked or reused by
+install/sync/update, including after interruption between those steps. Rerun the
+same <code>uninstall NAME --version VERSION</code> to resume. It refuses a changed generation
+rather than deleting a new installation with the same name/version. Other plugins,
+active versions, project declarations and locks are untouched. A later <code>sync</code>
+can reinstall a removed version that remains declared in the project lock.</p>
+<p><code>--timeout-ms</code> bounds cooperative lock waiting and traversal (default 30000,
+range 1–600000). One attempt traverses at most 100000 entries and 64 directory
+levels; a limit leaves cleanup pending. A failure may use up to two additional
+seconds to observe committed state. An OS filesystem call itself may block;
+these are not hard real-time or filesystem quota guarantees.</p>
+<p><code>--json</code> returns <code>apizr.plugin-uninstall/v1</code>: <code>mode</code>, <code>state</code>, <code>exit_code</code>,
+<code>plugin</code>, <code>version</code>, the exact <code>target</code>, <code>inventory_removed</code>,
+<code>environment_removed</code>, <code>cleanup_pending</code>, <code>effects</code> and fixed-code <code>diagnostics</code>.
+Preview effects describe intended changes; apply effects describe observed ones.</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Meaning</th>
+<th>Exit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>planned</code></td>
+<td>Preview allowed; no removal performed</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>complete</code></td>
+<td>Record retired, environment removed, intent cleared</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>absent</code></td>
+<td>No matching installation or pending cleanup</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>active</code> / <code>busy</code></td>
+<td>Explicit disable or end of current use required</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>refused</code></td>
+<td>Invalid input, identity/state mismatch or unavailable storage</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>incomplete</code></td>
+<td>Cleanup did not finish; inspect effects and retry</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>interrupted</code></td>
+<td>Cancellation; inspect persisted progress</td>
+<td>130</td>
+</tr>
+<tr>
+<td><code>unconfirmed</code></td>
+<td>Process cleanup or final store state cannot be established</td>
+<td>2, or 130 after cancellation</td>
+</tr>
+</tbody>
+</table>
+<p>The typed API performs the same operation without printing or exiting:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apizr.local_plugins</span><span class="w"> </span><span class="kn">import</span> <span class="n">uninstall_extension</span>
+
+<span class="n">cancel</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>  <span class="c1"># Another thread can set this to cancel cooperatively.</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">uninstall_extension</span><span class="p">(</span>
+    <span class="s2">"my-plugin"</span><span class="p">,</span>
+    <span class="s2">"1.0.0"</span><span class="p">,</span>
+    <span class="n">directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">"/absolute/plugin-store"</span><span class="p">),</span>
+    <span class="n">dry_run</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">timeout_ms</span><span class="o">=</span><span class="mi">30000</span><span class="p">,</span>
+    <span class="n">cancel</span><span class="o">=</span><span class="n">cancel</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span>
+</code></pre></div>
+<p>The installed-wheel update proof above also exercises A → update to B → select B
+→ remove A → invoke B → repeat removal, with OS network denial and before/after
+core inventories. The installed MCP proof uses a real SDK session: disable,
+refuse removal while connected, complete another call, close, then remove.
+Homebrew installation qualification runs only on disposable CI runners.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../project-plugin-locks/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Declarations and plugin locks (0.4)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Declarations and plugin locks (0.4)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../apizr-mcp-server/" class="md-footer__link md-footer__link--next" aria-label="Next: Apizr analysis MCP server (0.4)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Apizr analysis MCP server (0.4)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023–2026 Alien6 · <a href="#__consent">Cookie settings</a>
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+
+<h4>Cookie consent</h4>
+<p>Optional GitHub requests show repository statistics. They are off until you choose them. You can reject them or change your choice at any time.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+    
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" >
+      <span class="task-list-indicator"></span>
+      GitHub repository statistics
+    </label>
+  </li>
+
+      
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">Accept</button>
+    
+    
+    
+  
+    
+    
+      <button type="reset" class="md-button md-button--primary">Reject</button>
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">Manage settings</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.tooltips", "header.autohide", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/javascripts/video.js"></script>
+      
+    
+  </body>
+</html>

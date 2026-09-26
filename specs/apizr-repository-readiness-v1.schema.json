@@ -1,0 +1,1137 @@
+{
+  "$defs": {
+    "Assessment": {
+      "additionalProperties": false,
+      "properties": {
+        "can_generate_interface": {
+          "title": "Can Generate Interface",
+          "type": "boolean"
+        },
+        "capability_id": {
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "dimensions": {
+          "$ref": "#/$defs/Dimensions"
+        },
+        "effects": {
+          "$ref": "#/$defs/Effects"
+        },
+        "in_ir": {
+          "title": "In Ir",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "state": {
+          "$ref": "#/$defs/State"
+        }
+      },
+      "required": [
+        "capability_id",
+        "source",
+        "in_ir",
+        "dimensions",
+        "effects",
+        "state",
+        "can_generate_interface"
+      ],
+      "title": "Assessment",
+      "type": "object"
+    },
+    "DeclarationAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "effects": {
+          "$ref": "#/$defs/Effects"
+        },
+        "in_catalog": {
+          "title": "In Catalog",
+          "type": "boolean"
+        },
+        "local_readiness": {
+          "$ref": "#/$defs/Assessment"
+        },
+        "reasons": {
+          "items": {
+            "$ref": "#/$defs/apizr__repository_readiness__model__Reason"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "relationships": {
+          "$ref": "#/$defs/Relationships"
+        },
+        "source_path": {
+          "title": "Source Path",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/State"
+        }
+      },
+      "required": [
+        "capability_id",
+        "source_path",
+        "local_readiness",
+        "in_catalog",
+        "effects",
+        "relationships",
+        "reasons",
+        "state"
+      ],
+      "title": "DeclarationAssessment",
+      "type": "object"
+    },
+    "Dependency": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "effects": {
+          "$ref": "#/$defs/Effects"
+        },
+        "local_readiness": {
+          "$ref": "#/$defs/Assessment"
+        }
+      },
+      "required": [
+        "capability_id",
+        "local_readiness",
+        "effects"
+      ],
+      "title": "Dependency",
+      "type": "object"
+    },
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "Dimension": {
+      "additionalProperties": false,
+      "properties": {
+        "reasons": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/apizr__readiness__model__Reason"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "state": {
+          "$ref": "#/$defs/State"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "Dimension",
+      "type": "object"
+    },
+    "Dimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "binding": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "execution": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "inputs": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "outputs": {
+          "$ref": "#/$defs/Dimension"
+        }
+      },
+      "required": [
+        "binding",
+        "execution",
+        "inputs",
+        "outputs"
+      ],
+      "title": "Dimensions",
+      "type": "object"
+    },
+    "Effect": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "unknown"
+        },
+        "value": {
+          "$ref": "#/$defs/EffectValue",
+          "default": "unknown"
+        }
+      },
+      "title": "Effect",
+      "type": "object"
+    },
+    "EffectRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "require_false": {
+          "default": [],
+          "items": {
+            "enum": [
+              "filesystem_read",
+              "filesystem_write",
+              "network",
+              "environment",
+              "subprocess",
+              "state_mutation",
+              "secrets",
+              "external_service"
+            ],
+            "type": "string"
+          },
+          "title": "Require False",
+          "type": "array"
+        },
+        "require_known": {
+          "default": [],
+          "items": {
+            "enum": [
+              "filesystem_read",
+              "filesystem_write",
+              "network",
+              "environment",
+              "subprocess",
+              "state_mutation",
+              "secrets",
+              "external_service"
+            ],
+            "type": "string"
+          },
+          "title": "Require Known",
+          "type": "array"
+        }
+      },
+      "title": "EffectRequirements",
+      "type": "object"
+    },
+    "EffectValue": {
+      "enum": [
+        "true",
+        "false",
+        "unknown"
+      ],
+      "title": "EffectValue",
+      "type": "string"
+    },
+    "Effects": {
+      "additionalProperties": false,
+      "properties": {
+        "environment": {
+          "$ref": "#/$defs/Effect"
+        },
+        "external_service": {
+          "$ref": "#/$defs/Effect"
+        },
+        "filesystem_read": {
+          "$ref": "#/$defs/Effect"
+        },
+        "filesystem_write": {
+          "$ref": "#/$defs/Effect"
+        },
+        "network": {
+          "$ref": "#/$defs/Effect"
+        },
+        "secrets": {
+          "$ref": "#/$defs/Effect"
+        },
+        "state_mutation": {
+          "$ref": "#/$defs/Effect"
+        },
+        "subprocess": {
+          "$ref": "#/$defs/Effect"
+        }
+      },
+      "title": "Effects",
+      "type": "object"
+    },
+    "Evidence": {
+      "enum": [
+        "declared",
+        "observed",
+        "inferred",
+        "unknown"
+      ],
+      "title": "Evidence",
+      "type": "string"
+    },
+    "ExecutionRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "modes": {
+          "default": [
+            "local-process",
+            "oci-container"
+          ],
+          "items": {
+            "enum": [
+              "direct",
+              "local-process",
+              "oci-container"
+            ],
+            "type": "string"
+          },
+          "title": "Modes",
+          "type": "array"
+        },
+        "require_controls": {
+          "default": [],
+          "items": {
+            "enum": [
+              "wall_timeout",
+              "input_limit",
+              "output_limit",
+              "environment",
+              "working_directory",
+              "network_deny",
+              "filesystem_sandbox",
+              "subprocess_deny",
+              "memory_limit",
+              "cpu_limit",
+              "pid_limit"
+            ],
+            "type": "string"
+          },
+          "title": "Require Controls",
+          "type": "array"
+        }
+      },
+      "title": "ExecutionRequirements",
+      "type": "object"
+    },
+    "ImportDeclaration": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "enum": [
+            "unconditional",
+            "conditional"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "column": {
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        },
+        "declared_module": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Declared Module"
+        },
+        "end_column": {
+          "minimum": 0,
+          "title": "End Column",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "evidence": {
+          "const": "observed",
+          "default": "observed",
+          "title": "Evidence",
+          "type": "string"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "names": {
+          "items": {
+            "$ref": "#/$defs/ImportedName"
+          },
+          "title": "Names",
+          "type": "array"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "relative_level": {
+          "minimum": 0,
+          "title": "Relative Level",
+          "type": "integer"
+        },
+        "scope": {
+          "enum": [
+            "module_scope",
+            "capability_scope"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "syntax": {
+          "enum": [
+            "import",
+            "from"
+          ],
+          "title": "Syntax",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "line",
+        "end_line",
+        "column",
+        "end_column",
+        "availability",
+        "source",
+        "scope",
+        "syntax",
+        "declared_module",
+        "relative_level",
+        "names"
+      ],
+      "title": "ImportDeclaration",
+      "type": "object"
+    },
+    "ImportedName": {
+      "additionalProperties": false,
+      "properties": {
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alias"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "resolution": {
+          "enum": [
+            "module",
+            "capability",
+            "external",
+            "unresolved",
+            "ambiguous",
+            "star"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "resolution_evidence": {
+          "default": "unknown",
+          "enum": [
+            "inferred",
+            "unknown"
+          ],
+          "title": "Resolution Evidence",
+          "type": "string"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        }
+      },
+      "required": [
+        "name",
+        "resolution"
+      ],
+      "title": "ImportedName",
+      "type": "object"
+    },
+    "ModeCompatibility": {
+      "additionalProperties": false,
+      "properties": {
+        "backend_version": {
+          "enum": [
+            "direct",
+            "apizr.local-process/v1",
+            "apizr.oci-container/v1"
+          ],
+          "title": "Backend Version",
+          "type": "string"
+        },
+        "compatible": {
+          "title": "Compatible",
+          "type": "boolean"
+        },
+        "missing_controls": {
+          "items": {
+            "enum": [
+              "wall_timeout",
+              "input_limit",
+              "output_limit",
+              "environment",
+              "working_directory",
+              "network_deny",
+              "filesystem_sandbox",
+              "subprocess_deny",
+              "memory_limit",
+              "cpu_limit",
+              "pid_limit"
+            ],
+            "type": "string"
+          },
+          "title": "Missing Controls",
+          "type": "array"
+        },
+        "mode": {
+          "enum": [
+            "direct",
+            "local-process",
+            "oci-container"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "runtime_availability": {
+          "const": "not_assessed",
+          "default": "not_assessed",
+          "title": "Runtime Availability",
+          "type": "string"
+        },
+        "supported_controls": {
+          "items": {
+            "enum": [
+              "wall_timeout",
+              "input_limit",
+              "output_limit",
+              "environment",
+              "working_directory",
+              "network_deny",
+              "filesystem_sandbox",
+              "subprocess_deny",
+              "memory_limit",
+              "cpu_limit",
+              "pid_limit"
+            ],
+            "type": "string"
+          },
+          "title": "Supported Controls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "mode",
+        "backend_version",
+        "supported_controls",
+        "missing_controls",
+        "compatible"
+      ],
+      "title": "ModeCompatibility",
+      "type": "object"
+    },
+    "Relationship": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "enum": [
+            "unconditional",
+            "conditional"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "column": {
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        },
+        "end_column": {
+          "minimum": 0,
+          "title": "End Column",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/$defs/RelationshipKind"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "resolution_evidence": {
+          "enum": [
+            "observed",
+            "inferred"
+          ],
+          "title": "Resolution Evidence",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "syntax_evidence": {
+          "const": "observed",
+          "default": "observed",
+          "title": "Syntax Evidence",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "line",
+        "end_line",
+        "column",
+        "end_column",
+        "availability",
+        "source",
+        "target",
+        "kind",
+        "resolution_evidence"
+      ],
+      "title": "Relationship",
+      "type": "object"
+    },
+    "RelationshipKind": {
+      "enum": [
+        "contains",
+        "imports_module",
+        "imports_external_module",
+        "imports_capability",
+        "calls_capability",
+        "references_capability"
+      ],
+      "title": "RelationshipKind",
+      "type": "string"
+    },
+    "RelationshipRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "require_resolved": {
+          "default": true,
+          "title": "Require Resolved",
+          "type": "boolean"
+        }
+      },
+      "title": "RelationshipRequirements",
+      "type": "object"
+    },
+    "Relationships": {
+      "additionalProperties": false,
+      "properties": {
+        "dependencies": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/apizr__graph__model__Diagnostic"
+          },
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "direct": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Relationship"
+          },
+          "title": "Direct",
+          "type": "array"
+        },
+        "imports": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ImportDeclaration"
+          },
+          "title": "Imports",
+          "type": "array"
+        },
+        "module_imports": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Relationship"
+          },
+          "title": "Module Imports",
+          "type": "array"
+        },
+        "state": {
+          "enum": [
+            "resolved",
+            "partial",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "Relationships",
+      "type": "object"
+    },
+    "RepositoryReadinessPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "effects": {
+          "$ref": "#/$defs/EffectRequirements"
+        },
+        "execution": {
+          "$ref": "#/$defs/ExecutionRequirements"
+        },
+        "relationships": {
+          "$ref": "#/$defs/RelationshipRequirements"
+        },
+        "require_interface": {
+          "default": false,
+          "title": "Require Interface",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "apizr.repository-readiness-policy/v1",
+          "default": "apizr.repository-readiness-policy/v1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "title": "RepositoryReadinessPolicy",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "symbol": {
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module",
+        "symbol",
+        "line",
+        "end_line"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "State": {
+      "enum": [
+        "ready",
+        "conditional",
+        "unsupported",
+        "ambiguous"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "apizr__graph__model__Code": {
+      "enum": [
+        "APIZR-GRAPH-001",
+        "APIZR-GRAPH-002",
+        "APIZR-GRAPH-003",
+        "APIZR-GRAPH-004",
+        "APIZR-GRAPH-005",
+        "APIZR-GRAPH-006",
+        "APIZR-GRAPH-007",
+        "APIZR-GRAPH-008",
+        "APIZR-GRAPH-009",
+        "APIZR-GRAPH-010",
+        "APIZR-GRAPH-011"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "apizr__graph__model__Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/apizr__graph__model__Code"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "enum": [
+                "ast_nodes",
+                "relationships",
+                "calls",
+                "imports",
+                "parser"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "path"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "apizr__readiness__model__Code": {
+      "enum": [
+        "APIZR-READY-001",
+        "APIZR-READY-002",
+        "APIZR-READY-003",
+        "APIZR-READY-004",
+        "APIZR-READY-005",
+        "APIZR-READY-006",
+        "APIZR-READY-007",
+        "APIZR-READY-008",
+        "APIZR-READY-009",
+        "APIZR-READY-010",
+        "APIZR-READY-011",
+        "APIZR-READY-012",
+        "APIZR-READY-013",
+        "APIZR-READY-014",
+        "APIZR-READY-015",
+        "APIZR-READY-016",
+        "APIZR-READY-017",
+        "APIZR-READY-018"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "apizr__readiness__model__Reason": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/apizr__readiness__model__Code"
+        },
+        "evidence": {
+          "const": "inferred",
+          "default": "inferred",
+          "title": "Evidence",
+          "type": "string"
+        },
+        "line": {
+          "title": "Line",
+          "type": "integer"
+        },
+        "parameter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parameter"
+        }
+      },
+      "required": [
+        "code",
+        "line"
+      ],
+      "title": "Reason",
+      "type": "object"
+    },
+    "apizr__repository__model__Code": {
+      "enum": [
+        "APIZR-REPO-001",
+        "APIZR-REPO-002",
+        "APIZR-REPO-003",
+        "APIZR-REPO-004",
+        "APIZR-REPO-005",
+        "APIZR-REPO-006",
+        "APIZR-REPO-007",
+        "APIZR-REPO-008",
+        "APIZR-REPO-009",
+        "APIZR-REPO-010"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "apizr__repository__model__Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/apizr__repository__model__Code"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "enum": [
+                "sources",
+                "bytes",
+                "entries",
+                "depth"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "path"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "apizr__repository_readiness__model__Code": {
+      "enum": [
+        "APIZR-REPOREADY-001",
+        "APIZR-REPOREADY-002",
+        "APIZR-REPOREADY-003",
+        "APIZR-REPOREADY-004",
+        "APIZR-REPOREADY-005",
+        "APIZR-REPOREADY-006",
+        "APIZR-REPOREADY-007",
+        "APIZR-REPOREADY-008"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "apizr__repository_readiness__model__Reason": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/apizr__repository_readiness__model__Code"
+        },
+        "effect": {
+          "anyOf": [
+            {
+              "enum": [
+                "filesystem_read",
+                "filesystem_write",
+                "network",
+                "environment",
+                "subprocess",
+                "state_mutation",
+                "secrets",
+                "external_service"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effect"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Reason",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "assessments": {
+      "items": {
+        "$ref": "#/$defs/DeclarationAssessment"
+      },
+      "title": "Assessments",
+      "type": "array"
+    },
+    "catalog_diagnostics": {
+      "items": {
+        "$ref": "#/$defs/apizr__repository__model__Diagnostic"
+      },
+      "title": "Catalog Diagnostics",
+      "type": "array"
+    },
+    "catalog_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "catalog_exit_code": {
+      "enum": [
+        0,
+        1
+      ],
+      "title": "Catalog Exit Code",
+      "type": "integer"
+    },
+    "execution": {
+      "items": {
+        "$ref": "#/$defs/ModeCompatibility"
+      },
+      "title": "Execution",
+      "type": "array"
+    },
+    "graph_complete": {
+      "title": "Graph Complete",
+      "type": "boolean"
+    },
+    "graph_diagnostics": {
+      "items": {
+        "$ref": "#/$defs/apizr__graph__model__Diagnostic"
+      },
+      "title": "Graph Diagnostics",
+      "type": "array"
+    },
+    "graph_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "policy": {
+      "$ref": "#/$defs/RepositoryReadinessPolicy"
+    },
+    "policy_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "repository_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "schema_version": {
+      "const": "apizr.repository-readiness/v1",
+      "default": "apizr.repository-readiness/v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "repository_digest",
+    "catalog_digest",
+    "graph_digest",
+    "policy",
+    "policy_digest",
+    "execution",
+    "catalog_diagnostics",
+    "graph_diagnostics",
+    "catalog_exit_code",
+    "graph_complete",
+    "assessments"
+  ],
+  "title": "RepositoryReadinessReport",
+  "type": "object"
+}
