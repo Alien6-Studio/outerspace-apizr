@@ -4,8 +4,13 @@ import os
 import shutil
 import signal
 import subprocess
+import time
 from pathlib import Path
 
+from apizr.extension_runtime.errors import CleanupFailed
+from apizr.extension_runtime.supervisor import cleanup_process
+
+from .control import InstallControl
 from .models import PluginError
 
 
@@ -16,9 +21,17 @@ def require_uv() -> str:
     return str(Path(executable).absolute())
 
 
-def run_uv(executable: str, arguments: list[str], work: Path) -> None:
+def run_uv(
+    executable: str,
+    arguments: list[str],
+    work: Path,
+    *,
+    control: InstallControl | None = None,
+) -> None:
     """The installer is trusted; discard diagnostics and bound its lifetime."""
     try:
+        if control is not None:
+            control.check()
         process = subprocess.Popen(
             [
                 executable,
@@ -41,17 +54,39 @@ def run_uv(executable: str, arguments: list[str], work: Path) -> None:
             close_fds=True,
         )
         try:
-            if process.wait(timeout=120) != 0:
+            if control is None:
+                code = process.wait(timeout=120)
+            else:
+                command_deadline = min(control.deadline, time.monotonic() + 120)
+                while True:
+                    remaining = min(
+                        control.remaining(), command_deadline - time.monotonic()
+                    )
+                    if remaining <= 0:
+                        raise PluginError("uv_timeout")
+                    try:
+                        code = process.wait(timeout=min(0.05, remaining))
+                        break
+                    except subprocess.TimeoutExpired:
+                        continue
+                control.check()
+            if code != 0:
                 raise PluginError("uv_install_failed")
         finally:
-            try:
-                os.killpg(process.pid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
-            finally:
-                if process.poll() is None:
-                    process.kill()
-                process.wait(timeout=2)
+            if control is not None:
+                try:
+                    cleanup_process(process, 2000)
+                except CleanupFailed:
+                    raise PluginError("installation_cleanup_failed") from None
+            else:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                finally:
+                    if process.poll() is None:
+                        process.kill()
+                    process.wait(timeout=2)
     except subprocess.TimeoutExpired:
         raise PluginError("uv_timeout") from None
     except OSError:
