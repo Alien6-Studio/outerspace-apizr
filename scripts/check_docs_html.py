@@ -14,7 +14,11 @@ class Page(HTMLParser):
         self.targets: set[str] = set()
         self.links: list[str] = []
         self.canonicals: list[str] = []
+        self.text: list[str] = []
         self.feed(text)
+
+    def handle_data(self, data):
+        self.text.append(data)
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -74,6 +78,7 @@ def check(site: Path) -> None:
             failures.append(f"{name}: missing development status/installation link")
     home = (site / "index.html").read_text()
     for required in (
+        "getting-started/quickstart/",
         "development/0.4/",
         "Preparing 0.4",
         "Latest published stable: 0.3.0",
@@ -85,6 +90,32 @@ def check(site: Path) -> None:
     ):
         if required not in home:
             failures.append(f"Home is missing {required}")
+    quickstart = (site / "getting-started/quickstart/index.html").read_text()
+    for required in (
+        "outerspace-apizr==0.3.0",
+        "/v0.3.0/examples/repository-shop/",
+        "python:api:quote",
+        "python:inventory:available",
+        "quote: 25.0",
+        "available: true",
+        "mcpServers",
+        "The full journey",
+    ):
+        if required not in quickstart and required not in "".join(
+            Page(quickstart).text
+        ):
+            failures.append(f"Quickstart is missing {required}")
+    journey = pages["getting-started/introduction/index.html"]
+    for anchor in (
+        "start-here",
+        "introduction",
+        "install",
+        "walk-through-a-small-repository",
+        "understand-the-decisions",
+        "choose-your-next-step",
+    ):
+        if anchor not in journey.targets:
+            failures.append(f"Full journey lost published anchor: {anchor}")
     if failures:
         raise ValueError("\n".join(failures))
     print(

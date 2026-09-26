@@ -1,6 +1,6 @@
 # Publishing a release
 
-This is the maintainer procedure. Users should follow [Start here](../getting-started/introduction.md)
+This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 ## Published 0.3.0

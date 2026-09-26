@@ -1,26 +1,23 @@
 # OuterSpace Apizr
 
-**Apizr is an open-source capability compiler for Python codebases.**
+Connect selected Python functions to AI agents through MCP,
+or expose them as REST APIs.
 
-Discover capabilities in existing Python code, assess their static readiness,
-explicitly choose what to expose, generate REST or MCP interfaces, and run them
-under direct or governed execution policies.
+Apizr is an **open-source capability compiler**: analyze existing Python code,
+choose which functions are public, generate their interfaces, and define how
+they execute. Your business logic stays in Python.
+
+**[Quickstart: make your first MCP and REST calls](https://apizr.outerspace.sh/getting-started/quickstart/)** ·
+[The full journey](https://apizr.outerspace.sh/getting-started/introduction/)
 
 **Latest published stable: 0.3.0 · Released 22 September 2026**
 
-**Preparing 0.4 — not released.** `master` already includes project configuration,
-the Python compiler API, Git HTTPS/SSH sources, isolated plugins, OCI service
-build/push, signed Attest proof publication/retrieval, and the optional
-[local stdio MCP server](https://apizr.outerspace.sh/reference/apizr-mcp-server/) for read-only analysis
-and exposure planning.
-[Try the development build and complete delivery walkthrough](https://apizr.outerspace.sh/development/0.4/).
-The stable installation below does not include those additions.
+**Preparing 0.4 — not released.** This repository and the site also describe
+unreleased work. Follow the [0.4 development guide](https://apizr.outerspace.sh/development/0.4/)
+for the Python compiler API, project files, remote Git, isolated plugins,
+the Apizr analysis MCP server and OCI/Attest delivery. Those additions are
+not part of the stable installation below.
 
-Project plugin declarations and deterministic locks are described in the [development configuration guide](https://apizr.outerspace.sh/reference/project-plugin-locks/), separately from local installation and activation.
-
-0.3 adds explicit Exposure Plans and multi-module repository REST/MCP bundles,
-with direct, fresh local-process or fresh OCI-container execution. Discovery,
-generation, direct execution and local execution need **no Docker**.
 Python **3.11–3.14** · GPL-3.0-or-later.
 
 [![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg?cacheSeconds=300)](https://pypi.org/project/outerspace-apizr/)
@@ -32,148 +29,67 @@ Python **3.11–3.14** · GPL-3.0-or-later.
 
 ## Install
 
-Use Python 3.11–3.14 in a virtual environment:
+In a Python 3.11–3.14 virtual environment:
 
 ```sh
 python -m pip install outerspace-apizr==0.3.0
 apizr --version
 ```
 
-The base installation requires only Pydantic for static Python workflows. Optional
-workflows require explicit extras (this changes the default installation from 0.2.1):
+The [Quickstart](https://apizr.outerspace.sh/getting-started/quickstart/)
+shows how to create that environment, fetch a versioned example, select exactly
+two public functions, generate a server and call it. Static Python analysis needs
+only the base installation. Generated MCP and REST servers have their own
+`requirements.txt`, installed explicitly before running them.
 
-| Workflow | PyPI installation |
+For optional notebook, HTTP or historical pipeline workflows, see the
+[installation choices](https://apizr.outerspace.sh/getting-started/introduction/#install).
+
+## Expose the functions you choose
+
+<span id="one-repository-two-public-capabilities"></span>
+<span id="eligibility-selection-and-interfaces"></span>
+
+**Readiness** reports whether the available code evidence supports an interface.
+An **exposure policy** names the functions you choose to make public. A **bundle**
+is the generated server, its contracts and the source needed by those functions.
+Being ready never makes a function public automatically.
+
+| Connect through | Start with |
 | --- | --- |
-| Notebook inspection/generation | `python -m pip install "outerspace-apizr[notebook]==0.3.0"` |
-| HTTP adapters | `python -m pip install "outerspace-apizr[http]==0.3.0"` |
-| MCP adapters | `python -m pip install "outerspace-apizr[mcp]==0.3.0"` |
-| Complete historical pipeline/web app | `python -m pip install "outerspace-apizr[legacy]==0.3.0"` |
+| MCP tools for agents and other clients | [Generate MCP and make two calls](https://apizr.outerspace.sh/getting-started/quickstart/#generate-the-mcp-bundle) |
+| REST endpoints for applications | [Generate REST and send two requests](https://apizr.outerspace.sh/getting-started/quickstart/#use-rest-instead) |
 
-Extras combine, for example `"outerspace-apizr[notebook,mcp]==0.3.0"`. Choose `[legacy]`
-to retain the full 0.2.1 stack. Generated servers keep their own requirements.
-
-## One repository, two public capabilities
-
-Create these three files in an empty directory (also available in the repository's
-`examples/repository-shop`):
-
-**pricing.py**
-
-```python
-def total(unit_price: float, quantity: int = 1) -> float:
-    return unit_price * quantity
-```
-
-**inventory.py**
-
-```python
-def available(stock: int, requested: int = 1) -> bool:
-    return stock >= requested
-```
-
-**api.py**
-
-```python
-def quote(unit_price: float, quantity: int = 1) -> float:
-    return _price(unit_price, quantity)
-
-
-def _price(unit_price: float, quantity: int) -> float:
-    from pricing import total
-
-    return total(unit_price, quantity)
-```
-
-Save `readiness-direct.json`:
-
-```json
-{"execution":{"modes":["direct"]}}
-```
-
-Save `exposure-direct.json`:
-
-```json
-{"selection":{"include":["python:api:quote","python:inventory:available"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}
-```
-
-Discover, understand, assess, explicitly select, then expose:
-
-```sh
-apizr scan . --exclude-dir .output
-apizr graph . --exclude-dir .output
-apizr readiness . --exclude-dir .output --policy readiness-direct.json
-apizr expose plan . --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json
-apizr expose build rest . --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/rest
-apizr expose build mcp . --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/mcp
-```
-
-The explicit `.output` exclusion keeps generated files outside the scan universe.
-Readiness reports three ready functions and one conditional support helper, so its
-exit code is 1. The two explicitly selected public functions are eligible; planning
-and building succeed. **READY does not mean exposed.** `pricing.total` is packaged
-and called through `api._price`, but neither helper is public.
-
-Serve the direct REST bundle:
-
-```sh
-python -m pip install -r .output/rest/requirements.txt
-uvicorn app:app --app-dir .output/rest --host 127.0.0.1 --port 8000
-```
-
-POST `{"unit_price":12.5,"quantity":2}` to `/capabilities/api.quote` → `25.0`.
-POST `{"stock":10,"requested":3}` to `/capabilities/inventory.available` → `true`.
-The MCP bundle exposes the same two names. Install its `requirements.txt`, then run
-`python .output/mcp/server.py --transport stdio` or use `--transport streamable-http`.
-These generated servers execute trusted code. Use a fresh output directory when
-regenerating. Discovery and generation do not execute project source.
+The generated MCP server calls your selected functions. The separate,
+[development Apizr MCP server](https://apizr.outerspace.sh/reference/apizr-mcp-server/)
+analyzes repositories and plans exposure; it does not execute their functions.
 
 ## Choose execution boundaries
 
-| Mode | Boundary | State between calls |
-| --- | --- | --- |
-| Direct | Transport process | Persists |
-| Governed local-process | Fresh process per call | Resets |
-| Governed OCI | Fresh container per call | Resets |
+Analysis and generation do not execute the project. Starting a generated server
+and calling its functions does: use trusted source and dependencies.
+**Direct** mode runs functions inside the server. **Governed** mode uses an
+**execution policy** to choose a worker and its required limits: a fresh local
+process or an OCI container per call. Local workers do not isolate the host
+filesystem or network; containers are not an untrusted-code guarantee.
 
-Add `--execution-policy` for governed execution. Local workers provide time and
-input/output bounds, environment control and process-group cleanup; they do not
-isolate host filesystem or network access. OCI adds reviewed Linux container
-controls using an immutable image ID/platform and the repository worker protocol.
-It is not a VM or an untrusted-code guarantee. The optional
-[strict OCI subprocess-deny profile](https://apizr.outerspace.sh/architecture/subprocess-deny/)
-blocks process and thread creation before project import. Local mode cannot enforce it.
-
-See the [policy examples and exposure guide](https://apizr.outerspace.sh/getting-started/user-guide/exposure/)
-for local/OCI commands, policy composition and image prerequisites. Apizr does not
-infer/install repository application dependencies or package arbitrary repository
-data files. The separate legacy pipeline supports explicit requirements and resources.
-
-## Eligibility, selection and interfaces
-
-**Readiness** is evidence-based eligibility. **Exposure Plan** is the operator's
-explicit decision. **Bundle** is the generated public interface. Dependencies
-are packaged as support, never automatically exposed. All stages bind deterministic
-evidence; neither `READY` nor a generated bundle establishes trust or runtime safety.
-
-[Start here](https://apizr.outerspace.sh/getting-started/introduction/) ·
-[Architecture](https://apizr.outerspace.sh/architecture/overview/) ·
-[0.3 release notes and migration](https://apizr.outerspace.sh/releases/0.3.0/)
+The direct Quickstart needs no Docker. Read the
+[exposure guide](https://apizr.outerspace.sh/getting-started/user-guide/exposure/)
+for governed examples and the
+[execution boundaries](https://apizr.outerspace.sh/architecture/governed-repository-runtime/)
+for their guarantees and limits.
 
 ## Existing workflows and limits
 
-0.2 single-source `inspect`, `generate rest/mcp` and `execute` workflows remain
-supported, as does the legacy `apizr --script` / `--notebook` pipeline. There is no
-automatic migration or publication. Capabilities remain top-level functions;
-class/method exposure and an enterprise control plane are outside this release.
+Single-source `inspect`, `generate rest/mcp` and `execute` remain supported.
+The [historical pipeline](https://apizr.outerspace.sh/getting-started/user-guide/apizr/)
+is a separate compatibility path. See
+[the full journey](https://apizr.outerspace.sh/getting-started/introduction/#compatibility-and-limits)
+for dependency, resource and exposure limits, and
+[0.3 release notes](https://apizr.outerspace.sh/releases/0.3.0/) for migration.
 
-The legacy pipeline now supports configured notebook cell selection, resource
-packaging, explicit image builds and installed plugins. It inventories classes and
-methods separately, and refuses ambiguous selected definitions/overloads. See the
-[notebook configuration guide](https://apizr.outerspace.sh/modules/notebook-transformr/).
-Static readiness/exposure v1 adapters retain their original control vocabulary;
-the strict OCI profile is selected in the execution policy.
-See [compatibility notes](https://apizr.outerspace.sh/getting-started/developer-guide/releases/).
-
+[Watch the demo](https://apizr.outerspace.sh/#watch-apizr-in-action) ·
+[Architecture](https://apizr.outerspace.sh/architecture/overview/) ·
 [Development and checks](https://apizr.outerspace.sh/getting-started/developer-guide/setup/) ·
 [Report an issue](https://github.com/Alien6-Studio/outerspace-apizr/issues) ·
 [GPL-3.0-or-later](https://apizr.outerspace.sh/about/LICENSE/)

@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CRITICAL = {
+    "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
     "reference/project-plugin-locks/index.html": "Project plugin declarations and locks",
     "reference/apizr-mcp-server/index.html": "Apizr as a local MCP server",
     "index.html": "Preparing 0.4",

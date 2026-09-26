@@ -2,13 +2,16 @@
 
 import argparse
 import json
+import os
 import re
 import shlex
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
+from urllib.request import urlopen
 
 
 def main() -> None:
@@ -20,19 +23,18 @@ def main() -> None:
     repository = Path(__file__).resolve().parents[1]
     readme = (repository / "README.md").read_text()
     guide = (repository / "docs/getting-started/introduction.md").read_text()
-    sources = re.findall(r"```python\n(.*?)```", readme, re.S)
-    assert sources == re.findall(r"```python\n(.*?)```", guide, re.S)
+    assert "https://apizr.outerspace.sh/getting-started/quickstart/" in readme
+    assert "https://apizr.outerspace.sh/getting-started/introduction/" in readme
+    sources = re.findall(r"```python\n(.*?)```", guide, re.S)
     assert len(sources) == 3
-    policies = re.findall(r"```json\n(.*?)```", readme, re.S)
-    assert policies == re.findall(r"```json\n(.*?)```", guide, re.S)
+    policies = re.findall(r"```json\n(.*?)```", guide, re.S)
     assert len(policies) == 2
     commands = []
-    for block in re.findall(r"```sh\n(.*?)```", readme, re.S):
+    for block in re.findall(r"```sh\n(.*?)```", guide, re.S):
         for line in block.splitlines():
             if line.startswith(
                 ("apizr scan", "apizr graph", "apizr readiness", "apizr expose")
             ):
-                assert line in guide, line
                 commands.append(shlex.split(line))
     assert len(commands) == 6
     with tempfile.TemporaryDirectory(prefix="apizr-readme-") as directory:
@@ -81,6 +83,130 @@ def main() -> None:
 
     if args.development:
         development(cli, repository)
+    else:
+        quickstart(cli, repository)
+
+
+def quickstart(cli: Path, repository: Path) -> None:
+    """Run the published stable shell blocks verbatim, including real client calls."""
+    guide = (repository / "docs/getting-started/quickstart.md").read_text()
+    blocks = dict(
+        re.findall(r"<!-- quickstart:([a-z-]+) -->\s*```sh\n(.*?)```", guide, re.S)
+    )
+    order = (
+        "setup",
+        "sources",
+        "policies",
+        "generate-mcp",
+        "install-mcp",
+        "client",
+        "generate-rest",
+        "serve-rest",
+        "call-rest",
+    )
+    assert set(blocks) == set(order)
+    assert "outerspace-apizr==0.3.0" in blocks["setup"]
+    assert "/v0.3.0/examples/repository-shop/" in blocks["sources"]
+    env = dict(
+        os.environ, PATH=str(cli.parent) + os.pathsep + os.environ.get("PATH", "")
+    )
+    env.pop("PYTHONPATH", None)
+    with tempfile.TemporaryDirectory(prefix="apizr-quickstart-proof-") as directory:
+        parent = Path(directory).resolve()
+        assert not parent.is_relative_to(repository)
+        script = "set -eu\n" + "\n".join(blocks[name] for name in order[:-2])
+        result = subprocess.run(
+            ["/bin/sh", "-c", script],
+            cwd=parent,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+        print(result.stdout)
+        print(result.stderr, file=sys.stderr)
+        result.check_returncode()
+        for expected in (
+            "tools: api.quote, inventory.available",
+            "quote: 25.0",
+            "available: true",
+        ):
+            assert expected in result.stdout
+        root = parent / "apizr-quickstart"
+        python = root / ".venv/bin/python"
+        subprocess.run(
+            [
+                str(python),
+                "-I",
+                "-c",
+                "import apizr,importlib.metadata; from pathlib import Path; "
+                "assert importlib.metadata.version('outerspace-apizr') == '0.3.0'; "
+                f"assert not Path(apizr.__file__).resolve().is_relative_to(Path({str(repository)!r}))",
+            ],
+            cwd=root,
+            check=True,
+            timeout=10,
+        )
+        for name in ("api.py", "inventory.py", "pricing.py"):
+            assert (root / "shop" / name).read_bytes() == (
+                repository / "examples/repository-shop" / name
+            ).read_bytes()
+        env["PATH"] = str(python.parent) + os.pathsep + env["PATH"]
+        # Execute the documented server argv, retaining a bounded lifecycle for CI.
+        with (root / "rest.log").open("w+") as log:
+            process = subprocess.Popen(
+                shlex.split(blocks["serve-rest"]),
+                cwd=root,
+                env=env,
+                stdout=log,
+                stderr=log,
+            )
+            try:
+                deadline = time.monotonic() + 15
+                while True:
+                    assert process.poll() is None, "Documented REST server exited"
+                    try:
+                        with urlopen(
+                            "http://127.0.0.1:8000/openapi.json", timeout=1
+                        ) as response:
+                            schema = json.load(response)
+                        break
+                    except OSError:
+                        if time.monotonic() >= deadline:
+                            raise TimeoutError(
+                                "Documented REST server not ready"
+                            ) from None
+                        time.sleep(0.05)
+                assert {
+                    p for p in schema["paths"] if p.startswith("/capabilities/")
+                } == {
+                    "/capabilities/api.quote",
+                    "/capabilities/inventory.available",
+                }
+                for line, expected in zip(
+                    blocks["call-rest"].strip().splitlines(), (25.0, True), strict=True
+                ):
+                    call = subprocess.run(
+                        shlex.split(line),
+                        cwd=root,
+                        env=env,
+                        capture_output=True,
+                        text=True,
+                        check=True,
+                        timeout=10,
+                    )
+                    assert json.loads(call.stdout) == expected
+                    print(f"$ {line}\n{call.stdout}")
+            finally:
+                process.terminate()
+                try:
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait(timeout=5)
+        print(
+            "PASS: stable Quickstart outside checkout; two selected MCP tools and REST calls; no graphical client claimed"
+        )
 
 
 def development(cli: Path, repository: Path) -> None:

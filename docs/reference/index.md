@@ -1,11 +1,17 @@
 # Technical reference
 
-For your first project, follow [Start here](../getting-started/introduction.md).
+For your first project, follow [Quickstart](../getting-started/quickstart.md), then [The full journey](../getting-started/introduction.md).
 Read the [Capability Compiler overview](../architecture/overview.md) for the full flow.
 This reference is for using individual interfaces or understanding their contracts.
 The site follows `master`; pages marked **0.4 development** require the
 [development installation](../development/0.4.md), not published 0.3.0.
 The [stable release notes](../releases/0.3.0.md) describe the released scope.
+
+## Commands and parameters
+
+Each linked command guide describes its options, outputs and refusals. Modern
+`inspect`, `generate` and `execute` are part of the compiler workflows, not the
+historical pipeline.
 
 | What you need | Where to look |
 | --- | --- |
@@ -39,3 +45,27 @@ separate from the current contracts.
 
 The [MCP generator contract](../architecture/mcp-generator-v1.md) describes the
 Tools backend and the interface semantics shared with REST.
+
+## Policies and formats
+
+Use the existing JSON contracts; these links explain their fields and validation.
+Project TOML configuration in 0.4 references policy files rather than replacing
+the policy languages.
+
+| Format or parameter group | Specification |
+| --- | --- |
+| Scan exclusions and source roots | [Scanner parameters](../getting-started/user-guide/scan.md) |
+| Readiness policy and reports | [Repository readiness](../architecture/repository-readiness-v1.md) |
+| Exposure policy and plan | [Exposure Plan v1](../architecture/exposure-plan-v1.md) |
+| Bundle artifacts and manifests | [Repository Bundle v1](../architecture/repository-bundle-v1.md) |
+| Direct/governed execution choices | [Exposure guide](../getting-started/user-guide/exposure.md) |
+| Worker execution policy | [Execution Policy v1](../architecture/execution-policy-v1.md), [OCI v2](../architecture/oci-container-runtime-v1.md) |
+| Project and explicit user configuration (0.4) | [Project configuration](../getting-started/user-guide/project.md), [plugin declarations and locks](project-plugin-locks.md) |
+| Extension invocation messages (0.4) | [Extension protocol](extension-invocation.md) |
+
+## Python APIs
+
+The [compiler API](compiler-api.md) is available in **development 0.4**, independently
+of the CLI. Existing lower-level contracts are documented alongside the
+[Capability IR](../architecture/capability-ir-v1.md),
+[readiness](../architecture/capability-readiness-v1.md) and generator architecture.

@@ -1,14 +1,19 @@
 ---
-title: Start here
+title: The full journey
 description: Discover, understand, assess, select, expose and execute a Python repository through REST or MCP.
 ---
 
-# Start here
+# The full journey
+
+<span id="start-here"></span>
 
 <span id="introduction"></span>
 
 Apizr is an open-source capability compiler for Python codebases. The 0.3 journey
 is **Discover → Understand → Assess → Select → Expose → Execute**.
+
+For a first working server and verified calls, start with the [Quickstart](quickstart.md).
+This page explains the separate stages and their diagnostic outputs.
 
 ## Install
 
@@ -23,7 +28,18 @@ For Git sources, project configuration, isolated plugins and OCI/Attest delivery
 use the separate [unreleased 0.4 walkthrough](../development/0.4.md). The stable
 commands on this page remain available in 0.3.0.
 
-Choose the `[notebook]`, `[http]`, `[mcp]` or `[legacy]` extras for optional workflows.
+The base installation needs only Pydantic for static Python workflows.
+Choose an extra when the workflow requires it:
+
+| Workflow | Installation |
+| --- | --- |
+| Notebook inspection/generation | `python -m pip install "outerspace-apizr[notebook]==0.3.0"` |
+| HTTP adapters | `python -m pip install "outerspace-apizr[http]==0.3.0"` |
+| MCP adapters | `python -m pip install "outerspace-apizr[mcp]==0.3.0"` |
+| Complete historical pipeline/web app | `python -m pip install "outerspace-apizr[legacy]==0.3.0"` |
+
+Extras combine, for example `"outerspace-apizr[notebook,mcp]==0.3.0"`.
+`[legacy]` retains the full 0.2.1 stack. Generated servers have their own requirements.
 To work on Apizr itself, see [development setup](developer-guide/setup.md).
 
 ## Walk through a small repository
@@ -70,7 +86,13 @@ Save `exposure-direct.json`:
 {"selection":{"include":["python:api:quote","python:inventory:available"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}
 ```
 
-Discover, understand, assess, explicitly select, then expose:
+**Readiness** assesses whether code evidence supports an interface. The
+**exposure policy** selects the public functions and allowed modes. A **bundle**
+is the generated server, its contracts and the supporting source.
+
+The first four commands below are optional diagnostics, useful for understanding
+each stage. `expose build` already performs their required analysis and planning;
+you do not need to run them separately before generation. To inspect each stage:
 
 ```sh
 apizr scan . --exclude-dir .output
@@ -96,7 +118,7 @@ uvicorn app:app --app-dir .output/rest --host 127.0.0.1 --port 8000
 
 POST `{"unit_price":12.5,"quantity":2}` to `/capabilities/api.quote` → `25.0`.
 POST `{"stock":10,"requested":3}` to `/capabilities/inventory.available` → `true`.
-The MCP bundle exposes the same two names. Install its `requirements.txt`, then run
+The MCP bundle exposes the same two names. [Connect a client and verify calls](quickstart.md#connect-a-client-and-make-two-calls). Install its `requirements.txt`, then run
 `python .output/mcp/server.py --transport stdio` or use `--transport streamable-http`.
 These generated servers execute trusted code. Use a fresh output directory when
 regenerating. Discovery and generation do not execute project source.
@@ -133,3 +155,24 @@ Local execution provides bounds/environment/cleanup, not filesystem or network
 isolation. OCI uses reviewed container controls and offers an optional
 [strict subprocess-deny profile](../architecture/subprocess-deny.md); it is not a VM. Both require trusted source and dependencies; neither is an automatic
 untrusted-code guarantee. [Architecture and boundaries](../architecture/overview.md).
+
+## Compatibility and limits
+
+Modern single-source `inspect`, `generate rest/mcp` and `execute` commands remain
+supported alongside repository workflows. They are not the legacy pipeline.
+The historical `apizr --script` / `--notebook` pipeline is a separate path; there
+is no automatic migration or publication.
+
+Public capabilities remain top-level functions. Class/method exposure and an
+enterprise control plane are outside stable 0.3.0. Repository bundles do not infer
+or install application dependencies or package arbitrary repository data files.
+The [legacy pipeline](user-guide/apizr.md) supports explicit requirements and
+resources, configured notebook cell selection, explicit image builds and installed
+pipeline plugins. It inventories classes and methods separately and refuses
+ambiguous selected definitions/overloads. See the
+[notebook configuration guide](../modules/notebook-transformr.md).
+
+Static readiness/exposure v1 adapters keep their original control vocabulary;
+the strict OCI profile is selected through an **execution policy**, which chooses
+the actual worker backend and its required controls. See
+[compatibility notes](developer-guide/releases.md).
