@@ -249,3 +249,10 @@ def invoke_extension(
         raise
     except OSError:
         raise PluginFailed() from None
+
+
+# Shared by trusted core installation/probe supervision; invocation behavior and
+# its existing private test seams remain unchanged.
+cleanup_process = _cleanup
+exchange_process = _exchange
+signal_process_group = _signal_group

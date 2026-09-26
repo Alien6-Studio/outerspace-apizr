@@ -59,7 +59,7 @@ plugins_dir = "locked-plugins"
 ```
 
 `--user-config user.toml` works on `plugins install/list/enable/disable/run`,
-`plugins lock create/check` and `mcp serve`. Store precedence is explicit
+`plugins lock create/check`, `plugins sync` and `mcp serve`. Store precedence is explicit
 `--plugins-dir`, then the selected user file, then the existing platform default.
 Relative paths in the user file resolve against that file; relative CLI paths
 resolve against CWD. An explicitly chosen user file is validated even when its
@@ -217,6 +217,156 @@ artifacts. Output is published atomically without replacement: identical content
 is idempotent, different existing content yields `output_conflict`. Parent output
 directories must already exist. Interruption leaves no partially published lock.
 
-Synchronization, updates, removal, an official catalog/profiles and authorization
-per operation/destination remain commitments of the initial 0.4 plan. This change
-delivers configuration and locking only.
+Updates, removal, an official catalog/profiles and authorization per
+operation/destination remain commitments of the initial 0.4 plan. Synchronization
+is additive; it does not deliver those separate features.
+
+## Synchronize missing installations
+
+`plugins sync` is an explicit, offline installation request. All three input paths
+are required; no project, lock or wheelhouse is discovered automatically. The
+wheelhouse must already contain every locked wheel. There is no remote cache or
+catalogue lookup. Store selection keeps the precedence described above.
+
+```sh
+apizr plugins sync --project /path/project/apizr.toml \
+  --lock /path/project/apizr.plugins.lock.json --wheelhouse /path/wheels \
+  --dry-run --json
+apizr plugins sync --project /path/project/apizr.toml \
+  --lock /path/project/apizr.plugins.lock.json --wheelhouse /path/wheels \
+  --timeout-ms 120000 --json
+```
+
+Simulation validates the artifacts and compares full installation identities. It
+runs neither uv nor any plugin interpreter, creates no absent store and changes
+no persistent state. `interpreter_verified: false` explicitly records that no
+interpreter probe was performed. The later application repeats validation; a
+previous preview does not reserve artifacts or store state.
+
+Apply reuses the existing installer, which offers only each plugin's exact
+closure to offline uv. Already present identities are reused without requiring
+uv. Missing versions require an already installed uv and the current Python;
+there is no Python download, source build or index. Existing versions and foreign
+plugins are preserved. An identity conflict under the same name/version is
+refused before any installation. Full identity includes module/protocol, main
+wheel digest, **original** requirements digest and dependency versions/digests.
+New versions remain inactive, including when an older version is active.
+
+Apply probes each reused interpreter before starting installations and verifies
+all final records/interpreters before success. The fixed, bounded probe runs with
+`-I -S -B`, an empty environment and only the standard library; it imports no
+plugin or project code. A missing or mismatched interpreter is refused without
+repair. These checks are not a cryptographic audit of every virtualenv file.
+
+### Retained inputs and per-plugin progress
+
+Preparation retains the validated original lock, requirements and wheel bytes
+in a private temporary snapshot. Per-plugin wheel selections are hardlinks to
+those private copies, never to the input files. Changing originals after
+preparation cannot replace installed bytes. Each installer additionally verifies
+its private copy. Two plugins can use different versions of a common dependency.
+Static validation does not resolve dependency constraints: uv can still refuse
+an inconsistent closure during application.
+
+Retained input storage is bounded by 256 MiB of selected wheel bytes, 32 × 64 KiB
+of original requirements, and 1 MiB of lock JSON. Closures reuse those bytes;
+the sequential installer can additionally copy one closure (up to 256 MiB) into
+its scratch area. Existing per-wheel and expanded-closure bounds still apply.
+These are input/archive bounds, not a filesystem quota on uv metadata, filesystem
+block allocation or the final installed environments. Temporary snapshots are
+removed on normal success, refusal and handled interruption.
+
+Each environment is built at its final location and published atomically under
+the existing store lock. There is **no transaction across plugins**. If A succeeds
+and B fails, A remains available, B is not falsely published, and later plugins
+are not started. Rerun the same command with the same artifacts to reuse A and
+resume B. An interruption close to publication triggers a bounded inventory
+reread; published environments are retained. If state cannot be established,
+the result says `unconfirmed`, not rolled back. Concurrent identical syncs
+converge through the installer's existing identity check under the store lock.
+`action` records the initial plan: an `install` can find that another writer has
+already published the same identity; `installed` means its presence was confirmed.
+No sync operation writes activations.
+
+### Results, deadlines and Python API
+
+`--json` emits `apizr.plugin-sync/v1` on stdout, including recoverable partial
+failures. Fields are `mode`, `state`, `exit_code`, `lock_sha256`, `target`, `plugins`
+and redacted `diagnostics`. Each plugin has `name`, `version`, planned `action`
+(`install`, `reuse`, `refuse`), `status`, separate `active` and
+`interpreter_verified`. Unknown activation is null. A `planned` status is not an
+installation. Final statuses include `installed`, `reused`, `refused`, `failed`,
+`not_attempted` and `unconfirmed`. Operational stderr contains only stable codes;
+raw uv output and inherited secrets are not returned.
+
+| State | Meaning | Exit |
+| --- | --- | --- |
+| `planned` | Valid simulation, no interpreter verification | 0 |
+| `complete` | All required records and interpreters verified | 0 |
+| `refused` | Before installation: content/identity drift, or input/operational error | 1 for drift, 2 for operational errors |
+| `partial` | Application did not finish; published progress retained | 2 |
+| `interrupted` | User cancellation; progress reconciled where possible | 130 |
+| `unconfirmed` | Cleanup or final inventory state could not be confirmed | 2, or 130 after user cancellation |
+
+`--timeout-ms` is a total cooperative deadline: default 120000 ms, allowed
+1–600000 ms. It includes validation, lock waiting, uv and probes. Store acquisition
+also keeps its 30-second cap; each uv command its 120-second cap and each probe its
+10-second cap, always shortened by the remaining total time. Supervised process
+cleanup has a separate two-second grace; failure reconciliation permits a further
+two seconds. Cancellation stops/reaps the process group and releases locks rather
+than merely cancelling a waiting thread. Detached descendants retain the runtime's
+documented cleanup limitation. Blocking filesystem calls cannot be preempted;
+SIGKILL, machine loss or uninterruptible OS operations cannot guarantee timely
+cleanup or a final report. No automatic repair or deletion is attempted on restart.
+
+```python
+from pathlib import Path
+from threading import Event
+from apizr.plugin_sync import sync_plugins
+
+cancel = Event()  # Another thread may call cancel.set().
+result = sync_plugins(
+    Path("apizr.toml"),
+    Path("apizr.plugins.lock.json"),
+    Path("wheels"),
+    directory=Path("plugins"),
+    timeout_ms=120000,
+    cancel=cancel,
+)
+assert result.exit_code == 0, result.diagnostics
+```
+
+### Installed-wheel proof with two closures
+
+Extend the minimal-core preparation above from the checkout:
+
+```sh
+python3 scripts/prepare_sync_extensions.py --work-dir "$work/sync"
+"$core_python" -I -B -m apizr.cli plugins lock create --project "$work/sync/apizr.toml" --wheelhouse "$work/sync/wheels" --output "$work/sync/apizr.plugins.lock.json" --json
+"$core_python" -I -B -m apizr.cli plugins sync --project "$work/sync/apizr.toml" --lock "$work/sync/apizr.plugins.lock.json" --wheelhouse "$work/sync/wheels" --user-config "$work/sync/user.toml" --dry-run --json
+"$core_python" -I -B -m apizr.cli plugins sync --project "$work/sync/apizr.toml" --lock "$work/sync/apizr.plugins.lock.json" --wheelhouse "$work/sync/wheels" --user-config "$work/sync/user.toml" --json
+"$core_python" -I -B -m apizr.cli plugins lock check --project "$work/sync/apizr.toml" --lock "$work/sync/apizr.plugins.lock.json" --wheelhouse "$work/sync/wheels" --installed --user-config "$work/sync/user.toml" --json
+```
+
+Run sync again to observe `reused` for both. `plugins list --active --user-config
+"$work/sync/user.toml" --json` stays empty until explicit activation. Then:
+
+```sh
+"$core_python" -I -B -m apizr.cli plugins enable apizr-sync-a --version 1.0.0 --user-config "$work/sync/user.toml"
+"$core_python" -I -B -m apizr.cli plugins run apizr-sync-a answer --arguments "$work/sync/arguments.json" --user-config "$work/sync/user.toml"
+```
+
+Repeat enable/run for `apizr-sync-b`: A returns 42 and B returns 73 through their
+different helper/leaf versions. All these commands are exercised by
+`scripts/smoke_plugin_sync.py` against the installed core. It additionally forces
+a real uv refusal for B, then resumes without changing wheels or requirements.
+It compares core files/distributions and preserves JSON evidence per command.
+
+The existing packaging proof prepares these six wheels once. On disposable
+Linux/macOS runners, `scripts/run_plugin_sync_proof.py WORK` runs the installed
+proof under a Linux network namespace or macOS sandbox with networking denied.
+The restriction is inherited by uv children, not just Python socket calls.
+Every backend invocation verifies network denial before executing real uv.
+The existing uv and Homebrew qualification remains in place; no developer-machine
+Homebrew updates are needed. `sync-evidence.json`, `backend-network.jsonl` and
+`sync-summary.json` retain partial/resume, idempotence and core-integrity results.

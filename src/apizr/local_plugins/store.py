@@ -12,6 +12,7 @@ from uuid import uuid4
 
 from apizr.extension_runtime.protocol import unique_object
 
+from .control import InstallControl
 from .models import Inventory, PluginError
 
 MAX_INVENTORY_BYTES = 1024 * 1024
@@ -69,9 +70,13 @@ def validate_directory(path: Path) -> None:
 
 
 @contextmanager
-def installation_lock(root: Path, *, create: bool = True) -> Generator[None]:
+def installation_lock(
+    root: Path, *, create: bool = True, control: InstallControl | None = None
+) -> Generator[None]:
     import fcntl
 
+    if control is not None:
+        control.check()
     if create:
         private_directory(root)
     else:
@@ -86,6 +91,8 @@ def installation_lock(root: Path, *, create: bool = True) -> Generator[None]:
             raise PluginError("invalid_installation_lock")
         deadline = time.monotonic() + 30
         while True:
+            if control is not None:
+                control.check()
             try:
                 fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 break
@@ -93,6 +100,8 @@ def installation_lock(root: Path, *, create: bool = True) -> Generator[None]:
                 if time.monotonic() >= deadline:
                     raise PluginError("installation_busy") from None
                 time.sleep(0.05)
+        if control is not None:
+            control.check()
         yield
     finally:
         os.close(descriptor)

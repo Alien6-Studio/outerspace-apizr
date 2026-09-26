@@ -443,6 +443,9 @@ def main() -> None:
         != hashlib.sha256(requirements.read_bytes()).hexdigest()
     ):
         raise RuntimeError("Locked inventory does not match verified wheels")
+    from prepare_sync_extensions import prepare as prepare_sync
+
+    prepare_sync(work / "sync", uv, env)
     after = snapshot(core_root)
     after_distributions = core(inventory_code)
     evidence = {

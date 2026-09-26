@@ -3,11 +3,13 @@
 import os
 import shutil
 import sys
+from functools import partial
 from pathlib import Path
 from uuid import uuid4
 
 from . import backend, locking, store
 from .activation import active_inventory
+from .control import InstallControl
 from .models import Installation, Inventory, PluginError
 from .wheel import inspect_wheel
 
@@ -31,8 +33,12 @@ def install_extension(
     python: Path | None = None,
     requirements: Path | None = None,
     wheelhouse: Path | None = None,
+    control: InstallControl | None = None,
 ) -> Installation:
     """Install one verified wheel offline; publication alone makes it visible."""
+    if control is not None:
+        control.check()
+    run_uv = partial(backend.run_uv, control=control) if control else backend.run_uv
     locking.check_options(requirements, wheelhouse)
     lock = locking.read_lock(requirements) if requirements is not None else None
     uv = backend.require_uv()  # Before any filesystem modification, even a lock.
@@ -46,7 +52,7 @@ def install_extension(
     data, manifest = inspect_wheel(wheel, sha256, allow_dependencies=lock is not None)
     try:
         root = store.storage_directory(directory)
-        with store.installation_lock(root):
+        with store.installation_lock(root, control=control):
             inventory = store.read_inventory(root)
             for existing in inventory.installations:
                 if (existing.name, existing.version) == (
@@ -55,6 +61,8 @@ def install_extension(
                 ):
                     if (
                         existing.sha256 != sha256.lower()
+                        or existing.module != manifest.module
+                        or existing.protocol != manifest.protocol
                         or existing.lock_sha256 != (lock.sha256 if lock else None)
                         or existing.dependencies
                         != (
@@ -102,7 +110,9 @@ def install_extension(
                         encoding="utf-8",
                     )
                     dependency_options = ["--no-deps"]
-                backend.run_uv(
+                if control is not None:
+                    control.check()
+                run_uv(
                     uv,
                     [
                         "venv",
@@ -114,7 +124,9 @@ def install_extension(
                     ],
                     work,
                 )
-                backend.run_uv(
+                if control is not None:
+                    control.check()
+                run_uv(
                     uv,
                     [
                         "pip",
@@ -156,6 +168,8 @@ def install_extension(
                         key=lambda item: (item.name, item.version),
                     )
                 )
+                if control is not None:
+                    control.check()
                 store.publish(root, updated)
                 return record
             except BaseException:

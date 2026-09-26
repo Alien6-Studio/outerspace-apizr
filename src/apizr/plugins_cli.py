@@ -18,6 +18,7 @@ from apizr.local_plugins import (
 )
 from apizr.plugin_lock import LockError, Result, check_lock, create_lock
 from apizr.plugin_lock.models import Diagnostic
+from apizr.plugin_sync import SyncLimits, SyncResult, sync_plugins
 from apizr.user_config import plugins_directory
 
 
@@ -96,7 +97,21 @@ def main(argv: Sequence[str]) -> int:
         command.add_argument("--project", type=Path, required=True)
         command.add_argument("--wheelhouse", type=Path, required=True)
         command.add_argument("--json", action="store_true")
-    for command in (install, listing, enable, disable, run, create, check):
+    sync = commands.add_parser(
+        "sync", help="Install missing locked project plugins offline without activation"
+    )
+    sync.add_argument("--project", type=Path, required=True)
+    sync.add_argument("--lock", type=Path, required=True)
+    sync.add_argument("--wheelhouse", type=Path, required=True)
+    sync.add_argument("--dry-run", action="store_true")
+    sync.add_argument("--json", action="store_true")
+    sync.add_argument(
+        "--timeout-ms",
+        type=timeout_ms,
+        default=SyncLimits().timeout_ms,
+        help="Total sync deadline (1–600000 ms; default 120000)",
+    )
+    for command in (install, listing, enable, disable, run, create, check, sync):
         command.add_argument(
             "--user-config", type=Path, help="Explicit operator preferences file"
         )
@@ -108,6 +123,28 @@ def main(argv: Sequence[str]) -> int:
     args = parser.parse_args(argv)
     try:
         args.plugins_dir = plugins_directory(args.plugins_dir, args.user_config)
+        if args.command == "sync":
+            outcome = sync_plugins(
+                args.project,
+                args.lock,
+                args.wheelhouse,
+                dry_run=args.dry_run,
+                directory=args.plugins_dir,
+                timeout_ms=args.timeout_ms,
+            )
+            print(
+                outcome.model_dump_json()
+                if args.json
+                else f"Plugin sync: {outcome.state}."
+            )
+            if not args.json:
+                for item in outcome.plugins:
+                    print(
+                        f"{item.action} {item.name} {item.version}: {item.status}; interpreter_verified={item.interpreter_verified}; active={item.active}"
+                    )
+            for problem in outcome.diagnostics:
+                print(f"apizr plugins: {problem.code}", file=sys.stderr)
+            return outcome.exit_code
         if args.command == "lock":
             result = (
                 create_lock(args.project, args.wheelhouse, args.output)
@@ -171,6 +208,15 @@ def main(argv: Sequence[str]) -> int:
         print(f"apizr plugins: {error}", file=sys.stderr)
         return 130
     except (PluginError, ExtensionError) as error:
+        if args.command == "sync" and args.json:
+            print(
+                SyncResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    state="refused",
+                    exit_code=2,
+                    diagnostics=(Diagnostic(code=str(error)),),
+                ).model_dump_json()
+            )
         if args.command == "lock" and args.json:
             _show_lock(
                 Result(valid=False, diagnostics=(Diagnostic(code=str(error)),)), True
@@ -178,6 +224,15 @@ def main(argv: Sequence[str]) -> int:
         print(f"apizr plugins: {error}", file=sys.stderr)
         return 2
     except KeyboardInterrupt:
+        if args.command == "sync" and args.json:
+            print(
+                SyncResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    state="interrupted",
+                    exit_code=130,
+                    diagnostics=(Diagnostic(code="sync_cancelled"),),
+                ).model_dump_json()
+            )
         reason = (
             "installation_interrupted" if args.command == "install" else "cancelled"
         )

@@ -4,13 +4,21 @@ import hashlib
 import json
 import os
 import tempfile
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager, nullcontext
+from dataclasses import dataclass
 from pathlib import Path
 from uuid import uuid4
 
 from apizr.config_files import absolute_path, directory_fd, read_regular
 from apizr.extension_runtime.protocol import unique_object
 from apizr.local_plugins import list_extensions, locking
-from apizr.local_plugins.models import LockedDistribution, PluginError, canonical_name
+from apizr.local_plugins.models import (
+    Installation,
+    LockedDistribution,
+    PluginError,
+    canonical_name,
+)
 from apizr.local_plugins.wheel import MAX_WHEEL_BYTES, inspect_dependency, inspect_wheel
 from apizr.project import ProjectConfig, load_project
 
@@ -75,11 +83,15 @@ def _target_wheel(filename: str, target: Target) -> None:
         raise PluginError("wheel_target_not_verifiable")
 
 
-def _candidates(wheelhouse: Path) -> dict[tuple[str, str], list[str]]:
+def _candidates(
+    wheelhouse: Path, checkpoint: Callable[[], None] | None = None
+) -> dict[tuple[str, str], list[str]]:
     candidates: dict[tuple[str, str], list[str]] = {}
     try:
         with directory_fd(wheelhouse) as descriptor, os.scandir(descriptor) as entries:
             for count, entry in enumerate(entries, 1):
+                if checkpoint is not None:
+                    checkpoint()
                 if count > MAX_FILES:
                     raise LockError("too_many_wheelhouse_files")
                 if not entry.name.endswith(".whl"):
@@ -97,19 +109,34 @@ def _candidates(wheelhouse: Path) -> dict[tuple[str, str], list[str]]:
 
 
 def _assemble(
-    project: Path, wheelhouse: Path
+    project: Path,
+    wheelhouse: Path,
+    *,
+    snapshot: Path | None = None,
+    checkpoint: Callable[[], None] | None = None,
 ) -> tuple[ProjectLock | None, tuple[Diagnostic, ...]]:
+    if checkpoint is not None:
+        checkpoint()
     config = _load_project(project)
     target = current_target()
-    candidates = _candidates(wheelhouse)
+    candidates = _candidates(wheelhouse, checkpoint)
     diagnostics: list[Diagnostic] = []
     plugins: list[Plugin] = []
     total = expanded = 0
     # Retain each selected input exactly once, even when closures share a wheel.
     retained: dict[str, bytes] = {}
-    with tempfile.TemporaryDirectory(prefix="apizr-plugin-lock-") as temporary:
+    context = (
+        tempfile.TemporaryDirectory(prefix="apizr-plugin-lock-")
+        if snapshot is None
+        else nullcontext(str(snapshot))
+    )
+    with context as temporary:
         snapshot = Path(temporary)
+        requirements_dir = snapshot / "requirements"
+        requirements_dir.mkdir(mode=0o700)
         for declaration in sorted(config.plugins, key=lambda item: item.name):
+            if checkpoint is not None:
+                checkpoint()
             requirements = None
             packages = (
                 LockedDistribution(
@@ -125,6 +152,7 @@ def _assemble(
                         locking.MAX_LOCK_BYTES,
                     )
                     parsed = locking.parse_lock(raw)
+                    (requirements_dir / declaration.name).write_bytes(raw)
                     requirements = Requirements(
                         path=declaration.requirements, source_sha256=parsed.sha256
                     )
@@ -143,6 +171,8 @@ def _assemble(
             wheels: list[Wheel] = []
             manifest = None
             for expected in packages:
+                if checkpoint is not None:
+                    checkpoint()
                 names = candidates.get((expected.name, expected.version), [])
                 if len(names) != 1:
                     diagnostics.append(
@@ -307,18 +337,8 @@ def check_lock(
     lock, raw = _read(lock_path)
     diagnostics: list[Diagnostic] = []
     states: list[InstalledState] = []
-    if lock.target != current_target():
-        diagnostics.append(Diagnostic(code="target_mismatch"))
     expected, artifact_diagnostics = _assemble(project, wheelhouse)
-    diagnostics.extend(artifact_diagnostics)
-    if expected is not None:
-        wanted = {item.wheel.name: item for item in expected.plugins}
-        recorded = {item.wheel.name: item for item in lock.plugins}
-        for name in sorted(wanted.keys() | recorded.keys()):
-            if wanted.get(name) != recorded.get(name):
-                diagnostics.append(
-                    Diagnostic(code="project_artifacts_changed", plugin=name)
-                )
+    diagnostics = compare_artifacts(lock, expected, artifact_diagnostics)
     if installed:
         try:
             inventory = list_extensions(directory=directory)
@@ -335,20 +355,7 @@ def check_lock(
                 ),
                 None,
             )
-            matches = record is not None and (
-                record.sha256 == plugin.wheel.sha256
-                and record.lock_sha256
-                == (plugin.requirements.source_sha256 if plugin.requirements else None)
-                and record.module == plugin.manifest.module
-                and record.protocol == plugin.manifest.protocol
-                and sorted(record.dependencies, key=lambda item: item.name)
-                == [
-                    LockedDistribution(
-                        name=item.name, version=item.version, sha256=item.sha256
-                    )
-                    for item in plugin.dependencies
-                ]
-            )
+            matches = record is not None and installation_matches(plugin, record)
             states.append(
                 InstalledState(
                     name=plugin.wheel.name,
@@ -372,3 +379,84 @@ def check_lock(
         diagnostics=tuple(diagnostics),
         installed=tuple(states),
     )
+
+
+def compare_artifacts(
+    lock: ProjectLock,
+    expected: ProjectLock | None,
+    artifact_diagnostics: tuple[Diagnostic, ...],
+) -> list[Diagnostic]:
+    diagnostics: list[Diagnostic] = []
+    if lock.target != current_target():
+        diagnostics.append(Diagnostic(code="target_mismatch"))
+    diagnostics.extend(artifact_diagnostics)
+    if expected is not None:
+        wanted = {item.wheel.name: item for item in expected.plugins}
+        recorded = {item.wheel.name: item for item in lock.plugins}
+        for name in sorted(wanted.keys() | recorded.keys()):
+            if wanted.get(name) != recorded.get(name):
+                diagnostics.append(
+                    Diagnostic(code="project_artifacts_changed", plugin=name)
+                )
+    return diagnostics
+
+
+def installation_matches(plugin: Plugin, record: Installation) -> bool:
+    """One identity definition shared by lock checking and synchronization."""
+    return (
+        (record.name, record.version) == (plugin.wheel.name, plugin.wheel.version)
+        and record.sha256 == plugin.wheel.sha256
+        and record.lock_sha256
+        == (plugin.requirements.source_sha256 if plugin.requirements else None)
+        and record.module == plugin.manifest.module
+        and record.protocol == plugin.manifest.protocol
+        and sorted(record.dependencies, key=lambda item: item.name)
+        == [
+            LockedDistribution(name=item.name, version=item.version, sha256=item.sha256)
+            for item in plugin.dependencies
+        ]
+    )
+
+
+@dataclass(frozen=True)
+class PreparedLock:
+    lock: ProjectLock
+    result: Result
+    directory: Path
+
+
+@contextmanager
+def prepared_lock(
+    project: Path, lock_path: Path, wheelhouse: Path, checkpoint: Callable[[], None]
+) -> Iterator[PreparedLock]:
+    """Keep validated bytes alive; callers never reopen original install inputs."""
+    checkpoint()
+    lock, raw = _read(lock_path)
+    with tempfile.TemporaryDirectory(prefix="apizr-plugin-sync-") as temporary:
+        root = Path(temporary)
+        (root / "project-lock.json").write_bytes(raw)
+        expected, problems = _assemble(
+            project, wheelhouse, snapshot=root, checkpoint=checkpoint
+        )
+        diagnostics = compare_artifacts(lock, expected, problems)
+        checkpoint()
+        if not diagnostics:
+            closures = root / "closures"
+            closures.mkdir(mode=0o700)
+            for plugin in lock.plugins:
+                checkpoint()
+                closure = closures / plugin.wheel.name
+                closure.mkdir(mode=0o700)
+                for wheel in (plugin.wheel, *plugin.dependencies):
+                    # Private hard links share retained bytes, not the originals.
+                    os.link(root / wheel.filename, closure / wheel.filename)
+        yield PreparedLock(
+            lock,
+            Result(
+                valid=not diagnostics,
+                lock_sha256=_digest(raw),
+                target=lock.target,
+                diagnostics=tuple(diagnostics),
+            ),
+            root,
+        )
