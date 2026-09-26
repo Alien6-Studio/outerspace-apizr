@@ -91,32 +91,56 @@ extra_javascript:
 # Organize by reader task; keep published page paths stable.
 nav:
   - Home: index.md
-  - 0.4 in development: development/0.4.md
+  - Getting started:
+      - Quickstart: getting-started/quickstart.md
+      - The full journey: getting-started/introduction.md
   - Guides:
-      - Start here: getting-started/introduction.md
-      - Inventory a Python project: getting-started/user-guide/scan.md
-      - Inspect capability relationships: getting-started/user-guide/graph.md
-      - Inspect source without running it: getting-started/user-guide/inspect.md
-      - Assess repository exposure evidence: getting-started/user-guide/repository-readiness.md
-      - Configure a project: getting-started/user-guide/project.md
-      - Analyze a Git repository: reference/git-sources.md
-      - SSH Git sources: reference/git-ssh.md
-      - Apizr local MCP server: reference/apizr-mcp-server.md
-      - OCI service plugin: reference/oci-service-plugin.md
-      - Attest delivery plugin: reference/attest-delivery-plugin.md
-      - Attest OCI artifacts: reference/attest-oci-artifacts.md
-      - Plan exposure: getting-started/user-guide/exposure.md
-      - Call the compiler from Python: reference/compiler-api.md
-      - Invoke an installed extension: reference/extension-invocation.md
-      - Install local extensions: reference/local-extensions.md
-      - Project plugin locks: reference/project-plugin-locks.md
-      - Generate a REST interface: getting-started/user-guide/rest.md
-      - Generate an MCP server: getting-started/user-guide/mcp.md
-      - Execute code with a policy: getting-started/user-guide/execute.md
-      - Generate a legacy API and container: getting-started/user-guide/apizr.md
-      - Compatibility notes: getting-started/developer-guide/releases.md
+      - Compilation and interfaces:
+          - Inventory a Python project: getting-started/user-guide/scan.md
+          - Inspect capability relationships: getting-started/user-guide/graph.md
+          - Inspect source without running it: getting-started/user-guide/inspect.md
+          - Assess readiness: getting-started/user-guide/repository-readiness.md
+          - Plan and build repository interfaces: getting-started/user-guide/exposure.md
+          - Generate a REST interface: getting-started/user-guide/rest.md
+          - Generate an MCP server: getting-started/user-guide/mcp.md
+          - Execute code with a policy: getting-started/user-guide/execute.md
+          - Analyze a Git repository (0.4): reference/git-sources.md
+          - SSH Git sources (0.4): reference/git-ssh.md
+      - Project configuration:
+          - Configure a project (0.4): getting-started/user-guide/project.md
+          - Declarations and plugin locks (0.4): reference/project-plugin-locks.md
+      - Plugins:
+          - Install, activate and update (0.4): reference/local-extensions.md
+          - Apizr analysis MCP server (0.4): reference/apizr-mcp-server.md
+          - OCI service images (0.4): reference/oci-service-plugin.md
+          - Attest delivery proofs (0.4): reference/attest-delivery-plugin.md
+          - Attest OCI artifacts (0.4): reference/attest-oci-artifacts.md
   - Reference:
-      - Overview: reference/index.md
+      - Commands, parameters and formats: reference/index.md
+      - Python compiler API (0.4): reference/compiler-api.md
+      - Extension invocation API (0.4): reference/extension-invocation.md
+      - Compatibility notes: getting-started/developer-guide/releases.md
+  - Architecture:
+      - Capability Compiler overview: architecture/overview.md
+      - Repository Scanner and Catalog v1: architecture/repository-scanner-v1.md
+      - Repository Readiness v1: architecture/repository-readiness-v1.md
+      - Exposure Plan v1: architecture/exposure-plan-v1.md
+      - Repository Bundle v1: architecture/repository-bundle-v1.md
+      - Governed repository execution: architecture/governed-repository-runtime.md
+      - Capability Graph v1: architecture/capability-graph-v1.md
+      - Capability IR v1: architecture/capability-ir-v1.md
+      - Static readiness v1: architecture/capability-readiness-v1.md
+      - REST generator v1: architecture/rest-generator-v1.md
+      - MCP generator v1: architecture/mcp-generator-v1.md
+      - Execution Policy v1: architecture/execution-policy-v1.md
+      - OCI container execution: architecture/oci-container-runtime-v1.md
+      - Subprocess deny: architecture/subprocess-deny.md
+      - Governed REST and MCP: architecture/governed-transport-runtime-v1.md
+      - OCI-governed REST and MCP: architecture/governed-oci-transports-v2.md
+      - Artifact principles: architecture/artifact-principles.md
+      - Security baseline: architecture/security-baseline.md
+  - Legacy pipeline — compatibility:
+      - Generate a legacy API and container: getting-started/user-guide/apizr.md
       - Legacy standalone commands:
           - Analyze Python: getting-started/user-guide/code-analyzr.md
           - Generate FastAPI: getting-started/user-guide/fast-apizr.md
@@ -132,34 +156,16 @@ nav:
           - FastAPI generation endpoint: apis/fast-apizr-api.md
           - Notebook conversion endpoint: apis/notebook-transformr-api.md
           - Docker generation endpoints: apis/dockerizr-api.md
-      - Architecture and contracts:
-          - Capability Compiler overview: architecture/overview.md
-          - Repository Scanner and Catalog v1: architecture/repository-scanner-v1.md
-          - Repository Readiness v1: architecture/repository-readiness-v1.md
-          - Exposure Plan v1: architecture/exposure-plan-v1.md
-          - Repository Bundle v1: architecture/repository-bundle-v1.md
-          - Governed repository execution: architecture/governed-repository-runtime.md
-          - Capability Graph v1: architecture/capability-graph-v1.md
-          - Capability IR v1: architecture/capability-ir-v1.md
-          - Static readiness v1: architecture/capability-readiness-v1.md
-          - REST generator v1: architecture/rest-generator-v1.md
-          - MCP generator v1: architecture/mcp-generator-v1.md
-          - Execution Policy v1: architecture/execution-policy-v1.md
-          - OCI container execution: architecture/oci-container-runtime-v1.md
-          - Subprocess deny: architecture/subprocess-deny.md
-          - Governed REST and MCP: architecture/governed-transport-runtime-v1.md
-          - OCI-governed REST and MCP: architecture/governed-oci-transports-v2.md
-          - Legacy behavior contract: architecture/legacy-behavior-contract.md
-          - Artifact principles: architecture/artifact-principles.md
-          - Security baseline: architecture/security-baseline.md
+      - Pipeline plugins: getting-started/developer-guide/plugins.md
+      - Behavior contract: architecture/legacy-behavior-contract.md
   - Releases:
+      - 0.4 in development — unreleased: development/0.4.md
       - 0.3.0: releases/0.3.0.md
       - 0.2.1: releases/0.2.1.md
       - 0.2.0: releases/0.2.0.md
   - Contributing:
       - Overview: about/CONTRIBUTING.md
       - Development and checks: getting-started/developer-guide/setup.md
-      - Legacy pipeline plugins: getting-started/developer-guide/plugins.md
       - Extension packaging ADR: architecture/extension-packaging-v04.md
       - Publish a release: contributing/releases.md
       - Verify builds and releases: contributing/verification.md
