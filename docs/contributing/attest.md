@@ -7,10 +7,6 @@ provenance. The repository maintainer manages its provisioning and revocation.
 - Key identifier: `ac3b0b1c565ef9e18f894c10f5ce1cdb`.
 - Raw public key: `1d397e601c7efc4b8e372efa3d23bfbd819ecc02070d38a80335b1fd9a4e72e1`.
 - Public key and trust policy: `.attest/trust/` in the protected repository.
-- Private-key storage: `APIZR_ATTEST_SIGNING_KEY`, a PKCS#8 PEM provisioned on
-  2026-09-21 in the protected `pypi` GitHub environment with maintainer
-  authorization. The temporary local private copy was removed after verification.
-  No repository-wide secret or private key in source control.
 - Timestamp authority: DigiCert's documented
   [RFC 3161 service](https://knowledge.digicert.com/general-information/rfc3161-compliant-time-stamp-authority-server),
   `http://timestamp.digicert.com`. Only the signature's digest is submitted.
@@ -26,21 +22,6 @@ RFC 3161 token offline, then requires rejection of changed content, a missing
 timestamp, an invalid signature and an untrusted key. PRs never use the private
 release key or call the timestamp service.
 
-An authorized local test also signed and timestamped the actual artifacts from
-[CI run 35624060995](https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/35624060995)
-at `d254da33f649b853dee8bfa5669f0ca383e6f282`. GitHub provenance for the wheel,
-sdist and CI archive was verified against the repository, workflow, commit and
-`master` ref before signing. All five Attest checks passed again after extracting
-the receipt archive, using the independently held repository trust store; every
-archived file matched the verified input's SHA-256. The test receipt archive has
-SHA-256 `76ad8ebc0c69991c689759521c6e99123544db5d1798124af7ae30956f1e2626`.
-
-These were post-release CI verification builds declaring 0.2.0, not the immutable
-published 0.2.0 distributions. This local test does not establish execution of
-the protected GitHub publication job or delivery of a new release. The existing
-environment protections remain: required maintainer review, `v*` tags only and
-no administrator bypass.
-
 ## Receipt before publication
 
 The publication workflow first verifies the exact CI distributions and their
@@ -51,11 +32,8 @@ commit and CI run identifier as inputs and outputs. It does not rebuild them or
 claim that Attest supervised their original build. GitHub provenance remains
 the build evidence.
 
-The private key is available only to the signing step. The script removes it
-from the child environment, writes it with mode 0600, and deletes the temporary
-file on success or failure. An always-run cleanup step covers interruptions.
-Only an explicit public set enters the resulting archive; keys and caches are
-excluded. The PyPI publisher still executes no checkout or repository code.
+Private signing material is excluded from release artifacts. The PyPI publisher
+executes no checkout or repository code.
 
 Publication requires the expected Apizr signer and **all five** verification
 checks to pass: schema, consistency, signature, timestamp and recomputed hashes.
@@ -98,16 +76,15 @@ The pipeline mode is intentional: the published 0.1.0 CLI's `--recompute` needs
 
 ## Rotation and recovery
 
-The private key is retained in the protected GitHub environment; GitHub does not
-offer API retrieval of a stored secret. If it is lost or access is withdrawn,
-create a new identity and update its public policy through a reviewed PR. Do not
+If a signing identity can no longer be used, create a new identity and update
+its public policy through a reviewed PR. Do not
 silently replace the private key under an existing key identifier. Revoke a
 compromised key with a recorded UTC revocation time, retain its public key and
 history, and review which timestamped receipts remain acceptable. Never use
 `--trust-receipt-timestamp` to bypass independent time evidence.
 
 Key/TSA rotation requires updating the pinned policy and offline setup fixture,
-repeating the negative verification checks, and updating the environment secret
+repeating the negative verification checks, and updating the signing configuration
 before publishing. Keep previous public keys and issuer certificates so older
 receipts can still be checked against their original trusted policy. No other
 project's signing identity is changed by this setup.

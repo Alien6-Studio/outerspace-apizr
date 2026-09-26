@@ -21,8 +21,6 @@ Your business logic stays in Python.
 
 </div>
 
-<img class="apizr-home-art" src="assets/images/illustration.png" alt="OuterSpace Apizr: a space explorer in an orange suit in front of a yellow spacecraft" width="2048" height="642" />
-
 </div>
 
 **Latest published stable: 0.3.0 · Released 22 September 2026**
