@@ -29,7 +29,7 @@ jobs:
       - run: uv sync --locked
       - run: uv run --locked pytest tests/test_extension_probe.py tests/extension_runtime tests/local_plugins tests/test_pipeline_plugins.py tests/test_optional.py --timeout=30
       - run: uv run --locked python scripts/smoke_extension_packaging.py --work-dir "$RUNNER_TEMP/apizr-extension-proof"
-      - name: Sync installed plugins with OS network isolation
+      - name: Sync and update installed plugins with OS network isolation
         run: uv run --locked python scripts/run_plugin_sync_proof.py "$RUNNER_TEMP/apizr-extension-proof"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
@@ -40,6 +40,9 @@ jobs:
             ${{ runner.temp }}/apizr-extension-proof/sync/*evidence*
             ${{ runner.temp }}/apizr-extension-proof/sync/backend-network.jsonl
             ${{ runner.temp }}/apizr-extension-proof/sync/sync-summary.json
+            ${{ runner.temp }}/apizr-extension-proof/update/*evidence*
+            ${{ runner.temp }}/apizr-extension-proof/update/backend-network.jsonl
+            ${{ runner.temp }}/apizr-extension-proof/update/update-summary.json
           if-no-files-found: error
           retention-days: 90
 
@@ -72,7 +75,7 @@ jobs:
             --core-python "$(brew --prefix apizr-v04-probe)/libexec/bin/python" \
             --core-root "$(brew --prefix apizr-v04-probe)"
           brew info --json=v2 apizr-v04/prototype/apizr-v04-probe > "$RUNNER_TEMP/apizr-extension-proof/homebrew-receipt.json"
-      - name: Sync installed plugins with OS network isolation
+      - name: Sync and update installed plugins with OS network isolation
         run: uv run --locked python scripts/run_plugin_sync_proof.py "$RUNNER_TEMP/apizr-extension-proof"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
@@ -83,6 +86,9 @@ jobs:
             ${{ runner.temp }}/apizr-extension-proof/sync/*evidence*
             ${{ runner.temp }}/apizr-extension-proof/sync/backend-network.jsonl
             ${{ runner.temp }}/apizr-extension-proof/sync/sync-summary.json
+            ${{ runner.temp }}/apizr-extension-proof/update/*evidence*
+            ${{ runner.temp }}/apizr-extension-proof/update/backend-network.jsonl
+            ${{ runner.temp }}/apizr-extension-proof/update/update-summary.json
             ${{ runner.temp }}/apizr-extension-proof/homebrew-receipt.json
             ${{ runner.temp }}/apizr-brew/dependency-evidence.json
           if-no-files-found: error

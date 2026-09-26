@@ -1,4 +1,4 @@
-"""Run the installed sync proof with inherited OS network denial for all children."""
+"""Run the installed sync and update proofs with inherited OS network denial for all children."""
 
 import argparse
 import json
@@ -56,6 +56,21 @@ def main() -> None:
         raise RuntimeError("Network isolation proof requires Linux or macOS")
     subprocess.run(
         command,
+        cwd=work,
+        env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"),
+        check=True,
+        timeout=300,
+    )
+    update_command = [
+        value.replace("smoke_plugin_sync.py", "smoke_plugin_update.py")
+        if value == str(REPO / "scripts/smoke_plugin_sync.py")
+        else str(work / "update")
+        if value == str(work / "sync")
+        else value
+        for value in command
+    ]
+    subprocess.run(
+        update_command,
         cwd=work,
         env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"),
         check=True,
