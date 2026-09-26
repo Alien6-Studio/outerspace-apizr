@@ -5,33 +5,16 @@ from pathlib import Path
 from threading import Event
 from typing import Literal
 
-from apizr.local_plugins import activation, backend, store
+from apizr.local_plugins import backend, store
 from apizr.local_plugins.control import InstallationCancelled, InstallControl
 from apizr.local_plugins.models import Installation, Inventory, PluginError
-from apizr.local_plugins.operations import install_extension
 from apizr.plugin_lock.models import Diagnostic, LockError, Plugin
 from apizr.plugin_lock.operations import installation_matches, prepared_lock
 
 from .models import PluginAction, SyncLimits, SyncResult
+from .preparation import install_prepared_plugin
+from .preparation import installation_state as _state
 from .probe import verify_interpreter
-
-
-def _state(
-    root: Path, control: InstallControl
-) -> tuple[Inventory, activation.Activations]:
-    control.check()
-    if root.exists():
-        store.validate_directory(root)
-    if not any(
-        path.exists() or path.is_symlink()
-        for path in (root / "installations.json", root / "activations.json")
-    ):
-        return Inventory(), activation.Activations()
-    with store.installation_lock(root, create=False, control=control):
-        inventory, active = store.read_inventory(root), activation._read(root)
-        for record in active.activations:
-            activation._validate_binding(record, inventory)
-        return inventory, active
 
 
 def _record(plugin: Plugin, inventory: Inventory) -> Installation | None:
@@ -159,19 +142,7 @@ def sync_plugins(
                 current = plugin.wheel.name
                 control.check()
                 if actions[index].action == "install":
-                    closure = prepared.directory / "closures" / plugin.wheel.name
-                    record = install_extension(
-                        closure / plugin.wheel.filename,
-                        plugin.wheel.sha256,
-                        directory=root,
-                        requirements=prepared.directory
-                        / "requirements"
-                        / plugin.wheel.name
-                        if plugin.requirements
-                        else None,
-                        wheelhouse=closure if plugin.requirements else None,
-                        control=control,
-                    )
+                    record = install_prepared_plugin(plugin, prepared, root, control)
                     if not installation_matches(plugin, record):
                         raise PluginError("installation_conflict")
                     actions[index] = actions[index].model_copy(

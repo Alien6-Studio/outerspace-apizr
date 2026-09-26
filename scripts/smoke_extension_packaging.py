@@ -446,6 +446,9 @@ def main() -> None:
     from prepare_sync_extensions import prepare as prepare_sync
 
     prepare_sync(work / "sync", uv, env)
+    from prepare_update_extensions import prepare as prepare_update
+
+    prepare_update(work / "update", uv, env)
     after = snapshot(core_root)
     after_distributions = core(inventory_code)
     evidence = {

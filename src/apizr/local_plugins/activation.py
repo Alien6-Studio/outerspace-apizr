@@ -22,6 +22,7 @@ from apizr.extension_runtime import (
 from apizr.extension_runtime.protocol import unique_object
 
 from . import store
+from .control import InstallControl
 from .models import Installation, Inventory, PluginError, canonical_name
 
 DEFAULT_LIMITS = Limits()
@@ -240,3 +241,40 @@ def read_arguments(
         raise InvalidInvocation() from None
     except OSError:
         raise PluginError("arguments_unavailable") from None
+
+
+def compare_and_activate(
+    source: Installation,
+    target: Installation,
+    expected: Installation,
+    *,
+    root: Path,
+    control: InstallControl,
+) -> bool:
+    """Select a verified target only while its full expected binding still holds.
+
+    Returns whether this call wrote the activation. Identical concurrent
+    transitions may converge; unrelated operator selections are never replaced.
+    The caller has already probed the target outside the store lock.
+    """
+    if source.name != target.name or expected not in (source, target):
+        raise PluginError("invalid_activation_transition")
+    with store.installation_lock(root, create=False, control=control):
+        inventory, state = store.read_inventory(root), _read(root)
+        for item in state.activations:
+            _validate_binding(item, inventory)
+        if source not in inventory.installations:
+            raise PluginError("update_source_changed")
+        if target not in inventory.installations:
+            raise PluginError("update_target_changed")
+        current = next((r for r in state.activations if r.name == source.name), None)
+        _interpreter(target, root)
+        if current == target:
+            return False
+        if current != expected:
+            raise PluginError("update_activation_changed")
+        control.check()
+        _publish(
+            root, [r for r in state.activations if r.name != source.name] + [target]
+        )
+        return True

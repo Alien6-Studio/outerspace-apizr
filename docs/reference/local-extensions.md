@@ -429,4 +429,194 @@ uv run --locked python scripts/smoke_extension_packaging.py \
 
 ## Portable project locks and local preferences
 
-Development 0.4 adds [project declarations, explicit user preferences and portable artifact locks](project-plugin-locks.md). Use `plugins lock create/check` to validate artifacts and `plugins sync --project apizr.toml --lock apizr.plugins.lock.json --wheelhouse ./wheels --dry-run --json` to preview additive installation. Remove `--dry-run` to install the missing versions explicitly. `--user-config` selects local store preferences on all plugin commands and `mcp serve`; explicit `--plugins-dir` takes precedence. Neither project declarations nor locks activate anything. Synchronization keeps existing versions and activations; updates and removal remain future work. See the linked page for partial results, resuming, cancellation and installed-wheel proofs.
+Development 0.4 adds [project declarations, explicit user preferences and portable artifact locks](project-plugin-locks.md). Use `plugins lock create/check` to validate artifacts and `plugins sync --project apizr.toml --lock apizr.plugins.lock.json --wheelhouse ./wheels --dry-run --json` to preview additive installation. Remove `--dry-run` to install the missing versions explicitly. `--user-config` selects local store preferences on all plugin commands and `mcp serve`; explicit `--plugins-dir` takes precedence. Neither project declarations nor locks activate anything. Synchronization keeps existing versions and activations; removal remains future work. See the linked page for partial results, resuming, cancellation and installed-wheel proofs.
+
+## Controlled locked updates
+
+Development **0.4 remains unreleased**. `plugins update` prepares one explicitly
+locked version in a separate environment. It never modifies an existing
+environment in place or removes an older version. There is no automatic version
+selection, catalogue, dependency download or source build. A complete local
+wheelhouse and an already installed Python are required; uv is needed only when
+the target environment is missing.
+
+```sh
+apizr plugins update NAME --from-version INSTALLED_VERSION \
+  --project /path/next/apizr.toml --lock /path/next/apizr.plugins.lock.json \
+  --wheelhouse /path/wheels --dry-run --json
+```
+
+Remove `--dry-run` to prepare the target. Add `--activate` only when you also want
+to select it. `--plugins-dir` overrides the explicitly selected `--user-config`
+store, then the platform default. The project cannot choose the store or request
+activation. There is no implicit user-file discovery. `--timeout-ms` retains the
+sync default of 120000 ms and inclusive 1–600000 ms bounds; Python callers can
+supply a cancellation Event.
+
+The whole project/lock and artifact set must be coherent, but only NAME and its
+closure are installed. The source version must already be registered. The target
+comes exclusively from the project and lock. No version ordering is inferred,
+so an explicitly requested older version is allowed. A target equal to the source
+or already installed with the same complete identity is reused. Different hashes,
+manifest module/protocol or requirements/dependency identity under the same
+name/version are refused without replacement. Requirements retain their original
+byte identity; no normalization or rewriting takes place.
+
+Dry-run creates no absent store, changes no persistent state and starts neither
+uv nor a plugin interpreter. `interpreter_verified: false` records the remaining
+apply-time check. Apply retains the validated private snapshot used by sync,
+installs through its offline backend and probes the registered target using the
+same fixed, bounded `-I -S -B` standard-library program. It never imports the
+plugin or project and does not run a business-operation health check. Structural
+viability and Python target agreement do not prove functional compatibility with
+every project or cryptographic integrity of every virtualenv file.
+
+### Conditional activation and concurrent operators
+
+Without `--activate`, even an inactive plugin or a third active version remains
+exactly as selected. With `--activate`, the starting activation must match the
+complete source binding or the already matching target. Inactive plugins must
+first be selected with `enable`; a third selection is refused before installation.
+
+Update captures the source and activation under the store lock, releases it while
+preparing/probing the target, then reacquires it. It compares the complete source
+and target records (including environment IDs) and the expected activation before
+atomically writing the target selection. Other plugin activations are preserved.
+A concurrent disable or different selection causes a refusal, not an override.
+Identical concurrent requests can converge when the same verified target has
+already been selected. Competing requests for different targets cannot both use
+the same original active source. These are current-record comparisons, not a
+history of intervening operator actions.
+
+Installation and activation are separate steps, not a global transaction. An
+installer failure preserves A and its activation. If B installs successfully but
+the activation comparison fails, B remains installed and the current activation
+is retained. Correct the explicit precondition if appropriate and rerun the same
+command: the verified B is reused, including when uv is absent. Never rebuild or
+replace artifacts under the same locked identity to obtain a successful retry.
+
+An already admitted invocation or MCP session can finish on A after B is selected;
+A and its dependencies are retained. New admissions use the activation they
+observe. Explicit rollback is `plugins enable NAME --version OLD_VERSION`; update
+never initiates rollback based on executing a plugin operation.
+
+### Result and failure contract
+
+The typed Python operation is independent of the CLI:
+
+```python
+from pathlib import Path
+from threading import Event
+from apizr.plugin_update import update_plugin
+
+cancel = Event()
+result = update_plugin(
+    "apizr-update-probe",
+    "1.0.0",
+    Path("2.0.0/apizr.toml"),
+    Path("2.0.0/apizr.plugins.lock.json"),
+    Path("wheels"),
+    directory=Path("plugins"),
+    activate=True,
+    timeout_ms=120000,
+    cancel=cancel,
+)
+assert result.exit_code == 0, result.diagnostics
+```
+
+`--json` keeps stdout exclusively `apizr.plugin-update/v1`, even for recoverable
+partial failure. The document includes:
+
+- `mode`, `state`, `exit_code`, plugin/source version, full captured `source`
+  installation, locked `target`, observed `target_installation`, `python_target`
+  and `lock_sha256`. Installation records reuse the existing contract, including
+  the local interpreter path and environment identity.
+- `installation`: `not_attempted`, `planned`, `reused`, `installed`, `failed` or
+  `unconfirmed`; `interpreter_verified` reports a completed target probe.
+- `activation_requested`, distinct `activation` outcome, and the observed
+  `active_before`/`active_after` records. A null activation with `before_known` or
+  `after_known` true means inactive; false means it could not be established.
+- Stable redacted `diagnostics`; never raw uv output or the parent environment.
+
+`activation` distinguishes `not_requested`, `not_attempted`, `planned`, `changed`,
+`unchanged`, `refused`, `observed_target` and `unconfirmed`. After interruption,
+`observed_target` only reports the selection seen during reconciliation; it does
+not convert that interrupted command into success or claim which writer selected
+it. On success, `changed` records this call's atomic write; the separate final
+observation must still agree with the requested target. No selection is reserved
+against future operator actions after the command returns.
+
+| State | Exit | Meaning |
+| --- | --- | --- |
+| `planned` | 0 | Simulation without blocking divergence; no mutation |
+| `complete` | 0 | Target verified and, if requested, activation successful |
+| `refused` | 1 or 2 | Before mutation: divergence/precondition (1) or operational/input error (2) |
+| `partial` | 2 | Installation/activation work started but the full request failed |
+| `interrupted` | 130 | Cancellation; observed published progress retained |
+| `unconfirmed` | 2 or 130 | State/cleanup could not be confirmed; 130 retains user interruption |
+
+The deadline spans preparation, bounded store waits, offline uv and the target
+probe. Existing per-command and size limits from sync apply. Cleanup has its
+separate two-second grace; reconciliation rereads published state under the lock
+with a further two-second budget, including around atomic activation writes.
+No successful environment is deleted on failure. Cancellation stops supervised
+work, reaps the direct process and releases the lock. SIGKILL, loss of the machine,
+detached descendants and noninterruptible OS operations retain the documented
+limits: a final report and immediate cleanup cannot be guaranteed in those cases.
+
+### Complete installed-wheel example
+
+From the development checkout, use a fresh work directory outside it. Preparation
+may download the core/build dependencies; update itself is strictly offline.
+The trusted fixture uses the existing plugin → helper → leaf example, with
+versions A/B that return 42/73 through different transitive dependencies.
+
+```sh
+work=$(mktemp -d)
+uv build --wheel --out-dir "$work/dist"
+uv venv --no-python-downloads --python python3 "$work/core"
+uv pip install --python "$work/core/bin/python" "$work"/dist/outerspace_apizr-*.whl
+python3 scripts/prepare_update_extensions.py --work-dir "$work/update"
+core_python="$work/core/bin/python"
+cd "$work/update"
+"$core_python" -I -B -m apizr.cli plugins lock create --project 1.0.0/apizr.toml --wheelhouse wheels --output 1.0.0/apizr.plugins.lock.json --json
+"$core_python" -I -B -m apizr.cli plugins lock create --project 2.0.0/apizr.toml --wheelhouse wheels --output 2.0.0/apizr.plugins.lock.json --json
+"$core_python" -I -B -m apizr.cli plugins sync --project 1.0.0/apizr.toml --lock 1.0.0/apizr.plugins.lock.json --wheelhouse wheels --user-config user.toml --json
+"$core_python" -I -B -m apizr.cli plugins enable apizr-update-probe --version 1.0.0 --user-config user.toml
+"$core_python" -I -B -m apizr.cli plugins run apizr-update-probe answer --arguments arguments.json --user-config user.toml
+"$core_python" -I -B -m apizr.cli plugins update apizr-update-probe --from-version 1.0.0 --project 2.0.0/apizr.toml --lock 2.0.0/apizr.plugins.lock.json --wheelhouse wheels --user-config user.toml --dry-run --activate --json
+"$core_python" -I -B -m apizr.cli plugins update apizr-update-probe --from-version 1.0.0 --project 2.0.0/apizr.toml --lock 2.0.0/apizr.plugins.lock.json --wheelhouse wheels --user-config user.toml --json
+```
+
+The first invocation returns 42. Preparing B still leaves A active. The two locks
+have different output paths: `lock create` refuses to overwrite a different file.
+Do not rebuild wheels or edit original requirements after locking.
+
+```sh
+"$core_python" -I -B -m apizr.cli plugins update apizr-update-probe --from-version 1.0.0 --project 2.0.0/apizr.toml --lock 2.0.0/apizr.plugins.lock.json --wheelhouse wheels --user-config user.toml --activate --json
+"$core_python" -I -B -m apizr.cli plugins run apizr-update-probe answer --arguments arguments.json --user-config user.toml
+```
+
+B now returns 73. Repeat the update command: both installation and activation are
+reused. To return explicitly to A without reinstallation:
+
+```sh
+"$core_python" -I -B -m apizr.cli plugins enable apizr-update-probe --version 1.0.0 --user-config user.toml
+"$core_python" -I -B -m apizr.cli plugins run apizr-update-probe answer --arguments arguments.json --user-config user.toml
+```
+
+The result is again 42. After an activation conflict, inspect `plugins list
+--active --json --user-config user.toml` and respect the current operator choice.
+If you intentionally restore A with that explicit enable command, rerunning
+update reuses B and attempts the conditional transition again.
+
+The existing packaging workflow runs these operations from installed wheels on
+Linux 3.11–3.14, macOS 3.11/3.14 and disposable Homebrew. It retains
+`update-evidence.json`, `backend-network.jsonl`, `update-summary.json` and
+`core-evidence.json`: dry-run equality, real uv failure/retry, prepare-only behavior,
+transition/repetition with uv absent, explicit rollback, original-environment and
+core file/distribution equality. OS network isolation covers Python and uv children.
+Concurrent activation races, interruption reconciliation and in-flight calls are
+also covered by explicitly synchronized tests. No Homebrew changes are needed on
+the developer machine. Catalogue, automatic selection/download and uninstall remain
+separate work; `--activate` is not a general permission engine.

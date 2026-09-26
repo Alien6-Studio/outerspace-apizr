@@ -217,7 +217,7 @@ artifacts. Output is published atomically without replacement: identical content
 is idempotent, different existing content yields `output_conflict`. Parent output
 directories must already exist. Interruption leaves no partially published lock.
 
-Updates, removal, an official catalog/profiles and authorization per
+Removal, an official catalog/profiles and authorization per
 operation/destination remain commitments of the initial 0.4 plan. Synchronization
 is additive; it does not deliver those separate features.
 
@@ -370,3 +370,23 @@ Every backend invocation verifies network denial before executing real uv.
 The existing uv and Homebrew qualification remains in place; no developer-machine
 Homebrew updates are needed. `sync-evidence.json`, `backend-network.jsonl` and
 `sync-summary.json` retain partial/resume, idempotence and core-integrity results.
+
+
+## Prepare a controlled update
+
+Use a new project declaration and original requirements for the target version,
+then `plugins lock create --output apizr.plugins.next.lock.json`. Existing different
+lock files are never overwritten: choose a new output filename instead of changing
+that protection. Neither create nor update rewrites the project or requirements.
+
+[`plugins update NAME --from-version VERSION`](local-extensions.md#controlled-locked-updates)
+validates the whole supplied project/lock, but installs only NAME and its own
+closure. Other missing project plugins stay missing. The target comes exclusively
+from this lock; there is no latest-version selection or version-order comparison.
+An explicitly chosen lower version is also a valid transition.
+
+By default, update only prepares the target; activation is unchanged. With
+`--activate`, the initially active installation must be the requested source or
+the already conforming target. A conditional atomic comparison protects operator
+changes made during installation. See the linked complete installed-wheel example
+for simulation, retry, activation and an explicit return to the retained source.

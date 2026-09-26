@@ -19,6 +19,7 @@ from apizr.local_plugins import (
 from apizr.plugin_lock import LockError, Result, check_lock, create_lock
 from apizr.plugin_lock.models import Diagnostic
 from apizr.plugin_sync import SyncLimits, SyncResult, sync_plugins
+from apizr.plugin_update import UpdateResult, update_plugin
 from apizr.user_config import plugins_directory
 
 
@@ -111,7 +112,39 @@ def main(argv: Sequence[str]) -> int:
         default=SyncLimits().timeout_ms,
         help="Total sync deadline (1–600000 ms; default 120000)",
     )
-    for command in (install, listing, enable, disable, run, create, check, sync):
+    update = commands.add_parser(
+        "update",
+        help="Prepare one locked version and optionally switch its expected activation",
+    )
+    update.add_argument("name")
+    update.add_argument("--from-version", required=True)
+    update.add_argument("--project", type=Path, required=True)
+    update.add_argument("--lock", type=Path, required=True)
+    update.add_argument("--wheelhouse", type=Path, required=True)
+    update.add_argument("--dry-run", action="store_true")
+    update.add_argument(
+        "--activate",
+        action="store_true",
+        help="Conditionally switch from the expected active version",
+    )
+    update.add_argument("--json", action="store_true")
+    update.add_argument(
+        "--timeout-ms",
+        type=timeout_ms,
+        default=SyncLimits().timeout_ms,
+        help="Total update deadline (1–600000 ms; default 120000)",
+    )
+    for command in (
+        install,
+        listing,
+        enable,
+        disable,
+        run,
+        create,
+        check,
+        sync,
+        update,
+    ):
         command.add_argument(
             "--user-config", type=Path, help="Explicit operator preferences file"
         )
@@ -123,6 +156,26 @@ def main(argv: Sequence[str]) -> int:
     args = parser.parse_args(argv)
     try:
         args.plugins_dir = plugins_directory(args.plugins_dir, args.user_config)
+        if args.command == "update":
+            updated = update_plugin(
+                args.name,
+                args.from_version,
+                args.project,
+                args.lock,
+                args.wheelhouse,
+                activate=args.activate,
+                dry_run=args.dry_run,
+                directory=args.plugins_dir,
+                timeout_ms=args.timeout_ms,
+            )
+            print(
+                updated.model_dump_json()
+                if args.json
+                else f"Plugin update: {updated.state}; installation={updated.installation}; activation={updated.activation}."
+            )
+            for problem in updated.diagnostics:
+                print(f"apizr plugins: {problem.code}", file=sys.stderr)
+            return updated.exit_code
         if args.command == "sync":
             outcome = sync_plugins(
                 args.project,
@@ -208,6 +261,14 @@ def main(argv: Sequence[str]) -> int:
         print(f"apizr plugins: {error}", file=sys.stderr)
         return 130
     except (PluginError, ExtensionError) as error:
+        if args.command == "update" and args.json:
+            print(
+                UpdateResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    activation_requested=args.activate,
+                    diagnostics=(Diagnostic(code=str(error)),),
+                ).model_dump_json()
+            )
         if args.command == "sync" and args.json:
             print(
                 SyncResult(
@@ -224,6 +285,16 @@ def main(argv: Sequence[str]) -> int:
         print(f"apizr plugins: {error}", file=sys.stderr)
         return 2
     except KeyboardInterrupt:
+        if args.command == "update" and args.json:
+            print(
+                UpdateResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    state="interrupted",
+                    exit_code=130,
+                    activation_requested=args.activate,
+                    diagnostics=(Diagnostic(code="update_cancelled"),),
+                ).model_dump_json()
+            )
         if args.command == "sync" and args.json:
             print(
                 SyncResult(
