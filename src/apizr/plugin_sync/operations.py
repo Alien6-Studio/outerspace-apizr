@@ -190,6 +190,9 @@ def sync_plugins(
                 record = _record(plugin, inventory)
                 if record is None or not installation_matches(plugin, record):
                     raise PluginError("final_inventory_mismatch")
+                actions[index] = actions[index].model_copy(
+                    update={"interpreter_verified": False}
+                )
                 verify_interpreter(
                     record, root, prepared.lock.target, prepared.directory, control
                 )
@@ -240,7 +243,13 @@ def sync_plugins(
         except (OSError, PluginError):
             uncertain = True
             actions = [
-                a.model_copy(update={"status": "unconfirmed", "active": None})
+                a.model_copy(
+                    update={
+                        "status": "unconfirmed",
+                        "active": None,
+                        "interpreter_verified": False,
+                    }
+                )
                 if a.status == "installed" or a.name == current
                 else a
                 for a in actions

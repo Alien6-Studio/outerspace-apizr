@@ -38,6 +38,7 @@ jobs:
           path: |
             ${{ runner.temp }}/apizr-extension-proof/evidence.json
             ${{ runner.temp }}/apizr-extension-proof/sync/*evidence*
+            ${{ runner.temp }}/apizr-extension-proof/sync/backend-network.jsonl
             ${{ runner.temp }}/apizr-extension-proof/sync/sync-summary.json
           if-no-files-found: error
           retention-days: 90
@@ -80,6 +81,7 @@ jobs:
           path: |
             ${{ runner.temp }}/apizr-extension-proof/evidence.json
             ${{ runner.temp }}/apizr-extension-proof/sync/*evidence*
+            ${{ runner.temp }}/apizr-extension-proof/sync/backend-network.jsonl
             ${{ runner.temp }}/apizr-extension-proof/sync/sync-summary.json
             ${{ runner.temp }}/apizr-extension-proof/homebrew-receipt.json
             ${{ runner.temp }}/apizr-brew/dependency-evidence.json

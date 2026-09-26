@@ -456,3 +456,27 @@ def test_failed_new_interpreter_stops_later_installations(
     assert [p.status for p in result.plugins] == ["installed", "not_attempted"]
     assert len(list_extensions(directory=root).installations) == 1
     assert sync(project, root).exit_code == 0
+
+
+def test_failed_final_probe_does_not_report_earlier_probe_as_current(
+    project, tmp_path, monkeypatch
+):
+    root = tmp_path / "store"
+    assert sync(project, root).exit_code == 0
+    verify = operations.verify_interpreter
+    calls = 0
+
+    def fail_final(*args):
+        nonlocal calls
+        calls += 1
+        if calls == 3:  # Both initial reuse probes passed; A's final probe fails.
+            raise PluginError("installed_interpreter_unavailable")
+        verify(*args)
+
+    with monkeypatch.context() as context:
+        context.setattr(operations, "verify_interpreter", fail_final)
+        result = sync(project, root)
+    assert result.state == "partial" and result.exit_code == 2
+    assert not result.plugins[0].interpreter_verified
+    assert len(list_extensions(directory=root).installations) == 2
+    assert sync(project, root).exit_code == 0
