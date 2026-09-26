@@ -2,9 +2,8 @@
 
 !!! warning "Development 0.4 — not released"
 
-    These commands belong to the development wheel built from this PR's source.
-    They are not in the published **0.3.0** package. The new pages are in the PR
-    until it is merged and the normal documentation deployment succeeds.
+    These commands belong to development wheels for **0.4**.
+    They are not in the published **0.3.0** package.
 
 ## Four separate kinds of state
 
