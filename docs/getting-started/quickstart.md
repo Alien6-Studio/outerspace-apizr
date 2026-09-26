@@ -10,7 +10,9 @@ Use **stable Apizr 0.3.0** to expose two functions from the versioned
 example. You will call `quote(unit_price=12.5, quantity=2)` and get `25.0`,
 then `available(stock=10, requested=3)` and get `true`.
 
-This guide starts with MCP and includes an equally usable [REST path](#use-rest-instead).
+Complete the shared preparation below, then choose **[MCP](#use-mcp)** or
+**[REST](#use-rest-instead)**. You only need to follow one interface path. For MCP,
+choose your usual client or the Python test without an AI account.
 No Docker, plugin, remote-Git adapter or development build is needed. The site also
 documents [unreleased 0.4](../development/0.4.md); this page uses only 0.3.0 commands.
 
@@ -72,7 +74,19 @@ JSON
 `python:api:quote` and `python:inventory:available` are selected. Being ready does
 not automatically expose a function.
 
-## Generate the MCP bundle
+## Choose your interface
+
+The workspace, sources and policies above are shared. Continue with **one** path:
+
+[Use MCP](#use-mcp){ .md-button .md-button--primary }
+[Use REST](#use-rest-instead){ .md-button }
+
+- **MCP:** generate tools, then connect your usual client **or** test them with Python.
+- **REST:** generate an HTTP API and send two requests with curl. Skip the MCP sections.
+
+## Use MCP
+
+### Generate the MCP bundle
 
 **Goal:** turn the selected functions into callable MCP tools. A **bundle** is the
 generated server, its contracts and the source it needs.
@@ -94,7 +108,7 @@ to inspect these stages, not prerequisites. Generation does **not** execute the
 project. A conditional private helper does not prevent these two selected public
 functions from being generated.
 
-## Connect a client and make two calls
+### Connect a client and make two calls
 
 **Goal:** complete a real MCP exchange, not just start a process. Install the
 bundle's declared runtime dependencies into the active virtual environment:
@@ -104,12 +118,9 @@ bundle's declared runtime dependencies into the active virtual environment:
 python -m pip install -r build/mcp/requirements.txt
 ```
 
-**Observe:** the MCP SDK and server requirements install successfully. This bundle
-uses the SDK's v2 client API; follow the
-[official Python client documentation](https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/client/index.md)
-and [stdio transport configuration](https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/client/transports.md).
-The small client below starts the generated server with that same Python, completes
-the protocol handshake, lists its tools and calls them. No AI account is required.
+**Observe:** the MCP SDK and server requirements install successfully. Both client
+choices below use this same bundle and environment. Choose **one**; running the
+Python example is not required before connecting your usual client.
 
 !!! warning "Calls execute trusted Python"
     This example uses **direct** mode: the functions execute inside the generated
@@ -117,6 +128,60 @@ the protocol handshake, lists its tools and calls them. No AI account is require
     A readiness result is not a security approval. For governed execution, an
     **execution policy** chooses a worker backend and its required limits; see
     [the full journey](introduction.md#understand-the-decisions).
+
+This is a **generated business-function MCP server**. It is distinct from the
+[Apizr analysis MCP server](../reference/apizr-mcp-server.md) in development 0.4,
+which inspects repositories and plans exposure without executing their functions.
+
+<details id="connect-an-ai-client" markdown="1">
+<summary>With your usual client</summary>
+
+The generated MCP server can also be launched by a compatible AI client.
+On macOS, for example, the [official local-server guide for Claude Desktop](https://modelcontextprotocol.io/docs/develop/connect-local-servers)
+documents **Settings → Developer → Edit Config**, the `mcpServers` structure,
+absolute paths and a full restart after saving. Install Claude Desktop separately
+if you choose this client; the optional Python test does not require it.
+
+Run `pwd` in `apizr-quickstart` to obtain its absolute path. Add this entry to the
+existing `mcpServers` object, preserving any other servers. Replace both
+`/absolute/path/apizr-quickstart` prefixes with that real path; do not use `~` or
+shell variables in this JSON:
+
+```json
+{
+  "mcpServers": {
+    "repository-shop": {
+      "command": "/absolute/path/apizr-quickstart/.venv/bin/python",
+      "args": [
+        "/absolute/path/apizr-quickstart/build/mcp/server.py",
+        "--transport",
+        "stdio"
+      ]
+    }
+  }
+}
+```
+
+After restarting the client, inspect the server's available tools. Ask it to call
+`api.quote` with `unit_price=12.5, quantity=2`, then `inventory.available` with
+`stock=10, requested=3`. Approve only those intended calls and inspect the tool
+results (`25.0` and `true`), not just the assistant's prose answer.
+
+This configuration follows the official client documentation. Apizr's documented
+automated proof uses the Python client in the other choice; it does not claim a graphical
+Claude Desktop session was exercised. Other MCP clients can use the same stdio
+command and arguments according to their own configuration format.
+
+</details>
+
+<details id="test-with-python" markdown="1">
+<summary>Test with Python — no AI account</summary>
+
+This bundle uses the SDK's v2 client API; follow the
+[official Python client documentation](https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/client/index.md)
+and [stdio transport configuration](https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/client/transports.md).
+The small client below starts the generated server with that same Python, completes
+the protocol handshake, lists its tools and calls them. No AI account is required.
 
 Run this from `apizr-quickstart`, still with `.venv` active:
 
@@ -166,49 +231,12 @@ The server may also log diagnostic messages to stderr. Running
 it is not evidence that any tool has been called. Do not type chat messages into
 its protocol stream.
 
-### Connect an AI client
+</details>
 
-The generated MCP server can also be launched by a compatible AI client.
-On macOS, for example, the [official local-server guide for Claude Desktop](https://modelcontextprotocol.io/docs/develop/connect-local-servers)
-documents **Settings → Developer → Edit Config**, the `mcpServers` structure,
-absolute paths and a full restart after saving. Install Claude Desktop separately
-if you choose this client; the Python test above does not require it.
+After your two successful calls, [continue with your own code](#continue-with-your-own-code).
+You can finish here without following the REST path.
 
-Run `pwd` in `apizr-quickstart` to obtain its absolute path. Add this entry to the
-existing `mcpServers` object, preserving any other servers. Replace both
-`/absolute/path/apizr-quickstart` prefixes with that real path; do not use `~` or
-shell variables in this JSON:
-
-```json
-{
-  "mcpServers": {
-    "repository-shop": {
-      "command": "/absolute/path/apizr-quickstart/.venv/bin/python",
-      "args": [
-        "/absolute/path/apizr-quickstart/build/mcp/server.py",
-        "--transport",
-        "stdio"
-      ]
-    }
-  }
-}
-```
-
-After restarting the client, inspect the server's available tools. Ask it to call
-`api.quote` with `unit_price=12.5, quantity=2`, then `inventory.available` with
-`stock=10, requested=3`. Approve only those intended calls and inspect the tool
-results (`25.0` and `true`), not just the assistant's prose answer.
-
-This configuration follows the official client documentation. Apizr's documented
-automated proof uses the Python client above; it does not claim a graphical
-Claude Desktop session was exercised. Other MCP clients can use the same stdio
-command and arguments according to their own configuration format.
-
-This is a **generated business-function MCP server**. It is distinct from the
-[Apizr analysis MCP server](../reference/apizr-mcp-server.md) in development 0.4,
-which inspects repositories and plans exposure without executing their functions.
-
-## Use REST instead
+## Use REST {#use-rest-instead}
 
 **Goal:** expose the same two functions as HTTP endpoints. After the workspace,
 source and policy steps, you can choose REST directly; the MCP steps are not
@@ -221,8 +249,11 @@ python -m pip install -r build/rest/requirements.txt
 ```
 
 **Observe:** `build/rest` contains `app.py`, `openapi.json`, `requirements.txt` and
-supporting artifacts. Starting this server executes trusted source, with the same
-direct-mode permissions described above. Use an available local port; this example
+supporting artifacts. Starting this server executes trusted source inside its
+process with your user permissions (**direct** mode). Readiness is not a security
+approval. For governed workers and their limits, see
+[execution policies](introduction.md#understand-the-decisions).
+Use an available local port; this example
 uses 8000 and binds only to your machine:
 
 <!-- quickstart:serve-rest -->

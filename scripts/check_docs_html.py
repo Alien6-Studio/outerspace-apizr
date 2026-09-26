@@ -105,6 +105,32 @@ def check(site: Path) -> None:
             Page(quickstart).text
         ):
             failures.append(f"Quickstart is missing {required}")
+    quickstart_page = pages["getting-started/quickstart/index.html"]
+    for anchor in (
+        "choose-your-interface",
+        "use-mcp",
+        "generate-the-mcp-bundle",
+        "connect-a-client-and-make-two-calls",
+        "connect-an-ai-client",
+        "test-with-python",
+        "use-rest-instead",
+        "continue-with-your-own-code",
+    ):
+        if anchor not in quickstart_page.targets:
+            failures.append(
+                f"Quickstart lost a reading choice or published anchor: {anchor}"
+            )
+    for name, anchor in (
+        ("index.html", "apizr"),
+        ("getting-started/user-guide/rest/index.html", "generate-a-rest-interface"),
+        ("getting-started/user-guide/mcp/index.html", "generate-an-mcp-server"),
+        (
+            "getting-started/user-guide/exposure/index.html",
+            "plan-explicit-repository-exposure",
+        ),
+    ):
+        if anchor not in pages[name].targets:
+            failures.append(f"{name}: lost published anchor {anchor}")
     journey = pages["getting-started/introduction/index.html"]
     for anchor in (
         "start-here",

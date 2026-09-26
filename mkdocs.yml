@@ -2,7 +2,7 @@ site_name: OuterSpace Apizr
 site_url: https://apizr.outerspace.sh
 site_author: Ludovic FERNANDEZ, Alien6
 site_description: >-
-  Open-source capability compiler for Python codebases.
+  Connect selected Python functions to AI agents through MCP or expose them as REST APIs.
 
 hooks:
   - scripts/docs_build.py
@@ -100,9 +100,9 @@ nav:
           - Inspect capability relationships: getting-started/user-guide/graph.md
           - Inspect source without running it: getting-started/user-guide/inspect.md
           - Assess readiness: getting-started/user-guide/repository-readiness.md
-          - Plan and build repository interfaces: getting-started/user-guide/exposure.md
-          - Generate a REST interface: getting-started/user-guide/rest.md
-          - Generate an MCP server: getting-started/user-guide/mcp.md
+          - REST/MCP from a repository: getting-started/user-guide/exposure.md
+          - REST from a Python file or notebook: getting-started/user-guide/rest.md
+          - MCP from a Python file or notebook: getting-started/user-guide/mcp.md
           - Execute code with a policy: getting-started/user-guide/execute.md
           - Analyze a Git repository (0.4): reference/git-sources.md
           - SSH Git sources (0.4): reference/git-ssh.md
