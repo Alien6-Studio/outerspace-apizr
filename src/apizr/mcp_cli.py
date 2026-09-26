@@ -8,6 +8,7 @@ from typing import Sequence
 
 from apizr.extension_runtime import ExtensionError
 from apizr.local_plugins import PluginError, resolve_active_extension
+from apizr.user_config import plugins_directory
 
 
 def main(argv: Sequence[str]) -> int:
@@ -18,6 +19,7 @@ def main(argv: Sequence[str]) -> int:
     )
     serve.add_argument("--project", type=Path, required=True)
     serve.add_argument("--plugins-dir", type=Path)
+    serve.add_argument("--user-config", type=Path)
     serve.add_argument("--timeout-ms", type=int, default=10000)
     serve.add_argument("--max-request-bytes", type=int, default=65536)
     serve.add_argument("--max-response-bytes", type=int, default=4194304)
@@ -25,7 +27,8 @@ def main(argv: Sequence[str]) -> int:
     try:
         if not args.project.is_absolute():
             raise PluginError("absolute_project_required")
-        record = resolve_active_extension("apizr-mcp", directory=args.plugins_dir)
+        directory = plugins_directory(args.plugins_dir, args.user_config)
+        record = resolve_active_extension("apizr-mcp", directory=directory)
         if record.module != "apizr_mcp":
             raise PluginError("mcp_entrypoint_mismatch")
         # Replace this process, preserving the client's stdio/signals. No shell,

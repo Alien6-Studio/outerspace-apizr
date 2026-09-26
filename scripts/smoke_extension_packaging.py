@@ -367,6 +367,41 @@ def main() -> None:
     locked_wheelhouse = work / "locked-wheels"
     locked_plugin, locked_hash, requirements = prepare(locked_wheelhouse, uv, env)
     plugin_store = work / "locked-plugins"
+    run(
+        [
+            str(core_python),
+            "-I",
+            "-B",
+            str(REPO / "examples/project-plugins/prepare.py"),
+            str(work),
+        ],
+        work,
+        env,
+    )
+    documentation = (REPO / "docs/reference/project-plugin-locks.md").read_text()
+    commands = (
+        documentation.split("<!-- smoke:project-plugin-lock -->", 1)[1]
+        .split("```sh\n", 1)[1]
+        .split("```", 1)[0]
+    )
+    lock_proof_output = run(
+        ["/bin/sh", "-eu", "-c", commands],
+        work,
+        dict(env, work=str(work), core_python=str(core_python)),
+    )
+    proof_lines = lock_proof_output.splitlines()
+    lock_results = [json.loads(line) for line in proof_lines if line.startswith("{")]
+    if len(lock_results) != 4 or not all(item["valid"] for item in lock_results[:3]):
+        raise RuntimeError("Project lock example failed")
+    if (
+        lock_results[2]["installed"]
+        != [{"name": "apizr-locked-probe", "matches": True, "active": False}]
+        or lock_results[3]["installations"]
+    ):
+        raise RuntimeError("Project locking changed activation")
+    project_lock = json.loads((work / "apizr.plugins.lock.json").read_bytes())
+    if project_lock["plugins"][0]["wheel"]["sha256"] != locked_hash:
+        raise RuntimeError("Project lock and installer used different wheels")
     plugins(
         "install",
         str(locked_plugin),
@@ -432,6 +467,8 @@ def main() -> None:
         "https_lifecycle_verified": True,
         "https_invocation": https_invocation,
         "https_inventory": https_inventory,
+        "project_lock": project_lock,
+        "project_lock_results": lock_results,
         "locked_dependencies_verified": True,
         "locked_invocation": locked_invocation,
         "locked_inventory": locked_inventory,

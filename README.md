@@ -16,6 +16,8 @@ and exposure planning.
 [Try the development build and complete delivery walkthrough](https://apizr.outerspace.sh/development/0.4/).
 The stable installation below does not include those additions.
 
+Project plugin declarations and deterministic locks are described in the [development configuration guide](https://apizr.outerspace.sh/reference/project-plugin-locks/), separately from local installation and activation.
+
 0.3 adds explicit Exposure Plans and multi-module repository REST/MCP bundles,
 with direct, fresh local-process or fresh OCI-container execution. Discovery,
 generation, direct execution and local execution need **no Docker**.

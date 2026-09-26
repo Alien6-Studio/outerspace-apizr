@@ -9,10 +9,44 @@ from typing import Literal
 from pydantic import Field, field_validator
 
 from apizr.capabilities.types import ValueModel
+from apizr.config_files import read_regular
 from apizr.graph import GraphPolicy
+from apizr.local_plugins.models import LockedDistribution
 from apizr.repository import ScanPolicy
 
 MAX_PROJECT_BYTES = 65536
+
+
+class PluginDeclaration(LockedDistribution):
+    """Artifact identity only: no installation or execution authority."""
+
+    requirements: str | None = None
+
+    @field_validator("version")
+    @classmethod
+    def exact_version(cls, value: str) -> str:
+        if not re.fullmatch(
+            r"(?:[0-9]+!)?[0-9]+(?:\.[0-9]+)*(?:(?:a|b|rc)[0-9]+)?"
+            r"(?:\.post[0-9]+)?(?:\.dev[0-9]+)?(?:\+[a-z0-9]+(?:[._-][a-z0-9]+)*)?",
+            value,
+        ):
+            raise ValueError("Expected an exact normalized version")
+        return value
+
+    @field_validator("requirements")
+    @classmethod
+    def portable_requirements(cls, value: str | None) -> str | None:
+        if value is not None and (
+            not value
+            or len(value) > 256
+            or "\\" in value
+            or ":" in value
+            or "\0" in value
+            or Path(value).is_absolute()
+            or any(part in ("", ".", "..") for part in value.split("/"))
+        ):
+            raise ValueError("Requirements must be a portable project-relative path")
+        return value
 
 
 class ProjectConfig(ValueModel):
@@ -24,6 +58,17 @@ class ProjectConfig(ValueModel):
 
     schema_version: Literal["apizr.project/v1"]
     root: Path = Path(".")
+    plugins: tuple[PluginDeclaration, ...] = Field(default=(), max_length=32)
+
+    @field_validator("plugins")
+    @classmethod
+    def unique_plugins(
+        cls, value: tuple[PluginDeclaration, ...]
+    ) -> tuple[PluginDeclaration, ...]:
+        if len({item.name for item in value}) != len(value):
+            raise ValueError("Duplicate plugin declaration")
+        return value
+
     scan: ScanPolicy = Field(default_factory=ScanPolicy)
     graph: GraphPolicy = Field(default_factory=GraphPolicy)
     readiness_policy: Path | None = None
@@ -47,10 +92,12 @@ def load_project(path: str | Path) -> ProjectConfig:
     The caller may override a policy path before reading the chosen JSON file.
     """
     path = Path(path).absolute()
-    with path.open("rb") as stream:
-        raw = stream.read(MAX_PROJECT_BYTES + 1)
-    if len(raw) > MAX_PROJECT_BYTES:
-        raise ValueError("Project file exceeds size limit")
+    try:
+        raw = read_regular(path, MAX_PROJECT_BYTES)
+    except ValueError as error:
+        if str(error) == "file_too_large":
+            raise ValueError("Project file exceeds size limit") from None
+        raise
     document = tomllib.loads(raw.decode("utf-8"))
     try:
         # Strict JSON validation accepts TOML arrays for existing tuple fields,

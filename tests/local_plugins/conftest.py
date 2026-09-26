@@ -67,3 +67,31 @@ def wheel_factory(tmp_path):
         return wheel, hashlib.sha256(wheel.read_bytes()).hexdigest()
 
     return build
+
+
+@pytest.fixture
+def chain(wheel_factory, tmp_path):
+    leaf, leaf_hash = wheel_factory(
+        name="locked-leaf", plugin=False, files={"locked_leaf.py": b"VALUE = 41\n"}
+    )
+    helper, helper_hash = wheel_factory(
+        name="locked-helper",
+        plugin=False,
+        metadata_extra="Requires-Dist: locked-leaf==1.0\n",
+        files={"locked_helper.py": b"from locked_leaf import VALUE\nVALUE += 1\n"},
+    )
+    plugin, digest = wheel_factory(
+        metadata_extra="Requires-Dist: locked-helper==1.0\n",
+        files={
+            "local_probe.py": b"import json,sys\nfrom locked_helper import VALUE\nr=json.load(sys.stdin)\nprint(json.dumps({k:r[k] for k in ('protocol','request_id','operation')}|{'status':'ok','result':VALUE}))\n"
+        },
+    )
+    wheelhouse = tmp_path / "wheels"
+    wheelhouse.mkdir()
+    leaf = leaf.rename(wheelhouse / leaf.name)
+    helper = helper.rename(wheelhouse / helper.name)
+    lock = tmp_path / "requirements.lock"
+    lock.write_text(
+        f"local-probe==1.0 --hash=sha256:{digest}\nlocked-helper==1.0 --hash=sha256:{helper_hash}\nlocked-leaf==1.0 --hash=sha256:{leaf_hash}\n"
+    )
+    return plugin, digest, lock, wheelhouse

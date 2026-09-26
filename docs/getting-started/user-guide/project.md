@@ -150,3 +150,8 @@ assert report.exit_code == 0
 This exact Python example is also tested from the minimal installed wheel.
 Loader errors are ordinary validation, decoding or filesystem exceptions; the
 loader never prints results or terminates the process.
+
+## Project plugins and operator preferences (development 0.4)
+
+The optional `[[plugins]]` declarations identify exact wheels and requirements.
+They never install, activate or execute plugins. See [project plugin locks](../../reference/project-plugin-locks.md) for the format, explicit `--user-config`, precedence and a complete installed-wheel example. Existing analysis root and policy precedence remain unchanged.
