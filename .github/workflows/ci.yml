@@ -387,6 +387,7 @@ jobs:
             oci-repeated.xml
             oci-coverage.json
             /tmp/apizr-worker-image.json
+            /tmp/apizr-worker-image.inventory.json
           if-no-files-found: error
           retention-days: 90
 

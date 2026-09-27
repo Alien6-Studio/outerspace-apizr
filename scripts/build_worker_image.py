@@ -1,6 +1,7 @@
 """Deliberately build a local test worker image; never called by execution."""
 
 import argparse
+import hashlib
 import json
 import shutil
 import subprocess
@@ -69,6 +70,24 @@ def main():
                     "platform": inspected["Os"] + "/" + inspected["Architecture"],
                     "provider": "apizr.docker-engine/v1",
                 },
+                sort_keys=True,
+            )
+            + "\n"
+        )
+        args.output.with_suffix(".inventory.json").write_text(
+            json.dumps(
+                {
+                    "schema": "apizr.release-image/v1",
+                    "role": "governed execution worker; disposable qualification image",
+                    "local_image_id": image,
+                    "config_digest": inspected["Id"],
+                    "registry_manifest_digest": None,
+                    "published": False,
+                    "platform": inspected["Os"] + "/" + inspected["Architecture"],
+                    "core_wheel": args.wheel.name,
+                    "core_sha256": hashlib.sha256(args.wheel.read_bytes()).hexdigest(),
+                },
+                indent=2,
                 sort_keys=True,
             )
             + "\n"

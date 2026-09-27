@@ -19,7 +19,7 @@ Before tagging the exact candidate:
 - Qualify those exact wheels outside the checkout: minimal/extra installations,
   migration and canonical artifacts, Git HTTPS/SSH, plugin lifecycle, real MCP
   clients, and disposable OCI/Attest delivery. Retain the final commit and runs.
-- Apply the procedure below to the core artifacts. The **Publish PyPI**
+- Apply the procedure below to the coordinated artifacts. The **Publish PyPI**
   workflow consumes all eight archives from `python-distributions`, verifies the
   coordinated matrix and stages only missing public files after comparison.
   The target exports and qualification reports are release evidence, not PyPI packages.
@@ -106,8 +106,9 @@ apply only to their exact subjects and source commit.
 
 The procedure below is for a future **explicitly authorized release**. Prepare
 each new version through a separate release PR; version metadata alone does not
-mean publication has occurred. The publication guard refuses any version
-already on PyPI, including `0.2.0`, `0.2.1` and `0.3.0`.
+mean publication has occurred. Published historical versions remain immutable.
+Recovery of a partial coordinated publication requires the original approved
+archives and exact comparison; it never permits replacing public bytes.
 
 <span id="pypi-ownership"></span>
 
@@ -143,11 +144,11 @@ and publisher and is not part of this workflow.
    Wait for CI, Security and Documentation to pass again on the exact master
    merge commit. Do not disable a gate, lower a coverage floor or use an admin bypass.
 3. From that successful **master push CI run**, download `python-distributions`
-   and `distribution-checksums`. The package job builds wheel/sdist once, inspects
-   their metadata and contents, and tests the same wheel outside checkout on
-   Python 3.11 and 3.14, including the README example and legacy/modern workflows.
-   The separate required OCI job builds its own test image; it verifies the same
-   source revision, not byte identity with the publication artifact.
+   and `distribution-checksums`, plus `release-candidate`, every `release-target-*`
+   export and `release-delivery`. The distributions job builds all eight archives
+   once. Target jobs install those exact wheels outside checkout. OCI jobs build
+   their disposable images from the retained core/plugin wheels; image identities
+   and package hashes describe different artifacts.
 4. Review the actual archived README/metadata and hashes. Optionally run
    `uvx twine check --strict dist/*` locally. Preserve the CI run ID and commit SHA
    in the release record. Never rebuild on a laptop for the upload.
@@ -158,7 +159,7 @@ and publisher and is not part of this workflow.
    or automatically choose another version.
 6. Create `v<version>` on that exact verified merge commit. Release tags are protected
    against deletion/force updates. Prepare the GitHub release notes from
-   the reviewed notes for that version and attach the reviewed wheel/sdist and checksums.
+   the reviewed notes for that version and attach the eight reviewed archives, checksums and target exports.
 7. Explicitly dispatch **Publish PyPI** on the tag, passing the verified master
    `ci_run_id`. Its verification job checks tag/version/commit, successful coordinated CI,
    Security and Documentation runs, public artifact state, archive
