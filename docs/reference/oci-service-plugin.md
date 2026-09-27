@@ -79,13 +79,15 @@ not parsed or loaded. Compressed/expanded archive limits still apply.
 
 ## Generate a bundle and prepare server dependencies
 
-Use the existing Git workflow, with a reviewed commit and local policies:
+Use the existing Git workflow, with a reviewed commit, local readiness/exposure
+policies and a separate [Git operator grant](operator-policy.md#authorize-a-git-source)
+in `git-operator.json` matching the address, commit and default subdir `.`:
 
 ```sh
 core/bin/apizr expose build rest --git "$REPOSITORY_HTTPS_URL" --ref "$COMMIT" \
-  --policy exposure.json --readiness-policy readiness.json --output-dir rest-bundle
+  --operator-policy git-operator.json --policy exposure.json --readiness-policy readiness.json --output-dir rest-bundle
 core/bin/apizr expose build mcp --git "$REPOSITORY_HTTPS_URL" --ref "$COMMIT" \
-  --policy exposure.json --readiness-policy readiness.json --output-dir mcp-bundle
+  --operator-policy git-operator.json --policy exposure.json --readiness-policy readiness.json --output-dir mcp-bundle
 ```
 
 Both policies must explicitly allow `direct` execution. The exposure policy

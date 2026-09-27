@@ -1,8 +1,10 @@
 <span id="authorize-an-oci-publication"></span>
+<span id="authorize-image-builds-signing-and-publication"></span>
 
-# Authorize image builds, signing and publication
+# Authorize Git acquisition, image builds, signing and publication
 
 !!! warning "0.4 development — explicit policy required"
+    Remote `--git` commands and `acquire_snapshot` also require an explicit Git grant.
     Managed `apizr-oci build`, `apizr-oci push`, `apizr-attest publish` and `apizr-attest attest` calls require
     `--operator-policy`. An installed, active plugin alone no longer permits
     building, publication or signing. This changes development commands, not the published 0.3.0 CLI.
@@ -10,6 +12,54 @@
 Installation puts verified wheel bytes in an isolated environment. Activation
 chooses one installed version. **Authorization** permits a particular installed
 build to perform one operation on explicitly selected inputs or a remote repository. None implies the next.
+
+## Authorize a Git source
+
+Git is part of the minimal core, not an installed plugin. Use a separate
+`adapter: git`, `operation: fetch` grant with `git.fetch` permission. Complete
+[fictitious HTTPS](../examples/operator-git-https.json) and
+[fictitious SSH](../examples/operator-git-ssh.json) policies show every field;
+replace the example address, revision, subdirectory and absolute trust references
+with values you have reviewed. Never obtain this policy from the source project.
+
+The `target` binds `transport`, `repository`, `reference`, `subdir`, `ca_file`,
+`ssh_agent_socket` and `ssh_known_hosts`. Repository strings, revision names and
+subdirectories match **literally**: no URL decoding, hostname case folding,
+default-port substitution, `.git` stripping, wildcard or prefix matching. An SCP
+relative path is not an SSH absolute path; users and ports remain distinct.
+Existing Git validators still reject unsafe URLs and ambiguous branch/tag names.
+
+Trust references in a policy are absolute paths. API/CLI relative input paths
+are made absolute against the caller's working directory before the decision,
+without resolving symlinks, reading contents or collapsing `..` components.
+The captured values are then used for acquisition. Existing SSH/CA technical
+checks still run after authorization. Matching a path does **not** pin its bytes,
+the agent's identities or a server certificate.
+
+A branch grant authorizes that requested name, not a commit known in advance.
+Git resolves it once, then analyzes and generates from that exact commit.
+`subdir` selects the later analysis root: acquisition processes the repository
+before selecting it. It is **not a confidentiality boundary** limiting which
+objects are transferred or temporarily exported.
+
+`acquire_snapshot(..., operator_policy=load_operator_policy(Path("operator.json")))`
+applies the same gate as all four remote CLI commands. `decide_git(policy, target)`
+uses a typed `GitTarget` and performs no I/O. Missing/invalid/insufficient policy
+refuses before Git, SSH/helpers, network/agent access, trust-file reads or workspace
+creation. The CLI emits the existing structured decision on stderr and exits 2;
+the API raises `AuthorizationDenied`. Malformed source parameters retain their
+fixed `GitSourceError` diagnostics. No plugin installation identity is fabricated.
+
+Only the explicitly supplied policy grants authority. Neither `apizr.toml`,
+remote files, a catalog/profile nor environment variables can select or extend it.
+`--operator-policy` without `--git` is rejected rather than ignored. Local commands
+without that option retain their behavior. Acquisition limits remain separate
+validated controls. The grant replaces neither server access rights nor TLS/SSH
+trust and provides no build, signing or publication permission. Existing plugin
+grants remain valid and do not authorize Git. See the complete
+[HTTPS CLI/Python journey](git-sources.md) and [SSH journey](git-ssh.md).
+
+Analysis authorization remains a separate, unfinished 0.4 category.
 
 ## Write the operator's policy
 
@@ -294,6 +344,7 @@ No paths, reference values, credentials or native diagnostics appear in it.
 | `operator_operation_denied` | No matching operation grant |
 | `operator_repository_denied` | No matching exact repository |
 | `operator_permissions_denied` | The grant lacks a required build, registry, signing or timestamp permission |
+| `operator_git_source_denied` | Exact Git source, revision, selection or trust references do not match |
 | `operator_build_denied` | Base, platform, interface, paths, Docker parameters or local tag does not match |
 | `operator_key_denied` | Key ID, expected signer or key file reference does not match |
 | `operator_tsa_denied` | Timestamp authority does not match |
@@ -307,7 +358,7 @@ path does not acquire operator authorization. Protect operator files and plugin
 storage from untrusted writers; plugins still execute with the user's rights.
 
 This control covers image `build`/`push`, proof `publish` and delivery signing `attest`.
-Git access, analysis and the other operations retain their existing controls;
+Remote Git acquisition has its separate `git.fetch` gate above. Analysis and the other operations retain their existing controls;
 `not_required` does not claim they have completed operator authorization.
 `verify`, plugin lifecycle/catalog operations and the analysis
 MCP server keep their behavior. Publication through MCP is not added.

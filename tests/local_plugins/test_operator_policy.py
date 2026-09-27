@@ -619,3 +619,30 @@ def test_complete_documented_policy():
         ("apizr-attest", "publish"),
         ("apizr-attest", "attest"),
     }
+
+
+@pytest.mark.parametrize("operation", ["build", "attest", "push", "publish"])
+def test_git_grant_does_not_authorize_plugin_operations(operation):
+    selected = OperatorPolicy.model_validate_json(
+        json.dumps(
+            {
+                "schema": "apizr.operator-policy/v1",
+                "grants": [
+                    {
+                        "adapter": "git",
+                        "operation": "fetch",
+                        "permissions": ["git.fetch"],
+                        "target": {
+                            "transport": "https",
+                            "repository": "https://git.example/repo",
+                            "reference": "main",
+                        },
+                    }
+                ],
+            }
+        )
+    )
+    assert (
+        decide(selected, record(operation), operation, arguments(operation)).code
+        == "operator_identity_denied"
+    )

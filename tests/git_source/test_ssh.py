@@ -15,6 +15,8 @@ from apizr.git_source import AcquisitionLimits, GitSourceError, acquire_snapshot
 from apizr.git_source.ssh import configure_ssh, validate_ssh_url
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
+from .authorization import authorized_snapshot
+from .authorization import flags as operator_flags
 from .conftest import git_fixture, ssh_fixture
 from .test_cli import policies  # noqa: F401
 
@@ -26,7 +28,7 @@ def options(remote):
 
 
 def success(remote):
-    with acquire_snapshot(remote.url, "main", **options(remote)) as result:
+    with authorized_snapshot(remote.url, "main", **options(remote)) as result:
         assert result.commit == remote.commit
 
 
@@ -34,7 +36,7 @@ def success(remote):
 def test_authenticated_snapshot(ssh_remote, scratch, ref):
     remote = ssh_remote
     known = remote.known_hosts.read_bytes()
-    with acquire_snapshot(
+    with authorized_snapshot(
         remote.url,
         remote.commit if ref == "commit" else ref,
         subdir="service",
@@ -217,7 +219,7 @@ def test_authentication_refusals_clean_and_recover(
                 alternate.write_bytes(b"@revoked " + known)
             kwargs["ssh_known_hosts"] = alternate
         with pytest.raises(GitSourceError) as caught:
-            with acquire_snapshot(url, "main", **kwargs):
+            with authorized_snapshot(url, "main", **kwargs):
                 pytest.fail("accepted")
         assert str(caught.value) in {"git_ssh_agent_unavailable", "git_command_failed"}
     assert remote.known_hosts.read_bytes() == known
@@ -246,7 +248,7 @@ def test_ssh_prerequisites(ssh_remote, tmp_path, monkeypatch, scratch, failure):
     with pytest.raises(
         GitSourceError, match="git_ssh_(known_hosts_(unavailable|limit)|not_found)"
     ):
-        with acquire_snapshot(remote.url, "main", **kwargs):
+        with authorized_snapshot(remote.url, "main", **kwargs):
             pytest.fail("accepted")
 
 
@@ -280,6 +282,13 @@ def test_cli_exact_parity(ssh_remote, policies, scratch, tmp_path, capfd, comman
         main(
             [
                 *command,
+                *operator_flags(
+                    tmp_path,
+                    remote.url,
+                    remote.commit,
+                    subdir="service",
+                    **options(remote),
+                ),
                 "--git",
                 remote.url,
                 "--ref",
@@ -347,7 +356,7 @@ def test_ssh_configuration_is_isolated(ssh_remote, tmp_path, monkeypatch, scratc
     )
     git_fixture.git(remote.source, "add", ".")
     git_fixture.git(remote.source, "commit", "-m", "static only")
-    with acquire_snapshot(remote.url, "main", **options(remote)) as snapshot:
+    with authorized_snapshot(remote.url, "main", **options(remote)) as snapshot:
         assess_readiness(snapshot.root)
     assert not marker.exists()
     # Inspect OpenSSH's own expanded configuration, not merely our argv.
@@ -392,7 +401,7 @@ def test_retained_sources_after_ssh_cleanup(ssh_remote, scratch):
     local = prepare_exposure(
         remote.source / "service", policy=policy, readiness_policy=readiness
     )
-    with acquire_snapshot(
+    with authorized_snapshot(
         remote.url, "main", subdir="service", **options(remote)
     ) as snapshot:
         prepared = prepare_exposure(
@@ -450,7 +459,7 @@ def test_stalled_ssh_is_bounded_and_next_acquisition_works(
                 GitSourceError,
                 match=f"git_{'cancelled' if kind == 'cancel' else 'timeout'}",
             ):
-                with acquire_snapshot(
+                with authorized_snapshot(
                     f"ssh://fixture@127.0.0.1:{listener.getsockname()[1]}/repo",
                     "main",
                     **options(remote),
@@ -491,7 +500,7 @@ def test_scp_address_with_real_ssh(ssh_remote, tmp_path, monkeypatch, scratch):
     monkeypatch.setattr(
         "shutil.which", lambda name: str(wrapper) if name == "ssh" else original(name)
     )
-    with acquire_snapshot(
+    with authorized_snapshot(
         f"{parsed.username}@127.0.0.1:{remote.source}", "main", **options(remote)
     ) as snapshot:
         assert snapshot.commit == remote.commit
@@ -505,14 +514,14 @@ def test_ssh_paths_are_literal_data(ssh_remote, tmp_path, scratch):
     known.write_bytes(remote.known_hosts.read_bytes())
     agent_link = tmp_path / 'agent %h ${HOME} " ; socket'
     agent_link.symlink_to(remote.socket)
-    with acquire_snapshot(
+    with authorized_snapshot(
         remote.url, "main", ssh_agent_socket=agent_link, ssh_known_hosts=known
     ) as result:
         assert result.commit == remote.commit
     assert known.read_bytes() == remote.known_hosts.read_bytes()
 
 
-def test_cli_sigint_during_ssh_handshake(ssh_remote, scratch):
+def test_cli_sigint_during_ssh_handshake(ssh_remote, scratch, tmp_path):
     import signal
     import sys
 
@@ -540,6 +549,12 @@ def test_cli_sigint_during_ssh_handshake(ssh_remote, scratch):
                 "-c",
                 "import sys; from apizr.cli import main; sys.exit(main(sys.argv[1:]))",
                 "readiness",
+                *operator_flags(
+                    tmp_path,
+                    f"ssh://fixture@127.0.0.1:{listener.getsockname()[1]}/repo",
+                    "main",
+                    **options(remote),
+                ),
                 "--git",
                 f"ssh://fixture@127.0.0.1:{listener.getsockname()[1]}/repo",
                 "--ref",

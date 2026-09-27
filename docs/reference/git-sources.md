@@ -29,14 +29,38 @@ cat > exposure.json <<'JSON'
 {"selection":{"include":["python:calculator:add"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}
 JSON
 
+cat > operator.json <<'JSON'
+{
+  "schema": "apizr.operator-policy/v1",
+  "grants": [
+    {
+      "adapter": "git",
+      "operation": "fetch",
+      "permissions": [
+        "git.fetch"
+      ],
+      "target": {
+        "transport": "https",
+        "repository": "https://github.com/Alien6-Studio/outerspace-apizr.git",
+        "reference": "4898669e4990a6d090637436b5884d4d2c2dd41c",
+        "subdir": "examples/project-config/src",
+        "ca_file": null,
+        "ssh_agent_socket": null,
+        "ssh_known_hosts": null
+      }
+    }
+  ]
+}
+JSON
+
 apizr readiness --git "$REPOSITORY" --ref "$REF" --subdir "$SUBDIR" \
-  --policy readiness.json --report
+  --operator-policy operator.json --policy readiness.json --report
 apizr expose plan --git "$REPOSITORY" --ref "$REF" --subdir "$SUBDIR" \
-  --policy exposure.json --readiness-policy readiness.json --plan
+  --operator-policy operator.json --policy exposure.json --readiness-policy readiness.json --plan
 apizr expose build rest --git "$REPOSITORY" --ref "$REF" --subdir "$SUBDIR" \
-  --policy exposure.json --readiness-policy readiness.json --output-dir build/rest
+  --operator-policy operator.json --policy exposure.json --readiness-policy readiness.json --output-dir build/rest
 apizr expose build mcp --git "$REPOSITORY" --ref "$REF" --subdir "$SUBDIR" \
-  --policy exposure.json --readiness-policy readiness.json --output-dir build/mcp
+  --operator-policy operator.json --policy exposure.json --readiness-policy readiness.json --output-dir build/mcp
 ```
 
 `--ref` is mandatory: a branch, tag (including annotated tags), or full commit
@@ -50,11 +74,12 @@ The resolved commit is printed to **stderr**, leaving canonical JSON on stdout.
 `--subdir` selects a directory inside the snapshot. `--source-root` retains its
 scanner meaning, relative to that selected directory. `--git` cannot be combined
 with a positional local root or `--project`; `--ref` and `--subdir` require `--git`.
-Commands without `--git` retain their existing behavior and exit codes.
+Commands without `--git` retain their existing behavior and exit codes; supplying
+`--operator-policy` to a local command is refused rather than silently ignored.
 
 ## Python API
 
-Save this as `snapshot.py` alongside the two policy files above, then run
+Save this as `snapshot.py` alongside all three policy files above, then run
 `python snapshot.py "$REPOSITORY" "$REF" "$SUBDIR"`. Use fresh output directories.
 
 ```python
@@ -64,6 +89,7 @@ from pathlib import Path
 from apizr.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.git_source import acquire_snapshot
+from apizr.operator_policy import load_operator_policy
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
@@ -72,7 +98,12 @@ exposure = ExposurePolicy.model_validate_json(Path("exposure.json").read_bytes()
 readiness = RepositoryReadinessPolicy.model_validate_json(
     Path("readiness.json").read_bytes()
 )
-with acquire_snapshot(repository, reference, subdir=subdir) as snapshot:
+with acquire_snapshot(
+    repository,
+    reference,
+    subdir=subdir,
+    operator_policy=load_operator_policy(Path("operator.json")),
+) as snapshot:
     print(f"Git snapshot: commit {snapshot.commit}", file=sys.stderr)
     prepared = prepare_exposure(
         snapshot.root, policy=exposure, readiness_policy=readiness
@@ -91,7 +122,11 @@ and interruption. It does not catch or reclassify errors raised by your analysis
 passed as `cancel` cancels acquisition. `ca_file=Path(...)` can explicitly trust a
 CA in Python tests; certificate and hostname verification remain enabled.
 
-Acquisition raises `GitSourceError` with fixed codes such as `git_not_found`,
+Operator admission raises `AuthorizationDenied` with an `apizr.operator-decision/v1`
+result. Without a matching `git.fetch` grant, no Git process, network, trust-file
+read or workspace creation occurs. See [exact source grants and path matching](operator-policy.md#authorize-a-git-source).
+
+After admission, acquisition raises `GitSourceError` with fixed codes such as `git_not_found`,
 `git_invalid_url`, `git_ref_not_found`, `git_ambiguous_ref`, `git_timeout`,
 `git_cancelled`, `git_output_limit`, `git_acquisition_limit` and
 `git_snapshot_limit`. CLI acquisition errors return 2; Ctrl-C returns 130 after
@@ -116,6 +151,13 @@ subdirectory, so missing content cannot masquerade as a complete analysis.
 Paths cannot leave the snapshot; `.git` and acquisition files are never exported.
 Source filenames must be UTF-8 and portable relative paths. Case-colliding files
 are refused if the host filesystem cannot represent them separately.
+
+**`subdir` is not a confidentiality barrier:** the repository is acquired and
+exported before this directory is selected. A grant does not limit transferred
+objects to that subtree. A branch grant authorizes a name resolved at invocation,
+not an immutable content identity in advance. Authorization does not replace TLS
+or server permissions and does not authorize subsequent analysis as an operator
+category; that category remains to be implemented.
 
 Default acquisition bounds (independent of the existing scanner bounds):
 
@@ -149,7 +191,8 @@ REST/MCP bundles does not start either server or execute their source code.
 Maintainers can run `uv run python scripts/smoke_git_source.py dist/outerspace_apizr-*.whl`.
 It creates a disposable minimal wheel installation outside the checkout and a
 real smart-HTTPS Git server with an explicitly trusted localhost certificate.
-It compares all four commands to local sources and executes the Python example
+It first traps effects during CLI/API refusals without a policy, then supplies an
+explicit fixture-owned grant. It compares all four authorized commands to local sources and executes the Python example
 above after deleting the snapshot. No optional packages or plugins are loaded.
 The normal installation CI runs this proof for Python 3.11 and 3.14.
 

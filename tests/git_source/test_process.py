@@ -6,8 +6,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
-from apizr.git_source import AcquisitionLimits, GitSourceError, acquire_snapshot
+from apizr.git_source import AcquisitionLimits, GitSourceError
 
+from .authorization import authorized_snapshot
 from .conftest import git_fixture, https
 
 pytestmark = pytest.mark.timeout(20)
@@ -41,11 +42,11 @@ def test_no_implicit_credentials_or_redirects(
     monkeypatch.setenv("GIT_CONFIG_VALUE_1", f"!touch {marker}")
     with https.https_server(*tls, Handler) as url:
         if response == "repository":
-            with acquire_snapshot(url + "/repo.git", "main", ca_file=tls[0]):
+            with authorized_snapshot(url + "/repo.git", "main", ca_file=tls[0]):
                 pass
         else:
             with pytest.raises(GitSourceError, match="git_command_failed"):
-                with acquire_snapshot(url + "/repo.git", "main", ca_file=tls[0]):
+                with authorized_snapshot(url + "/repo.git", "main", ca_file=tls[0]):
                     pytest.fail("accepted")
     assert requests and all(
         "Authorization" not in headers and "Cookie" not in headers
@@ -71,7 +72,7 @@ def test_blocked_https_bounded_and_clean(remote, tls, scratch, kind):
     with https.https_server(*tls, Handler) as url:
 
         def acquire():
-            with acquire_snapshot(
+            with authorized_snapshot(
                 url + "/repo.git",
                 "main",
                 ca_file=tls[0],
@@ -96,7 +97,7 @@ def test_blocked_https_bounded_and_clean(remote, tls, scratch, kind):
             finally:
                 release.set()
     assert not list(scratch.iterdir())
-    with acquire_snapshot(remote[0], "main", ca_file=tls[0]):
+    with authorized_snapshot(remote[0], "main", ca_file=tls[0]):
         pass
 
 
@@ -189,6 +190,6 @@ def test_keyboard_interrupt_kills_acquisition_child(tmp_path, scratch, monkeypat
 
     monkeypatch.setattr(GitRunner, "check", interrupt)
     with pytest.raises(KeyboardInterrupt):
-        with acquire_snapshot("https://example.com/a", "main"):
+        with authorized_snapshot("https://example.com/a", "main"):
             pytest.fail("accepted")
     assert not list(scratch.iterdir())

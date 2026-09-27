@@ -1,0 +1,21 @@
+{
+  "schema": "apizr.operator-policy/v1",
+  "grants": [
+    {
+      "adapter": "git",
+      "operation": "fetch",
+      "permissions": [
+        "git.fetch"
+      ],
+      "target": {
+        "transport": "ssh",
+        "repository": "ssh://git@git.example:2222/team/project.git",
+        "reference": "refs/heads/main",
+        "subdir": "src",
+        "ca_file": null,
+        "ssh_agent_socket": "/run/user/1000/reviewed-agent.sock",
+        "ssh_known_hosts": "/home/operator/trust/known_hosts"
+      }
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-"""Explicit operator grants for managed build, signing and publication; decisions perform no I/O."""
+"""Explicit operator grants for Git, build, signing and publication; decisions perform no I/O."""
 
 import json
 import os
@@ -11,6 +11,7 @@ from pydantic import Field, JsonValue, field_validator, model_validator
 
 from apizr.execution.protocol import MAX_REQUEST_BYTES, SizeExceeded, encode
 from apizr.extension_runtime.protocol import unique_object
+from apizr.git_source.contracts import GitTarget
 from apizr.local_plugins.models import (
     Digest,
     Installation,
@@ -46,6 +47,7 @@ Code = Literal[
     "operator_key_denied",
     "operator_tsa_denied",
     "operator_build_denied",
+    "operator_git_source_denied",
 ]
 
 
@@ -184,10 +186,20 @@ class BuildGrant(Model):
         return value
 
 
+class GitGrant(Model):
+    adapter: Literal["git"]
+    operation: Literal["fetch"]
+    target: GitTarget
+    permissions: tuple[Literal["git.fetch"], ...] = Field(max_length=1)
+
+
 class OperatorPolicy(Model):
     schema_version: Literal["apizr.operator-policy/v1"] = Field(alias="schema")
     grants: tuple[
-        Annotated[Grant | SigningGrant | BuildGrant, Field(discriminator="operation")],
+        Annotated[
+            Grant | SigningGrant | BuildGrant | GitGrant,
+            Field(discriminator="operation"),
+        ],
         ...,
     ] = Field(max_length=128)
 
@@ -268,18 +280,9 @@ def decide(
     if policy is None:
         return Decision(allowed=False, code="operator_policy_required")
     try:
-        # Revalidate typed API input too: model_construct/model_copy are not trust boundaries.
-        policy = OperatorPolicy.model_validate_json(
-            encode(
-                policy.model_dump(mode="json", by_alias=True, warnings=False),
-                MAX_POLICY_BYTES,
-            ),
-            strict=True,
-        )
-    except SizeExceeded:
-        return Decision(allowed=False, code="operator_policy_too_large")
-    except (ValueError, TypeError, AttributeError, RecursionError):
-        return Decision(allowed=False, code="operator_policy_invalid")
+        policy = _validated_policy(policy)
+    except AuthorizationDenied as error:
+        return error.decision
     building: BuildTarget | None = None
     repository: str | None = None
     signing: AttestRequest | None = None
@@ -308,7 +311,9 @@ def decide(
         identity = PluginIdentity.from_installation(record)
     except (ValueError, TypeError, RecursionError, SizeExceeded):
         return Decision(allowed=False, code="operator_arguments_invalid")
-    grants = [g for g in policy.grants if g.plugin == identity]
+    grants = [
+        g for g in policy.grants if not isinstance(g, GitGrant) and g.plugin == identity
+    ]
     if not grants:
         return Decision(allowed=False, code="operator_identity_denied")
     grants = [g for g in grants if g.operation == operation]
@@ -360,5 +365,47 @@ def decide(
     if not any(
         set(g.permissions) == {"registry.read", "registry.publish"} for g in grants
     ):
+        return Decision(allowed=False, code="operator_permissions_denied")
+    return Decision(allowed=True, code="authorized")
+
+
+def _validated_policy(policy: OperatorPolicy) -> OperatorPolicy:
+    try:
+        # Revalidate typed API input too: model_construct/model_copy are not trust boundaries.
+        return OperatorPolicy.model_validate_json(
+            encode(
+                policy.model_dump(mode="json", by_alias=True, warnings=False),
+                MAX_POLICY_BYTES,
+            ),
+            strict=True,
+        )
+    except SizeExceeded:
+        raise AuthorizationDenied("operator_policy_too_large") from None
+    except (ValueError, TypeError, AttributeError, RecursionError):
+        raise AuthorizationDenied("operator_policy_invalid") from None
+
+
+def decide_git(policy: OperatorPolicy | None, target: GitTarget) -> Decision:
+    """Pure exact source grant; Git is a core adapter, not an installed plugin."""
+    if policy is None:
+        return Decision(allowed=False, code="operator_policy_required")
+    try:
+        policy = _validated_policy(policy)
+    except AuthorizationDenied as error:
+        return error.decision
+    try:
+        target = GitTarget.model_validate_json(
+            encode(target.model_dump(mode="json", warnings=False), MAX_POLICY_BYTES),
+            strict=True,
+        )
+    except (ValueError, TypeError, AttributeError, RecursionError, SizeExceeded):
+        return Decision(allowed=False, code="operator_arguments_invalid")
+    grants = [g for g in policy.grants if isinstance(g, GitGrant)]
+    if not grants:
+        return Decision(allowed=False, code="operator_operation_denied")
+    grants = [g for g in grants if g.target == target]
+    if not grants:
+        return Decision(allowed=False, code="operator_git_source_denied")
+    if not any(g.permissions == ("git.fetch",) for g in grants):
         return Decision(allowed=False, code="operator_permissions_denied")
     return Decision(allowed=True, code="authorized")

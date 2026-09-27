@@ -227,6 +227,7 @@ PY
         for name in (
             "catalog-oci",
             "catalog-delivery",
+            "operator-git-refusals.json",
             "operator-oci.json",
             "operator-build-rest.json",
             "operator-build-mcp.json",

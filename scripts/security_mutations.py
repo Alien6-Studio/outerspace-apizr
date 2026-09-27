@@ -28,6 +28,20 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "git-operator-admission",
+        "src/apizr/git_source/acquisition.py",
+        "    if not decision.allowed:",
+        "    if False:",
+        "tests/git_source/test_operator_policy.py::test_cli_and_api_refuse_before_effect[command0-missing-https]",
+    ),
+    Mutation(
+        "git-exact-source",
+        "src/apizr/operator_policy.py",
+        "g.target == target",
+        "True",
+        "tests/git_source/test_operator_policy.py::test_pure_exact_decision[https-prefix]",
+    ),
+    Mutation(
         "build-operator-admission",
         "src/apizr/local_plugins/activation.py",
         "            if not decision.allowed:",
@@ -222,7 +236,7 @@ def main() -> None:
     results = []
     with tempfile.TemporaryDirectory(prefix="apizr-mutations-") as directory:
         checkout = Path(directory)
-        for name in ("src", "tests"):
+        for name in ("src", "tests", "scripts"):
             shutil.copytree(
                 root / name,
                 checkout / name,

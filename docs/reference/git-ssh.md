@@ -17,24 +17,45 @@ Both SSH options are required for each call. They are rejected with public HTTPS
 or local sources; no implicit `SSH_AUTH_SOCK` or personal `known_hosts` is used.
 An explicit remote username is required. Supply a branch, tag or full commit;
 `--subdir` and the local policies behave as in the [HTTPS example](git-sources.md).
-For example, after preparing the two policy files from that example:
+For example, after preparing readiness and exposure policies from that example,
+write a separate operator grant. The following repository is fictitious; choose
+your reviewed repository, revision and trust files. The agent must already exist.
 
 ```sh
 REPOSITORY=git@github.com:organization/project.git
 REF=main
 
+python3 - "$REPOSITORY" "$REF" "$SSH_AUTH_SOCK" "$HOME/.ssh/known_hosts" <<'PYTHON'
+import json, sys
+from pathlib import Path
+repository, reference, agent, known = sys.argv[1:]
+policy = {
+    "schema": "apizr.operator-policy/v1",
+    "grants": [{
+        "adapter": "git", "operation": "fetch", "permissions": ["git.fetch"],
+        "target": {
+            "transport": "ssh", "repository": repository,
+            "reference": reference, "subdir": "service", "ca_file": None,
+            "ssh_agent_socket": str(Path(agent).absolute()),
+            "ssh_known_hosts": str(Path(known).absolute())
+        }
+    }]
+}
+Path("operator.json").write_text(json.dumps(policy, indent=2) + "\n")
+PYTHON
+
 apizr readiness --git "$REPOSITORY" --ref "$REF" --subdir service \
   --ssh-agent-socket "$SSH_AUTH_SOCK" --ssh-known-hosts "$HOME/.ssh/known_hosts" \
-  --policy readiness.json --report
+  --operator-policy operator.json --policy readiness.json --report
 apizr expose plan --git "$REPOSITORY" --ref "$REF" --subdir service \
   --ssh-agent-socket "$SSH_AUTH_SOCK" --ssh-known-hosts "$HOME/.ssh/known_hosts" \
-  --policy exposure.json --readiness-policy readiness.json --plan
+  --operator-policy operator.json --policy exposure.json --readiness-policy readiness.json --plan
 apizr expose build rest --git "$REPOSITORY" --ref "$REF" --subdir service \
   --ssh-agent-socket "$SSH_AUTH_SOCK" --ssh-known-hosts "$HOME/.ssh/known_hosts" \
-  --policy exposure.json --readiness-policy readiness.json --output-dir build/rest
+  --operator-policy operator.json --policy exposure.json --readiness-policy readiness.json --output-dir build/rest
 apizr expose build mcp --git "$REPOSITORY" --ref "$REF" --subdir service \
   --ssh-agent-socket "$SSH_AUTH_SOCK" --ssh-known-hosts "$HOME/.ssh/known_hosts" \
-  --policy exposure.json --readiness-policy readiness.json --output-dir build/mcp
+  --operator-policy operator.json --policy exposure.json --readiness-policy readiness.json --output-dir build/mcp
 ```
 
 Use a full commit to reproduce an analysis. Apizr resolves a branch/tag once,
@@ -43,6 +64,10 @@ The repository in this example must contain a `service/calculator.py` capability
 matching the example policies; substitute your own paths and selection otherwise.
 
 ## Python API
+
+Review the generated grant before invocation. It selects references, not agent
+identities or trust-file bytes. A complete [fictitious SSH JSON policy](../examples/operator-git-ssh.json)
+is also available.
 
 Save the example as `ssh_snapshot.py` beside the local policies and run
 `python ssh_snapshot.py "$REPOSITORY" "$REF" "$SSH_AUTH_SOCK" "$HOME/.ssh/known_hosts"`.
@@ -55,6 +80,7 @@ from pathlib import Path
 from apizr.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.git_source import acquire_snapshot
+from apizr.operator_policy import load_operator_policy
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
@@ -63,6 +89,7 @@ with acquire_snapshot(
     repository,
     reference,
     subdir="service",
+    operator_policy=load_operator_policy(Path("operator.json")),
     ssh_agent_socket=Path(agent),
     ssh_known_hosts=Path(known_hosts),
 ) as snapshot:
@@ -87,6 +114,17 @@ apply to SSH. There is no fallback to HTTPS, another agent or disk identities.
 `ca_file` is reserved for HTTPS and is rejected with SSH.
 
 ## Trust and isolation
+
+Operator authorization permits this acquisition. Agent authentication determines
+which server identity may access the repository; `known_hosts` establishes server
+trust. None replaces the others. Refusals happen before agent connections, trust
+file reads, Git/SSH execution or temporary workspace creation. The policy matches
+addresses, revisions and selections literally; SCP relative paths and SSH absolute
+paths are distinct. See [exact matching and captured paths](operator-policy.md#authorize-a-git-source).
+
+A branch grant still resolves to one commit at invocation. `subdir` does not
+restrict transferred/exported objects to that subtree. Authorization of analysis
+remains separate and unfinished; it is not implied by this Git grant.
 
 OpenSSH uses only the explicitly selected agent, with disk identities,
 certificates, password/interactive authentication and external key providers
@@ -138,7 +176,8 @@ never printed. CLI acquisition errors return 2; Ctrl-C cleans up and returns 130
 Run `uv run python scripts/smoke_git_ssh.py dist/outerspace_apizr-*.whl`.
 It installs the minimal wheel outside the checkout, generates dedicated fixture
 keys and starts its own loopback-only OpenSSH server and agent on temporary paths.
-All four commands and this Python example must match local analysis and bundles;
+After CLI/API refusals without any acquisition effects, a fixture-owned operator
+grant authorizes the source. All four commands and this Python example must match local analysis and bundles;
 the trusted calculator bundle is deliberately invoked after snapshot cleanup.
 No machine SSH service or personal keys are changed. The fixture needs `sshd`,
 `ssh-agent`, `ssh-add` and `ssh-keygen`; these are test prerequisites, not commands

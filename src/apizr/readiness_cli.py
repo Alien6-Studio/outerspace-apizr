@@ -7,6 +7,7 @@ from collections.abc import Sequence
 from apizr.compiler import assess_readiness
 from apizr.git_source import GitSourceError
 from apizr.git_source_cli import add_git_arguments, apply_input, input_root
+from apizr.operator_policy import AuthorizationDenied
 from apizr.repository_cli import (
     add_graph_arguments,
     add_scan_arguments,
@@ -45,6 +46,9 @@ def main(argv: Sequence[str]) -> int:
             raise
         print("apizr readiness: git_cancelled", file=sys.stderr)
         return 130
+    except AuthorizationDenied as error:
+        print(error.decision.model_dump_json(by_alias=True), file=sys.stderr)
+        return 2
     except GitSourceError as error:
         print(f"apizr readiness: {error}", file=sys.stderr)
         return 2
