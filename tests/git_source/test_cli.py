@@ -9,6 +9,9 @@ import pytest
 
 from apizr.cli import main
 
+from .authorization import authorized_snapshot
+from .authorization import flags as operator_flags
+
 pytestmark = pytest.mark.timeout(25)
 
 
@@ -61,6 +64,7 @@ def test_remote_and_local_exact_parity(
     actual_code = main(
         [
             *command,
+            *operator_flags(tmp_path, url, commit, subdir=subdir),
             "--git",
             url,
             "--ref",
@@ -119,13 +123,16 @@ def test_ambiguous_input_rejected_before_acquisition(command, options, monkeypat
     assert error.value.code == 2
 
 
-def test_remote_refusal_retains_exit_code(remote, trust_cli, scratch, policies, capfd):
+def test_remote_refusal_retains_exit_code(
+    remote, trust_cli, scratch, policies, capfd, tmp_path
+):
     # Explicit exposure still cannot widen default readiness to direct mode.
     assert (
         main(
             [
                 "expose",
                 "plan",
+                *operator_flags(tmp_path, remote[0], "main", subdir="service"),
                 "--git",
                 remote[0],
                 "--ref",
@@ -167,7 +174,6 @@ def test_cli_fixed_git_errors(command, capfd):
     ],
 )
 def test_cli_interrupt_is_clean(command, tmp_path, scratch, remote, tls):
-    from apizr.git_source import acquire_snapshot
 
     wrapper = tmp_path / "bin"
     wrapper.mkdir()
@@ -184,6 +190,7 @@ def test_cli_interrupt_is_clean(command, tmp_path, scratch, remote, tls):
             "-c",
             "from apizr.cli import main; import sys; sys.exit(main(sys.argv[1:]))",
             *command,
+            *operator_flags(tmp_path, "https://example.com/a", "main"),
             "--git",
             "https://example.com/a",
             "--ref",
@@ -216,5 +223,5 @@ def test_cli_interrupt_is_clean(command, tmp_path, scratch, remote, tls):
         process.communicate(timeout=3)
         for stream in (process.stdout, process.stderr):
             stream.close()
-    with acquire_snapshot(remote[0], "main", ca_file=tls[0]):
+    with authorized_snapshot(remote[0], "main", ca_file=tls[0]):
         pass

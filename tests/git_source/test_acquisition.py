@@ -8,6 +8,7 @@ from apizr.exposure import ExposurePolicy
 from apizr.git_source import AcquisitionLimits, GitSourceError, acquire_snapshot
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
+from .authorization import authorized_snapshot
 from .conftest import git_fixture
 
 pytestmark = pytest.mark.timeout(25)
@@ -19,7 +20,9 @@ pytestmark = pytest.mark.timeout(25)
 def test_real_snapshot_and_cleanup(remote, tls, scratch, ref):
     url, source, commit = remote
     reference = commit if ref == "commit" else ref
-    with acquire_snapshot(url, reference, subdir="service", ca_file=tls[0]) as snapshot:
+    with authorized_snapshot(
+        url, reference, subdir="service", ca_file=tls[0]
+    ) as snapshot:
         assert snapshot.commit == commit
         assert snapshot.repository == url and snapshot.requested_ref == reference
         assert snapshot.subdir == "service"
@@ -46,7 +49,7 @@ def test_retained_sources_and_moving_branch(remote, tls, scratch):
     local = prepare_exposure(
         source / "service", policy=policy, readiness_policy=readiness
     )
-    with acquire_snapshot(url, "main", subdir="service", ca_file=tls[0]) as snapshot:
+    with authorized_snapshot(url, "main", subdir="service", ca_file=tls[0]) as snapshot:
         (source / "service/calculator.py").write_text(
             "raise RuntimeError('must not run')\n"
         )
@@ -75,7 +78,7 @@ def test_missing_and_ambiguous(remote, tls, scratch, ref, code):
     git_fixture.git(source, "branch", "ambiguous")
     git_fixture.git(source, "tag", "ambiguous")
     with pytest.raises(GitSourceError, match=code):
-        with acquire_snapshot(url, ref, ca_file=tls[0]):
+        with authorized_snapshot(url, ref, ca_file=tls[0]):
             pytest.fail("accepted")
 
 
@@ -133,7 +136,7 @@ def test_path_escape(remote, tls, scratch, subdir):
 def test_absent_git(remote, monkeypatch, scratch):
     monkeypatch.setattr("shutil.which", lambda *a: None)
     with pytest.raises(GitSourceError, match="git_not_found"):
-        with acquire_snapshot(remote[0], "main"):
+        with authorized_snapshot(remote[0], "main"):
             pytest.fail("accepted")
 
 
@@ -143,7 +146,7 @@ def test_failed_acquisitions_clean_and_next_works(remote, tls, scratch, kind):
     if kind == "cancel":
         cancel.set()
     with pytest.raises(GitSourceError):
-        with acquire_snapshot(
+        with authorized_snapshot(
             remote[0] + ("/missing" if kind == "network" else ""),
             "main",
             subdir="absent" if kind == "subdir" else ".",
@@ -152,7 +155,7 @@ def test_failed_acquisitions_clean_and_next_works(remote, tls, scratch, kind):
         ):
             pytest.fail("accepted")
     assert not list(scratch.iterdir())
-    with acquire_snapshot(remote[0], "main", ca_file=tls[0]):
+    with authorized_snapshot(remote[0], "main", ca_file=tls[0]):
         pass
 
 
@@ -167,7 +170,7 @@ def test_failed_acquisitions_clean_and_next_works(remote, tls, scratch, kind):
 )
 def test_limits(remote, tls, scratch, limits, code):
     with pytest.raises(GitSourceError, match=code):
-        with acquire_snapshot(remote[0], "main", ca_file=tls[0], limits=limits):
+        with authorized_snapshot(remote[0], "main", ca_file=tls[0], limits=limits):
             pytest.fail("accepted")
 
 
@@ -197,7 +200,7 @@ def test_incomplete_or_unsafe_sources_refused(remote, tls, scratch, kind, code):
         git_fixture.git(source, "add", ".")
     git_fixture.git(source, "commit", "-m", kind)
     with pytest.raises(GitSourceError, match=code):
-        with acquire_snapshot(url, "main", ca_file=tls[0]):
+        with authorized_snapshot(url, "main", ca_file=tls[0]):
             pytest.fail("accepted")
 
 
@@ -233,20 +236,20 @@ def test_no_config_hooks_filters_or_project_execution(
     monkeypatch.setenv("GIT_ASKPASS", str(hooks / "post-checkout"))
     monkeypatch.setenv("GIT_SSL_NO_VERIFY", "true")
     monkeypatch.setenv("HTTPS_PROXY", "http://127.0.0.1:1")
-    with acquire_snapshot(url, "main", ca_file=tls[0]) as snapshot:
+    with authorized_snapshot(url, "main", ca_file=tls[0]) as snapshot:
         assert (snapshot.root / "service/calculator.py").is_file()
         assess_readiness(snapshot.root)
     assert not marker.exists()
     # An inherited "insecure" flag must not make the same certificate trusted.
     with pytest.raises(GitSourceError, match="git_command_failed"):
-        with acquire_snapshot(url, "main"):
+        with authorized_snapshot(url, "main"):
             pytest.fail("inherited TLS override")
 
 
 def test_caller_errors_and_interruptions_not_reclassified(remote, tls, scratch):
     for exception in (ValueError("compiler error"), KeyboardInterrupt()):
         with pytest.raises(type(exception)) as caught:
-            with acquire_snapshot(remote[0], "main", ca_file=tls[0]):
+            with authorized_snapshot(remote[0], "main", ca_file=tls[0]):
                 raise exception
         assert caught.value is exception
 
@@ -261,6 +264,6 @@ def test_temp_directory_inside_hostile_checkout_does_not_inherit_local_config(
     nested.mkdir()
     git_fixture.git(source, "config", "url.https://127.0.0.1:1/blocked.insteadOf", url)
     monkeypatch.setattr(tempfile, "tempdir", str(nested))
-    with acquire_snapshot(url, "main", ca_file=tls[0]) as snapshot:
+    with authorized_snapshot(url, "main", ca_file=tls[0]) as snapshot:
         assert (snapshot.root / "service/calculator.py").is_file()
     assert not list(nested.iterdir())

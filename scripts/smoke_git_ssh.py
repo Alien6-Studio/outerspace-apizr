@@ -9,6 +9,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from git_ssh_fixture import server
+from operator_policy_proof import refuse_git, write_git_policy
 
 
 def exercise(python: Path, cli: Path, work: Path) -> None:
@@ -42,7 +43,27 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
             assert not list(scratch.iterdir())
             return result
 
+        refuse_git(
+            python,
+            root,
+            environment,
+            remote.url,
+            remote.commit,
+            subdir="service",
+            ssh_agent_socket=remote.socket,
+            ssh_known_hosts=remote.known_hosts,
+        )
+        operator = write_git_policy(
+            root / "operator.json",
+            remote.url,
+            remote.commit,
+            subdir="service",
+            ssh_agent_socket=remote.socket,
+            ssh_known_hosts=remote.known_hosts,
+        )
         remote_flags = [
+            "--operator-policy",
+            str(operator),
             "--git",
             remote.url,
             "--ref",
@@ -138,7 +159,7 @@ for interface in ("rest", "mcp"):
                 root / f"local-{interface}"
             )
     print(
-        "PASS Git SSH: isolated agent/server, minimal wheel, four CLI commands and documented Python API; parity after cleanup"
+        "PASS Git SSH: isolated agent/server, minimal wheel, pre-effect CLI/API refusal, authorized four CLI commands and documented Python API; parity after cleanup"
     )
 
 

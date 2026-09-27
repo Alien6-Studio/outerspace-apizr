@@ -2,58 +2,16 @@
 
 import json
 import os
-import re
 import shutil
 import stat
 import sys
 from pathlib import Path
-from urllib.parse import urlsplit
 
+from .contracts import is_ssh as is_ssh
+from .contracts import validate_ssh_url as validate_ssh_url
 from .models import GitSourceError
 
 MAX_KNOWN_HOSTS_BYTES = 4 * 1024 * 1024
-_USER = r"[A-Za-z0-9_][A-Za-z0-9_.-]*"
-_HOST = r"(?:[A-Za-z0-9][A-Za-z0-9.-]*|\[[0-9A-Fa-f:]+\])"
-_PATH = r"/?[A-Za-z0-9_.][A-Za-z0-9_./-]*"
-_SCP = re.compile(rf"({_USER})@({_HOST}):({_PATH})\Z")
-
-
-def is_ssh(repository: str) -> bool:
-    return repository.startswith("ssh://") or _SCP.fullmatch(repository) is not None
-
-
-def validate_ssh_url(repository: str) -> None:
-    try:
-        if len(repository) > 4096 or any(
-            ord(c) <= 32 or ord(c) >= 127 for c in repository
-        ):
-            raise ValueError
-        if repository.startswith("ssh://"):
-            parsed = urlsplit(repository)
-            # Require an explicit user; never fall back to the local login name.
-            if (
-                parsed.scheme != "ssh"
-                or parsed.username is None
-                or not re.fullmatch(_USER, parsed.username)
-                or parsed.password is not None
-                or parsed.query
-                or parsed.fragment
-                or not re.fullmatch(rf"{_USER}@{_HOST}(?::[0-9]+)?", parsed.netloc)
-                or not re.fullmatch(_PATH, parsed.path)
-                or parsed.port is not None
-                and not 1 <= parsed.port <= 65535
-            ):
-                raise ValueError
-            path = parsed.path
-        else:
-            match = _SCP.fullmatch(repository)
-            if match is None:
-                raise ValueError
-            path = match[3]
-        if any(part in (".", "..", "") for part in path.lstrip("/").split("/")):
-            raise ValueError
-    except (ValueError, UnicodeError):
-        raise GitSourceError("git_invalid_url") from None
 
 
 def configure_ssh(work: Path, agent_socket: Path, known_hosts: Path) -> dict[str, str]:

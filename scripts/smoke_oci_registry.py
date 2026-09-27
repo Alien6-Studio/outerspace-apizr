@@ -227,6 +227,7 @@ PY
         for name in (
             "catalog-oci",
             "catalog-delivery",
+            "git-proof/operator-git-refusals.json",
             "operator-oci.json",
             "operator-build-rest.json",
             "operator-build-mcp.json",
@@ -255,7 +256,7 @@ PY
                     "docker",
                     "cp",
                     builder + ":/proof/work/" + name,
-                    str(args.output / name),
+                    str(args.output / Path(name).name),
                 ],
                 capture_output=True,
                 timeout=10,

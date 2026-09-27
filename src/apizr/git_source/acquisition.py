@@ -8,67 +8,19 @@ from contextlib import contextmanager
 from pathlib import Path, PurePosixPath
 from tempfile import TemporaryDirectory
 from threading import Event
-from urllib.parse import unquote, urlsplit
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from apizr.operator_policy import OperatorPolicy
+
+from .contracts import GitTarget, relative_path, validate_source
+from .contracts import validate_ref as validate_ref
+from .contracts import validate_url as validate_url
 from .models import AcquisitionLimits, GitSnapshot, GitSourceError
 from .process import GitRunner
-from .ssh import configure_ssh, is_ssh, validate_ssh_url
+from .ssh import configure_ssh
 
 OID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
-
-
-def validate_url(url: str) -> None:
-    try:
-        parsed = urlsplit(url)
-        if (
-            len(url) > 4096
-            or parsed.scheme != "https"
-            or not parsed.hostname
-            or parsed.username is not None
-            or parsed.password is not None
-            or parsed.query
-            or parsed.fragment
-            or not parsed.path.startswith("/")
-            or "\\" in unquote(url)
-            or any(ord(c) <= 32 or ord(c) == 127 for c in unquote(url))
-        ):
-            raise ValueError
-        _ = parsed.port
-    except (ValueError, UnicodeError):
-        raise GitSourceError("git_invalid_url") from None
-
-
-def validate_ref(reference: str) -> None:
-    if (
-        not reference
-        or len(reference) > 1024
-        or reference.startswith("-")
-        or ".." in reference
-        or "@{" in reference
-        or any(ord(c) <= 32 or ord(c) == 127 or c in "~^:?*[\\" for c in reference)
-        or reference.endswith(".")
-        or any(
-            not p or p.startswith(".") or p.endswith(".lock")
-            for p in reference.split("/")
-        )
-        or reference.startswith("refs/")
-        and not reference.startswith(("refs/heads/", "refs/tags/"))
-    ):
-        raise GitSourceError("git_invalid_ref")
-
-
-def relative_path(value: str) -> PurePosixPath:
-    if (
-        not value
-        or value.startswith("/")
-        or "\\" in value
-        or any(ord(c) < 32 or ord(c) == 127 for c in value)
-        or any(
-            part in ("", "..") or part.casefold() == ".git" for part in value.split("/")
-        )
-    ):
-        raise GitSourceError("git_invalid_path")
-    return PurePosixPath(value)
 
 
 def _resolve(advertisement: bytes, reference: str) -> str:
@@ -165,29 +117,56 @@ def acquire_snapshot(
     ca_file: Path | None = None,
     ssh_agent_socket: Path | None = None,
     ssh_known_hosts: Path | None = None,
+    operator_policy: "OperatorPolicy | None" = None,
 ) -> Generator[GitSnapshot, None, None]:
     """Resolve/fetch once, export literal blobs, then remove all temporary data.
 
     Git is a trusted installed executable. POSIX process groups bound normal
     helpers; this is not a sandbox. ``ca_file`` explicitly adds test/private-CA
     trust, never disables TLS verification. No parent credentials are inherited.
+    An explicit operator_policy must authorize the captured source before any
+    acquisition I/O; source parameters do not discover or expand that policy.
     """
-    ssh = is_ssh(repository)
-    if ssh:
-        validate_ssh_url(repository)
-        if ssh_agent_socket is None or ssh_known_hosts is None:
-            raise GitSourceError("git_ssh_options_required")
-        if ca_file is not None:
-            raise GitSourceError("git_ssh_ca_unsupported")
-    else:
-        validate_url(repository)
-        if ssh_agent_socket is not None or ssh_known_hosts is not None:
-            raise GitSourceError("git_ssh_options_unsupported")
-    validate_ref(reference)
-    selected = relative_path(subdir)
-    policy = AcquisitionLimits.model_validate(
-        (limits or AcquisitionLimits()).model_dump(), strict=True
+    from apizr.operator_policy import AuthorizationDenied, decide_git
+
+    # Capture caller-owned values once before the pure admission decision.
+    if any(type(value) is not str for value in (repository, reference, subdir)):
+        raise AuthorizationDenied("operator_arguments_invalid")
+    transport = validate_source(
+        repository, reference, subdir, ca_file, ssh_agent_socket, ssh_known_hosts
     )
+    try:
+        target = GitTarget(
+            transport=transport,
+            repository=repository,
+            reference=reference,
+            subdir=subdir,
+            ca_file=str(ca_file.absolute()) if ca_file is not None else None,
+            ssh_agent_socket=str(ssh_agent_socket.absolute())
+            if ssh_agent_socket is not None
+            else None,
+            ssh_known_hosts=str(ssh_known_hosts.absolute())
+            if ssh_known_hosts is not None
+            else None,
+        )
+        policy = AcquisitionLimits.model_validate(
+            (limits or AcquisitionLimits()).model_dump(), strict=True
+        )
+    except (ValueError, TypeError, AttributeError):
+        raise AuthorizationDenied("operator_arguments_invalid") from None
+    decision = decide_git(operator_policy, target)
+    if not decision.allowed:
+        raise AuthorizationDenied(decision.code)
+    repository, reference, subdir = target.repository, target.reference, target.subdir
+    ca_file = Path(target.ca_file) if target.ca_file is not None else None
+    ssh_agent_socket = (
+        Path(target.ssh_agent_socket) if target.ssh_agent_socket is not None else None
+    )
+    ssh_known_hosts = (
+        Path(target.ssh_known_hosts) if target.ssh_known_hosts is not None else None
+    )
+    ssh = target.transport == "ssh"
+    selected = relative_path(subdir)
     if os.name != "posix":
         raise GitSourceError("git_platform_unsupported")
     executable = shutil.which("git")

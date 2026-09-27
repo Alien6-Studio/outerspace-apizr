@@ -2,6 +2,7 @@
 
 import json
 import subprocess
+from pathlib import Path
 
 
 def installed_identity(python, store, name, command):
@@ -101,7 +102,7 @@ def write_signing_policy(python, store, path, arguments, command):
     return path
 
 
-GUARD = """import sys,json
+EFFECT_GUARD = """import sys,json
 credentials=json.loads(sys.argv[1])
 def guard(event,args):
     if event in {"subprocess.Popen","os.system","os.exec","socket.connect","socket.getaddrinfo"}:
@@ -109,9 +110,15 @@ def guard(event,args):
     if event in {"open", "os.listdir", "os.scandir"} and any(str(args[0]) == p or str(args[0]).startswith(p.rstrip("/")+"/") for p in credentials):
         raise AssertionError("protected input read before operator authorization")
 sys.addaudithook(guard)
+"""
+
+GUARD = (
+    EFFECT_GUARD
+    + """
 from apizr.cli import main
 raise SystemExit(main(sys.argv[2:]))
 """
+)
 
 
 def refuse(
@@ -159,3 +166,140 @@ def refuse(
         "code": code,
     }, result.stderr
     return {"operation": operation, "code": code, "before_effect": True}
+
+
+def write_git_policy(
+    path,
+    repository,
+    reference,
+    *,
+    subdir=".",
+    ssh_agent_socket=None,
+    ssh_known_hosts=None,
+):
+    target = {
+        "transport": "ssh" if ssh_agent_socket is not None else "https",
+        "repository": repository,
+        "reference": reference,
+        "subdir": subdir,
+        "ca_file": None,
+        "ssh_agent_socket": str(Path(ssh_agent_socket).absolute())
+        if ssh_agent_socket is not None
+        else None,
+        "ssh_known_hosts": str(Path(ssh_known_hosts).absolute())
+        if ssh_known_hosts is not None
+        else None,
+    }
+    path.write_text(
+        json.dumps(
+            {
+                "schema": "apizr.operator-policy/v1",
+                "grants": [
+                    {
+                        "adapter": "git",
+                        "operation": "fetch",
+                        "target": target,
+                        "permissions": ["git.fetch"],
+                    }
+                ],
+            }
+        )
+    )
+    return path
+
+
+def refuse_git(
+    python,
+    root,
+    environment,
+    repository,
+    reference,
+    *,
+    subdir=".",
+    ssh_agent_socket=None,
+    ssh_known_hosts=None,
+):
+    """Installed CLI/API refusal with traps before any acquisition effect."""
+    options = {
+        "subdir": subdir,
+        "ssh_agent_socket": str(ssh_agent_socket)
+        if ssh_agent_socket is not None
+        else None,
+        "ssh_known_hosts": str(ssh_known_hosts)
+        if ssh_known_hosts is not None
+        else None,
+    }
+    arguments = [
+        "readiness",
+        "--git",
+        repository,
+        "--ref",
+        reference,
+        "--subdir",
+        subdir,
+        "--report",
+    ]
+    for name in ("ssh_agent_socket", "ssh_known_hosts"):
+        if options[name] is not None:
+            arguments.extend(["--" + name.replace("_", "-"), options[name]])
+    probe = (
+        EFFECT_GUARD
+        + """
+from pathlib import Path
+from apizr.git_source import acquire_snapshot
+from apizr.operator_policy import AuthorizationDenied
+import apizr.git_source.acquisition as acquisition
+def forbidden(*args, **kwargs): raise AssertionError("workspace before admission")
+acquisition.TemporaryDirectory = forbidden
+request = json.loads(sys.argv[2])
+if request['entry'] == 'cli':
+    from apizr.cli import main
+    assert main(request['arguments']) == 2
+else:
+    options = request['options']
+    for name in ('ssh_agent_socket', 'ssh_known_hosts'):
+        if options[name] is not None: options[name] = Path(options[name])
+    try:
+        with acquire_snapshot(request['repository'], request['reference'], **options):
+            raise AssertionError('unauthorized acquisition')
+    except AuthorizationDenied as error:
+        print(error.decision.model_dump_json(by_alias=True), file=sys.stderr)
+"""
+    )
+    results = []
+    for entry in ("cli", "api"):
+        result = subprocess.run(
+            [
+                str(python),
+                "-I",
+                "-B",
+                "-c",
+                probe,
+                json.dumps(
+                    [v for k, v in options.items() if k != "subdir" and v is not None]
+                ),
+                json.dumps(
+                    {
+                        "entry": entry,
+                        "arguments": arguments,
+                        "repository": repository,
+                        "reference": reference,
+                        "options": options,
+                    }
+                ),
+            ],
+            cwd=root,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        assert result.returncode == 0 and not result.stdout, result.stderr
+        decision = json.loads(result.stderr)
+        assert (
+            decision["code"] == "operator_policy_required" and not decision["allowed"]
+        )
+        results.append(
+            {"entrypoint": entry, "code": decision["code"], "before_effect": True}
+        )
+    (root / "operator-git-refusals.json").write_text(json.dumps(results))

@@ -10,6 +10,7 @@ from tempfile import TemporaryDirectory
 
 from git_https_fixture import handler, repository, trusted_git
 from https_fixture import certificate, https_server
+from operator_policy_proof import refuse_git, write_git_policy
 
 
 def exercise(python: Path, cli: Path, work: Path) -> None:
@@ -53,7 +54,22 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
         }
 
     with https_server(cert, key, handler(root)) as url:
-        remote = ["--git", url + "/repo.git", "--ref", commit, "--subdir", "service"]
+        refuse_git(
+            python, root, environment, url + "/repo.git", commit, subdir="service"
+        )
+        operator = write_git_policy(
+            root / "operator.json", url + "/repo.git", commit, subdir="service"
+        )
+        remote = [
+            "--operator-policy",
+            str(operator),
+            "--git",
+            url + "/repo.git",
+            "--ref",
+            commit,
+            "--subdir",
+            "service",
+        ]
         policies = ["--policy", "exposure.json", "--readiness-policy", "readiness.json"]
         for prefix, flags in [
             (["readiness"], ["--policy", "readiness.json", "--report"]),
@@ -138,7 +154,7 @@ for interface in ("rest", "mcp"):
                 root / ("local-" + interface)
             )
     print(
-        "PASS Git HTTPS: minimal wheel, four CLI commands and documented Python API; exact parity after snapshot cleanup"
+        "PASS Git HTTPS: minimal wheel, pre-effect CLI/API refusal, authorized four CLI commands and documented Python API; exact parity after snapshot cleanup"
     )
 
 
