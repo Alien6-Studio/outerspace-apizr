@@ -156,11 +156,11 @@ def test_startup_refuses_unavailable_host_and_path_escape(tmp_path, monkeypatch)
 
 def test_snapshot_direct_bytes_against_committed_golden():
     # The original direct golden tests also regenerate and compare every hash in
-    # their manifests. These anchors predate governed integration.
+    # their manifests. The MCP anchor includes the #163 result-object correction.
     root = Path(__file__).parents[1] / "fixtures"
     expected = {
         "rest/v1/apizr-rest.json": "32597062a49b112139741c04a1cd6b8172cdd02c33258f91b032b9229cd8274c",  # gitleaks:allow -- public golden SHA-256, not a credential
-        "mcp/v1/apizr-mcp.json": "2da79e379a56bd319275f3d5094421e86a7dc46974034683a6e0eb5e0810fc1f",  # gitleaks:allow -- public golden SHA-256, not a credential
+        "mcp/v1/apizr-mcp.json": "3a1d237b0c78a89f9cd3c7e5d1e1b3f97f11b88b205dadf7264a34e46011df78",  # gitleaks:allow -- public golden SHA-256, not a credential
     }
     for path, digest in expected.items():
         assert hashlib.sha256((root / path).read_bytes()).hexdigest() == digest
