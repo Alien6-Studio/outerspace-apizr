@@ -169,13 +169,13 @@ def test_real_generated_transports_and_tamper(
             async with Client(connection, read_timeout_seconds=15) as client:
                 assert (
                     await client.call_tool(name, {"kind": "raw-clone"})
-                ).structured_content is True
+                ).structured_content == {"result": True}
                 damaged.write_bytes(original + b"# tampered\n")
                 assert (await client.call_tool(name, {"kind": "fork"})).is_error
                 damaged.write_bytes(original)
                 assert (
                     await client.call_tool(name, {"kind": "spawn"})
-                ).structured_content is True
+                ).structured_content == {"result": True}
 
         if transport == "stdio":
             anyio.run(

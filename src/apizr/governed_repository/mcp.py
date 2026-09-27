@@ -62,12 +62,15 @@ def create_server(root: Path) -> Server[dict[str, object]]:
             return tool_error("Invalid tool arguments")
         result = await anyio.to_thread.run_sync(runtime.invoke, identity, payload)
         if result.status == "success":
+            # Normalize only the transport; Python/REST execution values stay intact.
+            value = result.value
+            value = value if isinstance(value, dict) else {"result": value}
             return CallToolResult(
                 content=[
                     TextContent(
                         type="text",
                         text=json.dumps(
-                            result.value,
+                            value,
                             ensure_ascii=False,
                             sort_keys=True,
                             separators=(",", ":"),
@@ -75,7 +78,7 @@ def create_server(root: Path) -> Server[dict[str, object]]:
                         ),
                     )
                 ],
-                structured_content=result.value,
+                structured_content=value,
             )
         if result.status == "invalid_input":
             return tool_error("Invalid tool arguments")

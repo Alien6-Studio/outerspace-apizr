@@ -31,10 +31,9 @@ async def exercise(target, mode="auto"):
         result = await client.call_tool("total", {"values": [1, 2], "tax": 3})
         assert result.structured_content == {"total": 6}
         assert not result.is_error
-        if mode != "legacy":
-            assert (
-                await client.call_tool("greet", {"name": "Ada"})
-            ).structured_content == "Hello Ada"
+        assert (
+            await client.call_tool("greet", {"name": "Ada"})
+        ).structured_content == {"result": "Hello Ada"}
         invalid = await client.call_tool("total", {"values": ["bad"]})
         assert invalid.is_error and invalid.content[0].text == "Invalid tool arguments"
 

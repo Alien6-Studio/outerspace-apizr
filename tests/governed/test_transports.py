@@ -111,9 +111,11 @@ async def exercise_mcp(target, root, history):
                 event["elapsed_ms"] = round((time.monotonic() - started) * 1000, 3)
                 history.append(event)
 
-        assert (await call("total", {"a": 1})).structured_content == 6
-        assert (await call("greet", {"name": "Ada"})).structured_content == "Hello Ada"
-        assert (await call("nullable")).structured_content is None
+        assert (await call("total", {"a": 1})).structured_content == {"result": 6}
+        assert (await call("greet", {"name": "Ada"})).structured_content == {
+            "result": "Hello Ada"
+        }
+        assert (await call("nullable")).structured_content == {"result": None}
         assert not (await call("default_null")).is_error
         for name, args in [
             ("total", {}),
@@ -127,9 +129,9 @@ async def exercise_mcp(target, root, history):
         assert (
             (await call("counter")).structured_content
             == (await call("counter")).structured_content
-            == [1, 1]
+            == {"result": [1, 1]}
         )
-        assert (await call("environment")).structured_content is False
+        assert (await call("environment")).structured_content == {"result": False}
         for name in ["loop", "sleep", "crash", "fail", "large"]:
             start = time.monotonic()
             response = await call(name, {"n": 500} if name == "large" else {})
@@ -139,7 +141,7 @@ async def exercise_mcp(target, root, history):
                 if name in ["loop", "sleep"]
                 else "Tool execution failed"
             )
-            assert (await call("total", {"a": 1})).structured_content == 6
+            assert (await call("total", {"a": 1})).structured_content == {"result": 6}
         for path in [
             "source/governed_sample.py",
             "execution/policy.json",
@@ -155,7 +157,7 @@ async def exercise_mcp(target, root, history):
                 and response.content[0].text == "Tool execution failed"
             )
             target_path.write_bytes(original)
-            assert (await call("total", {"a": 1})).structured_content == 6
+            assert (await call("total", {"a": 1})).structured_content == {"result": 6}
 
 
 @pytest.mark.parametrize("transport", ["stdio", "streamable-http"])

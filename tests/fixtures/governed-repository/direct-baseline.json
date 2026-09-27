@@ -1,7 +1,7 @@
 {
   "artifacts": {
     "mcp": {
-      "apizr-repository-mcp.json": "037dc5bcbcdfa41e664a0cdde90c76db7ad06b0a35514b36b01383e24db2e59a",
+      "apizr-repository-mcp.json": "fc8fed0379bf876ce7fdea050f10b1e491b848e0803785e392c79ee2118abff3",
       "apizr_repository_runtime.py": "74c40505ad1beaa76b2bc8256b0a1964e62d657f44f48f18ee1052c337cc8054",
       "apizr_runtime.py": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14",
       "capability-catalog.json": "957021149968a303f4faca6c5980528e7379bb038101496d90b84a6a13bffff8",
@@ -12,7 +12,7 @@
       "repository-interface.json": "53e84f43d6b26b06ee5980c5cdf880462a7125e45120e9a78dbb005db88d344a",
       "repository-readiness.json": "620badc432956c07dfb43a543cbd419e9aa2a5a355bf2f7ff15ec55c30ad1a13",
       "requirements.txt": "92af853508dc94ec5da25d834bad8540be7df90930dbf7b4063ae94b098a4353",
-      "server.py": "b51fbe828497a1b13a143f7fa1f8c05da0bbdebeec59740e14f589040d4bf6aa",
+      "server.py": "3a1f879ff7b6cfc5cabe772d5aae79c464ea6a5144671fb57bdc5170b5c15ef6",
       "source/shop/__init__.py": "d6956f548c849543638298bf8e38b4f0728d81e16f006632d0a1ff09e6ec7932",
       "source/shop/admin.py": "74299f981a87e40b384596174832ec7bd2edc55b22daf03bc053003939e38a9e",
       "source/shop/api.py": "8b4e0ac0220ac1ff7fd5d2901d4b3cad98a8ceb5f9c468cae2e9ee984a72d4d7",

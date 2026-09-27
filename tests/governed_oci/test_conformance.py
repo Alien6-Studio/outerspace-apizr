@@ -79,14 +79,18 @@ def test_shared_eight_entrypoint_corpus_and_state(worker_image, tmp_path, capsys
                                 response = await client.call_tool(name, args)
                                 assert response.is_error != valid
                                 if valid:
-                                    assert response.structured_content == value
+                                    assert response.structured_content == (
+                                        value
+                                        if isinstance(value, dict)
+                                        else {"result": value}
+                                    )
                             assert (
                                 await client.call_tool("counter", {})
-                            ).structured_content == [1, 1]
+                            ).structured_content == {"result": [1, 1]}
                             assert (
                                 await client.call_tool("counter", {})
                             ).structured_content == (
-                                [2, 2] if mode == "direct" else [1, 1]
+                                {"result": [2, 2] if mode == "direct" else [1, 1]}
                             )
 
                     anyio.run(check)
