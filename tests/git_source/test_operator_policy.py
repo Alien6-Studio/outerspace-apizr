@@ -146,6 +146,11 @@ def traps(monkeypatch):
     def forbidden(*args, **kwargs):
         raise AssertionError("effect before Git authorization")
 
+    class ForbiddenProcess(subprocess.Popen):
+        # Preserve Popen[...] annotations during lazy imports on older Python.
+        def __init__(self, *args, **kwargs):
+            forbidden()
+
     def guard(original):
         def checked(path, *args, **kwargs):
             assert not str(path).startswith("/trust/")
@@ -161,7 +166,7 @@ def traps(monkeypatch):
         (os, "lstat"),
     ]:
         monkeypatch.setattr(owner, name, guard(getattr(owner, name)))
-    monkeypatch.setattr(subprocess, "Popen", forbidden)
+    monkeypatch.setattr(subprocess, "Popen", ForbiddenProcess)
     monkeypatch.setattr(socket, "socket", forbidden)
     monkeypatch.setattr("apizr.git_source.acquisition.TemporaryDirectory", forbidden)
     monkeypatch.setattr("apizr.git_source.acquisition.shutil.which", forbidden)
@@ -249,7 +254,10 @@ def test_pure_exact_decision(transport, case, monkeypatch):
 @pytest.mark.parametrize("command", COMMANDS)
 def test_local_operator_option_not_ignored(command, tmp_path, monkeypatch, capsys):
     traps(monkeypatch)
-    assert main([*command, str(tmp_path), "--operator-policy", "absent.json"]) == 2
+    # Keep positional arguments together for argparse on Python 3.11–3.13.
+    option_start = next(i for i, value in enumerate(command) if value.startswith("--"))
+    argv = [*command[:option_start], str(tmp_path), *command[option_start:]]
+    assert main([*argv, "--operator-policy", "absent.json"]) == 2
     assert json.loads(capsys.readouterr().err)["code"] == "operator_policy_unavailable"
 
 
