@@ -361,6 +361,10 @@ def main():
     os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
     try:
         git_bundles(python, core_env / "bin/apizr", work)
+        shutil.copyfile(
+            work / "git-proof/operator-git-refusals.json",
+            work / "operator-git-refusals.json",
+        )
     finally:
         if old is None:
             os.environ.pop("PYTHONDONTWRITEBYTECODE", None)
