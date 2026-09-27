@@ -38,6 +38,21 @@ def timeout_ms(value: str) -> int:
 def main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(prog="apizr plugins")
     commands = parser.add_subparsers(dest="command", required=True)
+    catalog = commands.add_parser(
+        "catalog", help="Inspect plugin metadata and prepare offline locks"
+    )
+    catalog_commands = catalog.add_subparsers(dest="catalog_command", required=True)
+    catalog_list = catalog_commands.add_parser("list")
+    catalog_show = catalog_commands.add_parser("show")
+    catalog_show.add_argument("name")
+    catalog_show.add_argument("--version", required=True)
+    catalog_resolve = catalog_commands.add_parser("resolve")
+    catalog_resolve.add_argument("--profile", required=True)
+    catalog_resolve.add_argument("--wheelhouse", type=Path, required=True)
+    catalog_resolve.add_argument("--output-dir", type=Path, required=True)
+    for command in (catalog_list, catalog_show, catalog_resolve):
+        command.add_argument("--catalog", type=Path, required=True)
+        command.add_argument("--json", action="store_true")
     install = commands.add_parser(
         "install", help="Install a trusted local or HTTPS wheel by its SHA-256"
     )
@@ -167,6 +182,8 @@ def main(argv: Sequence[str]) -> int:
             help="Explicit user storage directory (also for disposable tests)",
         )
     args = parser.parse_args(argv)
+    if args.command == "catalog":
+        return _catalog(args)
     try:
         args.plugins_dir = plugins_directory(args.plugins_dir, args.user_config)
         if args.command == "uninstall":
@@ -356,3 +373,37 @@ def _show_lock(result: Result, as_json: bool) -> None:
             print(
                 f"{diagnostic.code}: {diagnostic.plugin or '-'} / {diagnostic.distribution or '-'}"
             )
+
+
+def _catalog(args: argparse.Namespace) -> int:
+    from apizr.plugin_catalog import (
+        CatalogError,
+        load_catalog,
+        resolve_profile,
+        select_entry,
+    )
+
+    try:
+        catalog = load_catalog(args.catalog)
+        if args.catalog_command == "list":
+            result = catalog
+            text = "\n".join(
+                f"{e.wheel.name} {e.wheel.version}: {e.description} ({e.provenance.status})"
+                for e in catalog.entries
+            )
+        elif args.catalog_command == "show":
+            result = select_entry(catalog, args.name, args.version)
+            text = result.model_dump_json(by_alias=True, indent=2)
+        else:
+            result = resolve_profile(
+                catalog, args.profile, args.wheelhouse, args.output_dir
+            )
+            text = "Plugin plan prepared; nothing installed or activated."
+        print(result.model_dump_json(by_alias=True) if args.json else text)
+        return 0
+    except CatalogError as error:
+        print(f"apizr plugins catalog: {error}", file=sys.stderr)
+        return 2
+    except KeyboardInterrupt:
+        print("apizr plugins catalog: cancelled", file=sys.stderr)
+        return 130

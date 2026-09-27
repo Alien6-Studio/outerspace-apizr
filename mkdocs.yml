@@ -110,6 +110,8 @@ nav:
           - Configure a project (0.4): getting-started/user-guide/project.md
           - Declarations and plugin locks (0.4): reference/project-plugin-locks.md
       - Plugins:
+          - Choose a catalog profile (0.4): reference/plugin-catalog.md
+          - Package an extension (0.4): reference/plugin-authors.md
           - Install, activate and update (0.4): reference/local-extensions.md
           - Apizr analysis MCP server (0.4): reference/apizr-mcp-server.md
           - OCI service images (0.4): reference/oci-service-plugin.md

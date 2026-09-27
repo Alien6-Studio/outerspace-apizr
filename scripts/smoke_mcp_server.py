@@ -1,7 +1,6 @@
 """Prepare locked wheels, install isolated MCP plugin, exercise a real SDK client."""
 
 import argparse
-import hashlib
 import json
 import os
 import shutil
@@ -103,25 +102,121 @@ def prepare(root: Path, python: str) -> dict:
     before = snapshot(root / "core")
     cli = root / "core/bin/apizr"
     store = root / "plugins"
-    plugin = next(house.glob("apizr_mcp-*.whl"))
-    sha = hashlib.sha256(plugin.read_bytes()).hexdigest()
+    # Keep MCP's already prepared closure; OCI/Attest have separate minimal closures.
+    import zipfile
+    from email.parser import BytesParser
+
+    core_names = set(
+        json.loads(
+            run(
+                [
+                    root / "core/bin/python",
+                    "-I",
+                    "-B",
+                    "-c",
+                    "import importlib.metadata as m,json;print(json.dumps([d.metadata['Name'].lower().replace('_','-') for d in m.distributions()]))",
+                ],
+                root,
+            )
+        )
+    )
+    minimal = root / "minimal-wheels"
+    minimal.mkdir()
+    for wheel in house.glob("*.whl"):
+        with zipfile.ZipFile(wheel) as archive:
+            metadata = BytesParser().parsebytes(
+                archive.read(
+                    next(
+                        n
+                        for n in archive.namelist()
+                        if n.endswith(".dist-info/METADATA")
+                    )
+                )
+            )
+        if metadata["Name"].lower().replace("_", "-") in core_names:
+            shutil.copyfile(wheel, minimal / wheel.name)
+    for plugin_name in ("oci", "attest"):
+        run(
+            [
+                "uv",
+                "build",
+                "--wheel",
+                REPO / "plugins" / plugin_name,
+                "--out-dir",
+                minimal,
+            ],
+            root,
+        )
+        lock_wheels(minimal, root / (plugin_name + ".lock"))
+    for wheel in minimal.glob("*.whl"):
+        destination = house / wheel.name
+        if not destination.exists():
+            shutil.copyfile(wheel, destination)
+    commit = run(["git", "rev-parse", "HEAD"], REPO).strip()
+    catalog = root / "catalog"
+    run(
+        [
+            root / "core/bin/python",
+            "-I",
+            "-B",
+            REPO / "scripts/catalog_plugin_plan.py",
+            "--wheelhouse",
+            house,
+            "--plugin",
+            "apizr-mcp=" + str(root / "plugin.lock"),
+            "--plugin",
+            "apizr-oci=" + str(root / "oci.lock"),
+            "--plugin",
+            "apizr-attest=" + str(root / "attest.lock"),
+            "--commit",
+            commit,
+            "--output",
+            catalog,
+            "--profile",
+            "mcp",
+        ],
+        root,
+    )
+    plan = catalog / "plan"
     run(
         [
             cli,
             "plugins",
-            "install",
-            plugin,
-            "--sha256",
-            sha,
-            "--requirements",
-            root / "plugin.lock",
+            "lock",
+            "check",
+            "--project",
+            plan / "apizr.toml",
+            "--lock",
+            plan / "apizr.plugins.lock.json",
+            "--wheelhouse",
+            house,
+            "--json",
+        ],
+        root,
+    )
+    assert not store.exists() and snapshot(root / "core") == before
+    run(
+        [
+            cli,
+            "plugins",
+            "sync",
+            "--project",
+            plan / "apizr.toml",
+            "--lock",
+            plan / "apizr.plugins.lock.json",
             "--wheelhouse",
             house,
             "--plugins-dir",
             store,
+            "--json",
         ],
         root,
     )
+    assert not json.loads(
+        run(
+            [cli, "plugins", "list", "--active", "--json", "--plugins-dir", store], root
+        )
+    )["installations"]
     shutil.copytree(REPO / "examples/project-config", root / "project")
     project = root / "project/apizr.toml"
     launch = [cli, "mcp", "serve", "--project", project, "--plugins-dir", store]

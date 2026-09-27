@@ -65,25 +65,13 @@ def _load_project(path: Path) -> ProjectConfig:
 
 
 def _target_wheel(filename: str, target: Target) -> None:
-    # Conservative static tag check, not pip/uv's platform compatibility resolver.
-    python, abi, platform_tag = filename[:-4].rsplit("-", 3)[-3:]
-    major, minor, _ = target.python.split(".")
-    python_tags = {"py" + major, "py" + major + minor}
-    if target.implementation == "cpython":
-        python_tags.add("cp" + major + minor)
-    platform_tags = {"any", target.platform.replace("-", "_").replace(".", "_")}
-    abi_tags = {"none"}
-    if target.implementation == "cpython":
-        abi_tags.add("cp" + major + minor + ("t" if "t-" in target.abi else ""))
-    if (
-        not python_tags.intersection(python.split("."))
-        or not abi_tags.intersection(abi.split("."))
-        or not platform_tags.intersection(platform_tag.split("."))
-    ):
+    from .tags import wheel_matches
+
+    if not wheel_matches(filename, target):
         raise PluginError("wheel_target_not_verifiable")
 
 
-def _candidates(
+def wheel_candidates(
     wheelhouse: Path, checkpoint: Callable[[], None] | None = None
 ) -> dict[tuple[str, str], list[str]]:
     candidates: dict[tuple[str, str], list[str]] = {}
@@ -119,7 +107,7 @@ def _assemble(
         checkpoint()
     config = _load_project(project)
     target = current_target()
-    candidates = _candidates(wheelhouse, checkpoint)
+    candidates = wheel_candidates(wheelhouse, checkpoint)
     diagnostics: list[Diagnostic] = []
     plugins: list[Plugin] = []
     total = expanded = 0

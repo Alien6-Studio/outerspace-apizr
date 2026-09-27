@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-from apizr.extension_runtime import Limits, invoke_extension
+from apizr.extension_runtime import Limits, PluginFailed, invoke_extension
 from apizr.local_plugins import list_extensions
 
 inventory = list_extensions(directory=Path(sys.argv[1]))
@@ -23,3 +23,17 @@ response = invoke_extension(
 assert isinstance(response.result, dict)
 assert response.result["source_digest"] == "explicit-installed-example"
 print(response.model_dump_json())
+
+try:
+    invoke_extension(
+        plugin.python,
+        plugin.module,
+        "unknown",
+        {},
+        limits=Limits(wall_time_ms=3000),
+        environment={},
+    )
+except PluginFailed:
+    pass
+else:
+    raise AssertionError("Unknown operation must be refused")

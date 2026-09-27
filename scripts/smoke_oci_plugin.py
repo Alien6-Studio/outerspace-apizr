@@ -294,18 +294,39 @@ def main():
         "import importlib.util as u; assert all(u.find_spec(n) is None for n in ('apizr_oci','apizr_attest','fastapi','mcp','uvicorn'))",
     )
     store = work / "plugins"
+    catalog = work / "catalog-oci"
+    command(
+        python,
+        "-I",
+        "-B",
+        REPO / "scripts/catalog_plugin_plan.py",
+        "--wheelhouse",
+        house,
+        "--plugin",
+        "apizr-oci=" + str(plugin_lock),
+        "--commit",
+        command(
+            "git", "-c", "safe.directory=" + str(REPO), "-C", REPO, "rev-parse", "HEAD"
+        ),
+        "--output",
+        catalog,
+        "--profile",
+        "oci",
+    )
+    plan = catalog / "plan"
+    assert not store.exists() and snapshot(core_env) == before
     cli(
         "plugins",
-        "install",
-        plugin,
-        "--sha256",
-        hashlib.sha256(plugin.read_bytes()).hexdigest(),
-        "--requirements",
-        plugin_lock,
+        "sync",
+        "--project",
+        plan / "apizr.toml",
+        "--lock",
+        plan / "apizr.plugins.lock.json",
         "--wheelhouse",
         house,
         "--plugins-dir",
         store,
+        "--json",
     )
     assert not json.loads(
         cli("plugins", "list", "--active", "--json", "--plugins-dir", store)
