@@ -3,6 +3,35 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
+## Prepare the 0.4.0 delivery
+
+The [release notes](../releases/0.4.0.md) and
+[migration guide](../getting-started/migrate-0.4.md) describe the integrated scope.
+They are publication preparation, not proof that 0.4.0 artifacts exist.
+The core still declares `0.3.0`; optional plugins declare `0.0.0`.
+
+Before tagging the exact candidate:
+
+- Finalize core and official plugin distribution versions, metadata and supported
+  combinations in a release PR. Align locks/catalog artifacts with the actual
+  reviewed filenames and hashes; do not publish development placeholders as final.
+- Qualify those exact wheels outside the checkout: minimal/extra installations,
+  migration and canonical artifacts, Git HTTPS/SSH, plugin lifecycle, real MCP
+  clients, and disposable OCI/Attest delivery. Retain the final commit and runs.
+- Apply the procedure below to the core artifacts. The current **Publish PyPI**
+  workflow consumes the core `python-distributions` artifact; it does not establish
+  official publication of the separately packaged plugins. Complete and verify
+  their distribution path before declaring the integrated release delivered.
+- After publication, verify downloaded package bytes and fresh installations.
+  Record the actual date, tag, hashes and evidence in the release notes. Only then
+  change the stable installation guidance, Quickstart pins and documentation build
+  metadata to 0.4.0; retain historical 0.3.0 release instructions.
+- Qualify the public documentation through the existing Pages/HTTPS checks,
+  including the release notes and migration page in `build-info.json`.
+
+The [0.4.1/0.4.2 deferrals](../development/0.4.md#delivery-scope-and-explicit-deferrals)
+remain explicit. Do not add those features to this release-preparation step.
+
 ## Published 0.3.0
 
 **0.3.0 was published on 22 September 2026** from commit

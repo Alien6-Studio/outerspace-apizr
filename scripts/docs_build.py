@@ -7,6 +7,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CRITICAL = {
+    "releases/0.4.0/index.html": "Release preparation — not published",
+    "getting-started/migrate-0.4/index.html": "Migrate from 0.3 to 0.4",
     "reference/operator-policy/index.html": "receipt.sign",
     "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
     "reference/project-plugin-locks/index.html": "Project plugin declarations and locks",

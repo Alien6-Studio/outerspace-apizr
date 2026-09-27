@@ -98,10 +98,33 @@ def check(site: Path) -> None:
         or "authorize-repository-analysis" not in authority
     ):
         failures.append("Missing source analysis permission and stable anchor")
+    for name, required in {
+        "releases/0.4.0/index.html": (
+            "Release preparation — not published",
+            "Latest published stable: 0.3.0",
+            "source.analyze",
+            "structuredContent",
+            "0.4.1",
+            "0.4.2",
+        ),
+        "getting-started/migrate-0.4/index.html": (
+            "operator_policy_required",
+            "CLI/Python parity: plan, REST bundle and MCP bundle",
+            "git.fetch",
+            "source.analyze",
+            "structuredContent",
+        ),
+    }.items():
+        text = "".join(pages[name].text)
+        for token in required:
+            if token not in text:
+                failures.append(f"{name}: missing release/migration guidance: {token}")
     home = (site / "index.html").read_text()
     for required in (
         "getting-started/quickstart/",
         "development/0.4/",
+        "releases/0.4.0/",
+        "getting-started/migrate-0.4/",
         "Preparing 0.4",
         "Latest published stable: 0.3.0",
         "assets/images/illustration.png",

@@ -6,6 +6,8 @@ This reference is for using individual interfaces or understanding their contrac
 The site follows `master`; pages marked **0.4 development** require the
 [development installation](../development/0.4.md), not published 0.3.0.
 The [stable release notes](../releases/0.3.0.md) describe the released scope.
+For the upcoming version, read [0.4.0 notes](../releases/0.4.0.md) and the
+[migration guide](../getting-started/migrate-0.4.md).
 
 ## Commands and parameters
 
@@ -17,6 +19,7 @@ historical pipeline.
 
 | What you need | Where to look |
 | --- | --- |
+| Authorize source access and delivery operations | [Operator permissions](operator-policy.md) |
 | Acquire a Git snapshot | [HTTPS](git-sources.md) / [SSH](git-ssh.md) |
 | Build and publish service images | [OCI plugin](oci-service-plugin.md) |
 | Sign and transport delivery proofs | [Attest](attest-delivery-plugin.md) / [OCI proofs](attest-oci-artifacts.md) |

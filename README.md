@@ -12,11 +12,14 @@ they execute. Your business logic stays in Python.
 
 **Latest published stable: 0.3.0 · Released 22 September 2026**
 
-**Preparing 0.4 — not released.** This repository and the site also describe
-unreleased work. Follow the [0.4 development guide](https://apizr.outerspace.sh/development/0.4/)
-for the Python compiler API, project files, remote Git, isolated plugins,
-the Apizr analysis MCP server and OCI/Attest delivery. Those additions are
-not part of the stable installation below.
+**Preparing 0.4.0 — not released.** Read the
+[release notes](https://apizr.outerspace.sh/releases/0.4.0/) and
+[migration guide](https://apizr.outerspace.sh/getting-started/migrate-0.4/) for the
+Python compiler API, project files, remote Git, isolated plugins and authorized
+OCI/Attest delivery. The guide covers the new source-access grants and MCP result
+compatibility. Evaluate the [development build](https://apizr.outerspace.sh/development/0.4/)
+until the exact release distributions are published; these additions are not in
+the stable installation below.
 
 Python **3.11–3.14** · GPL-3.0-or-later.
 

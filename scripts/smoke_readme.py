@@ -91,6 +91,7 @@ def main() -> None:
 
     if args.development:
         development(cli, repository)
+        migration(cli, repository)
     quickstart(cli, repository)
 
 
@@ -244,6 +245,57 @@ def development(cli: Path, repository: Path) -> None:
         assert "/capabilities/calculator.add" in schema["paths"]
         tools = json.loads((root / "build/mcp/mcp-tools.json").read_text())
         assert [tool["name"] for tool in tools["tools"]] == ["calculator.add"]
+
+
+def migration(cli: Path, repository: Path) -> None:
+    """Execute migration Markdown with an installed minimal core outside checkout."""
+    guide = (repository / "docs/getting-started/migrate-0.4.md").read_text()
+    blocks = dict(
+        re.findall(r"<!-- migration:([a-z]+) -->\s*```sh\n(.*?)```", guide, re.S)
+    )
+    assert set(blocks) == {"prepare", "refuse", "generate", "python"}
+    env = dict(
+        os.environ, PATH=str(cli.parent) + os.pathsep + os.environ.get("PATH", "")
+    )
+    env.pop("PYTHONPATH", None)
+    with tempfile.TemporaryDirectory(prefix="apizr-migration-proof-") as directory:
+        parent = Path(directory).resolve()
+        assert not parent.is_relative_to(repository)
+        for name in ("prepare", "refuse", "generate", "python"):
+            result = subprocess.run(
+                ["/bin/sh", "-c", "set -eu\n" + blocks[name]],
+                cwd=parent if name == "prepare" else parent / "migration-demo",
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+            if name == "refuse":
+                assert result.returncode == 2, result.stderr
+                assert not result.stdout
+                assert json.loads(result.stderr)["code"] == "operator_policy_required"
+                continue
+            result.check_returncode()
+            print(result.stdout)
+            if name == "python":
+                assert (
+                    "CLI/Python parity: plan, REST bundle and MCP bundle"
+                    in result.stdout
+                )
+        root = parent / "migration-demo/build"
+        schema = json.loads((root / "rest/openapi.json").read_text())
+        assert {p for p in schema["paths"] if p.startswith("/capabilities/")} == {
+            "/capabilities/api.quote",
+            "/capabilities/inventory.available",
+        }
+        tools = json.loads((root / "mcp/mcp-tools.json").read_text())
+        assert {tool["name"] for tool in tools["tools"]} == {
+            "api.quote",
+            "inventory.available",
+        }
+        print(
+            "PASS: installed migration refusal, explicit grants and CLI/Python parity"
+        )
 
 
 def delivery_results(proof: Path) -> None:
