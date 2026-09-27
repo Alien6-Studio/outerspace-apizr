@@ -119,6 +119,17 @@ not prevent that. The build operation does not accept registry credentials or pr
 
 ## Build and run
 
+Managed image construction now needs an explicit [operator build grant](operator-policy.md#authorize-an-image-build),
+binding the installed plugin and locked dependencies to the exact base digest,
+interface, platform, input paths, Docker parameters and local output tag.
+Both `image.build` and `registry.read` are required. Choose the policy yourself;
+installation, activation, signing and publication grants do not authorize a build.
+The core refuses before starting the plugin or reading construction inputs.
+The complete [operator.json example](../examples/operator.json) includes distinct
+build, signing and publication rules; replace its illustrative identities and
+paths with reviewed values. Input references do not establish their bytes or
+predict `inputs_sha256`; the builder retains its snapshot and integrity checks.
+
 A complete `build.json` (replace the absolute paths with your prepared paths):
 
 ```json
@@ -152,6 +163,7 @@ supported in this pass.
 
 ```sh
 core/bin/apizr plugins run apizr-oci build --arguments build.json \
+  --operator-policy operator.json \
   --timeout-ms 360000 --plugins-dir "$work/plugins"
 docker run --rm --publish 127.0.0.1:8000:8000 apizr-service:rest-example
 curl --fail -H 'Content-Type: application/json' \
@@ -198,7 +210,8 @@ or interrupted call returns no successful image result. A daemon build, cache or
 unreported image may remain, including a tag assigned just before interruption.
 No global prune or deletion of previous user images occurs. Use disposable Docker
 runners for build tests and inspect the explicitly chosen tag before retrying.
-This mechanism is not a sandbox or a daemon resource quota.
+This mechanism is not a sandbox or a daemon resource quota. Operator authorization
+also does not constrain daemon mirrors or redirects.
 
 The [proof script](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/scripts/smoke_oci_plugin.py)
 installs both packages outside the checkout, acquires a real HTTPS Git fixture,

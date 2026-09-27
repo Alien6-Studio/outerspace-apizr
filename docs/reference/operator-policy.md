@@ -1,18 +1,20 @@
-# Authorize an OCI publication
+<span id="authorize-an-oci-publication"></span>
+
+# Authorize image builds, signing and publication
 
 !!! warning "0.4 development — explicit policy required"
-    Managed `apizr-oci push`, `apizr-attest publish` and `apizr-attest attest` calls require
+    Managed `apizr-oci build`, `apizr-oci push`, `apizr-attest publish` and `apizr-attest attest` calls require
     `--operator-policy`. An installed, active plugin alone no longer permits
-    publication or signing. This changes development commands, not the published 0.3.0 CLI.
+    building, publication or signing. This changes development commands, not the published 0.3.0 CLI.
 
 Installation puts verified wheel bytes in an isolated environment. Activation
 chooses one installed version. **Authorization** permits a particular installed
-build to perform one operation on one remote repository. None implies the next.
+build to perform one operation on explicitly selected inputs or a remote repository. None implies the next.
 
 ## Write the operator's policy
 
 Download the complete [operator.json example](../examples/operator.json). It
-contains separate image publication, proof publication and signing grants with
+contains separate image build, image publication, proof publication and signing grants with
 their dependency identities. Its repeated
 SHA-256 values are illustrative: they deliberately do not authorize your installed
 wheels. Replace every identity with your reviewed installation's metadata.
@@ -21,7 +23,7 @@ contain the entire installed closure with exact versions and SHA-256 values.
 For a dependency-free installation, explicitly use `null` and `[]` respectively.
 The official publishers currently have dependencies.
 
-To author a complete policy using actual installed identities, first install and
+To author publication grants using actual installed identities, first install and
 activate the plugins using the [local extension guide](local-extensions.md).
 Review their origin and wheel hashes. Run these commands in a directory you
 control; choose your actual registry and repository in the Python block:
@@ -77,6 +79,70 @@ needs a new grant. Reordering dependencies does not change identity. A grant mus
 contain both required permissions; separate partial grants are not combined.
 No grant contains credentials, private key bytes or a free-form command.
 Signing grants add explicit references as described below.
+
+## Authorize an image build
+
+Managed `apizr-oci build` requires its own `operation: build` grant. The complete
+[operator.json example](../examples/operator.json) includes one REST build rule.
+Replace its fictitious plugin and base hashes with reviewed values. To grant MCP
+construction too, add a distinct rule with that interface and its exact inputs/tag.
+Keep the existing publication and signing rules separate.
+
+Each build grant contains `plugin`, `operation`, `target` and `permissions`.
+`plugin` uses the full installed identity and locked closure described above.
+Use `apizr plugins list --active --json` to obtain those identities from the same
+store used for invocation, then review them and explicitly choose the target.
+The `target` object shares the builder's existing input validators:
+
+| Target field | Required match |
+| --- | --- |
+| `base_image` | Exact base reference pinned by SHA-256 digest |
+| `interface`, `platform` | Exact `rest`/`mcp` and `linux/amd64`/`linux/arm64` |
+| `bundle`, `requirements`, `wheelhouse` | Exact absolute input references |
+| `docker` | Exact executable, socket and optional Buildx path (`null` or omitted means none) |
+| `tag` | Exact local output tag |
+
+`permissions` must contain **both** `image.build` and `registry.read` in the same
+matching grant. Partial grants are not combined. These rights permit neither
+signature nor publication. A registry-looking local tag is still only a local
+name; it does not grant permission to push. Existing v1 publication/signing
+policies remain valid and do not authorize construction.
+
+Base references keep the builder's existing forms, including
+`python@sha256:…`, `python:3.14-slim@sha256:…` and registry names with ports. They
+are not validated as push destinations, normalized to another registry spelling
+or matched by prefix. Each input reference is compared exactly, without resolving
+paths, opening files or treating nested/sibling paths as covered by a grant.
+
+The policy authorizes references and parameters, **not their bytes**. The plugin
+still prepares bounded private snapshots, validates bundles statically, checks
+wheel hashes and installs dependencies without an index. `inputs_sha256` is only
+known after preparation; it is a build result, not a pre-authorized target field.
+Timeout/log limits remain explicit runtime controls validated by the existing
+request contract, outside the target grant. Project inputs cannot select or
+extend the policy.
+
+After preparing [build.json and the inputs](oci-service-plugin.md#build-and-run):
+
+```sh
+apizr plugins run apizr-oci build --arguments build.json \
+  --operator-policy operator.json --timeout-ms 360000
+```
+
+The CLI and managed Python API refuse before plugin/tool execution, input reads
+or Docker/network access. The same owned argument snapshot reaches the builder.
+A successful build retains `published:false`, verified image/platform/input
+identities and a nonprivileged image user. Apizr generates the Dockerfile; it
+never executes a Dockerfile or build script supplied by the analyzed project.
+`apizr expose build` still generates bundles and does not use this image-build
+rule. Existing governed-worker policies are unchanged.
+
+The base image or its metadata may require registry access even with cached
+layers. `--network=none` limits Dockerfile build steps, not all daemon traffic.
+This grant authorizes an invocation's parameters; it is not a daemon sandbox or
+a guarantee about configured registry mirrors, DNS or redirects. Killing the
+client does not confirm cancellation of daemon work: caches or unreported images
+may remain. Existing cancellation, cleanup and result-verification limits apply.
 
 ## Publish the selected image and its proof
 
@@ -227,7 +293,8 @@ No paths, reference values, credentials or native diagnostics appear in it.
 | `operator_identity_denied` | Installed build/closure or official entry point does not match |
 | `operator_operation_denied` | No matching operation grant |
 | `operator_repository_denied` | No matching exact repository |
-| `operator_permissions_denied` | The grant lacks a required registry, signing or timestamp permission |
+| `operator_permissions_denied` | The grant lacks a required build, registry, signing or timestamp permission |
+| `operator_build_denied` | Base, platform, interface, paths, Docker parameters or local tag does not match |
 | `operator_key_denied` | Key ID, expected signer or key file reference does not match |
 | `operator_tsa_denied` | Timestamp authority does not match |
 
@@ -239,8 +306,8 @@ low-level `extension_runtime.invoke_extension` outside the managed installation
 path does not acquire operator authorization. Protect operator files and plugin
 storage from untrusted writers; plugins still execute with the user's rights.
 
-This control covers image `push`, proof `publish` and delivery signing `attest`.
-Git access, analysis, construction and the other operations retain their existing controls;
+This control covers image `build`/`push`, proof `publish` and delivery signing `attest`.
+Git access, analysis and the other operations retain their existing controls;
 `not_required` does not claim they have completed operator authorization.
-`build`, `verify`, plugin lifecycle/catalog operations and the analysis
+`verify`, plugin lifecycle/catalog operations and the analysis
 MCP server keep their behavior. Publication through MCP is not added.

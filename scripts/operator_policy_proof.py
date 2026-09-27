@@ -4,7 +4,7 @@ import json
 import subprocess
 
 
-def write_policy(python, store, path, name, operation, repositories, command):
+def installed_identity(python, store, name, command):
     inventory = json.loads(
         command(
             python,
@@ -21,10 +21,14 @@ def write_policy(python, store, path, name, operation, repositories, command):
         )
     )
     record = next(r for r in inventory["installations"] if r["name"] == name)
-    identity = {
+    return {
         k: record[k]
         for k in ("name", "version", "sha256", "lock_sha256", "dependencies")
     }
+
+
+def write_policy(python, store, path, name, operation, repositories, command):
+    identity = installed_identity(python, store, name, command)
     document = {
         "schema": "apizr.operator-policy/v1",
         "grants": [
@@ -38,6 +42,39 @@ def write_policy(python, store, path, name, operation, repositories, command):
         ],
     }
     path.write_text(json.dumps(document))
+    return path
+
+
+def write_build_policy(python, store, path, arguments, command):
+    identity = installed_identity(python, store, "apizr-oci", command)
+    target = {
+        k: arguments[k]
+        for k in (
+            "bundle",
+            "requirements",
+            "wheelhouse",
+            "interface",
+            "platform",
+            "base_image",
+            "docker",
+            "tag",
+        )
+    }
+    path.write_text(
+        json.dumps(
+            {
+                "schema": "apizr.operator-policy/v1",
+                "grants": [
+                    {
+                        "plugin": identity,
+                        "operation": "build",
+                        "target": target,
+                        "permissions": ["image.build", "registry.read"],
+                    }
+                ],
+            }
+        )
+    )
     return path
 
 
@@ -69,8 +106,8 @@ credentials=json.loads(sys.argv[1])
 def guard(event,args):
     if event in {"subprocess.Popen","os.system","os.exec","socket.connect","socket.getaddrinfo"}:
         raise AssertionError("effect before operator authorization")
-    if event=="open" and str(args[0]) in credentials:
-        raise AssertionError("credentials read before operator authorization")
+    if event in {"open", "os.listdir", "os.scandir"} and any(str(args[0]) == p or str(args[0]).startswith(p.rstrip("/")+"/") for p in credentials):
+        raise AssertionError("protected input read before operator authorization")
 sys.addaudithook(guard)
 from apizr.cli import main
 raise SystemExit(main(sys.argv[2:]))
@@ -86,7 +123,11 @@ def refuse(
         "authentication", arguments.get("transport", {}).get("authentication", {})
     )
     credentials = [str(v) for v in auth.values() if v is not None]
-    credentials += [str(arguments[k]) for k in ("key_file",) if k in arguments]
+    credentials += [
+        str(arguments[k])
+        for k in ("key_file", "bundle", "requirements", "wheelhouse")
+        if k in arguments
+    ]
     credentials += [str(arguments["docker"]["socket"])] if "docker" in arguments else []
     result = subprocess.run(
         [

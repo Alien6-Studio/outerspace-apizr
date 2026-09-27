@@ -1,4 +1,4 @@
-"""Explicit operator grants for managed publication and signing; decisions perform no I/O."""
+"""Explicit operator grants for managed build, signing and publication; decisions perform no I/O."""
 
 import json
 import os
@@ -20,6 +20,8 @@ from apizr.local_plugins.models import (
 )
 from apizr.publication_contracts import (
     AttestRequest,
+    BuildRequest,
+    BuildTarget,
     Docker,
     Model,
     PublishRequest,
@@ -43,6 +45,7 @@ Code = Literal[
     "operator_permissions_denied",
     "operator_key_denied",
     "operator_tsa_denied",
+    "operator_build_denied",
 ]
 
 
@@ -165,10 +168,27 @@ class SigningGrant(Model):
         return value
 
 
+class BuildGrant(Model):
+    plugin: PluginIdentity
+    operation: Literal["build"]
+    target: BuildTarget
+    permissions: tuple[Literal["image.build", "registry.read"], ...] = Field(
+        min_length=1, max_length=2
+    )
+
+    @field_validator("permissions")
+    @classmethod
+    def unique(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        if len(set(value)) != len(value):
+            raise ValueError("duplicate permission")
+        return value
+
+
 class OperatorPolicy(Model):
     schema_version: Literal["apizr.operator-policy/v1"] = Field(alias="schema")
     grants: tuple[
-        Annotated[Grant | SigningGrant, Field(discriminator="operation")], ...
+        Annotated[Grant | SigningGrant | BuildGrant, Field(discriminator="operation")],
+        ...,
     ] = Field(max_length=128)
 
 
@@ -210,6 +230,7 @@ def load_operator_policy(path: Path) -> OperatorPolicy:
 # Trusted core knowledge, not supplied by a project, profile, catalog or plugin.
 # Trusted effects: publication reads and writes; signing reads, signs and timestamps.
 OPERATIONS = {
+    ("apizr-oci", "build"): "apizr_oci.protocol",
     ("apizr-oci", "push"): "apizr_oci.protocol",
     ("apizr-attest", "publish"): "apizr_attest.protocol",
     ("apizr-attest", "attest"): "apizr_attest.protocol",
@@ -259,11 +280,18 @@ def decide(
         return Decision(allowed=False, code="operator_policy_too_large")
     except (ValueError, TypeError, AttributeError, RecursionError):
         return Decision(allowed=False, code="operator_policy_invalid")
+    building: BuildTarget | None = None
+    repository: str | None = None
     signing: AttestRequest | None = None
     authority: tuple[str, str, int, str] | None = None
     try:
         raw_arguments = encode(arguments, MAX_REQUEST_BYTES)
-        if operation == "push":
+        if operation == "build":
+            build = BuildRequest.model_validate_json(raw_arguments, strict=True)
+            building = BuildTarget.model_validate(
+                build.model_dump(include=set(BuildTarget.model_fields)), strict=True
+            )
+        elif operation == "push":
             request = PushRequest.model_validate_json(raw_arguments, strict=True)
             repository = repository_name(request.destination.rsplit(":", 1)[0])
         elif operation == "attest":
@@ -286,7 +314,24 @@ def decide(
     grants = [g for g in grants if g.operation == operation]
     if not grants:
         return Decision(allowed=False, code="operator_operation_denied")
-    grants = [g for g in grants if g.repository == repository]
+    if building is not None:
+        builds = [
+            g for g in grants if isinstance(g, BuildGrant) and g.target == building
+        ]
+        if not builds:
+            return Decision(allowed=False, code="operator_build_denied")
+        allowed = any(
+            set(g.permissions) == {"image.build", "registry.read"} for g in builds
+        )
+        return Decision(
+            allowed=allowed,
+            code="authorized" if allowed else "operator_permissions_denied",
+        )
+    grants = [
+        g
+        for g in grants
+        if not isinstance(g, BuildGrant) and g.repository == repository
+    ]
     if not grants:
         return Decision(allowed=False, code="operator_repository_denied")
     if signing is not None:
