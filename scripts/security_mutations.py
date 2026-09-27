@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "source-analysis-admission",
+        "src/apizr/source_access.py",
+        "        decision = decide_analysis(operator_policy, target)",
+        "        from apizr.operator_policy import Decision\n        decision = Decision(allowed=True, code='authorized')",
+        "tests/source_analysis/test_authorization.py::test_all_public_filesystem_apis_refuse_before_traversal[missing-operator_policy_required-scan]",
+    ),
+    Mutation(
         "git-operator-admission",
         "src/apizr/git_source/acquisition.py",
         "    if not decision.allowed:",
@@ -37,8 +44,8 @@ MUTATIONS = (
     Mutation(
         "git-exact-source",
         "src/apizr/operator_policy.py",
-        "g.target == target",
-        "True",
+        'grants = [g for g in grants if g.target == target]\n    if not grants:\n        return Decision(allowed=False, code="operator_git_source_denied")',
+        'grants = [g for g in grants if True]\n    if not grants:\n        return Decision(allowed=False, code="operator_git_source_denied")',
         "tests/git_source/test_operator_policy.py::test_pure_exact_decision[https-prefix]",
     ),
     Mutation(

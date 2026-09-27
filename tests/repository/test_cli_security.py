@@ -3,7 +3,9 @@ import os
 import subprocess
 import sys
 
-from apizr.cli import main
+from analysis_authorization import analysis_policy
+from analysis_authorization import authorized_main as main
+
 from apizr.repository import Catalog, scan_sources
 from apizr.repository.reporting import text_report
 
@@ -72,14 +74,19 @@ def audit(event,args):
     if event=="exec" and str(args[0].co_filename).startswith(root): raise AssertionError("source execution")
     if event=="open" and isinstance(args[0],str) and args[0].startswith(root) and args[2] & (os.O_WRONLY|os.O_RDWR|os.O_CREAT|os.O_TRUNC): raise AssertionError("repository write")
 sys.addaudithook(audit)
+from pathlib import Path
+from apizr.operator_policy import load_operator_policy
+operator = load_operator_policy(Path(sys.argv[-1]))
 from apizr.repository import scan,catalog_bytes
-result=scan(root)
+result=scan(root, operator_policy=operator)
 assert len(result.sources)==2
 assert not any(name.startswith(("apizr.execution","apizr.oci","apizr.generators","fastapi","mcp")) for name in sys.modules)
 sys.stdout.buffer.write(catalog_bytes(result))
 """
+    authority_file = tmp_path / "operator-analysis.json"
+    authority_file.write_text(analysis_policy(project).model_dump_json())
     result = subprocess.run(
-        [sys.executable, "-I", "-B", "-c", probe, str(project)],
+        [sys.executable, "-I", "-B", "-c", probe, str(project), str(authority_file)],
         cwd=project,
         env={**os.environ, "PATH": "/nonexistent"},
         capture_output=True,

@@ -9,6 +9,8 @@ import tempfile
 import zipfile
 from pathlib import Path
 
+from operator_policy_proof import write_analysis_policy
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -94,6 +96,7 @@ print(apizr.__file__)
                 sys.executable,
                 str(Path(__file__).with_name("smoke_readme.py").resolve()),
                 str(cli),
+                "--development",
             ],
             cwd=root,
             check=True,
@@ -159,8 +162,18 @@ print(apizr.__file__)
         scan_source.write_text(
             "def total(values: list[int]) -> int: return sum(values)\n"
         )
+        scan_authority = write_analysis_policy(root / "scan-operator.json", scan_root)
         scanned = subprocess.run(
-            [str(cli), "scan", str(scan_root), "--source-root", "src", "--catalog"],
+            [
+                str(cli),
+                "scan",
+                str(scan_root),
+                "--operator-policy",
+                str(scan_authority),
+                "--source-root",
+                "src",
+                "--catalog",
+            ],
             cwd=root,
             check=True,
             capture_output=True,
@@ -172,7 +185,15 @@ print(apizr.__file__)
         assert catalog["sources"][0]["path"] == "src/pricing.py"
         assert str(root).encode() not in scanned.stdout
         subprocess.run(
-            [str(cli), "scan", str(scan_root), "--source-root", "src"],
+            [
+                str(cli),
+                "scan",
+                str(scan_root),
+                "--operator-policy",
+                str(scan_authority),
+                "--source-root",
+                "src",
+            ],
             cwd=root,
             check=True,
             stdout=subprocess.DEVNULL,
@@ -181,7 +202,16 @@ print(apizr.__file__)
             "from pricing import total\ndef checkout(values: list[int]) -> int: return total(values)\n"
         )
         graphed = subprocess.run(
-            [str(cli), "graph", str(scan_root), "--source-root", "src", "--graph"],
+            [
+                str(cli),
+                "graph",
+                str(scan_root),
+                "--operator-policy",
+                str(scan_authority),
+                "--source-root",
+                "src",
+                "--graph",
+            ],
             cwd=root,
             check=True,
             capture_output=True,
@@ -197,7 +227,15 @@ print(apizr.__file__)
         )
         assert str(root).encode() not in graphed.stdout
         subprocess.run(
-            [str(cli), "graph", str(scan_root), "--source-root", "src"],
+            [
+                str(cli),
+                "graph",
+                str(scan_root),
+                "--operator-policy",
+                str(scan_authority),
+                "--source-root",
+                "src",
+            ],
             cwd=root,
             check=True,
             stdout=subprocess.DEVNULL,
@@ -205,7 +243,16 @@ print(apizr.__file__)
         # Readiness consumes one discovery, or independently persisted matching
         # artifacts; both installed entry points must emit exactly the same bytes.
         scanned_after_graph = subprocess.run(
-            [str(cli), "scan", str(scan_root), "--source-root", "src", "--catalog"],
+            [
+                str(cli),
+                "scan",
+                str(scan_root),
+                "--operator-policy",
+                str(scan_authority),
+                "--source-root",
+                "src",
+                "--catalog",
+            ],
             cwd=root,
             check=True,
             capture_output=True,
@@ -239,6 +286,8 @@ print(apizr.__file__)
                     str(cli),
                     "readiness",
                     str(scan_root),
+                    "--operator-policy",
+                    str(scan_authority),
                     "--source-root",
                     "src",
                     "--report",
@@ -281,6 +330,8 @@ print(apizr.__file__)
                 "expose",
                 "plan",
                 str(scan_root),
+                "--operator-policy",
+                str(scan_authority),
                 "--source-root",
                 "src",
                 "--interface",
@@ -311,6 +362,8 @@ print(apizr.__file__)
                 "expose",
                 "plan",
                 str(scan_root),
+                "--operator-policy",
+                str(scan_authority),
                 "--source-root",
                 "src",
                 "--interface",
@@ -661,6 +714,12 @@ asyncio.run(check())
                 output = root / ("repository-" + profile + "-" + transport)
                 flags = [
                     str(repository),
+                    "--operator-policy",
+                    str(
+                        write_analysis_policy(
+                            root / "repository-operator.json", repository
+                        )
+                    ),
                     "--interface",
                     transport,
                     "--execution-mode",

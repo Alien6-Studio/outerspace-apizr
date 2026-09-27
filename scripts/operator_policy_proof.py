@@ -200,7 +200,18 @@ def write_git_policy(
                         "operation": "fetch",
                         "target": target,
                         "permissions": ["git.fetch"],
-                    }
+                    },
+                    {
+                        "adapter": "repository",
+                        "operation": "analyze",
+                        "permissions": ["source.analyze"],
+                        "target": {
+                            "kind": "git",
+                            "repository": repository,
+                            "reference": reference,
+                            "subdir": subdir,
+                        },
+                    },
                 ],
             }
         )
@@ -303,3 +314,89 @@ else:
             {"entrypoint": entry, "code": decision["code"], "before_effect": True}
         )
     (root / "operator-git-refusals.json").write_text(json.dumps(results))
+
+
+def write_analysis_policy(path, *sources):
+    """Write exact local fixture grants; no source enumeration or imports."""
+    path.write_text(
+        json.dumps(
+            {
+                "schema": "apizr.operator-policy/v1",
+                "grants": [
+                    {
+                        "adapter": "repository",
+                        "operation": "analyze",
+                        "target": {
+                            "kind": "local",
+                            "root": str(Path(source).absolute()),
+                        },
+                        "permissions": ["source.analyze"],
+                    }
+                    for source in sources
+                ],
+            }
+        )
+    )
+    return path
+
+
+def refuse_analysis(python, work, source):
+    """Installed CLI/Python refusals, with source I/O and process/network effect traps."""
+    probe = (
+        EFFECT_GUARD
+        + """
+from pathlib import Path
+from apizr.operator_policy import AuthorizationDenied, load_operator_policy
+from apizr.compiler import assess_readiness
+from apizr.cli import main
+request = json.loads(sys.argv[2])
+if request['entry'] == 'cli':
+    flags = ['--operator-policy', request['policy']] if request['policy'] else []
+    assert main(['readiness', request['source'], '--report', *flags]) == 2
+else:
+    operator = load_operator_policy(Path(request['policy'])) if request['policy'] else None
+    try:
+        assess_readiness(request['source'], operator_policy=operator)
+        raise AssertionError('analysis without admission')
+    except AuthorizationDenied as error:
+        print(error.decision.model_dump_json(by_alias=True), file=sys.stderr)
+"""
+    )
+    results = []
+    for entry in ("cli", "api"):
+        for case, code in [
+            ("missing", "operator_policy_required"),
+            ("neighbor", "operator_analysis_denied"),
+        ]:
+            selected = None
+            if case == "neighbor":
+                selected = write_analysis_policy(
+                    work / "denied-analysis.json",
+                    source.parent / (source.name + "-other"),
+                )
+            result = subprocess.run(
+                [
+                    str(python),
+                    "-I",
+                    "-B",
+                    "-c",
+                    probe,
+                    json.dumps([str(source)]),
+                    json.dumps(
+                        {
+                            "entry": entry,
+                            "source": str(source),
+                            "policy": str(selected) if selected else None,
+                        }
+                    ),
+                ],
+                cwd=work,
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            assert result.returncode == 0 and not result.stdout, result.stderr
+            decision = json.loads(result.stderr)
+            assert not decision["allowed"] and decision["code"] == code
+            results.append({"entry": entry, "case": case, "decision": decision})
+    (work / "operator-analysis-refusals.json").write_text(json.dumps(results))

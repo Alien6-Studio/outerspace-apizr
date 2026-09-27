@@ -6,7 +6,7 @@ use ``apizr.repository_interfaces.output.write_bundle`` to publish files safely.
 """
 
 from dataclasses import dataclass
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from apizr.execution.policy import ExecutionPolicy
 from apizr.exposure import ExposurePlan, ExposurePolicy, plan_exposure
@@ -24,6 +24,10 @@ from apizr.repository_readiness import (
     RepositoryReadinessReport,
     assess_repository,
 )
+from apizr.source_access import RepositoryInput
+
+if TYPE_CHECKING:
+    from apizr.operator_policy import OperatorPolicy
 
 
 @dataclass(frozen=True)
@@ -41,8 +45,9 @@ class PreparedExposure:
 
 
 def assess_readiness(
-    root: str | Path,
+    root: RepositoryInput,
     *,
+    operator_policy: "OperatorPolicy | None" = None,
     scan_policy: ScanPolicy | None = None,
     graph_policy: GraphPolicy | None = None,
     readiness_policy: RepositoryReadinessPolicy | None = None,
@@ -53,7 +58,10 @@ def assess_readiness(
     inputs raise the underlying validation/filesystem errors; they do not exit.
     """
     artifacts = graph_repository(
-        root, scan_policy=scan_policy, graph_policy=graph_policy
+        root,
+        scan_policy=scan_policy,
+        graph_policy=graph_policy,
+        operator_policy=operator_policy,
     )
     return assess_repository(
         artifacts.catalog, artifacts.graph, policy=readiness_policy
@@ -61,8 +69,9 @@ def assess_readiness(
 
 
 def prepare_exposure(
-    root: str | Path,
+    root: RepositoryInput,
     *,
+    operator_policy: "OperatorPolicy | None" = None,
     policy: ExposurePolicy,
     scan_policy: ScanPolicy | None = None,
     graph_policy: GraphPolicy | None = None,
@@ -74,7 +83,10 @@ def prepare_exposure(
     not replace the retained bytes. ExposureRefused propagates to the caller.
     """
     artifacts = analyze_repository(
-        root, scan_policy=scan_policy, graph_policy=graph_policy
+        root,
+        scan_policy=scan_policy,
+        graph_policy=graph_policy,
+        operator_policy=operator_policy,
     )
     readiness = assess_repository(
         artifacts.catalog, artifacts.graph, policy=readiness_policy

@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "plugins/mcp/src"))
@@ -17,4 +18,4 @@ def project(tmp_path):
     root = tmp_path / "project"
     shutil.copytree(ROOT / "examples/project-config", root)
     path = root / "apizr.toml"
-    return path, load_scope(path)
+    return path, load_scope(path, analysis_policy(root))

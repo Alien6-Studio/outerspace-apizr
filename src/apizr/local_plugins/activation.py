@@ -11,8 +11,8 @@ from typing import TYPE_CHECKING, Literal
 
 from pydantic import ConfigDict, Field, JsonValue
 
+from apizr.bounded_json import SizeExceeded, encode, finite_json
 from apizr.capabilities.types import ValueModel
-from apizr.execution.protocol import SizeExceeded, encode, finite_json
 from apizr.extension_runtime import (
     CleanupFailed,
     InvalidInvocation,

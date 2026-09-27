@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
 
 from apizr import mcp_cli
 from apizr.cli import main
@@ -367,6 +368,10 @@ def test_user_preferences_cli_precedence_and_mcp(tmp_path, monkeypatch, capsys):
         seen.append(directory)
         raise operations.PluginError("plugin_not_installed")
 
+    project = tmp_path / "apizr.toml"
+    project.write_text('schema_version="apizr.project/v1"\nroot="."\n')
+    authority = tmp_path / "operator.json"
+    authority.write_text(analysis_policy(tmp_path).model_dump_json())
     monkeypatch.setattr(mcp_cli, "admitted_extension", refuse)
     for extra in ([], ["--plugins-dir", "/explicit"]):
         assert (
@@ -375,7 +380,9 @@ def test_user_preferences_cli_precedence_and_mcp(tmp_path, monkeypatch, capsys):
                     "mcp",
                     "serve",
                     "--project",
-                    "/project/apizr.toml",
+                    str(project),
+                    "--operator-policy",
+                    str(authority),
                     "--user-config",
                     str(config),
                     *extra,

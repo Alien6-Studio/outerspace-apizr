@@ -6,8 +6,7 @@ import sys
 import time
 
 import pytest
-
-from apizr.cli import main
+from analysis_authorization import authorized_main as main
 
 from .authorization import authorized_snapshot
 from .authorization import flags as operator_flags

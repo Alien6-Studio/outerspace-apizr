@@ -13,8 +13,8 @@ from uuid import uuid4
 
 from pydantic import ConfigDict, Field, JsonValue, TypeAdapter
 
+from apizr.bounded_json import SizeExceeded, encode
 from apizr.capabilities.types import ValueModel, logical_module
-from apizr.execution.protocol import SizeExceeded, encode
 
 from .errors import (
     CleanupFailed,

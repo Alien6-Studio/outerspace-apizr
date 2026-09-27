@@ -8,8 +8,9 @@ import sys
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
+from analysis_authorization import authorized_main as main
 
-from apizr.cli import main
 from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
 from apizr.project import MAX_PROJECT_BYTES, load_project
@@ -77,12 +78,14 @@ def test_python_loader_paths_models_and_compiler(tmp_path, monkeypatch, capfd):
     exposure = ExposurePolicy.model_validate_json(config.exposure_policy.read_bytes())
     report = assess_readiness(
         config.root,
+        operator_policy=analysis_policy(config.root),
         scan_policy=config.scan,
         graph_policy=config.graph,
         readiness_policy=readiness,
     )
     prepared = prepare_exposure(
         config.root,
+        operator_policy=analysis_policy(config.root),
         policy=exposure,
         scan_policy=config.scan,
         graph_policy=config.graph,
@@ -484,18 +487,25 @@ def audit(event, args):
         raise AssertionError("project execution")
 def forbidden(*args, **kwargs): raise AssertionError("plugin discovery")
 sys.addaudithook(audit)
+from pathlib import Path
+from apizr.operator_policy import load_operator_policy
+operator = load_operator_policy(Path(sys.argv[-1]))
 importlib.metadata.entry_points = forbidden
 from apizr.project import load_project
 assert load_project(path).scan.source_roots == ("src",)
 assert not any(name == "apizr.cli" or name.endswith("_cli") for name in sys.modules)
 from apizr.cli import main
-assert main(["readiness", "--project", str(path), "--report"]) in (0, 1)
-assert main(["expose", "plan", "--project", str(path), "--plan"]) == 0
+assert main(["readiness", "--project", str(path), "--operator-policy", sys.argv[-1], "--report"]) in (0, 1)
+assert main(["expose", "plan", "--project", str(path), "--operator-policy", sys.argv[-1], "--plan"]) == 0
 for interface in ("rest", "mcp"):
-    assert main(["expose", "build", interface, "--project", str(path), "--output-dir", interface]) == 0
+    assert main(["expose", "build", interface, "--project", str(path), "--operator-policy", sys.argv[-1], "--output-dir", interface]) == 0
 """
+    authority_file = tmp_path / "operator-analysis.json"
+    authority_file.write_text(
+        analysis_policy(load_project(path).root).model_dump_json()
+    )
     result = subprocess.run(
-        [sys.executable, "-I", "-B", "-c", probe, str(path)],
+        [sys.executable, "-I", "-B", "-c", probe, str(path), str(authority_file)],
         cwd=tmp_path,
         env={
             **os.environ,

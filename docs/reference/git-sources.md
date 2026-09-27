@@ -48,6 +48,19 @@ cat > operator.json <<'JSON'
         "ssh_agent_socket": null,
         "ssh_known_hosts": null
       }
+    },
+    {
+      "adapter": "repository",
+      "operation": "analyze",
+      "target": {
+        "kind": "git",
+        "repository": "https://github.com/Alien6-Studio/outerspace-apizr.git",
+        "reference": "4898669e4990a6d090637436b5884d4d2c2dd41c",
+        "subdir": "examples/project-config/src"
+      },
+      "permissions": [
+        "source.analyze"
+      ]
     }
   ]
 }
@@ -74,8 +87,8 @@ The resolved commit is printed to **stderr**, leaving canonical JSON on stdout.
 `--subdir` selects a directory inside the snapshot. `--source-root` retains its
 scanner meaning, relative to that selected directory. `--git` cannot be combined
 with a positional local root or `--project`; `--ref` and `--subdir` require `--git`.
-Commands without `--git` retain their existing behavior and exit codes; supplying
-`--operator-policy` to a local command is refused rather than silently ignored.
+Local development commands also require an explicit `source.analyze` grant.
+See [local analysis authorization](operator-policy.md#authorize-repository-analysis).
 
 ## Python API
 
@@ -98,15 +111,16 @@ exposure = ExposurePolicy.model_validate_json(Path("exposure.json").read_bytes()
 readiness = RepositoryReadinessPolicy.model_validate_json(
     Path("readiness.json").read_bytes()
 )
+operator = load_operator_policy(Path("operator.json"))
 with acquire_snapshot(
     repository,
     reference,
     subdir=subdir,
-    operator_policy=load_operator_policy(Path("operator.json")),
+    operator_policy=operator,
 ) as snapshot:
     print(f"Git snapshot: commit {snapshot.commit}", file=sys.stderr)
     prepared = prepare_exposure(
-        snapshot.root, policy=exposure, readiness_policy=readiness
+        snapshot, operator_policy=operator, policy=exposure, readiness_policy=readiness
     )
 
 # The temporary snapshot is already deleted; the compiler retained its sources.
@@ -199,3 +213,8 @@ The normal installation CI runs this proof for Python 3.11 and 3.14.
 Git references: [environment isolation](https://git-scm.com/docs/git),
 [shallow fetch](https://git-scm.com/docs/git-fetch), and
 [literal object export](https://git-scm.com/docs/git-cat-file).
+
+Analysis takes the live `snapshot`, not `snapshot.root` with a declared origin.
+Its context owns the source and resolved commit; after it closes, new analysis
+is refused while `PreparedExposure` remains usable. The combined CLI checks both
+grants before retrieval. In Python, acquisition and analysis check their own grants.

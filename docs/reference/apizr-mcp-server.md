@@ -26,6 +26,7 @@ From the source checkout:
 
 ```sh
 work=$(mktemp -d)
+work=$(cd "$work" && pwd -P)
 git rev-parse HEAD > "$work/source-commit.txt"
 uv build --wheel --out-dir "$work/wheels"
 uv build --wheel plugins/mcp --out-dir "$work/wheels"
@@ -125,10 +126,22 @@ The selected root is anchored by filesystem identity; symlink traversal and
 root replacement cannot redirect a calculation to another project. Existing
 scanner refusals and diagnostics remain visible.
 
+From `$work`, prepare and review an explicit analysis grant:
+
+```sh
+core/bin/python - <<'PYTHON'
+import json
+from pathlib import Path
+root = str(Path("project").resolve())
+Path("operator.json").write_text(json.dumps({"schema":"apizr.operator-policy/v1","grants":[{"adapter":"repository","operation":"analyze","target":{"kind":"local","root":root},"permissions":["source.analyze"]}]}))
+PYTHON
+```
+
 Start with absolute paths:
 
 ```sh
 "$work/core/bin/apizr" mcp serve --project "$work/project/apizr.toml" \
+  --operator-policy "$work/operator.json" \
   --plugins-dir "$work/plugins"
 ```
 
@@ -225,6 +238,7 @@ No personal client configuration is changed by installation or this proof.
       "command": "/absolute/work/core/bin/apizr",
       "args": [
         "mcp", "serve", "--project", "/absolute/work/project/apizr.toml",
+        "--operator-policy", "/absolute/work/operator.json",
         "--plugins-dir", "/absolute/work/plugins"
       ]
     }
@@ -300,3 +314,16 @@ and the start of deadline measurement are unchanged.
 all historical failures and per-commit qualification links. The old logs did not
 measure internal phases: their exact startup/shutdown split cannot be recovered.
 No specific OS scheduling or interpreter defect is claimed from those logs.
+
+## Session authority
+
+The launcher checks source admission before server execution, preserving active
+installation checks and the usage lease. It hands the captured policy and project
+scope through a bounded private inherited descriptor, not a policy path to reopen.
+Workers recheck the shared gate, and the server checks before spawning a worker.
+Device/inode pinning refuses root replacement; descriptor traversal prevents a
+pathname change redirecting analysis. Only explicitly chosen bounded configuration
+is read before admission. Policy/project edits require a restart: no dynamic
+revocation is promised. Clients cannot supply new roots, grants or operator paths.
+Exposure proposals remain selection policies, never source authority. Tools remain
+local stdio analysis/readiness/planning, with no Git, generation or delivery.

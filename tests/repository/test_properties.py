@@ -1,6 +1,7 @@
 import shutil
 from pathlib import Path
 
+from analysis_authorization import analysis_policy
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
@@ -37,19 +38,22 @@ def test_location_independence_and_excluded_content(value):
     import tempfile
 
     with tempfile.TemporaryDirectory() as left, tempfile.TemporaryDirectory() as right:
-        first = Path(left) / "unrelated"
-        second = Path(right) / "elsewhere"
+        first = Path(left).resolve() / "unrelated"
+        second = Path(right).resolve() / "elsewhere"
         first.mkdir()
         (first / "api.py").write_text(f"def f(): return {value}\n")
         (first / ".git").mkdir()
         (first / ".git/hidden.py").write_text("this is invalid")
         shutil.copytree(first, second)
         (second / ".git/hidden.py").write_text("entirely different")
-        a, b = scan(first), scan(second)
+        a, b = (
+            scan(first, operator_policy=analysis_policy(first)),
+            scan(second, operator_policy=analysis_policy(second)),
+        )
         assert catalog_bytes(a) == catalog_bytes(b)
         assert str(first).encode() not in catalog_bytes(a)
         (second / "api.py").rename(second / "moved.py")
-        c = scan(second)
+        c = scan(second, operator_policy=analysis_policy(second))
         assert a.capabilities[0].id != c.capabilities[0].id
         assert a.sources[0].source_digest == c.sources[0].source_digest
 
@@ -61,7 +65,7 @@ def test_filesystem_enumeration_order_cannot_change_catalog(tmp_path, monkeypatc
         (tmp_path / name).mkdir()
         for file in ["b.py", "a.py"]:
             (tmp_path / name / file).write_text("def f(): pass")
-    before = scan(tmp_path)
+    before = scan(tmp_path, operator_policy=analysis_policy(tmp_path))
     original = os.scandir
 
     class Reverse:
@@ -76,7 +80,9 @@ def test_filesystem_enumeration_order_cannot_change_catalog(tmp_path, monkeypatc
             pass
 
     monkeypatch.setattr(os, "scandir", Reverse)
-    assert catalog_bytes(scan(tmp_path)) == catalog_bytes(before)
+    assert catalog_bytes(
+        scan(tmp_path, operator_policy=analysis_policy(tmp_path))
+    ) == catalog_bytes(before)
 
 
 def test_source_root_order_is_irrelevant_and_policy_is_bound():

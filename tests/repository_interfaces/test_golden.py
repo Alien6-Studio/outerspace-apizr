@@ -5,6 +5,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
 from jsonschema import Draft202012Validator
 
 from apizr.exposure import ExposurePolicy, plan_exposure
@@ -23,7 +24,11 @@ FIXTURE = ROOT / "tests/fixtures/repository-interface/v1"
 
 
 def render(root, interface):
-    evidence = analyze_repository(root, scan_policy=ScanPolicy(source_roots=("src",)))
+    evidence = analyze_repository(
+        root,
+        operator_policy=analysis_policy(root),
+        scan_policy=ScanPolicy(source_roots=("src",)),
+    )
     readiness = assess_repository(
         evidence.catalog,
         evidence.graph,

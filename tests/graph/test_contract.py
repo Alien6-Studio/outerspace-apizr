@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
 from jsonschema import Draft202012Validator
 from pydantic import ValidationError
 
@@ -36,7 +37,9 @@ FIXTURE = Path(__file__).parents[1] / "fixtures/graph/v1"
 
 def test_reviewed_graph_and_schemas():
     result = graph_repository(
-        FIXTURE / "project", scan_policy=ScanPolicy(source_roots=("src",))
+        FIXTURE / "project",
+        operator_policy=analysis_policy(FIXTURE / "project"),
+        scan_policy=ScanPolicy(source_roots=("src",)),
     )
     g = result.graph
     assert graph_bytes(g) == (FIXTURE / "graph.json").read_bytes()

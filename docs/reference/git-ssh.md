@@ -39,6 +39,9 @@ policy = {
             "ssh_agent_socket": str(Path(agent).absolute()),
             "ssh_known_hosts": str(Path(known).absolute())
         }
+    }, {
+        "adapter": "repository", "operation": "analyze", "permissions": ["source.analyze"],
+        "target": {"kind": "git", "repository": repository, "reference": reference, "subdir": "service"}
     }]
 }
 Path("operator.json").write_text(json.dumps(policy, indent=2) + "\n")
@@ -85,17 +88,19 @@ from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
 repository, reference, agent, known_hosts = sys.argv[1:]
+operator = load_operator_policy(Path("operator.json"))
 with acquire_snapshot(
     repository,
     reference,
     subdir="service",
-    operator_policy=load_operator_policy(Path("operator.json")),
+    operator_policy=operator,
     ssh_agent_socket=Path(agent),
     ssh_known_hosts=Path(known_hosts),
 ) as snapshot:
     print(f"Git snapshot: commit {snapshot.commit}", file=sys.stderr)
     prepared = prepare_exposure(
-        snapshot.root,
+        snapshot,
+        operator_policy=operator,
         policy=ExposurePolicy.model_validate_json(Path("exposure.json").read_bytes()),
         readiness_policy=RepositoryReadinessPolicy.model_validate_json(
             Path("readiness.json").read_bytes()
@@ -185,3 +190,8 @@ run by Apizr. Normal installation CI exercises the proof on Python 3.11 and 3.14
 
 See the OpenSSH documentation for [configuration precedence and authentication](https://man.openbsd.org/ssh_config)
 and [the `-F` option](https://man.openbsd.org/ssh).
+
+Analysis takes the live `snapshot`, not `snapshot.root` with a declared origin.
+Its context owns the source and resolved commit; after it closes, new analysis
+is refused while `PreparedExposure` remains usable. The combined CLI checks both
+grants before retrieval. In Python, acquisition and analysis check their own grants.

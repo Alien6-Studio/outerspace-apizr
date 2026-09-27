@@ -10,11 +10,11 @@ from tempfile import TemporaryDirectory
 
 from git_https_fixture import handler, repository, trusted_git
 from https_fixture import certificate, https_server
-from operator_policy_proof import refuse_git, write_git_policy
+from operator_policy_proof import refuse_git, write_analysis_policy, write_git_policy
 
 
 def exercise(python: Path, cli: Path, work: Path) -> None:
-    root = work / "git-proof"
+    root = (work / "git-proof").resolve()
     root.mkdir()
     cert, key = certificate(root)
     source, commit = repository(root)
@@ -60,6 +60,9 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
         operator = write_git_policy(
             root / "operator.json", url + "/repo.git", commit, subdir="service"
         )
+        local_operator = write_analysis_policy(
+            root / "operator-local.json", source / "service"
+        )
         remote = [
             "--operator-policy",
             str(operator),
@@ -76,7 +79,15 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
             (["expose", "plan"], [*policies, "--plan"]),
         ]:
             actual = command([*prefix, *remote, *flags])
-            expected = command([*prefix, str(source / "service"), *flags])
+            expected = command(
+                [
+                    *prefix,
+                    str(source / "service"),
+                    "--operator-policy",
+                    str(local_operator),
+                    *flags,
+                ]
+            )
             assert actual.stdout == expected.stdout
             assert actual.stderr == f"Git snapshot: commit {commit}\n"
         for interface in ("rest", "mcp"):
@@ -97,6 +108,8 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
                     "build",
                     interface,
                     str(source / "service"),
+                    "--operator-policy",
+                    str(local_operator),
                     *policies,
                     "--output-dir",
                     "local-" + interface,

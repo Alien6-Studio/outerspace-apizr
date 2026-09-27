@@ -14,6 +14,7 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from pydantic import ValidationError
 
+from apizr.analysis_session import check_scope, read_session
 from apizr.exposure import ExposurePlan
 from apizr.extension_runtime import (
     CleanupFailed,
@@ -21,6 +22,7 @@ from apizr.extension_runtime import (
     Limits,
     invoke_extension,
 )
+from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 
 from .model import (
     AnalysisResult,
@@ -78,6 +80,7 @@ class Calculations:
         self.fatal = anyio.Event()
 
     async def call(self, operation: str, arguments: PlanArguments) -> dict:
+        check_scope(self.scope)
         cancel, done = Event(), Event()
         cleanup_failed = False
         job = Job(
@@ -187,6 +190,8 @@ def create_server(calculations: Calculations) -> Server:
                 ],
                 structured_content=value,
             )
+        except AuthorizationDenied as error:
+            return error_result(error.decision.code)
         except ExtensionError as error:
             return error_result(error.code)
         except (ValueError, KeyError, TypeError):
@@ -203,13 +208,13 @@ def create_server(calculations: Calculations) -> Server:
     )
 
 
-async def serve(project: Path, limits: ServerLimits) -> None:
+async def serve(scope: Scope, limits: ServerLimits) -> None:
     disconnected = anyio.Event()
     with streams(limits.max_request_bytes, limits.max_response_bytes, disconnected) as (
         stdin,
         stdout,
     ):
-        calculations = Calculations(load_scope(project), limits)
+        calculations = Calculations(scope, limits)
         server = create_server(calculations)
         async with anyio.create_task_group() as tasks:
 
@@ -254,20 +259,34 @@ def diagnostic(error: BaseException) -> str:
 
 def main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(prog="apizr mcp serve")
-    parser.add_argument("--project", type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--project", type=Path)
+    source.add_argument("--session-fd", type=int, help=argparse.SUPPRESS)
+    parser.add_argument("--operator-policy", type=Path)
     parser.add_argument("--timeout-ms", type=int, default=10000)
     parser.add_argument("--max-request-bytes", type=int, default=65536)
     parser.add_argument("--max-response-bytes", type=int, default=4194304)
     args = parser.parse_args(argv)
     try:
-        if not args.project.is_absolute():
-            raise ValueError()
+        if args.session_fd is not None:
+            if args.operator_policy is not None:
+                raise ValueError()
+            scope = read_session(args.session_fd)
+        else:
+            if not args.project.is_absolute():
+                raise ValueError()
+            authority = (
+                load_operator_policy(args.operator_policy)
+                if args.operator_policy
+                else None
+            )
+            scope = load_scope(args.project, authority)
         limits = ServerLimits(
             timeout_ms=args.timeout_ms,
             max_request_bytes=args.max_request_bytes,
             max_response_bytes=args.max_response_bytes,
         )
-        anyio.run(serve, args.project, limits)
+        anyio.run(serve, scope, limits)
     except KeyboardInterrupt:
         return 130
     except Exception as error:

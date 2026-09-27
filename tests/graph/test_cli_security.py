@@ -3,7 +3,9 @@ import os
 import subprocess
 import sys
 
-from apizr.cli import main
+from analysis_authorization import analysis_policy
+from analysis_authorization import authorized_main as main
+
 from apizr.graph import Graph, build_graph, graph_bytes, graph_repository
 from apizr.graph.reporting import text_report
 from apizr.repository import scan_sources
@@ -74,7 +76,7 @@ def test_discovery_bytes_shared_despite_file_mutation(monkeypatch, tmp_path):
         return catalog
 
     monkeypatch.setattr(builder, "assemble", mutate)
-    result = graph_repository(tmp_path)
+    result = graph_repository(tmp_path, operator_policy=analysis_policy(tmp_path))
     assert counts == ["a.py"]
     assert result.graph.capability_calls("python:a:run") == ("python:a:f",)
     assert graph_bytes(result.graph) == graph_bytes(
@@ -106,18 +108,23 @@ def audit(event,args):
  if event=="exec" and str(args[0].co_filename).startswith(root): raise AssertionError("source execution")
  if event=="open" and isinstance(args[0],str) and args[0].startswith(root) and args[2] & (os.O_WRONLY|os.O_RDWR|os.O_CREAT|os.O_TRUNC): raise AssertionError("repository write")
 sys.addaudithook(audit)
+from pathlib import Path
+from apizr.operator_policy import load_operator_policy
+operator = load_operator_policy(Path(sys.argv[-1]))
 from apizr.graph import graph_repository,graph_bytes
 import importlib.util
 # No resolver is necessary after loading the library itself.
 def forbidden(*args,**kwargs): raise AssertionError("installed package resolution")
 importlib.util.find_spec=forbidden
-result=graph_repository(root)
+result=graph_repository(root, operator_policy=operator)
 assert len(result.catalog.sources)==2
 assert not any(name.startswith(("apizr.execution","apizr.oci","apizr.generators","apizr.governed","fastapi","mcp")) for name in sys.modules)
 sys.stdout.buffer.write(graph_bytes(result.graph))
 """
+    authority_file = tmp_path / "operator-analysis.json"
+    authority_file.write_text(analysis_policy(root).model_dump_json())
     result = subprocess.run(
-        [sys.executable, "-I", "-B", "-c", probe, str(root)],
+        [sys.executable, "-I", "-B", "-c", probe, str(root), str(authority_file)],
         cwd=root,
         env={**os.environ, "PATH": "/nonexistent"},
         capture_output=True,

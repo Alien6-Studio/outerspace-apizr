@@ -5,6 +5,14 @@ description: Discover, understand, assess, select, expose and execute a Python r
 
 # The full journey
 
+!!! note "Development 0.4 source authorization"
+
+    Stable 0.3.0 examples retain their historical syntax. On a development wheel,
+    repository commands additionally require `--operator-policy operator.json`
+    with an exact `source.analyze` grant. Python filesystem APIs require the same
+    explicitly loaded `operator_policy`. Read the [migration and complete policy](../reference/operator-policy.md#authorize-repository-analysis).
+    Readiness, exposure selection and execution policies remain independent.
+
 <span id="start-here"></span>
 
 <span id="introduction"></span>

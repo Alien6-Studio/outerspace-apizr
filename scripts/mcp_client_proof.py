@@ -14,6 +14,7 @@ from apizr.exposure import ExposurePolicy
 from apizr.exposure.serialization import plan_bytes
 from apizr.graph import analyze_repository
 from apizr.graph.serialization import graph_bytes
+from apizr.operator_policy import load_operator_policy
 from apizr.project import load_project
 from apizr.repository.serialization import catalog_bytes
 from apizr.repository_readiness import RepositoryReadinessPolicy
@@ -36,6 +37,7 @@ async def exercise(root: Path, mode: str):
     config = json.loads((root / "installed.json").read_text())
     project = Path(config["project"])
     settings = load_project(project)
+    operator = load_operator_policy(Path(config["operator_policy"]))
     assert (
         settings.exposure_policy is not None and settings.readiness_policy is not None
     )
@@ -48,6 +50,8 @@ async def exercise(root: Path, mode: str):
         args=[
             "mcp",
             "serve",
+            "--operator-policy",
+            config["operator_policy"],
             "--project",
             str(project),
             "--plugins-dir",
@@ -79,7 +83,10 @@ async def exercise(root: Path, mode: str):
         analyzed = await client.call_tool("apizr_analyze", {})
         assert not analyzed.is_error, analyzed
         evidence = analyze_repository(
-            settings.root, scan_policy=settings.scan, graph_policy=settings.graph
+            settings.root,
+            operator_policy=operator,
+            scan_policy=settings.scan,
+            graph_policy=settings.graph,
         )
         assert analyzed.structured_content["catalog"] == json.loads(
             catalog_bytes(evidence.catalog)
@@ -88,6 +95,8 @@ async def exercise(root: Path, mode: str):
             graph_bytes(evidence.graph)
         )
         scan_args = [
+            "--operator-policy",
+            config["operator_policy"],
             str(settings.root),
             "--source-root",
             "src",
@@ -120,6 +129,7 @@ async def exercise(root: Path, mode: str):
         assert not ready.is_error, ready
         report = assess_readiness(
             settings.root,
+            operator_policy=operator,
             scan_policy=settings.scan,
             graph_policy=settings.graph,
             readiness_policy=readiness,
@@ -127,7 +137,15 @@ async def exercise(root: Path, mode: str):
         assert ready.structured_content["report"] == json.loads(report_bytes(report))
         assert ready.structured_content["exit_code"] == report.exit_code
         cli_report = subprocess.run(
-            [config["cli"], "readiness", "--project", str(project), "--report"],
+            [
+                config["cli"],
+                "readiness",
+                "--project",
+                str(project),
+                "--operator-policy",
+                config["operator_policy"],
+                "--report",
+            ],
             capture_output=True,
             text=True,
             timeout=20,
@@ -140,6 +158,7 @@ async def exercise(root: Path, mode: str):
         assert not plan.is_error, plan
         prepared = prepare_exposure(
             settings.root,
+            operator_policy=operator,
             scan_policy=settings.scan,
             graph_policy=settings.graph,
             readiness_policy=readiness,
@@ -147,7 +166,16 @@ async def exercise(root: Path, mode: str):
         )
         assert plan.structured_content == json.loads(plan_bytes(prepared.plan))
         cli_plan = subprocess.run(
-            [config["cli"], "expose", "plan", "--project", str(project), "--plan"],
+            [
+                config["cli"],
+                "expose",
+                "plan",
+                "--project",
+                str(project),
+                "--operator-policy",
+                config["operator_policy"],
+                "--plan",
+            ],
             capture_output=True,
             text=True,
             check=True,
@@ -156,6 +184,8 @@ async def exercise(root: Path, mode: str):
         assert plan.structured_content == json.loads(cli_plan.stdout)
         for args in (
             {"root": "/"},
+            {"operator_policy": config["operator_policy"]},
+            {"permissions": ["source.analyze"]},
             {"project": "/etc/passwd"},
             {"policy_file": "/secret"},
             {"expected_repository_digest": 123},
@@ -179,6 +209,19 @@ async def exercise(root: Path, mode: str):
             assert not (await client.call_tool("apizr_plan_exposure", {})).is_error
         finally:
             settings.exposure_policy.write_bytes(original)
+        authority_path = Path(config["operator_policy"])
+        authority_bytes, project_bytes = (
+            authority_path.read_bytes(),
+            project.read_bytes(),
+        )
+        authority_path.write_text("invalid after launch")
+        project.write_text('schema_version="apizr.project/v1"\nroot="/"\n')
+        try:
+            assert not (await client.call_tool("apizr_analyze", {})).is_error
+            assert not (await client.call_tool("apizr_plan_exposure", {})).is_error
+        finally:
+            authority_path.write_bytes(authority_bytes)
+            project.write_bytes(project_bytes)
         source = settings.root / "src/calculator.py"
         original = source.read_bytes()
         source.write_bytes(original + b"\n# changed repository\n")
@@ -204,7 +247,83 @@ async def exercise(root: Path, mode: str):
 
 async def boundary_errors(root: Path):
     config = json.loads((root / "installed.json").read_text())
-    command = [config["cli"], "mcp", "serve", "--plugins-dir", config["store"]]
+    command = [
+        config["cli"],
+        "mcp",
+        "serve",
+        "--plugins-dir",
+        config["store"],
+        "--operator-policy",
+        config["operator_policy"],
+    ]
+    # A real SDK cannot establish a session with missing/invalid/narrow authority.
+    allowed = json.loads(Path(config["operator_policy"]).read_bytes())
+    for name, raw, expected in (
+        ("missing", None, "operator_policy_required"),
+        ("invalid", {}, "operator_policy_invalid"),
+        (
+            "fetch-only",
+            {
+                "schema": "apizr.operator-policy/v1",
+                "grants": [
+                    {
+                        "adapter": "git",
+                        "operation": "fetch",
+                        "permissions": ["git.fetch"],
+                        "target": {
+                            "transport": "https",
+                            "repository": "https://example.org/repo.git",
+                            "reference": "main",
+                        },
+                    }
+                ],
+            },
+            "operator_operation_denied",
+        ),
+        (
+            "neighbor",
+            {
+                "schema": "apizr.operator-policy/v1",
+                "grants": [
+                    {
+                        **allowed["grants"][0],
+                        "target": {
+                            "kind": "local",
+                            "root": str(root / "project-other"),
+                        },
+                    }
+                ],
+            },
+            "operator_analysis_denied",
+        ),
+    ):
+        argv = [
+            "mcp",
+            "serve",
+            "--project",
+            config["project"],
+            "--plugins-dir",
+            config["store"],
+        ]
+        if raw is not None:
+            file = root / ("denied-" + name + ".json")
+            file.write_text(json.dumps(raw))
+            argv += ["--operator-policy", str(file)]
+        refused = subprocess.run(
+            [config["cli"], *argv], input=b"", capture_output=True, timeout=10
+        )
+        assert refused.returncode == 2 and not refused.stdout
+        assert json.loads(refused.stderr)["code"] == expected
+        entered = False
+        try:
+            async with Client(
+                StdioServerParameters(command=config["cli"], args=argv, cwd=root),
+                read_timeout_seconds=5,
+            ):
+                entered = True
+        except Exception:
+            pass
+        assert not entered, "unauthorized MCP session initialized"
     invalid = root / "invalid.toml"
     invalid.write_text("not valid toml")
     for project in (root / "absent.toml", invalid):
@@ -215,7 +334,10 @@ async def boundary_errors(root: Path):
             timeout=10,
         )
         assert result.returncode == 2 and result.stdout == b""
-        assert b"startup_or_transport_refused" in result.stderr
+        assert (
+            b"invalid_analysis_configuration" in result.stderr
+            or b"launch_failed" in result.stderr
+        )
     result = subprocess.run(
         [*command, "--project", config["project"]],
         input=b" " * 65537 + b"\n",
@@ -228,6 +350,8 @@ async def boundary_errors(root: Path):
         command=config["cli"],
         args=[
             *command[1:],
+            "--operator-policy",
+            config["operator_policy"],
             "--project",
             config["project"],
             "--max-response-bytes",

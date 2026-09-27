@@ -247,11 +247,10 @@ def test_pure_exact_decision(transport, case, monkeypatch):
 
 
 @pytest.mark.parametrize("command", COMMANDS)
-def test_local_operator_option_not_ignored(command, tmp_path, monkeypatch):
+def test_local_operator_option_not_ignored(command, tmp_path, monkeypatch, capsys):
     traps(monkeypatch)
-    with pytest.raises(SystemExit) as error:
-        main([*command, str(tmp_path), "--operator-policy", "absent.json"])
-    assert error.value.code == 2
+    assert main([*command, str(tmp_path), "--operator-policy", "absent.json"]) == 2
+    assert json.loads(capsys.readouterr().err)["code"] == "operator_policy_unavailable"
 
 
 def test_ca_refusal_and_typed_object_revalidation(monkeypatch):
@@ -322,7 +321,7 @@ def test_complete_documented_git_policy(transport):
         / f"docs/examples/operator-git-{transport}.json"
     )
     selected = OperatorPolicy.model_validate_json(path.read_bytes())
-    assert len(selected.grants) == 1
+    assert len(selected.grants) == 2
     assert decide_git(selected, selected.grants[0].target).allowed
 
 

@@ -4,10 +4,16 @@ import os
 import stat
 from contextlib import ExitStack
 from dataclasses import dataclass
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
+from typing import TYPE_CHECKING
+
+from apizr.source_access import RepositoryInput, open_analysis_root
 
 from .model import Code, Diagnostic
 from .policy import ScanPolicy, relative_path
+
+if TYPE_CHECKING:
+    from apizr.operator_policy import OperatorPolicy
 
 
 class ScanError(ValueError):
@@ -81,7 +87,10 @@ def read_source(
 
 
 def discover(
-    root: str | Path, policy: ScanPolicy
+    root: RepositoryInput,
+    policy: ScanPolicy,
+    *,
+    operator_policy: "OperatorPolicy | None" = None,
 ) -> tuple[list[SourceInput], list[Diagnostic]]:
     if os.name != "posix":
         raise ScanError(
@@ -89,7 +98,7 @@ def discover(
         )
     flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
     try:
-        anchor = os.open(root, flags)
+        anchor = open_analysis_root(root, operator_policy)
     except OSError:
         raise ScanError(
             "Repository root must be an accessible non-symlink directory"

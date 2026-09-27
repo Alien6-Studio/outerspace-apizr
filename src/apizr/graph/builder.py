@@ -3,14 +3,15 @@
 import ast
 from collections.abc import Mapping
 from dataclasses import dataclass
-from pathlib import Path
 from types import MappingProxyType
+from typing import TYPE_CHECKING
 
 from apizr.capabilities.model import Digest, Severity
 from apizr.readiness import State
 from apizr.repository import Catalog, ScanPolicy, SourceUnit, catalog_digest
 from apizr.repository.discovery import discover
 from apizr.repository.scanner import assemble
+from apizr.source_access import RepositoryInput
 
 from .analysis import Analysis, GraphInputError, Index, LimitError, location
 from .bindings import Inventory, Site, inventory, walk_scope
@@ -28,6 +29,9 @@ from .model import (
 )
 from .policy import GraphPolicy
 from .serialization import policy_digest
+
+if TYPE_CHECKING:
+    from apizr.operator_policy import OperatorPolicy
 
 
 def validated_inputs(catalog: Catalog, sources: Mapping[str, bytes]) -> Catalog:
@@ -259,8 +263,9 @@ class RepositoryEvidence(RepositoryGraph):
 
 
 def analyze_repository(
-    root: str | Path,
+    root: RepositoryInput,
     *,
+    operator_policy: "OperatorPolicy | None" = None,
     scan_policy: ScanPolicy | None = None,
     graph_policy: GraphPolicy | None = None,
 ) -> RepositoryEvidence:
@@ -270,7 +275,7 @@ def analyze_repository(
         if scan_policy is None
         else ScanPolicy.model_validate(scan_policy.model_dump(mode="json"))
     )
-    manifest, diagnostics = discover(root, selected)
+    manifest, diagnostics = discover(root, selected, operator_policy=operator_policy)
     catalog = assemble(manifest, selected, diagnostics)
     paths = {s.path for s in catalog.sources if s.inspection is not None}
     sources = {
@@ -284,13 +289,17 @@ def analyze_repository(
 
 
 def graph_repository(
-    root: str | Path,
+    root: RepositoryInput,
     *,
+    operator_policy: "OperatorPolicy | None" = None,
     scan_policy: ScanPolicy | None = None,
     graph_policy: GraphPolicy | None = None,
 ) -> RepositoryGraph:
     """Compatible Catalog/Graph API; callers needing bytes use analyze_repository."""
     evidence = analyze_repository(
-        root, scan_policy=scan_policy, graph_policy=graph_policy
+        root,
+        scan_policy=scan_policy,
+        graph_policy=graph_policy,
+        operator_policy=operator_policy,
     )
     return RepositoryGraph(evidence.catalog, evidence.graph)

@@ -13,6 +13,8 @@ import time
 from pathlib import Path
 from urllib.request import urlopen
 
+from operator_policy_proof import write_analysis_policy
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -53,9 +55,15 @@ def main() -> None:
                 (repository / "examples/policies" / name).read_bytes()
             )
             (root / name).write_text(policy)
+        authority = (
+            write_analysis_policy(root / "operator.json", root)
+            if args.development
+            else None
+        )
         for command in commands:
+            flags = ["--operator-policy", str(authority)] if authority else []
             result = subprocess.run(
-                [str(cli), *command[1:]],
+                [str(cli), *command[1:], *flags],
                 cwd=root,
                 capture_output=True,
                 text=True,
@@ -83,8 +91,7 @@ def main() -> None:
 
     if args.development:
         development(cli, repository)
-    else:
-        quickstart(cli, repository)
+    quickstart(cli, repository)
 
 
 def quickstart(cli: Path, repository: Path) -> None:
@@ -215,28 +222,24 @@ def development(cli: Path, repository: Path) -> None:
     match = re.search(r"<!-- smoke:development -->\s*```sh\n(.*?)```", guide, re.S)
     assert match
     with tempfile.TemporaryDirectory(prefix="apizr-docs-dev-") as directory:
-        root = Path(directory)
+        root = Path(directory).resolve()
         shutil.copytree(repository / "examples/project-config", root / "project-config")
-        for line in match[1].strip().splitlines():
-            command = shlex.split(line)
-            assert command.pop(0) == "core/bin/apizr"
-            output = None
-            if ">" in command:
-                index = command.index(">")
-                output = root / command[index + 1]
-                command = command[:index]
-            result = subprocess.run(
-                [str(cli), *command],
-                cwd=root,
-                capture_output=True,
-                text=True,
-                timeout=30,
-                check=True,
-            )
-            if output:
-                json.loads(result.stdout)
-                output.write_text(result.stdout)
-            print(f"$ {line}\n{result.stdout}")
+        script = (
+            match[1]
+            .replace("core/bin/apizr", shlex.quote(str(cli)))
+            .replace("core/bin/python", shlex.quote(str(cli.parent / "python")))
+        )
+        result = subprocess.run(
+            ["/bin/sh", "-c", "set -eu\n" + script],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            timeout=60,
+            check=True,
+        )
+        print(result.stdout)
+        for name in ("readiness.json", "plan.json"):
+            json.loads((root / name).read_text())
         schema = json.loads((root / "build/rest/openapi.json").read_text())
         assert "/capabilities/calculator.add" in schema["paths"]
         tools = json.loads((root / "build/mcp/mcp-tools.json").read_text())

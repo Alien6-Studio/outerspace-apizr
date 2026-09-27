@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
 
 from apizr.cli import main
 from apizr.extension_runtime import CleanupFailed
@@ -299,6 +300,11 @@ def test_execve_keeps_lease_until_session_exit(wheel_factory, tmp_path):
     root = tmp_path / "plugins"
     record = install_extension(wheel, digest, directory=root)
     enable_extension(record.name, record.version, directory=root)
+    (tmp_path / "apizr.toml").write_text(
+        'schema_version="apizr.project/v1"\nroot="."\n'
+    )
+    authority = tmp_path / "operator.json"
+    authority.write_text(analysis_policy(tmp_path).model_dump_json())
     process = subprocess.Popen(
         [
             sys.executable,
@@ -309,6 +315,8 @@ def test_execve_keeps_lease_until_session_exit(wheel_factory, tmp_path):
             "serve",
             "--project",
             str(tmp_path / "apizr.toml"),
+            "--operator-policy",
+            str(authority),
             "--plugins-dir",
             str(root),
         ],

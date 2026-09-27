@@ -2,6 +2,7 @@ import json
 import os
 
 import pytest
+from analysis_authorization import analysis_policy
 from apizr_mcp.model import Job, PlanArguments
 from apizr_mcp.scope import load_scope, open_root, policy_bytes
 from apizr_mcp.worker import calculate
@@ -11,6 +12,7 @@ from apizr.compiler import assess_readiness, prepare_exposure
 from apizr.exposure.serialization import plan_bytes
 from apizr.graph import analyze_repository
 from apizr.graph.serialization import graph_bytes
+from apizr.operator_policy import AuthorizationDenied
 from apizr.repository.serialization import catalog_bytes
 from apizr.repository_readiness.serialization import report_bytes
 
@@ -34,7 +36,10 @@ def test_canonical_parity_single_analysis_and_no_source(project, monkeypatch):
     )
     analysis = calculate(job(scope))["value"]
     evidence = analyze_repository(
-        scope.root, scan_policy=scope.scan, graph_policy=scope.graph
+        scope.root,
+        operator_policy=analysis_policy(scope.root),
+        scan_policy=scope.scan,
+        graph_policy=scope.graph,
     )
     assert analysis["catalog"] == json.loads(catalog_bytes(evidence.catalog))
     assert analysis["graph"] == json.loads(graph_bytes(evidence.graph))
@@ -42,6 +47,7 @@ def test_canonical_parity_single_analysis_and_no_source(project, monkeypatch):
     ready = calculate(job(scope, "readiness"))["value"]
     expected = assess_readiness(
         scope.root,
+        operator_policy=analysis_policy(scope.root),
         scan_policy=scope.scan,
         graph_policy=scope.graph,
         readiness_policy=scope.readiness,
@@ -50,6 +56,7 @@ def test_canonical_parity_single_analysis_and_no_source(project, monkeypatch):
     plan = calculate(job(scope, "plan"))["value"]
     expected = prepare_exposure(
         scope.root,
+        operator_policy=analysis_policy(scope.root),
         scan_policy=scope.scan,
         graph_policy=scope.graph,
         readiness_policy=scope.readiness,
@@ -118,8 +125,7 @@ def test_containment_replacement_and_links(project, tmp_path):
     assert calculate(job(scope))["error"]["code"] == "scope_changed"
     path.parent.rmdir()
     path.parent.symlink_to(external, target_is_directory=True)
-    with pytest.raises(OSError):
-        calculate(job(scope))
+    assert calculate(job(scope))["error"]["code"] == "operator_source_unavailable"
 
 
 def test_root_guards_and_policy_file_bounds(tmp_path):
@@ -147,13 +153,13 @@ def test_root_guards_and_policy_file_bounds(tmp_path):
 def test_scope_missing_policy_default_and_symlink_root(project):
     path, _ = project
     path.write_text('schema_version = "apizr.project/v1"\nroot="src"\n')
-    scope = load_scope(path)
+    scope = load_scope(path, analysis_policy(path.parent / "src"))
     assert scope.exposure is None
     source = path.parent / "src"
     source.rename(path.parent / "original")
     source.symlink_to(path.parent / "original", target_is_directory=True)
-    with pytest.raises(ValueError):
-        load_scope(path)
+    with pytest.raises(AuthorizationDenied, match="operator_source_unavailable"):
+        load_scope(path, analysis_policy(path.parent / "src"))
 
 
 @pytest.mark.parametrize("operation", ["analyze", "readiness", "plan"])

@@ -10,6 +10,11 @@ from apizr.repository.policy import ScanPolicy
 def add_scan_arguments(
     parser: argparse.ArgumentParser, *, project: bool = False
 ) -> None:
+    parser.add_argument(
+        "--operator-policy",
+        type=Path,
+        help="Explicit operator authorization for repository analysis and remote acquisition",
+    )
     if project:
         parser.add_argument("root", type=Path, nargs="?")
         parser.add_argument(

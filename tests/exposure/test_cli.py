@@ -7,8 +7,9 @@ import sys
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
+from analysis_authorization import authorized_main as main
 
-from apizr.cli import main
 from apizr.exposure import ExposurePlan
 
 FLAGS = ["--interface", "mcp", "--execution-mode", "oci-container"]
@@ -270,6 +271,9 @@ def audit(event, args):
  if event == "exec" and str(args[0].co_filename).startswith(root): raise AssertionError("project execution")
  if event == "open" and isinstance(args[0], str) and args[0].startswith(root) and args[2] & (os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC): raise AssertionError("repository write")
 sys.addaudithook(audit)
+from pathlib import Path
+from apizr.operator_policy import load_operator_policy
+operator = load_operator_policy(Path(sys.argv[-1]))
 from apizr.cli import main
 import apizr.exposure_cli
 import apizr.execution.policy
@@ -277,11 +281,13 @@ import importlib.util
 def forbidden(*args, **kwargs): raise AssertionError("runtime or package probe")
 apizr.execution.policy.local_capabilities = forbidden
 importlib.util.find_spec = forbidden
-assert main(["expose", "plan", root, "--interface", "mcp", "--execution-mode", "oci-container", "--select", "python:selected:f", "--plan"]) == 0
+assert main(["expose", "plan", root, "--operator-policy", sys.argv[-1], "--interface", "mcp", "--execution-mode", "oci-container", "--select", "python:selected:f", "--plan"]) == 0
 assert not any(name.startswith(("fastapi", "mcp", "docker", "apizr.oci.docker", "apizr.generators", "apizr.governed")) for name in sys.modules)
 """
+    authority_file = tmp_path / "operator-analysis.json"
+    authority_file.write_text(analysis_policy(root).model_dump_json())
     result = subprocess.run(
-        [sys.executable, "-I", "-B", "-c", probe, str(root)],
+        [sys.executable, "-I", "-B", "-c", probe, str(root), str(authority_file)],
         cwd=root,
         env={
             **os.environ,

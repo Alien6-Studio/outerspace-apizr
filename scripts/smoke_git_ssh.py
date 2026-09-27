@@ -9,7 +9,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from git_ssh_fixture import server
-from operator_policy_proof import refuse_git, write_git_policy
+from operator_policy_proof import refuse_git, write_analysis_policy, write_git_policy
 
 
 def exercise(python: Path, cli: Path, work: Path) -> None:
@@ -61,6 +61,9 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
             ssh_agent_socket=remote.socket,
             ssh_known_hosts=remote.known_hosts,
         )
+        local_operator = write_analysis_policy(
+            root / "operator-local.json", remote.source / "service"
+        )
         remote_flags = [
             "--operator-policy",
             str(operator),
@@ -81,7 +84,15 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
             (["expose", "plan"], [*policies, "--plan"]),
         ]:
             actual = run([*prefix, *remote_flags, *flags])
-            expected = run([*prefix, str(remote.source / "service"), *flags])
+            expected = run(
+                [
+                    *prefix,
+                    str(remote.source / "service"),
+                    "--operator-policy",
+                    str(local_operator),
+                    *flags,
+                ]
+            )
             assert actual.stdout == expected.stdout
             assert actual.stderr == f"Git snapshot: commit {remote.commit}\n"
 
@@ -95,7 +106,14 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
         for interface in ("rest", "mcp"):
             for name, flags in [
                 ("remote", remote_flags),
-                ("local", [str(remote.source / "service")]),
+                (
+                    "local",
+                    [
+                        str(remote.source / "service"),
+                        "--operator-policy",
+                        str(local_operator),
+                    ],
+                ),
             ]:
                 run(
                     [

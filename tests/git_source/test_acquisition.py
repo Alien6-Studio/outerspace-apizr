@@ -2,6 +2,7 @@ from pathlib import Path
 from threading import Event
 
 import pytest
+from analysis_authorization import analysis_policy
 
 from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
@@ -47,7 +48,10 @@ def test_retained_sources_and_moving_branch(remote, tls, scratch):
         {"execution": {"modes": ["direct"]}}
     )
     local = prepare_exposure(
-        source / "service", policy=policy, readiness_policy=readiness
+        source / "service",
+        operator_policy=analysis_policy(source / "service"),
+        policy=policy,
+        readiness_policy=readiness,
     )
     with authorized_snapshot(url, "main", subdir="service", ca_file=tls[0]) as snapshot:
         (source / "service/calculator.py").write_text(
@@ -56,11 +60,18 @@ def test_retained_sources_and_moving_branch(remote, tls, scratch):
         git_fixture.git(source, "commit", "-am", "move branch")
         assert git_fixture.git(source, "rev-parse", "HEAD") != snapshot.commit == commit
         prepared = prepare_exposure(
-            snapshot.root, policy=policy, readiness_policy=readiness
+            snapshot,
+            operator_policy=analysis_policy(snapshot),
+            policy=policy,
+            readiness_policy=readiness,
         )
         assert prepared.plan == local.plan
         assert (
-            assess_readiness(snapshot.root, readiness_policy=readiness)
+            assess_readiness(
+                snapshot,
+                operator_policy=analysis_policy(snapshot),
+                readiness_policy=readiness,
+            )
             == local.readiness
         )
     assert not snapshot.root.exists()
@@ -238,7 +249,7 @@ def test_no_config_hooks_filters_or_project_execution(
     monkeypatch.setenv("HTTPS_PROXY", "http://127.0.0.1:1")
     with authorized_snapshot(url, "main", ca_file=tls[0]) as snapshot:
         assert (snapshot.root / "service/calculator.py").is_file()
-        assess_readiness(snapshot.root)
+        assess_readiness(snapshot, operator_policy=analysis_policy(snapshot))
     assert not marker.exists()
     # An inherited "insecure" flag must not make the same certificate trusted.
     with pytest.raises(GitSourceError, match="git_command_failed"):
