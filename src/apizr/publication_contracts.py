@@ -6,6 +6,7 @@ The core and optional plugins use these same models before any operational I/O.
 import re
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -142,3 +143,34 @@ class PublishRequest(Common):
     proof_dir: str
     transport: Transport
     _proof = field_validator("proof_dir")(Docker.absolute.__func__)
+
+
+class AttestRequest(Common):
+    schema_version: Literal["apizr.attest-delivery/v1"] = Field(alias="schema")
+    build_result: str
+    push_result: str
+    docker: Docker
+    authentication: Authentication
+    key_file: str
+    key_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    tsa_url: str
+    output_dir: str
+    _paths = field_validator("build_result", "push_result", "key_file", "output_dir")(
+        Docker.absolute.__func__
+    )
+
+    @field_validator("tsa_url")
+    @classmethod
+    def tsa(cls, value: str) -> str:
+        url = urlsplit(value)
+        if (
+            url.scheme not in {"https", "http"}
+            or not url.hostname
+            or url.username is not None
+            or url.password is not None
+            or url.fragment
+            or url.query
+            or any(c.isspace() for c in value)
+        ):
+            raise ValueError("explicit timestamp authority required")
+        return value

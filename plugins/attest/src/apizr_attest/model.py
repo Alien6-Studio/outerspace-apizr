@@ -1,11 +1,13 @@
 """Explicit identities, file references and limits; never inline credentials."""
 
 from typing import Literal
-from urllib.parse import urlsplit
 
-from apizr_oci.model import Authentication, Docker, Model
+from apizr_oci.model import Docker, Model
 from pydantic import Field, field_validator, model_validator
 
+from apizr.publication_contracts import (
+    AttestRequest as AttestRequest,
+)
 from apizr.publication_contracts import (
     Common as Common,
 )
@@ -20,37 +22,6 @@ from apizr.publication_contracts import Transport, digest_reference
 
 class AttestError(Exception):
     """Fixed codes only. Native diagnostics can contain sensitive paths."""
-
-
-class AttestRequest(Common):
-    schema_version: Literal["apizr.attest-delivery/v1"] = Field(alias="schema")
-    build_result: str
-    push_result: str
-    docker: Docker
-    authentication: Authentication
-    key_file: str
-    key_id: str = Field(pattern=r"^[0-9a-f]{32}$")
-    tsa_url: str
-    output_dir: str
-    _paths = field_validator("build_result", "push_result", "key_file", "output_dir")(
-        Docker.absolute.__func__
-    )
-
-    @field_validator("tsa_url")
-    @classmethod
-    def tsa(cls, value: str) -> str:
-        url = urlsplit(value)
-        if (
-            url.scheme not in {"https", "http"}
-            or not url.hostname
-            or url.username is not None
-            or url.password is not None
-            or url.fragment
-            or url.query
-            or any(c.isspace() for c in value)
-        ):
-            raise ValueError("explicit timestamp authority required")
-        return value
 
 
 class VerifyRequest(Common):

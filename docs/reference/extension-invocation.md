@@ -211,3 +211,8 @@ inventories including bytes, permissions, links and added/deleted files. The
 core cannot import the extension. Installers run only during this explicit setup
 on disposable runners, never during invocation; do not update workstation
 Homebrew dependencies to reproduce the CI job.
+
+Managed `attest` separately authorizes the exact key reference/identity, signer
+and timestamp authority before any plugin or key access. Publication permission
+never implies signing permission. Offline `verify` requires neither a signing
+grant nor a private key; see [signing authorization](operator-policy.md#authorize-signing-separately).

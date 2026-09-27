@@ -1,9 +1,9 @@
 # Authorize an OCI publication
 
-!!! warning "0.4 development — explicit policy now required"
-    Managed `apizr-oci push` and `apizr-attest publish` calls require
+!!! warning "0.4 development — explicit policy required"
+    Managed `apizr-oci push`, `apizr-attest publish` and `apizr-attest attest` calls require
     `--operator-policy`. An installed, active plugin alone no longer permits
-    publication. This changes development commands, not the published 0.3.0 CLI.
+    publication or signing. This changes development commands, not the published 0.3.0 CLI.
 
 Installation puts verified wheel bytes in an isolated environment. Activation
 chooses one installed version. **Authorization** permits a particular installed
@@ -12,7 +12,8 @@ build to perform one operation on one remote repository. None implies the next.
 ## Write the operator's policy
 
 Download the complete [operator.json example](../examples/operator.json). It
-contains both publication grants and their dependency identities. Its repeated
+contains separate image publication, proof publication and signing grants with
+their dependency identities. Its repeated
 SHA-256 values are illustrative: they deliberately do not authorize your installed
 wheels. Replace every identity with your reviewed installation's metadata.
 `lock_sha256` identifies the installation requirements lock; `dependencies` must
@@ -62,7 +63,7 @@ operation arguments cannot select or extend a policy.
 The JSON document must specify `schema: apizr.operator-policy/v1` and `grants`.
 Files are regular, nonsymlink UTF-8 JSON, at most 65,536 bytes and 128 grants.
 Unknown fields/versions, duplicate JSON keys, duplicate dependency names or
-permissions, and invalid types are refused. Each grant has exactly:
+permissions, and invalid types are refused. Publication grants retain their existing fields and meaning:
 
 | Field | Meaning |
 | --- | --- |
@@ -74,7 +75,8 @@ permissions, and invalid types are refused. Each grant has exactly:
 A rebuilt wheel with the same name/version, or a changed lock/dependency set,
 needs a new grant. Reordering dependencies does not change identity. A grant must
 contain both required permissions; separate partial grants are not combined.
-No grant contains credentials, a private key or a free-form command.
+No grant contains credentials, private key bytes or a free-form command.
+Signing grants add explicit references as described below.
 
 ## Publish the selected image and its proof
 
@@ -91,7 +93,7 @@ apizr plugins run apizr-attest publish --arguments publish.json \
 ```
 
 The core validates the active installation and acquires its existing usage
-protection. It snapshots the arguments, validates the shared publication contract,
+protection. It snapshots the arguments, validates the shared operation contract,
 and decides before starting a plugin, contacting Docker/a registry or reading
 registry credentials. The plugin receives the same checked argument snapshot;
 changing the original file or Python dictionary cannot substitute a destination.
@@ -103,6 +105,69 @@ Successful calls return the existing plugin response. Keep the image
 `digest_reference` from push and `artifact_reference` from proof publication.
 Publishing an already signed proof verifies it; it requires no private key and
 no new signature permission.
+
+## Authorize signing separately
+
+`attest` needs its own grant. Installation, activation or a `publish` grant cannot
+authorize use of a signing key. The complete [operator.json](../examples/operator.json)
+includes this third rule, with fictitious identities. Use the exact reviewed
+`apizr-attest` identity and full locked dependency closure from your installation.
+
+In addition to `plugin`, `operation: attest` and the exact `repository`, specify:
+
+| Field | Operator expectation |
+| --- | --- |
+| `key_id` | Exact 32-character lowercase hexadecimal key identifier |
+| `expected_signer` | Exact 64-character lowercase hexadecimal public signer identity |
+| `key_file` | Exact absolute local file reference from `attest.json`; no private key contents |
+| `tsa_url` | Explicit RFC 3161 authority URL from `attest.json` |
+| `permissions` | All three: `registry.read`, `receipt.sign`, `timestamp.request` |
+
+One matching rule must contain all three rights. Partial rules are not combined.
+Signing grants do not accept `registry.publish`; publication grants do not accept
+signing or timestamp permissions. Existing v1 publication-only documents remain
+valid and do not authorize signing. Add a separate signing rule to authorize it.
+
+Key paths are compared as exact absolute strings, without resolving symlinks,
+reading files or treating `/private/./operator.key` as `/private/operator.key`.
+The reference is not a cryptographic identity of the file's bytes. The native
+plugin must still verify the key, actual signer, timestamp and final receipt.
+Keep keys and operator-selected files protected from untrusted writers.
+
+TSA comparison uses scheme, hostname, effective port and exact path. Scheme and
+hostname are case-insensitive; omitted ports mean 80 for HTTP or 443 for HTTPS;
+an empty path means `/`. Other paths, ports and authorities stay distinct, with
+no wildcard or prefix matching. Path escapes are not decoded, and paths are not
+resolved: `%74imestamp` and `timestamp` are different policy inputs. Credentials,
+queries, fragments, backslashes, control characters, percent-encoded hostnames
+and invalid ports are refused; the URL is limited to 2,048 characters.
+Both existing HTTP and HTTPS transports remain supported; HTTPS retains TLS
+verification. RFC 3161 trust still comes from independently pinned certificates.
+
+This decision authorizes the **initial URL passed to the native tool**. It does
+not resolve DNS, pin the server's network address or impose a network sandbox on
+the native client's redirect behavior. Select an authority you trust and retain
+the existing cryptographic trust checks; authorization does not replace them.
+
+Prepare the operational files using the [delivery guide](attest-delivery-plugin.md).
+With matching, separately reviewed signing and publication grants:
+
+```sh
+# Sign and timestamp a verified delivery.
+apizr plugins run apizr-attest attest --arguments attest.json \
+  --operator-policy operator.json --timeout-ms 360000
+# Verify an existing receipt offline; no signing grant or private key is needed.
+apizr plugins run apizr-attest verify --arguments verify.json \
+  --timeout-ms 180000
+# Publish that existing receipt using a distinct publication grant.
+apizr plugins run apizr-attest publish --arguments publish.json \
+  --operator-policy operator.json --timeout-ms 360000
+```
+
+Signing does not publish the proof. After signing, verification and publication
+can run with the private key unavailable. Publication still requires its own
+repository read/publish authorization. A delivery receipt remains evidence of
+verified delivery, **not supervision of the build**.
 
 ## Match the destination exactly
 
@@ -162,7 +227,9 @@ No paths, reference values, credentials or native diagnostics appear in it.
 | `operator_identity_denied` | Installed build/closure or official entry point does not match |
 | `operator_operation_denied` | No matching operation grant |
 | `operator_repository_denied` | No matching exact repository |
-| `operator_permissions_denied` | The grant lacks a required registry permission |
+| `operator_permissions_denied` | The grant lacks a required registry, signing or timestamp permission |
+| `operator_key_denied` | Key ID, expected signer or key file reference does not match |
+| `operator_tsa_denied` | Timestamp authority does not match |
 
 ## Understand the boundary
 
@@ -172,8 +239,8 @@ low-level `extension_runtime.invoke_extension` outside the managed installation
 path does not acquire operator authorization. Protect operator files and plugin
 storage from untrusted writers; plugins still execute with the user's rights.
 
-This pass covers only image `push` and proof `publish`. Git access, analysis,
-construction, signing and the other operations retain their existing controls;
+This control covers image `push`, proof `publish` and delivery signing `attest`.
+Git access, analysis, construction and the other operations retain their existing controls;
 `not_required` does not claim they have completed operator authorization.
-`build`, `attest`, `verify`, plugin lifecycle/catalog operations and the analysis
+`build`, `verify`, plugin lifecycle/catalog operations and the analysis
 MCP server keep their behavior. Publication through MCP is not added.

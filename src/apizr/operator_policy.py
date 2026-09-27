@@ -1,14 +1,15 @@
-"""Explicit operator grants for managed publication; decisions perform no I/O."""
+"""Explicit operator grants for managed publication and signing; decisions perform no I/O."""
 
 import json
 import os
 import stat
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
+from urllib.parse import urlsplit
 
 from pydantic import Field, JsonValue, field_validator, model_validator
 
-from apizr.execution.protocol import SizeExceeded, encode
+from apizr.execution.protocol import MAX_REQUEST_BYTES, SizeExceeded, encode
 from apizr.extension_runtime.protocol import unique_object
 from apizr.local_plugins.models import (
     Digest,
@@ -18,6 +19,8 @@ from apizr.local_plugins.models import (
     canonical_name,
 )
 from apizr.publication_contracts import (
+    AttestRequest,
+    Docker,
     Model,
     PublishRequest,
     PushRequest,
@@ -38,6 +41,8 @@ Code = Literal[
     "operator_operation_denied",
     "operator_repository_denied",
     "operator_permissions_denied",
+    "operator_key_denied",
+    "operator_tsa_denied",
 ]
 
 
@@ -106,9 +111,65 @@ class Grant(Model):
         return value
 
 
+def tsa_identity(value: str) -> tuple[str, str, int, str]:
+    """Compare the explicit authority; no DNS, URL decoding or redirect discovery."""
+    AttestRequest.tsa(value)
+    url = urlsplit(value)
+    if (
+        len(value) > 2048
+        or any(ord(c) < 33 or ord(c) == 127 for c in value)
+        or "\\" in value
+        or url.hostname is None
+        or "%" in url.hostname
+        or (url.port is not None and url.port < 1)
+    ):
+        raise ValueError("invalid timestamp authority")
+    return (
+        url.scheme,
+        url.hostname,
+        url.port or (443 if url.scheme == "https" else 80),
+        url.path or "/",
+    )
+
+
+class SigningGrant(Model):
+    plugin: PluginIdentity
+    operation: Literal["attest"]
+    repository: str
+    key_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    expected_signer: Digest
+    key_file: str
+    tsa_url: str
+    permissions: tuple[
+        Literal["registry.read", "receipt.sign", "timestamp.request"], ...
+    ] = Field(min_length=1, max_length=3)
+
+    _repository = field_validator("repository")(repository_name)
+
+    @field_validator("key_file")
+    @classmethod
+    def key_reference(cls, value: str) -> str:
+        return Docker.absolute(value)
+
+    @field_validator("tsa_url")
+    @classmethod
+    def authority(cls, value: str) -> str:
+        tsa_identity(value)
+        return value
+
+    @field_validator("permissions")
+    @classmethod
+    def unique(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        if len(set(value)) != len(value):
+            raise ValueError("duplicate permission")
+        return value
+
+
 class OperatorPolicy(Model):
     schema_version: Literal["apizr.operator-policy/v1"] = Field(alias="schema")
-    grants: tuple[Grant, ...] = Field(max_length=128)
+    grants: tuple[
+        Annotated[Grant | SigningGrant, Field(discriminator="operation")], ...
+    ] = Field(max_length=128)
 
 
 class Decision(Model):
@@ -147,10 +208,11 @@ def load_operator_policy(path: Path) -> OperatorPolicy:
 
 
 # Trusted core knowledge, not supplied by a project, profile, catalog or plugin.
-# Each operation reads the target repository both before and after publication.
+# Trusted effects: publication reads and writes; signing reads, signs and timestamps.
 OPERATIONS = {
     ("apizr-oci", "push"): "apizr_oci.protocol",
     ("apizr-attest", "publish"): "apizr_attest.protocol",
+    ("apizr-attest", "attest"): "apizr_attest.protocol",
 }
 
 
@@ -161,6 +223,16 @@ def decide(
     arguments: dict[str, JsonValue],
 ) -> Decision:
     """Pure decision for an already validated installation and argument snapshot."""
+    try:
+        record = Installation.model_validate_json(
+            encode(
+                record.model_dump(mode="json", by_alias=True, warnings=False),
+                MAX_POLICY_BYTES,
+            ),
+            strict=True,
+        )
+    except (ValueError, TypeError, AttributeError, RecursionError, SizeExceeded):
+        return Decision(allowed=False, code="operator_identity_denied")
     module = OPERATIONS.get((record.name, operation))
     # Also gate aliases of known official entry points; changing the manifest's
     # package name cannot turn the official publisher into an unchecked operation.
@@ -177,24 +249,36 @@ def decide(
     try:
         # Revalidate typed API input too: model_construct/model_copy are not trust boundaries.
         policy = OperatorPolicy.model_validate_json(
-            encode(policy.model_dump(mode="json", by_alias=True), MAX_POLICY_BYTES),
+            encode(
+                policy.model_dump(mode="json", by_alias=True, warnings=False),
+                MAX_POLICY_BYTES,
+            ),
             strict=True,
         )
     except SizeExceeded:
         return Decision(allowed=False, code="operator_policy_too_large")
     except (ValueError, TypeError, AttributeError, RecursionError):
         return Decision(allowed=False, code="operator_policy_invalid")
+    signing: AttestRequest | None = None
+    authority: tuple[str, str, int, str] | None = None
     try:
+        raw_arguments = encode(arguments, MAX_REQUEST_BYTES)
         if operation == "push":
-            request = PushRequest.model_validate(arguments, strict=True)
+            request = PushRequest.model_validate_json(raw_arguments, strict=True)
             repository = repository_name(request.destination.rsplit(":", 1)[0])
+        elif operation == "attest":
+            signing = AttestRequest.model_validate_json(raw_arguments, strict=True)
+            repository = repository_name(
+                digest_reference(signing.expected_reference).split("@")[0]
+            )
+            authority = tsa_identity(signing.tsa_url)
         else:
-            proof = PublishRequest.model_validate(arguments, strict=True)
+            proof = PublishRequest.model_validate_json(raw_arguments, strict=True)
             repository = repository_name(
                 digest_reference(proof.expected_reference).split("@")[0]
             )
         identity = PluginIdentity.from_installation(record)
-    except (ValueError, TypeError, RecursionError):
+    except (ValueError, TypeError, RecursionError, SizeExceeded):
         return Decision(allowed=False, code="operator_arguments_invalid")
     grants = [g for g in policy.grants if g.plugin == identity]
     if not grants:
@@ -205,6 +289,29 @@ def decide(
     grants = [g for g in grants if g.repository == repository]
     if not grants:
         return Decision(allowed=False, code="operator_repository_denied")
+    if signing is not None:
+        signing_grants = [
+            g
+            for g in grants
+            if isinstance(g, SigningGrant)
+            and (g.key_id, g.expected_signer, g.key_file)
+            == (signing.key_id, signing.expected_signer, signing.key_file)
+        ]
+        if not signing_grants:
+            return Decision(allowed=False, code="operator_key_denied")
+        signing_grants = [
+            g for g in signing_grants if tsa_identity(g.tsa_url) == authority
+        ]
+        if not signing_grants:
+            return Decision(allowed=False, code="operator_tsa_denied")
+        allowed = any(
+            set(g.permissions) == {"registry.read", "receipt.sign", "timestamp.request"}
+            for g in signing_grants
+        )
+        return Decision(
+            allowed=allowed,
+            code="authorized" if allowed else "operator_permissions_denied",
+        )
     if not any(
         set(g.permissions) == {"registry.read", "registry.publish"} for g in grants
     ):
