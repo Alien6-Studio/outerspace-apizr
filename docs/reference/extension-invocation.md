@@ -9,14 +9,16 @@
 in a fresh process. It is independent of the CLI, `apizr.compiler`, project
 configuration and historical `apizr.pipeline.v1` plugins.
 
-## Managed publication authorization
+## Managed publication and signing authorization
 
 `apizr.local_plugins.run_extension` enforces an explicit
-[operator publication policy](operator-policy.md) for `apizr-oci push` and
-`apizr-attest publish`, equally from Python and `apizr plugins run`. It retains
+[operator policy](operator-policy.md) for `apizr-oci push`, `apizr-attest publish`
+and `apizr-attest attest`, equally from Python and `apizr plugins run`. It retains
 activation and usage protection, then checks the build identity, operation and
 exact repository before invoking the runtime. These development calls now refuse
-an absent policy. Build, signing, verification and other operations are unchanged.
+an absent policy. Signing also requires the exact key reference/identity, expected
+signer and TSA, with separate signing and timestamp rights. Build, verification
+and other operations retain their behavior.
 
 The low-level API below runs an explicitly trusted program; it has no installation
 identity and does **not** provide managed operator authorization. Calling it or a

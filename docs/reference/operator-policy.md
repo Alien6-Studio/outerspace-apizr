@@ -219,11 +219,11 @@ No paths, reference values, credentials or native diagnostics appear in it.
 
 | Code | Decision |
 | --- | --- |
-| `authorized` | This publication matches a complete grant |
+| `authorized` | This operation matches a complete grant |
 | `not_required` | This operation is outside this first authorization scope |
 | `operator_policy_required` | No policy was supplied |
 | `operator_policy_invalid` / `operator_policy_unavailable` / `operator_policy_too_large` | Policy refused before invocation |
-| `operator_arguments_invalid` | Publication arguments do not satisfy the shared contract |
+| `operator_arguments_invalid` | Operation arguments do not satisfy the shared contract |
 | `operator_identity_denied` | Installed build/closure or official entry point does not match |
 | `operator_operation_denied` | No matching operation grant |
 | `operator_repository_denied` | No matching exact repository |
