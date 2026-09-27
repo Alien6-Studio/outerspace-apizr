@@ -227,6 +227,10 @@ PY
         for name in (
             "catalog-oci",
             "catalog-delivery",
+            "operator-oci.json",
+            "operator-attest.json",
+            "operator-push-refusals.json",
+            "operator-attest-refusals.json",
             "artifact-results.json",
             "artifact-refusals.json",
             "results.json",

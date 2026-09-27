@@ -241,3 +241,11 @@ the checkout. It signs a real published image, copies the proof, deletes the
 original and private key, and verifies under `unshare --net` with independent
 trust. Negative cases and tool identities are retained as artifacts. No machine
 trust store or Apizr release workflow, secret or identity is changed.
+
+## Authorize proof publication separately
+
+Signing and offline verification keep their current inputs. Sending an already
+signed proof with `publish` additionally requires the core
+[operator publication policy](operator-policy.md). That grant covers registry read
+and publish access to the image repository; it requires no new private key or
+signing permission. See [OCI proof transport](attest-oci-artifacts.md).

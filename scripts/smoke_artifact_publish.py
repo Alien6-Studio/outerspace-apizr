@@ -7,6 +7,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from operator_policy_proof import refuse, write_policy
+
 FILES = (
     "attest.yaml",
     "receipt.yaml",
@@ -49,6 +51,17 @@ def exercise(python, store, work, first, second, signing, command, environment):
         "run",
         "apizr-attest",
     ]
+    operator = write_policy(
+        python,
+        store,
+        work / "operator-attest.json",
+        "apizr-attest",
+        "publish",
+        [
+            common["expected_reference"].split("@")[0],
+        ],
+        command,
+    )
     refusals = []
 
     def invoke(op, data, refused=False):
@@ -58,6 +71,7 @@ def exercise(python, store, work, first, second, signing, command, environment):
             [
                 *base,
                 op,
+                *(["--operator-policy", str(operator)] if op == "publish" else []),
                 "--arguments",
                 str(path),
                 "--plugins-dir",
@@ -99,6 +113,35 @@ def exercise(python, store, work, first, second, signing, command, environment):
         "proof_dir": str(first),
         "transport": transport,
     }
+    operator_refusals = [
+        refuse(
+            python,
+            store,
+            work,
+            "apizr-attest",
+            "publish",
+            publish,
+            None,
+            "operator_policy_required",
+            environment,
+        ),
+        refuse(
+            python,
+            store,
+            work,
+            "apizr-attest",
+            "publish",
+            publish
+            | {
+                "expected_reference": "registry.test:5443/unauthorized/service@sha256:"
+                + "a" * 64
+            },
+            operator,
+            "operator_repository_denied",
+            environment,
+        ),
+    ]
+    (work / "operator-attest-refusals.json").write_text(json.dumps(operator_refusals))
     wrong = publish | {"expected_signer": "0" * 64}
     invoke("publish", wrong, True)
     refusals.append("invalid-proof-before-publication")
@@ -217,6 +260,8 @@ def exercise(python, store, work, first, second, signing, command, environment):
                     [
                         *base,
                         "publish",
+                        "--operator-policy",
+                        str(operator),
                         "--arguments",
                         str(argument),
                         "--plugins-dir",

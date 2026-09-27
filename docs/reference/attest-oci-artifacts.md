@@ -71,8 +71,15 @@ default plugin store. Run the Python example in the separate environment where
 ```
 
 ```sh
-apizr plugins run apizr-attest publish --arguments publish.json --timeout-ms 360000
+apizr plugins run apizr-attest publish --arguments publish.json \
+  --operator-policy operator.json --timeout-ms 360000
 ```
+
+First create an [operator policy](operator-policy.md) granting this installed
+apizr-attest build both registry read and publish access to the exact image
+repository. The core refuses missing or insufficient grants before invocation or
+credential reads. Publishing this already signed proof needs no private key or
+additional signature authorization.
 
 The plugin snapshots the allowlisted files, runs all five native verification
 checks without warnings or skips, reads the image manifest by digest, and calls

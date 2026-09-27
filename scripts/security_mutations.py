@@ -28,6 +28,20 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "publication-operator-admission",
+        "src/apizr/local_plugins/activation.py",
+        "            if not decision.allowed:",
+        "            if False:",
+        "tests/local_plugins/test_operator_policy.py::test_managed_cli_and_api_refuse_before_effect[push]",
+    ),
+    Mutation(
+        "publication-repository-prefix",
+        "src/apizr/operator_policy.py",
+        "g.repository == repository",
+        "repository.startswith(g.repository)",
+        "tests/local_plugins/test_operator_policy.py::test_exact_grants_without_external_io[prefix-operator_repository_denied-push]",
+    ),
+    Mutation(
         "subprocess-deny-kernel-action",
         "src/apizr/subprocess_guard/filter.py",
         "DENIED = 0x00050000 | errno.EPERM",

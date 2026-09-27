@@ -4,11 +4,18 @@ import hashlib
 import os
 import re
 from pathlib import Path
-from typing import Literal
 
-from pydantic import Field, field_validator
+from apizr.publication_contracts import (
+    OrasTool as OrasTool,
+)
+from apizr.publication_contracts import (
+    Transport as Transport,
+)
+from apizr.publication_contracts import (
+    digest_reference as digest_reference,
+)
 
-from .model import Authentication, BuildError, Docker, Model, PushRequest
+from .model import BuildError
 from .native import run
 from .push import document, registry_authentication
 from .snapshot import read
@@ -16,28 +23,6 @@ from .snapshot import read
 OCI_MANIFEST = "application/vnd.oci.image.manifest.v1+json"
 IMAGE_MEDIA = {OCI_MANIFEST, "application/vnd.docker.distribution.manifest.v2+json"}
 DIGEST = re.compile(r"sha256:[0-9a-f]{64}")
-
-
-def digest_reference(value: str) -> str:
-    repository, separator, digest = value.partition("@")
-    if len(value) > 320 or not separator or DIGEST.fullmatch(digest) is None:
-        raise ValueError("explicit digest reference required")
-    PushRequest.reference(repository + ":explicit")
-    return value
-
-
-class OrasTool(Model):
-    executable: str
-    version: Literal["1.3.4"]
-    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
-    _path = field_validator("executable")(Docker.absolute.__func__)
-
-
-class Transport(Model):
-    tool: OrasTool
-    authentication: Authentication
-    max_candidates: int = Field(default=128, ge=1, le=128)
-    max_discovery_bytes: int = Field(default=1048576, ge=1024, le=4194304)
 
 
 def sha(raw: bytes) -> str:

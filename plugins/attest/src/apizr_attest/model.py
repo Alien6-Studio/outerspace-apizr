@@ -3,41 +3,23 @@
 from typing import Literal
 from urllib.parse import urlsplit
 
-from apizr_oci.model import Authentication, Docker, Model, PushRequest
-from apizr_oci.oras import Transport, digest_reference
+from apizr_oci.model import Authentication, Docker, Model
 from pydantic import Field, field_validator, model_validator
+
+from apizr.publication_contracts import (
+    Common as Common,
+)
+from apizr.publication_contracts import (
+    PublishRequest as PublishRequest,
+)
+from apizr.publication_contracts import (
+    Tool as Tool,
+)
+from apizr.publication_contracts import Transport, digest_reference
 
 
 class AttestError(Exception):
     """Fixed codes only. Native diagnostics can contain sensitive paths."""
-
-
-class Tool(Model):
-    executable: str
-    version: Literal["0.1.0"]
-    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
-    _path = field_validator("executable")(Docker.absolute.__func__)
-
-
-class Common(Model):
-    expected_reference: str
-    expected_signer: str = Field(pattern=r"^[0-9a-f]{64}$")
-    trust_store: str
-    tool: Tool
-    timeout_ms: int = Field(default=120000, ge=1, le=540000)
-    max_output_bytes: int = Field(default=1048576, ge=1024, le=4194304)
-    _trust = field_validator("trust_store")(Docker.absolute.__func__)
-
-    @field_validator("expected_reference")
-    @classmethod
-    def reference(cls, value: str) -> str:
-        import re
-
-        repository, separator, digest = value.partition("@")
-        if not separator or re.fullmatch(r"sha256:[0-9a-f]{64}", digest) is None:
-            raise ValueError("digest reference required")
-        PushRequest.reference(repository + ":explicit")
-        return value
 
 
 class AttestRequest(Common):
@@ -94,13 +76,6 @@ class DeliveryResult(Model):
 
 
 # Transport-only discovery deliberately has no Attest binary or trust inputs.
-
-
-class PublishRequest(Common):
-    schema_version: Literal["apizr.publish-proof/v1"] = Field(alias="schema")
-    proof_dir: str
-    transport: Transport
-    _proof = field_validator("proof_dir")(Docker.absolute.__func__)
 
 
 class DiscoverRequest(Model):
