@@ -20,10 +20,12 @@ async def exercise(target):
         names = {tool.name for tool in (await client.list_tools()).tools}
         assert names == {"shop.api.run", "shop.pricing.run", "shop.inventory.available"}
         assert (await client.call_tool("shop.api.helper", {})).is_error
-        assert (await client.call_tool("shop.api.run", {})).structured_content == 7
+        assert (await client.call_tool("shop.api.run", {})).structured_content == {
+            "result": 7
+        }
         assert (
             await client.call_tool("shop.pricing.run", {"x": 4})
-        ).structured_content == 5
+        ).structured_content == {"result": 5}
 
 
 def test_emitted_rest_no_apizr_dependency(tmp_path, inputs):

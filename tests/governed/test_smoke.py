@@ -29,6 +29,6 @@ def test_governed_smoke(tmp_path):
         async with Client(create_server(mcp)) as client:
             result = await client.call_tool("total", {"values": [1, 2]})
             assert not result.is_error, result
-            assert result.structured_content == 5
+            assert result.structured_content == {"result": 5}
 
     anyio.run(check)

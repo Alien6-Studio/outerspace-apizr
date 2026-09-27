@@ -168,19 +168,21 @@ def test_real_transports_isolation_failures_state_and_tampering(
                             name, {} if args is None else args
                         )
 
-                    assert (
-                        await call("isolation", arguments)
-                    ).structured_content == expected
+                    assert (await call("isolation", arguments)).structured_content == (
+                        expected if isinstance(expected, dict) else {"result": expected}
+                    )
                     cleaned()
                     assert (
                         (await call("counter")).structured_content
                         == (await call("counter")).structured_content
-                        == [1, 1]
+                        == {"result": [1, 1]}
                     )
-                    assert (await call("environment")).structured_content is False
+                    assert (await call("environment")).structured_content == {
+                        "result": False
+                    }
                     assert (
                         await call("greet", {"name": "Ada"})
-                    ).structured_content == "Hello Ada"
+                    ).structured_content == {"result": "Hello Ada"}
                     assert (await call("total")).is_error
                     cleaned()
                     for name in ["memory", "sleep", "loop", "crash", "fail", "large"]:
@@ -194,7 +196,9 @@ def test_real_transports_isolation_failures_state_and_tampering(
                             "loop": "Tool execution timed out",
                         }.get(name, "Tool execution failed")
                         cleaned()
-                        assert (await call("total", {"a": 1})).structured_content == 6
+                        assert (await call("total", {"a": 1})).structured_content == {
+                            "result": 6
+                        }
                     for path in paths:
                         target_path, original = damage(root, path)
                         assert (await call("total", {"a": 1})).content[
@@ -202,13 +206,17 @@ def test_real_transports_isolation_failures_state_and_tampering(
                         ].text == "Tool execution failed"
                         cleaned()
                         target_path.write_bytes(original)
-                        assert (await call("total", {"a": 1})).structured_content == 6
+                        assert (await call("total", {"a": 1})).structured_content == {
+                            "result": 6
+                        }
                     target_path, original = damage(
                         root, "execution/plans/total.json", "image"
                     )
                     assert (await call("total", {"a": 1})).is_error
                     target_path.write_bytes(original)
-                    assert (await call("total", {"a": 1})).structured_content == 6
+                    assert (await call("total", {"a": 1})).structured_content == {
+                        "result": 6
+                    }
 
             if transport == "stdio":
                 connection = StdioServerParameters(
@@ -265,7 +273,7 @@ def test_real_allowlisted_environment_has_no_automatic_disclosure(
             async with Client(create_server(root)) as client:
                 assert (
                     await client.call_tool("environment", {})
-                ).structured_content is True
+                ).structured_content == {"result": True}
 
         anyio.run(check)
     assert marker not in json.dumps(commands)

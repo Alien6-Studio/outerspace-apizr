@@ -28,7 +28,9 @@ def test_sync_async_and_structured_results(tmp_path, source, arguments, expected
         async with Client(server) as client:
             result = await client.call_tool("f", arguments)
             assert not result.is_error
-            assert result.structured_content == expected
+            assert result.structured_content == (
+                expected if isinstance(expected, dict) else {"result": expected}
+            )
             assert (await client.list_tools()).tools[0].description is None
 
     with server_bundle(tmp_path / "bundle", source) as (server, _):
@@ -85,8 +87,12 @@ def test_exceptions_and_non_json_results_are_sanitized(tmp_path, body):
 def test_omitted_mutable_default_keeps_identity_and_state(tmp_path):
     async def check(server):
         async with Client(server) as client:
-            assert (await client.call_tool("f", {})).structured_content == [1]
-            assert (await client.call_tool("f", {})).structured_content == [1, 1]
+            assert (await client.call_tool("f", {})).structured_content == {
+                "result": [1]
+            }
+            assert (await client.call_tool("f", {})).structured_content == {
+                "result": [1, 1]
+            }
             result = await client.call_tool("f", {"x": None})
             assert result.is_error
 

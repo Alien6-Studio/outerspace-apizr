@@ -489,11 +489,11 @@ from mcp import Client, StdioServerParameters
 assert importlib.util.find_spec('apizr') is None
 assert importlib.util.find_spec('fastapi') is None
 async def check():
-    async with Client(StdioServerParameters(command=sys.executable, args=[sys.argv[1], '--transport', 'stdio'])) as client:
-        assert client.protocol_version == '2026-07-28'
+    async with Client(StdioServerParameters(command=sys.executable, args=[sys.argv[1], '--transport', 'stdio']), mode="legacy") as client:
+        assert client.protocol_version == '2025-11-25'
         assert [t.name for t in (await client.list_tools()).tools] == ['total']
         result = await client.call_tool('total', {'values':[1,2]})
-        assert not result.is_error and result.structured_content == 3
+        assert not result.is_error and result.structured_content == {"result": 3}
 asyncio.run(check())
 """,
                     str(mcp_output / "server.py"),
@@ -572,7 +572,7 @@ async def check():
     async with Client(StdioServerParameters(command=sys.executable,args=[sys.argv[1],'--transport','stdio'])) as client:
         assert client.protocol_version=='2026-07-28'
         result=await client.call_tool('total',{'values':[1,2]})
-        assert not result.is_error and result.structured_content==3,result
+        assert not result.is_error and result.structured_content=={"result": 3},result
 asyncio.run(check())
 """
                 governed_probes[transport] = probe

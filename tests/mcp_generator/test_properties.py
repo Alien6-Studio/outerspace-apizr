@@ -51,7 +51,9 @@ def test_argument_reconstruction_and_null_validation(a, b, supplied, explicit_nu
             result = await client.call_tool("f", payload)
             assert result.is_error == (supplied and explicit_null)
             if not result.is_error:
-                assert result.structured_content == [a, b if supplied else 2]
+                assert result.structured_content == {
+                    "result": [a, b if supplied else 2]
+                }
 
     with TemporaryDirectory() as directory:
         with server_bundle(Path(directory).resolve() / "bundle", source) as (server, _):

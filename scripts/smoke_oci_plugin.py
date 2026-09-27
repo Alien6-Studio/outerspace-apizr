@@ -490,7 +490,7 @@ async def check():
     async with Client(StdioServerParameters(command=sys.argv[1], args=['--host',sys.argv[2],'run','--rm','--interactive','--name',sys.argv[3],sys.argv[4]],env={})) as client:
         assert [t.name for t in (await client.list_tools()).tools] == ['calculator.add']
         result = await client.call_tool('calculator.add', {'a':2,'b':3})
-        assert not result.is_error and result.structured_content == 5
+        assert not result.is_error and result.structured_content == {"result": 5}
 asyncio.run(check())
 """,
             docker,

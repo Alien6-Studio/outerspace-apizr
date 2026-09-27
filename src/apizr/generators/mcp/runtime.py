@@ -112,6 +112,8 @@ def create_server(root: Path, plan: RuntimePlan) -> Server[dict[str, object]]:
                     partial(function, *args, **kwargs)
                 )
             value = result_value(result)
+            # MCP structuredContent must be an object on every supported protocol.
+            value = value if isinstance(value, dict) else {"result": value}
             return CallToolResult(
                 content=[
                     TextContent(

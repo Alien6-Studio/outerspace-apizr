@@ -101,16 +101,15 @@ def test_real_multisource_transports(
                 assert len(names) == 8 and "sample.pricing.double" not in names
                 for name, args, expected in cases:
                     response = await client.call_tool(name, args)
-                    assert (
-                        not response.is_error
-                        and response.structured_content == expected
+                    assert not response.is_error and response.structured_content == (
+                        expected if isinstance(expected, dict) else {"result": expected}
                     ), response
                 for name, args, _, message in failures:
                     response = await client.call_tool("sample.api." + name, args)
                     assert response.is_error and response.content[0].text == message
                     assert (
                         await client.call_tool("sample.api.run", {})
-                    ).structured_content == 4
+                    ).structured_content == {"result": 4}
                 for path in paths:
                     target, original = damage(root, path)
                     assert (await client.call_tool("sample.api.run", {})).content[
@@ -119,7 +118,7 @@ def test_real_multisource_transports(
                     target.write_bytes(original)
                     assert (
                         await client.call_tool("sample.api.run", {})
-                    ).structured_content == 4
+                    ).structured_content == {"result": 4}
 
         if transport == "stdio":
             anyio.run(
