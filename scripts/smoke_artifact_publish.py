@@ -141,6 +141,19 @@ def exercise(python, store, work, first, second, signing, command, environment):
             environment,
         ),
     ]
+    operator_refusals.append(
+        refuse(
+            python,
+            store,
+            work,
+            "apizr-attest",
+            "publish",
+            publish,
+            work / "operator-signing.json",
+            "operator_operation_denied",
+            environment,
+        )
+    )
     (work / "operator-attest-refusals.json").write_text(json.dumps(operator_refusals))
     wrong = publish | {"expected_signer": "0" * 64}
     invoke("publish", wrong, True)

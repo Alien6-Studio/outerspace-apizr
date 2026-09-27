@@ -28,6 +28,20 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "signing-operator-admission",
+        "src/apizr/local_plugins/activation.py",
+        "            if not decision.allowed:",
+        "            if False:",
+        "tests/local_plugins/test_signing_policy.py::test_signing_cli_and_api_refuse_before_effect[missing-operator_policy_required-attest]",
+    ),
+    Mutation(
+        "signing-timestamp-authority",
+        "src/apizr/operator_policy.py",
+        "tsa_identity(g.tsa_url) == authority",
+        "True",
+        "tests/local_plugins/test_signing_policy.py::test_signing_decision_is_pure[tsa_prefix-operator_tsa_denied]",
+    ),
+    Mutation(
         "publication-operator-admission",
         "src/apizr/local_plugins/activation.py",
         "            if not decision.allowed:",

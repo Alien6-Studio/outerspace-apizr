@@ -91,6 +91,13 @@ No proxy or parent authentication environment is inherited.
 
 ## Attest a published delivery
 
+Managed signing requires an explicit [operator signing grant](operator-policy.md#authorize-signing-separately)
+binding the installed plugin identity, repository, key ID/file, expected signer
+and TSA, with `registry.read`, `receipt.sign` and `timestamp.request` permissions.
+The core decides before launching the plugin or accessing credentials or keys.
+A publication grant does not authorize signing. These permissions compare the
+operator's expectations; native cryptographic verification remains mandatory.
+
 Example `attest.json` (replace the illustrative identities with your actual
 build/push results, paths, signer and TSA):
 
@@ -132,6 +139,7 @@ permission. The destination must not exist.
 
 ```sh
 core/bin/apizr plugins run apizr-attest attest --arguments attest.json \
+  --operator-policy operator.json \
   --plugins-dir "$work/plugins" --timeout-ms 360000
 ```
 

@@ -229,6 +229,8 @@ PY
             "catalog-delivery",
             "operator-oci.json",
             "operator-attest.json",
+            "operator-signing.json",
+            "operator-signing-refusals.json",
             "operator-push-refusals.json",
             "operator-attest-refusals.json",
             "artifact-results.json",

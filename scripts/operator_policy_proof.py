@@ -41,6 +41,29 @@ def write_policy(python, store, path, name, operation, repositories, command):
     return path
 
 
+def write_signing_policy(python, store, path, arguments, command):
+    write_policy(
+        python,
+        store,
+        path,
+        "apizr-attest",
+        "attest",
+        [arguments["expected_reference"].split("@")[0]],
+        command,
+    )
+    raw = json.loads(path.read_bytes())
+    grant = raw["grants"][0]
+    grant.update(
+        {
+            key: arguments[key]
+            for key in ("key_id", "expected_signer", "key_file", "tsa_url")
+        }
+    )
+    grant["permissions"] = ["registry.read", "receipt.sign", "timestamp.request"]
+    path.write_text(json.dumps(raw))
+    return path
+
+
 GUARD = """import sys,json
 credentials=json.loads(sys.argv[1])
 def guard(event,args):
@@ -63,6 +86,8 @@ def refuse(
         "authentication", arguments.get("transport", {}).get("authentication", {})
     )
     credentials = [str(v) for v in auth.values() if v is not None]
+    credentials += [str(arguments[k]) for k in ("key_file",) if k in arguments]
+    credentials += [str(arguments["docker"]["socket"])] if "docker" in arguments else []
     result = subprocess.run(
         [
             str(python),

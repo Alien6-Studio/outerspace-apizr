@@ -92,7 +92,9 @@ def main(argv: Sequence[str]) -> int:
     run.add_argument("name")
     run.add_argument("operation")
     run.add_argument(
-        "--operator-policy", type=Path, help="Explicit operator publication grants"
+        "--operator-policy",
+        type=Path,
+        help="Explicit operator grants for publication or signing",
     )
     run.add_argument(
         "--arguments", type=Path, required=True, help="Bounded JSON object file"

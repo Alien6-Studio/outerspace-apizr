@@ -45,6 +45,20 @@ def arguments(operation):
             "docker": {"executable": "/native/docker", "socket": "/daemon/docker.sock"},
             "authentication": {"config_file": "/private/credentials.json"},
         }
+    if operation == "attest":
+        data = arguments("publish")
+        del data["proof_dir"], data["transport"]
+        return data | {
+            "schema": "apizr.attest-delivery/v1",
+            "build_result": "/proof/build.json",
+            "push_result": "/proof/push.json",
+            "docker": {"executable": "/native/docker", "socket": "/daemon/docker.sock"},
+            "authentication": {"config_file": "/private/credentials.json"},
+            "key_file": "/private/signing.key",
+            "key_id": "e" * 32,
+            "tsa_url": "https://tsa.example:8443/timestamp",
+            "output_dir": "/proof/output",
+        }
     return {
         "schema": "apizr.publish-proof/v1",
         "expected_reference": REPOSITORY + "@sha256:" + "a" * 64,
@@ -90,7 +104,7 @@ def record(operation="push"):
 
 
 def document(binding, operation="push", repository=REPOSITORY):
-    return {
+    result = {
         "schema": "apizr.operator-policy/v1",
         "grants": [
             {
@@ -103,6 +117,19 @@ def document(binding, operation="push", repository=REPOSITORY):
             }
         ],
     }
+    if operation == "attest":
+        result["grants"][0].update(
+            {
+                k: arguments(operation)[k]
+                for k in ("key_id", "expected_signer", "key_file", "tsa_url")
+            }
+        )
+        result["grants"][0]["permissions"] = [
+            "registry.read",
+            "receipt.sign",
+            "timestamp.request",
+        ]
+    return result
 
 
 def policy(value):
@@ -279,7 +306,7 @@ def test_bounded_regular_policy_files(tmp_path):
         load_operator_policy(path)
 
 
-@pytest.fixture(params=["push", "publish"])
+@pytest.fixture(params=["push", "publish", "attest"])
 def installed(request, wheel_factory, tmp_path):
     operation = request.param
     template = record(operation)
@@ -324,7 +351,7 @@ def test_managed_cli_and_api_refuse_before_effect(
     original_open = os.open
 
     def checked(path, *args, **kwargs):
-        assert str(path) != "/private/credentials.json"
+        assert str(path) not in {"/private/credentials.json", "/private/signing.key"}
         return original_open(path, *args, **kwargs)
 
     monkeypatch.setattr(os, "open", checked)
@@ -389,7 +416,7 @@ def test_authorized_call_uses_owned_snapshot(installed, tmp_path, monkeypatch):
         binding.name, operation, args, directory=root, operator_policy=selected
     )
     assert result.result == before and marker.exists()
-    assert "key_file" not in before
+    assert ("key_file" in before) == (operation == "attest")
     with pytest.raises(SizeLimitExceeded):
         run_extension(
             binding.name,
@@ -415,7 +442,7 @@ def test_official_module_alias_cannot_bypass():
 
 
 @pytest.mark.parametrize(
-    "operation", ["build", "attest", "verify", "discover", "fetch", "analyze"]
+    "operation", ["build", "verify", "discover", "fetch", "analyze"]
 )
 def test_other_operations_preserve_current_scope(operation):
     assert decide(None, record(), operation, {}).code == "not_required"
@@ -510,10 +537,14 @@ def test_shared_publication_models_are_the_plugin_contracts():
         path = str(root / "plugins" / name / "src")
         if path not in sys.path:
             sys.path.insert(0, path)
+    from apizr_attest.model import AttestRequest as PluginAttest
     from apizr_attest.model import PublishRequest as PluginPublish
     from apizr_oci.model import PushRequest as PluginPush
 
     assert PluginPush is PushRequest
+    from apizr.publication_contracts import AttestRequest
+
+    assert PluginAttest is AttestRequest
     assert PluginPublish is PublishRequest
 
 
@@ -565,4 +596,5 @@ def test_complete_documented_policy():
     assert {(g.plugin.name, g.operation) for g in selected.grants} == {
         ("apizr-oci", "push"),
         ("apizr-attest", "publish"),
+        ("apizr-attest", "attest"),
     }

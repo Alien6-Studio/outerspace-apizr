@@ -12,6 +12,7 @@ from threading import Event
 
 from attest_test_authority import authority
 from attest_test_authority import command as native_command
+from operator_policy_proof import refuse, write_policy, write_signing_policy
 from smoke_oci_plugin import REPO, lock_wheels
 
 
@@ -116,7 +117,9 @@ def exercise(python, store, work, builds, command, environment):
         ]["auth"].encode(),
     ]
 
-    def invoke(operation, arguments, *, refused=False, offline=False):
+    operator = work / "operator-signing.json"
+
+    def invoke(operation, arguments, *, refused=False, offline=False, selected=None):
         argsfile = work / f"{operation}-arguments.json"
         argsfile.write_text(json.dumps(arguments))
         args = [
@@ -124,6 +127,11 @@ def exercise(python, store, work, builds, command, environment):
             "run",
             "apizr-attest",
             operation,
+            *(
+                ["--operator-policy", str(selected or operator)]
+                if operation == "attest"
+                else []
+            ),
             "--arguments",
             str(argsfile),
             "--plugins-dir",
@@ -172,6 +180,38 @@ def exercise(python, store, work, builds, command, environment):
             "output_dir": str(output),
             "timeout_ms": 300000,
         }
+        write_signing_policy(python, store, operator, arguments, command)
+        publication_only = write_policy(
+            python,
+            store,
+            work / "publication-only.json",
+            "apizr-attest",
+            "publish",
+            [arguments["expected_reference"].split("@")[0]],
+            command,
+        )
+        operator_refusals = []
+        for selected, code in (
+            (None, "operator_policy_required"),
+            (publication_only, "operator_operation_denied"),
+        ):
+            operator_refusals.append(
+                refuse(
+                    python,
+                    store,
+                    work,
+                    "apizr-attest",
+                    "attest",
+                    arguments,
+                    selected,
+                    code,
+                    environment,
+                )
+            )
+        assert not calls and not output.exists()
+        (work / "operator-signing-refusals.json").write_text(
+            json.dumps(operator_refusals)
+        )
         for name, change in (
             ("wrong-reference", {"expected_reference": pushes[1]["digest_reference"]}),
             ("wrong-signer", {"expected_signer": "0" * 64}),
@@ -179,7 +219,16 @@ def exercise(python, store, work, builds, command, environment):
             ("wrong-version", {"tool": tool | {"version": "9.0.0"}}),
             ("wrong-hash", {"tool": tool | {"sha256": "0" * 64}}),
         ):
-            invoke("attest", arguments | change, refused=True)
+            # Explicitly authorize changed signing identities too: these cases
+            # must still exercise native verification, not stop at admission.
+            changed_policy = write_signing_policy(
+                python,
+                store,
+                work / "negative-signing.json",
+                arguments | change,
+                command,
+            )
+            invoke("attest", arguments | change, refused=True, selected=changed_policy)
             assert not output.exists()
             refusals.append({"case": name, "refused": True})
         # An external writer moves the mutable tag. Digest observation must still
@@ -230,6 +279,9 @@ def exercise(python, store, work, builds, command, environment):
                     "timeout_ms": 10000 if mode == "timeout" else 300000,
                     "output_dir": str(work / (mode + "-proof")),
                 }
+                blocked_policy = write_signing_policy(
+                    python, store, work / "blocked-signing.json", blocked, command
+                )
                 blocked_file = work / "blocked-arguments.json"
                 blocked_file.write_text(json.dumps(blocked))
                 with tempfile.TemporaryDirectory(dir=work) as runtimes:
@@ -239,6 +291,8 @@ def exercise(python, store, work, builds, command, environment):
                             "run",
                             "apizr-attest",
                             "attest",
+                            "--operator-policy",
+                            str(blocked_policy),
                             "--arguments",
                             str(blocked_file),
                             "--plugins-dir",
@@ -275,6 +329,14 @@ def exercise(python, store, work, builds, command, environment):
         recovered = arguments | {"output_dir": str(work / "recovered-proof")}
         assert invoke("attest", recovered) is not None
         key.unlink()  # Publication of an existing proof requires no private key.
+        offline = {
+            k: arguments[k]
+            for k in ("expected_reference", "expected_signer", "trust_store", "tool")
+        }
+        offline |= {"schema": "apizr.verify-delivery/v1", "proof_dir": str(output)}
+        calls_before_verify = len(calls)
+        assert invoke("verify", offline, offline=True) == signed
+        assert len(calls) == calls_before_verify
         if os.environ.get("APIZR_ARTIFACT_PROOF") == "1":
             from smoke_artifact_publish import exercise
 
