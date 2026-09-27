@@ -23,7 +23,7 @@ from apizr.plugin_catalog.models import (
     Profile,
     Provenance,
 )
-from apizr.plugin_lock import check_lock
+from apizr.plugin_lock import check_lock, create_lock
 from apizr.plugins_cli import main
 
 DESCRIPTIONS = {
@@ -73,6 +73,10 @@ def prepare(
         )
     shutil.copytree(requirements, output / "requirements")
     project.write_text("\n".join(lines) + "\n")
+    check = create_lock(project, house, output / "inspected.lock.json")
+    (output / "artifact-check.json").write_text(check.model_dump_json())
+    if not check.valid:
+        raise RuntimeError(check.model_dump_json())
     entries = generate_entries(
         project,
         house,

@@ -67,3 +67,30 @@ def test_unknown_libc(monkeypatch):
 
     monkeypatch.setattr("os.confstr", unavailable)
     assert not platform_matches("manylinux_2_28_x86_64", LINUX)
+
+
+@pytest.mark.parametrize("build", ["macosx-10.9-universal2", "macosx-11.0-arm64"])
+@pytest.mark.parametrize("release", ["26.0.0", "11.0.0"])
+def test_macos_running_os_and_active_universal_slice(monkeypatch, build, release):
+    from apizr.plugin_lock import tags
+
+    target = MAC.model_copy(
+        update={"python": "3.11.9", "platform": build, "abi": "cpython-311-darwin"}
+    )
+    monkeypatch.setattr(tags, "current_target", lambda: target)
+    monkeypatch.setattr(tags.sys, "platform", "darwin")
+    monkeypatch.setattr(tags.platform, "mac_ver", lambda: (release, (), "arm64"))
+    assert wheel_matches("p-1-cp311-cp311-macosx_11_0_arm64.whl", target)
+    assert wheel_matches("p-1-cp311-cp311-macosx_10_9_universal2.whl", target)
+    assert not wheel_matches("p-1-cp311-cp311-macosx_11_0_x86_64.whl", target)
+    assert not wheel_matches("p-1-cp311-cp311-macosx_99_0_arm64.whl", target)
+
+
+def test_macos_unknown_runtime_stays_conservative(monkeypatch):
+    from apizr.plugin_lock import tags
+
+    target = MAC.model_copy(update={"platform": "macosx-10.9-universal2"})
+    monkeypatch.setattr(tags, "current_target", lambda: target)
+    monkeypatch.setattr(tags.sys, "platform", "darwin")
+    monkeypatch.setattr(tags.platform, "mac_ver", lambda: ("", (), "arm64"))
+    assert not platform_matches("macosx_11_0_arm64", target)

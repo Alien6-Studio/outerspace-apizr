@@ -5,20 +5,34 @@ packaging or enumerating a dependency resolver. Unknown platform tags fail close
 """
 
 import os
+import platform
 import re
+import sys
 
-from .models import Target
+from .models import Target, current_target
 
 
 def platform_matches(tag: str, target: Target) -> bool:
     if tag in ("any", target.platform.replace("-", "_").replace(".", "_")):
         return True
     mac = re.fullmatch(r"macosx_(\d+)_(\d+)_(arm64|x86_64|universal2)", tag)
-    host = re.fullmatch(r"macosx-(\d+)\.(\d+)-(arm64|x86_64)", target.platform)
+    host = re.fullmatch(
+        r"macosx-(\d+)\.(\d+)-(arm64|x86_64|universal2)", target.platform
+    )
     if mac and host:
-        return (int(mac[1]), int(mac[2])) <= (int(host[1]), int(host[2])) and mac[
-            3
-        ] in (host[3], "universal2")
+        minimum = (int(host[1]), int(host[2]))
+        # sysconfig describes the interpreter build's deployment minimum and may
+        # say universal2. Admission concerns the running OS and active CPU slice.
+        if sys.platform == "darwin" and target == current_target():
+            release = platform.mac_ver()[0].split(".")
+            if len(release) >= 2 and all(part.isdigit() for part in release[:2]):
+                minimum = (int(release[0]), int(release[1]))
+        return (
+            target.machine in ("arm64", "x86_64")
+            and host[3] in (target.machine, "universal2")
+            and mac[3] in (target.machine, "universal2")
+            and (int(mac[1]), int(mac[2])) <= minimum
+        )
     linux = re.fullmatch(r"manylinux_(\d+)_(\d+)_(x86_64|aarch64)", tag)
     if linux and target.platform == "linux-" + linux[3] and target.machine == linux[3]:
         try:

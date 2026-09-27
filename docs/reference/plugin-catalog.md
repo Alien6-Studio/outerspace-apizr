@@ -34,8 +34,9 @@ not rebuilt between catalog generation and installation.
 
 ## Consult, choose and lock
 
-Assume you extracted the matching artifacts into a working directory containing
-`catalog/catalogue.json` and `wheels/`. Use the development `apizr` executable:
+Extract the matching `mcp-stdio-OS-python-VERSION` artifact and enter its
+`_temp/mcp-proof/` directory. It contains `catalog/catalogue.json` and `wheels/`;
+test/coverage reports occupy another subtree. Use the development `apizr` executable:
 
 ```sh
 apizr plugins catalog list --catalog catalog/catalogue.json --json
@@ -140,7 +141,9 @@ The proof driver `scripts/catalog_plugin_plan.py` is a worked generation example
 The target is exact; export on the same Python/platform as the catalog and lock.
 Static wheel tag admission supports pure Python, the current native ABI, CPython
 stable ABI on non-free-threaded builds, macOS arm64/x86_64/universal2 and modern
-`manylinux_x_y` on known glibc x86_64/aarch64 hosts. Other tags fail closed. This
+`manylinux_x_y` on known glibc x86_64/aarch64 hosts. For universal2 Python builds,
+macOS checks use the running OS and active CPU slice rather than the interpreter
+build deployment minimum. Other tags fail closed. This
 bounded check follows [PyPA's wheel tag specification](https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/)
 and does not replace uv's dependency/platform checks at installation.
 
