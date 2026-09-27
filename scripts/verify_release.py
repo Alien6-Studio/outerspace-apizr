@@ -44,6 +44,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-id", required=True, type=int)
     parser.add_argument("--github-output", type=Path)
+    parser.add_argument("--coordinated", action="store_true")
+    parser.add_argument("--source-only", action="store_true")
     args = parser.parse_args()
     project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
     version = project["version"]
@@ -55,6 +57,33 @@ def main() -> None:
     if sha != os.environ.get("GITHUB_SHA"):
         raise ValueError("Checkout must equal the dispatched tag commit")
     validate_run(github(f"actions/runs/{args.run_id}"), sha, "ci.yml")
+    if args.coordinated:
+        jobs = github(f"actions/runs/{args.run_id}/jobs?per_page=100")["jobs"]
+        expected_jobs = {
+            "distributions",
+            "release-delivery",
+            *(
+                f"release-target ({system}, {python})"
+                for system, python in (
+                    ("ubuntu-latest", "3.11"),
+                    ("ubuntu-latest", "3.12"),
+                    ("ubuntu-latest", "3.13"),
+                    ("ubuntu-latest", "3.14"),
+                    ("macos-latest", "3.11"),
+                    ("macos-latest", "3.14"),
+                )
+            ),
+        }
+        for name in expected_jobs:
+            selected_jobs = [job for job in jobs if job["name"] == name]
+            if len(selected_jobs) != 1 or selected_jobs[0]["conclusion"] != "success":
+                raise ValueError(f"Missing coordinated qualification: {name}")
+        for name in ("oci", "attest", "mcp"):
+            plugin = tomllib.loads(Path("plugins", name, "pyproject.toml").read_text())[
+                "project"
+            ]
+            if plugin["version"] != version:
+                raise ValueError("Uncoordinated distribution versions")
     verified_runs = {}
     for workflow in ("security.yml", "mkdocs.yaml"):
         runs = github(
@@ -66,22 +95,28 @@ def main() -> None:
         selected = max(runs, key=lambda run: run["id"])
         validate_run(selected, sha, workflow)
         verified_runs[workflow] = int(selected["id"])
-    try:
-        urllib.request.urlopen(
-            f"https://pypi.org/pypi/{project['name']}/{version}/json", timeout=30
-        ).close()
-    except urllib.error.HTTPError as error:
-        if error.code != 404:
-            raise
-    else:
-        raise ValueError(
-            "Version already exists on PyPI; never overwrite or skip existing files"
-        )
+    if not args.source_only:
+        try:
+            urllib.request.urlopen(
+                f"https://pypi.org/pypi/{project['name']}/{version}/json", timeout=30
+            ).close()
+        except urllib.error.HTTPError as error:
+            if error.code != 404:
+                raise
+        else:
+            raise ValueError(
+                "Version already exists on PyPI; never overwrite or skip existing files"
+            )
     if args.github_output:
         with args.github_output.open("a") as output:
             output.write(f"security_run_id={verified_runs['security.yml']}\n")
     print(
-        f"Verified {version}, {sha}, CI run {args.run_id}, Security, Documentation, and unused PyPI version"
+        f"Verified {version}, {sha}, CI run {args.run_id}, Security, Documentation"
+        + (
+            "; public artifact comparison required"
+            if args.source_only
+            else ", and unused PyPI version"
+        )
     )
 
 

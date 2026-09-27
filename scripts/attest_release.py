@@ -151,10 +151,14 @@ def main() -> None:
     shutil.copytree(ROOT / ".attest/trust", workspace / ".attest/trust")
     distributions = copy_files(args.dist, workspace / "delivery/dist")
     evidence = copy_files(args.evidence, workspace / "delivery/evidence")
+    version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
+    expected_distributions = {
+        name + "-" + version + suffix
+        for name in ("outerspace_apizr", "apizr_oci", "apizr_attest", "apizr_mcp")
+        for suffix in ("-py3-none-any.whl", ".tar.gz")
+    }
     if (
-        len(distributions) != 2
-        or sum(name.endswith(".whl") for name in distributions) != 1
-        or sum(name.endswith(".tar.gz") for name in distributions) != 1
+        set(distributions) != expected_distributions
         or "ci-evidence.tar.gz" not in evidence
         or "build-provenance.sigstore.json" not in evidence
     ):

@@ -4,7 +4,7 @@
     {
       "plugin": {
         "name": "apizr-oci",
-        "version": "0.0.0",
+        "version": "0.4.0",
         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "dependencies": [
@@ -63,7 +63,7 @@
     {
       "plugin": {
         "name": "apizr-oci",
-        "version": "0.0.0",
+        "version": "0.4.0",
         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "dependencies": [
@@ -109,7 +109,7 @@
     {
       "plugin": {
         "name": "apizr-attest",
-        "version": "0.0.0",
+        "version": "0.4.0",
         "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "dependencies": [
@@ -120,7 +120,7 @@
           },
           {
             "name": "apizr-oci",
-            "version": "0.0.0",
+            "version": "0.4.0",
             "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
           },
           {
@@ -160,7 +160,7 @@
     {
       "plugin": {
         "name": "apizr-attest",
-        "version": "0.0.0",
+        "version": "0.4.0",
         "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "dependencies": [
@@ -171,7 +171,7 @@
           },
           {
             "name": "apizr-oci",
-            "version": "0.0.0",
+            "version": "0.4.0",
             "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
           },
           {

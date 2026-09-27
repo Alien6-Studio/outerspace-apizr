@@ -94,6 +94,7 @@ nav:
   - Getting started:
       - Quickstart: getting-started/quickstart.md
       - The full journey: getting-started/introduction.md
+      - Migrate from 0.3 to 0.4: getting-started/migrate-0.4.md
   - Guides:
       - Compilation and interfaces:
           - Inventory a Python project: getting-started/user-guide/scan.md
@@ -121,7 +122,7 @@ nav:
       - Commands, parameters and formats: reference/index.md
       - Python compiler API (0.4): reference/compiler-api.md
       - Extension invocation API (0.4): reference/extension-invocation.md
-      - Operator publication policy (0.4): reference/operator-policy.md
+      - Operator permissions (0.4): reference/operator-policy.md
       - Compatibility notes: getting-started/developer-guide/releases.md
   - Architecture:
       - Capability Compiler overview: architecture/overview.md
@@ -162,7 +163,8 @@ nav:
       - Pipeline plugins: getting-started/developer-guide/plugins.md
       - Behavior contract: architecture/legacy-behavior-contract.md
   - Releases:
-      - 0.4 in development — unreleased: development/0.4.md
+      - 0.4.0 — release preparation: releases/0.4.0.md
+      - Evaluate 0.4 — unreleased: development/0.4.md
       - 0.3.0: releases/0.3.0.md
       - 0.2.1: releases/0.2.1.md
       - 0.2.0: releases/0.2.0.md

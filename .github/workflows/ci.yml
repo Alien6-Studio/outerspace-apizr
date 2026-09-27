@@ -10,6 +10,128 @@ permissions:
   contents: read
 
 jobs:
+  distributions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: '3.14'
+      - run: uv sync --locked
+      - name: Build the four candidate wheels and sdists exactly once
+        run: |
+          uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/candidate"
+          uv run --locked python scripts/check_distribution.py "$RUNNER_TEMP/candidate/dist" --coordinated --manifest "$RUNNER_TEMP/candidate/SHA256SUMS.json"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: python-distributions
+          path: ${{ runner.temp }}/candidate/dist/*
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: distribution-checksums
+          path: ${{ runner.temp }}/candidate/SHA256SUMS.json
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-candidate
+          path: ${{ runner.temp }}/candidate/
+          if-no-files-found: error
+          retention-days: 90
+
+  release-target:
+    needs: distributions
+    timeout-minutes: 35
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: '3.11'}
+          - {os: ubuntu-latest, python: '3.12'}
+          - {os: ubuntu-latest, python: '3.13'}
+          - {os: ubuntu-latest, python: '3.14'}
+          - {os: macos-latest, python: '3.11'}
+          - {os: macos-latest, python: '3.14'}
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Set isolated candidate paths
+        run: |
+          echo "APIZR_RELEASE_SET=$RUNNER_TEMP/candidate" >> "$GITHUB_ENV"
+          echo "APIZR_RELEASE_TARGET=$RUNNER_TEMP/target" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: ${{ matrix.python }}
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-candidate
+          path: ${{ runner.temp }}/candidate
+      - name: Prepare disposable SSH prerequisites
+        if: runner.os == 'Linux'
+        run: |
+          if ! test -x /usr/sbin/sshd; then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends openssh-server
+          fi
+          sudo install -d -m 755 /run/sshd
+      - run: uv sync --locked
+      - name: Export locked dependency closures and catalog for this exact target
+        run: uv run --locked python scripts/coordinated_distributions.py target --candidate "$APIZR_RELEASE_SET" --output "$APIZR_RELEASE_TARGET"
+      - name: pip, uv, pipx, extras, Git, migration and profile installation
+        run: uv run --locked python scripts/qualify_distributions.py --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/qualification"
+      - name: Real MCP sessions from the same candidate bytes
+        run: |
+          uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-candidate"
+          uv run --locked python scripts/run_catalog_offline_proof.py "$RUNNER_TEMP/mcp-candidate"
+          "$RUNNER_TEMP/mcp-candidate/client/bin/python" -B scripts/mcp_uninstall_proof.py "$RUNNER_TEMP/mcp-candidate"
+      - name: Archive installable export without installed environments
+        if: always()
+        run: |
+          if test -d "$APIZR_RELEASE_TARGET"; then
+            tar -czf "$RUNNER_TEMP/target-export.tar.gz" -C "$APIZR_RELEASE_TARGET" .
+          fi
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: release-target-${{ matrix.os }}-${{ matrix.python }}
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/target-export.tar.gz
+            ${{ runner.temp }}/qualification/
+            ${{ runner.temp }}/mcp-candidate/*.json
+            ${{ runner.temp }}/mcp-candidate/*.log
+
+  release-delivery:
+    needs: distributions
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Set isolated candidate paths
+        run: |
+          echo "APIZR_RELEASE_SET=$RUNNER_TEMP/candidate" >> "$GITHUB_ENV"
+          echo "APIZR_RELEASE_TARGET=$RUNNER_TEMP/target" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-candidate
+          path: ${{ runner.temp }}/candidate
+      - name: Same candidates through build, TLS push, signing, timestamp and offline proof
+        run: python3 scripts/smoke_oci_registry.py --artifacts --output "$RUNNER_TEMP/candidate-delivery"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: release-delivery
+          retention-days: 90
+          if-no-files-found: error
+          path: ${{ runner.temp }}/candidate-delivery/
+
   quality:
     runs-on: ubuntu-latest
     steps:
@@ -146,6 +268,7 @@ jobs:
           retention-days: 90
 
   package:
+    needs: distributions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -162,15 +285,18 @@ jobs:
           fi
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
-      - run: uv build
-      - run: uv run --locked python scripts/check_distribution.py dist --manifest SHA256SUMS.json
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: python-distributions
+          path: dist
+      - run: uv run --locked python scripts/check_distribution.py dist --coordinated --manifest SHA256SUMS.json
       - name: Verify minimal and optional installed-wheel dependency paths
         run: |
-          uv run --locked python scripts/smoke_installations.py dist/*.whl
-          uv run --locked python scripts/smoke_installations.py dist/*.whl --python 3.11
-      - run: uv run --locked python scripts/smoke_wheel.py dist/*.whl
+          uv run --locked python scripts/smoke_installations.py dist/outerspace_apizr-*.whl
+          uv run --locked python scripts/smoke_installations.py dist/outerspace_apizr-*.whl --python 3.11
+      - run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl
       - name: Check the same wheel on the oldest supported Python
-        run: uv run --locked python scripts/smoke_wheel.py dist/*.whl --python 3.11
+        run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --python 3.11
       - name: Preserve source, lock and dependency SBOMs
         run: uv run --locked python scripts/build_evidence.py
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -179,18 +305,6 @@ jobs:
           path: release-evidence/
           if-no-files-found: error
           retention-days: 90
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: python-distributions
-          path: dist/*
-          if-no-files-found: error
-          retention-days: 30
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: distribution-checksums
-          path: SHA256SUMS.json
-          if-no-files-found: error
-          retention-days: 30
 
   container:
     runs-on: ubuntu-latest
@@ -210,6 +324,7 @@ jobs:
       - run: uv run --locked python scripts/smoke_container.py --python-version "${{ matrix.python }}"
 
   oci-isolation:
+    needs: distributions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -238,9 +353,12 @@ jobs:
           docker info --format 'Docker={{.ServerVersion}} cgroup_driver={{.CgroupDriver}} cgroup_version={{.CgroupVersion}}'
           test "$(docker info --format '{{.CgroupDriver}}')" = cgroupfs
       - run: uv sync --locked
-      - run: uv build
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: python-distributions
+          path: dist
       - name: Deliberately build local fixture worker image
-        run: uv run --locked python scripts/build_worker_image.py dist/*.whl --output /tmp/apizr-worker-image.json
+        run: uv run --locked python scripts/build_worker_image.py dist/outerspace_apizr-*.whl --output /tmp/apizr-worker-image.json
       - name: Exercise actual Linux container boundaries
         env:
           APIZR_TEST_OCI_IMAGE: /tmp/apizr-worker-image.json
@@ -256,7 +374,7 @@ jobs:
       - run: uv run --locked coverage report --include='src/apizr/repository_execution/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/governed_repository/*' --fail-under=90
       - name: Installed wheel supports explicit OCI execution
-        run: uv run --locked python scripts/smoke_wheel.py dist/*.whl --runtime-image-config /tmp/apizr-worker-image.json
+        run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --runtime-image-config /tmp/apizr-worker-image.json
       - name: Assert no invocation containers remain
         if: always()
         run: test -z "$(docker ps -aq --filter label=org.apizr.execution=oci-v1)"
@@ -268,12 +386,14 @@ jobs:
             oci-tests.xml
             oci-repeated.xml
             oci-coverage.json
+            /tmp/apizr-worker-image.json
+            /tmp/apizr-worker-image.inventory.json
           if-no-files-found: error
           retention-days: 90
 
   provenance:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations]
+    needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations, release-target, release-delivery]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -297,6 +417,10 @@ jobs:
         with:
           name: security-mutation-evidence
           path: evidence/security-mutations
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: release-*
+          path: evidence/coordinated
       - name: Archive validation evidence with the exact build inputs
         run: |
           mkdir attestations
@@ -310,7 +434,7 @@ jobs:
       - uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3
         id: sbom
         with:
-          subject-path: dist/*
+          subject-path: dist/outerspace_apizr-*
           sbom-path: evidence/sbom-runtime.cdx.json
       - name: Name the verifiable bundles
         env:

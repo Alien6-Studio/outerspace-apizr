@@ -9,14 +9,17 @@ had the additional controls described below.
 
 A successful protected `master` build produces:
 
-- The tested wheel and sdist, plus `SHA256SUMS.json`.
+- For coordinated 0.4.0 candidates: four tested wheels and four sdists, plus
+  `SHA256SUMS.json` and the commit-bound candidate inventory. Earlier releases
+  contain the core wheel/sdist pair only.
 - `ci-evidence.tar.gz`: exact source archive (including tests and workflows),
   `uv.lock`, project configuration, checksums, build environment details, runtime
   and validation CycloneDX SBOMs, JUnit results, branch coverage and mutation reports.
 - `build-provenance.sigstore.json`: signed GitHub build provenance binding the
-  two distributions and evidence archive to their source commit and CI run.
+  distributions and evidence archive to their source commit and CI run.
 - `runtime-sbom.sigstore.json`: a signed statement binding the runtime SBOM to
-  both distributions. SBOMs represent the **universal locked resolution**, including
+  core wheel and sdist. Plugin dependency identities are recorded separately in
+  target-specific wheelhouses, requirements and catalog inventories. SBOMs represent the **universal locked resolution**, including
   Python/platform alternatives; a user's installed dependency graph can differ.
 - The separately audited dependency report from the successful Security run on
   the same commit.
@@ -52,7 +55,7 @@ gh attestation verify outerspace_apizr-VERSION-py3-none-any.whl \
   --source-digest EXPECTED_COMMIT --source-ref refs/heads/master
 ```
 
-Repeat for the sdist and `ci-evidence.tar.gz`. The attestation verifies the subject
+Repeat for every distribution in that release and `ci-evidence.tar.gz`. The attestation verifies the subject
 hash, signing identity and source revision. Compare the distribution hashes with
 `SHA256SUMS.json` and the public PyPI metadata as a separate consistency check.
 A self-computed hash alone does not establish the producer's identity.
@@ -69,8 +72,10 @@ uv run --locked --group docs mkdocs build --strict
 
 Use the Python and uv versions recorded in `build-evidence.json`. The dedicated
 OCI suite additionally needs the Linux Docker configuration and deliberately built
-worker image in the archived CI workflow. OCI tests validate the same source
-revision; their separately built image is not the published wheel's binary identity.
+worker image in the archived CI workflow. Coordinated qualification builds this
+image from the retained core wheel and records its role, wheel hash and image/config
+digest in `validation-oci`. That digest identifies a disposable worker image, not
+a published registry manifest or a generated user service.
 Do not count the repeated OCI samples as additional distinct test cases.
 
 ## Coverage and mutation controls

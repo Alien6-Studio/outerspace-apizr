@@ -429,7 +429,7 @@ uv run --locked python scripts/smoke_extension_packaging.py \
 
 ## Portable project locks and local preferences
 
-Development 0.4 adds [project declarations, explicit user preferences and portable artifact locks](project-plugin-locks.md). Use `plugins lock create/check` to validate artifacts and `plugins sync --project apizr.toml --lock apizr.plugins.lock.json --wheelhouse ./wheels --dry-run --json` to preview additive installation. Remove `--dry-run` to install the missing versions explicitly. `--user-config` selects local store preferences on all plugin commands and `mcp serve`; explicit `--plugins-dir` takes precedence. Neither project declarations nor locks activate anything. Synchronization keeps existing versions and activations; removal remains future work. See the linked page for partial results, resuming, cancellation and installed-wheel proofs.
+Development 0.4 adds [project declarations, explicit user preferences and portable artifact locks](project-plugin-locks.md). Use `plugins lock create/check` to validate artifacts and `plugins sync --project apizr.toml --lock apizr.plugins.lock.json --wheelhouse ./wheels --dry-run --json` to preview additive installation. Remove `--dry-run` to install the missing versions explicitly. `--user-config` selects local store preferences on all plugin commands and `mcp serve`; explicit `--plugins-dir` takes precedence. Neither project declarations nor locks activate anything. Synchronization keeps existing versions and activations; [uninstall](#remove-one-unused-version) is a separate explicit operation. See the linked page for partial results, resuming, cancellation and installed-wheel proofs.
 
 ## Controlled locked updates
 
@@ -618,7 +618,7 @@ transition/repetition with uv absent, explicit rollback, original-environment an
 core file/distribution equality. OS network isolation covers Python and uv children.
 Concurrent activation races, interruption reconciliation and in-flight calls are
 also covered by explicitly synchronized tests. No Homebrew changes are needed on
-the developer machine. Catalogue and automatic selection/download remain separate work; `--activate` is not a general permission engine.
+the developer machine. [Catalog preparation](plugin-catalog.md) remains explicit; there is no automatic version selection or update. `--activate` is not a general permission engine.
 
 ## Remove one unused version
 

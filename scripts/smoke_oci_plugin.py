@@ -16,6 +16,7 @@ import zipfile
 from email.parser import BytesParser
 from pathlib import Path
 
+from coordinated_distributions import copy_closure
 from operator_policy_proof import refuse, write_build_policy, write_policy
 from smoke_extension_packaging import snapshot
 from smoke_git_source import exercise as git_bundles
@@ -269,23 +270,26 @@ def main():
     platform = base_info["Os"] + "/" + base_info["Architecture"]
     house = work / "plugin-wheels"
     house.mkdir()
-    command("uv", "build", "--wheel", REPO, "--out-dir", house)
-    command("uv", "build", "--wheel", REPO / "plugins/oci", "--out-dir", house)
+    retained = copy_closure("oci", house)
+    if not retained:
+        command("uv", "build", "--wheel", REPO, "--out-dir", house)
+        command("uv", "build", "--wheel", REPO / "plugins/oci", "--out-dir", house)
     core = next(house.glob("outerspace_apizr-*.whl"))
     plugin = next(house.glob("apizr_oci-*.whl"))
     preparation = work / "preparation"
     command("uv", "venv", "--seed", "--python", sys.executable, preparation)
-    command(
-        preparation / "bin/python",
-        "-m",
-        "pip",
-        "download",
-        "--only-binary=:all:",
-        "--dest",
-        house,
-        core,
-        plugin,
-    )
+    if not retained:
+        command(
+            preparation / "bin/python",
+            "-m",
+            "pip",
+            "download",
+            "--only-binary=:all:",
+            "--dest",
+            house,
+            core,
+            plugin,
+        )
     plugin_lock = work / "plugin.lock"
     lock_wheels(house, plugin_lock)
     core_env = work / "core"
@@ -355,7 +359,7 @@ def main():
     assert not json.loads(
         cli("plugins", "list", "--active", "--json", "--plugins-dir", store)
     )["installations"]
-    cli("plugins", "enable", "apizr-oci", "--version", "0.0.0", "--plugins-dir", store)
+    cli("plugins", "enable", "apizr-oci", "--version", "0.4.0", "--plugins-dir", store)
     # Existing proof: real HTTPS repository, verified TLS, exact commit, four commands.
     old = os.environ.get("PYTHONDONTWRITEBYTECODE")
     os.environ["PYTHONDONTWRITEBYTECODE"] = "1"

@@ -25,10 +25,12 @@ Your business logic stays in Python.
 
 **Latest published stable: 0.3.0 · Released 22 September 2026**
 
-**Preparing 0.4 — not released.** Use the stable Quickstart above for your first
-server. The [0.4 development guide](development/0.4.md) covers the compiler API,
-project files, remote Git, isolated plugins and OCI/Attest delivery; those features
-are not in stable 0.3.0. Python 3.11–3.14 · GPL-3.0-or-later.
+**Preparing 0.4.0 — not released.** Use the stable Quickstart above for your first
+server. Read [what changes in 0.4.0](releases/0.4.0.md) and
+[how to migrate](getting-started/migrate-0.4.md), including explicit source access
+and the MCP result fix. The [development installation](development/0.4.md) lets
+you evaluate remote Git, isolated plugins and OCI/Attest delivery before the
+release; those additions are not in stable 0.3.0. Python 3.11–3.14 · GPL-3.0-or-later.
 
   <section class="apizr-demo-section md-typeset" aria-labelledby="watch-apizr-in-action">
     <div class="apizr-demo-section__inner">

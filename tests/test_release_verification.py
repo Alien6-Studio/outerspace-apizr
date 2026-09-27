@@ -171,12 +171,30 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
             next(item for item in verify_downloads if item["name"] == name)["run-id"]
             == "${{ inputs.ci_run_id }}"
         )
-    assert jobs["publish"]["steps"][0]["with"]["name"] == "verified-distributions"
+    assert jobs["publish"]["steps"][0]["with"]["name"] == "pending-distributions"
+    staging = next(
+        step for step in jobs["verify"]["steps"] if step.get("id") == "public"
+    )
+    assert "scripts/prepare_publication.py --dist dist" in staging["run"]
+    publishers = [
+        step
+        for step in jobs["publish"]["steps"]
+        if step.get("uses", "").startswith("pypa/")
+    ]
+    assert [step["with"]["packages-dir"] for step in publishers] == [
+        "pending/outerspace-apizr/",
+        "pending/apizr-oci/",
+        "pending/apizr-mcp/",
+        "pending/apizr-attest/",
+    ]
+    assert all("skip-existing" not in step["with"] for step in publishers)
+    assert jobs["verify-public"]["needs"] == "publish"
+    assert jobs["archive-evidence"]["needs"] == "verify-public"
     provenance = next(
         step
         for step in jobs["verify"]["steps"]
         if step.get("name")
-        == "Verify build provenance for both distributions and validation archive"
+        == "Verify build provenance for all distributions and validation archive"
     )
     assert (
         "--source-digest" in provenance["run"]
@@ -189,3 +207,63 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
     )
     assert "APIZR_ATTEST_SIGNING_KEY" in receipt["env"]
     assert "scripts/attest_release.py" in receipt["run"]
+
+
+@pytest.mark.parametrize(
+    "fault", [None, "missing", "pending", "failed", "duplicate", "version"]
+)
+def test_coordinated_release_requires_every_exact_target(tmp_path, monkeypatch, fault):
+    import sys
+
+    for folder in [
+        tmp_path,
+        *(tmp_path / "plugins" / name for name in ("oci", "attest", "mcp")),
+    ]:
+        folder.mkdir(parents=True, exist_ok=True)
+        version = "0.3.0" if fault == "version" and folder.name == "mcp" else "0.4.0"
+        (folder / "pyproject.toml").write_text(
+            f'[project]\nname="outerspace-apizr"\nversion="{version}"\n'
+        )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GITHUB_REF", "refs/tags/v0.4.0")
+    monkeypatch.setenv("GITHUB_SHA", "abc")
+    monkeypatch.setattr(
+        sys, "argv", ["verify", "--run-id", "123", "--coordinated", "--source-only"]
+    )
+    monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
+    names = ["distributions", "release-delivery"] + [
+        f"release-target ({system}, {python})"
+        for system, versions in [
+            ("ubuntu-latest", ["3.11", "3.12", "3.13", "3.14"]),
+            ("macos-latest", ["3.11", "3.14"]),
+        ]
+        for python in versions
+    ]
+    jobs = [{"name": name, "conclusion": "success"} for name in names]
+    if fault == "missing":
+        jobs.pop()
+    elif fault == "pending":
+        jobs[-1]["conclusion"] = None
+    elif fault == "failed":
+        jobs[-1]["conclusion"] = "failure"
+    elif fault == "duplicate":
+        jobs.append(jobs[-1])
+
+    def github(path):
+        if "/jobs?" in path:
+            return {"jobs": jobs}
+        if path == "actions/runs/123":
+            return valid_run()
+        workflow = path.split("/")[2]
+        return {
+            "workflow_runs": [
+                {**valid_run(), "id": 10, "path": ".github/workflows/" + workflow}
+            ]
+        }
+
+    monkeypatch.setattr(release, "github", github)
+    if fault:
+        with pytest.raises(ValueError):
+            release.main()
+    else:
+        release.main()

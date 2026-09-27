@@ -1,5 +1,12 @@
 # Inventory a Python project
 
+!!! note "Stable 0.3.0 examples and development 0.4"
+
+    The commands below use the published 0.3.0 syntax. On a 0.4 development wheel,
+    add `--operator-policy operator.json` with an exact `source.analyze` grant.
+    See the [complete migration example](../migrate-0.4.md#authorize-a-local-repository).
+    Missing authority returns a structured refusal with exit 2 before source reads.
+
 `apizr scan` discovers Python files under explicit source roots, derives stable
 logical module names and reuses single-source inspection. It does not import or
 execute project code, install packages, use Git or access the network. Filesystem

@@ -39,7 +39,7 @@ prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
   -r dependencies.txt
 uv venv --no-python-downloads --python python3 core
 uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.3.0-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.0-py3-none-any.whl
 ```
 
 Record one exact version and SHA-256 per distribution, including the plugin,
@@ -63,16 +63,16 @@ for wheel in sorted(Path("wheels").glob("*.whl")):
     lines.append(f"{metadata['Name']}=={metadata['Version']} --hash=sha256:{digest}\n")
 Path("plugin.lock").write_text("".join(lines))
 PY
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/apizr_mcp-0.0.0-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/apizr_mcp-0.0.0-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/apizr_mcp-0.4.0-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/apizr_mcp-0.4.0-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable apizr-mcp --version 0.0.0 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable apizr-mcp --version 0.4.0 --plugins-dir "$work/plugins"
 ```
 
 Installation alone leaves the plugin inactive. The existing [locked installation
 rules](local-extensions.md) apply. The plugin's development version remains
-`0.0.0`; this is not a package published on PyPI. No installer runs at server
+`0.4.0`; this is not a package published on PyPI. No installer runs at server
 startup. A missing, inactive, inconsistent or missing-interpreter installation
 is refused without repair.
 

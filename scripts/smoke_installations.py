@@ -9,6 +9,7 @@ import tempfile
 from collections.abc import Callable
 from pathlib import Path
 
+from coordinated_distributions import target_root
 from operator_policy_proof import refuse_analysis, write_analysis_policy
 from smoke_git_source import exercise as git_example
 from smoke_git_ssh import exercise as ssh_example
@@ -112,6 +113,7 @@ def main():
     parser.add_argument("--python", default=sys.executable)
     args = parser.parse_args()
     wheel = args.wheel.resolve()
+    retained_target = target_root()
     with tempfile.TemporaryDirectory(prefix="apizr-installations-") as directory:
         root = Path(directory).resolve()
         source = root / "repository"
@@ -164,6 +166,16 @@ def main():
                     "--quiet",
                     "--python",
                     str(python),
+                    *(
+                        [
+                            "--offline",
+                            "--no-index",
+                            "--find-links",
+                            str(retained_target / "extras"),
+                        ]
+                        if retained_target
+                        else []
+                    ),
                     requirement,
                 ],
                 check=True,

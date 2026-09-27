@@ -1,5 +1,47 @@
 # Changelog
 
+## 0.4.0 — Unreleased
+
+Release documentation is prepared; official distributions and publication remain
+to be finalized. See the [0.4.0 notes](https://apizr.outerspace.sh/releases/0.4.0/)
+and [migration guide](https://apizr.outerspace.sh/getting-started/migrate-0.4/).
+
+### Added
+
+- Shared Python compiler operations and explicit `apizr.toml` configuration.
+- HTTPS and SSH Git snapshots with explicit revisions, trust and bounded static
+  source export; Git remains part of the minimal core.
+- Isolated extension invocation, local/HTTPS installation with hashes, locked
+  local dependencies, activation, invocation, removal and controlled updates.
+- Project plugin declarations/locks, additive synchronization and catalog profiles.
+- Optional local MCP analysis/planning, OCI service image build/push and Attest
+  delivery signing, verification and OCI-linked proof transport.
+- Independent operator grants for Git acquisition, source analysis, image
+  construction, delivery signing and publication across managed entry points.
+
+### Changed
+
+- Repository filesystem analysis now requires an explicit `source.analyze` grant
+  in CLI/Python and MCP. Fetching a Git snapshot does not grant analysis access.
+- MCP analysis sessions retain captured scope and authority; policy changes need
+  a restart. Project declarations and plugin activation grant no permissions.
+
+### Fixed
+
+- Generated MCP servers return object-valued `structuredContent` for every result
+  shape, including scalars, arrays and null. Regenerate existing bundles to apply
+  the fix; REST and Python result values remain unchanged.
+- Process-group cleanup and explicitly synchronized descendant tests cover
+  macOS extension/Git refusals and worker recovery without weakening cleanup errors.
+
+### Compatibility and scope
+
+- Keep Python 3.11–3.14, minimal Pydantic-only core, explicit exposure selection,
+  single-source commands, historical YAML pipeline and direct/local/OCI boundaries.
+- Defer application dependencies/resources, shared manifest, multiple destinations,
+  mandatory proof and Docker Hub/Trunx qualification to 0.4.1. MCP delivery,
+  Postman, forge integrations, onboarding tools and the Homebrew tap belong to 0.4.2.
+
 ## 0.3.0 — 2026-09-22
 
 Published from `43f5626fe9e26b018aa323abd83b9611f7b2aba9`, using the exact artifacts

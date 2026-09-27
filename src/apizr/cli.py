@@ -103,10 +103,18 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print("Apizr — an open-source capability compiler for Python codebases.\n")
         print("Version: apizr --version")
         print("Local MCP analysis server (optional plugin): apizr mcp serve --help")
-        print("Extensions: apizr plugins {install,list,enable,disable,run} --help")
+        print(
+            "Extensions: apizr plugins {install,list,enable,disable,run,uninstall} --help"
+        )
+        print("Project plugins: apizr plugins {lock,sync,update,catalog} --help")
         print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
         )
+        print(
+            "Repository analysis requires --operator-policy OPERATOR.json (source.analyze)."
+        )
+        print("Git adds --git URL --ref REF and a separate git.fetch grant.")
+        print("Use --project apizr.toml for explicit local project configuration.")
         print("Discover: apizr scan ROOT [--source-root DIR] [--catalog]")
         print("Understand: apizr graph ROOT [--source-root DIR] [--graph]")
         print("Assess: apizr readiness ROOT [--policy READINESS.json] [--report]")

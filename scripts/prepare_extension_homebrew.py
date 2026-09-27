@@ -71,7 +71,7 @@ def main() -> None:
   desc "Local-only Apizr V04-01 packaging qualification"
   homepage "https://github.com/Alien6-Studio/outerspace-apizr"
   url {json.dumps(archive.as_uri())}
-  version "0.3.0"
+  version "{tomllib.loads((REPO / "pyproject.toml").read_text())["project"]["version"]}"
   sha256 "{hashlib.sha256(archive.read_bytes()).hexdigest()}"
   license "GPL-3.0-or-later"
 
@@ -87,7 +87,7 @@ def main() -> None:
   end
 
   test do
-    assert_match "outerspace-apizr 0.3.0", shell_output("#{{bin}}/apizr-v04-probe --version")
+    assert_match "outerspace-apizr {tomllib.loads((REPO / "pyproject.toml").read_text())["project"]["version"]}", shell_output("#{{bin}}/apizr-v04-probe --version")
   end
 end
 '''
