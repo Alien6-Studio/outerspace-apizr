@@ -35,7 +35,8 @@ def candidate(root, packaging):
 
 
 @pytest.mark.parametrize(
-    "fault", ["commit", "missing", "bytes", "size", "path", "duplicate", "link"]
+    "fault",
+    ["commit", "missing", "bytes", "size", "path", "duplicate", "link", "extra"],
 )
 def test_retained_set_rejects_mismatch(packaging, tmp_path, fault):
     value = candidate(tmp_path, packaging)
@@ -54,6 +55,8 @@ def test_retained_set_rejects_mismatch(packaging, tmp_path, fault):
         item["file"] = "../" + path.name
     elif fault == "duplicate":
         value["artifacts"].append(item)
+    elif fault == "extra":
+        (tmp_path / "dist/.gitignore").write_text("*")
     elif fault == "link":
         other = tmp_path / "outside"
         path.rename(other)

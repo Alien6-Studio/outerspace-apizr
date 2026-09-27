@@ -94,6 +94,12 @@ def load(root: Path) -> dict:
         manifest["artifacts"]
     ) != 8:
         raise ValueError("Expected exactly four wheels and four sdists")
+    if {path.name for path in (root / "dist").iterdir()} != expected:
+        raise ValueError("Unexpected distribution files")
+    if {item["file"] for item in manifest["artifacts"]} != {
+        "dist/" + name for name in expected
+    }:
+        raise ValueError("Unexpected distribution paths")
     verify_records(root, manifest["artifacts"])
     return manifest
 
@@ -131,7 +137,8 @@ def build(output: Path) -> None:
                 reconstructed,
                 cwd=source,
             )
-            for path in archives.iterdir():
+            for filename in checksums:
+                path = archives / filename
                 shutil.copyfile(path, dist / path.name)
             reports.append(
                 {
