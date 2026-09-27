@@ -164,7 +164,7 @@ def main():
         "--plugins-dir",
         store,
     )
-    cli("enable", "apizr-attest", "--version", "0.0.0", "--plugins-dir", store)
+    cli("enable", "apizr-attest", "--version", "0.4.0", "--plugins-dir", store)
     common = record["common"] | {"trust_store": str(root / "trust")}
     transport = record["transport"] | {
         "authentication": {

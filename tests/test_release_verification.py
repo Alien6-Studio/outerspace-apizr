@@ -171,7 +171,25 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
             next(item for item in verify_downloads if item["name"] == name)["run-id"]
             == "${{ inputs.ci_run_id }}"
         )
-    assert jobs["publish"]["steps"][0]["with"]["name"] == "verified-distributions"
+    assert jobs["publish"]["steps"][0]["with"]["name"] == "pending-distributions"
+    staging = next(
+        step for step in jobs["verify"]["steps"] if step.get("id") == "public"
+    )
+    assert "scripts/prepare_publication.py --dist dist" in staging["run"]
+    publishers = [
+        step
+        for step in jobs["publish"]["steps"]
+        if step.get("uses", "").startswith("pypa/")
+    ]
+    assert [step["with"]["packages-dir"] for step in publishers] == [
+        "pending/outerspace-apizr/",
+        "pending/apizr-oci/",
+        "pending/apizr-mcp/",
+        "pending/apizr-attest/",
+    ]
+    assert all("skip-existing" not in step["with"] for step in publishers)
+    assert jobs["verify-public"]["needs"] == "publish"
+    assert jobs["archive-evidence"]["needs"] == "verify-public"
     provenance = next(
         step
         for step in jobs["verify"]["steps"]

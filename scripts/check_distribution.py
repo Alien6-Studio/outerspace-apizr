@@ -5,7 +5,9 @@ import email.parser
 import hashlib
 import json
 import re
+import shutil
 import tarfile
+import tempfile
 import tomllib
 import zipfile
 from pathlib import Path
@@ -15,9 +17,12 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
     project = tomllib.loads((project_root / "pyproject.toml").read_text())["project"]
     readme = (project_root / project["readme"]).read_text()
     artifacts = sorted(p for p in directory.iterdir() if p.name != ".gitignore")
+    stem = project["name"].replace("-", "_")
+    core = stem == "outerspace_apizr"
+    package = "apizr" if core else stem
     expected = {
-        f"outerspace_apizr-{project['version']}-py3-none-any.whl",
-        f"outerspace_apizr-{project['version']}.tar.gz",
+        f"{stem}-{project['version']}-py3-none-any.whl",
+        f"{stem}-{project['version']}.tar.gz",
     }
     assert {p.name for p in artifacts} == expected, "Expected exactly wheel and sdist"
     for link in re.findall(r"\]\(([^)]+)\)", readme):
@@ -30,13 +35,25 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
             metadata_key = next(n for n in files if n.endswith(".dist-info/METADATA"))
             assert all(
                 n.startswith(
-                    ("apizr/", f"outerspace_apizr-{project['version']}.dist-info/")
+                    (
+                        package + "/",
+                        f"{stem}-{project['version']}.dist-info/",
+                        *(() if core else ("apizr-extension.json",)),
+                    )
                 )
                 for n in files
             )
             assert any(n.endswith("/licenses/LICENSE") for n in files)
-            assert "apizr/generators/rest/templates/preamble.txt" in files
-            assert "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2" in files
+            if core:
+                assert "apizr/generators/rest/templates/preamble.txt" in files
+                assert (
+                    "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2"
+                    in files
+                )
+            else:
+                assert json.loads(files["apizr-extension.json"]) == json.loads(
+                    (project_root / "apizr-extension.json").read_bytes()
+                )
         else:
             with tarfile.open(artifact) as archive:
                 files = {}
@@ -56,26 +73,38 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
                 "PKG-INFO",
                 ".gitignore",  # Hatchling includes its standard VCS exclusion file.
             }
-            assert all(n.startswith("src/apizr/") or n in allowed for n in files)
+            if not core:
+                allowed.add("apizr-extension.json")
+                assert json.loads(files["apizr-extension.json"]) == json.loads(
+                    (project_root / "apizr-extension.json").read_bytes()
+                )
+            assert all(
+                n.startswith("src/" + package + "/") or n in allowed for n in files
+            )
             assert files["README.md"].decode() == readme
-            assert "src/apizr/generators/rest/templates/preamble.txt" in files
+            if core:
+                assert "src/apizr/generators/rest/templates/preamble.txt" in files
             assert "LICENSE" in files
         prefix = "" if artifact.suffix == ".whl" else "src/"
         for required in (
-            "apizr/exposure/planner.py",
-            "apizr/repository_interfaces/generator.py",
-            "apizr/repository_interfaces/runtime.py",
-            "apizr/repository_interfaces/rest_runtime.py",
-            "apizr/repository_interfaces/mcp_runtime.py",
-            "apizr/repository_execution/worker.py",
-            "apizr/repository_execution/entrypoint.py",
-            "apizr/governed_repository/embedding.py",
-            "apizr/governed_repository/runtime.py",
-            "apizr/subprocess_guard/filter.py",
-            "apizr/subprocess_guard/entrypoint.py",
-            "apizr/subprocess_guard/repository_entrypoint.py",
-            "apizr/optional.py",
-            "apizr/extensions/plugins/api.py",
+            (
+                "apizr/exposure/planner.py",
+                "apizr/repository_interfaces/generator.py",
+                "apizr/repository_interfaces/runtime.py",
+                "apizr/repository_interfaces/rest_runtime.py",
+                "apizr/repository_interfaces/mcp_runtime.py",
+                "apizr/repository_execution/worker.py",
+                "apizr/repository_execution/entrypoint.py",
+                "apizr/governed_repository/embedding.py",
+                "apizr/governed_repository/runtime.py",
+                "apizr/subprocess_guard/filter.py",
+                "apizr/subprocess_guard/entrypoint.py",
+                "apizr/subprocess_guard/repository_entrypoint.py",
+                "apizr/optional.py",
+                "apizr/extensions/plugins/api.py",
+            )
+            if core
+            else (package + "/__init__.py",)
         ):
             assert prefix + required in files, required
         for name, data in files.items():
@@ -95,10 +124,13 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
             "Description-Content-Type": "text/markdown",
         }.items():
             assert metadata[key] == value, (key, metadata[key], value)
-        assert set(metadata.get_all("Classifier", [])) == set(project["classifiers"])
-        assert set(str(metadata["Keywords"]).split(",")) == set(project["keywords"])
+        assert set(metadata.get_all("Classifier", [])) == set(
+            project.get("classifiers", [])
+        )
+        if core:
+            assert set(str(metadata["Keywords"]).split(",")) == set(project["keywords"])
         assert set(metadata.get_all("Project-URL", [])) == {
-            f"{k}, {v}" for k, v in project["urls"].items()
+            f"{k}, {v}" for k, v in project.get("urls", {}).items()
         }
         from packaging.specifiers import SpecifierSet
 
@@ -126,6 +158,24 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
         assert {
             Requirement(v) for v in metadata.get_all("Requires-Dist", [])
         } == expected_requirements
+        if artifact.suffix == ".whl":
+            import configparser
+
+            key = f"{stem}-{project['version']}.dist-info/entry_points.txt"
+            entries = configparser.ConfigParser()
+            if key in files:
+                entries.read_string(files[key].decode())
+            actual = (
+                dict(entries["console_scripts"])
+                if entries.has_section("console_scripts")
+                else {}
+            )
+            assert actual == project.get("scripts", {}), "Unexpected entry points"
+        if not core:
+            manifest = json.loads(files["apizr-extension.json"])
+            assert manifest["name"] == project["name"]
+            assert manifest["version"] == project["version"]
+            assert manifest["protocol"] == "apizr.extension/v1"
         payload = metadata.get_payload()
         assert isinstance(payload, str)
         assert payload.strip() == readme.strip()
@@ -136,12 +186,40 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
     return digests
 
 
+def check_coordinated(directory: Path, project_root: Path) -> dict[str, str]:
+    projects = [
+        project_root,
+        *(project_root / "plugins" / name for name in ("oci", "attest", "mcp")),
+    ]
+    digests = {}
+    version = tomllib.loads((project_root / "pyproject.toml").read_text())["project"][
+        "version"
+    ]
+    for root in projects:
+        project = tomllib.loads((root / "pyproject.toml").read_text())["project"]
+        assert project["version"] == version
+        prefix = project["name"].replace("-", "_") + "-" + version
+        with tempfile.TemporaryDirectory() as temporary:
+            selected = Path(temporary)
+            for suffix in ("-py3-none-any.whl", ".tar.gz"):
+                source = directory / (prefix + suffix)
+                assert source.is_file() and not source.is_symlink()
+                shutil.copyfile(source, selected / source.name)
+            digests.update(check(selected, root))
+    assert {path.name for path in directory.iterdir()} == set(digests), (
+        "Unexpected distribution files"
+    )
+    return digests
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
     parser.add_argument("--manifest", type=Path)
+    parser.add_argument("--coordinated", action="store_true")
     args = parser.parse_args()
-    digests = check(args.directory, Path(__file__).resolve().parents[1])
+    inspect = check_coordinated if args.coordinated else check
+    digests = inspect(args.directory, Path(__file__).resolve().parents[1])
     if args.manifest:
         args.manifest.write_text(json.dumps(digests, indent=2, sort_keys=True) + "\n")
     print(json.dumps(digests, sort_keys=True))

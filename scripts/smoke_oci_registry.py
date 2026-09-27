@@ -6,6 +6,7 @@ The installed-wheel proof runs inside the builder's disposable Linux environment
 
 import argparse
 import json
+import os
 import subprocess
 import tempfile
 import time
@@ -28,6 +29,15 @@ def main():
     parser.add_argument("--attest", action="store_true")
     parser.add_argument("--artifacts", action="store_true")
     args = parser.parse_args()
+    candidate = os.environ.get("APIZR_RELEASE_SET")
+    mounts = (
+        [
+            "--mount",
+            f"type=bind,src={Path(candidate).resolve()},dst=/candidate,readonly",
+        ]
+        if candidate
+        else []
+    )
     if args.artifacts:
         args.attest = True
     args.output.mkdir(parents=True, exist_ok=False)
@@ -160,6 +170,7 @@ PY
                 f"type=volume,src={volume},dst=/proof",
                 "--mount",
                 f"type=bind,src={REPO},dst=/repo,readonly",
+                *mounts,
                 "--entrypoint",
                 "sh",
                 image,
@@ -169,6 +180,20 @@ PY
                 + ".sock",
             )
         builder = prefix + "-builder"
+        if candidate:
+            command(
+                "docker",
+                "exec",
+                builder,
+                "python3",
+                "/repo/scripts/coordinated_distributions.py",
+                "target",
+                "--candidate",
+                "/candidate",
+                "--output",
+                "/proof/release-target",
+                timeout=900,
+            )
         deadline = time.monotonic() + 60
         for role in ("builder", "consumer"):
             while True:
@@ -206,6 +231,16 @@ PY
                     "APIZR_ARTIFACT_PROOF=" + ("1" if args.artifacts else "0"),
                     "--env",
                     "PATH=/proof/bin:/usr/local/bin:/usr/bin:/bin",
+                    *(
+                        [
+                            "--env",
+                            "APIZR_RELEASE_SET=/candidate",
+                            "--env",
+                            "APIZR_RELEASE_TARGET=/proof/release-target",
+                        ]
+                        if candidate
+                        else []
+                    ),
                     builder,
                     "python3",
                     "/repo/scripts/smoke_oci_plugin.py",
@@ -224,6 +259,16 @@ PY
             from smoke_artifact_consumer import consume
 
             consume(command, args.output, prefix, network, volume, image, REPO)
+        if candidate:
+            command(
+                "docker",
+                "cp",
+                builder + ":/proof/release-target",
+                args.output / "release-target",
+                timeout=300,
+            )
+            shutil_candidate = Path(candidate) / "candidate.json"
+            (args.output / "candidate.json").write_bytes(shutil_candidate.read_bytes())
         for name in (
             "catalog-oci",
             "catalog-delivery",

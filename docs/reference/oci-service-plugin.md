@@ -10,7 +10,7 @@ repository exposure bundle and publishes it through a separate, explicit `push`
 operation. It does not build governed execution workers or install business
 dependencies. Install and enable it explicitly;
 the minimal Apizr environment does not acquire Docker, REST or MCP dependencies.
-This first package is version `0.0.0`, available from the checkout, not published.
+This first package is version `0.4.0`, available from the checkout, not published.
 
 ## Prerequisites and installation
 
@@ -32,11 +32,11 @@ uv build --wheel plugins/oci --out-dir "$work/plugin-wheels"
 cd "$work"
 uv venv --seed --python 3.14 prepare
 prepare/bin/python -m pip download --only-binary=:all: --dest plugin-wheels \
-  plugin-wheels/outerspace_apizr-0.3.0-py3-none-any.whl \
-  plugin-wheels/apizr_oci-0.0.0-py3-none-any.whl
+  plugin-wheels/outerspace_apizr-0.4.0-py3-none-any.whl \
+  plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl
 uv venv --python 3.14 core
 uv pip install --python core/bin/python --offline --no-index \
-  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.3.0-py3-none-any.whl
+  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.0-py3-none-any.whl
 ```
 
 Create `lock_wheels.py` for the reviewed wheels downloaded for **this** interpreter
@@ -63,11 +63,11 @@ Path(sys.argv[2]).write_text("".join(lines))
 
 ```sh
 prepare/bin/python lock_wheels.py plugin-wheels plugin.lock
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/apizr_oci-0.0.0-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install plugin-wheels/apizr_oci-0.0.0-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse plugin-wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable apizr-oci --version 0.0.0 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable apizr-oci --version 0.4.0 --plugins-dir "$work/plugins"
 ```
 
 The lock uses the existing restricted requirements syntax: `name==version

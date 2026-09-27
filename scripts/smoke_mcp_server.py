@@ -8,6 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from coordinated_distributions import copy_closure
 from operator_policy_proof import write_analysis_policy
 from smoke_extension_packaging import snapshot
 from smoke_oci_plugin import lock_wheels
@@ -33,48 +34,49 @@ def prepare(root: Path, python: str) -> dict:
     root.mkdir(parents=True, exist_ok=False)
     house = root / "wheels"
     house.mkdir()
-    run(["uv", "build", "--wheel", REPO, "--out-dir", house], root)
-    run(["uv", "build", "--wheel", REPO / "plugins/mcp", "--out-dir", house], root)
-    run(
-        [
-            "uv",
-            "export",
-            "--locked",
-            "--no-dev",
-            "--extra",
-            "mcp",
-            "--no-emit-project",
-            "--output-file",
-            root / "dependencies.txt",
-        ],
-        REPO,
-    )
-    run(
-        [
-            "uv",
-            "venv",
-            "--seed",
-            "--no-python-downloads",
-            "--python",
-            python,
-            root / "prepare",
-        ],
-        root,
-    )
-    run(
-        [
-            root / "prepare/bin/python",
-            "-m",
-            "pip",
-            "download",
-            "--only-binary=:all:",
-            "--dest",
-            house,
-            "-r",
-            root / "dependencies.txt",
-        ],
-        root,
-    )
+    if not copy_closure("mcp", house):
+        run(["uv", "build", "--wheel", REPO, "--out-dir", house], root)
+        run(["uv", "build", "--wheel", REPO / "plugins/mcp", "--out-dir", house], root)
+        run(
+            [
+                "uv",
+                "export",
+                "--locked",
+                "--no-dev",
+                "--extra",
+                "mcp",
+                "--no-emit-project",
+                "--output-file",
+                root / "dependencies.txt",
+            ],
+            REPO,
+        )
+        run(
+            [
+                "uv",
+                "venv",
+                "--seed",
+                "--no-python-downloads",
+                "--python",
+                python,
+                root / "prepare",
+            ],
+            root,
+        )
+        run(
+            [
+                root / "prepare/bin/python",
+                "-m",
+                "pip",
+                "download",
+                "--only-binary=:all:",
+                "--dest",
+                house,
+                "-r",
+                root / "dependencies.txt",
+            ],
+            root,
+        )
     lock_wheels(house, root / "plugin.lock")
     core_wheel = next(house.glob("outerspace_apizr-*.whl"))
     for name, requirements in [
@@ -137,17 +139,18 @@ def prepare(root: Path, python: str) -> dict:
         if metadata["Name"].lower().replace("_", "-") in core_names:
             shutil.copyfile(wheel, minimal / wheel.name)
     for plugin_name in ("oci", "attest"):
-        run(
-            [
-                "uv",
-                "build",
-                "--wheel",
-                REPO / "plugins" / plugin_name,
-                "--out-dir",
-                minimal,
-            ],
-            root,
-        )
+        if not copy_closure(plugin_name, minimal):
+            run(
+                [
+                    "uv",
+                    "build",
+                    "--wheel",
+                    REPO / "plugins" / plugin_name,
+                    "--out-dir",
+                    minimal,
+                ],
+                root,
+            )
         lock_wheels(minimal, root / (plugin_name + ".lock"))
     for wheel in minimal.glob("*.whl"):
         destination = house / wheel.name
@@ -240,7 +243,7 @@ def prepare(root: Path, python: str) -> dict:
             "enable",
             "apizr-mcp",
             "--version",
-            "0.0.0",
+            "0.4.0",
             "--plugins-dir",
             store,
         ],

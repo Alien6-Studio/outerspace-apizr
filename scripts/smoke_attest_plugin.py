@@ -12,6 +12,7 @@ from threading import Event
 
 from attest_test_authority import authority
 from attest_test_authority import command as native_command
+from coordinated_distributions import copy_closure
 from operator_policy_proof import refuse, write_policy, write_signing_policy
 from smoke_oci_plugin import REPO, lock_wheels
 
@@ -19,7 +20,8 @@ from smoke_oci_plugin import REPO, lock_wheels
 def exercise(python, store, work, builds, command, environment):
     house = work / "attest-wheels"
     shutil.copytree(work / "plugin-wheels", house)
-    command("uv", "build", "--wheel", REPO / "plugins/attest", "--out-dir", house)
+    if not copy_closure("attest", house):
+        command("uv", "build", "--wheel", REPO / "plugins/attest", "--out-dir", house)
     lock = work / "attest.lock"
     lock_wheels(house, lock)
     base = [str(python), "-I", "-B", "-m", "apizr.cli", "plugins"]
@@ -66,7 +68,7 @@ def exercise(python, store, work, builds, command, environment):
     assert len({record["environment_id"] for record in records}) == 2
     assert len({len(record["dependencies"]) for record in records}) == 2
     command(
-        *base, "enable", "apizr-attest", "--version", "0.0.0", "--plugins-dir", store
+        *base, "enable", "apizr-attest", "--version", "0.4.0", "--plugins-dir", store
     )
     native = Path("/opt/attest/attest")
     tool = {

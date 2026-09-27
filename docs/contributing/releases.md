@@ -8,7 +8,8 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 The [release notes](../releases/0.4.0.md) and
 [migration guide](../getting-started/migrate-0.4.md) describe the integrated scope.
 They are publication preparation, not proof that 0.4.0 artifacts exist.
-The core still declares `0.3.0`; optional plugins declare `0.0.0`.
+The coordinated core and optional plugin candidates declare `0.4.0`; publication
+remains a separate explicit operation.
 
 Before tagging the exact candidate:
 
@@ -18,10 +19,10 @@ Before tagging the exact candidate:
 - Qualify those exact wheels outside the checkout: minimal/extra installations,
   migration and canonical artifacts, Git HTTPS/SSH, plugin lifecycle, real MCP
   clients, and disposable OCI/Attest delivery. Retain the final commit and runs.
-- Apply the procedure below to the core artifacts. The current **Publish PyPI**
-  workflow consumes the core `python-distributions` artifact; it does not establish
-  official publication of the separately packaged plugins. Complete and verify
-  their distribution path before declaring the integrated release delivered.
+- Apply the procedure below to the core artifacts. The **Publish PyPI**
+  workflow consumes all eight archives from `python-distributions`, verifies the
+  coordinated matrix and stages only missing public files after comparison.
+  The target exports and qualification reports are release evidence, not PyPI packages.
 - After publication, verify downloaded package bytes and fresh installations.
   Record the actual date, tag, hashes and evidence in the release notes. Only then
   change the stable installation guidance, Quickstart pins and documentation build
@@ -31,6 +32,52 @@ Before tagging the exact candidate:
 
 The [0.4.1/0.4.2 deferrals](../development/0.4.md#delivery-scope-and-explicit-deferrals)
 remain explicit. Do not add those features to this release-preparation step.
+
+## Retain and publish one coordinated artifact set
+
+The CI `distributions` job builds four wheels and four sdists from a clean commit.
+Independent sdist reconstruction checks are marked as tests; their wheels never
+replace the candidate. `release-candidate` contains the manifest and metadata
+reports. `release-target-*` archives hold target-specific wheelhouses, separate
+MCP/OCI/Attest requirements, catalog/profile exports and qualification evidence.
+`release-delivery` exercises the same four candidate packages in disposable
+Docker environments. The governed-worker image identity is retained with
+`validation-oci`: its local image/config digest is not a published registry digest
+or a user service-image release. No public official image destination is invented.
+
+The exact matrix is Linux CPython 3.11–3.14 and macOS 3.11/3.14, plus the Linux
+registry/TSA/ORAS fixture. Consult each target report for the actual architecture,
+Python patch version, byte counts and five timing samples. Download bytes,
+installed file bytes and subprocess startup are separate measures; tooling,
+caches and Docker images are excluded from wheel-download sizes. Do not infer
+other machines' performance from these samples.
+
+Select the successful **master push** run for the release commit, not the PR run
+or a later reconstruction. Its provenance covers the eight distributions and the
+validation archive. The existing runtime SBOM remains scoped to core distributions;
+plugin dependency identities are retained in each target inventory and lock.
+After this PR merges, build and qualify a new set from the selected release commit.
+The PR's artifacts cannot establish approval of that different commit.
+
+Publication requires the existing human approval and Trusted Publishing for
+**each** PyPI project. Read-only GitHub checks can verify the environment gate and
+workflow permissions, but cannot establish PyPI ownership or pending-publisher
+configuration for the plugin projects. A maintainer must verify those external
+prerequisites before dispatch. Do not create secrets or publishers implicitly.
+
+The manual workflow publishes **outerspace-apizr → apizr-oci → apizr-mcp →
+apizr-attest**, preserving exact internal requirements. Only the eight first-party
+archives enter PyPI; catalog exports, third-party dependency wheels, images and
+proofs remain separate evidence/distribution assets. There is no rebuild in the
+publication path and no publication trigger on merge.
+
+If publication stops partway through, inspect the public state, then dispatch the
+same tag and approved run again. Every existing filename must match both approved
+SHA-256/size and downloaded bytes. Missing files are staged; a different file,
+unexpected filename, network error or access error stops the procedure before
+upload. `skip-existing` is never used. Following upload, all eight public archives
+are downloaded and compared before the publication evidence is archived. Verify
+fresh public installations as well before marking the release delivered.
 
 ## Published 0.3.0
 
@@ -106,14 +153,15 @@ and publisher and is not part of this workflow.
    in the release record. Never rebuild on a laptop for the upload.
 5. Check [PyPI release history](https://pypi.org/project/outerspace-apizr/#history)
    immediately before publication. Versions and filenames are immutable. If
-   the target version already exists, stop and investigate; do not overwrite, silently skip
-   files, or automatically choose another version.
+   the target version already exists, inspect it. The coordinated recovery path
+   accepts only byte-identical approved files; never overwrite, silently skip files,
+   or automatically choose another version.
 6. Create `v<version>` on that exact verified merge commit. Release tags are protected
    against deletion/force updates. Prepare the GitHub release notes from
    the reviewed notes for that version and attach the reviewed wheel/sdist and checksums.
 7. Explicitly dispatch **Publish PyPI** on the tag, passing the verified master
-   `ci_run_id`. Its verification job checks tag/version/commit, successful CI,
-   Security and Documentation runs, availability of the PyPI version, archive
+   `ci_run_id`. Its verification job checks tag/version/commit, successful coordinated CI,
+   Security and Documentation runs, public artifact state, archive
    metadata and original checksums. It downloads and forwards the same bytes;
    there is no rebuild. Approve the protected `pypi` receipt job after review.
 8. The receipt job signs and RFC 3161 timestamps those exact distributions and
@@ -148,7 +196,7 @@ must be present on the default branch before its first manual dispatch.
 
 Complete against the final commit; historical green runs are not sufficient.
 
-- [ ] Version, tag and built metadata agree; target version is unused on PyPI.
+- [ ] All four versions, tag and built metadata agree; public files are absent or byte-identical to the approved set.
 - [ ] README renders, public URLs work and current/legacy documentation is accurate.
 - [ ] Ruff, Pyright and pre-commit pass.
 - [ ] Python 3.11–3.14 tests and every package coverage floor pass.

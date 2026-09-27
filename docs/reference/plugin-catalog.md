@@ -15,7 +15,7 @@ The Linux/macOS **MCP server plugin** CI artifacts contain `catalog/catalogue.js
 `wheels/` (including `requirements/`) and the exported plans. Choose the artifact
 for your exact Python/platform target and the source commit you intend to use.
 These are development builds, not published releases or a hosted marketplace.
-The three official plugins still declare `0.0.0`; use the source commit and
+The three official plugins still declare `0.4.0`; use the source commit and
 SHA-256 values to distinguish builds. The core's `0.3.0` version string does
 **not** establish compatibility with the published stable package.
 
@@ -40,7 +40,7 @@ test/coverage reports occupy another subtree. Use the development `apizr` execut
 
 ```sh
 apizr plugins catalog list --catalog catalog/catalogue.json --json
-apizr plugins catalog show apizr-mcp --version 0.0.0 \
+apizr plugins catalog show apizr-mcp --version 0.4.0 \
   --catalog catalog/catalogue.json --json
 apizr plugins catalog resolve --profile mcp \
   --catalog catalog/catalogue.json --wheelhouse ./wheels \
@@ -79,7 +79,7 @@ apizr plugins sync --project plugin-plan/apizr.toml \
   --lock plugin-plan/apizr.plugins.lock.json --wheelhouse ./wheels \
   --plugins-dir ./trusted-plugins --json
 apizr plugins list --active --plugins-dir ./trusted-plugins --json
-apizr plugins enable apizr-mcp --version 0.0.0 --plugins-dir ./trusted-plugins
+apizr plugins enable apizr-mcp --version 0.4.0 --plugins-dir ./trusted-plugins
 ```
 
 `sync` uses installed uv offline, validates constraints and installs into separate
@@ -124,7 +124,7 @@ from pathlib import Path
 from apizr.plugin_catalog import load_catalog, resolve_profile, select_entry
 
 catalog = load_catalog(Path("catalog/catalogue.json"))
-entry = select_entry(catalog, "apizr-mcp", "0.0.0")
+entry = select_entry(catalog, "apizr-mcp", "0.4.0")
 result = resolve_profile(catalog, "mcp", Path("wheels"), Path("plugin-plan"))
 assert result.installation == "not_performed"
 ```
