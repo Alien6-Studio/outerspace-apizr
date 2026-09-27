@@ -9,8 +9,24 @@ import sys
 import time
 from pathlib import Path
 
+from operator_policy_proof import refuse, write_policy
+
 
 def exercise(python, store, work, results, command, engine, environment):
+    operator = write_policy(
+        python,
+        store,
+        work / "operator-oci.json",
+        "apizr-oci",
+        "push",
+        [
+            "registry.test:5443/services/rest",
+            "registry.test:5443/services/mcp",
+            "registry-untrusted.test:5443/services/rest",
+        ],
+        command,
+    )
+    operator_refusals = []
     outputs = []
     refusals = []
     secrets = json.loads(Path("/proof/auth/config.json").read_text())["auths"][
@@ -34,6 +50,8 @@ def exercise(python, store, work, results, command, engine, environment):
                 "push",
                 "--arguments",
                 str(path),
+                "--operator-policy",
+                str(operator),
                 "--plugins-dir",
                 str(store),
                 "--timeout-ms",
@@ -79,6 +97,54 @@ def exercise(python, store, work, results, command, engine, environment):
             "timeout_ms": 300000,
         }
         if index == 0:
+            operator_refusals.append(
+                refuse(
+                    python,
+                    store,
+                    work,
+                    "apizr-oci",
+                    "push",
+                    document,
+                    None,
+                    "operator_policy_required",
+                    environment,
+                )
+            )
+            operator_refusals.append(
+                refuse(
+                    python,
+                    store,
+                    work,
+                    "apizr-oci",
+                    "push",
+                    document
+                    | {"destination": "registry.test:5443/unauthorized/service:v1"},
+                    operator,
+                    "operator_repository_denied",
+                    environment,
+                )
+            )
+            read_only = work / "operator-read-only.json"
+            raw = json.loads(operator.read_bytes())
+            for grant in raw["grants"]:
+                grant["permissions"] = ["registry.read"]
+            read_only.write_text(json.dumps(raw))
+            operator_refusals.append(
+                refuse(
+                    python,
+                    store,
+                    work,
+                    "apizr-oci",
+                    "push",
+                    document,
+                    read_only,
+                    "operator_permissions_denied",
+                    environment,
+                )
+            )
+            (work / "operator-push-refusals.json").write_text(
+                json.dumps(operator_refusals)
+            )
             bad_auth = work / "bad-auth.json"
             bad_auth.write_text(
                 json.dumps(
@@ -142,7 +208,7 @@ def exercise(python, store, work, results, command, engine, environment):
 
                 invoke(changed, refused=True)
                 refusals.append({"case": fault, "refused": True})
-            interrupt(python, store, work, document, environment)
+            interrupt(python, store, work, document, environment, operator)
             # The build tag can move; publication still selects the recorded ID.
             other = json.loads(engine("image", "inspect", "python:3.14-slim"))[0]["Id"]
             engine("image", "tag", other, result["tag"])
@@ -160,6 +226,7 @@ def exercise(python, store, work, results, command, engine, environment):
                 f"#!{sys.executable}\n"
                 + f"""import os,subprocess,sys
 from pathlib import Path
+
 args=sys.argv[1:]
 marker=Path({str(marker)!r})
 if args[:3] == ['buildx','imagetools','create']:
@@ -223,7 +290,7 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
     return [item["digest_reference"] for item in outputs]
 
 
-def interrupt(python, store, work, document, environment):
+def interrupt(python, store, work, document, environment, operator):
     """Interrupt after the upload client starts; never infer daemon/registry rollback."""
     marker = work / "push-started.json"
     wrapper = work / "push-observer"
@@ -231,6 +298,7 @@ def interrupt(python, store, work, document, environment):
         f"#!{sys.executable}\n"
         + f"""import json,os,signal,subprocess,sys
 from pathlib import Path
+
 args=sys.argv[1:]
 if args[:2] != ['image','push']:
  os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
@@ -266,6 +334,8 @@ signal.pause()
             "push",
             "--arguments",
             str(path),
+            "--operator-policy",
+            str(operator),
             "--plugins-dir",
             str(store),
             "--timeout-ms",

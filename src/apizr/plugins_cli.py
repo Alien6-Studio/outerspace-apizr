@@ -19,6 +19,7 @@ from apizr.local_plugins import (
     uninstall_extension,
 )
 from apizr.local_plugins.uninstall import UninstallDiagnostic
+from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.plugin_lock import LockError, Result, check_lock, create_lock
 from apizr.plugin_lock.models import Diagnostic
 from apizr.plugin_sync import SyncLimits, SyncResult, sync_plugins
@@ -90,6 +91,9 @@ def main(argv: Sequence[str]) -> int:
     )
     run.add_argument("name")
     run.add_argument("operation")
+    run.add_argument(
+        "--operator-policy", type=Path, help="Explicit operator publication grants"
+    )
     run.add_argument(
         "--arguments", type=Path, required=True, help="Bounded JSON object file"
     )
@@ -282,6 +286,9 @@ def main(argv: Sequence[str]) -> int:
                 args.name,
                 args.operation,
                 read_arguments(args.arguments, limits=limits),
+                operator_policy=load_operator_policy(args.operator_policy)
+                if args.operator_policy is not None
+                else None,
                 directory=args.plugins_dir,
                 limits=limits,
             )
@@ -296,6 +303,9 @@ def main(argv: Sequence[str]) -> int:
                 for item in inventory.installations:
                     print(f"{item.name} {item.version}  {item.protocol}  {item.module}")
         return 0
+    except AuthorizationDenied as error:
+        print(error.decision.model_dump_json(by_alias=True), file=sys.stderr)
+        return 2
     except LockError as error:
         if args.json:
             _show_lock(

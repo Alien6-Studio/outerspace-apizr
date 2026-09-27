@@ -7,12 +7,12 @@ from collections.abc import Generator
 from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from threading import Event
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import ConfigDict, Field, JsonValue
 
 from apizr.capabilities.types import ValueModel
-from apizr.execution.protocol import finite_json
+from apizr.execution.protocol import SizeExceeded, encode, finite_json
 from apizr.extension_runtime import (
     CleanupFailed,
     InvalidInvocation,
@@ -27,6 +27,9 @@ from apizr.extension_runtime.protocol import unique_object
 from . import retirement, store, usage
 from .control import InstallControl
 from .models import Installation, Inventory, PluginError, canonical_name
+
+if TYPE_CHECKING:
+    from apizr.operator_policy import OperatorPolicy
 
 DEFAULT_LIMITS = Limits()
 
@@ -213,14 +216,31 @@ def run_extension(
     directory: Path | None = None,
     limits: Limits = DEFAULT_LIMITS,
     cancel: Event | None = None,
+    operator_policy: "OperatorPolicy | None" = None,
 ) -> Response:
+    from apizr.operator_policy import AuthorizationDenied, decide
+
+    try:
+        # Own the JSON snapshot before authorization. Never pass mutable caller
+        # data (or reread its source file) after checking the destination.
+        limits = Limits.model_validate(limits.model_dump(), strict=True)
+        snapshot = finite_json(json.loads(encode(arguments, limits.max_request_bytes)))
+        if not isinstance(snapshot, dict):
+            raise InvalidInvocation()
+    except SizeExceeded:
+        raise SizeLimitExceeded("request") from None
+    except (ValueError, TypeError, RecursionError):
+        raise InvalidInvocation() from None
     try:
         with admitted_extension(name, directory=directory) as (record, usage_fd):
+            decision = decide(operator_policy, record, operation, snapshot)
+            if not decision.allowed:
+                raise AuthorizationDenied(decision.code)
             return invoke_extension(
                 record.python,
                 record.module,
                 operation,
-                arguments,
+                snapshot,
                 limits=limits,
                 environment={},
                 cancel=cancel,

@@ -274,6 +274,7 @@ def exercise(python, store, work, builds, command, environment):
                         process.communicate(timeout=5)
         recovered = arguments | {"output_dir": str(work / "recovered-proof")}
         assert invoke("attest", recovered) is not None
+        key.unlink()  # Publication of an existing proof requires no private key.
         if os.environ.get("APIZR_ARTIFACT_PROOF") == "1":
             from smoke_artifact_publish import exercise
 

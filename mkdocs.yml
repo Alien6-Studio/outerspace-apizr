@@ -121,6 +121,7 @@ nav:
       - Commands, parameters and formats: reference/index.md
       - Python compiler API (0.4): reference/compiler-api.md
       - Extension invocation API (0.4): reference/extension-invocation.md
+      - Operator publication policy (0.4): reference/operator-policy.md
       - Compatibility notes: getting-started/developer-guide/releases.md
   - Architecture:
       - Capability Compiler overview: architecture/overview.md

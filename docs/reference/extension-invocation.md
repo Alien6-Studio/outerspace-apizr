@@ -9,6 +9,19 @@
 in a fresh process. It is independent of the CLI, `apizr.compiler`, project
 configuration and historical `apizr.pipeline.v1` plugins.
 
+## Managed publication authorization
+
+`apizr.local_plugins.run_extension` enforces an explicit
+[operator publication policy](operator-policy.md) for `apizr-oci push` and
+`apizr-attest publish`, equally from Python and `apizr plugins run`. It retains
+activation and usage protection, then checks the build identity, operation and
+exact repository before invoking the runtime. These development calls now refuse
+an absent policy. Build, signing, verification and other operations are unchanged.
+
+The low-level API below runs an explicitly trusted program; it has no installation
+identity and does **not** provide managed operator authorization. Calling it or a
+plugin directly is outside that control, not a sandbox escape.
+
 ## Python call
 
 The caller supplies an absolute interpreter from a separately prepared

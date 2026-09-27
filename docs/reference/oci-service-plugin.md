@@ -261,12 +261,19 @@ configuration remain trusted prerequisites; do not resolve registry names to the
 daemon's implicitly insecure loopback network.
 
 ```bash
-apizr plugins run apizr-oci push --arguments /work/push.json --timeout-ms 360000
+apizr plugins run apizr-oci push --arguments /work/push.json \
+  --operator-policy /work/operator.json --timeout-ms 360000
 ```
+
+Create an explicit [operator policy](operator-policy.md) for this installed build
+and exact repository first. Activation alone cannot authorize publication. The
+core requires both registry read and publish permissions before launching the plugin.
 
 The Python API is `apizr_oci.push(PushRequest.model_validate(document),
 workspace=owned_directory, cancel=event)`, inside the installed plugin environment.
-Use the existing extension runtime to supervise it from the core.
+From the core, use `apizr.local_plugins.run_extension` with the explicit
+`operator_policy`; it applies the same admission check as the CLI. Calling the
+plugin API directly is outside managed authorization.
 
 Publication requires Docker Engine API 1.46+ and Buildx. Destination references
 must include a DNS registry name (optionally a port), a namespace, an image and an
