@@ -4,6 +4,7 @@ import argparse
 import sys
 from collections.abc import Sequence
 
+from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.repository import catalog_bytes, scan
 from apizr.repository.reporting import envelope_bytes, text_report
 from apizr.repository_cli import add_scan_arguments, scan_policy
@@ -27,7 +28,15 @@ def main(argv: Sequence[str]) -> int:
     )
     args = parser.parse_args(argv)
     try:
-        catalog = scan(args.root, policy=scan_policy(args))
+        authority = (
+            load_operator_policy(args.operator_policy)
+            if args.operator_policy is not None
+            else None
+        )
+        catalog = scan(args.root, policy=scan_policy(args), operator_policy=authority)
+    except AuthorizationDenied as error:
+        print(error.decision.model_dump_json(by_alias=True), file=sys.stderr)
+        return 2
     except (OSError, ValueError, UnicodeError, RecursionError):
         print(
             "apizr scan: invalid policy or inaccessible repository root; check source roots, limits and filesystem support",

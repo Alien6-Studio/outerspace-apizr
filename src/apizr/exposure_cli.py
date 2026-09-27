@@ -131,9 +131,10 @@ def main(argv: Sequence[str]) -> int:
                 }
             )
         readiness_policy = load_policy(args.readiness_policy)
-        with input_root(args) as root:
+        with input_root(args) as (root, authority):
             prepared = prepare_exposure(
                 root,
+                operator_policy=authority,
                 policy=policy,
                 scan_policy=scan_policy(args),
                 graph_policy=graph_policy(args),

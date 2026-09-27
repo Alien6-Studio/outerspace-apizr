@@ -79,7 +79,15 @@ async def exercise(root: Path):
     transport._create_platform_compatible_process = spawn
     target = StdioServerParameters(
         command=config["plugin_python"],
-        args=["-I", "-B", str(bootstrap), "--project", config["project"]],
+        args=[
+            "-I",
+            "-B",
+            str(bootstrap),
+            "--operator-policy",
+            config["operator_policy"],
+            "--project",
+            config["project"],
+        ],
         env={"APIZR_TEST_SECRET": "must-not-be-inherited"},
         cwd=root,
     )

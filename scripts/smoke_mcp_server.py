@@ -8,6 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from operator_policy_proof import write_analysis_policy
 from smoke_extension_packaging import snapshot
 from smoke_oci_plugin import lock_wheels
 
@@ -219,7 +220,18 @@ def prepare(root: Path, python: str) -> dict:
     )["installations"]
     shutil.copytree(REPO / "examples/project-config", root / "project")
     project = root / "project/apizr.toml"
-    launch = [cli, "mcp", "serve", "--project", project, "--plugins-dir", store]
+    authority = write_analysis_policy(root / "operator.json", project.parent)
+    launch = [
+        cli,
+        "mcp",
+        "serve",
+        "--project",
+        project,
+        "--operator-policy",
+        authority,
+        "--plugins-dir",
+        store,
+    ]
     assert run(launch, root, expected=2) == ""
     run(
         [
@@ -234,6 +246,25 @@ def prepare(root: Path, python: str) -> dict:
         ],
         root,
     )
+    # Source refusal is checked before launching the active MCP installation.
+    denied = subprocess.run(
+        [
+            str(cli),
+            "mcp",
+            "serve",
+            "--project",
+            str(project),
+            "--plugins-dir",
+            str(store),
+        ],
+        cwd=root,
+        env={"PYTHONDONTWRITEBYTECODE": "1"},
+        input=b"",
+        capture_output=True,
+        timeout=10,
+    )
+    assert denied.returncode == 2 and not denied.stdout
+    assert json.loads(denied.stderr)["code"] == "operator_policy_required"
     inventory = json.loads(
         run([cli, "plugins", "list", "--json", "--plugins-dir", store], root)
     )
@@ -257,6 +288,7 @@ def prepare(root: Path, python: str) -> dict:
         "cli": str(cli),
         "plugin_python": record["python"],
         "project": str(project),
+        "operator_policy": str(authority),
         "store": str(store),
     }
 

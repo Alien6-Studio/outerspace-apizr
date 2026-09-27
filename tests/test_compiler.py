@@ -8,9 +8,10 @@ import sys
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
+from analysis_authorization import authorized_main as main
 from pydantic import ValidationError
 
-from apizr.cli import main
 from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.execution.policy import ExecutionPolicy, PolicyRefused
 from apizr.exposure import ExposurePolicy, ExposureRefused, plan_bytes, refusal_report
@@ -71,7 +72,12 @@ def test_readiness_python_cli_and_existing_golden(tmp_path, capfd, name):
         source_roots=("src",),
         excluded_directories=(*ScanPolicy().excluded_directories, "ignored"),
     )
-    report = assess_readiness(root, scan_policy=scan, readiness_policy=policy)
+    report = assess_readiness(
+        root,
+        operator_policy=analysis_policy(root),
+        scan_policy=scan,
+        readiness_policy=policy,
+    )
     assert capfd.readouterr() == ("", "")
     flags = ["--policy", str(policy_path)] if name else []
     assert (
@@ -101,7 +107,11 @@ def test_readiness_python_cli_and_existing_golden(tmp_path, capfd, name):
 def test_exposure_python_cli_and_existing_golden(capfd):
     fixture = FIXTURES / "exposure/v1"
     policy = ExposurePolicy.model_validate_json((fixture / "policy.json").read_bytes())
-    prepared = prepare_exposure(fixture / "project", policy=policy)
+    prepared = prepare_exposure(
+        fixture / "project",
+        operator_policy=analysis_policy(fixture / "project"),
+        policy=policy,
+    )
     assert capfd.readouterr() == ("", "")
     assert (
         main(
@@ -133,7 +143,12 @@ def test_bundle_python_cli_exact_bytes_and_separate_safe_write(
         "oci-container": ExecutionPolicyV2(),
     }[mode]
     image = IMAGE if mode == "oci-container" else None
-    prepared = prepare_exposure(root, policy=policy, readiness_policy=readiness)
+    prepared = prepare_exposure(
+        root,
+        operator_policy=analysis_policy(root),
+        policy=policy,
+        readiness_policy=readiness,
+    )
     before = {p.relative_to(tmp_path) for p in tmp_path.rglob("*")}
     bundle = render_bundle(
         prepared, interface=interface, execution_policy=execution, runtime_image=image
@@ -209,7 +224,10 @@ def test_retained_sources_one_discovery_even_after_deletion(
     monkeypatch.setattr(builder, "discover", counted)
     monkeypatch.setattr(discovery, "read_source", counted_read)
     prepared = prepare_exposure(
-        root, policy=exposure_policy(), readiness_policy=readiness_policy()
+        root,
+        operator_policy=analysis_policy(root),
+        policy=exposure_policy(),
+        readiness_policy=readiness_policy(),
     )
     shutil.rmtree(root)
     for interface in ("rest", "mcp"):
@@ -257,7 +275,7 @@ def test_invalid_typed_policy_preserves_validation(tmp_path, capfd, kind):
         if operation is prepare_exposure:
             kwargs["policy"] = exposure_policy()
         with pytest.raises(ValidationError):
-            operation(tmp_path, **kwargs)
+            operation(tmp_path, operator_policy=analysis_policy(tmp_path), **kwargs)
     assert capfd.readouterr() == ("", "")
     flags = (
         [flag, "0"]
@@ -276,7 +294,12 @@ def test_refused_capabilities_same_structured_diagnostics(tmp_path, capfd, selec
     policy = exposure_policy(selected=(selected,))
     readiness = readiness_policy()
     with pytest.raises(ExposureRefused) as refused:
-        prepare_exposure(root, policy=policy, readiness_policy=readiness)
+        prepare_exposure(
+            root,
+            operator_policy=analysis_policy(root),
+            policy=policy,
+            readiness_policy=readiness,
+        )
     assert refused.value.diagnostics
     assert capfd.readouterr() == ("", "")
     assert (
@@ -300,12 +323,19 @@ def test_refused_capabilities_same_structured_diagnostics(tmp_path, capfd, selec
 def test_empty_selection_and_execution_refusals_remain_distinct(tmp_path, capfd):
     root = project(tmp_path)
     empty = prepare_exposure(
-        root, policy=exposure_policy(selected=()), readiness_policy=readiness_policy()
+        root,
+        operator_policy=analysis_policy(root),
+        policy=exposure_policy(selected=()),
+        readiness_policy=readiness_policy(),
     )
     assert empty.plan.capabilities == ()
     with pytest.raises(BundleRefused, match="APIZR-BUNDLE-002"):
         render_bundle(empty, interface="rest")
-    prepared = prepare_exposure(root, policy=exposure_policy("local-process"))
+    prepared = prepare_exposure(
+        root,
+        operator_policy=analysis_policy(root),
+        policy=exposure_policy("local-process"),
+    )
     with pytest.raises(BundleRefused):
         render_bundle(prepared, interface="rest")  # No implicit backend fallback.
     with pytest.raises(PolicyRefused):
@@ -340,23 +370,28 @@ def audit(event, args):
     if event == "open" and isinstance(args[0], str) and args[0].startswith(root) and args[2] & (os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC):
         raise AssertionError("source write")
 sys.addaudithook(audit)
+from pathlib import Path
+from apizr.operator_policy import load_operator_policy
+operator = load_operator_policy(Path(sys.argv[-1]))
 import importlib.metadata
 def forbidden(*args, **kwargs): raise AssertionError("plugin discovery")
 importlib.metadata.entry_points = forbidden
 from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.repository_readiness import RepositoryReadinessPolicy
-assess_readiness(root)
+assess_readiness(root, operator_policy=operator)
 policy = ExposurePolicy.model_validate({"selection":{"include":["python:sample:add"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}})
 readiness = RepositoryReadinessPolicy.model_validate({"execution":{"modes":["direct"]}})
-prepared = prepare_exposure(root, policy=policy, readiness_policy=readiness)
+prepared = prepare_exposure(root, operator_policy=operator, policy=policy, readiness_policy=readiness)
 assert not any(name.startswith("apizr.generators") for name in sys.modules)
 for interface in ("rest", "mcp"):
     assert render_bundle(prepared, interface=interface)
 assert not any(name.startswith("apizr.extensions.plugins") for name in sys.modules)
 """
+    authority_file = tmp_path / "operator-analysis.json"
+    authority_file.write_text(analysis_policy(root).model_dump_json())
     result = subprocess.run(
-        [sys.executable, "-I", "-B", "-c", probe, str(root)],
+        [sys.executable, "-I", "-B", "-c", probe, str(root), str(authority_file)],
         cwd=tmp_path,
         env={
             **os.environ,

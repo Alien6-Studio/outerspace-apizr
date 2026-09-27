@@ -1,0 +1,16 @@
+{
+  "schema": "apizr.operator-policy/v1",
+  "grants": [
+    {
+      "adapter": "repository",
+      "operation": "analyze",
+      "target": {
+        "kind": "local",
+        "root": "/work/project"
+      },
+      "permissions": [
+        "source.analyze"
+      ]
+    }
+  ]
+}

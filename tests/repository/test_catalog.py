@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
 from jsonschema import Draft202012Validator
 
 from apizr.capabilities.model import Digest
@@ -25,7 +26,11 @@ FIXTURES = Path(__file__).parents[1] / "fixtures/catalog"
 
 
 def test_reviewed_catalog_and_schemas():
-    catalog = scan(FIXTURES / "v1/project", policy=ScanPolicy(source_roots=("src",)))
+    catalog = scan(
+        FIXTURES / "v1/project",
+        operator_policy=analysis_policy(FIXTURES / "v1/project"),
+        policy=ScanPolicy(source_roots=("src",)),
+    )
     assert catalog_bytes(catalog) == (FIXTURES / "v1/catalog.json").read_bytes()
     assert Catalog.model_validate_json(catalog_bytes(catalog)) == catalog
     for model, name in [(Catalog, "catalog"), (ScanPolicy, "scan")]:
@@ -137,14 +142,16 @@ def test_invalid_modules_are_inventory_errors(path):
 
 def test_collisions_namespaces_and_rejected_declarations():
     collision = scan(
-        FIXTURES / "collision", policy=ScanPolicy(source_roots=("src_b", "src_a"))
+        FIXTURES / "collision",
+        operator_policy=analysis_policy(FIXTURES / "collision"),
+        policy=ScanPolicy(source_roots=("src_b", "src_a")),
     )
     assert len(collision.sources) == 2
     assert not collision.capabilities
     assert {d.code for d in collision.diagnostics} == {Code.COLLISION}
     assert all(s.inspection is None for s in collision.sources)
     assert collision.exit_code == 1
-    roots = scan(FIXTURES / "root")
+    roots = scan(FIXTURES / "root", operator_policy=analysis_policy(FIXTURES / "root"))
     assert roots.capabilities[0].id == "python:project.tools:run"
     namespace = scan_sources(
         [("a/run.py", b"def run(): return 1"), ("b/run.py", b"def run(): return 2")]

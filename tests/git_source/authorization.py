@@ -62,5 +62,19 @@ def authorized_snapshot(repository, reference, **options):
 
 def flags(directory, repository, reference, **options):
     path = directory / "operator.json"
-    path.write_text(json.dumps(document(repository, reference, **options)))
+    value = document(repository, reference, **options)
+    value["grants"].append(
+        {
+            "adapter": "repository",
+            "operation": "analyze",
+            "permissions": ["source.analyze"],
+            "target": {
+                "kind": "git",
+                "repository": repository,
+                "reference": reference,
+                "subdir": options.get("subdir", "."),
+            },
+        }
+    )
+    path.write_text(json.dumps(value))
     return ["--operator-policy", str(path)]

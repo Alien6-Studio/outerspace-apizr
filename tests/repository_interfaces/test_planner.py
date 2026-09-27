@@ -4,6 +4,7 @@ import ast
 import json
 
 import pytest
+from analysis_authorization import analysis_policy
 
 from apizr.capabilities.model import Digest
 from apizr.exposure import ExposureRefused
@@ -165,14 +166,14 @@ def test_one_discovery_retains_immutable_bytes(tmp_path, monkeypatch):
     discover = builder.discover
     calls = []
 
-    def snapshot(*args):
+    def snapshot(*args, **kwargs):
         calls.append(1)
-        result = discover(*args)
+        result = discover(*args, **kwargs)
         path.write_bytes(b"raise RuntimeError('changed')")
         return result
 
     monkeypatch.setattr(builder, "discover", snapshot)
-    result = analyze_repository(tmp_path)
+    result = analyze_repository(tmp_path, operator_policy=analysis_policy(tmp_path))
     assert result.sources == {"a.py": original} and calls == [1]
     with pytest.raises(TypeError):
         result.sources["a.py"] = b"changed"

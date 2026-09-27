@@ -57,14 +57,26 @@ max_ast_nodes = 10000
 }
 ```
 
-From the checkout, run:
+From the checkout, prepare a separate operator grant. Review its root before use;
+authority never belongs in `apizr.toml`.
 
 ```sh
-apizr readiness --project examples/project-config/apizr.toml --report
-apizr expose plan --project examples/project-config/apizr.toml --plan
+python3 - <<'PYTHON'
+import json
+from pathlib import Path
+root = str(Path("examples/project-config").resolve())
+Path("project-operator.json").write_text(json.dumps({"schema":"apizr.operator-policy/v1","grants":[{"adapter":"repository","operation":"analyze","target":{"kind":"local","root":root},"permissions":["source.analyze"]}]}))
+PYTHON
+```
+
+Then run:
+
+```sh
+apizr readiness --project examples/project-config/apizr.toml --operator-policy project-operator.json --report
+apizr expose plan --project examples/project-config/apizr.toml --operator-policy project-operator.json --plan
 mkdir -p build
-apizr expose build rest --project examples/project-config/apizr.toml --output-dir build/rest
-apizr expose build mcp --project examples/project-config/apizr.toml --output-dir build/mcp
+apizr expose build rest --project examples/project-config/apizr.toml --operator-policy project-operator.json --output-dir build/rest
+apizr expose build mcp --project examples/project-config/apizr.toml --operator-policy project-operator.json --output-dir build/mcp
 ```
 
 The output directories must be absent or empty. Generating these bundles needs
@@ -129,6 +141,8 @@ using the existing policy models before invoking
 [the compiler API](../../reference/compiler-api.md).
 
 ```python
+from pathlib import Path
+from apizr.operator_policy import load_operator_policy
 from apizr.compiler import assess_readiness
 from apizr.project import load_project
 from apizr.repository_readiness import RepositoryReadinessPolicy
@@ -140,6 +154,7 @@ policy = RepositoryReadinessPolicy.model_validate_json(
 )
 report = assess_readiness(
     settings.root,
+    operator_policy=load_operator_policy(Path("project-operator.json")),
     scan_policy=settings.scan,
     graph_policy=settings.graph,
     readiness_policy=policy,

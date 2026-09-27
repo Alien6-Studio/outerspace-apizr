@@ -14,6 +14,7 @@ installation. It does not discover plugins or import optional transport servers.
 Given `repository/sample.py` containing
 `def add(a: int, b: int = 1) -> int: return a + b`, run this Python code from its
 parent directory. The output directories must be absent or empty.
+First prepare `operator-local.json` using the complete [local grant](operator-policy.md#authorize-repository-analysis), with the canonical absolute path of `repository`.
 The installed-wheel smoke test executes this exact example outside the checkout.
 
 ```python
@@ -21,11 +22,14 @@ from pathlib import Path
 
 from apizr.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
+from apizr.operator_policy import load_operator_policy
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
+operator = load_operator_policy(Path("operator-local.json"))
 prepared = prepare_exposure(
     Path("repository"),
+    operator_policy=operator,
     readiness_policy=RepositoryReadinessPolicy.model_validate(
         {"execution": {"modes": ["direct"]}}
     ),
@@ -54,8 +58,8 @@ complete bundle without replacing existing contents.
 
 | Operation | Parameters | Result |
 | --- | --- | --- |
-| `assess_readiness(root, *, scan_policy=None, graph_policy=None, readiness_policy=None)` | `str` or `Path`, existing `ScanPolicy`, `GraphPolicy`, `RepositoryReadinessPolicy` | Existing `RepositoryReadinessReport`, including diagnostics and `exit_code` |
-| `prepare_exposure(root, *, policy, scan_policy=None, graph_policy=None, readiness_policy=None)` | Same analysis policies plus an explicit `ExposurePolicy` | `PreparedExposure` retaining evidence, readiness, policy and plan |
+| `assess_readiness(root, *, operator_policy=None, scan_policy=None, graph_policy=None, readiness_policy=None)` | `str` or `Path`, existing `ScanPolicy`, `GraphPolicy`, `RepositoryReadinessPolicy` | Existing `RepositoryReadinessReport`, including diagnostics and `exit_code` |
+| `prepare_exposure(root, *, policy, operator_policy=None, scan_policy=None, graph_policy=None, readiness_policy=None)` | Same analysis policies plus an explicit `ExposurePolicy` | `PreparedExposure` retaining evidence, readiness, policy and plan |
 | `render_bundle(prepared, *, interface, execution_policy=None, runtime_image=None)` | Prepared context, `"rest"` or `"mcp"`, existing execution policy/image models | Existing bundle filenames and bytes |
 
 `PreparedExposure` is an in-memory container for existing contracts, not a new
@@ -101,3 +105,19 @@ images, resolve remote Git repositories or publish services. Runtime optional
 dependencies are needed when running the generated service, not when rendering.
 See [exposure policies](../getting-started/user-guide/exposure.md) for the three
 independent policy roles and existing limitations.
+
+## Source admission in development 0.4
+
+`operator_policy` is an explicitly loaded `OperatorPolicy`. Omission raises
+`AuthorizationDenied` with a fixed structured decision. Filesystem `scan`,
+`discover`, `analyze_repository` and `graph_repository` share this gate. Local
+roots match canonical absolute paths; relative arguments resolve against the
+caller's working directory. No path component may be a symlink. Git analysis
+accepts its live `GitSnapshot`, bound to the actual acquisition and commit.
+See [Git acquisition](git-sources.md#python-api).
+
+Admission does not authorize exposure, execution, image build, signing or
+publication. Existing contracts, selection refusals and bounds remain. Primitives
+accepting already supplied bytes/artifacts do not read a root and remain outside
+this gate. Arbitrary Python execution is not an authorization sandbox. Stable
+0.3.0 instructions retain their historical syntax.

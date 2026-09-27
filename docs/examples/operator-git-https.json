@@ -16,6 +16,19 @@
         "ssh_agent_socket": null,
         "ssh_known_hosts": null
       }
+    },
+    {
+      "adapter": "repository",
+      "operation": "analyze",
+      "target": {
+        "kind": "git",
+        "repository": "https://git.example/team/project.git",
+        "reference": "refs/heads/main",
+        "subdir": "src"
+      },
+      "permissions": [
+        "source.analyze"
+      ]
     }
   ]
 }

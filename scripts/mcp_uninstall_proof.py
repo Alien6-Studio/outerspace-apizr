@@ -38,6 +38,8 @@ async def prove(root: Path) -> None:
         args=[
             "mcp",
             "serve",
+            "--operator-policy",
+            config["operator_policy"],
             "--project",
             config["project"],
             "--plugins-dir",

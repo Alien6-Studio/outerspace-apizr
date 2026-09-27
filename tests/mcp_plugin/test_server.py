@@ -217,7 +217,7 @@ def test_serve_lifecycle_with_official_session(project, monkeypatch):
         monkeypatch.setattr(server, "stdio_server", stdio_server)
         with anyio.fail_after(10):
             async with anyio.create_task_group() as tasks:
-                tasks.start_soon(server.serve, path, ServerLimits())
+                tasks.start_soon(server.serve, project[1], ServerLimits())
                 async with ClientSession(read_client, to_server) as client:
                     await client.initialize()
                     assert len((await client.list_tools()).tools) == 3
@@ -236,5 +236,53 @@ def test_server_entrypoint_validation_and_interrupt(project, monkeypatch, capsys
         raise KeyboardInterrupt
 
     monkeypatch.setattr(server.anyio, "run", interrupt)
-    assert server.main(["--project", str(path)]) == 130
+    authority = path.parent / "operator.json"
+    authority.write_text(project[1].operator_policy.model_dump_json())
+    assert (
+        server.main(["--project", str(path), "--operator-policy", str(authority)])
+        == 130
+    )
     assert capsys.readouterr().out == ""
+
+
+def test_session_scope_and_authority_cannot_be_expanded(project, monkeypatch):
+    from apizr.operator_policy import OperatorPolicy
+
+    calculations, app = setup(project, monkeypatch)
+    original = calculations.scope
+    calls = []
+    monkeypatch.setattr(server, "invoke_extension", lambda *a, **k: calls.append(a))
+
+    async def exercise():
+        async with Client(app) as client:
+            for arguments in (
+                {"operator_policy": {}},
+                {"permissions": ["source.analyze"]},
+                {"root": "/"},
+            ):
+                result = await client.call_tool("apizr_analyze", arguments)
+                assert result.structured_content["error"]["code"] == "invalid_arguments"
+            for authority, expected in (
+                (None, "operator_policy_required"),
+                (
+                    OperatorPolicy.model_construct(schema_version="invalid", grants=()),
+                    "operator_policy_invalid",
+                ),
+            ):
+                calculations.scope = original.model_copy(
+                    update={"operator_policy": authority}
+                )
+                result = await client.call_tool("apizr_readiness", {})
+                assert result.is_error
+                assert result.structured_content["error"]["code"] == expected
+                assert "catalog" not in result.structured_content
+            calculations.scope = original.model_copy(
+                update={"root": original.root + "-neighbor"}
+            )
+            result = await client.call_tool("apizr_analyze", {})
+            assert (
+                result.structured_content["error"]["code"] == "operator_analysis_denied"
+            )
+        assert calls == []
+
+    anyio.run(exercise)

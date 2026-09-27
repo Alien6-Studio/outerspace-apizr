@@ -7,9 +7,10 @@ from pathlib import Path
 from typing import Annotated, Literal
 from urllib.parse import urlsplit
 
-from pydantic import Field, JsonValue, field_validator, model_validator
+from pydantic import ConfigDict, Field, JsonValue, field_validator, model_validator
 
-from apizr.execution.protocol import MAX_REQUEST_BYTES, SizeExceeded, encode
+from apizr.analysis_contracts import AnalysisTarget, GitAnalysisTarget, LocalTarget
+from apizr.bounded_json import MAX_REQUEST_BYTES, SizeExceeded, encode
 from apizr.extension_runtime.protocol import unique_object
 from apizr.git_source.contracts import GitTarget
 from apizr.local_plugins.models import (
@@ -48,6 +49,10 @@ Code = Literal[
     "operator_tsa_denied",
     "operator_build_denied",
     "operator_git_source_denied",
+    "operator_analysis_denied",
+    "operator_source_invalid",
+    "operator_source_unavailable",
+    "operator_source_changed",
 ]
 
 
@@ -193,11 +198,19 @@ class GitGrant(Model):
     permissions: tuple[Literal["git.fetch"], ...] = Field(max_length=1)
 
 
+class AnalysisGrant(Model):
+    adapter: Literal["repository"]
+    operation: Literal["analyze"]
+    target: AnalysisTarget
+    permissions: tuple[Literal["source.analyze"], ...] = Field(max_length=1)
+
+
 class OperatorPolicy(Model):
+    model_config = ConfigDict(serialize_by_alias=True)
     schema_version: Literal["apizr.operator-policy/v1"] = Field(alias="schema")
     grants: tuple[
         Annotated[
-            Grant | SigningGrant | BuildGrant | GitGrant,
+            Grant | SigningGrant | BuildGrant | GitGrant | AnalysisGrant,
             Field(discriminator="operation"),
         ],
         ...,
@@ -312,7 +325,9 @@ def decide(
     except (ValueError, TypeError, RecursionError, SizeExceeded):
         return Decision(allowed=False, code="operator_arguments_invalid")
     grants = [
-        g for g in policy.grants if not isinstance(g, GitGrant) and g.plugin == identity
+        g
+        for g in policy.grants
+        if not isinstance(g, (GitGrant, AnalysisGrant)) and g.plugin == identity
     ]
     if not grants:
         return Decision(allowed=False, code="operator_identity_denied")
@@ -407,5 +422,37 @@ def decide_git(policy: OperatorPolicy | None, target: GitTarget) -> Decision:
     if not grants:
         return Decision(allowed=False, code="operator_git_source_denied")
     if not any(g.permissions == ("git.fetch",) for g in grants):
+        return Decision(allowed=False, code="operator_permissions_denied")
+    return Decision(allowed=True, code="authorized")
+
+
+def decide_analysis(
+    policy: OperatorPolicy | None, target: LocalTarget | GitAnalysisTarget
+) -> Decision:
+    """Pure source admission; data supplied in memory is outside filesystem admission."""
+    if policy is None:
+        return Decision(allowed=False, code="operator_policy_required")
+    try:
+        policy = _validated_policy(policy)
+    except AuthorizationDenied as error:
+        return error.decision
+    try:
+        from pydantic import TypeAdapter
+
+        target = TypeAdapter[LocalTarget | GitAnalysisTarget](
+            AnalysisTarget
+        ).validate_json(
+            encode(target.model_dump(mode="json", warnings=False), MAX_POLICY_BYTES),
+            strict=True,
+        )
+    except (ValueError, TypeError, AttributeError, RecursionError, SizeExceeded):
+        return Decision(allowed=False, code="operator_source_invalid")
+    grants = [g for g in policy.grants if isinstance(g, AnalysisGrant)]
+    if not grants:
+        return Decision(allowed=False, code="operator_operation_denied")
+    grants = [g for g in grants if g.target == target]
+    if not grants:
+        return Decision(allowed=False, code="operator_analysis_denied")
+    if not any(g.permissions == ("source.analyze",) for g in grants):
         return Decision(allowed=False, code="operator_permissions_denied")
     return Decision(allowed=True, code="authorized")

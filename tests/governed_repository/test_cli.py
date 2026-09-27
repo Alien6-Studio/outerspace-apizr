@@ -4,12 +4,13 @@ import subprocess
 import sys
 
 import pytest
+from analysis_authorization import analysis_policy
+from analysis_authorization import authorized_main as main
 from hypothesis import given, settings
 from hypothesis import strategies as st
 from oci.helpers import IMAGE
 from repository_interfaces.conftest import evidence
 
-from apizr.cli import main
 from apizr.execution.policy import ExecutionPolicy
 from apizr.oci.model import ExecutionPolicyV2
 from apizr.repository_interfaces.generator import render_repository_bundle
@@ -159,8 +160,16 @@ def audit(event,args):
  if event=="exec" and any(str(args[0].co_filename).startswith(root) for root in roots): raise AssertionError("source execution")
 sys.addaudithook(audit)
 for index,root in enumerate(roots):
- assert main(["expose","build","mcp",root,"--interface","mcp","--execution-mode","oci-container","--select","python:selected:run","--execution-policy",sys.argv[3],"--runtime-image",sys.argv[4],"--runtime-platform",sys.argv[5],"--output-dir",sys.argv[6+index]])==0
+ assert main(["expose","build","mcp",root,"--operator-policy",sys.argv[-1],"--interface","mcp","--execution-mode","oci-container","--select","python:selected:run","--execution-policy",sys.argv[3],"--runtime-image",sys.argv[4],"--runtime-platform",sys.argv[5],"--output-dir",sys.argv[6+index]])==0
 """
+    authority = tmp_path / "operator.json"
+    grants = [
+        analysis_policy(root).model_dump(mode="json")["grants"][0]
+        for root in (first, second)
+    ]
+    authority.write_text(
+        json.dumps({"schema": "apizr.operator-policy/v1", "grants": grants})
+    )
     outputs = [tmp_path / "one", tmp_path / "two"]
     result = subprocess.run(
         [
@@ -175,6 +184,7 @@ for index,root in enumerate(roots):
             IMAGE.image,
             IMAGE.platform,
             *map(str, outputs),
+            str(authority),
         ],
         env={
             **os.environ,

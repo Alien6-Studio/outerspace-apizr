@@ -6,6 +6,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
 from hypothesis import given
 from hypothesis import strategies as st
 from jsonschema import Draft202012Validator
@@ -389,7 +390,7 @@ def test_golden_relocation_canonical_and_schemas(tmp_path):
     for root in (FIXTURE / "project", tmp_path / "relocated"):
         if not root.exists():
             shutil.copytree(FIXTURE / "project", root)
-        artifacts = graph_repository(root)
+        artifacts = graph_repository(root, operator_policy=analysis_policy(root))
         report = assess_repository(artifacts.catalog, artifacts.graph)
         result = plan_exposure(
             artifacts.catalog, artifacts.graph, report, policy=policy_value

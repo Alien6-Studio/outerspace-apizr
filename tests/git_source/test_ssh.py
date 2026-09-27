@@ -7,8 +7,9 @@ from pathlib import Path
 from threading import Event, Thread
 
 import pytest
+from analysis_authorization import analysis_policy
+from analysis_authorization import authorized_main as main
 
-from apizr.cli import main
 from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.git_source import AcquisitionLimits, GitSourceError, acquire_snapshot
@@ -357,7 +358,7 @@ def test_ssh_configuration_is_isolated(ssh_remote, tmp_path, monkeypatch, scratc
     git_fixture.git(remote.source, "add", ".")
     git_fixture.git(remote.source, "commit", "-m", "static only")
     with authorized_snapshot(remote.url, "main", **options(remote)) as snapshot:
-        assess_readiness(snapshot.root)
+        assess_readiness(snapshot, operator_policy=analysis_policy(snapshot))
     assert not marker.exists()
     # Inspect OpenSSH's own expanded configuration, not merely our argv.
     work = tmp_path / "work"
@@ -399,13 +400,19 @@ def test_retained_sources_after_ssh_cleanup(ssh_remote, scratch):
         {"execution": {"modes": ["direct"]}}
     )
     local = prepare_exposure(
-        remote.source / "service", policy=policy, readiness_policy=readiness
+        remote.source / "service",
+        operator_policy=analysis_policy(remote.source / "service"),
+        policy=policy,
+        readiness_policy=readiness,
     )
     with authorized_snapshot(
         remote.url, "main", subdir="service", **options(remote)
     ) as snapshot:
         prepared = prepare_exposure(
-            snapshot.root, policy=policy, readiness_policy=readiness
+            snapshot,
+            operator_policy=analysis_policy(snapshot),
+            policy=policy,
+            readiness_policy=readiness,
         )
     assert not snapshot.root.exists()
     for interface in ("rest", "mcp"):

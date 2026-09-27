@@ -4,13 +4,13 @@ from typing import Annotated, Literal
 
 from pydantic import ConfigDict, Field
 
+from apizr.analysis_session import Scope as Scope
 from apizr.capabilities.model import Digest
 from apizr.capabilities.types import ValueModel
 from apizr.exposure import ExposurePolicy
-from apizr.graph import Graph, GraphPolicy
-from apizr.repository import Catalog, ScanPolicy
+from apizr.graph import Graph
+from apizr.repository import Catalog
 from apizr.repository_readiness import (
-    RepositoryReadinessPolicy,
     RepositoryReadinessReport,
 )
 
@@ -33,16 +33,6 @@ class ServerLimits(StrictModel):
     timeout_ms: int = Field(default=10000, ge=1, le=600000)
     max_request_bytes: int = Field(default=65536, ge=4096, le=1048576)
     max_response_bytes: int = Field(default=4194304, ge=2048, le=16777216)
-
-
-class Scope(StrictModel):
-    root: str
-    device: int
-    inode: int
-    scan: ScanPolicy
-    graph: GraphPolicy
-    readiness: RepositoryReadinessPolicy
-    exposure: ExposurePolicy | None
 
 
 Operation = Literal["analyze", "readiness", "plan"]

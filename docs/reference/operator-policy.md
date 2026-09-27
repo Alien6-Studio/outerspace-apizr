@@ -13,6 +13,75 @@ Installation puts verified wheel bytes in an isolated environment. Activation
 chooses one installed version. **Authorization** permits a particular installed
 build to perform one operation on explicitly selected inputs or a remote repository. None implies the next.
 
+## Authorize repository analysis
+
+Development 0.4 requires **source.analyze** for filesystem-backed `scan`, `graph`,
+`readiness`, `expose plan` and the analysis phase of `expose build rest|mcp`.
+Their Python APIs use the same pure `decide_analysis(policy, target)` decision.
+This is independent of `git.fetch`, image construction, signing and publication.
+It does not select public functions or permit business execution. Historical
+stable 0.3.0 commands are unchanged; development commands add an explicit
+`--operator-policy` or the typed Python `operator_policy` argument.
+
+A complete [local policy](../examples/operator-analysis-local.json):
+
+```json
+{
+  "schema": "apizr.operator-policy/v1",
+  "grants": [
+    {
+      "adapter": "repository",
+      "operation": "analyze",
+      "target": {
+        "kind": "local",
+        "root": "/work/project"
+      },
+      "permissions": [
+        "source.analyze"
+      ]
+    }
+  ]
+}
+```
+
+Replace `/work/project` with the **canonical absolute root** actually used.
+The exact root is authorized, including descendants subject to scan limits,
+source roots and exclusions. It does not grant `/work/project-other`, another
+root, or an independently requested child root. All path components are opened
+without following symbolic links. Use the physical path (for example
+`/private/tmp/project` on macOS), not a symlink alias. The directory descriptor
+anchors traversal; changing a pathname cannot redirect it. MCP also pins the
+root's device/inode and refuses replacement. Local file edits affect later
+analyses: use the repository digest guard to detect changes between MCP calls.
+
+```sh
+apizr scan /work/project --operator-policy /private/operator.json --catalog
+apizr graph /work/project --operator-policy /private/operator.json --graph
+apizr readiness /work/project --operator-policy /private/operator.json --report
+```
+
+Explicitly selected, bounded project/operator/readiness/exposure configuration
+may be read to determine the target and parameters. Source enumeration and reading
+start only after admission. No authority is discovered from a project, profile,
+catalogue or environment variable. Refusals exit 2 with a fixed JSON decision on
+stderr, no partial report on stdout.
+
+For Git, add a separate analysis grant with target
+`{"kind":"git","repository":"https://git.example/team/project.git",
+"reference":"refs/heads/main","subdir":"src"}`. Matching uses the exact requested
+repository/ref/subdirectory, never a random temporary path. Both grants are
+checked before combined CLI acquisition. The Python acquisition API separately
+requires `git.fetch`; pass its **live GitSnapshot object**, plus analysis policy,
+to the compiler. That object is bound to the actual acquisition, resolved commit
+and opened export. Invented, copied or expired snapshots are refused. A branch
+grant admits its name; the resolved commit identifies what was analyzed.
+`subdir` does not bound all objects transferred during acquisition.
+
+MCP captures the policy and project scope once at launch, preserving them across
+exec and workers. Policy edits require a **restart**; there is no dynamic
+revocation. Clients cannot choose roots or new authority. See the
+[complete MCP example](apizr-mcp-server.md#choose-one-local-project).
+
 ## Authorize a Git source
 
 Git is part of the minimal core, not an installed plugin. Use a separate
@@ -52,14 +121,14 @@ fixed `GitSourceError` diagnostics. No plugin installation identity is fabricate
 
 Only the explicitly supplied policy grants authority. Neither `apizr.toml`,
 remote files, a catalog/profile nor environment variables can select or extend it.
-`--operator-policy` without `--git` is rejected rather than ignored. Local commands
-without that option retain their behavior. Acquisition limits remain separate
+Local development commands require their own `source.analyze` grant; a fetch
+grant does not authorize reading a local root. Acquisition limits remain separate
 validated controls. The grant replaces neither server access rights nor TLS/SSH
 trust and provides no build, signing or publication permission. Existing plugin
 grants remain valid and do not authorize Git. See the complete
 [HTTPS CLI/Python journey](git-sources.md) and [SSH journey](git-ssh.md).
 
-Analysis authorization remains a separate, unfinished 0.4 category.
+Analysis authorization is a separate `source.analyze` rule; see the complete examples above.
 
 ## Write the operator's policy
 
@@ -345,6 +414,8 @@ No paths, reference values, credentials or native diagnostics appear in it.
 | `operator_repository_denied` | No matching exact repository |
 | `operator_permissions_denied` | The grant lacks a required build, registry, signing or timestamp permission |
 | `operator_git_source_denied` | Exact Git source, revision, selection or trust references do not match |
+| `operator_analysis_denied` | Exact analysis root or Git source does not match |
+| `operator_source_invalid` / `operator_source_unavailable` / `operator_source_changed` | Invalid context, inaccessible/link traversal, or changed pinned identity |
 | `operator_build_denied` | Base, platform, interface, paths, Docker parameters or local tag does not match |
 | `operator_key_denied` | Key ID, expected signer or key file reference does not match |
 | `operator_tsa_denied` | Timestamp authority does not match |
@@ -357,8 +428,11 @@ low-level `extension_runtime.invoke_extension` outside the managed installation
 path does not acquire operator authorization. Protect operator files and plugin
 storage from untrusted writers; plugins still execute with the user's rights.
 
-This control covers image `build`/`push`, proof `publish` and delivery signing `attest`.
-Remote Git acquisition has its separate `git.fetch` gate above. Analysis and the other operations retain their existing controls;
-`not_required` does not claim they have completed operator authorization.
-`verify`, plugin lifecycle/catalog operations and the analysis
-MCP server keep their behavior. Publication through MCP is not added.
+This control covers managed repository analysis, Git acquisition, image
+`build`/`push`, proof `publish` and signing `attest`. Single-file/notebook inspection
+and primitives such as `scan_sources`, `build_graph`, `assess_repository` and
+`plan_exposure` process caller-supplied bytes/artifacts in memory; they cannot
+infer the authority under which those bytes were obtained. `render_bundle` uses
+retained bytes without rereading sources. This is not universal protection against
+arbitrary Python executed with the user's rights. Verification and plugin lifecycle
+operations retain their controls. Publication through MCP is not added.

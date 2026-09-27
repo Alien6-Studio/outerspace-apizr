@@ -78,6 +78,26 @@ def check(site: Path) -> None:
             or "development/0.4/#install-a-development-wheel" not in text
         ):
             failures.append(f"{name}: missing development status/installation link")
+    for name in (
+        "reference/operator-policy",
+        "reference/compiler-api",
+        "reference/apizr-mcp-server",
+        "reference/git-sources",
+        "reference/git-ssh",
+        "getting-started/user-guide/project",
+        "development/0.4",
+    ):
+        text = (site / name / "index.html").read_text()
+        if "operator-policy" not in text and "operator_policy" not in text:
+            failures.append(
+                f"{name}: missing explicit operator authority documentation"
+            )
+    authority = (site / "reference/operator-policy/index.html").read_text()
+    if (
+        "source.analyze" not in authority
+        or "authorize-repository-analysis" not in authority
+    ):
+        failures.append("Missing source analysis permission and stable anchor")
     home = (site / "index.html").read_text()
     for required in (
         "getting-started/quickstart/",

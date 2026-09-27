@@ -34,9 +34,10 @@ def main(argv: Sequence[str]) -> int:
     try:
         apply_input(parser, args)
         policy = load_policy(args.policy)
-        with input_root(args) as root:
+        with input_root(args) as (root, authority):
             report = assess_readiness(
                 root,
+                operator_policy=authority,
                 scan_policy=scan_policy(args),
                 graph_policy=graph_policy(args),
                 readiness_policy=policy,

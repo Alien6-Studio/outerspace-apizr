@@ -200,7 +200,18 @@ def write_git_policy(
                         "operation": "fetch",
                         "target": target,
                         "permissions": ["git.fetch"],
-                    }
+                    },
+                    {
+                        "adapter": "repository",
+                        "operation": "analyze",
+                        "permissions": ["source.analyze"],
+                        "target": {
+                            "kind": "git",
+                            "repository": repository,
+                            "reference": reference,
+                            "subdir": subdir,
+                        },
+                    },
                 ],
             }
         )
@@ -252,7 +263,7 @@ import apizr.git_source.acquisition as acquisition
 def forbidden(*args, **kwargs): raise AssertionError("workspace before admission")
 acquisition.TemporaryDirectory = forbidden
 request = json.loads(sys.argv[2])
-if request['entry'] == 'cli':
+if request['entry'].startswith('cli'):
     from apizr.cli import main
     assert main(request['arguments']) == 2
 else:
@@ -267,7 +278,23 @@ else:
 """
     )
     results = []
-    for entry in ("cli", "api"):
+    for entry in ("cli", "api", "cli-fetch-only"):
+        flags = arguments
+        expected = "operator_policy_required"
+        if entry == "cli-fetch-only":
+            path = write_git_policy(
+                root / "fetch-only.json",
+                repository,
+                reference,
+                subdir=subdir,
+                ssh_agent_socket=ssh_agent_socket,
+                ssh_known_hosts=ssh_known_hosts,
+            )
+            raw = json.loads(path.read_bytes())
+            raw["grants"] = [g for g in raw["grants"] if g["operation"] == "fetch"]
+            path.write_text(json.dumps(raw))
+            flags = [*arguments, "--operator-policy", str(path)]
+            expected = "operator_operation_denied"
         result = subprocess.run(
             [
                 str(python),
@@ -281,7 +308,7 @@ else:
                 json.dumps(
                     {
                         "entry": entry,
-                        "arguments": arguments,
+                        "arguments": flags,
                         "repository": repository,
                         "reference": reference,
                         "options": options,
@@ -296,10 +323,119 @@ else:
         )
         assert result.returncode == 0 and not result.stdout, result.stderr
         decision = json.loads(result.stderr)
-        assert (
-            decision["code"] == "operator_policy_required" and not decision["allowed"]
-        )
+        assert decision["code"] == expected and not decision["allowed"]
         results.append(
             {"entrypoint": entry, "code": decision["code"], "before_effect": True}
         )
     (root / "operator-git-refusals.json").write_text(json.dumps(results))
+
+
+def write_analysis_policy(path, *sources):
+    """Write exact local fixture grants; no source enumeration or imports."""
+    path.write_text(
+        json.dumps(
+            {
+                "schema": "apizr.operator-policy/v1",
+                "grants": [
+                    {
+                        "adapter": "repository",
+                        "operation": "analyze",
+                        "target": {
+                            "kind": "local",
+                            "root": str(Path(source).absolute()),
+                        },
+                        "permissions": ["source.analyze"],
+                    }
+                    for source in sources
+                ],
+            }
+        )
+    )
+    return path
+
+
+def refuse_analysis(python, work, source):
+    """Installed CLI/Python refusals, with source I/O and process/network effect traps."""
+    probe = (
+        EFFECT_GUARD
+        + """
+from pathlib import Path
+from apizr.operator_policy import AuthorizationDenied, load_operator_policy
+from apizr.compiler import assess_readiness
+from apizr.cli import main
+request = json.loads(sys.argv[2])
+if request['entry'] == 'cli':
+    flags = ['--operator-policy', request['policy']] if request['policy'] else []
+    assert main(['readiness', request['source'], '--report', *flags]) == 2
+else:
+    operator = load_operator_policy(Path(request['policy'])) if request['policy'] else None
+    try:
+        assess_readiness(request['source'], operator_policy=operator)
+        raise AssertionError('analysis without admission')
+    except AuthorizationDenied as error:
+        print(error.decision.model_dump_json(by_alias=True), file=sys.stderr)
+"""
+    )
+    results = []
+    for entry in ("cli", "api"):
+        for case, code in [
+            ("missing", "operator_policy_required"),
+            ("neighbor", "operator_analysis_denied"),
+        ]:
+            selected = None
+            if case == "neighbor":
+                selected = write_analysis_policy(
+                    work / "denied-analysis.json",
+                    source.parent / (source.name + "-other"),
+                )
+            result = subprocess.run(
+                [
+                    str(python),
+                    "-I",
+                    "-B",
+                    "-c",
+                    probe,
+                    json.dumps([str(source)]),
+                    json.dumps(
+                        {
+                            "entry": entry,
+                            "source": str(source),
+                            "policy": str(selected) if selected else None,
+                        }
+                    ),
+                ],
+                cwd=work,
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            assert result.returncode == 0 and not result.stdout, result.stderr
+            decision = json.loads(result.stderr)
+            assert not decision["allowed"] and decision["code"] == code
+            results.append({"entry": entry, "case": case, "decision": decision})
+    (work / "operator-analysis-refusals.json").write_text(json.dumps(results))
+
+
+GIT_ANALYSIS_REFUSAL = """
+def verify_analysis_refusal(snapshot):
+    import os
+    import apizr.repository.discovery as discovery
+    from apizr.compiler import assess_readiness
+    from apizr.operator_policy import AuthorizationDenied, load_operator_policy
+    from pathlib import Path
+    selected = load_operator_policy(Path("operator.json"))
+    fetch_only = selected.model_copy(update={"grants": tuple(g for g in selected.grants if g.operation == "fetch")})
+    original_scan, original_read = os.scandir, discovery.read_source
+    def forbidden(*args, **kwargs):
+        raise AssertionError("source read before analysis admission")
+    os.scandir = discovery.read_source = forbidden
+    try:
+        for authority, expected in ((None, "operator_policy_required"), (fetch_only, "operator_operation_denied")):
+            try:
+                assess_readiness(snapshot, operator_policy=authority)
+                raise AssertionError("analysis without source permission")
+            except AuthorizationDenied as error:
+                assert error.code == expected
+    finally:
+        os.scandir, discovery.read_source = original_scan, original_read
+"""

@@ -2,6 +2,7 @@ import os
 import tempfile
 from pathlib import Path
 
+from analysis_authorization import analysis_policy
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
@@ -35,9 +36,16 @@ def test_mapping_and_relocation_independence(order, value):
     outputs = []
     for _ in range(2):
         with tempfile.TemporaryDirectory() as directory:
+            directory = str(Path(directory).resolve())
             for p in order:
                 (Path(directory) / p).write_bytes(files[p])
-            outputs.append(graph_bytes(graph_repository(directory).graph))
+            outputs.append(
+                graph_bytes(
+                    graph_repository(
+                        directory, operator_policy=analysis_policy(directory)
+                    ).graph
+                )
+            )
     assert outputs == [graph_bytes(expected)] * 2
 
 
@@ -136,7 +144,11 @@ def test_actual_scandir_reverse_order(monkeypatch, tmp_path):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(f"def {name}(): return 1")
     policy = ScanPolicy(source_roots=("src",))
-    expected = graph_bytes(graph_repository(tmp_path, scan_policy=policy).graph)
+    expected = graph_bytes(
+        graph_repository(
+            tmp_path, operator_policy=analysis_policy(tmp_path), scan_policy=policy
+        ).graph
+    )
     original = os.scandir
 
     class Reversed:
@@ -151,4 +163,11 @@ def test_actual_scandir_reverse_order(monkeypatch, tmp_path):
             return False
 
     monkeypatch.setattr(os, "scandir", Reversed)
-    assert graph_bytes(graph_repository(tmp_path, scan_policy=policy).graph) == expected
+    assert (
+        graph_bytes(
+            graph_repository(
+                tmp_path, operator_policy=analysis_policy(tmp_path), scan_policy=policy
+            ).graph
+        )
+        == expected
+    )

@@ -9,10 +9,11 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
+from analysis_authorization import authorized_main as main
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from apizr.cli import main
 from apizr.repository_readiness import (
     RepositoryReadinessReport,
 )
@@ -153,7 +154,7 @@ def test_invalid_scan_graph_bounds_fail_before_discovery(
 
 def test_inaccessible_or_invalid_policies_and_roots(tmp_path, capfd):
     assert main(["readiness", str(tmp_path / "missing")]) == 2
-    assert "inaccessible" in capfd.readouterr().err
+    assert "operator_source_unavailable" in capfd.readouterr().err
     policy = tmp_path / "policy.json"
     for content in [
         b"SENSITIVE !",
@@ -204,7 +205,7 @@ def test_bounds_preserve_upstream_diagnostics(tmp_path, capfd, bound, value):
 def test_canonical_checkout_location_and_option_order_determinism(roots, controls):
     # Exercise real CLI parsing as well as filesystem discovery across locations.
     with tempfile.TemporaryDirectory() as directory:
-        base = Path(directory)
+        base = Path(directory).resolve()
         results = []
         for index, root_order in enumerate([roots, list(reversed(roots))]):
             root = base / f"unrelated-checkout-{index}"
@@ -229,6 +230,8 @@ def test_canonical_checkout_location_and_option_order_determinism(roots, control
                     }
                 )
             )
+            authority = base / f"operator-{index}.json"
+            authority.write_text(analysis_policy(root).model_dump_json())
             command = [
                 sys.executable,
                 "-m",
@@ -236,6 +239,8 @@ def test_canonical_checkout_location_and_option_order_determinism(roots, control
                 "readiness",
                 str(root),
                 "--report",
+                "--operator-policy",
+                str(authority),
                 "--policy",
                 str(policy),
             ]
@@ -277,6 +282,9 @@ def audit(event, args):
  if event == "exec" and str(args[0].co_filename).startswith(root): raise AssertionError("source execution")
  if event == "open" and isinstance(args[0], str) and args[0].startswith(root) and args[2] & (os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC): raise AssertionError("repository write")
 sys.addaudithook(audit)
+from pathlib import Path
+from apizr.operator_policy import load_operator_policy
+operator = load_operator_policy(Path(sys.argv[-1]))
 from apizr.cli import main
 import apizr.readiness_cli
 import apizr.execution.policy
@@ -284,12 +292,14 @@ import importlib.util
 def forbidden(*args, **kwargs): raise AssertionError("runtime availability or package probe")
 apizr.execution.policy.local_capabilities = forbidden
 importlib.util.find_spec = forbidden
-status = main(["readiness", root, "--report"])
+status = main(["readiness", root, "--operator-policy", sys.argv[-1], "--report"])
 assert status == 1
 assert not any(name.startswith(("fastapi", "mcp", "docker", "apizr.oci.docker", "apizr.generators", "apizr.governed")) for name in sys.modules)
 """
+    authority_file = tmp_path / "operator-analysis.json"
+    authority_file.write_text(analysis_policy(root).model_dump_json())
     result = subprocess.run(
-        [sys.executable, "-I", "-B", "-c", probe, str(root)],
+        [sys.executable, "-I", "-B", "-c", probe, str(root), str(authority_file)],
         cwd=root,
         env={
             **os.environ,

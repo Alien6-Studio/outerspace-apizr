@@ -1,7 +1,6 @@
 """One isolated compiler call. No MCP SDK, imports of project code, or CLI calls."""
 
 import json
-import os
 import sys
 
 from pydantic import ValidationError
@@ -11,11 +10,11 @@ from apizr.exposure import ExposureRefused, plan_bytes
 from apizr.extension_runtime.protocol import Request, unique_object
 from apizr.graph import analyze_repository
 from apizr.graph.serialization import graph_bytes
+from apizr.operator_policy import AuthorizationDenied
 from apizr.repository.serialization import catalog_bytes
 from apizr.repository_readiness.serialization import report_bytes
 
 from .model import Job
-from .scope import open_root
 
 MAX_JOB_BYTES = 1048576
 
@@ -26,22 +25,13 @@ def failure(code: str, *, diagnostics: list | None = None) -> dict:
 
 def calculate(job: Job) -> dict:
     scope = job.scope
-    descriptor = open_root(scope.root)
     try:
-        previous = os.open(".", os.O_RDONLY | os.O_DIRECTORY)
-    except OSError:
-        os.close(descriptor)
-        raise
-    try:
-        identity = os.fstat(descriptor)
-        if (identity.st_dev, identity.st_ino) != (scope.device, scope.inode):
-            return failure("scope_changed")
-        # The scanner anchors '.' with its own descriptor. Ancestor replacement
-        # cannot redirect this worker outside the repository inode selected at start.
-        os.fchdir(descriptor)
+        source = scope.source()
         options = {"scan_policy": scope.scan, "graph_policy": scope.graph}
         if job.operation == "analyze":
-            evidence = analyze_repository(".", **options)
+            evidence = analyze_repository(
+                source, **options, operator_policy=scope.operator_policy
+            )
             digest = evidence.catalog.repository_digest
             value = {
                 "repository_digest": digest.model_dump(mode="json"),
@@ -49,7 +39,12 @@ def calculate(job: Job) -> dict:
                 "graph": json.loads(graph_bytes(evidence.graph)),
             }
         elif job.operation == "readiness":
-            report = assess_readiness(".", **options, readiness_policy=scope.readiness)
+            report = assess_readiness(
+                source,
+                **options,
+                readiness_policy=scope.readiness,
+                operator_policy=scope.operator_policy,
+            )
             digest = report.repository_digest
             value = {
                 "repository_digest": digest.model_dump(mode="json"),
@@ -61,7 +56,11 @@ def calculate(job: Job) -> dict:
             if policy is None:
                 return failure("policy_required")
             prepared = prepare_exposure(
-                ".", **options, readiness_policy=scope.readiness, policy=policy
+                source,
+                **options,
+                readiness_policy=scope.readiness,
+                policy=policy,
+                operator_policy=scope.operator_policy,
             )
             digest = prepared.plan.repository_digest
             value = json.loads(plan_bytes(prepared.plan))
@@ -76,10 +75,9 @@ def calculate(job: Job) -> dict:
             "exposure_refused",
             diagnostics=[d.model_dump(mode="json") for d in error.diagnostics],
         )
-    finally:
-        os.fchdir(previous)
-        os.close(previous)
-        os.close(descriptor)
+    except AuthorizationDenied as error:
+        code = error.decision.code
+        return failure("scope_changed" if code == "operator_source_changed" else code)
 
 
 def main() -> int:

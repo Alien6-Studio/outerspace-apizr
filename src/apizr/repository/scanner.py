@@ -1,10 +1,12 @@
 """Orchestrate existing Inspection; never reinterpret capability semantics."""
 
 from collections.abc import Iterable
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
+from typing import TYPE_CHECKING
 
 from apizr.capabilities.model import Digest
 from apizr.inspection import inspect_source, json_bytes
+from apizr.source_access import RepositoryInput
 
 from .discovery import Budget, ScanError, ScanLimit, SourceInput, discover
 from .model import (
@@ -18,6 +20,9 @@ from .model import (
 from .modules import module_name, source_root
 from .policy import ScanPolicy, relative_path
 from .serialization import policy_digest
+
+if TYPE_CHECKING:
+    from apizr.operator_policy import OperatorPolicy
 
 
 def assemble(
@@ -105,13 +110,18 @@ def assemble(
     )
 
 
-def scan(root: str | Path, *, policy: ScanPolicy | None = None) -> Catalog:
+def scan(
+    root: RepositoryInput,
+    *,
+    policy: ScanPolicy | None = None,
+    operator_policy: "OperatorPolicy | None" = None,
+) -> Catalog:
     selected = (
         ScanPolicy()
         if policy is None
         else ScanPolicy.model_validate(policy.model_dump(mode="json"))
     )
-    sources, diagnostics = discover(root, selected)
+    sources, diagnostics = discover(root, selected, operator_policy=operator_policy)
     return assemble(sources, selected, diagnostics)
 
 

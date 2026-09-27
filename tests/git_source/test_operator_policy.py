@@ -146,6 +146,11 @@ def traps(monkeypatch):
     def forbidden(*args, **kwargs):
         raise AssertionError("effect before Git authorization")
 
+    class ForbiddenProcess(subprocess.Popen):
+        # Preserve Popen[...] annotations during lazy imports on older Python.
+        def __init__(self, *args, **kwargs):
+            forbidden()
+
     def guard(original):
         def checked(path, *args, **kwargs):
             assert not str(path).startswith("/trust/")
@@ -161,7 +166,7 @@ def traps(monkeypatch):
         (os, "lstat"),
     ]:
         monkeypatch.setattr(owner, name, guard(getattr(owner, name)))
-    monkeypatch.setattr(subprocess, "Popen", forbidden)
+    monkeypatch.setattr(subprocess, "Popen", ForbiddenProcess)
     monkeypatch.setattr(socket, "socket", forbidden)
     monkeypatch.setattr("apizr.git_source.acquisition.TemporaryDirectory", forbidden)
     monkeypatch.setattr("apizr.git_source.acquisition.shutil.which", forbidden)
@@ -247,11 +252,13 @@ def test_pure_exact_decision(transport, case, monkeypatch):
 
 
 @pytest.mark.parametrize("command", COMMANDS)
-def test_local_operator_option_not_ignored(command, tmp_path, monkeypatch):
+def test_local_operator_option_not_ignored(command, tmp_path, monkeypatch, capsys):
     traps(monkeypatch)
-    with pytest.raises(SystemExit) as error:
-        main([*command, str(tmp_path), "--operator-policy", "absent.json"])
-    assert error.value.code == 2
+    # Keep positional arguments together for argparse on Python 3.11–3.13.
+    option_start = next(i for i, value in enumerate(command) if value.startswith("--"))
+    argv = [*command[:option_start], str(tmp_path), *command[option_start:]]
+    assert main([*argv, "--operator-policy", "absent.json"]) == 2
+    assert json.loads(capsys.readouterr().err)["code"] == "operator_policy_unavailable"
 
 
 def test_ca_refusal_and_typed_object_revalidation(monkeypatch):
@@ -322,7 +329,7 @@ def test_complete_documented_git_policy(transport):
         / f"docs/examples/operator-git-{transport}.json"
     )
     selected = OperatorPolicy.model_validate_json(path.read_bytes())
-    assert len(selected.grants) == 1
+    assert len(selected.grants) == 2
     assert decide_git(selected, selected.grants[0].target).allowed
 
 

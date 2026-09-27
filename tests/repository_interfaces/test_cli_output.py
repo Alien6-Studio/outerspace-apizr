@@ -5,8 +5,9 @@ import subprocess
 import sys
 
 import pytest
+from analysis_authorization import analysis_policy
+from analysis_authorization import authorized_main as main
 
-from apizr.cli import main
 from apizr.repository_interfaces.output import write_bundle
 
 
@@ -48,9 +49,9 @@ def test_cli_one_discovery_exact_retained_bytes(tmp_path, monkeypatch, capfd, ta
     discover, read, assemble = builder.discover, discovery.read_source, builder.assemble
     calls, reads = [], []
 
-    def counted(*args):
+    def counted(*args, **kwargs):
         calls.append(1)
-        return discover(*args)
+        return discover(*args, **kwargs)
 
     def counted_read(*args):
         reads.append(args[2])
@@ -158,7 +159,7 @@ def test_generation_audit_no_project_execution_or_environment_probes(tmp_path):
         'import socket, subprocess\nopen("MARKER", "w").write("executed")\nsocket.create_connection(("localhost", 9))\nsubprocess.run(["docker", "info"])\n'
     )
     probe = """import sys, os
-root, output, readiness = sys.argv[1:]
+root, output, readiness, authority = sys.argv[1:]
 def audit(event, args):
  if event in {"subprocess.Popen", "os.system", "os.posix_spawn", "os.fork", "socket.connect", "socket.bind", "socket.getaddrinfo"}: raise AssertionError(event)
  if event == "import" and args[0].split('.')[0] in {"a", "hostile", "setup", "fastapi", "mcp", "docker"}: raise AssertionError(args[0])
@@ -173,8 +174,10 @@ apizr.execution.policy.local_capabilities = forbidden
 importlib.util.find_spec = forbidden
 importlib.metadata.distributions = forbidden
 for target in ("rest", "mcp"):
- assert main(["expose", "build", target, root, "--interface", target, "--execution-mode", "direct", "--select", "python:a:f", "--readiness-policy", readiness, "--output-dir", output + target]) == 0
+ assert main(["expose", "build", target, root, "--operator-policy", authority, "--interface", target, "--execution-mode", "direct", "--select", "python:a:f", "--readiness-policy", readiness, "--output-dir", output + target]) == 0
 """
+    authority = tmp_path / "operator.json"
+    authority.write_text(analysis_policy(root).model_dump_json())
     result = subprocess.run(
         [
             sys.executable,
@@ -185,6 +188,7 @@ for target in ("rest", "mcp"):
             str(root),
             str(tmp_path / "bundle"),
             str(rp),
+            str(authority),
         ],
         cwd=root,
         env={

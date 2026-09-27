@@ -3,7 +3,9 @@ import shutil
 from pathlib import Path
 
 import pytest
+from analysis_authorization import analysis_policy
 
+from apizr.operator_policy import AuthorizationDenied
 from apizr.repository import (
     Code,
     ScanError,
@@ -26,14 +28,18 @@ def write(root, path, data=b"def f(): return 1"):
 
 
 def test_empty_projects_and_invalid_sources_continue(tmp_path):
-    empty = scan(tmp_path)
+    empty = scan(tmp_path, operator_policy=analysis_policy(tmp_path))
     assert empty.exit_code == 0 and empty.statistics.sources == 0
-    catalog = scan(FIXTURES / "invalid")
+    catalog = scan(
+        FIXTURES / "invalid", operator_policy=analysis_policy(FIXTURES / "invalid")
+    )
     assert len(catalog.sources) == 2 and len(catalog.capabilities) == 1
     assert catalog.diagnostics[0].code == Code.PARSE
     assert catalog.diagnostics[0].line == 1
     assert catalog.exit_code == 1
-    names = scan(FIXTURES / "names")
+    names = scan(
+        FIXTURES / "names", operator_policy=analysis_policy(FIXTURES / "names")
+    )
     assert any(c.module == "λ" for c in names.capabilities)
     assert names.diagnostics[0].code == Code.MODULE
     for number, raw in enumerate(
@@ -45,7 +51,7 @@ def test_empty_projects_and_invalid_sources_continue(tmp_path):
     ):
         write(tmp_path, f"bad{number}.py", raw)
     write(tmp_path, "good.py")
-    result = scan(tmp_path)
+    result = scan(tmp_path, operator_policy=analysis_policy(tmp_path))
     assert len(result.capabilities) == 1
     assert len(result.diagnostics) == 3
     assert all(d.code in {Code.PARSE, Code.ENCODING} for d in result.diagnostics)
@@ -58,9 +64,10 @@ def test_default_exclusions_do_not_hide_tests_or_require_git(tmp_path):
     write(tmp_path, "ordinary.py")
     for name in ScanPolicy().excluded_directories:
         write(tmp_path, f"{name}/hidden.py")
-    assert len(scan(tmp_path).sources) == 2
+    assert len(scan(tmp_path, operator_policy=analysis_policy(tmp_path)).sources) == 2
     explicit = scan(
         tmp_path,
+        operator_policy=analysis_policy(tmp_path),
         policy=ScanPolicy(
             excluded_directories=(*ScanPolicy().excluded_directories, "tests")
         ),
@@ -81,23 +88,29 @@ def test_symlinks_are_never_followed_including_loops_and_roots(tmp_path):
     (repository / "file.py").symlink_to(outside)
     (repository / "loop").symlink_to(repository, target_is_directory=True)
     (repository / "outside").symlink_to(tmp_path, target_is_directory=True)
-    result = scan(repository)
+    result = scan(repository, operator_policy=analysis_policy(repository))
     assert not result.sources and not result.capabilities
     assert len(result.diagnostics) == 3
     assert all(d.code == Code.SYMLINK for d in result.diagnostics)
     assert result.exit_code == 0
     assert str(tmp_path).encode() not in catalog_bytes(result)
-    missing = scan(repository, policy=ScanPolicy(source_roots=("missing", "outside")))
+    missing = scan(
+        repository,
+        operator_policy=analysis_policy(repository),
+        policy=ScanPolicy(source_roots=("missing", "outside")),
+    )
     assert [d.code for d in missing.diagnostics] == [Code.ROOT, Code.ROOT]
     assert missing.exit_code == 1
     alias = tmp_path / "alias"
     alias.symlink_to(repository, target_is_directory=True)
-    with pytest.raises(ScanError):
-        scan(alias)
-    with pytest.raises(ScanError):
-        scan(tmp_path / "missing")
-    with pytest.raises(ScanError):
-        scan(outside)
+    with pytest.raises(AuthorizationDenied, match="operator_source_unavailable"):
+        scan(alias, operator_policy=analysis_policy(alias))
+    with pytest.raises(AuthorizationDenied, match="operator_source_unavailable"):
+        scan(
+            tmp_path / "missing", operator_policy=analysis_policy(tmp_path / "missing")
+        )
+    with pytest.raises(AuthorizationDenied, match="operator_source_unavailable"):
+        scan(outside, operator_policy=analysis_policy(outside))
 
 
 @pytest.mark.parametrize(
@@ -112,7 +125,9 @@ def test_symlinks_are_never_followed_including_loops_and_roots(tmp_path):
 def test_global_bounds_discard_partial_prefix(tmp_path, change, limit):
     write(tmp_path, "a.py")
     write(tmp_path, "b/c/d.py")
-    result = scan(tmp_path, policy=ScanPolicy(**change))
+    result = scan(
+        tmp_path, operator_policy=analysis_policy(tmp_path), policy=ScanPolicy(**change)
+    )
     assert not result.sources and not result.capabilities
     assert result.diagnostics[0].code == Code.LIMIT
     assert result.diagnostics[0].limit == limit
@@ -124,7 +139,7 @@ def test_large_file_not_read_and_independent_source_survives(tmp_path):
     with huge.open("wb") as stream:
         stream.truncate(2**30)
     write(tmp_path, "good.py")
-    result = scan(tmp_path)
+    result = scan(tmp_path, operator_policy=analysis_policy(tmp_path))
     assert result.statistics.inspected_sources == 1
     source = next(s for s in result.sources if s.path == "huge.py")
     assert source.size == 2**30 and source.source_digest is None
@@ -191,7 +206,7 @@ def test_swap_to_external_symlink_before_open_is_contained(
         return original(path, flags, *args, **kwargs)
 
     monkeypatch.setattr(os, "open", open_guard)
-    result = scan(root)
+    result = scan(root, operator_policy=analysis_policy(root))
     assert replaced and result.exit_code == 1
     assert all("stolen" not in c.id for c in result.capabilities)
     assert any(d.code == Code.READ for d in result.diagnostics)
@@ -221,7 +236,7 @@ def test_unreadable_sources_directories_and_nonregular_files(tmp_path, monkeypat
     monkeypatch.setattr(os, "open", deny)
     monkeypatch.setattr(os, "scandir", denied_directory)
     os.mkfifo(tmp_path / "pipe.py")
-    result = scan(tmp_path)
+    result = scan(tmp_path, operator_policy=analysis_policy(tmp_path))
     assert len(result.capabilities) == 1
     assert len(result.diagnostics) == 3
     assert all(d.code == Code.READ for d in result.diagnostics)
@@ -275,7 +290,11 @@ def test_concurrent_source_mutation_does_not_get_a_trusted_digest(
             return self.stream.read(size)
 
     monkeypatch.setattr(os, "fdopen", ChangingStream)
-    result = scan(tmp_path, policy=ScanPolicy(max_file_bytes=32))
+    result = scan(
+        tmp_path,
+        operator_policy=analysis_policy(tmp_path),
+        policy=ScanPolicy(max_file_bytes=32),
+    )
     assert result.sources[0].source_digest is None
     assert result.exit_code == 1
     assert result.diagnostics[0].code in {Code.READ, Code.SIZE}
@@ -284,7 +303,7 @@ def test_concurrent_source_mutation_does_not_get_a_trusted_digest(
 def test_noncanonical_filesystem_name_is_diagnosed(tmp_path):
     write(tmp_path, "bad\\name.py")
     write(tmp_path, "good.py")
-    result = scan(tmp_path)
+    result = scan(tmp_path, operator_policy=analysis_policy(tmp_path))
     assert len(result.capabilities) == 1
     assert result.diagnostics[0].code == Code.MODULE
     assert result.diagnostics[0].path == "."
@@ -298,7 +317,7 @@ def test_non_utf8_filesystem_name_is_diagnosed_when_supported(tmp_path):
         pytest.skip("Filesystem does not permit non-UTF-8 names")
     os.close(descriptor)
     write(tmp_path, "good.py")
-    result = scan(tmp_path)
+    result = scan(tmp_path, operator_policy=analysis_policy(tmp_path))
     assert len(result.capabilities) == 1
     assert result.diagnostics[0].code == Code.READ
     assert result.diagnostics[0].path == "."

@@ -9,6 +9,7 @@ import tempfile
 from collections.abc import Callable
 from pathlib import Path
 
+from operator_policy_proof import refuse_analysis, write_analysis_policy
 from smoke_git_source import exercise as git_example
 from smoke_git_ssh import exercise as ssh_example
 
@@ -23,8 +24,11 @@ def project_example(
     example = root / "examples/project-config"
     shutil.copytree(checkout / "examples/project-config", example)
     project = example / "apizr.toml"
+    operator = write_analysis_policy(root / "project-operator.json", example)
     scan = [
         example,
+        "--operator-policy",
+        operator,
         "--source-root",
         "src",
         "--exclude-dir",
@@ -36,10 +40,14 @@ def project_example(
     ]
     readiness = example / "policies/readiness.json"
     exposure = example / "policies/exposure.json"
-    configured = command("readiness", "--project", project, "--report")
+    configured = command(
+        "readiness", "--project", project, "--operator-policy", operator, "--report"
+    )
     explicit = command("readiness", *scan, "--policy", readiness, "--report")
     assert configured.stdout == explicit.stdout
-    configured = command("expose", "plan", "--project", project, "--plan")
+    configured = command(
+        "expose", "plan", "--project", project, "--operator-policy", operator, "--plan"
+    )
     explicit = command(
         "expose",
         "plan",
@@ -53,7 +61,17 @@ def project_example(
     assert configured.stdout == explicit.stdout
     for target in ("rest", "mcp"):
         actual, expected = root / ("project-" + target), root / ("explicit-" + target)
-        command("expose", "build", target, "--project", project, "--output-dir", actual)
+        command(
+            "expose",
+            "build",
+            target,
+            "--project",
+            project,
+            "--operator-policy",
+            operator,
+            "--output-dir",
+            actual,
+        )
         command(
             "expose",
             "build",
@@ -127,6 +145,7 @@ def main():
         exposure.write_text(
             '{"selection":{"include":["python:sample:add"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}'
         )
+        authority = write_analysis_policy(root / "operator-local.json", source)
         for extra in ("base", "notebook", "http", "mcp", "legacy"):
             env = root / ("env-" + extra)
             subprocess.run(
@@ -177,6 +196,7 @@ def main():
                 probe(
                     "from importlib.metadata import distributions; names={d.metadata['Name'].lower().replace('_','-') for d in distributions()}; assert names == {'outerspace-apizr','pydantic','pydantic-core','annotated-types','typing-extensions','typing-inspection'}, names; print('Base installation: exactly 5 dependencies')"
                 )
+                refuse_analysis(python, root, source)
                 project_example(root, command, probe)
                 git_example(python, cli, root)
                 ssh_example(python, cli, root)
@@ -185,11 +205,13 @@ def main():
                     ("graph", "--graph"),
                     ("readiness", "--report"),
                 ):
-                    command(cmd, source, flag)
+                    command(cmd, source, "--operator-policy", authority, flag)
                 command(
                     "expose",
                     "plan",
                     source,
+                    "--operator-policy",
+                    authority,
                     "--readiness-policy",
                     readiness,
                     "--policy",
@@ -202,6 +224,8 @@ def main():
                         "build",
                         target,
                         source,
+                        "--operator-policy",
+                        authority,
                         "--readiness-policy",
                         readiness,
                         "--policy",
@@ -243,7 +267,7 @@ importlib.metadata.entry_points = forbidden
 from apizr.compiler import assess_readiness
 from apizr.repository_readiness import report_bytes
 from apizr.exposure import plan_bytes
-assert report_bytes(assess_readiness(Path("repository"), readiness_policy=RepositoryReadinessPolicy.model_validate({"execution":{"modes":["direct"]}}))) == report_bytes(report)
+assert report_bytes(assess_readiness(Path("repository"), operator_policy=operator, readiness_policy=RepositoryReadinessPolicy.model_validate({"execution":{"modes":["direct"]}}))) == report_bytes(report)
 assert rest["repository-readiness.json"] == report_bytes(report)
 assert rest["exposure-plan.json"] == plan_bytes(plan)
 for target in ("rest", "mcp"):

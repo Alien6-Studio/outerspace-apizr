@@ -5,8 +5,8 @@ from typing import Annotated, Literal
 
 from pydantic import ConfigDict, Field, JsonValue, TypeAdapter
 
+from apizr.bounded_json import finite_json
 from apizr.capabilities.types import ValueModel
-from apizr.execution.protocol import finite_json
 
 from .errors import PluginFailed, ProtocolInvalid
 

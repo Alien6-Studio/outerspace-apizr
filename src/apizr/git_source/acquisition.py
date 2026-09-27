@@ -7,7 +7,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path, PurePosixPath
 from tempfile import TemporaryDirectory
-from threading import Event
+from threading import Event, RLock
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -21,6 +21,20 @@ from .process import GitRunner
 from .ssh import configure_ssh
 
 OID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
+
+
+# Only live, adapter-issued snapshots carry Git origin into managed analysis.
+_ACTIVE: dict[int, tuple[GitSnapshot, GitTarget, int]] = {}
+_ACTIVE_LOCK = RLock()
+
+
+def snapshot_context(snapshot: GitSnapshot) -> tuple[GitTarget, int]:
+    """Return the owned identity and a duplicated anchor; caller must close it."""
+    with _ACTIVE_LOCK:
+        entry = _ACTIVE.get(id(snapshot))
+        if entry is None or entry[0] is not snapshot:
+            raise ValueError("not an active acquired snapshot")
+        return entry[1], os.dup(entry[2])
 
 
 def _resolve(advertisement: bytes, reference: str) -> str:
@@ -235,4 +249,15 @@ def acquire_snapshot(
             raise
         except (OSError, ValueError, UnicodeError):
             raise GitSourceError("git_acquisition_failed") from None
-        yield GitSnapshot(repository, reference, commit, selected.as_posix(), root)
+        snapshot_result = GitSnapshot(
+            repository, reference, commit, selected.as_posix(), root
+        )
+        descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        with _ACTIVE_LOCK:
+            _ACTIVE[id(snapshot_result)] = (snapshot_result, target, descriptor)
+        try:
+            yield snapshot_result
+        finally:
+            with _ACTIVE_LOCK:
+                _ACTIVE.pop(id(snapshot_result), None)
+                os.close(descriptor)

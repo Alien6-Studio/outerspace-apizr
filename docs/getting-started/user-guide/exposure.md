@@ -1,5 +1,13 @@
 # Plan and build REST/MCP from a repository {#plan-explicit-repository-exposure}
 
+!!! note "Development 0.4 source authorization"
+
+    Stable 0.3.0 examples retain their historical syntax. On a development wheel,
+    repository commands additionally require `--operator-policy operator.json`
+    with an exact `source.analyze` grant. Python filesystem APIs require the same
+    explicitly loaded `operator_policy`. Read the [migration and complete policy](../../reference/operator-policy.md#authorize-repository-analysis).
+    Readiness, exposure selection and execution policies remain independent.
+
 **Available in published stable 0.3.0.** The `--project` and `--git` additions
 require the [unreleased development build](../../development/0.4.md); they are
 documented separately in the project and Git guides.
