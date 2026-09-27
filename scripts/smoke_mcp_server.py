@@ -258,6 +258,7 @@ def prepare(root: Path, python: str) -> dict:
             str(store),
         ],
         cwd=root,
+        env={"PYTHONDONTWRITEBYTECODE": "1"},
         input=b"",
         capture_output=True,
         timeout=10,

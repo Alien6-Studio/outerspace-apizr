@@ -310,14 +310,23 @@ async def boundary_errors(root: Path):
             file.write_text(json.dumps(raw))
             argv += ["--operator-policy", str(file)]
         refused = subprocess.run(
-            [config["cli"], *argv], input=b"", capture_output=True, timeout=10
+            [config["cli"], *argv],
+            env={"PYTHONDONTWRITEBYTECODE": "1"},
+            input=b"",
+            capture_output=True,
+            timeout=10,
         )
         assert refused.returncode == 2 and not refused.stdout
         assert json.loads(refused.stderr)["code"] == expected
         entered = False
         try:
             async with Client(
-                StdioServerParameters(command=config["cli"], args=argv, cwd=root),
+                StdioServerParameters(
+                    command=config["cli"],
+                    args=argv,
+                    cwd=root,
+                    env={"PYTHONDONTWRITEBYTECODE": "1"},
+                ),
                 read_timeout_seconds=5,
             ):
                 entered = True
