@@ -80,10 +80,12 @@ def test_mcp_sync_async_listing_unknown_and_invalid(tmp_path, inputs):
                 t.meta["sh.outerspace.apizr/capability-id"].startswith("python:shop.")
                 for t in tools
             )
-            assert (await client.call_tool("shop.api.run", {})).structured_content == 7
+            assert (await client.call_tool("shop.api.run", {})).structured_content == {
+                "result": 7
+            }
             assert (
                 await client.call_tool("shop.pricing.run", {"x": 4})
-            ).structured_content == 5
+            ).structured_content == {"result": 5}
             assert (await client.call_tool("shop.api.run", {"x": "bad"})).is_error
             assert (await client.call_tool("shop.api.helper", {})).is_error
 
@@ -136,10 +138,10 @@ def test_persistent_direct_state(tmp_path, interface):
             async with Client(create_server(tmp_path)) as client:
                 assert (
                     await client.call_tool("isolated.f", {})
-                ).structured_content == [1]
+                ).structured_content == {"result": [1]}
                 assert (
                     await client.call_tool("isolated.f", {})
-                ).structured_content == [1, 1]
+                ).structured_content == {"result": [1, 1]}
 
         anyio.run(check)
 
@@ -325,7 +327,7 @@ def test_validated_cross_module_support_without_exposing_helper(
                 ]
                 assert (
                     await client.call_tool("pkg.api.public", {})
-                ).structured_content == 42
+                ).structured_content == {"result": 42}
 
         anyio.run(check)
     assert "pkg.pricing" in sys.modules and "pkg.admin" not in sys.modules
@@ -477,7 +479,9 @@ def test_mcp_hash_fallback_at_runtime(tmp_path):
 
     async def check():
         async with Client(create_server(tmp_path)) as client:
-            assert (await client.call_tool(name, {})).structured_content == 1
+            assert (await client.call_tool(name, {})).structured_content == {
+                "result": 1
+            }
 
     anyio.run(check)
 

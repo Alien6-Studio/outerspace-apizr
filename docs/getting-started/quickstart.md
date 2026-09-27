@@ -16,6 +16,16 @@ choose your usual client or the Python test without an AI account.
 No Docker, plugin, remote-Git adapter or development build is needed. The site also
 documents [unreleased 0.4](../development/0.4.md); this page uses only 0.3.0 commands.
 
+!!! warning "Stable 0.3.0: MCP calls with Claude are affected by a known bug"
+    The stable generator emits scalar results as bare `structuredContent` values.
+    Claude Code/Desktop can reject these calls with
+    `MCP error -32603: Handler returned an invalid result`. The Python SDK test
+    below accepts them; its success does **not** prove Claude compatibility.
+    The [development correction](../architecture/mcp-generator-v1.md#results-and-public-errors)
+    emits `{"result": 25.0}` and `{"result": true}` and requires regenerating the
+    bundle with a corrected compiler. It is not in the published 0.3.0 package.
+    Use the [REST path](#use-rest-instead) for a working stable example.
+
 ## Prepare an isolated workspace
 
 **Goal:** install the stable compiler without changing your system Python.
@@ -136,7 +146,10 @@ which inspects repositories and plans exposure without executing their functions
 <details id="connect-an-ai-client" markdown="1">
 <summary>With your usual client</summary>
 
-The generated MCP server can also be launched by a compatible AI client.
+The configuration below starts the server, but **the stable 0.3.0 bundle cannot
+complete these scalar-returning calls with Claude**; see the known-bug warning
+above. Use this configuration after regenerating with a compiler containing the
+fix. The configuration format itself is unchanged.
 On macOS, for example, the [official local-server guide for Claude Desktop](https://modelcontextprotocol.io/docs/develop/connect-local-servers)
 documents **Settings → Developer → Edit Config**, the `mcpServers` structure,
 absolute paths and a full restart after saving. Install Claude Desktop separately
@@ -165,7 +178,8 @@ shell variables in this JSON:
 After restarting the client, inspect the server's available tools. Ask it to call
 `api.quote` with `unit_price=12.5, quantity=2`, then `inventory.available` with
 `stock=10, requested=3`. Approve only those intended calls and inspect the tool
-results (`25.0` and `true`), not just the assistant's prose answer.
+results (`{"result": 25.0}` and `{"result": true}` with the corrected generator),
+not just the assistant's prose answer.
 
 This configuration follows the official client documentation. Apizr's documented
 automated proof uses the Python client in the other choice; it does not claim a graphical

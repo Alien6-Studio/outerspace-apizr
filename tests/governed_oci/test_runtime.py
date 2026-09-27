@@ -78,7 +78,7 @@ def test_public_mapping(no_docker, tmp_path, monkeypatch, status):
             result = await client.call_tool("f", {})
             assert result.is_error == (status != "success")
             if status == "success":
-                assert result.structured_content == 3
+                assert result.structured_content == {"result": 3}
             else:
                 assert result.content[0].text == {
                     "invalid_input": "Invalid tool arguments",
@@ -339,3 +339,26 @@ def test_stdio_uses_sdk_context_lifecycle(monkeypatch):
         SimpleNamespace(run=run, create_initialization_options=lambda: "options"),
     )
     assert calls == ["enter", ("reader", "writer", "options"), "exit"]
+
+
+@pytest.mark.parametrize("value", [25.0, True, [1, None], None, "hello", {"result": 3}])
+def test_success_result_object_contract(no_docker, tmp_path, monkeypatch, value):
+    # Exercise the OCI adapter without requiring a daemon; real-container
+    # conformance and transport tests verify the same mapping in integration CI.
+    monkeypatch.setattr(
+        GovernedRuntime,
+        "invoke",
+        lambda *a: ContainerResult(status="success", value=value),
+    )
+    root = bundle(tmp_path / "mcp", "mcp", source=b"def f(): return 3")
+    expected = value if isinstance(value, dict) else {"result": value}
+
+    async def check():
+        async with Client(mcp.create_server(root), mode="legacy") as client:
+            result = await client.call_tool("f", {})
+            assert not result.is_error
+            assert isinstance(result.structured_content, dict)
+            assert result.structured_content == expected
+            assert json.loads(result.content[0].text) == expected
+
+    anyio.run(check)

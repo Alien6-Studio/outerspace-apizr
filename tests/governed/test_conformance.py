@@ -56,7 +56,9 @@ def test_shared_five_backend_conformance(tmp_path, capsys):
                 result = await client.call_tool(name, args)
                 assert result.is_error != valid
                 if valid:
-                    assert result.structured_content == value
+                    assert result.structured_content == (
+                        value if isinstance(value, dict) else {"result": value}
+                    )
 
     try:
         for mode in ["direct", "governed"]:
@@ -144,12 +146,14 @@ def test_state_lifetime_is_explicit(tmp_path, mode):
 
         async def check():
             async with Client(server) as client:
-                assert (await client.call_tool("counter", {})).structured_content == [
-                    1,
-                    1,
-                ]
+                assert (await client.call_tool("counter", {})).structured_content == {
+                    "result": [
+                        1,
+                        1,
+                    ]
+                }
                 assert (await client.call_tool("counter", {})).structured_content == (
-                    [2, 2] if mode == "direct" else [1, 1]
+                    {"result": [2, 2] if mode == "direct" else [1, 1]}
                 )
 
         anyio.run(check)
@@ -167,7 +171,9 @@ def test_argument_parity_property(tmp_path_factory, value, supply):
 
     async def mcp_call(server):
         async with Client(server) as client:
-            assert (await client.call_tool("f", payload)).structured_content == expected
+            assert (await client.call_tool("f", payload)).structured_content == (
+                expected if isinstance(expected, dict) else {"result": expected}
+            )
 
     for governed in [False, True]:
         policy = ExecutionPolicy() if governed else None
@@ -224,7 +230,7 @@ def test_environment_allowlist_and_strict_rest_output(tmp_path, monkeypatch):
                 async with Client(governed_mcp(root)) as client:
                     assert (
                         await client.call_tool("environment", {})
-                    ).structured_content is True
+                    ).structured_content == {"result": True}
 
             anyio.run(check)
     source = b"def f(): return (1,2)"

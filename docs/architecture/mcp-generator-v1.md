@@ -116,10 +116,24 @@ running sync code, sandbox or effect inference.
 
 ## Results and public errors
 
-Finite JSON-compatible results remain structured values, including scalar and
-array results on the 2026-07-28 protocol. A canonical JSON text block accompanies
-them for clients consuming content. A Python `None` result is represented by null
-and the text `null`; the SDK may omit its optional structured-content field.
+Generated servers always return a JSON object in `structuredContent`, including
+when negotiating MCP 2025-11-25. A dictionary result is preserved unchanged;
+numbers, strings, booleans, arrays and null are wrapped as `{"result": value}`.
+For example, `25.0` becomes `{"result": 25.0}` and Python `None` becomes
+`{"result": null}`. A canonical JSON text block serializes the same object for
+clients consuming `content`, following the
+[MCP structured-content contract](https://modelcontextprotocol.io/specification/2025-06-18/server/tools#structured-content).
+
+This normalization happens only in the MCP adapter, for direct, local-process
+and OCI execution, from a file/notebook or repository. Python execution results
+and REST response bodies retain their original values. Object results containing
+a `result` key are not wrapped again. Tool errors omit `structuredContent`.
+
+This is a development fix for [#163](https://github.com/Alien6-Studio/outerspace-apizr/issues/163).
+Published 0.3.0 bundles pass non-object values through and can fail with
+`Handler returned an invalid result` in clients such as Claude. Regenerate bundles
+with the corrected compiler; upgrading the client or compiler alone does not
+rewrite existing generated servers.
 Non-JSON values (including arbitrary objects, sets, tuples, non-string object keys
 and non-finite floats) produce a controlled error rather than implicit coercion.
 
@@ -175,10 +189,10 @@ policy. Stdio uses the SDK's stdio transport.
 
 Integration tests use official `Client` APIs in process, over real stdio and over
 real local Streamable HTTP. The default path negotiates 2026-07-28. The SDK's
-`mode="legacy"` path is also tested on both transports with a structured object
-result using 2025-11-25; Apizr contains no version negotiation branches. Earlier
-protocols cannot express every modern structured scalar result, so the SDK owns
-that compatibility conversion.
+`mode="legacy"` path is also tested on both transports using 2025-11-25.
+Raw JSON-RPC regression tests check object, scalar, boolean, array and null
+responses without relying on the SDK's permissive result model. Apizr emits the
+same object envelope across these protocols and has no version negotiation branches.
 
 Effects are UNKNOWN. Tools omit safety annotations entirely: no read-only,
 idempotence, destructiveness or world-access claim is inferred from a name.
