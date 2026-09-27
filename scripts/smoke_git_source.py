@@ -10,7 +10,12 @@ from tempfile import TemporaryDirectory
 
 from git_https_fixture import handler, repository, trusted_git
 from https_fixture import certificate, https_server
-from operator_policy_proof import refuse_git, write_analysis_policy, write_git_policy
+from operator_policy_proof import (
+    GIT_ANALYSIS_REFUSAL,
+    refuse_git,
+    write_analysis_policy,
+    write_git_policy,
+)
 
 
 def exercise(python: Path, cli: Path, work: Path) -> None:
@@ -137,7 +142,11 @@ importlib.metadata.entry_points = forbidden
                 "-B",
                 "-c",
                 guard
-                + example
+                + GIT_ANALYSIS_REFUSAL
+                + example.replace(
+                    "    prepared = prepare_exposure(",
+                    "    verify_analysis_refusal(snapshot)\n    prepared = prepare_exposure(",
+                )
                 + """
 assert not snapshot.root.exists()
 # Deliberate execution of this trusted test fixture, after static acquisition
