@@ -39,6 +39,7 @@ jobs:
             ${{ runner.temp }}/oci-service-proof/refusals.json
             ${{ runner.temp }}/oci-service-proof/*-build.json
             ${{ runner.temp }}/oci-service-proof/*.lock
+            ${{ runner.temp }}/oci-service-proof/catalog-oci/
 
   registry-publication:
     runs-on: ubuntu-latest

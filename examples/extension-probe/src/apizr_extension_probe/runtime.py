@@ -3,6 +3,19 @@
 import json
 import re
 import sys
+from typing import TypedDict
+
+
+class DescribeArguments(TypedDict):
+    source_digest: str
+
+
+def describe(arguments: DescribeArguments) -> dict[str, str]:
+    return {
+        "source_digest": arguments["source_digest"],
+        "message": "demo extension reached",
+    }
+
 
 PROTOCOL = "apizr.extension/v1"
 MAX_REQUEST_BYTES = 64 * 1024 * 1024
@@ -29,6 +42,7 @@ def main() -> int:
         }
         arguments = request["arguments"]
         if request["operation"] != "describe":
+            print("Unsupported operation", file=sys.stderr)
             response.update(
                 status="error",
                 error={"code": "unknown_operation", "message": "Unsupported operation"},
@@ -46,10 +60,7 @@ def main() -> int:
         else:
             response.update(
                 status="ok",
-                result={
-                    "source_digest": arguments["source_digest"],
-                    "message": "demo extension reached",
-                },
+                result=describe({"source_digest": arguments["source_digest"]}),
             )
         print(json.dumps(response, separators=(",", ":")))
         return 0

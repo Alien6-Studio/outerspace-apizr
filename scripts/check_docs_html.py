@@ -64,6 +64,8 @@ def check(site: Path) -> None:
         "reference/git-ssh",
         "reference/compiler-api",
         "reference/local-extensions",
+        "reference/plugin-catalog",
+        "reference/plugin-authors",
         "reference/extension-invocation",
         "reference/oci-service-plugin",
         "reference/attest-delivery-plugin",

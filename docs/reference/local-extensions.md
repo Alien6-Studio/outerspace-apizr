@@ -727,3 +727,9 @@ The installed-wheel update proof above also exercises A → update to B → sele
 core inventories. The installed MCP proof uses a real SDK session: disable,
 refuse removal while connected, complete another call, close, then remove.
 Homebrew installation qualification runs only on disposable CI runners.
+
+## Prepare from a plugin catalog
+
+Use [catalog profiles](plugin-catalog.md) to inspect official development artifacts
+and export declarations and locks before explicit sync and activation.
+Plugin authors can follow the [minimal extension contract](plugin-authors.md).

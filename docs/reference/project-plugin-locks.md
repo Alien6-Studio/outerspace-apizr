@@ -406,3 +406,9 @@ lock. A concurrently removed source/target causes refusal, not an implicit repai
 or activation of a replacement. A pending cleanup cannot be reused or installed
 over; complete its exact-generation removal first. A dry-run is only an observed
 plan, and every application rechecks state under the lock.
+
+## Prepare from a plugin catalog
+
+Use [catalog profiles](plugin-catalog.md) to inspect official development artifacts
+and export declarations and locks before explicit sync and activation.
+Plugin authors can follow the [minimal extension contract](plugin-authors.md).

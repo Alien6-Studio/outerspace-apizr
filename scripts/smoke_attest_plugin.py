@@ -21,21 +21,49 @@ def exercise(python, store, work, builds, command, environment):
     command("uv", "build", "--wheel", REPO / "plugins/attest", "--out-dir", house)
     lock = work / "attest.lock"
     lock_wheels(house, lock)
-    wheel = next(house.glob("apizr_attest-*.whl"))
     base = [str(python), "-I", "-B", "-m", "apizr.cli", "plugins"]
+    catalog = work / "catalog-delivery"
+    activations = (store / "activations.json").read_bytes()
+    command(
+        python,
+        "-I",
+        "-B",
+        REPO / "scripts/catalog_plugin_plan.py",
+        "--wheelhouse",
+        house,
+        "--plugin",
+        "apizr-oci=" + str(work / "plugin.lock"),
+        "--plugin",
+        "apizr-attest=" + str(lock),
+        "--commit",
+        command(
+            "git", "-c", "safe.directory=" + str(REPO), "-C", REPO, "rev-parse", "HEAD"
+        ),
+        "--output",
+        catalog,
+        "--profile",
+        "delivery",
+    )
+    plan = catalog / "plan"
     command(
         *base,
-        "install",
-        wheel,
-        "--sha256",
-        hashlib.sha256(wheel.read_bytes()).hexdigest(),
-        "--requirements",
-        lock,
+        "sync",
+        "--project",
+        plan / "apizr.toml",
+        "--lock",
+        plan / "apizr.plugins.lock.json",
         "--wheelhouse",
         house,
         "--plugins-dir",
         store,
+        "--json",
     )
+    assert (store / "activations.json").read_bytes() == activations
+    records = json.loads(command(*base, "list", "--json", "--plugins-dir", store))[
+        "installations"
+    ]
+    assert len({record["environment_id"] for record in records}) == 2
+    assert len({len(record["dependencies"]) for record in records}) == 2
     command(
         *base, "enable", "apizr-attest", "--version", "0.0.0", "--plugins-dir", store
     )

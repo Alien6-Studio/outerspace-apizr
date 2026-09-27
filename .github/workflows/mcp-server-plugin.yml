@@ -32,6 +32,8 @@ jobs:
         run: uv run --locked pytest tests/test_mcp_cli.py tests/mcp_plugin --cov=apizr_mcp --cov-report=term-missing --cov-report=json:mcp-coverage.json --junitxml=mcp-tests.xml
       - name: Installed core, plugin and official stdio client
         run: uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-proof"
+      - name: Catalog profiles and separate closures without network access
+        run: uv run --locked python scripts/run_catalog_offline_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/catalog-offline.log" 2>&1
       - name: Installed protocol proof without network access
         if: runner.os == 'Linux'
         run: |
@@ -55,6 +57,8 @@ jobs:
             ${{ runner.temp }}/mcp-proof/*.log
             ${{ runner.temp }}/mcp-proof/*.json
             ${{ runner.temp }}/mcp-proof/*.lock
+            ${{ runner.temp }}/mcp-proof/catalog/
+            ${{ runner.temp }}/mcp-proof/wheels/
 
   generated-recovery:
     timeout-minutes: 20
