@@ -306,8 +306,10 @@ def target_root() -> Path | None:
     candidate = Path(os.environ["APIZR_RELEASE_SET"]).resolve()
     manifest = load(candidate)
     target = json.loads((root / "target.json").read_text())
-    if target["commit"] != manifest["commit"] or target["candidate_sha256"] != digest(
-        candidate / "candidate.json"
+    if (
+        target["schema"] != "apizr.release-target/v1"
+        or target["commit"] != manifest["commit"]
+        or target["candidate_sha256"] != digest(candidate / "candidate.json")
     ):
         raise ValueError("Dependency target does not belong to candidate")
     if (
@@ -317,6 +319,14 @@ def target_root() -> Path | None:
         or target["target"]["machine"] != platform.machine()
     ):
         raise ValueError("Dependency wheelhouse belongs to another Python/platform")
+    expected = {item["file"] for item in target["artifacts"]} | {"target.json"}
+    actual = {
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() or path.is_symlink()
+    }
+    if actual != expected:
+        raise ValueError("Unexpected dependency target files")
     verify_records(root, target["artifacts"])
     return root
 

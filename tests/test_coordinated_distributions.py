@@ -131,3 +131,49 @@ def test_partial_identical_upload_stages_only_missing_bytes(
     assert len(list(output.rglob("*.whl"))) == 3
     assert len(list(output.rglob("*.tar.gz"))) == 4
     assert json.loads((output / "public-comparison.json").read_text()) == result
+
+
+@pytest.mark.parametrize("fault", [None, "extra", "schema", "python", "bytes"])
+def test_dependency_export_rejects_unrecorded_or_changed_files(
+    packaging, tmp_path, monkeypatch, fault
+):
+    import platform
+
+    retained = tmp_path / "candidate"
+    retained.mkdir()
+    candidate(retained, packaging)
+    target = tmp_path / "target"
+    house = target / "mcp"
+    house.mkdir(parents=True)
+    wheel = house / "dependency.whl"
+    wheel.write_bytes(b"approved dependency")
+    data = {
+        "schema": "apizr.release-target/v1",
+        "commit": "a" * 40,
+        "candidate_sha256": packaging.digest(retained / "candidate.json"),
+        "target": {
+            "python": platform.python_version(),
+            "system": platform.system(),
+            "machine": platform.machine(),
+        },
+        "artifacts": [packaging.record(wheel, target)],
+    }
+    if fault == "extra":
+        (house / "unapproved.whl").write_bytes(b"extra")
+    elif fault == "schema":
+        data["schema"] = "unknown"
+    elif fault == "python":
+        data["target"]["python"] = "0.0.0"
+    elif fault == "bytes":
+        wheel.write_bytes(b"replaced")
+    packaging.write(target / "target.json", data)
+    monkeypatch.setenv("APIZR_RELEASE_SET", str(retained))
+    monkeypatch.setenv("APIZR_RELEASE_TARGET", str(target))
+    destination = tmp_path / "proof"
+    if fault:
+        with pytest.raises(ValueError):
+            packaging.copy_closure("mcp", destination)
+        assert not destination.exists()
+    else:
+        assert packaging.copy_closure("mcp", destination)
+        assert (destination / wheel.name).read_bytes() == wheel.read_bytes()
