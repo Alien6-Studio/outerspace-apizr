@@ -1,4 +1,4 @@
-"""Shared publication input contracts: validation only, no tools or file reads.
+"""Shared build, signing and publication input contracts: validation only, no tools or file reads.
 
 The core and optional plugins use these same models before any operational I/O.
 """
@@ -174,3 +174,30 @@ class AttestRequest(Common):
         ):
             raise ValueError("explicit timestamp authority required")
         return value
+
+
+class BuildTarget(Model):
+    """Exact references and tool parameters shared by build inputs and grants."""
+
+    bundle: str
+    interface: Literal["rest", "mcp"]
+    base_image: str = Field(
+        pattern=r"^[a-z0-9][a-z0-9./:_-]*@sha256:[0-9a-f]{64}$", max_length=512
+    )
+    platform: Literal["linux/amd64", "linux/arm64"]
+    tag: str = Field(
+        pattern=r"^[a-z0-9][a-z0-9._/-]*:[A-Za-z0-9_][A-Za-z0-9_.-]*$", max_length=200
+    )
+    requirements: str
+    wheelhouse: str
+    docker: Docker
+
+    _paths = field_validator("bundle", "requirements", "wheelhouse")(
+        Docker.absolute.__func__
+    )
+
+
+class BuildRequest(BuildTarget):
+    schema_version: Literal["apizr.oci-build/v1"] = Field(alias="schema")
+    timeout_ms: int = Field(default=300000, ge=1, le=540000)
+    max_log_bytes: int = Field(default=1048576, ge=1024, le=16777216)

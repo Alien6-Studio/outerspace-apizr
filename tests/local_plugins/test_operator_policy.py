@@ -35,6 +35,18 @@ REPOSITORY = "registry.example:5443/team/service"
 
 
 def arguments(operation):
+    if operation == "build":
+        return {
+            "schema": "apizr.oci-build/v1",
+            "bundle": "/inputs/bundle",
+            "interface": "rest",
+            "base_image": "python:3.14-slim@sha256:" + "c" * 64,
+            "platform": "linux/amd64",
+            "tag": "service:reviewed",
+            "requirements": "/inputs/requirements.lock",
+            "wheelhouse": "/inputs/wheels",
+            "docker": {"executable": "/native/docker", "socket": "/daemon/docker.sock"},
+        }
     if operation == "push":
         return {
             "schema": "apizr.oci-push/v1",
@@ -84,7 +96,7 @@ def arguments(operation):
 def record(operation="push"):
     name, module = (
         ("apizr-oci", "apizr_oci.protocol")
-        if operation == "push"
+        if operation in {"push", "build"}
         else ("apizr-attest", "apizr_attest.protocol")
     )
     return Installation.model_validate(
@@ -117,6 +129,12 @@ def document(binding, operation="push", repository=REPOSITORY):
             }
         ],
     }
+    if operation == "build":
+        del result["grants"][0]["repository"]
+        result["grants"][0]["target"] = {
+            k: v for k, v in arguments(operation).items() if k != "schema"
+        }
+        result["grants"][0]["permissions"] = ["image.build", "registry.read"]
     if operation == "attest":
         result["grants"][0].update(
             {
@@ -306,7 +324,7 @@ def test_bounded_regular_policy_files(tmp_path):
         load_operator_policy(path)
 
 
-@pytest.fixture(params=["push", "publish", "attest"])
+@pytest.fixture(params=["push", "publish", "attest", "build"])
 def installed(request, wheel_factory, tmp_path):
     operation = request.param
     template = record(operation)
@@ -441,9 +459,7 @@ def test_official_module_alias_cannot_bypass():
     )
 
 
-@pytest.mark.parametrize(
-    "operation", ["build", "verify", "discover", "fetch", "analyze"]
-)
+@pytest.mark.parametrize("operation", ["verify", "discover", "fetch", "analyze"])
 def test_other_operations_preserve_current_scope(operation):
     assert decide(None, record(), operation, {}).code == "not_required"
 
@@ -539,8 +555,12 @@ def test_shared_publication_models_are_the_plugin_contracts():
             sys.path.insert(0, path)
     from apizr_attest.model import AttestRequest as PluginAttest
     from apizr_attest.model import PublishRequest as PluginPublish
+    from apizr_oci.model import BuildRequest as PluginBuild
     from apizr_oci.model import PushRequest as PluginPush
 
+    from apizr.publication_contracts import BuildRequest
+
+    assert PluginBuild is BuildRequest
     assert PluginPush is PushRequest
     from apizr.publication_contracts import AttestRequest
 
@@ -595,6 +615,7 @@ def test_complete_documented_policy():
     )
     assert {(g.plugin.name, g.operation) for g in selected.grants} == {
         ("apizr-oci", "push"),
+        ("apizr-oci", "build"),
         ("apizr-attest", "publish"),
         ("apizr-attest", "attest"),
     }

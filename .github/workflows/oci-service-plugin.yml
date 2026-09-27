@@ -34,6 +34,7 @@ jobs:
             plugin-coverage.json
             plugin-tests.xml
             oci-service-proof.log
+            ${{ runner.temp }}/oci-service-proof/operator-build*.json
             ${{ runner.temp }}/oci-service-proof/results.json
             ${{ runner.temp }}/oci-service-proof/interruption.json
             ${{ runner.temp }}/oci-service-proof/refusals.json

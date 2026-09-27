@@ -105,6 +105,19 @@ def exercise(python, store, work, results, command, engine, environment):
                     "apizr-oci",
                     "push",
                     document,
+                    work / "operator-build-rest.json",
+                    "operator_operation_denied",
+                    environment,
+                )
+            )
+            operator_refusals.append(
+                refuse(
+                    python,
+                    store,
+                    work,
+                    "apizr-oci",
+                    "push",
+                    document,
                     None,
                     "operator_policy_required",
                     environment,

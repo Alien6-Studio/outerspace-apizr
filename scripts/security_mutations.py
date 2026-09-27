@@ -28,6 +28,20 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "build-operator-admission",
+        "src/apizr/local_plugins/activation.py",
+        "            if not decision.allowed:",
+        "            if False:",
+        "tests/local_plugins/test_build_policy.py::test_build_cli_and_api_refuse_before_effect[missing-operator_policy_required-build]",
+    ),
+    Mutation(
+        "build-exact-target",
+        "src/apizr/operator_policy.py",
+        "g.target == building",
+        "True",
+        "tests/local_plugins/test_build_policy.py::test_build_decision_is_pure[prefix-operator_build_denied]",
+    ),
+    Mutation(
         "signing-operator-admission",
         "src/apizr/local_plugins/activation.py",
         "            if not decision.allowed:",

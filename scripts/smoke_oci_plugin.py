@@ -16,6 +16,7 @@ import zipfile
 from email.parser import BytesParser
 from pathlib import Path
 
+from operator_policy_proof import refuse, write_build_policy, write_policy
 from smoke_extension_packaging import snapshot
 from smoke_git_source import exercise as git_bundles
 
@@ -51,7 +52,7 @@ def lock_wheels(house, path):
     path.write_text("".join(lines))
 
 
-def refuse_builds(python, document, store, work, environment):
+def refuse_builds(python, document, store, work, environment, runner):
     """Real installed-plugin refusals, including pip's missing transitive closure."""
     inputs = work / "refused-build.json"
     bundle_file = Path(document["bundle"]) / "source/calculator.py"
@@ -87,6 +88,13 @@ def refuse_builds(python, document, store, work, environment):
                 }
             if fault == "invalid":
                 changed["tag"] = "--bad-option"
+            operator = write_build_policy(
+                python,
+                store,
+                work / "negative-build-policy.json",
+                document if fault == "invalid" else changed,
+                runner,
+            )
             inputs.write_text(json.dumps(changed))
             command = [
                 str(python),
@@ -98,6 +106,8 @@ def refuse_builds(python, document, store, work, environment):
                 "run",
                 "apizr-oci",
                 "build",
+                "--operator-policy",
+                str(operator),
                 "--arguments",
                 str(inputs),
                 "--plugins-dir",
@@ -111,7 +121,16 @@ def refuse_builds(python, document, store, work, environment):
             assert (
                 result.returncode == 2
                 and result.stdout == b""
-                and result.stderr == b"apizr plugins: plugin_failed\n"
+                and (
+                    json.loads(result.stderr)
+                    == {
+                        "schema": "apizr.operator-decision/v1",
+                        "allowed": False,
+                        "code": "operator_arguments_invalid",
+                    }
+                    if fault == "invalid"
+                    else result.stderr == b"apizr plugins: plugin_failed\n"
+                )
             ), (fault, result)
             outcomes.append({"case": fault, "exit_code": result.returncode})
         finally:
@@ -121,7 +140,7 @@ def refuse_builds(python, document, store, work, environment):
     (work / "refusals.json").write_text(json.dumps(outcomes))
 
 
-def interrupt_build(python, document, store, work, environment):
+def interrupt_build(python, document, store, work, environment, runner):
     """Gate on actual Docker progress, then interrupt the owning core process."""
     marker = work / "docker-started.json"
     wrapper = work / "docker-observer"
@@ -147,6 +166,9 @@ raise SystemExit(child.wait())
     )
     wrapper.chmod(0o700)
     changed = {**document, "docker": {**document["docker"], "executable": str(wrapper)}}
+    operator = write_build_policy(
+        python, store, work / "interrupt-build-policy.json", changed, runner
+    )
     args_file = work / "interrupt-build.json"
     args_file.write_text(json.dumps(changed))
     process = subprocess.Popen(
@@ -160,6 +182,8 @@ raise SystemExit(child.wait())
             "run",
             "apizr-oci",
             "build",
+            "--operator-policy",
+            str(operator),
             "--arguments",
             str(args_file),
             "--plugins-dir",
@@ -398,12 +422,60 @@ def main():
             }
             build_json = work / (interface + "-build.json")
             build_json.write_text(json.dumps(document, indent=2) + "\n")
+            operator = write_build_policy(
+                python,
+                store,
+                work / ("operator-build-" + interface + ".json"),
+                document,
+                command,
+            )
             if interface == "rest":
-                refuse_builds(python, document, store, work, environment)
+                publication_only = write_policy(
+                    python,
+                    store,
+                    work / "operator-publish-only.json",
+                    "apizr-oci",
+                    "push",
+                    ["registry.example/team/service"],
+                    command,
+                )
+                operator_refusals = [
+                    refuse(
+                        python,
+                        store,
+                        work,
+                        "apizr-oci",
+                        "build",
+                        document,
+                        None,
+                        "operator_policy_required",
+                        environment,
+                    ),
+                    refuse(
+                        python,
+                        store,
+                        work,
+                        "apizr-oci",
+                        "build",
+                        document,
+                        publication_only,
+                        "operator_operation_denied",
+                        environment,
+                    ),
+                ]
+                (work / "operator-build-refusals.json").write_text(
+                    json.dumps(operator_refusals)
+                )
+                refuse_builds(python, document, store, work, environment, command)
                 cancelled_tag = tag + "-interrupted"
                 images.append(cancelled_tag)
                 interrupt_build(
-                    python, {**document, "tag": cancelled_tag}, store, work, environment
+                    python,
+                    {**document, "tag": cancelled_tag},
+                    store,
+                    work,
+                    environment,
+                    command,
                 )
             result = json.loads(
                 cli(
@@ -411,6 +483,8 @@ def main():
                     "run",
                     "apizr-oci",
                     "build",
+                    "--operator-policy",
+                    operator,
                     "--arguments",
                     build_json,
                     "--timeout-ms",
