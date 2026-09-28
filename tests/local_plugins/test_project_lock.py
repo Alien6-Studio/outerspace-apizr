@@ -365,7 +365,7 @@ def test_user_preferences_cli_precedence_and_mcp(tmp_path, monkeypatch, capsys):
     seen = []
 
     def refuse(name, directory, inherit):
-        seen.append(directory)
+        seen.append((name, directory))
         raise operations.PluginError("plugin_not_installed")
 
     project = tmp_path / "apizr.toml"
@@ -390,7 +390,11 @@ def test_user_preferences_cli_precedence_and_mcp(tmp_path, monkeypatch, capsys):
             )
             == 2
         )
-    assert seen == [tmp_path / "store", Path("/explicit")]
+    assert seen == [
+        (name, directory)
+        for directory in (tmp_path / "store", Path("/explicit"))
+        for name in ("outerspace-apizr-mcp", "apizr-mcp")
+    ]
 
 
 @pytest.mark.parametrize(
