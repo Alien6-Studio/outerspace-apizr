@@ -4,6 +4,8 @@ import argparse
 import os
 import sys
 import tempfile
+from collections.abc import Generator
+from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from typing import Sequence
 
@@ -11,8 +13,32 @@ from apizr.analysis_session import MAX_SESSION_BYTES, load_scope
 from apizr.extension_runtime import ExtensionError
 from apizr.local_plugins import PluginError
 from apizr.local_plugins.activation import admitted_extension
+from apizr.local_plugins.models import Installation
 from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.user_config import plugins_directory
+
+
+@contextmanager
+def _admitted_mcp(directory: Path | None) -> Generator[tuple[Installation, int]]:
+    """Prefer the official distribution; retain existing local installations.
+
+    An installed but inactive or invalid new identity must not fall back to an
+    older identity. Admission continues to own the existing process lease.
+    """
+    with ExitStack() as stack:
+        try:
+            admitted = stack.enter_context(
+                admitted_extension(
+                    "outerspace-apizr-mcp", directory=directory, inherit=True
+                )
+            )
+        except PluginError as error:
+            if str(error) != "plugin_not_installed":
+                raise
+            admitted = stack.enter_context(
+                admitted_extension("apizr-mcp", directory=directory, inherit=True)
+            )
+        yield admitted
 
 
 def main(argv: Sequence[str]) -> int:
@@ -42,7 +68,7 @@ def main(argv: Sequence[str]) -> int:
         directory = plugins_directory(args.plugins_dir, args.user_config)
         with (
             tempfile.TemporaryFile() as session,
-            admitted_extension("apizr-mcp", directory=directory, inherit=True) as (
+            _admitted_mcp(directory) as (
                 record,
                 _,
             ),

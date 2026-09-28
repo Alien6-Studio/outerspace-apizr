@@ -1,4 +1,4 @@
-# apizr-oci
+# outerspace-apizr-oci
 
 Build REST/MCP service images and explicitly publish a verified image.
 

@@ -148,15 +148,15 @@ for tool installations use that reported Apizr executable instead.
 ## Choose a plugin profile
 
 The **core** is enough for supported static analysis and generation. Generated
-REST/MCP servers have separate runtime requirements. The **`apizr-mcp` plugin**
+REST/MCP servers have separate runtime requirements. The **`outerspace-apizr-mcp` plugin**
 is an analysis server; the historical **`mcp` extra** supplies optional dependencies
 for existing core workflows and does not install that plugin.
 
 | Profile | Plugins | Additional prerequisites when used |
 | --- | --- | --- |
-| `mcp` | apizr-mcp | An MCP client; Python SDK proof needs no AI account |
-| `oci` | apizr-oci | Docker Engine and Buildx for build/push |
-| `delivery` | apizr-oci and apizr-attest | Docker/Buildx; Continuum Attest for receipts; ORAS for proof transport |
+| `mcp` | outerspace-apizr-mcp | An MCP client; Python SDK proof needs no AI account |
+| `oci` | outerspace-apizr-oci | Docker Engine and Buildx for build/push |
+| `delivery` | outerspace-apizr-oci and outerspace-apizr-attest | Docker/Buildx; Continuum Attest for receipts; ORAS for proof transport |
 
 From the verified installation workspace, choose **one** profile and absent plan
 and plugin-store directories. The commands below are offline and reuse exported
@@ -181,9 +181,9 @@ On this fresh store, the active inventory is empty. Activate only what you selec
 
 ```sh
 # mcp profile
-"$CORE_DIR/bin/apizr" plugins enable apizr-mcp --version 0.4.0 --plugins-dir "$PLUGINS_DIR"
-# oci profile: enable apizr-oci instead
-# delivery profile: enable both apizr-oci and apizr-attest
+"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version 0.4.0 --plugins-dir "$PLUGINS_DIR"
+# oci profile: enable outerspace-apizr-oci instead
+# delivery profile: enable both outerspace-apizr-oci and outerspace-apizr-attest
 ```
 
 **Installation** verifies and stores bytes. **Activation** selects an installed

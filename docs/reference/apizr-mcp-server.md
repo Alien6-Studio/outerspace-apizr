@@ -2,7 +2,7 @@
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
-The optional **apizr-mcp** plugin exposes read-only local analysis and planning
+The optional **outerspace-apizr-mcp** plugin exposes read-only local analysis and planning
 through stdio. It does not generate bundles, execute business functions, acquire
 Git sources, install plugins or publish artifacts. A **generated business MCP
 server** exposes the capabilities you selected; this server exposes Apizr's
@@ -71,11 +71,11 @@ for wheel in sorted(Path("wheels").glob("*.whl")):
     lines.append(f"{metadata['Name']}=={metadata['Version']} --hash=sha256:{digest}\n")
 Path("plugin.lock").write_text("".join(lines))
 PY
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/apizr_mcp-0.4.0-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/apizr_mcp-0.4.0-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.0-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.0-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable apizr-mcp --version 0.4.0 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.0 --plugins-dir "$work/plugins"
 ```
 
 Installation alone leaves the plugin inactive. The existing [locked installation

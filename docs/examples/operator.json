@@ -3,7 +3,7 @@
   "grants": [
     {
       "plugin": {
-        "name": "apizr-oci",
+        "name": "outerspace-apizr-oci",
         "version": "0.4.0",
         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
@@ -62,7 +62,7 @@
     },
     {
       "plugin": {
-        "name": "apizr-oci",
+        "name": "outerspace-apizr-oci",
         "version": "0.4.0",
         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
@@ -108,7 +108,7 @@
     },
     {
       "plugin": {
-        "name": "apizr-attest",
+        "name": "outerspace-apizr-attest",
         "version": "0.4.0",
         "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
@@ -119,7 +119,7 @@
             "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
           },
           {
-            "name": "apizr-oci",
+            "name": "outerspace-apizr-oci",
             "version": "0.4.0",
             "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
           },
@@ -159,7 +159,7 @@
     },
     {
       "plugin": {
-        "name": "apizr-attest",
+        "name": "outerspace-apizr-attest",
         "version": "0.4.0",
         "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
@@ -170,7 +170,7 @@
             "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
           },
           {
-            "name": "apizr-oci",
+            "name": "outerspace-apizr-oci",
             "version": "0.4.0",
             "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
           },

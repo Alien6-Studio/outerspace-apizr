@@ -3,7 +3,7 @@
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 After [signing a delivery proof](attest-delivery-plugin.md), the optional
-`apizr-attest` plugin can store its existing six public files alongside the
+`outerspace-apizr-attest` plugin can store its existing six public files alongside the
 image. It does not rebuild, retag, re-sign or timestamp anything. The image and
 proof have different manifest digests. No private key or TSA is needed.
 
@@ -34,7 +34,7 @@ The consumer only needs registry pull permissions, no Docker daemon or image.
 If following the signing page's custom installation directory, append
 `--plugins-dir "$work/plugins"` to each command below; otherwise they use the
 default plugin store. Run the Python example in the separate environment where
-`apizr-attest` is installed, not in the minimal core environment.
+`outerspace-apizr-attest` is installed, not in the minimal core environment.
 
 ## Publish an existing proof
 
@@ -68,12 +68,12 @@ default plugin store. Run the Python example in the separate environment where
 ```
 
 ```sh
-apizr plugins run apizr-attest publish --arguments publish.json \
+apizr plugins run outerspace-apizr-attest publish --arguments publish.json \
   --operator-policy operator.json --timeout-ms 360000
 ```
 
 First create an [operator policy](operator-policy.md) granting this installed
-apizr-attest build both registry read and publish access to the exact image
+outerspace-apizr-attest build both registry read and publish access to the exact image
 repository. The core refuses missing or insufficient grants before invocation or
 credential reads. Publishing this already signed proof needs no private key or
 additional signature authorization.
@@ -127,7 +127,7 @@ Discover and fetch an explicit digest to establish what is present.
 ```
 
 ```sh
-apizr plugins run apizr-attest discover --arguments discover.json --timeout-ms 180000
+apizr plugins run outerspace-apizr-attest discover --arguments discover.json --timeout-ms 180000
 ```
 
 `apizr.discovered-proofs/v1` contains digest-sorted `candidates`, each with a
@@ -170,7 +170,7 @@ An empty successful list differs from an authentication, network or API failure.
 ```
 
 ```sh
-apizr plugins run apizr-attest fetch --arguments fetch.json --timeout-ms 360000
+apizr plugins run outerspace-apizr-attest fetch --arguments fetch.json --timeout-ms 360000
 ```
 
 Fetch validates the raw manifest hash and exact profile before receiving blobs.

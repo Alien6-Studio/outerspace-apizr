@@ -112,7 +112,7 @@ def main():
         result = json.loads(
             cli(
                 "run",
-                "apizr-attest",
+                "outerspace-apizr-attest",
                 "verify",
                 "--arguments",
                 root / "verify.json",
@@ -134,7 +134,7 @@ def main():
     assert not list(root.rglob("*.key"))
     house = root / "wheels"
     core = next(house.glob("outerspace_apizr-*.whl"))
-    plugin = next(house.glob("apizr_attest-*.whl"))
+    plugin = next(house.glob("outerspace_apizr_attest-*.whl"))
     command("uv", "venv", "--python", sys.executable, root / "core")
     command(
         "uv",
@@ -164,7 +164,14 @@ def main():
         "--plugins-dir",
         store,
     )
-    cli("enable", "apizr-attest", "--version", "0.4.0", "--plugins-dir", store)
+    cli(
+        "enable",
+        "outerspace-apizr-attest",
+        "--version",
+        "0.4.0",
+        "--plugins-dir",
+        store,
+    )
     common = record["common"] | {"trust_store": str(root / "trust")}
     transport = record["transport"] | {
         "authentication": {
@@ -181,7 +188,7 @@ def main():
     found = json.loads(
         cli(
             "run",
-            "apizr-attest",
+            "outerspace-apizr-attest",
             "discover",
             "--arguments",
             root / "discover.json",
@@ -212,7 +219,7 @@ def main():
             "apizr.cli",
             "plugins",
             "run",
-            "apizr-attest",
+            "outerspace-apizr-attest",
             "discover" if discovery else "fetch",
             "--arguments",
             str(argument),
@@ -281,7 +288,7 @@ def main():
             "apizr.cli",
             "plugins",
             "run",
-            "apizr-attest",
+            "outerspace-apizr-attest",
             "fetch",
             "--arguments",
             str(root / "case.json"),
@@ -318,7 +325,7 @@ def main():
     result = json.loads(
         cli(
             "run",
-            "apizr-attest",
+            "outerspace-apizr-attest",
             "fetch",
             "--arguments",
             root / "fetch.json",

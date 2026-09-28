@@ -11,8 +11,8 @@ configuration and historical `apizr.pipeline.v1` plugins.
 ## Managed build, publication and signing authorization
 
 `apizr.local_plugins.run_extension` enforces an explicit
-[operator policy](operator-policy.md) for `apizr-oci build`, `apizr-oci push`, `apizr-attest publish`
-and `apizr-attest attest`, equally from Python and `apizr plugins run`. It retains
+[operator policy](operator-policy.md) for `outerspace-apizr-oci build`, `outerspace-apizr-oci push`, `outerspace-apizr-attest publish`
+and `outerspace-apizr-attest attest`, equally from Python and `apizr plugins run`. It retains
 activation and usage protection, then checks the build identity, operation and
 exact build target or repository before invoking the runtime. These development calls now refuse
 an absent policy. Signing also requires the exact key reference/identity, expected

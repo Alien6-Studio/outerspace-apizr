@@ -183,13 +183,28 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
     ]
     assert [step["with"]["packages-dir"] for step in publishers] == [
         "pending/outerspace-apizr/",
-        "pending/apizr-oci/",
-        "pending/apizr-mcp/",
-        "pending/apizr-attest/",
+        "pending/outerspace-apizr-oci/",
+        "pending/outerspace-apizr-mcp/",
+        "pending/outerspace-apizr-attest/",
     ]
     assert all("skip-existing" not in step["with"] for step in publishers)
+    package_input = workflow["on"]["workflow_dispatch"]["inputs"]["package"]
+    assert package_input["default"] == "all"
+    assert package_input["options"] == [
+        "all",
+        "outerspace-apizr",
+        "outerspace-apizr-oci",
+        "outerspace-apizr-mcp",
+        "outerspace-apizr-attest",
+    ]
+    for publisher in publishers:
+        name = publisher["with"]["packages-dir"].split("/")[1]
+        assert f"inputs.package == '{name}'" in publisher["if"]
+        assert "inputs.package == 'all'" in publisher["if"]
+        assert "needs.verify.outputs." in publisher["if"]
     assert jobs["verify-public"]["needs"] == "publish"
     assert jobs["archive-evidence"]["needs"] == "verify-public"
+    assert jobs["archive-evidence"]["if"] == "inputs.package == 'all'"
     provenance = next(
         step
         for step in jobs["verify"]["steps"]

@@ -65,11 +65,26 @@ workflow permissions, but cannot establish PyPI ownership or pending-publisher
 configuration for the plugin projects. A maintainer must verify those external
 prerequisites before dispatch. Do not create secrets or publishers implicitly.
 
-The manual workflow publishes **outerspace-apizr → apizr-oci → apizr-mcp →
-apizr-attest**, preserving exact internal requirements. Only the eight first-party
+The manual workflow publishes **outerspace-apizr → outerspace-apizr-oci → outerspace-apizr-mcp →
+outerspace-apizr-attest**, preserving exact internal requirements. Only the eight first-party
 archives enter PyPI; catalog exports, third-party dependency wheels, images and
 proofs remain separate evidence/distribution assets. There is no rebuild in the
 publication path and no publication trigger on merge.
+
+For the first upload, PyPI permits only one pending publisher for an identical
+GitHub repository/workflow/environment configuration. Register the pending
+publisher for one plugin name, then dispatch with `package` set to that exact
+distribution name. This verifies and uploads only that package while retaining
+the same provenance, receipt and byte-comparison gates. Once PyPI converts it to
+an active project publisher, register the next plugin and repeat. Finish with
+`package: all`: only this complete verification archives release-wide publication
+evidence. A successful single-package run is not a completed coordinated release.
+
+The prefixed plugin distributions require the matching corrected core. The public
+`outerspace-apizr==0.4.0` archives and tag remain immutable; verification builds
+from later commits must not replace them. Approve a new core version before
+publishing this renamed set. Changing only PyPI publisher names does not rename
+wheel metadata or the core's MCP launcher and operator identities.
 
 If publication stops partway through, inspect the public state, then dispatch the
 same tag and approved run again. Every existing filename must match both approved

@@ -27,16 +27,16 @@ from apizr.plugin_lock import check_lock, create_lock
 from apizr.plugins_cli import main
 
 DESCRIPTIONS = {
-    "apizr-mcp": "Read-only repository analysis over a persistent MCP stdio server.",
-    "apizr-oci": "Build REST/MCP service images and publish verified OCI images.",
-    "apizr-attest": "Attest verified deliveries and publish or verify OCI receipts.",
+    "outerspace-apizr-mcp": "Read-only repository analysis over a persistent MCP stdio server.",
+    "outerspace-apizr-oci": "Build REST/MCP service images and publish verified OCI images.",
+    "outerspace-apizr-attest": "Attest verified deliveries and publish or verify OCI receipts.",
 }
 PREREQUISITES = {
-    "apizr-mcp": (),
-    "apizr-oci": (
+    "outerspace-apizr-mcp": (),
+    "outerspace-apizr-oci": (
         Prerequisite(tool="Docker and Buildx", operations=("build", "push")),
     ),
-    "apizr-attest": (
+    "outerspace-apizr-attest": (
         Prerequisite(tool="Docker", operations=("attest",)),
         Prerequisite(
             tool="Continuum Attest",
@@ -90,9 +90,9 @@ def prepare(
     )
     profiles = []
     for label, names in (
-        ("mcp", ("apizr-mcp",)),
-        ("oci", ("apizr-oci",)),
-        ("delivery", ("apizr-oci", "apizr-attest")),
+        ("mcp", ("outerspace-apizr-mcp",)),
+        ("oci", ("outerspace-apizr-oci",)),
+        ("delivery", ("outerspace-apizr-oci", "outerspace-apizr-attest")),
     ):
         if all(name in identities for name in names):
             profiles.append(

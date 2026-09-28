@@ -8,6 +8,17 @@ on:
         description: Successful master CI run containing the exact reviewed distributions
         required: true
         type: string
+      package:
+        description: Publish all packages or bootstrap one new PyPI project
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - outerspace-apizr
+          - outerspace-apizr-oci
+          - outerspace-apizr-mcp
+          - outerspace-apizr-attest
 
 permissions:
   contents: read
@@ -20,9 +31,9 @@ jobs:
   verify:
     outputs:
       outerspace_apizr: ${{ steps.public.outputs.outerspace_apizr }}
-      apizr_oci: ${{ steps.public.outputs.apizr_oci }}
-      apizr_mcp: ${{ steps.public.outputs.apizr_mcp }}
-      apizr_attest: ${{ steps.public.outputs.apizr_attest }}
+      outerspace_apizr_oci: ${{ steps.public.outputs.outerspace_apizr_oci }}
+      outerspace_apizr_mcp: ${{ steps.public.outputs.outerspace_apizr_mcp }}
+      outerspace_apizr_attest: ${{ steps.public.outputs.outerspace_apizr_attest }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -158,24 +169,24 @@ jobs:
           name: pending-distributions
           path: pending
       - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
-        if: needs.verify.outputs.outerspace_apizr == 'true'
+        if: needs.verify.outputs.outerspace_apizr == 'true' && (inputs.package == 'all' || inputs.package == 'outerspace-apizr')
         with:
           packages-dir: pending/outerspace-apizr/
           print-hash: true
       - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
-        if: needs.verify.outputs.apizr_oci == 'true'
+        if: needs.verify.outputs.outerspace_apizr_oci == 'true' && (inputs.package == 'all' || inputs.package == 'outerspace-apizr-oci')
         with:
-          packages-dir: pending/apizr-oci/
+          packages-dir: pending/outerspace-apizr-oci/
           print-hash: true
       - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
-        if: needs.verify.outputs.apizr_mcp == 'true'
+        if: needs.verify.outputs.outerspace_apizr_mcp == 'true' && (inputs.package == 'all' || inputs.package == 'outerspace-apizr-mcp')
         with:
-          packages-dir: pending/apizr-mcp/
+          packages-dir: pending/outerspace-apizr-mcp/
           print-hash: true
       - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
-        if: needs.verify.outputs.apizr_attest == 'true'
+        if: needs.verify.outputs.outerspace_apizr_attest == 'true' && (inputs.package == 'all' || inputs.package == 'outerspace-apizr-attest')
         with:
-          packages-dir: pending/apizr-attest/
+          packages-dir: pending/outerspace-apizr-attest/
           print-hash: true
 
   verify-public:
@@ -189,10 +200,16 @@ jobs:
         with:
           name: verified-distributions
           path: dist
-      - name: Download and compare all eight public archives
+      - name: Download and compare published archives
+        env:
+          PACKAGE: ${{ inputs.package }}
         run: |
           version=$(python3 -c 'import tomllib;print(tomllib.load(open("pyproject.toml","rb"))["project"]["version"])')
-          python3 scripts/prepare_publication.py --dist dist --version "$version" --output public-verification --require-complete
+          if [ "$PACKAGE" = all ]; then
+            python3 scripts/prepare_publication.py --dist dist --version "$version" --output public-verification --require-complete
+          else
+            python3 scripts/prepare_publication.py --dist dist --version "$version" --output public-verification --require-package "$PACKAGE"
+          fi
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
@@ -202,6 +219,7 @@ jobs:
 
 
   archive-evidence:
+    if: inputs.package == 'all'
     needs: verify-public
     runs-on: ubuntu-latest
     permissions:

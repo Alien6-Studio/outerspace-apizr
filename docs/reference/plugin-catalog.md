@@ -39,7 +39,7 @@ test/coverage reports occupy another subtree. Use the `apizr` executable install
 
 ```sh
 apizr plugins catalog list --catalog catalog/catalogue.json --json
-apizr plugins catalog show apizr-mcp --version 0.4.0 \
+apizr plugins catalog show outerspace-apizr-mcp --version 0.4.0 \
   --catalog catalog/catalogue.json --json
 apizr plugins catalog resolve --profile mcp \
   --catalog catalog/catalogue.json --wheelhouse ./wheels \
@@ -50,9 +50,9 @@ apizr plugins lock check --project plugin-plan/apizr.toml \
 
 | Profile | Selected installations | Purpose |
 | --- | --- | --- |
-| `mcp` | `apizr-mcp` | Persistent analysis MCP server |
-| `oci` | `apizr-oci` | Build and publish service images |
-| `delivery` | `apizr-oci`, `apizr-attest` | Images and delivery receipts |
+| `mcp` | `outerspace-apizr-mcp` | Persistent analysis MCP server |
+| `oci` | `outerspace-apizr-oci` | Build and publish service images |
+| `delivery` | `outerspace-apizr-oci`, `outerspace-apizr-attest` | Images and delivery receipts |
 
 `list` reads metadata only. `show` requires an unambiguous entry for the exact
 version and current target. Neither reads the wheels or invokes an external tool.
@@ -78,7 +78,7 @@ apizr plugins sync --project plugin-plan/apizr.toml \
   --lock plugin-plan/apizr.plugins.lock.json --wheelhouse ./wheels \
   --plugins-dir ./trusted-plugins --json
 apizr plugins list --active --plugins-dir ./trusted-plugins --json
-apizr plugins enable apizr-mcp --version 0.4.0 --plugins-dir ./trusted-plugins
+apizr plugins enable outerspace-apizr-mcp --version 0.4.0 --plugins-dir ./trusted-plugins
 ```
 
 `sync` uses installed uv offline, validates constraints and installs into separate
@@ -90,7 +90,7 @@ Activation is not a sandbox. External tools and credentials remain explicit
 operation inputs, never profile contents.
 
 Each plugin has its own dependency closure. Attest's Python dependency on
-`apizr-oci` is inside **Attest's environment**. It does not register or activate a
+`outerspace-apizr-oci` is inside **Attest's environment**. It does not register or activate a
 separate OCI installation. `delivery` explicitly selects both installations.
 
 ## Document contract and Python API
@@ -123,7 +123,7 @@ from pathlib import Path
 from apizr.plugin_catalog import load_catalog, resolve_profile, select_entry
 
 catalog = load_catalog(Path("catalog/catalogue.json"))
-entry = select_entry(catalog, "apizr-mcp", "0.4.0")
+entry = select_entry(catalog, "outerspace-apizr-mcp", "0.4.0")
 result = resolve_profile(catalog, "mcp", Path("wheels"), Path("plugin-plan"))
 assert result.installation == "not_performed"
 ```

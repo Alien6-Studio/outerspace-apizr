@@ -12,7 +12,12 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-PACKAGES = ("outerspace-apizr", "apizr-oci", "apizr-mcp", "apizr-attest")
+PACKAGES = (
+    "outerspace-apizr",
+    "outerspace-apizr-oci",
+    "outerspace-apizr-mcp",
+    "outerspace-apizr-attest",
+)
 
 
 def public_files(name: str, version: str) -> dict:
@@ -94,13 +99,17 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--version", required=True)
     parser.add_argument("--github-output", type=Path)
-    parser.add_argument("--require-complete", action="store_true")
+    required = parser.add_mutually_exclusive_group()
+    required.add_argument("--require-complete", action="store_true")
+    required.add_argument("--require-package", choices=PACKAGES)
     args = parser.parse_args()
     statuses = stage(args.dist, args.output, args.version)
     if args.require_complete and any(
         "pending" in files.values() for files in statuses.values()
     ):
         raise ValueError("Publication remains incomplete")
+    if args.require_package and "pending" in statuses[args.require_package].values():
+        raise ValueError(f"Publication remains incomplete for {args.require_package}")
     if args.github_output:
         with args.github_output.open("a") as stream:
             for name, states in statuses.items():

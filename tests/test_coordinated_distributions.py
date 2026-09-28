@@ -133,6 +133,46 @@ def test_partial_identical_upload_stages_only_missing_bytes(
     assert json.loads((output / "public-comparison.json").read_text()) == result
 
 
+@pytest.mark.parametrize("complete", [True, False])
+def test_single_project_publication_requires_both_archives(
+    publication, monkeypatch, tmp_path, complete
+):
+    import sys
+
+    selected = "outerspace-apizr-oci"
+    states = {
+        name: {"wheel": "pending", "sdist": "pending"} for name in publication.PACKAGES
+    }
+    states[selected] = {
+        "wheel": "public-byte-identical",
+        "sdist": "public-byte-identical" if complete else "pending",
+    }
+    monkeypatch.setattr(publication, "stage", lambda *args: states)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "prepare_publication",
+            "--dist",
+            str(tmp_path),
+            "--output",
+            str(tmp_path / "output"),
+            "--version",
+            "0.4.0",
+            "--require-package",
+            selected,
+        ],
+    )
+    if complete:
+        publication.main()
+    else:
+        with pytest.raises(ValueError, match=selected):
+            publication.main()
+    monkeypatch.setattr(sys, "argv", [*sys.argv[:-2], "--require-complete"])
+    with pytest.raises(ValueError, match="remains incomplete"):
+        publication.main()
+
+
 @pytest.mark.parametrize("fault", [None, "extra", "schema", "python", "bytes"])
 def test_dependency_export_rejects_unrecorded_or_changed_files(
     packaging, tmp_path, monkeypatch, fault

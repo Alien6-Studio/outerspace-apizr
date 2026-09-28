@@ -1,5 +1,5 @@
 [project]
-name = "apizr-oci"
+name = "outerspace-apizr-oci"
 version = "0.4.0"
 description = "Official Apizr plugin for building local REST and MCP service images"
 requires-python = ">=3.11,<3.15"

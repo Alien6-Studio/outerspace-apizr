@@ -291,7 +291,7 @@ def test_running_call_survives_disable_and_refuses_removal(wheel_factory, tmp_pa
 
 def test_execve_keeps_lease_until_session_exit(wheel_factory, tmp_path):
     wheel, digest = wheel_factory(
-        name="apizr-mcp",
+        name="outerspace-apizr-mcp",
         manifest_changes={"module": "apizr_mcp"},
         files={
             "apizr_mcp.py": b"import sys\nprint('ready',flush=True)\nsys.stdin.readline()\n"

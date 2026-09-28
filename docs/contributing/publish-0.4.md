@@ -83,9 +83,9 @@ presence does **not** establish PyPI ownership or trust configuration.
 | PyPI project | Public 0.4.0 files at audit | Publishing rights | Trusted Publisher | Expected GitHub environment |
 | --- | --- | --- | --- | --- |
 | outerspace-apizr | Absent; 0.3.0 is public | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
-| apizr-oci | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
-| apizr-mcp | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
-| apizr-attest | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
+| outerspace-apizr-oci | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
+| outerspace-apizr-mcp | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
+| outerspace-apizr-attest | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
 
 For each project, confirm owner/publish rights and a publisher bound to
 `Alien6-Studio/outerspace-apizr`, workflow `publish-pypi.yml`, environment `pypi`.

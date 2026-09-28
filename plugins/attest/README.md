@@ -1,4 +1,4 @@
-# apizr-attest
+# outerspace-apizr-attest
 
 Sign, timestamp, transport and verify proofs of an OCI delivery.
 

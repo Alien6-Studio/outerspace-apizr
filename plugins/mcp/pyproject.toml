@@ -1,5 +1,5 @@
 [project]
-name = "apizr-mcp"
+name = "outerspace-apizr-mcp"
 version = "0.4.0"
 description = "Optional local stdio MCP server for read-only Apizr analysis and planning"
 requires-python = ">=3.11,<3.15"

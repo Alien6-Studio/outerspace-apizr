@@ -78,7 +78,7 @@ checkout and checks that the core is unchanged. `invoke_installed.py` demonstrat
 successful `describe` and refusal of an unknown operation using only public APIs.
 The example requires no optional core imports.
 
-This one-request extension protocol is **not MCP**. The optional `apizr-mcp`
+This one-request extension protocol is **not MCP**. The optional `outerspace-apizr-mcp`
 plugin additionally exposes a persistent stdio server, managed by
 [`apizr mcp serve`](apizr-mcp-server.md). A generated business MCP server is a
 separate bundle; neither transport changes this extension contract.
