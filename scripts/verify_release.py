@@ -142,7 +142,9 @@ def main() -> None:
     if args.github_output:
         with args.github_output.open("a") as output:
             if args.release_tag:
-                output.write(f"release_sha={sha}\nrelease_tag={args.release_tag}\n")
+                output.write(
+                    f"release_sha={sha}\nrelease_tag={args.release_tag}\nrelease_version={version}\n"
+                )
             output.write(f"security_run_id={verified_runs['security.yml']}\n")
     if args.preflight:
         print("Preflight only: no tag, upload or publication authorization")

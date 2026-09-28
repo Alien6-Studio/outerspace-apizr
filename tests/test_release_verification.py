@@ -397,7 +397,7 @@ def test_resumed_workflow_keeps_source_and_publisher_separate():
     gate = next(step for step in jobs["verify"]["steps"] if step.get("id") == "gates")
     assert gate["working-directory"] == "release-source"
     assert '--release-tag "$RELEASE_TAG"' in gate["run"]
-    for job in ("receipt", "verify-public"):
+    for job in ("receipt",):
         source = next(
             step
             for step in jobs[job]["steps"]
@@ -445,3 +445,29 @@ def test_resume_refuses_unrelated_or_unprotected_dispatch(
     )
     with pytest.raises(ValueError, match="matching protected version tag"):
         release.main()
+
+
+def test_public_archive_check_does_not_checkout_artifact_source():
+    import yaml
+
+    root = Path(__file__).resolve().parents[1]
+    workflow = yaml.load(
+        (root / ".github/workflows/publish-pypi.yml").read_text(),
+        Loader=yaml.BaseLoader,
+    )
+    steps = workflow["jobs"]["verify-public"]["steps"]
+    checkouts = [
+        step for step in steps if step.get("uses", "").startswith("actions/checkout@")
+    ]
+    assert len(checkouts) == 1
+    assert checkouts[0]["with"] == {"persist-credentials": "false"}
+    public = next(
+        step
+        for step in steps
+        if step.get("name") == "Download and compare published archives"
+    )
+    assert (
+        public["env"]["RELEASE_VERSION"]
+        == "${{ needs.verify.outputs.release_version }}"
+    )
+    assert '--version "$RELEASE_VERSION"' in public["run"]

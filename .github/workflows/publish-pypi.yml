@@ -36,6 +36,7 @@ jobs:
   verify:
     outputs:
       release_sha: ${{ steps.gates.outputs.release_sha }}
+      release_version: ${{ steps.gates.outputs.release_version }}
       outerspace_apizr: ${{ steps.public.outputs.outerspace_apizr }}
       outerspace_apizr_oci: ${{ steps.public.outputs.outerspace_apizr_oci }}
       outerspace_apizr_mcp: ${{ steps.public.outputs.outerspace_apizr_mcp }}
@@ -216,10 +217,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.verify.outputs.release_sha }}
-          path: release-source
           persist-credentials: false
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
@@ -228,12 +226,12 @@ jobs:
       - name: Download and compare published archives
         env:
           PACKAGE: ${{ inputs.package }}
+          RELEASE_VERSION: ${{ needs.verify.outputs.release_version }}
         run: |
-          version=$(python3 -c 'import tomllib;print(tomllib.load(open("release-source/pyproject.toml","rb"))["project"]["version"])')
           if [ "$PACKAGE" = all ]; then
-            python3 scripts/prepare_publication.py --dist dist --version "$version" --output public-verification --require-complete
+            python3 scripts/prepare_publication.py --dist dist --version "$RELEASE_VERSION" --output public-verification --require-complete
           else
-            python3 scripts/prepare_publication.py --dist dist --version "$version" --output public-verification --require-package "$PACKAGE"
+            python3 scripts/prepare_publication.py --dist dist --version "$RELEASE_VERSION" --output public-verification --require-package "$PACKAGE"
           fi
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
