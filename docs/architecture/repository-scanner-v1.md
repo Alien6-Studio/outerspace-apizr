@@ -1,4 +1,6 @@
-# Repository Scanner and Capability Catalog v1
+<span id="repository-scanner-and-capability-catalog-v1"></span>
+
+# Repository Scanner and Capability Catalog
 
 The scanner inventories explicitly selected Python source units and orchestrates
 existing `Inspection v1`. It does not resolve imports, infer calls or readiness,

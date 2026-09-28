@@ -1,11 +1,8 @@
 # Inventory a Python project
 
-!!! note "Version compatibility"
-
-    The commands below use the published 0.3.0 syntax. From 0.4,
-    add `--operator-policy operator.json` with an exact `source.analyze` grant.
-    See the [complete migration example](../migrate-0.4.md#authorize-a-local-repository).
-    Missing authority returns a structured refusal with exit 2 before source reads.
+Repository analysis requires an explicit operator policy. Save a grant for the
+exact source root as `operator.json`; follow [Authorize source analysis](../../reference/operator-policy.md#authorize-repository-analysis).
+This permission does not expose functions or authorize their execution.
 
 `apizr scan` discovers Python files under explicit source roots, derives stable
 logical module names and reuses single-source inspection. It does not import or
@@ -13,9 +10,9 @@ execute project code, install packages, use Git or access the network. Filesyste
 scanning v1 supports Linux/macOS. No Docker is required.
 
 ```sh
-apizr scan .
-apizr scan . --source-root src
-apizr scan . --source-root packages/core/src --source-root packages/tools/src
+apizr scan --operator-policy operator.json .
+apizr scan --operator-policy operator.json . --source-root src
+apizr scan --operator-policy operator.json . --source-root packages/core/src --source-root packages/tools/src
 ```
 
 Without `--source-root`, the repository directory itself is the source root.
@@ -34,9 +31,9 @@ Inspection. The catalog introduces no new readiness policy.
 ## Output and exit codes
 
 ```sh
-apizr scan . --source-root src --details
-apizr scan . --source-root src --format json
-apizr scan . --source-root src --catalog
+apizr scan --operator-policy operator.json . --source-root src --details
+apizr scan --operator-policy operator.json . --source-root src --format json
+apizr scan --operator-policy operator.json . --source-root src --catalog
 ```
 
 The default human report limits displayed sources/diagnostics; `--details` expands
@@ -62,8 +59,8 @@ Only `.py` files are selected; repository notebooks are deferred. Existing
 `apizr inspect notebook.ipynb` remains available.
 
 ```sh
-apizr scan . --exclude-dir tests --exclude-dir generated
-apizr scan . --source-root src --max-file-bytes 1048576 --max-source-files 1000
+apizr scan --operator-policy operator.json . --exclude-dir tests --exclude-dir generated
+apizr scan --operator-policy operator.json . --source-root src --max-file-bytes 1048576 --max-source-files 1000
 ```
 
 Other bounds are `--max-total-bytes` (default 16 MiB), `--max-entries` (20,000) and

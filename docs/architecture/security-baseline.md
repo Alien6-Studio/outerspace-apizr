@@ -18,8 +18,8 @@ Upgrade the interpreter and replace explicit 3.8–3.10 targets in CLI arguments
 and YAML with a supported target. The generation interpreter must still be at
 least as recent as its target. Unsupported targets, including 3.15, produce
 an explicit supported-range error. This is a deliberate compatibility break.
-The package remains **0.2.0**, whose release notes are still marked unreleased;
-version selection remains part of the documented publication procedure.
+This baseline was established during the 0.2.0 foundation work; subsequent
+release records describe the distributed versions.
 
 `apizr.compat` is removed. Its active branches on supported interpreters are
 replaced directly: `ast.unparse`, `importlib.metadata`,

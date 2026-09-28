@@ -13,8 +13,6 @@ import time
 from pathlib import Path
 from urllib.request import urlopen
 
-from operator_policy_proof import write_analysis_policy
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -24,7 +22,12 @@ def main() -> None:
     cli = args.cli.resolve()
     repository = Path(__file__).resolve().parents[1]
     readme = (repository / "README.md").read_text()
-    guide = (repository / "docs/getting-started/introduction.md").read_text()
+    directory = (
+        "docs/getting-started"
+        if args.development
+        else "tests/fixtures/documentation-0.3"
+    )
+    guide = (repository / directory / "introduction.md").read_text()
     assert "https://apizr.outerspace.sh/getting-started/quickstart/" in readme
     assert "https://apizr.outerspace.sh/getting-started/introduction/" in readme
     sources = re.findall(r"```python\n(.*?)```", guide, re.S)
@@ -55,15 +58,20 @@ def main() -> None:
                 (repository / "examples/policies" / name).read_bytes()
             )
             (root / name).write_text(policy)
-        authority = (
-            write_analysis_policy(root / "operator.json", root)
-            if args.development
-            else None
-        )
+        if args.development:
+            authority = re.search(
+                r"<!-- journey:authorization -->\s*```sh\n(.*?)```", guide, re.S
+            )
+            assert authority
+            subprocess.run(
+                ["/bin/sh", "-c", "set -eu\n" + authority[1]],
+                cwd=root,
+                check=True,
+                timeout=10,
+            )
         for command in commands:
-            flags = ["--operator-policy", str(authority)] if authority else []
             result = subprocess.run(
-                [str(cli), *command[1:], *flags],
+                [str(cli), *command[1:]],
                 cwd=root,
                 capture_output=True,
                 text=True,
@@ -98,8 +106,10 @@ def main() -> None:
 
 def quickstart(cli: Path, repository: Path, *, candidate: bool = False) -> None:
     """Run the selected Quickstart blocks verbatim, including real client calls."""
-    page = "quickstart-0.4.md" if candidate else "quickstart.md"
-    guide = (repository / "docs/getting-started" / page).read_text()
+    directory = (
+        "docs/getting-started" if candidate else "tests/fixtures/documentation-0.3"
+    )
+    guide = (repository / directory / "quickstart.md").read_text()
     blocks = dict(
         re.findall(r"<!-- quickstart:([a-z-]+) -->\s*```sh\n(.*?)```", guide, re.S)
     )
@@ -219,7 +229,7 @@ def quickstart(cli: Path, repository: Path, *, candidate: bool = False) -> None:
                     process.kill()
                     process.wait(timeout=5)
         print(
-            f"PASS: {'candidate 0.4' if candidate else 'stable 0.3'} Quickstart outside checkout; two selected MCP tools and REST calls; no graphical client claimed"
+            f"PASS: {'current 0.4' if candidate else 'historical 0.3'} Quickstart outside checkout; two selected MCP tools and REST calls; no graphical client claimed"
         )
 
 

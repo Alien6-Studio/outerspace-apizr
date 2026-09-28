@@ -63,7 +63,7 @@ Python 3.11–3.14 · GPL-3.0-or-later.
 
 ## Choose your next step
 
-- **[Expose your Python functions](getting-started/quickstart.md)** — generate a business MCP server or REST API. Using verified candidate artifacts? Follow the [corresponding Quickstart](getting-started/quickstart-0.4.md).
+- **[Expose your Python functions](getting-started/quickstart.md)** — generate a business MCP server or REST API.
 - **[Analyze a project from an MCP client](reference/apizr-mcp-server.md)** — install the optional analysis server; it does not run your functions.
 - **[Build and deliver a service](reference/oci-service-plugin.md)** — choose the OCI or delivery profile, then explicitly authorize remote publication and, if needed, [Attest proofs](reference/attest-delivery-plugin.md).
 
@@ -109,4 +109,4 @@ project code.
 - [The full journey](getting-started/introduction.md): understand each stage and use your own code.
 - [REST](getting-started/user-guide/rest.md) and [MCP](getting-started/user-guide/mcp.md): modern single-source workflows.
 - [Legacy pipeline — compatibility](getting-started/user-guide/apizr.md): the historical notebook/script pipeline.
-- [0.3.0 release notes](releases/0.3.0.md), [0.2.1 notes](releases/0.2.1.md) and [compatibility](getting-started/developer-guide/releases.md).
+- [Release notes](releases/0.4.0.md) and [compatibility](getting-started/developer-guide/releases.md).

@@ -1,16 +1,8 @@
 # Assess repository exposure evidence
 
-!!! note "Source authorization"
-
-    Stable 0.3.0 examples retain their historical syntax. From 0.4,
-    repository commands additionally require `--operator-policy operator.json`
-    with an exact `source.analyze` grant. Python filesystem APIs require the same
-    explicitly loaded `operator_policy`. Read the [migration and complete policy](../../reference/operator-policy.md#authorize-repository-analysis).
-    Readiness, exposure selection and execution policies remain independent.
-
-The local commands below are available in stable 0.3.0. For
-`--project` and `--git`, see [Install Apizr](../install.md) for package availability
-and follow the linked project/Git references.
+Repository analysis requires an explicit operator policy. Save a grant for the
+exact source root as `operator.json`; follow [Authorize source analysis](../../reference/operator-policy.md#authorize-repository-analysis).
+This permission does not expose functions or authorize their execution.
 
 Repository readiness evaluates existing static evidence under a declared policy.
 It is **not a runtime guarantee or an authorization to give an agent access**.
@@ -18,10 +10,10 @@ It is **not a runtime guarantee or an authorization to give an agent access**.
 For repository-first assessment, run:
 
 ```sh
-apizr readiness .
-apizr readiness . --source-root src
-apizr readiness . --policy policy.json --details
-apizr readiness . --source-root src --report > readiness.json
+apizr readiness --operator-policy operator.json .
+apizr readiness --operator-policy operator.json . --source-root src
+apizr readiness --operator-policy operator.json . --policy policy.json --details
+apizr readiness --operator-policy operator.json . --source-root src --report > readiness.json
 ```
 
 This performs one bounded discovery shared by Scan, Catalog and Graph, then evaluates
@@ -37,8 +29,8 @@ For offline evaluation or artifact pipelines, the existing artifact-first comman
 remains available. Save matching Catalog and Graph artifacts from an unchanged repository:
 
 ```sh
-apizr scan ./project --catalog > catalog.json
-apizr graph ./project --graph > graph.json
+apizr scan --operator-policy operator.json ./project --catalog > catalog.json
+apizr graph --operator-policy operator.json ./project --graph > graph.json
 apizr repository-readiness catalog.json graph.json
 apizr repository-readiness catalog.json graph.json --format json > readiness.json
 ```
@@ -51,10 +43,14 @@ With identical source universes and policies, both workflows produce byte-identi
 For a single-discovery Python workflow:
 
 ```python
+from pathlib import Path
+
 from apizr.graph import graph_repository
+from apizr.operator_policy import load_operator_policy
 from apizr.repository_readiness import assess_repository
 
-artifacts = graph_repository("./project")
+operator = load_operator_policy(Path("operator.json"))
+artifacts = graph_repository("./project", operator_policy=operator)
 report = assess_repository(artifacts.catalog, artifacts.graph)
 for assessment in report.assessments:
     print(assessment.capability_id, assessment.state.value)
@@ -105,7 +101,7 @@ Four copyable policies are provided under `examples/readiness/`:
 For example, from the Apizr checkout:
 
 ```sh
-apizr readiness ./project --policy examples/readiness/isolated-oci.json --report
+apizr readiness --operator-policy operator.json ./project --policy examples/readiness/isolated-oci.json --report
 ```
 
 This is an additive v1 completion. Existing policies and report bytes remain unchanged.

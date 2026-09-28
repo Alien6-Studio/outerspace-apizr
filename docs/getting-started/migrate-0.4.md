@@ -1,17 +1,16 @@
 # Migrate from 0.3 to 0.4
 
-**0.4.0 is being prepared; the published stable release remains 0.3.0.**
-This guide applies to the development compiler and the upcoming 0.4.0 release.
-Keep the [stable Quickstart](quickstart.md) for the published 0.3.0 package.
+Use this guide to adapt an existing installation to the current compiler.
+For a new project, start with the [Quickstart](quickstart.md).
 See the [0.4.0 notes](../releases/0.4.0.md) for the complete scope and limits.
 
 ## Prepare a separate installation
 
 Keep your existing environment and bundles while validating the change. Follow
-[Install Apizr → evaluate the candidate](install.md#evaluate-the-040-candidate)
+[Install Apizr](install.md)
 for artifact retrieval, provenance checks and pip/uv/pipx alternatives. Activate
 the separate `core/` environment for the example below. `apizr --version` must
-report `0.4.0`; this is a reviewed candidate, not an available PyPI installation.
+report `0.4.0`.
 
 ## Authorize a local repository
 

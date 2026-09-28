@@ -31,7 +31,7 @@ historical pipeline.
 | Execute under a policy | [Local and OCI execution](../getting-started/user-guide/execute.md) |
 | Inspect one Python file or notebook without execution | [Inspection guide](../getting-started/user-guide/inspect.md) and [readiness policy](../architecture/capability-readiness-v1.md) |
 | Generate REST from a Python file or notebook | [REST guide](../getting-started/user-guide/rest.md) and [generator contract](../architecture/rest-generator-v1.md) |
-| Inspect source using the independent typed Python API | [Capability IR v1](../architecture/capability-ir-v1.md), including serialization, digests and diagnostics |
+| Inspect source using the independent typed Python API | [Capability IR](../architecture/capability-ir-v1.md), including serialization, digests and diagnostics |
 | Understand guarantees and limits | [Artifact principles](../architecture/artifact-principles.md), [security baseline](../architecture/security-baseline.md) |
 
 The [MCP generator contract](../architecture/mcp-generator-v1.md) describes the
@@ -67,10 +67,10 @@ the policy languages.
 | --- | --- |
 | Scan exclusions and source roots | [Scanner parameters](../getting-started/user-guide/scan.md) |
 | Readiness policy and reports | [Repository readiness](../architecture/repository-readiness-v1.md) |
-| Exposure policy and plan | [Exposure Plan v1](../architecture/exposure-plan-v1.md) |
-| Bundle artifacts and manifests | [Repository Bundle v1](../architecture/repository-bundle-v1.md) |
+| Exposure policy and plan | [Exposure Plan](../architecture/exposure-plan-v1.md) |
+| Bundle artifacts and manifests | [Repository Bundle](../architecture/repository-bundle-v1.md) |
 | Direct/governed execution choices | [Exposure guide](../getting-started/user-guide/exposure.md) |
-| Worker execution policy | [Execution Policy v1](../architecture/execution-policy-v1.md), [OCI v2](../architecture/oci-container-runtime-v1.md) |
+| Worker execution policy | [Execution Policy](../architecture/execution-policy-v1.md), [OCI](../architecture/oci-container-runtime-v1.md) |
 | Project and explicit user configuration | [Project configuration](../getting-started/user-guide/project.md), [plugin declarations and locks](project-plugin-locks.md) |
 | Extension invocation messages | [Extension protocol](extension-invocation.md) |
 

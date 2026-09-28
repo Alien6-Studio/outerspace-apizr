@@ -1,4 +1,6 @@
-# Governed OCI transport bridge v2
+<span id="governed-oci-transport-bridge-v2"></span>
+
+# Governed OCI transport bridge
 
 The original backend contract described here is unchanged. The 0.3 release
 line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)

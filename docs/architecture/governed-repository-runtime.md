@@ -5,8 +5,6 @@ The original backend contract remains unchanged. An opt-in
 protocol; v1 static adapters retain their original guarantees.
 
 
-**Available in published stable 0.3.0.**
-
 Repository exposure now supports direct, governed local-process and governed OCI
 REST/MCP bundles. The requested backend must be explicitly compatible with every
 selected Exposure Record. Generation never ranks backends or falls back to direct.

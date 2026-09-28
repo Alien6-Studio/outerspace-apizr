@@ -2,9 +2,11 @@
 
 <span id="migration-and-releases"></span>
 
-## Preparing the move from 0.3.0 to 0.4.0
+<span id="preparing-the-move-from-030-to-040"></span>
 
-0.4.0 is not yet published. The [migration guide](../migrate-0.4.md) includes a
+## Move from 0.3 to 0.4
+
+The [migration guide](../migrate-0.4.md) includes a
 complete local example, shared CLI/Python authorization and MCP result changes.
 The [0.4.0 notes](../../releases/0.4.0.md) distinguish integrated capabilities
 from remaining distribution/publication work and explicit 0.4.1/0.4.2 deferrals.
@@ -13,7 +15,7 @@ Keep the historical instructions below for the versions they describe.
 
 ## From 0.2.1 to 0.3.0
 
-Latest published stable: **0.3.0**, released 22 September 2026.
+**0.3.0** was released on 22 September 2026.
 Existing single-source and legacy commands remain available,
 and no canonical contract meanings change. Repository Exposure is an explicit new
 workflow; nothing is published or migrated automatically. See the

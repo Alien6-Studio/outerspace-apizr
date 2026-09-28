@@ -166,15 +166,12 @@ use `--clobber` or recreate the release. Attach only missing identical resources
    ```
 
    Confirm unauthenticated users can download the same release attachments.
-2. Prepare a **documentation-only follow-up PR**, not rebuilt packages:
-   retain the old Quickstart as `getting-started/quickstart-0.3.md`; copy the
-   reviewed `quickstart-0.4.md` content to `getting-started/quickstart.md` and
-   replace candidate installation with the now-verified public installation.
-   Preserve every old anchor (including `use-rest-instead`, `test-with-python`,
-   `connect-an-ai-client`, `generate-the-mcp-bundle` and `continue-with-your-own-code`).
-   Keep the candidate URL as an explicit historical/redirecting entry with its
-   anchors. Move the 0.3 smoke proof to its historical page without changing its
-   expected scalar responses; keep 0.4 object-response assertions separate.
+2. Update the single current [Quickstart](../getting-started/quickstart.md) and
+   [installation guide](../getting-started/install.md) to use verified public
+   packages. Do not create a Quickstart per release. Preserve every existing
+   anchor and keep the former candidate URL as a forwarding entry only.
+   Historical scalar-response checks remain frozen test fixtures, outside the
+   published documentation; current MCP examples assert object responses.
 3. Update `install.md`, home, release notes, compatibility and navigation labels
    to the verified status and working public resource URLs. Search transitional
    text with `rg -n 'development.*0.4|0.4 development|not released|not published|Preparing 0.4' docs mkdocs.yml`.

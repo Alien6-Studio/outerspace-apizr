@@ -1,4 +1,6 @@
-# Governed transport runtime v1
+<span id="governed-transport-runtime-v1"></span>
+
+# Governed transport runtime
 
 REST and MCP separate their interface from the strategy used to invoke it.
 Generation without `--execution-policy` remains **direct**, with every existing

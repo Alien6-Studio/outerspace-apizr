@@ -94,9 +94,7 @@ nav:
   - Getting started:
       - Install Apizr: getting-started/install.md
       - Quickstart: getting-started/quickstart.md
-      - Try the 0.4 candidate: getting-started/quickstart-0.4.md
       - The full journey: getting-started/introduction.md
-      - Migrate from 0.3 to 0.4: getting-started/migrate-0.4.md
   - Guides:
       - Compilation and interfaces:
           - Inventory a Python project: getting-started/user-guide/scan.md
@@ -127,17 +125,17 @@ nav:
       - Compatibility notes: getting-started/developer-guide/releases.md
   - Architecture:
       - Capability Compiler overview: architecture/overview.md
-      - Repository Scanner and Catalog v1: architecture/repository-scanner-v1.md
-      - Repository Readiness v1: architecture/repository-readiness-v1.md
-      - Exposure Plan v1: architecture/exposure-plan-v1.md
-      - Repository Bundle v1: architecture/repository-bundle-v1.md
+      - Repository Scanner and Catalog: architecture/repository-scanner-v1.md
+      - Repository Readiness: architecture/repository-readiness-v1.md
+      - Exposure Plan: architecture/exposure-plan-v1.md
+      - Repository Bundle: architecture/repository-bundle-v1.md
       - Governed repository execution: architecture/governed-repository-runtime.md
-      - Capability Graph v1: architecture/capability-graph-v1.md
-      - Capability IR v1: architecture/capability-ir-v1.md
-      - Static readiness v1: architecture/capability-readiness-v1.md
-      - REST generator v1: architecture/rest-generator-v1.md
-      - MCP generator v1: architecture/mcp-generator-v1.md
-      - Execution Policy v1: architecture/execution-policy-v1.md
+      - Capability Graph: architecture/capability-graph-v1.md
+      - Capability IR: architecture/capability-ir-v1.md
+      - Static readiness: architecture/capability-readiness-v1.md
+      - REST generator: architecture/rest-generator-v1.md
+      - MCP generator: architecture/mcp-generator-v1.md
+      - Execution Policy: architecture/execution-policy-v1.md
       - OCI container execution: architecture/oci-container-runtime-v1.md
       - Subprocess deny: architecture/subprocess-deny.md
       - Governed REST and MCP: architecture/governed-transport-runtime-v1.md
@@ -164,13 +162,14 @@ nav:
       - Pipeline plugins: getting-started/developer-guide/plugins.md
       - Behavior contract: architecture/legacy-behavior-contract.md
   - Releases:
-      - 0.4.0 — release preparation: releases/0.4.0.md
-      - Evaluate 0.4 — unreleased: development/0.4.md
+      - 0.4.0: releases/0.4.0.md
+      - Migrate from 0.3 to 0.4: getting-started/migrate-0.4.md
       - 0.3.0: releases/0.3.0.md
       - 0.2.1: releases/0.2.1.md
       - 0.2.0: releases/0.2.0.md
   - Contributing:
       - Overview: about/CONTRIBUTING.md
+      - Build from source: development/0.4.md
       - Development and checks: getting-started/developer-guide/setup.md
       - Package an extension: reference/plugin-authors.md
       - Publication and documentation cutover: contributing/publish-0.4.md

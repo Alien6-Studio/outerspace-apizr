@@ -138,13 +138,12 @@ error. Positional-only inputs remain object fields in MCP; the adapter reconstru
 the Python call. Supplying a later optional positional-only field requires its
 preceding positional-only fields, exactly as in REST.
 
-In development builds containing [#163](https://github.com/Alien6-Studio/outerspace-apizr/issues/163),
-object results stay unchanged. Other finite JSON results use an object envelope:
+Object results stay unchanged. Other finite JSON results use an object envelope:
 `25.0` becomes `{"result": 25.0}`, a list becomes `{"result": [...]}`, and `None`
 becomes `{"result": null}`. Read the value from `result.structured_content["result"]`
 for these functions. The text content serializes the same object. This correction
-requires regenerating the bundle; published 0.3.0 still emits bare values that
-strict clients can reject. See the [result contract](../../architecture/mcp-generator-v1.md#results-and-public-errors).
+requires regenerating older bundles that emit bare values, which strict clients
+can reject. See the [result contract](../../architecture/mcp-generator-v1.md#results-and-public-errors).
 
 Sync and async functions work. Results must be finite JSON-compatible values;
 declared return annotations do not constrain them. Unsupported results and

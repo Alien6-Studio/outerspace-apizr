@@ -1,4 +1,6 @@
-# Static capability readiness v1
+<span id="static-capability-readiness-v1"></span>
+
+# Static capability readiness
 
 Capability IR records source declarations. Readiness applies a separate, bounded
 policy to those declarations and matching static source evidence. Neither model

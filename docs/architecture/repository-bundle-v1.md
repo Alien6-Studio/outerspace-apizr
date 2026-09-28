@@ -1,6 +1,6 @@
-# Repository Exposure Bundle v1
+<span id="repository-exposure-bundle-v1"></span>
 
-**Available in published stable 0.3.0.**
+# Repository Exposure Bundle
 
 Repository bundles turn an explicitly validated Exposure Plan into one direct
 REST server or one direct MCP server with multiple selected capabilities.

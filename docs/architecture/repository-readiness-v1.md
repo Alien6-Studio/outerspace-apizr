@@ -1,4 +1,6 @@
-# Repository / Agent Readiness v1
+<span id="repository-agent-readiness-v1"></span>
+
+# Repository / Agent Readiness
 
 The original backend contract described here is unchanged. The 0.3 release
 line also provides an opt-in [strict OCI subprocess-deny profile](subprocess-deny.md)
