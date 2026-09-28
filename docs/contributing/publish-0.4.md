@@ -1,9 +1,15 @@
-# Publish the coordinated 0.4 delivery
+# Historical coordinated 0.4.0rc1 publication
 
 **The coordinated 0.4.0rc1 packages are published.** See the
 [release record](../releases/0.4.0.md#publication-status) for verification and public
-resources. This page retains the existing [manual publication procedure](releases.md).
-Do not repeat phase B without explicit maintainer authorization.
+resources. The commands and master-run references below are an **archived record
+of that completed delivery**, not instructions to execute again. Do not rebuild,
+retag, republish or modify 0.4.0rc1. There will be no new final 0.4.0 publication.
+
+For future work follow the [current release procedure](releases.md) and
+[release-branch model](release-branches.md): 0.4.1 candidates and final originate
+on `release/0.4.1`; final integration into `master` precedes creating `release/0.4.2`.
+Historical `REVIEWED_MASTER_RUN_ID` variables below describe the 0.4.0rc1 evidence only.
 
 <span id="available-candidate-resources"></span>
 
@@ -179,9 +185,13 @@ use `--clobber` or recreate the release. Attach only missing identical resources
    are verified. The documentation commit may be newer than the immutable
    release commit; it never reconstructs or replaces published packages.
 
-### Resume after a publication-script correction
+### Historical recovery after a publication-script correction
 
-If an immutable release tag predates a correction to publication tooling, merge
+The completed delivery used this recovery mechanism. For a future authorized
+0.4.1 recovery, qualify tooling on `release/0.4.1` and keep the original release-line
+artifact run; do not use a newer rebuild or change the original tag.
+
+Historically, if an immutable release tag predated a correction to publication tooling, merge
 and qualify the tooling fix on master, then create a separate
 `vVERSION-publishN` tag on that qualified commit. Dispatch that tag with
 `release_tag=vVERSION` and the original reviewed master CI run. The publisher

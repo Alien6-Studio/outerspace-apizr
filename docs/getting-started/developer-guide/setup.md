@@ -162,3 +162,9 @@ the development group, which includes all optional dependencies for validation.
 The package job tests the base wheel and each extra in separate environments on
 Python 3.11 and 3.14. Security audits cover the base, each extra, and validation
 groups; archived SBOMs distinguish the base and combined optional runtime.
+
+For 0.4.1 contributions, create feature branches from `release/0.4.1` and target
+that branch with PRs. Release-line pushes validate documentation without deploying
+it; the public site remains on the integrated `master` baseline. See
+[release governance](../../contributing/release-branches.md) for RC semantics and
+pending protection settings.
