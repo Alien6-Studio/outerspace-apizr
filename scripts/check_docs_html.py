@@ -66,6 +66,7 @@ def check(site: Path) -> None:
         "reference/local-extensions",
         "reference/plugin-catalog",
         "reference/plugin-authors",
+        "reference/project-plugin-locks",
         "reference/extension-invocation",
         "reference/oci-service-plugin",
         "reference/attest-delivery-plugin",
@@ -73,11 +74,13 @@ def check(site: Path) -> None:
         "getting-started/user-guide/project",
     ):
         text = (site / name / "index.html").read_text()
-        if (
-            "0.4 development — not released" not in text
-            or "development/0.4/#install-a-development-wheel" not in text
-        ):
-            failures.append(f"{name}: missing development status/installation link")
+        content = "".join(pages[f"{name}/index.html"].text)
+        if "Install Apizr" not in content or "install/" not in text:
+            failures.append(f"{name}: missing package availability/installation link")
+        if "0.4 development — not released" in content:
+            failures.append(f"{name}: obsolete development banner")
+        if "(0.4)" in content:
+            failures.append(f"{name}: version suffix in official guide navigation")
     for name in (
         "reference/operator-policy",
         "reference/compiler-api",
@@ -140,11 +143,11 @@ def check(site: Path) -> None:
     home = (site / "index.html").read_text()
     for required in (
         "getting-started/quickstart/",
-        "development/0.4/",
+        "getting-started/install/",
         "releases/0.4.0/",
         "getting-started/migrate-0.4/",
-        "Preparing 0.4",
-        "Latest published stable: 0.3.0",
+        "package availability",
+        "Choose your next step",
         "assets/images/illustration.png",
         "assets/videos/paris-route.jpg",
         "assets/javascripts/video.js",

@@ -1,18 +1,12 @@
 # Build and publish REST and MCP service images
 
-!!! warning "0.4 development — not released"
-
-    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
-    for this page's 0.4 commands; they are not available in stable 0.3.0.
-    The [development setup](../development/0.4.md#install-a-development-wheel)
-    is for contributors building their own evaluation wheels.
+For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 The official `apizr-oci` extension builds a **local service image** from a direct
 repository exposure bundle and publishes it through a separate, explicit `push`
 operation. It does not build governed execution workers or install business
 dependencies. Install and enable it explicitly;
 the minimal Apizr environment does not acquire Docker, REST or MCP dependencies.
-This first package is version `0.4.0`, available as a reviewed candidate, not a published release.
 
 ## Prerequisites and installation
 

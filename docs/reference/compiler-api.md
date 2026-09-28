@@ -1,11 +1,6 @@
 # Call the repository compiler from Python
 
-!!! warning "0.4 development — not released"
-
-    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
-    for this page's 0.4 commands; they are not available in stable 0.3.0.
-    The [development setup](../development/0.4.md#install-a-development-wheel)
-    is for contributors building their own evaluation wheels.
+For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 `apizr.compiler` provides the orchestration used by `apizr readiness`,
 `apizr expose plan` and `apizr expose build rest|mcp`. It requires only the base
@@ -108,7 +103,9 @@ dependencies are needed when running the generated service, not when rendering.
 See [exposure policies](../getting-started/user-guide/exposure.md) for the three
 independent policy roles and existing limitations.
 
-## Source admission in development 0.4
+<span id="source-admission-in-development-04"></span>
+
+## Authorize source analysis
 
 `operator_policy` is an explicitly loaded `OperatorPolicy`. Omission raises
 `AuthorizationDenied` with a fixed structured decision. Filesystem `scan`,

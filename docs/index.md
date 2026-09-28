@@ -23,14 +23,12 @@ Your business logic stays in Python.
 
 </div>
 
-**Latest published stable: 0.3.0 · Released 22 September 2026**
+See [Install Apizr](getting-started/install.md) for package availability and the
+installation steps for your chosen workflow. The [release notes](releases/0.4.0.md)
+and [migration guide](getting-started/migrate-0.4.md) explain version differences,
+including explicit source access and MCP results.
 
-**Preparing 0.4.0 — not released.** Use the stable Quickstart above for your first
-server. Read [what changes in 0.4.0](releases/0.4.0.md) and
-[how to migrate](getting-started/migrate-0.4.md), including explicit source access
-and the MCP result fix. The [candidate installation](getting-started/install.md#evaluate-the-040-candidate) lets
-you evaluate remote Git, isolated plugins and OCI/Attest delivery before the
-release; those additions are not in stable 0.3.0. Python 3.11–3.14 · GPL-3.0-or-later.
+Python 3.11–3.14 · GPL-3.0-or-later.
 
   <section class="apizr-demo-section md-typeset" aria-labelledby="watch-apizr-in-action">
     <div class="apizr-demo-section__inner">
@@ -65,12 +63,11 @@ release; those additions are not in stable 0.3.0. Python 3.11–3.14 · GPL-3.0-
 
 ## Choose your next step
 
-- **[Expose your Python functions](getting-started/quickstart.md)** — generate a business MCP server or REST API. Evaluating 0.4? Use its [candidate Quickstart](getting-started/quickstart-0.4.md).
+- **[Expose your Python functions](getting-started/quickstart.md)** — generate a business MCP server or REST API. Using verified candidate artifacts? Follow the [corresponding Quickstart](getting-started/quickstart-0.4.md).
 - **[Analyze a project from an MCP client](reference/apizr-mcp-server.md)** — install the optional analysis server; it does not run your functions.
 - **[Build and deliver a service](reference/oci-service-plugin.md)** — choose the OCI or delivery profile, then explicitly authorize remote publication and, if needed, [Attest proofs](reference/attest-delivery-plugin.md).
 
-Start with the [installation guide](getting-started/install.md). The analysis
-server and delivery profiles belong to the 0.4 candidate while stable remains 0.3.0.
+Choose the core and optional plugins in the [installation guide](getting-started/install.md).
 
 ## Choose what becomes public
 
@@ -105,7 +102,7 @@ controls, not a VM or an untrusted-code guarantee. See
 ## Find the right server and guide
 
 The **generated MCP server** serves your selected Python functions. The separate
-**[Apizr analysis MCP server](reference/apizr-mcp-server.md)**, in development 0.4,
+**[Apizr analysis MCP server](reference/apizr-mcp-server.md)**
 lets a client inspect repositories and prepare exposure plans without executing
 project code.
 

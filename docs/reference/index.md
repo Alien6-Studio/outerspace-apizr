@@ -3,11 +3,9 @@
 For your first project, follow [Quickstart](../getting-started/quickstart.md), then [The full journey](../getting-started/introduction.md).
 Read the [Capability Compiler overview](../architecture/overview.md) for the full flow.
 This reference is for using individual interfaces or understanding their contracts.
-The site follows `master`; pages marked **0.4 development** require the
-[development installation](../development/0.4.md), not published 0.3.0.
-The [stable release notes](../releases/0.3.0.md) describe the released scope.
-For the upcoming version, read [0.4.0 notes](../releases/0.4.0.md) and the
-[migration guide](../getting-started/migrate-0.4.md).
+See [Install Apizr](../getting-started/install.md) for package availability and
+prerequisites. The [release notes](../releases/0.4.0.md) and
+[migration guide](../getting-started/migrate-0.4.md) explain version differences.
 
 ## Commands and parameters
 
@@ -73,12 +71,12 @@ the policy languages.
 | Bundle artifacts and manifests | [Repository Bundle v1](../architecture/repository-bundle-v1.md) |
 | Direct/governed execution choices | [Exposure guide](../getting-started/user-guide/exposure.md) |
 | Worker execution policy | [Execution Policy v1](../architecture/execution-policy-v1.md), [OCI v2](../architecture/oci-container-runtime-v1.md) |
-| Project and explicit user configuration (0.4) | [Project configuration](../getting-started/user-guide/project.md), [plugin declarations and locks](project-plugin-locks.md) |
-| Extension invocation messages (0.4) | [Extension protocol](extension-invocation.md) |
+| Project and explicit user configuration | [Project configuration](../getting-started/user-guide/project.md), [plugin declarations and locks](project-plugin-locks.md) |
+| Extension invocation messages | [Extension protocol](extension-invocation.md) |
 
 ## Python APIs
 
-The [compiler API](compiler-api.md) is available in **development 0.4**, independently
+The [compiler API](compiler-api.md) can be called directly from Python, independently
 of the CLI. Existing lower-level contracts are documented alongside the
 [Capability IR](../architecture/capability-ir-v1.md),
 [readiness](../architecture/capability-readiness-v1.md) and generator architecture.

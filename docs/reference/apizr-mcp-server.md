@@ -1,11 +1,6 @@
 # Apizr as a local MCP server
 
-!!! warning "0.4 development — not released"
-
-    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
-    for this page's 0.4 commands; they are not available in stable 0.3.0.
-    The [development setup](../development/0.4.md#install-a-development-wheel)
-    is for contributors building their own evaluation wheels.
+For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 The optional **apizr-mcp** plugin exposes read-only local analysis and planning
 through stdio. It does not generate bundles, execute business functions, acquire
@@ -84,8 +79,7 @@ core/bin/apizr plugins enable apizr-mcp --version 0.4.0 --plugins-dir "$work/plu
 ```
 
 Installation alone leaves the plugin inactive. The existing [locked installation
-rules](local-extensions.md) apply. The plugin's development version remains
-`0.4.0`; this is not a package published on PyPI. No installer runs at server
+rules](local-extensions.md) apply. No installer runs at server
 startup. A missing, inactive, inconsistent or missing-interpreter installation
 is refused without repair.
 

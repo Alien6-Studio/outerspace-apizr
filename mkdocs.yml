@@ -107,23 +107,23 @@ nav:
           - REST from a Python file or notebook: getting-started/user-guide/rest.md
           - MCP from a Python file or notebook: getting-started/user-guide/mcp.md
           - Execute code with a policy: getting-started/user-guide/execute.md
-          - Analyze a Git repository (0.4): reference/git-sources.md
-          - SSH Git sources (0.4): reference/git-ssh.md
+          - Analyze a Git repository: reference/git-sources.md
+          - SSH Git sources: reference/git-ssh.md
       - Project configuration:
-          - Configure a project (0.4): getting-started/user-guide/project.md
-          - Declarations and plugin locks (0.4): reference/project-plugin-locks.md
+          - Configure a project: getting-started/user-guide/project.md
+          - Declarations and plugin locks: reference/project-plugin-locks.md
       - Plugins:
-          - Choose a catalog profile (0.4): reference/plugin-catalog.md
-          - Install, run, update and uninstall (0.4): reference/local-extensions.md
-          - Apizr analysis MCP server (0.4): reference/apizr-mcp-server.md
-          - OCI service images (0.4): reference/oci-service-plugin.md
-          - Attest delivery proofs (0.4): reference/attest-delivery-plugin.md
-          - Attest OCI artifacts (0.4): reference/attest-oci-artifacts.md
+          - Choose a catalog profile: reference/plugin-catalog.md
+          - Install, run, update and uninstall: reference/local-extensions.md
+          - Apizr analysis MCP server: reference/apizr-mcp-server.md
+          - OCI service images: reference/oci-service-plugin.md
+          - Attest delivery proofs: reference/attest-delivery-plugin.md
+          - Attest OCI artifacts: reference/attest-oci-artifacts.md
   - Reference:
       - Commands, parameters and formats: reference/index.md
-      - Python compiler API (0.4): reference/compiler-api.md
-      - Extension invocation API (0.4): reference/extension-invocation.md
-      - Operator permissions (0.4): reference/operator-policy.md
+      - Python compiler API: reference/compiler-api.md
+      - Extension invocation API: reference/extension-invocation.md
+      - Operator permissions: reference/operator-policy.md
       - Compatibility notes: getting-started/developer-guide/releases.md
   - Architecture:
       - Capability Compiler overview: architecture/overview.md

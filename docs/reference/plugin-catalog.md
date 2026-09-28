@@ -1,25 +1,22 @@
 # Choose plugins from a catalog
 
-!!! warning "0.4 development — not released"
-
-    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
-    for this page's 0.4 commands; they are not available in stable 0.3.0.
-    The [development setup](../development/0.4.md#install-a-development-wheel)
-    is for contributors building their own evaluation wheels.
+For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 A **plugin catalog** describes available plugin artifacts. It is separate from
 `apizr scan`'s catalog of Python capabilities. A **profile** selects exact plugin
 versions; it contains no scripts, secrets, activation or execution permissions.
 
-## Obtain a development catalog
+<span id="obtain-a-development-catalog"></span>
+
+## Obtain a verified catalog
 
 The Linux/macOS **MCP server plugin** CI artifacts contain `catalog/catalogue.json`,
 `wheels/` (including `requirements/`) and the exported plans. Choose the artifact
 for your exact Python/platform target and the source commit you intend to use.
 These are development builds, not published releases or a hosted marketplace.
-The three official plugins still declare `0.4.0`; use the source commit and
-SHA-256 values to distinguish builds. The core's `0.3.0` version string does
-**not** establish compatibility with the published stable package.
+The core and three official plugins declare `0.4.0`; use the source commit and
+SHA-256 values to distinguish builds. A matching version string alone does
+**not** establish artifact identity or qualification.
 
 To prepare and qualify these artifacts yourself, from a development checkout
 with uv and an installed Python, use a new directory outside the checkout:
@@ -38,7 +35,7 @@ not rebuilt between catalog generation and installation.
 
 Extract the matching `mcp-stdio-OS-python-VERSION` artifact and enter its
 `_temp/mcp-proof/` directory. It contains `catalog/catalogue.json` and `wheels/`;
-test/coverage reports occupy another subtree. Use the development `apizr` executable:
+test/coverage reports occupy another subtree. Use the `apizr` executable installed with these artifacts:
 
 ```sh
 apizr plugins catalog list --catalog catalog/catalogue.json --json
@@ -149,7 +146,7 @@ build deployment minimum. Other tags fail closed. This
 bounded check follows [PyPA's wheel tag specification](https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/)
 and does not replace uv's dependency/platform checks at installation.
 
-The declared development core version is necessary but insufficient: use the
+The declared core version is necessary but insufficient: use the
 recorded source commit and its qualification evidence. Catalog metadata does not
 certify publisher identity, dependency constraints, external-tool availability or
 successful operation. CI qualifies MCP through its real SDK client and OCI/Attest

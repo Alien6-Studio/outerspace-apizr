@@ -140,7 +140,7 @@ Python example is not required before connecting your usual client.
     [the full journey](introduction.md#understand-the-decisions).
 
 This is a **generated business-function MCP server**. It is distinct from the
-[Apizr analysis MCP server](../reference/apizr-mcp-server.md) in development 0.4,
+[Apizr analysis MCP server](../reference/apizr-mcp-server.md),
 which inspects repositories and plans exposure without executing their functions.
 
 <details id="connect-an-ai-client" markdown="1">

@@ -3,7 +3,7 @@
 !!! note "Prototype architecture record"
 
     This page preserves the original separation experiment. For the current,
-    unreleased installation/runtime commands use the [0.4 development guide](../development/0.4.md).
+    installation prerequisites, see [Install Apizr](../getting-started/install.md).
 
 Implementation updates: [controlled invocation](../reference/extension-invocation.md)
 and [local installation/inventory](../reference/local-extensions.md) now provide

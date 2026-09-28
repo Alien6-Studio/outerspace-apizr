@@ -1,8 +1,8 @@
 # Inventory a Python project
 
-!!! note "Stable 0.3.0 examples and development 0.4"
+!!! note "Version compatibility"
 
-    The commands below use the published 0.3.0 syntax. On a 0.4 development wheel,
+    The commands below use the published 0.3.0 syntax. From 0.4,
     add `--operator-policy operator.json` with an exact `source.analyze` grant.
     See the [complete migration example](../migrate-0.4.md#authorize-a-local-repository).
     Missing authority returns a structured refusal with exit 2 before source reads.
