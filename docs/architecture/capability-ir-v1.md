@@ -1,4 +1,6 @@
-# Capability IR v1 — normative specification
+<span id="capability-ir-v1-normative-specification"></span>
+
+# Capability IR — normative specification
 
 This specification defines the internal source-analysis contract, independently of
 Apizr's package version. Its empirical input is the

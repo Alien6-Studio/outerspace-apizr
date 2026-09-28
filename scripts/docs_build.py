@@ -8,16 +8,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CRITICAL = {
     "getting-started/install/index.html": "Install Apizr",
-    "getting-started/quickstart-0.4/index.html": "Make your first MCP and REST calls with the 0.4 candidate",
+    "getting-started/quickstart-0.4/index.html": "The walkthrough is now at",
     "contributing/publish-0.4/index.html": "Release attachment inventory",
-    "releases/0.4.0/index.html": "Release preparation — not published",
+    "releases/0.4.0/index.html": "Core published on PyPI; plugin publication pending",
     "getting-started/migrate-0.4/index.html": "Migrate from 0.3 to 0.4",
     "reference/operator-policy/index.html": "receipt.sign",
     "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
     "reference/project-plugin-locks/index.html": "Project plugin declarations and locks",
     "reference/apizr-mcp-server/index.html": "Apizr as a local MCP server",
     "index.html": "Choose your next step",
-    "development/0.4/index.html": "Not released",
+    "development/0.4/index.html": "Build and qualify Apizr from source",
     "reference/git-sources/index.html": "One explicit revision",
     "reference/git-ssh/index.html": "ssh-known-hosts",
     "reference/oci-service-plugin/index.html": "Publish a verified service image",
@@ -48,7 +48,7 @@ def on_config(config):
         "source_dirty": dirty,
         "status": "development",
         "target_version": "0.4.0",
-        "stable_release": "0.3.0",
+        "stable_release": "0.4.0",
     }
     return config
 

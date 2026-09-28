@@ -1,4 +1,6 @@
-# MCP generator v1
+<span id="mcp-generator-v1"></span>
+
+# MCP generator
 
 MCP is a second consumer of Capability IR v1 and Readiness v1. It maps an eligible
 capability to one Tool, using the same interface contract as REST. It does not

@@ -1,6 +1,7 @@
 # Capability Compiler architecture
 
-Apizr 0.3.0 is the latest published stable release. The complete repository workflow is implemented:
+Apizr analyzes a local or remote Python repository, prepares explicit exposure
+plans and generates REST/MCP interfaces:
 
 ```text
 Repository
@@ -75,6 +76,6 @@ The [single-source REST](rest-generator-v1.md), [MCP](mcp-generator-v1.md),
 [local execution](execution-policy-v1.md) and [OCI](oci-container-runtime-v1.md)
 workflows remain supported. The [legacy pipeline](../getting-started/user-guide/apizr.md)
 is independent and retains its [documented limitations](legacy-behavior-contract.md).
-No canonical contract meaning changes for 0.3 finalization.
+Canonical artifacts retain their versioned contracts.
 
-See [migration and known limitations](../releases/0.3.0.md).
+See [migration](../getting-started/migrate-0.4.md) and [known limitations](../releases/0.4.0.md).

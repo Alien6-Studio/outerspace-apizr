@@ -21,7 +21,7 @@ Repository analysis requires **source.analyze** for filesystem-backed `scan`, `g
 `readiness`, `expose plan` and the analysis phase of `expose build rest|mcp`.
 Their Python APIs use the same pure `decide_analysis(policy, target)` decision.
 This is independent of `git.fetch`, image construction, signing and publication.
-It does not select public functions or permit business execution. From 0.4, these commands require an explicit
+It does not select public functions or permit business execution. These commands require an explicit
 `--operator-policy` or the typed Python `operator_policy` argument.
 
 A complete [local policy](../examples/operator-analysis-local.json):

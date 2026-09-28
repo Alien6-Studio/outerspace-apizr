@@ -1,6 +1,7 @@
 """Check generated page links, anchors, canonicals and home assets without network."""
 
 import argparse
+import re
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
@@ -103,13 +104,13 @@ def check(site: Path) -> None:
         failures.append("Missing source analysis permission and stable anchor")
     for name, required in {
         "getting-started/install/index.html": (
-            "0.4.0 is in preparation",
+            "plugins are not yet published on PyPI",
             "catalog resolve",
             "lock check",
             "pipx",
             "attestation verify",
         ),
-        "getting-started/quickstart-0.4/index.html": (
+        "getting-started/quickstart/index.html": (
             "--operator-policy operator.json",
             "source.analyze",
             'quote: {"result": 25.0}',
@@ -121,8 +122,7 @@ def check(site: Path) -> None:
             "SHA256SUMS",
         ),
         "releases/0.4.0/index.html": (
-            "Release preparation — not published",
-            "Latest published stable: 0.3.0",
+            "Core published on PyPI; plugin publication pending",
             "source.analyze",
             "structuredContent",
             "0.4.1",
@@ -156,14 +156,43 @@ def check(site: Path) -> None:
     ):
         if required not in home:
             failures.append(f"Home is missing {required}")
+    for name in (
+        "getting-started/install/index.html",
+        "getting-started/quickstart/index.html",
+        "getting-started/introduction/index.html",
+        "architecture/overview/index.html",
+    ):
+        text = (site / name).read_text()
+        visible = "".join(pages[name].text)
+        for obsolete in (
+            "Try the 0.4 candidate",
+            "Evaluate 0.4 — unreleased",
+            "Install the published release",
+            "Latest published stable",
+        ):
+            if obsolete in visible:
+                failures.append(f"{name}: obsolete version choice: {obsolete}")
+        if 'data-md-component="source"' in text:
+            failures.append(
+                f"{name}: repository widget can inject a stale release badge"
+            )
+        headings = re.findall(r"<h[1-6]\b[^>]*>(.*?)</h[1-6]>", text, re.S)
+        if any(re.search(r"\bv[12]\b", "".join(Page(h).text)) for h in headings):
+            failures.append(f"{name}: schema version in a reader-facing title")
+    for name in (
+        "getting-started/quickstart-0.3/index.html",
+        "getting-started/introduction-0.3/index.html",
+    ):
+        if name in pages:
+            failures.append(f"{name}: historical walkthrough must not be published")
     quickstart = (site / "getting-started/quickstart/index.html").read_text()
     for required in (
-        "outerspace-apizr==0.3.0",
-        "/v0.3.0/examples/repository-shop/",
+        "--operator-policy operator.json",
+        "/37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f/examples/repository-shop/",
         "python:api:quote",
         "python:inventory:available",
-        "quote: 25.0",
-        "available: true",
+        'quote: {"result": 25.0}',
+        'available: {"result": true}',
         "mcpServers",
         "The full journey",
     ):

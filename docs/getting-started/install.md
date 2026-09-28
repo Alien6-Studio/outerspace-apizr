@@ -1,47 +1,54 @@
 # Install Apizr
 
-Choose **one** path: [published stable](#install-the-published-release),
-[reviewed 0.4 candidate](#evaluate-the-040-candidate), or
-[contributor setup](#develop-from-source). **0.4.0 is in preparation, not published.**
-The published stable remains **0.3.0**. Do not mix a 0.3 installation with 0.4 commands.
+This documentation covers Apizr **0.4**. Install the core, then follow the
+[Quickstart](quickstart.md). Add a plugin profile only when your workflow needs it.
 
-## Install the published release
+## Install the core
 
-Use Python 3.11–3.14 with `venv` and pip. In a writable directory on macOS/Linux:
+Use Python 3.11–3.14, a POSIX shell and pip. Start in a new working directory:
 
 ```sh
+mkdir apizr-workspace
+cd apizr-workspace
 python3 -m venv core
 . core/bin/activate
-python -m pip install outerspace-apizr==0.3.0
+python -m pip install outerspace-apizr==0.4.0
 apizr --version
 ```
 
-Observe `outerspace-apizr 0.3.0`, then follow the [stable Quickstart](quickstart.md).
-If you already use uv or pipx, choose `uv tool install outerspace-apizr==0.3.0`
-or `pipx install outerspace-apizr==0.3.0` **instead**. They are alternative tool
-installations, not additional steps. The [release record](../releases/0.3.0.md)
-identifies the verified public version.
+**Observe:** `outerspace-apizr 0.4.0`. Continue with the [Quickstart](quickstart.md)
+to generate and call your first MCP or REST service. No plugin or Docker is needed.
 
-## Evaluate the 0.4.0 candidate {#evaluate-the-040-candidate}
+With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.0` or
+`pipx install outerspace-apizr==0.4.0` is an alternative to the virtual environment
+above. Use the executable path reported by your tool.
+
+## Add optional plugin profiles
+
+The core is published on PyPI. The three plugins are not yet published on PyPI;
+use the verified installation files below for MCP analysis, OCI or delivery.
+Keep the working directory above. These profiles install plugins separately and
+do not change the core environment.
+
+<span id="install-the-published-release"></span>
+<span id="evaluate-the-040-candidate"></span>
+
+### Obtain the installation files
 
 You need Python 3.11–3.14, a POSIX shell, tar, and an authenticated GitHub CLI (`gh`)
 that can download Actions artifacts and verify attestations. Plugin installation
 also requires an already installed **uv**. None of these tools is installed by
 Apizr. Use a new workspace, and select the export matching your interpreter,
-system and architecture from the [candidate download table](../contributing/publish-0.4.md#available-candidate-resources).
+system and architecture from the [target download table](#supported-targets).
 Windows and other targets are not qualified by this matrix.
 
-The following concrete example uses the successful master run **36339017308**,
-commit **56de041b06e0ab296955311098c8d110321ce88f**, on **Linux x86-64 / CPython 3.11**.
-It is an existing evaluation candidate, not a published 0.4.0 release. The PR
-changes package descriptions, so its replacement candidate must be qualified
-before release; never mix candidate/target archives from different runs.
+The following concrete example uses the successful master run **36396147495**,
+commit **37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f**, on **Linux x86-64 / CPython 3.11**.
+Keep the packages and target export from this same verified run.
 
 ```sh
-mkdir apizr-evaluation
-cd apizr-evaluation
-export REVIEWED_RUN_ID=36339017308
-export EXPECTED_COMMIT=56de041b06e0ab296955311098c8d110321ce88f
+export REVIEWED_RUN_ID=36396147495
+export EXPECTED_COMMIT=37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f
 export TARGET_ARTIFACT=release-target-ubuntu-latest-3.11
 export PYTHON=python3.11
 gh run view "$REVIEWED_RUN_ID" --repo Alien6-Studio/outerspace-apizr
@@ -58,7 +65,7 @@ artifact and installed interpreter using the table; inspect its recorded archite
 Actions resources expire after 90 days; the final release will retain the approved
 resources under [unique public names](../contributing/publish-0.4.md#release-attachment-inventory).
 
-Bind **both** the catalog/dependency export and the candidate to the verified
+Bind **both** the catalog/dependency export and the package inventory to the verified
 evidence, then verify all eight package hashes. This is a consistency check after
 identity verification, not an independent trust decision:
 
@@ -99,9 +106,12 @@ export CORE_DIR="$PWD/core"
 Its file inventory covers catalogs, locks, notices inside wheels and dependency
 bytes. Do not substitute other wheels after verification.
 
-### Install the candidate with pip
+<span id="install-the-candidate-with-pip"></span>
 
-This is the principal path; it changes only the new `core/` virtual environment.
+### Install the core offline
+
+Skip this step if you already installed the core above. As an offline alternative,
+these commands install the same core from verified files in a new environment.
 The selected `PYTHON` must match the target export's Python minor version.
 
 <!-- install:pip -->
@@ -112,7 +122,7 @@ The selected `PYTHON` must match the target export's Python minor version.
 ```
 
 Observe `outerspace-apizr 0.4.0`, then activate it with `. "$CORE_DIR/bin/activate"`
-and follow the [candidate Quickstart](quickstart-0.4.md).
+and follow the [Quickstart](quickstart.md).
 
 ### Alternatively, install as a tool
 
@@ -183,6 +193,21 @@ provides a complete project, operator grant and client configuration. The
 [OCI](../reference/oci-service-plugin.md) and [Attest](../reference/attest-delivery-plugin.md)
 guides explain explicit image publication and signing permissions. These are
 trusted programs running with user rights, not a universal sandbox.
+
+## Supported targets
+
+Choose the artifact and interpreter for your machine. All exports below belong
+to [the same verified run](https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/36396147495).
+The exact patch version and architecture are recorded in `target.json`.
+
+| System / architecture | Python | Target artifact |
+| --- | --- | --- |
+| Linux x86-64 | 3.11 | `release-target-ubuntu-latest-3.11` |
+| Linux x86-64 | 3.12 | `release-target-ubuntu-latest-3.12` |
+| Linux x86-64 | 3.13 | `release-target-ubuntu-latest-3.13` |
+| Linux x86-64 | 3.14 | `release-target-ubuntu-latest-3.14` |
+| macOS arm64 | 3.11 | `release-target-macos-latest-3.11` |
+| macOS arm64 | 3.14 | `release-target-macos-latest-3.14` |
 
 ## Develop from source
 

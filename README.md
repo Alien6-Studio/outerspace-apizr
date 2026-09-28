@@ -10,10 +10,9 @@ they execute. Your business logic stays in Python.
 **[Quickstart: make your first MCP and REST calls](https://apizr.outerspace.sh/getting-started/quickstart/)** ·
 [The full journey](https://apizr.outerspace.sh/getting-started/introduction/)
 
-Choose the [installation guide](https://apizr.outerspace.sh/getting-started/install/)
-for published packages, reviewed candidates or contributor setup. The
-[release record](https://apizr.outerspace.sh/releases/0.4.0/) identifies what is
-actually available; capabilities described here belong to this version of the code.
+Follow [Install Apizr](https://apizr.outerspace.sh/getting-started/install/), then
+the Quickstart. The documentation covers Apizr 0.4; installation instructions
+identify the available packages and verified artifacts.
 
 Python **3.11–3.14** · GPL-3.0-or-later.
 
@@ -35,8 +34,7 @@ Python **3.11–3.14** · GPL-3.0-or-later.
 The core handles supported static analysis and generation. Generated servers have
 their own runtime dependencies. Optional plugins live in separate environments;
 installation, activation and operator authorization are independent decisions.
-Follow the installation guide for version-specific commands rather than mixing
-an older installed release with this source version's capabilities.
+
 
 ## Expose the functions you choose
 
@@ -79,7 +77,7 @@ The [historical pipeline](https://apizr.outerspace.sh/getting-started/user-guide
 is a separate compatibility path. See
 [the full journey](https://apizr.outerspace.sh/getting-started/introduction/#compatibility-and-limits)
 for dependency, resource and exposure limits, and
-[0.3 release notes](https://apizr.outerspace.sh/releases/0.3.0/) for migration.
+[migration guide](https://apizr.outerspace.sh/getting-started/migrate-0.4/) for existing installations.
 
 [Watch the demo](https://apizr.outerspace.sh/#watch-apizr-in-action) ·
 [Architecture](https://apizr.outerspace.sh/architecture/overview/) ·

@@ -21,7 +21,7 @@ jobs:
       - run: uv sync --locked --group docs
       - run: uv run --locked --group docs mkdocs build --strict
       - run: uv run --locked python scripts/check_docs_html.py
-      - name: Check examples with stable and development wheels outside the checkout
+      - name: Check current and historical examples with installed wheels outside the checkout
         run: |
           uv build --wheel --out-dir "$RUNNER_TEMP/docs-wheel"
           uv venv --python 3.11 "$RUNNER_TEMP/docs-stable"

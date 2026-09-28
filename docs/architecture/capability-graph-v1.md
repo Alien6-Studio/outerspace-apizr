@@ -1,4 +1,6 @@
-# Capability Graph v1
+<span id="capability-graph-v1"></span>
+
+# Capability Graph
 
 Capability Graph is a conservative static relationship layer over the
 [Capability Catalog](repository-scanner-v1.md). It does not replace Inspection,

@@ -11,7 +11,8 @@ reusable operations. The record below describes the original packaging experimen
 
 Status: proposed 0.4 architecture, demonstrated by a private experiment; **not a
 production plugin runtime**.
-The package version remains 0.3.0. No public CLI command is added.
+At the time of this experiment, the package version was 0.3.0 and no public
+CLI command was added. Current plugin commands are documented above.
 
 ## Decision and boundaries
 

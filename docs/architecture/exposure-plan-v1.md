@@ -1,4 +1,6 @@
-# Exposure Plan v1
+<span id="exposure-plan-v1"></span>
+
+# Exposure Plan
 
 The original backend contract remains unchanged. An opt-in
 [strict OCI subprocess-deny profile](subprocess-deny.md) adds a separate worker

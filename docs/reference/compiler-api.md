@@ -118,5 +118,4 @@ See [Git acquisition](git-sources.md#python-api).
 Admission does not authorize exposure, execution, image build, signing or
 publication. Existing contracts, selection refusals and bounds remain. Primitives
 accepting already supplied bytes/artifacts do not read a root and remain outside
-this gate. Arbitrary Python execution is not an authorization sandbox. Stable
-0.3.0 instructions retain their historical syntax.
+this gate. Arbitrary Python execution is not an authorization sandbox.

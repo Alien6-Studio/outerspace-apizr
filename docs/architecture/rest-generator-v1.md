@@ -1,4 +1,6 @@
-# Deterministic REST generator v1
+<span id="deterministic-rest-generator-v1"></span>
+
+# Deterministic REST generator
 
 The REST generator is the first consumer of Capability IR and Readiness. It
 produces an ordinary JSON/value interface from their contracts. The historical

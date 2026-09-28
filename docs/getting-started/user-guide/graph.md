@@ -1,19 +1,16 @@
 # Inspect static capability relationships
 
-!!! note "Version compatibility"
-
-    The commands below use the published 0.3.0 syntax. From 0.4,
-    add `--operator-policy operator.json` with an exact `source.analyze` grant.
-    See the [complete migration example](../migrate-0.4.md#authorize-a-local-repository).
-    Missing authority returns a structured refusal with exit 2 before source reads.
+Repository analysis requires an explicit operator policy. Save a grant for the
+exact source root as `operator.json`; follow [Authorize source analysis](../../reference/operator-policy.md#authorize-repository-analysis).
+This permission does not expose functions or authorize their execution.
 
 Use `apizr graph` to see which Python modules import each other and which direct
 capability calls can be resolved from static source evidence:
 
 ```bash
-apizr graph . --source-root src
-apizr graph . --source-root src --format json
-apizr graph . --source-root src --graph > capability-graph.json
+apizr graph . --operator-policy operator.json --source-root src
+apizr graph . --operator-policy operator.json --source-root src --format json
+apizr graph . --operator-policy operator.json --source-root src --graph > capability-graph.json
 ```
 
 `--graph` emits canonical `apizr.graph/v1` JSON. `--format json` wraps that graph
@@ -52,7 +49,7 @@ The Catalog artifact format is unchanged.
 Graph-specific aggregate limits are:
 
 ```bash
-apizr graph . --source-root src \
+apizr graph . --operator-policy operator.json --source-root src \
   --max-ast-nodes 500000 --max-relationships 50000 \
   --max-calls 50000 --max-imports 10000
 ```

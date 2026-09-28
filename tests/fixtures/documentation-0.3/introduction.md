@@ -5,12 +5,19 @@ description: Discover, understand, assess, select, expose and execute a Python r
 
 # The full journey
 
+!!! note "Development 0.4 source authorization"
+
+    Stable 0.3.0 examples retain their historical syntax. On a development wheel,
+    repository commands additionally require `--operator-policy operator.json`
+    with an exact `source.analyze` grant. Python filesystem APIs require the same
+    explicitly loaded `operator_policy`. Read the [migration and complete policy](../reference/operator-policy.md#authorize-repository-analysis).
+    Readiness, exposure selection and execution policies remain independent.
 
 <span id="start-here"></span>
 
 <span id="introduction"></span>
 
-Apizr is an open-source capability compiler for Python codebases. The journey
+Apizr is an open-source capability compiler for Python codebases. The 0.3 journey
 is **Discover → Understand → Assess → Select → Expose → Execute**.
 
 For a first working server and verified calls, start with the [Quickstart](quickstart.md).
@@ -18,14 +25,30 @@ This page explains the separate stages and their diagnostic outputs.
 
 ## Install
 
-Follow [Install Apizr](install.md), then activate the core environment and check
-`apizr --version`. These guides use Apizr 0.4 and Python 3.11–3.14.
+**Latest published stable: 0.3.0.** Use Python 3.11–3.14 in a virtual environment:
 
-The minimal core handles static Python analysis and generation. Generated servers
-have their own requirements; the [Quickstart](quickstart.md) installs them in a
-separate runtime environment. Optional analysis and delivery plugins are installed
-through [plugin profiles](install.md#choose-a-plugin-profile).
-For notebook or historical pipeline dependencies, see [development setup](developer-guide/setup.md).
+```sh
+python -m pip install outerspace-apizr==0.3.0
+apizr --version
+```
+
+For Git sources, project configuration, isolated plugins and OCI/Attest delivery,
+use the separate [unreleased 0.4 walkthrough](../development/0.4.md). The stable
+commands on this page remain available in 0.3.0.
+
+The base installation needs only Pydantic for static Python workflows.
+Choose an extra when the workflow requires it:
+
+| Workflow | Installation |
+| --- | --- |
+| Notebook inspection/generation | `python -m pip install "outerspace-apizr[notebook]==0.3.0"` |
+| HTTP adapters | `python -m pip install "outerspace-apizr[http]==0.3.0"` |
+| MCP adapters | `python -m pip install "outerspace-apizr[mcp]==0.3.0"` |
+| Complete historical pipeline/web app | `python -m pip install "outerspace-apizr[legacy]==0.3.0"` |
+
+Extras combine, for example `"outerspace-apizr[notebook,mcp]==0.3.0"`.
+`[legacy]` retains the full 0.2.1 stack. Generated servers have their own requirements.
+To work on Apizr itself, see [development setup](developer-guide/setup.md).
 
 ## Walk through a small repository
 
@@ -75,35 +98,17 @@ Save `exposure-direct.json`:
 **exposure policy** selects the public functions and allowed modes. A **bundle**
 is the generated server, its contracts and the supporting source.
 
-Save an **operator policy** for this directory before reading its source. This
-allows analysis only; readiness, exposure and execution policies stay independent.
-
-<!-- journey:authorization -->
-```sh
-python - <<'PYTHON'
-import json
-from pathlib import Path
-root = str(Path.cwd().resolve())
-Path("operator.json").write_text(json.dumps({
-    "schema": "apizr.operator-policy/v1",
-    "grants": [{"adapter": "repository", "operation": "analyze",
-                "target": {"kind": "local", "root": root},
-                "permissions": ["source.analyze"]}],
-}))
-PYTHON
-```
-
 The first four commands below are optional diagnostics, useful for understanding
 each stage. `expose build` already performs their required analysis and planning;
 you do not need to run them separately before generation. To inspect each stage:
 
 ```sh
-apizr scan . --operator-policy operator.json --exclude-dir .output
-apizr graph . --operator-policy operator.json --exclude-dir .output
-apizr readiness . --operator-policy operator.json --exclude-dir .output --policy readiness-direct.json
-apizr expose plan . --operator-policy operator.json --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json
-apizr expose build rest . --operator-policy operator.json --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/rest
-apizr expose build mcp . --operator-policy operator.json --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/mcp
+apizr scan . --exclude-dir .output
+apizr graph . --exclude-dir .output
+apizr readiness . --exclude-dir .output --policy readiness-direct.json
+apizr expose plan . --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json
+apizr expose build rest . --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/rest
+apizr expose build mcp . --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/mcp
 ```
 
 The explicit `.output` exclusion keeps generated files outside the scan universe.
@@ -150,7 +155,7 @@ Only `api.quote` and `inventory.available` appear in REST/MCP.
 | Use fresh local/OCI workers | [Governed repository execution](../architecture/governed-repository-runtime.md) |
 | Keep single-source workflows | [REST](user-guide/rest.md) / [MCP](user-guide/mcp.md) |
 | Use the historical notebook/script pipeline | [Legacy guide](user-guide/apizr.md) |
-| Adapt an older installation | [Migration guide](migrate-0.4.md) |
+| Migrate from 0.2.1 | [0.3 release notes](../releases/0.3.0.md) |
 
 Direct state persists in the transport interpreter. Governed local state resets in
 a fresh process per call; governed OCI state resets in a fresh container per call.
@@ -167,7 +172,7 @@ The historical `apizr --script` / `--notebook` pipeline is a separate path; ther
 is no automatic migration or publication.
 
 Public capabilities remain top-level functions. Class/method exposure and an
-enterprise control plane are not supported. Repository bundles do not infer
+enterprise control plane are outside stable 0.3.0. Repository bundles do not infer
 or install application dependencies or package arbitrary repository data files.
 The [legacy pipeline](user-guide/apizr.md) supports explicit requirements and
 resources, configured notebook cell selection, explicit image builds and installed

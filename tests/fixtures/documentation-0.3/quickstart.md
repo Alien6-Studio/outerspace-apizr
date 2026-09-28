@@ -1,51 +1,64 @@
 ---
 title: Quickstart
-description: Generate MCP and REST interfaces from the versioned repository-shop example and verify your first calls.
+description: Generate MCP and REST interfaces from the stable repository-shop example and verify your first calls.
 ---
 
 # Make your first MCP and REST calls
 
-Expose only `python:api:quote` and `python:inventory:available` from
-[`examples/repository-shop`](https://github.com/Alien6-Studio/outerspace-apizr/tree/37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f/examples/repository-shop).
-For `quote(unit_price=12.5, quantity=2)` and `available(stock=10, requested=3)`,
-REST returns `25.0` and `true`; MCP returns `{"result": 25.0}` and `{"result": true}`.
+Use **stable Apizr 0.3.0** to expose two functions from the versioned
+[`examples/repository-shop`](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.3.0/examples/repository-shop)
+example. You will call `quote(unit_price=12.5, quantity=2)` and get `25.0`,
+then `available(stock=10, requested=3)` and get `true`.
 
-Complete the shared preparation, then choose **[MCP](#use-mcp)** or
-**[REST](#use-rest-instead)**. Within MCP, your usual client and the Python test
-are alternatives. No plugin, Docker or AI account is needed for the Python path.
+Complete the shared preparation below, then choose **[MCP](#use-mcp)** or
+**[REST](#use-rest-instead)**. You only need to follow one interface path. For MCP,
+choose your usual client or the Python test without an AI account.
+No Docker, plugin, remote-Git adapter or development build is needed. The site also
+documents [unreleased 0.4](../development/0.4.md); this page uses only 0.3.0 commands.
+
+!!! warning "Stable 0.3.0: MCP calls with Claude are affected by a known bug"
+    The stable generator emits scalar results as bare `structuredContent` values.
+    Claude Code/Desktop can reject these calls with
+    `MCP error -32603: Handler returned an invalid result`. The Python SDK test
+    below accepts them; its success does **not** prove Claude compatibility.
+    The [development correction](../architecture/mcp-generator-v1.md#results-and-public-errors)
+    emits `{"result": 25.0}` and `{"result": true}` and requires regenerating the
+    bundle with a corrected compiler. It is not in the published 0.3.0 package.
+    Use the [REST path](#use-rest-instead) for a working stable example.
 
 ## Prepare an isolated workspace
 
-**Goal:** use Apizr and keep generated runtime dependencies separate.
-Complete [Install Apizr](install.md), choosing
-pip in `core/` and activating it. You need Python 3.11–3.14, `venv`, pip, `curl`,
-a POSIX shell on a qualified macOS/Linux target and network access for the
-versioned example and declared server requirements. Keep the same terminal.
-From a writable parent directory, use a new workspace:
+**Goal:** install the stable compiler without changing your system Python.
+You need Python 3.11–3.14 with `venv` and pip, `curl`, an internet connection
+for downloads, and a POSIX shell on macOS or Linux. Run the following in a writable
+parent directory, using a new directory name. Keep the same terminal throughout.
 
 <!-- quickstart:setup -->
 ```sh
 mkdir apizr-quickstart
 cd apizr-quickstart
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install outerspace-apizr==0.3.0
 apizr --version
-python3 -m venv runtime
 ```
 
-**Observe:** Apizr reports `0.4.0`. `runtime/` is a separate environment for the
-generated servers and test client; installing their requirements will not alter
-the compiler environment. No source checkout is needed.
+**Observe:** the last command reports `0.3.0`. If `venv` or pip is unavailable,
+install those components for your Python before continuing. No Apizr checkout is
+needed. Generated files and client code will stay outside the directory analyzed
+below.
 
 ## Get the example and choose its public functions
 
-**Goal:** fetch all three source files from an existing, recorded commit, rather than copying
+**Goal:** fetch all three source files from the stable tag, rather than copying
 an unversioned example from `master`.
 
 <!-- quickstart:sources -->
 ```sh
 mkdir shop
-curl --fail --location https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f/examples/repository-shop/api.py --output shop/api.py
-curl --fail --location https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f/examples/repository-shop/inventory.py --output shop/inventory.py
-curl --fail --location https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f/examples/repository-shop/pricing.py --output shop/pricing.py
+curl --fail --location https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/v0.3.0/examples/repository-shop/api.py --output shop/api.py
+curl --fail --location https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/v0.3.0/examples/repository-shop/inventory.py --output shop/inventory.py
+curl --fail --location https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/v0.3.0/examples/repository-shop/pricing.py --output shop/pricing.py
 ls shop
 ```
 
@@ -55,8 +68,7 @@ will be public.
 
 **Readiness** assesses whether the code evidence supports an interface. Its policy
 below permits the direct execution mode. An **exposure policy** names the public
-functions, interfaces and allowed modes. Create the two policies and an **operator policy**: the latter authorizes analysis
-of only this example’s canonical root, without granting execution or publication:
+functions, interfaces and allowed modes. Create these two local JSON files:
 
 <!-- quickstart:policies -->
 ```sh
@@ -66,28 +78,10 @@ JSON
 cat > exposure-direct.json <<'JSON'
 {"selection":{"include":["python:api:quote","python:inventory:available"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}
 JSON
-python - <<'PYTHON'
-import json
-from pathlib import Path
-root = str(Path("shop").resolve(strict=True))
-policy = {
-    "schema": "apizr.operator-policy/v1",
-    "grants": [{
-        "adapter": "repository",
-        "operation": "analyze",
-        "target": {"kind": "local", "root": root},
-        "permissions": ["source.analyze"],
-    }],
-}
-Path("operator.json").write_text(json.dumps(policy, indent=2) + "\n")
-print("Authorized source:", root)
-PYTHON
 ```
 
-**Observe:** the three policy files exist beside `shop`, not inside it. Only
-`python:api:quote` and `python:inventory:available` are selected.
-Keep `shop` at that path. If you move it or use `apizr.toml`, explicitly regenerate
-the grant for the actual configured root; a project file does not grant access. Being ready does
+**Observe:** both policy files exist beside `shop`, not inside it. Only
+`python:api:quote` and `python:inventory:available` are selected. Being ready does
 not automatically expose a function.
 
 ## Choose your interface
@@ -109,7 +103,7 @@ generated server, its contracts and the source it needs.
 
 <!-- quickstart:generate-mcp -->
 ```sh
-apizr expose build mcp shop --operator-policy operator.json --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir build/mcp
+apizr expose build mcp shop --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir build/mcp
 ```
 
 **Observe:** generation succeeds and `build/mcp` contains `server.py`,
@@ -127,11 +121,11 @@ functions from being generated.
 ### Connect a client and make two calls
 
 **Goal:** complete a real MCP exchange, not just start a process. Install the
-bundle's declared runtime dependencies into the separate runtime environment:
+bundle's declared runtime dependencies into the active virtual environment:
 
 <!-- quickstart:install-mcp -->
 ```sh
-runtime/bin/python -m pip install -r build/mcp/requirements.txt
+python -m pip install -r build/mcp/requirements.txt
 ```
 
 **Observe:** the MCP SDK and server requirements install successfully. Both client
@@ -152,6 +146,10 @@ which inspects repositories and plans exposure without executing their functions
 <details id="connect-an-ai-client" markdown="1">
 <summary>With your usual client</summary>
 
+The configuration below starts the server, but **the stable 0.3.0 bundle cannot
+complete these scalar-returning calls with Claude**; see the known-bug warning
+above. Use this configuration after regenerating with a compiler containing the
+fix. The configuration format itself is unchanged.
 On macOS, for example, the [official local-server guide for Claude Desktop](https://modelcontextprotocol.io/docs/develop/connect-local-servers)
 documents **Settings → Developer → Edit Config**, the `mcpServers` structure,
 absolute paths and a full restart after saving. Install Claude Desktop separately
@@ -166,7 +164,7 @@ shell variables in this JSON:
 {
   "mcpServers": {
     "repository-shop": {
-      "command": "/absolute/path/apizr-quickstart/runtime/bin/python",
+      "command": "/absolute/path/apizr-quickstart/.venv/bin/python",
       "args": [
         "/absolute/path/apizr-quickstart/build/mcp/server.py",
         "--transport",
@@ -180,7 +178,7 @@ shell variables in this JSON:
 After restarting the client, inspect the server's available tools. Ask it to call
 `api.quote` with `unit_price=12.5, quantity=2`, then `inventory.available` with
 `stock=10, requested=3`. Approve only those intended calls and inspect the tool
-results (`{"result": 25.0}` and `{"result": true}` from this generated bundle),
+results (`{"result": 25.0}` and `{"result": true}` with the corrected generator),
 not just the assistant's prose answer.
 
 This configuration follows the official client documentation. Apizr's documented
@@ -199,11 +197,11 @@ and [stdio transport configuration](https://github.com/modelcontextprotocol/pyth
 The small client below starts the generated server with that same Python, completes
 the protocol handshake, lists its tools and calls them. No AI account is required.
 
-Run this from `apizr-quickstart` using its runtime Python:
+Run this from `apizr-quickstart`, still with `.venv` active:
 
 <!-- quickstart:client -->
 ```sh
-runtime/bin/python - <<'PY'
+python - <<'PY'
 import asyncio
 import json
 import sys
@@ -224,8 +222,8 @@ async def main():
         quote = await client.call_tool("api.quote", {"unit_price": 12.5, "quantity": 2})
         available = await client.call_tool("inventory.available", {"stock": 10, "requested": 3})
         assert not quote.is_error and not available.is_error
-        assert quote.structured_content == {"result": 25.0}
-        assert available.structured_content == {"result": True}
+        assert quote.structured_content == 25.0
+        assert available.structured_content is True
         print("quote:", json.dumps(quote.structured_content))
         print("available:", json.dumps(available.structured_content))
 
@@ -238,8 +236,8 @@ PY
 
 ```text
 tools: api.quote, inventory.available
-quote: {"result": 25.0}
-available: {"result": true}
+quote: 25.0
+available: true
 ```
 
 The server may also log diagnostic messages to stderr. Running
@@ -256,12 +254,12 @@ You can finish here without following the REST path.
 
 **Goal:** expose the same two functions as HTTP endpoints. After the workspace,
 source and policy steps, you can choose REST directly; the MCP steps are not
-required. Keep the compiler environment active and run:
+required. Keep the same active `.venv` and run:
 
 <!-- quickstart:generate-rest -->
 ```sh
-apizr expose build rest shop --operator-policy operator.json --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir build/rest
-runtime/bin/python -m pip install -r build/rest/requirements.txt
+apizr expose build rest shop --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir build/rest
+python -m pip install -r build/rest/requirements.txt
 ```
 
 **Observe:** `build/rest` contains `app.py`, `openapi.json`, `requirements.txt` and
@@ -274,7 +272,7 @@ uses 8000 and binds only to your machine:
 
 <!-- quickstart:serve-rest -->
 ```sh
-runtime/bin/uvicorn app:app --app-dir build/rest --host 127.0.0.1 --port 8000
+uvicorn app:app --app-dir build/rest --host 127.0.0.1 --port 8000
 ```
 
 **Observe:** Uvicorn reports that the server is running. Keep that terminal open.
@@ -295,7 +293,6 @@ Stop the server with Ctrl+C in its terminal when finished.
 Follow [The full journey](introduction.md) to inspect each compiler stage, understand
 policy decisions and choose direct or governed execution. For your own repository,
 replace `shop` with its local source root and explicitly choose its capability IDs
-in your exposure policy. Prepare a new operator grant for that exact root, then use
-`apizr scan /path/to/source --operator-policy your-operator.json` to discover those IDs;
+in your exposure policy. Use `apizr scan /path/to/source` to discover those IDs;
 review the source and application dependencies before executing a generated bundle.
 The [exposure guide](user-guide/exposure.md) covers refusals and worker policies.
