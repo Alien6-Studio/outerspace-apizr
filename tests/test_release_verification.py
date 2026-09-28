@@ -267,3 +267,53 @@ def test_coordinated_release_requires_every_exact_target(tmp_path, monkeypatch, 
             release.main()
     else:
         release.main()
+
+
+@pytest.mark.parametrize("preflight", [False, True])
+def test_read_only_preflight_needs_no_tag_but_still_validates_source(
+    tmp_path, monkeypatch, capsys, preflight
+):
+    import sys
+
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname="outerspace-apizr"\nversion="0.4.0"\n'
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("GITHUB_REF", raising=False)
+    monkeypatch.delenv("GITHUB_SHA", raising=False)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["verify", "--run-id", "123", "--source-only"]
+        + (["--preflight"] if preflight else []),
+    )
+    monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
+
+    def github(path):
+        if path == "actions/runs/123":
+            return valid_run()
+        return {
+            "workflow_runs": [
+                {
+                    **valid_run(),
+                    "id": 10,
+                    "path": ".github/workflows/" + path.split("/")[2],
+                }
+            ]
+        }
+
+    monkeypatch.setattr(release, "github", github)
+    if not preflight:
+        with pytest.raises(ValueError, match="immutable version tag"):
+            release.main()
+    else:
+        release.main()
+        assert (
+            "Preflight only: no tag, upload or publication authorization"
+            in capsys.readouterr().out
+        )
+        monkeypatch.setattr(
+            release, "github", lambda path: {**valid_run(), "status": "in_progress"}
+        )
+        with pytest.raises(ValueError, match="successful master push run"):
+            release.main()

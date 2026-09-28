@@ -92,7 +92,9 @@ extra_javascript:
 nav:
   - Home: index.md
   - Getting started:
+      - Install Apizr: getting-started/install.md
       - Quickstart: getting-started/quickstart.md
+      - Try the 0.4 candidate: getting-started/quickstart-0.4.md
       - The full journey: getting-started/introduction.md
       - Migrate from 0.3 to 0.4: getting-started/migrate-0.4.md
   - Guides:
@@ -112,8 +114,7 @@ nav:
           - Declarations and plugin locks (0.4): reference/project-plugin-locks.md
       - Plugins:
           - Choose a catalog profile (0.4): reference/plugin-catalog.md
-          - Package an extension (0.4): reference/plugin-authors.md
-          - Install, activate and update (0.4): reference/local-extensions.md
+          - Install, run, update and uninstall (0.4): reference/local-extensions.md
           - Apizr analysis MCP server (0.4): reference/apizr-mcp-server.md
           - OCI service images (0.4): reference/oci-service-plugin.md
           - Attest delivery proofs (0.4): reference/attest-delivery-plugin.md
@@ -171,6 +172,8 @@ nav:
   - Contributing:
       - Overview: about/CONTRIBUTING.md
       - Development and checks: getting-started/developer-guide/setup.md
+      - Package an extension: reference/plugin-authors.md
+      - Publication and documentation cutover: contributing/publish-0.4.md
       - Extension packaging ADR: architecture/extension-packaging-v04.md
       - Publish a release: contributing/releases.md
       - Verify builds and releases: contributing/verification.md

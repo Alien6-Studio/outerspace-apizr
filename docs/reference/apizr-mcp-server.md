@@ -2,11 +2,10 @@
 
 !!! warning "0.4 development — not released"
 
-    This feature requires wheels built from this development source, not the
-    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel)
-    and record the source commit. This page ships with the feature PR; it does
-    not describe a released plugin. The public site's build marker identifies
-    which documentation revision has actually been deployed.
+    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
+    for this page's 0.4 commands; they are not available in stable 0.3.0.
+    The [development setup](../development/0.4.md#install-a-development-wheel)
+    is for contributors building their own evaluation wheels.
 
 The optional **apizr-mcp** plugin exposes read-only local analysis and planning
 through stdio. It does not generate bundles, execute business functions, acquire
@@ -15,6 +14,20 @@ server** exposes the capabilities you selected; this server exposes Apizr's
 compiler operations. They are different applications.
 
 ## Install and activate explicitly
+
+Follow [Install Apizr → choose a plugin profile](../getting-started/install.md#choose-a-plugin-profile)
+with **`mcp`**. Use its verified exported wheels and locks; users do not need
+to build plugins or compute dependency closures. Keep that workspace as `$work`,
+with `core/` and the explicit `plugins/` store. For the MCP example below, create
+the directories below, then save the four files shown in the next section.
+
+```sh
+export work="$PWD"
+mkdir -p project/src project/policies
+```
+
+<details markdown="1">
+<summary>Advanced: build and prepare wheels from a source checkout</summary>
 
 Use macOS or Linux, Python 3.11–3.14 and uv. Build the core and plugin from the
 **same recorded commit**. Preparation below can download build tools and locked
@@ -76,9 +89,12 @@ rules](local-extensions.md) apply. The plugin's development version remains
 startup. A missing, inactive, inconsistent or missing-interpreter installation
 is refused without repair.
 
+
+</details>
+
 ## Choose one local project
 
-The copied `project/` contains this complete `apizr.toml`:
+Create `project/` with this complete `apizr.toml`:
 
 ```toml
 schema_version = "apizr.project/v1"

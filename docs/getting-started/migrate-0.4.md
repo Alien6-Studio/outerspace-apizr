@@ -7,65 +7,11 @@ See the [0.4.0 notes](../releases/0.4.0.md) for the complete scope and limits.
 
 ## Prepare a separate installation
 
-Keep your existing environment and generated bundles while validating the change.
-Use the retained artifacts from a reviewed successful CI run; there is no need to
-build the plugins or manually resolve their dependencies. The following example
-is for **Linux x86-64 / CPython 3.11** with `gh`, Python 3.11 and uv already installed.
-It downloads a candidate, not a published release. Set `REVIEWED_RUN_ID` to the
-reviewed run and retain its commit from `gh run view`.
-
-```sh
-gh run view "$REVIEWED_RUN_ID" --repo Alien6-Studio/outerspace-apizr
-gh run download "$REVIEWED_RUN_ID" --repo Alien6-Studio/outerspace-apizr --name release-candidate --dir release/candidate
-gh run download "$REVIEWED_RUN_ID" --repo Alien6-Studio/outerspace-apizr --name release-target-ubuntu-latest-3.11 --dir release/target-download
-mkdir release/target
-tar -xzf release/target-download/target-export.tar.gz -C release/target
-python3.11 -m venv core
-core/bin/python -m pip install --no-index --find-links release/target/base release/candidate/dist/outerspace_apizr-0.4.0-py3-none-any.whl
-```
-
-`candidate.json` identifies the source commit and the eight distribution filenames,
-sizes and SHA-256 values. `target.json` identifies the dependency target and every
-exported file; `qualification.json` records actual checks and measurements.
-Verify these records against the selected run and its checksums before installation.
-For published release bytes, follow the [provenance verification procedure](../contributing/verification.md).
-
-Other exported targets are Linux CPython 3.12/3.13/3.14 and macOS CPython 3.11/3.14;
-select the corresponding `release-target-<runner>-<python>` artifact and inspect
-its actual system/architecture before use. They are **target-specific**, not
-universal wheelhouses. Windows and other Python/platform combinations are not
-qualified by this matrix.
-
-For an isolated CLI tool instead, the same base wheels work with:
-
-```sh
-uv tool install --python python3.11 --offline --no-index --find-links release/target/base release/candidate/dist/outerspace_apizr-0.4.0-py3-none-any.whl
-pipx install --python python3.11 --pip-args="--no-index --find-links=release/target/base" release/candidate/dist/outerspace_apizr-0.4.0-py3-none-any.whl
-```
-
-Choose one installation method; do not run all three into your normal tool paths.
-Qualification uses separate disposable tool homes. `pipx` itself is an explicit
-prerequisite for its command. Plugins never require `pipx inject` or editing a uv
-tool environment. Historical extras use the `extras` wheelhouse with the same core
-wheel, for example `...whl[legacy]`; they are separate from plugin dependencies.
-
-To develop Apizr rather than consume an exported candidate, the
-[development installation](../development/0.4.md#install-a-development-wheel)
-remains available. That builds new evaluation artifacts and does not substitute
-for the retained candidate's qualification.
-
-For the local example below, activate the separate `core` environment in your
-working directory:
-
-```sh
-. core/bin/activate
-apizr --version
-```
-
-The coordinated candidate wheel reports `0.4.0`; the candidate commit and archive
-hashes identify the candidate being qualified, not an already published package. Do not substitute a nonexistent
-`outerspace-apizr==0.4.0` index installation. Official versions and artifact hashes
-will be supplied by the verified release record.
+Keep your existing environment and bundles while validating the change. Follow
+[Install Apizr → evaluate the candidate](install.md#evaluate-the-040-candidate)
+for artifact retrieval, provenance checks and pip/uv/pipx alternatives. Activate
+the separate `core/` environment for the example below. `apizr --version` must
+report `0.4.0`; this is a reviewed candidate, not an available PyPI installation.
 
 ## Authorize a local repository
 
@@ -239,22 +185,10 @@ returns are unchanged. See the [result contract](../architecture/mcp-generator-v
 
 ## Keep plugins and existing workflows explicit
 
-From the directory containing `release/` and `core/`, export a profile and install
-its locked wheels offline:
-
-```sh
-core/bin/apizr plugins catalog resolve --profile mcp --catalog release/target/catalog/catalogue.json --wheelhouse release/target/wheelhouse --output-dir mcp-plan --json
-core/bin/apizr plugins lock check --project mcp-plan/apizr.toml --lock mcp-plan/apizr.plugins.lock.json --wheelhouse release/target/wheelhouse --json
-core/bin/apizr plugins sync --project mcp-plan/apizr.toml --lock mcp-plan/apizr.plugins.lock.json --wheelhouse release/target/wheelhouse --plugins-dir release/plugins --json
-core/bin/apizr plugins enable apizr-mcp --version 0.4.0 --plugins-dir release/plugins
-```
-
-The `oci` and `delivery` profiles follow the same resolver with their own
-requirements/closures. Invoking the analysis server still requires your explicit
-local project and operator policy. OCI operations require prepared Docker/Buildx;
-Attest operations need the documented Attest and, for artifact transport, ORAS
-binaries. Git acquisition needs Git and, for SSH, the explicit agent/trust inputs.
-No tool is secretly downloaded during invocation.
+Use the [profile installation procedure](install.md#choose-a-plugin-profile)
+for catalog resolution, lock checking, synchronization and activation. The `mcp`,
+`oci` and `delivery` profiles retain separate dependency closures. Invoking them
+still requires the operation-specific prerequisites and explicit authority.
 
 Existing development `0.0.0` plugin installations, locks and operator grants are
 not rewritten. New artifact hashes, versions and environment identities require

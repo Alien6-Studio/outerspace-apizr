@@ -28,7 +28,7 @@ Your business logic stays in Python.
 **Preparing 0.4.0 — not released.** Use the stable Quickstart above for your first
 server. Read [what changes in 0.4.0](releases/0.4.0.md) and
 [how to migrate](getting-started/migrate-0.4.md), including explicit source access
-and the MCP result fix. The [development installation](development/0.4.md) lets
+and the MCP result fix. The [candidate installation](getting-started/install.md#evaluate-the-040-candidate) lets
 you evaluate remote Git, isolated plugins and OCI/Attest delivery before the
 release; those additions are not in stable 0.3.0. Python 3.11–3.14 · GPL-3.0-or-later.
 
@@ -62,6 +62,15 @@ release; those additions are not in stable 0.3.0. Python 3.11–3.14 · GPL-3.0-
       </details>
     </div>
   </section>
+
+## Choose your next step
+
+- **[Expose your Python functions](getting-started/quickstart.md)** — generate a business MCP server or REST API. Evaluating 0.4? Use its [candidate Quickstart](getting-started/quickstart-0.4.md).
+- **[Analyze a project from an MCP client](reference/apizr-mcp-server.md)** — install the optional analysis server; it does not run your functions.
+- **[Build and deliver a service](reference/oci-service-plugin.md)** — choose the OCI or delivery profile, then explicitly authorize remote publication and, if needed, [Attest proofs](reference/attest-delivery-plugin.md).
+
+Start with the [installation guide](getting-started/install.md). The analysis
+server and delivery profiles belong to the 0.4 candidate while stable remains 0.3.0.
 
 ## Choose what becomes public
 

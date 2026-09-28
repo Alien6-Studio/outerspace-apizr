@@ -46,15 +46,20 @@ def main() -> None:
     parser.add_argument("--github-output", type=Path)
     parser.add_argument("--coordinated", action="store_true")
     parser.add_argument("--source-only", action="store_true")
+    parser.add_argument(
+        "--preflight",
+        action="store_true",
+        help="Read-only checks without a tag; never publication authorization",
+    )
     args = parser.parse_args()
     project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
     version = project["version"]
     if not re.fullmatch(r"\d+\.\d+\.\d+", version):
         raise ValueError("Expected stable release version")
-    if os.environ.get("GITHUB_REF") != f"refs/tags/v{version}":
+    if not args.preflight and os.environ.get("GITHUB_REF") != f"refs/tags/v{version}":
         raise ValueError("Dispatch must run on the matching immutable version tag")
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    if sha != os.environ.get("GITHUB_SHA"):
+    if not args.preflight and sha != os.environ.get("GITHUB_SHA"):
         raise ValueError("Checkout must equal the dispatched tag commit")
     validate_run(github(f"actions/runs/{args.run_id}"), sha, "ci.yml")
     if args.coordinated:
@@ -110,6 +115,8 @@ def main() -> None:
     if args.github_output:
         with args.github_output.open("a") as output:
             output.write(f"security_run_id={verified_runs['security.yml']}\n")
+    if args.preflight:
+        print("Preflight only: no tag, upload or publication authorization")
     print(
         f"Verified {version}, {sha}, CI run {args.run_id}, Security, Documentation"
         + (

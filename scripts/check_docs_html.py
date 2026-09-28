@@ -99,6 +99,24 @@ def check(site: Path) -> None:
     ):
         failures.append("Missing source analysis permission and stable anchor")
     for name, required in {
+        "getting-started/install/index.html": (
+            "0.4.0 is in preparation",
+            "catalog resolve",
+            "lock check",
+            "pipx",
+            "attestation verify",
+        ),
+        "getting-started/quickstart-0.4/index.html": (
+            "--operator-policy operator.json",
+            "source.analyze",
+            'quote: {"result": 25.0}',
+            'available: {"result": true}',
+        ),
+        "contributing/publish-0.4/index.html": (
+            "Confirmation mainteneur nécessaire",
+            "Official Apizr distribution images remain deferred",
+            "SHA256SUMS",
+        ),
         "releases/0.4.0/index.html": (
             "Release preparation — not published",
             "Latest published stable: 0.3.0",
