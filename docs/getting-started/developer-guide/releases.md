@@ -6,8 +6,6 @@
 
 ## Move from 0.3 to 0.4
 
-The [migration guide](../migrate-0.4.md) includes a
-complete local example, shared CLI/Python authorization and MCP result changes.
 The [0.4.0 notes](../../releases/0.4.0.md) distinguish integrated capabilities
 from remaining distribution/publication work and explicit 0.4.1/0.4.2 deferrals.
 

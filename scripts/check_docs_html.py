@@ -104,7 +104,7 @@ def check(site: Path) -> None:
         failures.append("Missing source analysis permission and stable anchor")
     for name, required in {
         "getting-started/install/index.html": (
-            "plugins are not yet published on PyPI",
+            "core and all three plugins are published as",
             "catalog resolve",
             "lock check",
             "pipx",
@@ -122,30 +122,30 @@ def check(site: Path) -> None:
             "SHA256SUMS",
         ),
         "releases/0.4.0/index.html": (
-            "Core published on PyPI; plugin publication pending",
+            "Core and all three plugins published as 0.4.0rc1.",
             "source.analyze",
             "structuredContent",
             "0.4.1",
             "0.4.2",
         ),
-        "getting-started/migrate-0.4/index.html": (
-            "operator_policy_required",
-            "CLI/Python parity: plan, REST bundle and MCP bundle",
-            "git.fetch",
-            "source.analyze",
-            "structuredContent",
-        ),
     }.items():
         text = "".join(pages[name].text)
         for token in required:
             if token not in text:
-                failures.append(f"{name}: missing release/migration guidance: {token}")
+                failures.append(f"{name}: missing release guidance: {token}")
+    permissions = "".join(pages["reference/operator-policy/index.html"].text)
+    for token in (
+        "operator_policy_required",
+        "CLI/Python parity: plan, REST bundle and MCP bundle",
+        "source.analyze",
+    ):
+        if token not in permissions:
+            failures.append(f"Current source permission example is missing: {token}")
     home = (site / "index.html").read_text()
     for required in (
         "getting-started/quickstart/",
         "getting-started/install/",
         "releases/0.4.0/",
-        "getting-started/migrate-0.4/",
         "package availability",
         "Choose your next step",
         "assets/images/illustration.png",

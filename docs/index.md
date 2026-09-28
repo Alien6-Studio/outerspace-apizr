@@ -25,7 +25,7 @@ Your business logic stays in Python.
 
 See [Install Apizr](getting-started/install.md) for package availability and the
 installation steps for your chosen workflow. The [release notes](releases/0.4.0.md)
-and [migration guide](getting-started/migrate-0.4.md) explain version differences,
+explain version differences,
 including explicit source access and MCP results.
 
 Python 3.11–3.14 · GPL-3.0-or-later.

@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0rc1 — Unreleased
+## 0.4.0rc1 — 2026-09-28
 
 - Publish official plugins as `outerspace-apizr-oci`, `outerspace-apizr-mcp` and
   `outerspace-apizr-attest`, with matching core and internal package requirements.
@@ -12,8 +12,8 @@
 ## 0.4.0 — 2026-09-28
 
 The core was published on PyPI; the original plugin distributions were not
-published. The corrected coordinated delivery uses 0.4.0rc1. See the [0.4.0 notes](https://apizr.outerspace.sh/releases/0.4.0/)
-and [migration guide](https://apizr.outerspace.sh/getting-started/migrate-0.4/).
+published. The corrected coordinated delivery uses 0.4.0rc1. See the [0.4.0 notes](https://apizr.outerspace.sh/releases/0.4.0/).
+
 
 ### Added
 

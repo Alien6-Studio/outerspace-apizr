@@ -172,8 +172,8 @@ def test_marker_uses_source_commit_and_fingerprints(site):
             ["git", "rev-parse", "HEAD"], cwd=SCRIPTS, text=True
         ).strip()
     )
-    assert marker["status"] == "development"
-    assert marker["stable_release"] == "0.4.0"
+    assert marker["status"] == "prerelease"
+    assert marker["stable_release"] == "0.3.0"
     assert (
         marker["files"]["index.html"]
         == hashlib.sha256((site / "index.html").read_bytes()).hexdigest()
