@@ -12,20 +12,20 @@ mkdir apizr-workspace
 cd apizr-workspace
 python3 -m venv core
 . core/bin/activate
-python -m pip install outerspace-apizr==0.4.0.1
+python -m pip install outerspace-apizr==0.4.0rc1
 apizr --version
 ```
 
-**Observe:** `outerspace-apizr 0.4.0.1`. Continue with the [Quickstart](quickstart.md)
+**Observe:** `outerspace-apizr 0.4.0rc1`. Continue with the [Quickstart](quickstart.md)
 to generate and call your first MCP or REST service. No plugin or Docker is needed.
 
-With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.0.1` or
-`pipx install outerspace-apizr==0.4.0.1` is an alternative to the virtual environment
+With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.0rc1` or
+`pipx install outerspace-apizr==0.4.0rc1` is an alternative to the virtual environment
 above. Use the executable path reported by your tool.
 
 ## Add optional plugin profiles
 
-The plugins are not yet published on PyPI. The coordinated `0.4.0.1`
+The plugins are not yet published on PyPI. The coordinated `0.4.0rc1`
 replacement is being qualified; its public packages
 and tag are not yet available. The commands below target that exact delivery.
 The previously published core is `0.4.0`. See the
@@ -45,13 +45,13 @@ Apizr. Use a new workspace, and select the export matching your interpreter,
 system and architecture from the [target download table](#supported-targets).
 Windows and other targets are not qualified by this matrix.
 
-After publication, resolve the immutable `v0.4.0.1` tag and its latest successful
+After publication, resolve the immutable `v0.4.0rc1` tag and its latest successful
 master CI run. This example selects **Linux x86-64 / CPython 3.11**. Keep the
 packages and target export from that same verified run; older 0.4.0 exports use
 different plugin identities and must not be mixed with these instructions.
 
 ```sh
-export EXPECTED_COMMIT=$(gh api repos/Alien6-Studio/outerspace-apizr/git/ref/tags/v0.4.0.1 --jq .object.sha)
+export EXPECTED_COMMIT=$(gh api repos/Alien6-Studio/outerspace-apizr/git/ref/tags/v0.4.0rc1 --jq .object.sha)
 export REVIEWED_RUN_ID=$(gh run list --repo Alien6-Studio/outerspace-apizr --workflow ci.yml --branch master --event push --commit "$EXPECTED_COMMIT" --limit 1 --json databaseId,conclusion --jq '.[0] | select(.conclusion == "success") | .databaseId')
 test -n "$EXPECTED_COMMIT" && test -n "$REVIEWED_RUN_ID"
 export TARGET_ARTIFACT=release-target-ubuntu-latest-3.11
@@ -122,11 +122,11 @@ The selected `PYTHON` must match the target export's Python minor version.
 <!-- install:pip -->
 ```sh
 "$PYTHON" -m venv "$CORE_DIR"
-"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0.1-py3-none-any.whl"
+"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0rc1-py3-none-any.whl"
 "$CORE_DIR/bin/apizr" --version
 ```
 
-Observe `outerspace-apizr 0.4.0.1`, then activate it with `. "$CORE_DIR/bin/activate"`
+Observe `outerspace-apizr 0.4.0rc1`, then activate it with `. "$CORE_DIR/bin/activate"`
 and follow the [Quickstart](quickstart.md).
 
 ### Alternatively, install as a tool
@@ -135,14 +135,14 @@ With uv already installed, use this **instead of** pip:
 
 <!-- install:uv -->
 ```sh
-uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0.1-py3-none-any.whl"
+uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0rc1-py3-none-any.whl"
 ```
 
 Or, with pipx already installed, use:
 
 <!-- install:pipx -->
 ```sh
-pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0.1-py3-none-any.whl"
+pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0rc1-py3-none-any.whl"
 ```
 
 Use the executable path reported by that tool, then check `apizr --version`.
@@ -186,7 +186,7 @@ On this fresh store, the active inventory is empty. Activate only what you selec
 
 ```sh
 # mcp profile
-"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version 0.4.0.1 --plugins-dir "$PLUGINS_DIR"
+"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version 0.4.0rc1 --plugins-dir "$PLUGINS_DIR"
 # oci profile: enable outerspace-apizr-oci instead
 # delivery profile: enable both outerspace-apizr-oci and outerspace-apizr-attest
 ```

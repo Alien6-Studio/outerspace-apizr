@@ -71,7 +71,7 @@ def test_installed_version_and_current_help(capsys):
     "fault,message",
     [
         (None, None),
-        ("version", "stable release version"),
+        ("version", "final or release-candidate version"),
         ("tag", "matching immutable version tag"),
         ("sha", "Checkout must equal"),
         ("run", "successful master push run"),
@@ -81,7 +81,7 @@ def test_installed_version_and_current_help(capsys):
         ("pypi_error", None),
     ],
 )
-@pytest.mark.parametrize("release_version", ["0.3.0", "0.4.0.1"])
+@pytest.mark.parametrize("release_version", ["0.3.0", "0.4.0rc1"])
 def test_candidate_publication_guards_without_tag_upload_or_signing(
     tmp_path, monkeypatch, capsys, fault, message, release_version
 ):
@@ -229,7 +229,7 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
 @pytest.mark.parametrize(
     "fault", [None, "missing", "pending", "failed", "duplicate", "version"]
 )
-@pytest.mark.parametrize("release_version", ["0.4.0", "0.4.0.1"])
+@pytest.mark.parametrize("release_version", ["0.4.0", "0.4.0rc1"])
 def test_coordinated_release_requires_every_exact_target(
     tmp_path, monkeypatch, fault, release_version
 ):

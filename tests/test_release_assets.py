@@ -100,7 +100,7 @@ def inputs(root, assets, version="0.4.0"):
     return targets
 
 
-@pytest.mark.parametrize("version", ["0.4.0", "0.4.0.1"])
+@pytest.mark.parametrize("version", ["0.4.0", "0.4.0rc1"])
 def test_stage_preserves_bytes_and_uses_recorded_unique_names(
     assets, tmp_path, monkeypatch, version
 ):

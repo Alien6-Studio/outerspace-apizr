@@ -1,6 +1,6 @@
 # Publish the coordinated 0.4 delivery
 
-**The 0.4.0.1 replacement is not yet published.** This is the
+**The 0.4.0rc1 replacement is not yet published.** This is the
 handoff for the existing [manual publication workflow](releases.md), not a second
 publisher. Do not execute phase B without explicit maintainer authorization.
 
@@ -9,7 +9,7 @@ publisher. Do not execute phase B without explicit maintainer authorization.
 ## Select the corrected candidate
 
 The original core 0.4.0 reached PyPI, but the old plugin names could not be
-created. The coordinated replacement is **0.4.0.1**, using the prefixed official
+created. The coordinated replacement is **0.4.0rc1**, using the prefixed official
 plugin names. Select a new qualified master commit containing these names and
 versions; previous 0.4.0 archives cannot substitute for it. The
 [release record](../releases/0.4.0.md#publication-status) tracks actual publication.
@@ -42,7 +42,7 @@ expire after 90 days; preserve the approved resources as release attachments.
    gh run download "$REVIEWED_MASTER_RUN_ID" --repo Alien6-Studio/outerspace-apizr --pattern 'release-*' --dir reviewed
    gh run download "$REVIEWED_MASTER_RUN_ID" --repo Alien6-Studio/outerspace-apizr --name build-attestations --dir reviewed/build-attestations
    python3 scripts/prepare_release_assets.py --downloads reviewed --output approved-assets --commit "$RELEASE_COMMIT" --run-id "$REVIEWED_MASTER_RUN_ID"
-   python3 scripts/prepare_publication.py --dist reviewed/release-candidate/dist --version 0.4.0.1 --output public-preflight
+   python3 scripts/prepare_publication.py --dist reviewed/release-candidate/dist --version 0.4.0rc1 --output public-preflight
    ```
 
    `prepare_release_assets.py` verifies GitHub provenance of `ci-evidence.tar.gz`,
@@ -67,7 +67,7 @@ review and uses the existing `v*` tag restriction. `publish-pypi.yml` is active,
 manual, and retains separate receipt/publication approvals. The workflow's
 presence does **not** establish PyPI ownership or trust configuration.
 
-| PyPI project | Public 0.4.0.1 files at preparation | Publishing rights | Trusted Publisher | Expected GitHub environment |
+| PyPI project | Public 0.4.0rc1 files at preparation | Publishing rights | Trusted Publisher | Expected GitHub environment |
 | --- | --- | --- | --- | --- |
 | outerspace-apizr | Absent; original core 0.4.0 is public | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
 | outerspace-apizr-oci | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
@@ -84,10 +84,10 @@ project or protection is created by this preparation.
 
 | Resource | Public attachment naming | Verification |
 | --- | --- | --- |
-| Four wheels and four sdists | Original exact package filenames, version 0.4.0.1 | Candidate SHA-256 plus build provenance |
+| Four wheels and four sdists | Original exact package filenames, version 0.4.0rc1 | Candidate SHA-256 plus build provenance |
 | Candidate and attachment inventories | `candidate.json`, `release-assets.json`, `SHA256SUMS` | Candidate: signed CI evidence; derived inventory: recomputed hashes of those originals |
-| Six target exports | `apizr-0.4.0.1-SYSTEM-ARCH-cpython-PATCH.tar.gz` | **Same bytes** as each `target-export.tar.gz`, signed evidence membership |
-| Six qualification reports | Matching `apizr-0.4.0.1-SYSTEM-ARCH-cpython-PATCH.qualification.json` | Recorded candidate and exact target |
+| Six target exports | `apizr-0.4.0rc1-SYSTEM-ARCH-cpython-PATCH.tar.gz` | **Same bytes** as each `target-export.tar.gz`, signed evidence membership |
+| Six qualification reports | Matching `apizr-0.4.0rc1-SYSTEM-ARCH-cpython-PATCH.qualification.json` | Recorded candidate and exact target |
 | Complete validation, delivery and license evidence | `ci-evidence.tar.gz` | `build-provenance.sigstore.json` |
 | Core runtime SBOM binding | `runtime-sbom.sigstore.json` | Existing core wheel/sdist scope; plugin closures have target inventories |
 | Release receipt and public comparison | Workflow-generated evidence after phase B | Existing Attest verification and public download comparison |
@@ -112,11 +112,11 @@ Only after phase A and explicit authorization, in the reviewed checkout:
 ```sh
 test "$(git rev-parse HEAD)" = "$RELEASE_COMMIT"
 (cd approved-assets && shasum -a 256 -c SHA256SUMS)
-git tag v0.4.0.1 "$RELEASE_COMMIT"
-git push origin refs/tags/v0.4.0.1
-gh release create v0.4.0.1 --repo Alien6-Studio/outerspace-apizr --verify-tag --title 'Apizr 0.4.0.1' --notes-file docs/releases/0.4.0.md --draft
-gh release upload v0.4.0.1 approved-assets/* --repo Alien6-Studio/outerspace-apizr
-gh workflow run publish-pypi.yml --repo Alien6-Studio/outerspace-apizr --ref v0.4.0.1 -f ci_run_id="$REVIEWED_MASTER_RUN_ID"
+git tag v0.4.0rc1 "$RELEASE_COMMIT"
+git push origin refs/tags/v0.4.0rc1
+gh release create v0.4.0rc1 --repo Alien6-Studio/outerspace-apizr --verify-tag --title 'Apizr 0.4.0rc1' --notes-file docs/releases/0.4.0.md --prerelease --draft
+gh release upload v0.4.0rc1 approved-assets/* --repo Alien6-Studio/outerspace-apizr
+gh workflow run publish-pypi.yml --repo Alien6-Studio/outerspace-apizr --ref v0.4.0rc1 -f ci_run_id="$REVIEWED_MASTER_RUN_ID"
 ```
 
 Prepare the public release description from the reviewed notes with the actual
@@ -143,7 +143,7 @@ use `--clobber` or recreate the release. Attach only missing identical resources
 ## C. After verified publication
 
 1. Verify the workflow's public comparison. In fresh environments outside the
-   checkout, install `outerspace-apizr==0.4.0.1` from PyPI and run the candidate
+   checkout, install `outerspace-apizr==0.4.0rc1` from PyPI and run the candidate
    Quickstart's explicit operator policy and real REST/MCP calls. Download the
    draft release resources as maintainer, verify their provenance/hashes, install
    a profile through catalog → lock → sync, activate and run the analysis server.
@@ -151,7 +151,7 @@ use `--clobber` or recreate the release. Attach only missing identical resources
    and public installations pass, publish the GitHub release draft explicitly:
 
    ```sh
-   gh release edit v0.4.0.1 --repo Alien6-Studio/outerspace-apizr --draft=false
+   gh release edit v0.4.0rc1 --repo Alien6-Studio/outerspace-apizr --prerelease --draft=false
    ```
 
    Confirm unauthenticated users can download the same release attachments.
