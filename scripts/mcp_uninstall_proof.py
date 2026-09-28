@@ -56,7 +56,7 @@ async def prove(root: Path) -> None:
                 "uninstall",
                 "outerspace-apizr-mcp",
                 "--version",
-                "0.4.0",
+                "0.4.0.1",
                 "--json",
                 expected=1,
             )
@@ -65,11 +65,11 @@ async def prove(root: Path) -> None:
             analyzed = await client.call_tool("apizr_analyze", {})
             assert not analyzed.is_error
         removed = cli(
-            "uninstall", "outerspace-apizr-mcp", "--version", "0.4.0", "--json"
+            "uninstall", "outerspace-apizr-mcp", "--version", "0.4.0.1", "--json"
         )
         assert removed["state"] == "complete" and removed["environment_removed"]
         assert (
-            cli("uninstall", "outerspace-apizr-mcp", "--version", "0.4.0", "--json")[
+            cli("uninstall", "outerspace-apizr-mcp", "--version", "0.4.0.1", "--json")[
                 "state"
             ]
             == "absent"

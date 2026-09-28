@@ -47,7 +47,7 @@ def on_config(config):
         "source_commit": commit,
         "source_dirty": dirty,
         "status": "development",
-        "target_version": "0.4.0",
+        "target_version": "0.4.0.1",
         "stable_release": "0.4.0",
     }
     return config

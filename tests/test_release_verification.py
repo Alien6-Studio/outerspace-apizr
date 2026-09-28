@@ -81,14 +81,15 @@ def test_installed_version_and_current_help(capsys):
         ("pypi_error", None),
     ],
 )
+@pytest.mark.parametrize("release_version", ["0.3.0", "0.4.0.1"])
 def test_candidate_publication_guards_without_tag_upload_or_signing(
-    tmp_path, monkeypatch, capsys, fault, message
+    tmp_path, monkeypatch, capsys, fault, message, release_version
 ):
     import io
     import sys
     import urllib.error
 
-    version = "0.3.0.dev0" if fault == "version" else "0.3.0"
+    version = release_version + ".dev0" if fault == "version" else release_version
     (tmp_path / "pyproject.toml").write_text(
         f'[project]\nname="outerspace-apizr"\nversion="{version}"\n'
     )
@@ -98,7 +99,8 @@ def test_candidate_publication_guards_without_tag_upload_or_signing(
         sys, "argv", ["verify", "--run-id", "123", "--github-output", str(output)]
     )
     monkeypatch.setenv(
-        "GITHUB_REF", "refs/heads/master" if fault == "tag" else "refs/tags/v0.3.0"
+        "GITHUB_REF",
+        "refs/heads/master" if fault == "tag" else f"refs/tags/v{release_version}",
     )
     monkeypatch.setenv("GITHUB_SHA", "wrong" if fault == "sha" else "abc")
     monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
@@ -118,7 +120,7 @@ def test_candidate_publication_guards_without_tag_upload_or_signing(
         return {"workflow_runs": [run]}
 
     def pypi(url, **kwargs):
-        assert url == "https://pypi.org/pypi/outerspace-apizr/0.3.0/json"
+        assert url == f"https://pypi.org/pypi/outerspace-apizr/{release_version}/json"
         if fault == "published":
             return io.BytesIO(b"{}")
         raise urllib.error.HTTPError(
@@ -130,7 +132,7 @@ def test_candidate_publication_guards_without_tag_upload_or_signing(
     if fault is None:
         release.main()
         assert output.read_text() == "security_run_id=10\n"
-        assert "Verified 0.3.0, abc" in capsys.readouterr().out
+        assert f"Verified {release_version}, abc" in capsys.readouterr().out
     elif fault == "pypi_error":
         with pytest.raises(urllib.error.HTTPError):
             release.main()
@@ -227,7 +229,10 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
 @pytest.mark.parametrize(
     "fault", [None, "missing", "pending", "failed", "duplicate", "version"]
 )
-def test_coordinated_release_requires_every_exact_target(tmp_path, monkeypatch, fault):
+@pytest.mark.parametrize("release_version", ["0.4.0", "0.4.0.1"])
+def test_coordinated_release_requires_every_exact_target(
+    tmp_path, monkeypatch, fault, release_version
+):
     import sys
 
     for folder in [
@@ -235,12 +240,14 @@ def test_coordinated_release_requires_every_exact_target(tmp_path, monkeypatch, 
         *(tmp_path / "plugins" / name for name in ("oci", "attest", "mcp")),
     ]:
         folder.mkdir(parents=True, exist_ok=True)
-        version = "0.3.0" if fault == "version" and folder.name == "mcp" else "0.4.0"
+        version = (
+            "0.3.0" if fault == "version" and folder.name == "mcp" else release_version
+        )
         (folder / "pyproject.toml").write_text(
             f'[project]\nname="outerspace-apizr"\nversion="{version}"\n'
         )
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("GITHUB_REF", "refs/tags/v0.4.0")
+    monkeypatch.setenv("GITHUB_REF", f"refs/tags/v{release_version}")
     monkeypatch.setenv("GITHUB_SHA", "abc")
     monkeypatch.setattr(
         sys, "argv", ["verify", "--run-id", "123", "--coordinated", "--source-only"]

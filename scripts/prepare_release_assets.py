@@ -106,7 +106,7 @@ def prepare(downloads: Path, output: Path, commit: str, run_id: int, preview=Fal
     if (
         candidate["schema"] != "apizr.release-candidate/v1"
         or candidate["commit"] != commit
-        or not re.fullmatch(r"\d+\.\d+\.\d+", version)
+        or not re.fullmatch(r"\d+\.\d+\.\d+(?:\.\d+)?", version)
     ):
         raise ValueError("Candidate source/version mismatch")
     expected = {

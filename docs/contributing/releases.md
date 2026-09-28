@@ -7,8 +7,9 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 The [release notes](../releases/0.4.0.md) and
 [migration guide](../getting-started/migrate-0.4.md) describe the integrated scope.
-They are publication preparation, not proof that 0.4.0 artifacts exist.
-The coordinated core and optional plugin candidates declare `0.4.0`; publication
+The original core 0.4.0 is public. The corrected coordinated delivery is being
+qualified; these notes do not prove that its replacement archives are public.
+The coordinated core and optional plugin candidates declare `0.4.0.1`; publication
 remains a separate explicit operation.
 
 Before tagging the exact candidate:
@@ -26,7 +27,7 @@ Before tagging the exact candidate:
 - After publication, verify downloaded package bytes and fresh installations.
   Record the actual date, tag, hashes and evidence in the release notes. Only then
   change the stable installation guidance, Quickstart pins and documentation build
-  metadata to 0.4.0; retain historical 0.3.0 release instructions.
+  metadata to the verified 0.4.0.1 delivery; retain historical 0.3.0 release instructions.
 - Qualify the public documentation through the existing Pages/HTTPS checks,
   including the release notes and migration page in `build-info.json`.
 
@@ -82,8 +83,10 @@ evidence. A successful single-package run is not a completed coordinated release
 
 The prefixed plugin distributions require the matching corrected core. The public
 `outerspace-apizr==0.4.0` archives and tag remain immutable; verification builds
-from later commits must not replace them. Approve a new core version before
-publishing this renamed set. Changing only PyPI publisher names does not rename
+from later commits must not replace them. The renamed set uses `0.4.0.1` for
+all four packages, reserving `0.4.1` for functional changes. This four-component
+release number is accepted by Python packaging and sorts after `0.4.0` and before
+`0.4.1`. Changing only PyPI publisher names does not rename
 wheel metadata or the core's MCP launcher and operator identities.
 
 If publication stops partway through, inspect the public state, then dispatch the

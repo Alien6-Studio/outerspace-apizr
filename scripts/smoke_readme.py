@@ -164,7 +164,7 @@ def quickstart(cli: Path, repository: Path, *, candidate: bool = False) -> None:
                 "-I",
                 "-c",
                 "import apizr,importlib.metadata; from pathlib import Path; "
-                f"assert importlib.metadata.version('outerspace-apizr') == {'0.4.0' if candidate else '0.3.0'!r}; "
+                f"assert importlib.metadata.version('outerspace-apizr') == {'0.4.0.1' if candidate else '0.3.0'!r}; "
                 f"assert not Path(apizr.__file__).resolve().is_relative_to(Path({str(repository)!r}))",
             ],
             cwd=root,

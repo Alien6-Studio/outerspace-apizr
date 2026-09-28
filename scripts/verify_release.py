@@ -54,7 +54,7 @@ def main() -> None:
     args = parser.parse_args()
     project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
     version = project["version"]
-    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
+    if not re.fullmatch(r"\d+\.\d+\.\d+(?:\.\d+)?", version):
         raise ValueError("Expected stable release version")
     if not args.preflight and os.environ.get("GITHUB_REF") != f"refs/tags/v{version}":
         raise ValueError("Dispatch must run on the matching immutable version tag")
