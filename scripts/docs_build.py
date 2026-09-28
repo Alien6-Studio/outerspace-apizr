@@ -10,7 +10,7 @@ CRITICAL = {
     "getting-started/install/index.html": "Install Apizr",
     "getting-started/quickstart-0.4/index.html": "The walkthrough is now at",
     "contributing/publish-0.4/index.html": "Release attachment inventory",
-    "releases/0.4.0/index.html": "Core published on PyPI; plugin publication pending",
+    "releases/0.4.0/index.html": "Core and all three plugins published as 0.4.0rc1.",
     "reference/operator-policy/index.html": "receipt.sign",
     "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
     "reference/project-plugin-locks/index.html": "Project plugin declarations and locks",
@@ -45,7 +45,7 @@ def on_config(config):
         "schema": "apizr.docs-build/v1",
         "source_commit": commit,
         "source_dirty": dirty,
-        "status": "development",
+        "status": "prerelease",
         "target_version": "0.4.0rc1",
         "stable_release": "0.4.0",
     }

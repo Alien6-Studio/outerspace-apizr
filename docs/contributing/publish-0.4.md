@@ -1,8 +1,9 @@
 # Publish the coordinated 0.4 delivery
 
-**The 0.4.0rc1 replacement is not yet published.** This is the
-handoff for the existing [manual publication workflow](releases.md), not a second
-publisher. Do not execute phase B without explicit maintainer authorization.
+**The coordinated 0.4.0rc1 packages are published.** See the
+[release record](../releases/0.4.0.md#publication-status) for verification and public
+resources. This page retains the existing [manual publication procedure](releases.md).
+Do not repeat phase B without explicit maintainer authorization.
 
 <span id="available-candidate-resources"></span>
 
@@ -10,8 +11,8 @@ publisher. Do not execute phase B without explicit maintainer authorization.
 
 The original core 0.4.0 reached PyPI, but the old plugin names could not be
 created. The coordinated replacement is **0.4.0rc1**, using the prefixed official
-plugin names. Select a new qualified master commit containing these names and
-versions; previous 0.4.0 archives cannot substitute for it. The
+plugin names. Its qualified source is `17be43af47c513576e83db5a323c2cd4cffade0b`;
+previous 0.4.0 archives cannot substitute for it. The
 [release record](../releases/0.4.0.md#publication-status) tracks actual publication.
 
 Inspect the exact Python patch version, system, architecture and compatibility
@@ -67,18 +68,12 @@ review and uses the existing `v*` tag restriction. `publish-pypi.yml` is active,
 manual, and retains separate receipt/publication approvals. The workflow's
 presence does **not** establish PyPI ownership or trust configuration.
 
-| PyPI project | Public 0.4.0rc1 files at preparation | Publishing rights | Trusted Publisher | Expected GitHub environment |
-| --- | --- | --- | --- | --- |
-| outerspace-apizr | Absent; original core 0.4.0 is public | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
-| outerspace-apizr-oci | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
-| outerspace-apizr-mcp | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
-| outerspace-apizr-attest | Absent | **Confirmation mainteneur nécessaire** | **Confirmation mainteneur nécessaire** | `pypi` |
-
-For each project, confirm owner/publish rights and a publisher bound to
-`Alien6-Studio/outerspace-apizr`, workflow `publish-pypi.yml`, environment `pypi`.
-The available read-only access cannot verify these PyPI settings. Do not infer
-that a plugin project or pending publisher exists. No token, secret, publisher,
-project or protection is created by this preparation.
+All four project publishers were confirmed for `Alien6-Studio/outerspace-apizr`,
+workflow `publish-pypi.yml`, environment `pypi`, and used for this delivery.
+The release record links the successful workflows and public-byte comparison.
+For a future delivery, recheck those permissions immediately before upload:
+**Confirmation mainteneur nécessaire**. Existing publication does not authorize
+another release or changes to repository protections.
 
 ## Release attachment inventory
 

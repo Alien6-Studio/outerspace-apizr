@@ -6,10 +6,10 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 ## Prepare the 0.4.0 delivery
 
 The [release notes](../releases/0.4.0.md) describe the integrated scope.
-The original core 0.4.0 is public. The corrected coordinated delivery is being
-qualified; these notes do not prove that its replacement archives are public.
-The coordinated core and optional plugin candidates declare `0.4.0rc1`; publication
-remains a separate explicit operation.
+The coordinated core and optional plugins are published as `0.4.0rc1`.
+The release notes retain the exact source and verification evidence. The procedure
+below remains the maintainer workflow for a coordinated delivery; publication is
+always a separate explicit operation.
 
 Before tagging the exact candidate:
 

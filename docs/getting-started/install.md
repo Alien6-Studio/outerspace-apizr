@@ -25,11 +25,10 @@ above. Use the executable path reported by your tool.
 
 ## Add optional plugin profiles
 
-The plugins are not yet published on PyPI. The coordinated `0.4.0rc1`
-replacement is being qualified; its public packages
-and tag are not yet available. The commands below target that exact delivery.
-The previously published core is `0.4.0`. See the
-[publication status](../releases/0.4.0.md#publication-status) before installing.
+The core and all three plugins are published as `0.4.0rc1`. Use this exact
+prerelease throughout the installation; do not mix its prefixed plugin names
+with the earlier core-only 0.4.0 package. The
+[release record](../releases/0.4.0.md#publication-status) links the verified archives.
 Keep the working directory above. These profiles install plugins separately and
 do not change the core environment.
 
@@ -45,7 +44,7 @@ Apizr. Use a new workspace, and select the export matching your interpreter,
 system and architecture from the [target download table](#supported-targets).
 Windows and other targets are not qualified by this matrix.
 
-After publication, resolve the immutable `v0.4.0rc1` tag and its latest successful
+Resolve the immutable `v0.4.0rc1` tag and its latest successful
 master CI run. This example selects **Linux x86-64 / CPython 3.11**. Keep the
 packages and target export from that same verified run; older 0.4.0 exports use
 different plugin identities and must not be mixed with these instructions.
@@ -67,7 +66,7 @@ gh attestation verify release/evidence/ci-evidence.tar.gz --bundle release/evide
 workflow and evidence archive. A PR preview has no master attestation and cannot
 substitute for this approval. For another supported target, change only the target
 artifact and installed interpreter using the table; inspect its recorded architecture.
-Actions resources expire after 90 days; the final release will retain the approved
+Actions resources expire after 90 days; the [GitHub prerelease](https://github.com/Alien6-Studio/outerspace-apizr/releases/tag/v0.4.0rc1) retains the approved
 resources under [unique public names](../contributing/publish-0.4.md#release-attachment-inventory).
 
 Bind **both** the catalog/dependency export and the package inventory to the verified

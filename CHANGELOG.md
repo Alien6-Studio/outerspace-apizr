@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0rc1 — Unreleased
+## 0.4.0rc1 — 2026-09-28
 
 - Publish official plugins as `outerspace-apizr-oci`, `outerspace-apizr-mcp` and
   `outerspace-apizr-attest`, with matching core and internal package requirements.
