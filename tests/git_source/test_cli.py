@@ -210,7 +210,7 @@ def test_cli_interrupt_is_clean(command, tmp_path, scratch, remote, tls):
         assert ready.exists()
         process.send_signal(signal.SIGINT)
         out, error = process.communicate(timeout=5)
-        assert process.returncode == 130
+        assert process.returncode == 130, (out, error)
         assert not out and b"git_cancelled" in error and b"Traceback" not in error
         pid = int(ready.read_text())
         with pytest.raises(ProcessLookupError):
