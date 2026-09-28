@@ -98,12 +98,12 @@ each stage. `expose build` already performs their required analysis and planning
 you do not need to run them separately before generation. To inspect each stage:
 
 ```sh
-apizr scan --operator-policy operator.json . --exclude-dir .output
-apizr graph --operator-policy operator.json . --exclude-dir .output
-apizr readiness --operator-policy operator.json . --exclude-dir .output --policy readiness-direct.json
-apizr expose plan --operator-policy operator.json . --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json
-apizr expose build rest --operator-policy operator.json . --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/rest
-apizr expose build mcp --operator-policy operator.json . --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/mcp
+apizr scan . --operator-policy operator.json --exclude-dir .output
+apizr graph . --operator-policy operator.json --exclude-dir .output
+apizr readiness . --operator-policy operator.json --exclude-dir .output --policy readiness-direct.json
+apizr expose plan . --operator-policy operator.json --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json
+apizr expose build rest . --operator-policy operator.json --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/rest
+apizr expose build mcp . --operator-policy operator.json --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/mcp
 ```
 
 The explicit `.output` exclusion keeps generated files outside the scan universe.

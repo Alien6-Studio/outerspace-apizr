@@ -8,9 +8,9 @@ Use `apizr graph` to see which Python modules import each other and which direct
 capability calls can be resolved from static source evidence:
 
 ```bash
-apizr graph --operator-policy operator.json . --source-root src
-apizr graph --operator-policy operator.json . --source-root src --format json
-apizr graph --operator-policy operator.json . --source-root src --graph > capability-graph.json
+apizr graph . --operator-policy operator.json --source-root src
+apizr graph . --operator-policy operator.json --source-root src --format json
+apizr graph . --operator-policy operator.json --source-root src --graph > capability-graph.json
 ```
 
 `--graph` emits canonical `apizr.graph/v1` JSON. `--format json` wraps that graph
@@ -49,7 +49,7 @@ The Catalog artifact format is unchanged.
 Graph-specific aggregate limits are:
 
 ```bash
-apizr graph --operator-policy operator.json . --source-root src \
+apizr graph . --operator-policy operator.json --source-root src \
   --max-ast-nodes 500000 --max-relationships 50000 \
   --max-calls 50000 --max-imports 10000
 ```

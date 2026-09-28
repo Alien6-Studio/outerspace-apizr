@@ -10,9 +10,9 @@ execute project code, install packages, use Git or access the network. Filesyste
 scanning v1 supports Linux/macOS. No Docker is required.
 
 ```sh
-apizr scan --operator-policy operator.json .
-apizr scan --operator-policy operator.json . --source-root src
-apizr scan --operator-policy operator.json . --source-root packages/core/src --source-root packages/tools/src
+apizr scan . --operator-policy operator.json
+apizr scan . --operator-policy operator.json --source-root src
+apizr scan . --operator-policy operator.json --source-root packages/core/src --source-root packages/tools/src
 ```
 
 Without `--source-root`, the repository directory itself is the source root.
@@ -31,9 +31,9 @@ Inspection. The catalog introduces no new readiness policy.
 ## Output and exit codes
 
 ```sh
-apizr scan --operator-policy operator.json . --source-root src --details
-apizr scan --operator-policy operator.json . --source-root src --format json
-apizr scan --operator-policy operator.json . --source-root src --catalog
+apizr scan . --operator-policy operator.json --source-root src --details
+apizr scan . --operator-policy operator.json --source-root src --format json
+apizr scan . --operator-policy operator.json --source-root src --catalog
 ```
 
 The default human report limits displayed sources/diagnostics; `--details` expands
@@ -59,8 +59,8 @@ Only `.py` files are selected; repository notebooks are deferred. Existing
 `apizr inspect notebook.ipynb` remains available.
 
 ```sh
-apizr scan --operator-policy operator.json . --exclude-dir tests --exclude-dir generated
-apizr scan --operator-policy operator.json . --source-root src --max-file-bytes 1048576 --max-source-files 1000
+apizr scan . --operator-policy operator.json --exclude-dir tests --exclude-dir generated
+apizr scan . --operator-policy operator.json --source-root src --max-file-bytes 1048576 --max-source-files 1000
 ```
 
 Other bounds are `--max-total-bytes` (default 16 MiB), `--max-entries` (20,000) and

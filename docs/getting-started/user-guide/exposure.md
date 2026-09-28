@@ -42,7 +42,7 @@ in [examples/policies](https://github.com/Alien6-Studio/outerspace-apizr/tree/ma
 | OCI | `readiness-oci.json` | `exposure-oci.json` | `execution-oci.json` |
 
 ```sh
-apizr expose build mcp --operator-policy operator.json examples/repository-shop --readiness-policy examples/policies/readiness-local.json --policy examples/policies/exposure-local.json --execution-policy examples/policies/execution-local.json --output-dir .output/shop-local
+apizr expose build mcp examples/repository-shop --operator-policy operator.json --readiness-policy examples/policies/readiness-local.json --policy examples/policies/exposure-local.json --execution-policy examples/policies/execution-local.json --output-dir .output/shop-local
 ```
 
 For OCI, choose the three `oci` files and add `--runtime-image sha256:<64hex>` and
@@ -56,7 +56,7 @@ For `shop/pricing.py` defining `calculate`, use the exact capability ID displaye
 by Scan/Readiness. Declare an interface and at least one allowed execution mode:
 
 ```sh
-apizr expose plan --operator-policy operator.json . --interface mcp --execution-mode oci-container \
+apizr expose plan . --operator-policy operator.json --interface mcp --execution-mode oci-container \
   --select python:shop.pricing:calculate
 ```
 
@@ -89,9 +89,9 @@ Save `exposure.json`:
 ```
 
 ```sh
-apizr expose plan --operator-policy operator.json . --policy exposure.json
-apizr expose plan --operator-policy operator.json . --policy exposure.json --plan > exposure-plan.json
-apizr expose plan --operator-policy operator.json . --readiness-policy readiness.json --policy exposure.json
+apizr expose plan . --operator-policy operator.json --policy exposure.json
+apizr expose plan . --operator-policy operator.json --policy exposure.json --plan > exposure-plan.json
+apizr expose plan . --operator-policy operator.json --readiness-policy readiness.json --policy exposure.json
 ```
 
 Policy files use JSON. `--policy` cannot be mixed with inline exposure choices;
@@ -159,13 +159,13 @@ Create `direct-readiness.json`:
 Then build one interface for your explicitly selected eligible capabilities:
 
 ```sh
-apizr expose build rest --operator-policy operator.json . --source-root src \
+apizr expose build rest . --operator-policy operator.json --source-root src \
   --readiness-policy direct-readiness.json \
   --interface rest --execution-mode direct \
   --select python:shop.api:run --select python:shop.pricing:run \
   --output-dir .output/rest
 
-apizr expose build mcp --operator-policy operator.json . --source-root src \
+apizr expose build mcp . --operator-policy operator.json --source-root src \
   --readiness-policy direct-readiness.json --policy direct-exposure.json \
   --output-dir .output/mcp
 ```
@@ -223,7 +223,7 @@ backend for every selection. The readiness policy must also allow it. For local
 execution, create `local-policy.json` containing `{}` and use:
 
 ```bash
-apizr expose build mcp --operator-policy operator.json . \
+apizr expose build mcp . --operator-policy operator.json \
   --readiness-policy readiness.json --policy exposure.json \
   --execution-policy local-policy.json --output-dir .output/mcp
 ```
@@ -237,7 +237,7 @@ For OCI, allow `oci-container` in those policies, create `oci-policy.json` conta
 `{"schema_version":"apizr.execution/v2"}`, and supply an existing image ID/platform:
 
 ```bash
-apizr expose build mcp --operator-policy operator.json . \
+apizr expose build mcp . --operator-policy operator.json \
   --readiness-policy readiness.json --policy exposure.json \
   --execution-policy oci-policy.json \
   --runtime-image sha256:<64hex> --runtime-platform linux/amd64 \

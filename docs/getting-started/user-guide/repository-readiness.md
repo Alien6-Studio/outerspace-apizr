@@ -10,10 +10,10 @@ It is **not a runtime guarantee or an authorization to give an agent access**.
 For repository-first assessment, run:
 
 ```sh
-apizr readiness --operator-policy operator.json .
-apizr readiness --operator-policy operator.json . --source-root src
-apizr readiness --operator-policy operator.json . --policy policy.json --details
-apizr readiness --operator-policy operator.json . --source-root src --report > readiness.json
+apizr readiness . --operator-policy operator.json
+apizr readiness . --operator-policy operator.json --source-root src
+apizr readiness . --operator-policy operator.json --policy policy.json --details
+apizr readiness . --operator-policy operator.json --source-root src --report > readiness.json
 ```
 
 This performs one bounded discovery shared by Scan, Catalog and Graph, then evaluates
@@ -29,8 +29,8 @@ For offline evaluation or artifact pipelines, the existing artifact-first comman
 remains available. Save matching Catalog and Graph artifacts from an unchanged repository:
 
 ```sh
-apizr scan --operator-policy operator.json ./project --catalog > catalog.json
-apizr graph --operator-policy operator.json ./project --graph > graph.json
+apizr scan ./project --operator-policy operator.json --catalog > catalog.json
+apizr graph ./project --operator-policy operator.json --graph > graph.json
 apizr repository-readiness catalog.json graph.json
 apizr repository-readiness catalog.json graph.json --format json > readiness.json
 ```
@@ -101,7 +101,7 @@ Four copyable policies are provided under `examples/readiness/`:
 For example, from the Apizr checkout:
 
 ```sh
-apizr readiness --operator-policy operator.json ./project --policy examples/readiness/isolated-oci.json --report
+apizr readiness ./project --operator-policy operator.json --policy examples/readiness/isolated-oci.json --report
 ```
 
 This is an additive v1 completion. Existing policies and report bytes remain unchanged.
