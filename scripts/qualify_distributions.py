@@ -175,7 +175,7 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
                     cli,
                     "plugins",
                     "enable",
-                    "apizr-" + name,
+                    "outerspace-apizr-" + name,
                     "--version",
                     manifest["version"],
                     "--plugins-dir",

@@ -142,10 +142,10 @@ universal access-control boundary for arbitrary Python code.
 | Local repository analysis | `source.analyze` for the exact root | Readiness and explicit exposure selection |
 | Git acquisition and analysis | `git.fetch` for the exact transport/target, plus `source.analyze` for repository/ref/subdir | Resolved commit, trust inputs and acquisition limits |
 | `apizr mcp serve` | `source.analyze` for the configured local root | Explicit active MCP plugin and captured session scope |
-| `apizr-oci build` | `image.build` and `registry.read` for the exact build target | Valid inputs, immutable base and Docker controls |
-| `apizr-oci push` | `registry.read` and `registry.publish` for the selected image/destination | Remote identity verification and tag-conflict checks |
-| `apizr-attest attest` | `registry.read`, `receipt.sign`, `timestamp.request` for the exact signing target | Key identity, expected signer and independent trust |
-| `apizr-attest publish` | `registry.read` and `registry.publish` for the exact proof/destination | Verified proof bytes and remote confirmation |
+| `outerspace-apizr-oci build` | `image.build` and `registry.read` for the exact build target | Valid inputs, immutable base and Docker controls |
+| `outerspace-apizr-oci push` | `registry.read` and `registry.publish` for the selected image/destination | Remote identity verification and tag-conflict checks |
+| `outerspace-apizr-attest attest` | `registry.read`, `receipt.sign`, `timestamp.request` for the exact signing target | Key identity, expected signer and independent trust |
+| `outerspace-apizr-attest publish` | `registry.read` and `registry.publish` for the exact proof/destination | Verified proof bytes and remote confirmation |
 
 Use the [complete operator examples](../reference/operator-policy.md), not a local
 grant reused for a Git origin. Analyze the actual `GitSnapshot` yielded by
@@ -202,5 +202,5 @@ The catalog is not an automatic updater and supplies no operator grants.
 
 Single-file/notebook commands and the historical YAML pipeline remain available.
 The core, generated application and plugins have different dependency environments;
-the `mcp` extra and the `apizr-mcp` analysis plugin are different installations.
+the `mcp` extra and the `outerspace-apizr-mcp` analysis plugin are different installations.
 There is no need to rewrite a working legacy pipeline into `apizr.toml`.

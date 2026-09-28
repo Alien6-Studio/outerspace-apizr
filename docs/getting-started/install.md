@@ -12,21 +12,24 @@ mkdir apizr-workspace
 cd apizr-workspace
 python3 -m venv core
 . core/bin/activate
-python -m pip install outerspace-apizr==0.4.0
+python -m pip install outerspace-apizr==0.4.0rc1
 apizr --version
 ```
 
-**Observe:** `outerspace-apizr 0.4.0`. Continue with the [Quickstart](quickstart.md)
+**Observe:** `outerspace-apizr 0.4.0rc1`. Continue with the [Quickstart](quickstart.md)
 to generate and call your first MCP or REST service. No plugin or Docker is needed.
 
-With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.0` or
-`pipx install outerspace-apizr==0.4.0` is an alternative to the virtual environment
+With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.0rc1` or
+`pipx install outerspace-apizr==0.4.0rc1` is an alternative to the virtual environment
 above. Use the executable path reported by your tool.
 
 ## Add optional plugin profiles
 
-The core is published on PyPI. The three plugins are not yet published on PyPI;
-use the verified installation files below for MCP analysis, OCI or delivery.
+The plugins are not yet published on PyPI. The coordinated `0.4.0rc1`
+replacement is being qualified; its public packages
+and tag are not yet available. The commands below target that exact delivery.
+The previously published core is `0.4.0`. See the
+[publication status](../releases/0.4.0.md#publication-status) before installing.
 Keep the working directory above. These profiles install plugins separately and
 do not change the core environment.
 
@@ -42,13 +45,15 @@ Apizr. Use a new workspace, and select the export matching your interpreter,
 system and architecture from the [target download table](#supported-targets).
 Windows and other targets are not qualified by this matrix.
 
-The following concrete example uses the successful master run **36396147495**,
-commit **37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f**, on **Linux x86-64 / CPython 3.11**.
-Keep the packages and target export from this same verified run.
+After publication, resolve the immutable `v0.4.0rc1` tag and its latest successful
+master CI run. This example selects **Linux x86-64 / CPython 3.11**. Keep the
+packages and target export from that same verified run; older 0.4.0 exports use
+different plugin identities and must not be mixed with these instructions.
 
 ```sh
-export REVIEWED_RUN_ID=36396147495
-export EXPECTED_COMMIT=37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f
+export EXPECTED_COMMIT=$(gh api repos/Alien6-Studio/outerspace-apizr/git/ref/tags/v0.4.0rc1 --jq .object.sha)
+export REVIEWED_RUN_ID=$(gh run list --repo Alien6-Studio/outerspace-apizr --workflow ci.yml --branch master --event push --commit "$EXPECTED_COMMIT" --limit 1 --json databaseId,conclusion --jq '.[0] | select(.conclusion == "success") | .databaseId')
+test -n "$EXPECTED_COMMIT" && test -n "$REVIEWED_RUN_ID"
 export TARGET_ARTIFACT=release-target-ubuntu-latest-3.11
 export PYTHON=python3.11
 gh run view "$REVIEWED_RUN_ID" --repo Alien6-Studio/outerspace-apizr
@@ -117,11 +122,11 @@ The selected `PYTHON` must match the target export's Python minor version.
 <!-- install:pip -->
 ```sh
 "$PYTHON" -m venv "$CORE_DIR"
-"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0-py3-none-any.whl"
+"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0rc1-py3-none-any.whl"
 "$CORE_DIR/bin/apizr" --version
 ```
 
-Observe `outerspace-apizr 0.4.0`, then activate it with `. "$CORE_DIR/bin/activate"`
+Observe `outerspace-apizr 0.4.0rc1`, then activate it with `. "$CORE_DIR/bin/activate"`
 and follow the [Quickstart](quickstart.md).
 
 ### Alternatively, install as a tool
@@ -130,14 +135,14 @@ With uv already installed, use this **instead of** pip:
 
 <!-- install:uv -->
 ```sh
-uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0-py3-none-any.whl"
+uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0rc1-py3-none-any.whl"
 ```
 
 Or, with pipx already installed, use:
 
 <!-- install:pipx -->
 ```sh
-pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0-py3-none-any.whl"
+pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0rc1-py3-none-any.whl"
 ```
 
 Use the executable path reported by that tool, then check `apizr --version`.
@@ -148,15 +153,15 @@ for tool installations use that reported Apizr executable instead.
 ## Choose a plugin profile
 
 The **core** is enough for supported static analysis and generation. Generated
-REST/MCP servers have separate runtime requirements. The **`apizr-mcp` plugin**
+REST/MCP servers have separate runtime requirements. The **`outerspace-apizr-mcp` plugin**
 is an analysis server; the historical **`mcp` extra** supplies optional dependencies
 for existing core workflows and does not install that plugin.
 
 | Profile | Plugins | Additional prerequisites when used |
 | --- | --- | --- |
-| `mcp` | apizr-mcp | An MCP client; Python SDK proof needs no AI account |
-| `oci` | apizr-oci | Docker Engine and Buildx for build/push |
-| `delivery` | apizr-oci and apizr-attest | Docker/Buildx; Continuum Attest for receipts; ORAS for proof transport |
+| `mcp` | outerspace-apizr-mcp | An MCP client; Python SDK proof needs no AI account |
+| `oci` | outerspace-apizr-oci | Docker Engine and Buildx for build/push |
+| `delivery` | outerspace-apizr-oci and outerspace-apizr-attest | Docker/Buildx; Continuum Attest for receipts; ORAS for proof transport |
 
 From the verified installation workspace, choose **one** profile and absent plan
 and plugin-store directories. The commands below are offline and reuse exported
@@ -181,9 +186,9 @@ On this fresh store, the active inventory is empty. Activate only what you selec
 
 ```sh
 # mcp profile
-"$CORE_DIR/bin/apizr" plugins enable apizr-mcp --version 0.4.0 --plugins-dir "$PLUGINS_DIR"
-# oci profile: enable apizr-oci instead
-# delivery profile: enable both apizr-oci and apizr-attest
+"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version 0.4.0rc1 --plugins-dir "$PLUGINS_DIR"
+# oci profile: enable outerspace-apizr-oci instead
+# delivery profile: enable both outerspace-apizr-oci and outerspace-apizr-attest
 ```
 
 **Installation** verifies and stores bytes. **Activation** selects an installed
@@ -197,7 +202,7 @@ trusted programs running with user rights, not a universal sandbox.
 ## Supported targets
 
 Choose the artifact and interpreter for your machine. All exports below belong
-to [the same verified run](https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/36396147495).
+to the same verified run selected above.
 The exact patch version and architecture are recorded in `target.json`.
 
 | System / architecture | Python | Target artifact |

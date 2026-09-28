@@ -95,9 +95,9 @@ def arguments(operation):
 
 def record(operation="push"):
     name, module = (
-        ("apizr-oci", "apizr_oci.protocol")
+        ("outerspace-apizr-oci", "apizr_oci.protocol")
         if operation in {"push", "build"}
-        else ("apizr-attest", "apizr_attest.protocol")
+        else ("outerspace-apizr-attest", "apizr_attest.protocol")
     )
     return Installation.model_validate(
         {
@@ -614,11 +614,27 @@ def test_complete_documented_policy():
         Path(__file__).parents[2] / "docs/examples/operator.json"
     )
     assert {(g.plugin.name, g.operation) for g in selected.grants} == {
-        ("apizr-oci", "push"),
-        ("apizr-oci", "build"),
-        ("apizr-attest", "publish"),
-        ("apizr-attest", "attest"),
+        ("outerspace-apizr-oci", "push"),
+        ("outerspace-apizr-oci", "build"),
+        ("outerspace-apizr-attest", "publish"),
+        ("outerspace-apizr-attest", "attest"),
     }
+
+
+@pytest.mark.parametrize("operation", ["build", "attest", "push", "publish"])
+def test_renamed_and_existing_plugins_require_separate_exact_grants(operation):
+    renamed = record(operation)
+    existing = renamed.model_copy(
+        update={"name": renamed.name.removeprefix("outerspace-")}
+    )
+    for binding, other in ((renamed, existing), (existing, renamed)):
+        assert decide(None, binding, operation, arguments(operation)).code == (
+            "operator_policy_required"
+        )
+        granted = policy(document(binding, operation))
+        assert decide(granted, binding, operation, arguments(operation)).allowed
+        refused = decide(granted, other, operation, arguments(operation))
+        assert not refused.allowed and refused.code == "operator_identity_denied"
 
 
 @pytest.mark.parametrize("operation", ["build", "attest", "push", "publish"])

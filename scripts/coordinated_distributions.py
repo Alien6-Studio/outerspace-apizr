@@ -22,9 +22,9 @@ from check_distribution import check
 ROOT = Path(__file__).resolve().parents[1]
 PROJECTS = {
     "outerspace-apizr": ROOT,
-    "apizr-oci": ROOT / "plugins/oci",
-    "apizr-attest": ROOT / "plugins/attest",
-    "apizr-mcp": ROOT / "plugins/mcp",
+    "outerspace-apizr-oci": ROOT / "plugins/oci",
+    "outerspace-apizr-attest": ROOT / "plugins/attest",
+    "outerspace-apizr-mcp": ROOT / "plugins/mcp",
 }
 
 
@@ -232,7 +232,9 @@ def prepare_target(candidate: Path, output: Path) -> None:
             if plugin != "mcp":
                 shutil.copytree(output / "base", house)
             for member in members:
-                wheel = next((candidate / "dist").glob("apizr_" + member + "-*.whl"))
+                wheel = next(
+                    (candidate / "dist").glob("outerspace_apizr_" + member + "-*.whl")
+                )
                 shutil.copyfile(wheel, house / wheel.name)
             lock_wheels(house, output / (plugin + ".lock"))
         # Catalog export reuses the existing parser, resolver and lock validation.
@@ -269,11 +271,11 @@ def prepare_target(candidate: Path, output: Path) -> None:
             "--wheelhouse",
             house,
             "--plugin",
-            "apizr-mcp=" + str(output / "mcp.lock"),
+            "outerspace-apizr-mcp=" + str(output / "mcp.lock"),
             "--plugin",
-            "apizr-oci=" + str(output / "oci.lock"),
+            "outerspace-apizr-oci=" + str(output / "oci.lock"),
             "--plugin",
-            "apizr-attest=" + str(output / "attest.lock"),
+            "outerspace-apizr-attest=" + str(output / "attest.lock"),
             "--commit",
             manifest["commit"],
             "--output",

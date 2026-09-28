@@ -7,8 +7,9 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 The [release notes](../releases/0.4.0.md) and
 [migration guide](../getting-started/migrate-0.4.md) describe the integrated scope.
-They are publication preparation, not proof that 0.4.0 artifacts exist.
-The coordinated core and optional plugin candidates declare `0.4.0`; publication
+The original core 0.4.0 is public. The corrected coordinated delivery is being
+qualified; these notes do not prove that its replacement archives are public.
+The coordinated core and optional plugin candidates declare `0.4.0rc1`; publication
 remains a separate explicit operation.
 
 Before tagging the exact candidate:
@@ -26,7 +27,7 @@ Before tagging the exact candidate:
 - After publication, verify downloaded package bytes and fresh installations.
   Record the actual date, tag, hashes and evidence in the release notes. Only then
   change the stable installation guidance, Quickstart pins and documentation build
-  metadata to 0.4.0; retain historical 0.3.0 release instructions.
+  metadata to the verified 0.4.0rc1 delivery; retain historical 0.3.0 release instructions.
 - Qualify the public documentation through the existing Pages/HTTPS checks,
   including the release notes and migration page in `build-info.json`.
 
@@ -65,11 +66,28 @@ workflow permissions, but cannot establish PyPI ownership or pending-publisher
 configuration for the plugin projects. A maintainer must verify those external
 prerequisites before dispatch. Do not create secrets or publishers implicitly.
 
-The manual workflow publishes **outerspace-apizr → apizr-oci → apizr-mcp →
-apizr-attest**, preserving exact internal requirements. Only the eight first-party
+The manual workflow publishes **outerspace-apizr → outerspace-apizr-oci → outerspace-apizr-mcp →
+outerspace-apizr-attest**, preserving exact internal requirements. Only the eight first-party
 archives enter PyPI; catalog exports, third-party dependency wheels, images and
 proofs remain separate evidence/distribution assets. There is no rebuild in the
 publication path and no publication trigger on merge.
+
+For the first upload, PyPI permits only one pending publisher for an identical
+GitHub repository/workflow/environment configuration. Register the pending
+publisher for one plugin name, then dispatch with `package` set to that exact
+distribution name. This verifies and uploads only that package while retaining
+the same provenance, receipt and byte-comparison gates. Once PyPI converts it to
+an active project publisher, register the next plugin and repeat. Finish with
+`package: all`: only this complete verification archives release-wide publication
+evidence. A successful single-package run is not a completed coordinated release.
+
+The prefixed plugin distributions require the matching corrected core. The public
+`outerspace-apizr==0.4.0` archives and tag remain immutable; verification builds
+from later commits must not replace them. The renamed set uses `0.4.0rc1` for
+all four packages, reserving `0.4.1` for functional changes. This is a release
+candidate, ordered before the final `0.4.0`. Install it with an explicit
+`==0.4.0rc1` requirement and mark its GitHub release as a prerelease. Changing only PyPI publisher names does not rename
+wheel metadata or the core's MCP launcher and operator identities.
 
 If publication stops partway through, inspect the public state, then dispatch the
 same tag and approved run again. Every existing filename must match both approved

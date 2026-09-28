@@ -51,18 +51,27 @@ async def prove(root: Path) -> None:
     with anyio.fail_after(60):
         async with Client(target, read_timeout_seconds=15) as client:
             assert len((await client.list_tools()).tools) == 3
-            cli("disable", "apizr-mcp")
+            cli("disable", "outerspace-apizr-mcp")
             refused = cli(
-                "uninstall", "apizr-mcp", "--version", "0.4.0", "--json", expected=1
+                "uninstall",
+                "outerspace-apizr-mcp",
+                "--version",
+                "0.4.0rc1",
+                "--json",
+                expected=1,
             )
             assert refused["state"] == "busy"
             # Existing admission survives disable and the rejected uninstall.
             analyzed = await client.call_tool("apizr_analyze", {})
             assert not analyzed.is_error
-        removed = cli("uninstall", "apizr-mcp", "--version", "0.4.0", "--json")
+        removed = cli(
+            "uninstall", "outerspace-apizr-mcp", "--version", "0.4.0rc1", "--json"
+        )
         assert removed["state"] == "complete" and removed["environment_removed"]
         assert (
-            cli("uninstall", "apizr-mcp", "--version", "0.4.0", "--json")["state"]
+            cli("uninstall", "outerspace-apizr-mcp", "--version", "0.4.0rc1", "--json")[
+                "state"
+            ]
             == "absent"
         )
     assert snapshot(root / "core") == json.loads(

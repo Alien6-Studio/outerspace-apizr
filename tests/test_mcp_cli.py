@@ -1,6 +1,6 @@
 import json
 import os
-from contextlib import nullcontext
+from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -73,7 +73,54 @@ def test_mcp_launcher_exact_admitted_interpreter_and_empty_environment(
     monkeypatch.setattr(mcp_cli.os, "execve", execute)
     with pytest.raises(Executed):
         cli.main(["mcp", *launch, "--plugins-dir", "/plugins"])
-    assert seen == [("apizr-mcp", {"directory": Path("/plugins"), "inherit": True})]
+    assert seen == [
+        ("outerspace-apizr-mcp", {"directory": Path("/plugins"), "inherit": True})
+    ]
+
+
+def test_existing_mcp_installation_retains_its_lease(monkeypatch):
+    events = []
+    record = SimpleNamespace(module="apizr_mcp")
+
+    @contextmanager
+    def admit(name, **kwargs):
+        events.append(name)
+        assert kwargs == {"directory": Path("/plugins"), "inherit": True}
+        if name == "outerspace-apizr-mcp":
+            raise PluginError("plugin_not_installed")
+        try:
+            yield record, 42
+        finally:
+            events.append("released")
+
+    monkeypatch.setattr(mcp_cli, "admitted_extension", admit)
+    with mcp_cli._admitted_mcp(Path("/plugins")) as admitted:
+        assert admitted == (record, 42)
+        assert events == ["outerspace-apizr-mcp", "apizr-mcp"]
+    assert events[-1] == "released"
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        PluginError("plugin_inactive"),
+        PluginError("activation_mismatch"),
+        PluginError("invalid_inventory"),
+        PrerequisiteMissing(),
+    ],
+)
+def test_new_mcp_identity_refusal_does_not_select_an_old_identity(monkeypatch, error):
+    names = []
+
+    def admit(name, **kwargs):
+        names.append(name)
+        raise error
+
+    monkeypatch.setattr(mcp_cli, "admitted_extension", admit)
+    with pytest.raises(type(error)):
+        with mcp_cli._admitted_mcp(Path("/plugins")):
+            pytest.fail("invalid identity admitted")
+    assert names == ["outerspace-apizr-mcp"]
 
 
 def test_entrypoint_and_relative_root_refused(monkeypatch, capsys, launch):

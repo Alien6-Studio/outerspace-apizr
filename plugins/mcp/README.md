@@ -1,4 +1,4 @@
-# apizr-mcp
+# outerspace-apizr-mcp
 
 Analyze a local Python project from an MCP client without executing its functions.
 

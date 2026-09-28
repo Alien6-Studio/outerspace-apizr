@@ -255,10 +255,15 @@ def load_operator_policy(path: Path) -> OperatorPolicy:
 # Trusted core knowledge, not supplied by a project, profile, catalog or plugin.
 # Trusted effects: publication reads and writes; signing reads, signs and timestamps.
 OPERATIONS = {
+    # Existing local installations keep their exact identity and grants.
     ("apizr-oci", "build"): "apizr_oci.protocol",
     ("apizr-oci", "push"): "apizr_oci.protocol",
     ("apizr-attest", "publish"): "apizr_attest.protocol",
     ("apizr-attest", "attest"): "apizr_attest.protocol",
+    ("outerspace-apizr-oci", "build"): "apizr_oci.protocol",
+    ("outerspace-apizr-oci", "push"): "apizr_oci.protocol",
+    ("outerspace-apizr-attest", "publish"): "apizr_attest.protocol",
+    ("outerspace-apizr-attest", "attest"): "apizr_attest.protocol",
 }
 
 

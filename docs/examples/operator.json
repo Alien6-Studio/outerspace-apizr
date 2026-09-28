@@ -3,8 +3,8 @@
   "grants": [
     {
       "plugin": {
-        "name": "apizr-oci",
-        "version": "0.4.0",
+        "name": "outerspace-apizr-oci",
+        "version": "0.4.0rc1",
         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "dependencies": [
@@ -62,8 +62,8 @@
     },
     {
       "plugin": {
-        "name": "apizr-oci",
-        "version": "0.4.0",
+        "name": "outerspace-apizr-oci",
+        "version": "0.4.0rc1",
         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "dependencies": [
@@ -108,8 +108,8 @@
     },
     {
       "plugin": {
-        "name": "apizr-attest",
-        "version": "0.4.0",
+        "name": "outerspace-apizr-attest",
+        "version": "0.4.0rc1",
         "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "dependencies": [
@@ -119,8 +119,8 @@
             "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
           },
           {
-            "name": "apizr-oci",
-            "version": "0.4.0",
+            "name": "outerspace-apizr-oci",
+            "version": "0.4.0rc1",
             "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
           },
           {
@@ -159,8 +159,8 @@
     },
     {
       "plugin": {
-        "name": "apizr-attest",
-        "version": "0.4.0",
+        "name": "outerspace-apizr-attest",
+        "version": "0.4.0rc1",
         "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "dependencies": [
@@ -170,8 +170,8 @@
             "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
           },
           {
-            "name": "apizr-oci",
-            "version": "0.4.0",
+            "name": "outerspace-apizr-oci",
+            "version": "0.4.0rc1",
             "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
           },
           {

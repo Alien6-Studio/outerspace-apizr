@@ -47,7 +47,7 @@ def write_policy(python, store, path, name, operation, repositories, command):
 
 
 def write_build_policy(python, store, path, arguments, command):
-    identity = installed_identity(python, store, "apizr-oci", command)
+    identity = installed_identity(python, store, "outerspace-apizr-oci", command)
     target = {
         k: arguments[k]
         for k in (
@@ -84,7 +84,7 @@ def write_signing_policy(python, store, path, arguments, command):
         python,
         store,
         path,
-        "apizr-attest",
+        "outerspace-apizr-attest",
         "attest",
         [arguments["expected_reference"].split("@")[0]],
         command,

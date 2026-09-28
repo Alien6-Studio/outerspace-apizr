@@ -2,7 +2,7 @@
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
-The official `apizr-oci` extension builds a **local service image** from a direct
+The official `outerspace-apizr-oci` extension builds a **local service image** from a direct
 repository exposure bundle and publishes it through a separate, explicit `push`
 operation. It does not build governed execution workers or install business
 dependencies. Install and enable it explicitly;
@@ -40,22 +40,22 @@ uv build --wheel plugins/oci --out-dir "$work/plugin-wheels"
 cd "$work"
 uv venv --seed --python 3.14 prepare
 prepare/bin/python -m pip download --only-binary=:all: --dest plugin-wheels \
-  plugin-wheels/outerspace_apizr-0.4.0-py3-none-any.whl \
-  plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl
+  plugin-wheels/outerspace_apizr-0.4.0rc1-py3-none-any.whl \
+  plugin-wheels/outerspace_apizr_oci-0.4.0rc1-py3-none-any.whl
 uv venv --python 3.14 core
 uv pip install --python core/bin/python --offline --no-index \
-  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.0-py3-none-any.whl
+  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.0rc1-py3-none-any.whl
 ```
 
 Create `lock_wheels.py` using the [shared wheel-lock recipe](#prepare-server-dependency-locks) below before continuing.
 
 ```sh
 prepare/bin/python lock_wheels.py plugin-wheels plugin.lock
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/outerspace_apizr_oci-0.4.0rc1-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.0rc1-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse plugin-wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable apizr-oci --version 0.4.0 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-oci --version 0.4.0rc1 --plugins-dir "$work/plugins"
 ```
 
 The lock uses the existing restricted requirements syntax: `name==version
@@ -184,7 +184,7 @@ explicit binary, Buildx and socket are used. TCP/SSH Docker endpoints are not
 supported in this pass.
 
 ```sh
-core/bin/apizr plugins run apizr-oci build --arguments build.json \
+core/bin/apizr plugins run outerspace-apizr-oci build --arguments build.json \
   --operator-policy operator.json \
   --timeout-ms 360000 --plugins-dir "$work/plugins"
 docker run --rm --publish 127.0.0.1:8000:8000 apizr-service:rest-example
@@ -296,7 +296,7 @@ configuration remain trusted prerequisites; do not resolve registry names to the
 daemon's implicitly insecure loopback network.
 
 ```bash
-apizr plugins run apizr-oci push --arguments /work/push.json \
+apizr plugins run outerspace-apizr-oci push --arguments /work/push.json \
   --operator-policy /work/operator.json --timeout-ms 360000
 ```
 

@@ -80,8 +80,11 @@ def main_script():
     assert len(records) == 3 and len({r.environment_id for r in records}) == 3
     assert not list_extensions(directory=store, active=True).installations
     closures = {r.name: [d.name for d in r.dependencies] for r in records}
-    assert "apizr-oci" in closures["apizr-attest"]
-    assert "mcp" in closures["apizr-mcp"] and "mcp" not in closures["apizr-oci"]
+    assert "outerspace-apizr-oci" in closures["outerspace-apizr-attest"]
+    assert (
+        "mcp" in closures["outerspace-apizr-mcp"]
+        and "mcp" not in closures["outerspace-apizr-oci"]
+    )
     assert (
         snapshot(core) == before
         and (root / "plugins/activations.json").read_bytes() == active

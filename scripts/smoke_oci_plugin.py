@@ -105,7 +105,7 @@ def refuse_builds(python, document, store, work, environment, runner):
                 "apizr.cli",
                 "plugins",
                 "run",
-                "apizr-oci",
+                "outerspace-apizr-oci",
                 "build",
                 "--operator-policy",
                 str(operator),
@@ -181,7 +181,7 @@ raise SystemExit(child.wait())
             "apizr.cli",
             "plugins",
             "run",
-            "apizr-oci",
+            "outerspace-apizr-oci",
             "build",
             "--operator-policy",
             str(operator),
@@ -275,7 +275,7 @@ def main():
         command("uv", "build", "--wheel", REPO, "--out-dir", house)
         command("uv", "build", "--wheel", REPO / "plugins/oci", "--out-dir", house)
     core = next(house.glob("outerspace_apizr-*.whl"))
-    plugin = next(house.glob("apizr_oci-*.whl"))
+    plugin = next(house.glob("outerspace_apizr_oci-*.whl"))
     preparation = work / "preparation"
     command("uv", "venv", "--seed", "--python", sys.executable, preparation)
     if not retained:
@@ -331,7 +331,7 @@ def main():
         "--wheelhouse",
         house,
         "--plugin",
-        "apizr-oci=" + str(plugin_lock),
+        "outerspace-apizr-oci=" + str(plugin_lock),
         "--commit",
         command(
             "git", "-c", "safe.directory=" + str(REPO), "-C", REPO, "rev-parse", "HEAD"
@@ -359,7 +359,15 @@ def main():
     assert not json.loads(
         cli("plugins", "list", "--active", "--json", "--plugins-dir", store)
     )["installations"]
-    cli("plugins", "enable", "apizr-oci", "--version", "0.4.0", "--plugins-dir", store)
+    cli(
+        "plugins",
+        "enable",
+        "outerspace-apizr-oci",
+        "--version",
+        "0.4.0rc1",
+        "--plugins-dir",
+        store,
+    )
     # Existing proof: real HTTPS repository, verified TLS, exact commit, four commands.
     old = os.environ.get("PYTHONDONTWRITEBYTECODE")
     os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
@@ -442,7 +450,7 @@ def main():
                     python,
                     store,
                     work / "operator-publish-only.json",
-                    "apizr-oci",
+                    "outerspace-apizr-oci",
                     "push",
                     ["registry.example/team/service"],
                     command,
@@ -452,7 +460,7 @@ def main():
                         python,
                         store,
                         work,
-                        "apizr-oci",
+                        "outerspace-apizr-oci",
                         "build",
                         document,
                         None,
@@ -463,7 +471,7 @@ def main():
                         python,
                         store,
                         work,
-                        "apizr-oci",
+                        "outerspace-apizr-oci",
                         "build",
                         document,
                         publication_only,
@@ -489,7 +497,7 @@ def main():
                 cli(
                     "plugins",
                     "run",
-                    "apizr-oci",
+                    "outerspace-apizr-oci",
                     "build",
                     "--operator-policy",
                     operator,

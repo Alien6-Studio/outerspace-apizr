@@ -369,7 +369,13 @@ def test_cli_timeout_default_override_and_bounds(monkeypatch, capsys, tmp_path):
         return SimpleNamespace(model_dump_json=lambda: "{}")
 
     monkeypatch.setattr(cli, "run_extension", invoke)
-    args = ["run", "apizr-oci", "build", "--arguments", str(tmp_path / "build.json")]
+    args = [
+        "run",
+        "outerspace-apizr-oci",
+        "build",
+        "--arguments",
+        str(tmp_path / "build.json"),
+    ]
     assert cli.main(args) == 0
     assert cli.main(args + ["--timeout-ms", "360000"]) == 0
     assert captured == [10000, 360000]

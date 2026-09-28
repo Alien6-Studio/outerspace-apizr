@@ -19,7 +19,7 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
     artifacts = sorted(p for p in directory.iterdir() if p.name != ".gitignore")
     stem = project["name"].replace("-", "_")
     core = stem == "outerspace_apizr"
-    package = "apizr" if core else stem
+    package = "apizr" if core else stem.removeprefix("outerspace_")
     expected = {
         f"{stem}-{project['version']}-py3-none-any.whl",
         f"{stem}-{project['version']}.tar.gz",

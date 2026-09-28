@@ -24,17 +24,17 @@ def archive(path, files):
             tar.addfile(member, io.BytesIO(content))
 
 
-def inputs(root, assets):
+def inputs(root, assets, version="0.4.0"):
     candidate = root / "release-candidate"
     (candidate / "dist").mkdir(parents=True)
     for name in assets.PROJECTS:
         for suffix in ("-py3-none-any.whl", ".tar.gz"):
             (
-                candidate / "dist" / (name.replace("-", "_") + "-0.4.0" + suffix)
+                candidate / "dist" / (name.replace("-", "_") + "-" + version + suffix)
             ).write_bytes(b"retained package")
     manifest = {
         "schema": "apizr.release-candidate/v1",
-        "version": "0.4.0",
+        "version": version,
         "commit": "a" * 40,
         "artifacts": [
             assets.record(p, candidate) for p in sorted((candidate / "dist").iterdir())
@@ -100,11 +100,12 @@ def inputs(root, assets):
     return targets
 
 
+@pytest.mark.parametrize("version", ["0.4.0", "0.4.0rc1"])
 def test_stage_preserves_bytes_and_uses_recorded_unique_names(
-    assets, tmp_path, monkeypatch
+    assets, tmp_path, monkeypatch, version
 ):
     downloads = tmp_path / "downloads"
-    targets = inputs(downloads, assets)
+    targets = inputs(downloads, assets, version)
     calls = []
     monkeypatch.setattr(
         assets.subprocess, "run", lambda command, **kw: calls.append(command)
@@ -126,7 +127,7 @@ def test_stage_preserves_bytes_and_uses_recorded_unique_names(
         _, suffix = assets.inspect_target(
             target / "target-export.tar.gz", {"commit": "a" * 40}
         )
-        assert (output / f"apizr-0.4.0-{suffix}.tar.gz").read_bytes() == (
+        assert (output / f"apizr-{version}-{suffix}.tar.gz").read_bytes() == (
             target / "target-export.tar.gz"
         ).read_bytes()
     for line in (output / "SHA256SUMS").read_text().splitlines():

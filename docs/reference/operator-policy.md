@@ -5,7 +5,7 @@
 
 !!! warning "Explicit authorization required"
     Remote `--git` commands and `acquire_snapshot` also require an explicit Git grant.
-    Managed `apizr-oci build`, `apizr-oci push`, `apizr-attest publish` and `apizr-attest attest` calls require
+    Managed `outerspace-apizr-oci build`, `outerspace-apizr-oci push`, `outerspace-apizr-attest publish` and `outerspace-apizr-attest attest` calls require
     `--operator-policy`. An installed, active plugin alone does not permit
     building, publication or signing.
 
@@ -157,7 +157,7 @@ from pathlib import Path
 records = json.loads(Path("installed.json").read_text())["installations"]
 repository = "registry.example:5443/team/service"
 grants = []
-for name, operation in (("apizr-oci", "push"), ("apizr-attest", "publish")):
+for name, operation in (("outerspace-apizr-oci", "push"), ("outerspace-apizr-attest", "publish")):
     record = next(item for item in records if item["name"] == name)
     identity = {key: record[key] for key in (
         "name", "version", "sha256", "lock_sha256", "dependencies"
@@ -190,7 +190,7 @@ permissions, and invalid types are refused. Publication grants retain their exis
 | Field | Meaning |
 | --- | --- |
 | `plugin` | Canonical distribution name, exact version, primary wheel `sha256`, `lock_sha256`, full `dependencies` array |
-| `operation` | `push` for apizr-oci or `publish` for apizr-attest |
+| `operation` | `push` for outerspace-apizr-oci or `publish` for outerspace-apizr-attest |
 | `repository` | Exact registry, optional explicit port, namespace and image repository; no tag, digest or wildcard |
 | `permissions` | Both `registry.read` and `registry.publish` for this operation |
 
@@ -202,7 +202,7 @@ Signing grants add explicit references as described below.
 
 ## Authorize an image build
 
-Managed `apizr-oci build` requires its own `operation: build` grant. The complete
+Managed `outerspace-apizr-oci build` requires its own `operation: build` grant. The complete
 [operator.json example](../examples/operator.json) includes one REST build rule.
 Replace its fictitious plugin and base hashes with reviewed values. To grant MCP
 construction too, add a distinct rule with that interface and its exact inputs/tag.
@@ -245,7 +245,7 @@ extend the policy.
 After preparing [build.json and the inputs](oci-service-plugin.md#build-and-run):
 
 ```sh
-apizr plugins run apizr-oci build --arguments build.json \
+apizr plugins run outerspace-apizr-oci build --arguments build.json \
   --operator-policy operator.json --timeout-ms 360000
 ```
 
@@ -272,9 +272,9 @@ configuration. Prepare [publish.json](attest-oci-artifacts.md) with the already
 signed proof, image digest, public trust and native verification tools.
 
 ```sh
-apizr plugins run apizr-oci push --arguments push.json \
+apizr plugins run outerspace-apizr-oci push --arguments push.json \
   --operator-policy operator.json --timeout-ms 360000
-apizr plugins run apizr-attest publish --arguments publish.json \
+apizr plugins run outerspace-apizr-attest publish --arguments publish.json \
   --operator-policy operator.json --timeout-ms 360000
 ```
 
@@ -297,7 +297,7 @@ no new signature permission.
 `attest` needs its own grant. Installation, activation or a `publish` grant cannot
 authorize use of a signing key. The complete [operator.json](../examples/operator.json)
 includes this third rule, with fictitious identities. Use the exact reviewed
-`apizr-attest` identity and full locked dependency closure from your installation.
+`outerspace-apizr-attest` identity and full locked dependency closure from your installation.
 
 In addition to `plugin`, `operation: attest` and the exact `repository`, specify:
 
@@ -340,13 +340,13 @@ With matching, separately reviewed signing and publication grants:
 
 ```sh
 # Sign and timestamp a verified delivery.
-apizr plugins run apizr-attest attest --arguments attest.json \
+apizr plugins run outerspace-apizr-attest attest --arguments attest.json \
   --operator-policy operator.json --timeout-ms 360000
 # Verify an existing receipt offline; no signing grant or private key is needed.
-apizr plugins run apizr-attest verify --arguments verify.json \
+apizr plugins run outerspace-apizr-attest verify --arguments verify.json \
   --timeout-ms 180000
 # Publish that existing receipt using a distinct publication grant.
-apizr plugins run apizr-attest publish --arguments publish.json \
+apizr plugins run outerspace-apizr-attest publish --arguments publish.json \
   --operator-policy operator.json --timeout-ms 360000
 ```
 
@@ -381,7 +381,7 @@ from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 
 try:
     response = run_extension(
-        "apizr-oci",
+        "outerspace-apizr-oci",
         "push",
         read_arguments(Path("push.json")),
         operator_policy=load_operator_policy(Path("operator.json")),

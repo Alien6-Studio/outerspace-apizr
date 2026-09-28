@@ -1,12 +1,12 @@
 [project]
-name = "apizr-mcp"
-version = "0.4.0"
+name = "outerspace-apizr-mcp"
+version = "0.4.0rc1"
 description = "Optional local stdio MCP server for read-only Apizr analysis and planning"
 requires-python = ">=3.11,<3.15"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
-dependencies = ["outerspace-apizr==0.4.0", "mcp>=2.2,<3"]
+dependencies = ["outerspace-apizr==0.4.0rc1", "mcp>=2.2,<3"]
 
 [build-system]
 requires = ["hatchling>=1.27,<2"]

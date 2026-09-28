@@ -35,9 +35,9 @@ def exercise(python, store, work, builds, command, environment):
         "--wheelhouse",
         house,
         "--plugin",
-        "apizr-oci=" + str(work / "plugin.lock"),
+        "outerspace-apizr-oci=" + str(work / "plugin.lock"),
         "--plugin",
-        "apizr-attest=" + str(lock),
+        "outerspace-apizr-attest=" + str(lock),
         "--commit",
         command(
             "git", "-c", "safe.directory=" + str(REPO), "-C", REPO, "rev-parse", "HEAD"
@@ -68,7 +68,13 @@ def exercise(python, store, work, builds, command, environment):
     assert len({record["environment_id"] for record in records}) == 2
     assert len({len(record["dependencies"]) for record in records}) == 2
     command(
-        *base, "enable", "apizr-attest", "--version", "0.4.0", "--plugins-dir", store
+        *base,
+        "enable",
+        "outerspace-apizr-attest",
+        "--version",
+        "0.4.0rc1",
+        "--plugins-dir",
+        store,
     )
     native = Path("/opt/attest/attest")
     tool = {
@@ -127,7 +133,7 @@ def exercise(python, store, work, builds, command, environment):
         args = [
             *base,
             "run",
-            "apizr-attest",
+            "outerspace-apizr-attest",
             operation,
             *(
                 ["--operator-policy", str(selected or operator)]
@@ -187,7 +193,7 @@ def exercise(python, store, work, builds, command, environment):
             python,
             store,
             work / "publication-only.json",
-            "apizr-attest",
+            "outerspace-apizr-attest",
             "publish",
             [arguments["expected_reference"].split("@")[0]],
             command,
@@ -202,7 +208,7 @@ def exercise(python, store, work, builds, command, environment):
                     python,
                     store,
                     work,
-                    "apizr-attest",
+                    "outerspace-apizr-attest",
                     "attest",
                     arguments,
                     selected,
@@ -291,7 +297,7 @@ def exercise(python, store, work, builds, command, environment):
                         [
                             *base,
                             "run",
-                            "apizr-attest",
+                            "outerspace-apizr-attest",
                             "attest",
                             "--operator-policy",
                             str(blocked_policy),

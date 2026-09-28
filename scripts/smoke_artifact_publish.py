@@ -49,13 +49,13 @@ def exercise(python, store, work, first, second, signing, command, environment):
         "apizr.cli",
         "plugins",
         "run",
-        "apizr-attest",
+        "outerspace-apizr-attest",
     ]
     operator = write_policy(
         python,
         store,
         work / "operator-attest.json",
-        "apizr-attest",
+        "outerspace-apizr-attest",
         "publish",
         [
             common["expected_reference"].split("@")[0],
@@ -118,7 +118,7 @@ def exercise(python, store, work, first, second, signing, command, environment):
             python,
             store,
             work,
-            "apizr-attest",
+            "outerspace-apizr-attest",
             "publish",
             publish,
             None,
@@ -129,7 +129,7 @@ def exercise(python, store, work, first, second, signing, command, environment):
             python,
             store,
             work,
-            "apizr-attest",
+            "outerspace-apizr-attest",
             "publish",
             publish
             | {
@@ -146,7 +146,7 @@ def exercise(python, store, work, first, second, signing, command, environment):
             python,
             store,
             work,
-            "apizr-attest",
+            "outerspace-apizr-attest",
             "publish",
             publish,
             work / "operator-signing.json",
