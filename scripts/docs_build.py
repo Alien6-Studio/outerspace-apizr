@@ -47,7 +47,7 @@ def on_config(config):
         "source_dirty": dirty,
         "status": "prerelease",
         "target_version": "0.4.0rc1",
-        "stable_release": "0.4.0",
+        "stable_release": "0.3.0",
     }
     return config
 
