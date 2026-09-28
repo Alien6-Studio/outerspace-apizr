@@ -220,4 +220,6 @@ Contributors should follow [development and checks](developer-guide/setup.md).
 [Manual wheel preparation](../development/0.4.md#install-a-development-wheel)
 and the guides' advanced sections remain available for custom evaluation builds.
 Those builds have their own identities and cannot replace approved release bytes.
-See [migration](migrate-0.4.md) before replacing development locks, grants or activations.
+Review [plugin locks](../reference/project-plugin-locks.md) and
+[operator permissions](../reference/operator-policy.md) before replacing
+development locks, grants or activations.

@@ -264,8 +264,8 @@ def development(cli: Path, repository: Path) -> None:
 
 
 def migration(cli: Path, repository: Path) -> None:
-    """Execute migration Markdown with an installed minimal core outside checkout."""
-    guide = (repository / "docs/getting-started/migrate-0.4.md").read_text()
+    """Execute the current authorization example with an installed minimal core outside checkout."""
+    guide = (repository / "docs/reference/operator-policy.md").read_text()
     blocks = dict(
         re.findall(r"<!-- migration:([a-z]+) -->\s*```sh\n(.*?)```", guide, re.S)
     )
@@ -280,7 +280,7 @@ def migration(cli: Path, repository: Path) -> None:
         for name in ("prepare", "refuse", "generate", "python"):
             result = subprocess.run(
                 ["/bin/sh", "-c", "set -eu\n" + blocks[name]],
-                cwd=parent if name == "prepare" else parent / "migration-demo",
+                cwd=parent if name == "prepare" else parent / "permissions-demo",
                 env=env,
                 capture_output=True,
                 text=True,
@@ -298,7 +298,7 @@ def migration(cli: Path, repository: Path) -> None:
                     "CLI/Python parity: plan, REST bundle and MCP bundle"
                     in result.stdout
                 )
-        root = parent / "migration-demo/build"
+        root = parent / "permissions-demo/build"
         schema = json.loads((root / "rest/openapi.json").read_text())
         assert {p for p in schema["paths"] if p.startswith("/capabilities/")} == {
             "/capabilities/api.quote",

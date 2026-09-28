@@ -76,8 +76,7 @@ Single-source `inspect`, `generate rest/mcp` and `execute` remain supported.
 The [historical pipeline](https://apizr.outerspace.sh/getting-started/user-guide/apizr/)
 is a separate compatibility path. See
 [the full journey](https://apizr.outerspace.sh/getting-started/introduction/#compatibility-and-limits)
-for dependency, resource and exposure limits, and
-[migration guide](https://apizr.outerspace.sh/getting-started/migrate-0.4/) for existing installations.
+for dependency, resource and exposure limits.
 
 [Watch the demo](https://apizr.outerspace.sh/#watch-apizr-in-action) ·
 [Architecture](https://apizr.outerspace.sh/architecture/overview/) ·

@@ -150,7 +150,6 @@ Only `api.quote` and `inventory.available` appear in REST/MCP.
 | Use fresh local/OCI workers | [Governed repository execution](../architecture/governed-repository-runtime.md) |
 | Keep single-source workflows | [REST](user-guide/rest.md) / [MCP](user-guide/mcp.md) |
 | Use the historical notebook/script pipeline | [Legacy guide](user-guide/apizr.md) |
-| Adapt an older installation | [Migration guide](migrate-0.4.md) |
 
 Direct state persists in the transport interpreter. Governed local state resets in
 a fresh process per call; governed OCI state resets in a fresh container per call.

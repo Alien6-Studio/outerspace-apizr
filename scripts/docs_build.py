@@ -11,7 +11,6 @@ CRITICAL = {
     "getting-started/quickstart-0.4/index.html": "The walkthrough is now at",
     "contributing/publish-0.4/index.html": "Release attachment inventory",
     "releases/0.4.0/index.html": "Core published on PyPI; plugin publication pending",
-    "getting-started/migrate-0.4/index.html": "Migrate from 0.3 to 0.4",
     "reference/operator-policy/index.html": "receipt.sign",
     "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
     "reference/project-plugin-locks/index.html": "Project plugin declarations and locks",

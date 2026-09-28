@@ -5,8 +5,7 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 ## Prepare the 0.4.0 delivery
 
-The [release notes](../releases/0.4.0.md) and
-[migration guide](../getting-started/migrate-0.4.md) describe the integrated scope.
+The [release notes](../releases/0.4.0.md) describe the integrated scope.
 The original core 0.4.0 is public. The corrected coordinated delivery is being
 qualified; these notes do not prove that its replacement archives are public.
 The coordinated core and optional plugin candidates declare `0.4.0rc1`; publication
@@ -29,7 +28,7 @@ Before tagging the exact candidate:
   change the stable installation guidance, Quickstart pins and documentation build
   metadata to the verified 0.4.0rc1 delivery; retain historical 0.3.0 release instructions.
 - Qualify the public documentation through the existing Pages/HTTPS checks,
-  including the release notes and migration page in `build-info.json`.
+  including the release notes in `build-info.json`.
 
 The [0.4.1/0.4.2 deferrals](../development/0.4.md#delivery-scope-and-explicit-deferrals)
 remain explicit. Do not add those features to this release-preparation step.

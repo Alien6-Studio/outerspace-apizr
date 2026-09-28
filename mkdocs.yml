@@ -163,7 +163,6 @@ nav:
       - Behavior contract: architecture/legacy-behavior-contract.md
   - Releases:
       - 0.4.0: releases/0.4.0.md
-      - Migrate from 0.3 to 0.4: getting-started/migrate-0.4.md
       - 0.3.0: releases/0.3.0.md
       - 0.2.1: releases/0.2.1.md
       - 0.2.0: releases/0.2.0.md

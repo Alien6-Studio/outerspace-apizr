@@ -128,24 +128,24 @@ def check(site: Path) -> None:
             "0.4.1",
             "0.4.2",
         ),
-        "getting-started/migrate-0.4/index.html": (
-            "operator_policy_required",
-            "CLI/Python parity: plan, REST bundle and MCP bundle",
-            "git.fetch",
-            "source.analyze",
-            "structuredContent",
-        ),
     }.items():
         text = "".join(pages[name].text)
         for token in required:
             if token not in text:
-                failures.append(f"{name}: missing release/migration guidance: {token}")
+                failures.append(f"{name}: missing release guidance: {token}")
+    permissions = "".join(pages["reference/operator-policy/index.html"].text)
+    for token in (
+        "operator_policy_required",
+        "CLI/Python parity: plan, REST bundle and MCP bundle",
+        "source.analyze",
+    ):
+        if token not in permissions:
+            failures.append(f"Current source permission example is missing: {token}")
     home = (site / "index.html").read_text()
     for required in (
         "getting-started/quickstart/",
         "getting-started/install/",
         "releases/0.4.0/",
-        "getting-started/migrate-0.4/",
         "package availability",
         "Choose your next step",
         "assets/images/illustration.png",

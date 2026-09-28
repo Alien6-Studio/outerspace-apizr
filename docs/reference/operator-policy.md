@@ -437,3 +437,126 @@ infer the authority under which those bytes were obtained. `render_bundle` uses
 retained bytes without rereading sources. This is not universal protection against
 arbitrary Python executed with the user's rights. Verification and plugin lifecycle
 operations retain their controls. Publication through MCP is not added.
+
+## Verify local source permissions
+
+The following example is self-contained. Start in your working directory with the
+Apizr environment activated. Use an absent `permissions-demo` directory; the example
+keeps generated files outside the source directory.
+
+First create two ordinary Python functions and the policies. **Readiness** assesses
+the code evidence, **exposure** selects public functions, and **operator authority**
+permits reading this exact source root. They are separate inputs.
+
+<!-- migration:prepare -->
+```sh
+mkdir permissions-demo
+cd permissions-demo
+mkdir repository
+cat > repository/api.py <<'PY'
+def quote(unit_price: float, quantity: int = 1) -> float:
+    return unit_price * quantity
+PY
+cat > repository/inventory.py <<'PY'
+def available(stock: int, requested: int = 1) -> bool:
+    return stock >= requested
+PY
+cat > readiness.json <<'JSON'
+{"execution":{"modes":["direct"]}}
+JSON
+cat > exposure.json <<'JSON'
+{"selection":{"include":["python:api:quote","python:inventory:available"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}
+JSON
+python - <<'PY'
+import json
+from pathlib import Path
+root = str(Path("repository").resolve())
+Path("operator.json").write_text(json.dumps({
+    "schema": "apizr.operator-policy/v1",
+    "grants": [{
+        "adapter": "repository", "operation": "analyze",
+        "target": {"kind": "local", "root": root},
+        "permissions": ["source.analyze"]
+    }]
+}))
+PY
+```
+<!-- /migration:prepare -->
+
+`operator.json` authorizes only that canonical absolute repository root.
+It does not authorize a neighboring directory, follow symlinks or make functions
+public. For your own code, explicitly choose the root and selected capability IDs;
+do not accept an operator policy supplied by the project or a remote client.
+
+A repository command without the grant fails before source reads:
+
+<!-- migration:refuse -->
+```sh
+apizr expose plan repository --readiness-policy readiness.json --policy exposure.json --plan
+```
+<!-- /migration:refuse -->
+
+Expect exit **2**, a structured `operator_policy_required` refusal on stderr and
+no plan on stdout. Add the explicit policy to plan and generate:
+
+<!-- migration:generate -->
+```sh
+apizr expose plan repository --operator-policy operator.json --readiness-policy readiness.json --policy exposure.json --plan > plan.json
+apizr expose build rest repository --operator-policy operator.json --readiness-policy readiness.json --policy exposure.json --output-dir build/rest
+apizr expose build mcp repository --operator-policy operator.json --readiness-policy readiness.json --policy exposure.json --output-dir build/mcp
+```
+<!-- /migration:generate -->
+
+Expect a plan selecting `python:api:quote` and `python:inventory:available`, a REST
+bundle with `openapi.json`, and an MCP bundle with `mcp-tools.json` and `server.py`.
+Output directories must be absent or empty. Generation already performs the
+necessary analysis and planning; separate `scan`, `graph` and `readiness` commands
+are optional diagnostics, not prerequisites. They accept the same
+`--operator-policy operator.json` option.
+
+These commands generate files without running the project. To serve and call
+them, install each bundle's `requirements.txt` in its own environment and follow
+the [REST/MCP bundle instructions](../getting-started/user-guide/exposure.md#build-a-direct-repository-bundle). The expected
+function results are `quote(12.5, 2) = 25.0` and `available(10, 3) = true`.
+Execution requires trusted source and dependencies; an analysis grant is not
+an execution safety guarantee.
+
+## Pass the same authority from Python
+
+There is no CLI subprocess or implicit policy-file lookup. Load the policy once
+and pass it to the shared compiler. From `permissions-demo`, the following produces
+the same plan and bundle bytes as the preceding CLI commands:
+
+<!-- migration:python -->
+```sh
+python - <<'PY'
+from pathlib import Path
+from apizr.compiler import prepare_exposure, render_bundle
+from apizr.exposure import ExposurePolicy, plan_bytes
+from apizr.operator_policy import load_operator_policy
+from apizr.repository_readiness import RepositoryReadinessPolicy
+
+prepared = prepare_exposure(
+    Path("repository"),
+    operator_policy=load_operator_policy(Path("operator.json")),
+    readiness_policy=RepositoryReadinessPolicy.model_validate_json(
+        Path("readiness.json").read_bytes()
+    ),
+    policy=ExposurePolicy.model_validate_json(Path("exposure.json").read_bytes()),
+)
+assert plan_bytes(prepared.plan) == Path("plan.json").read_bytes()
+for interface in ("rest", "mcp"):
+    bundle = render_bundle(prepared, interface=interface)
+    assert all(
+        (Path("build") / interface / name).read_bytes() == data
+        for name, data in bundle.items()
+    )
+print("CLI/Python parity: plan, REST bundle and MCP bundle")
+PY
+```
+<!-- /migration:python -->
+
+`prepare_exposure` analyzes once; `render_bundle` uses its retained sources.
+The [compiler reference](compiler-api.md) covers writing, refusals
+and the lower-level filesystem APIs. Already supplied in-memory data is not a
+universal access-control boundary for arbitrary Python code.
