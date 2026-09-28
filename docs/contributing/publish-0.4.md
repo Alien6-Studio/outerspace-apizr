@@ -116,7 +116,7 @@ git tag v0.4.0rc1 "$RELEASE_COMMIT"
 git push origin refs/tags/v0.4.0rc1
 gh release create v0.4.0rc1 --repo Alien6-Studio/outerspace-apizr --verify-tag --title 'Apizr 0.4.0rc1' --notes-file docs/releases/0.4.0.md --prerelease --draft
 gh release upload v0.4.0rc1 approved-assets/* --repo Alien6-Studio/outerspace-apizr
-gh workflow run publish-pypi.yml --repo Alien6-Studio/outerspace-apizr --ref v0.4.0rc1 -f ci_run_id="$REVIEWED_MASTER_RUN_ID"
+gh workflow run publish-pypi.yml --repo Alien6-Studio/outerspace-apizr --ref v0.4.0rc1 -f release_tag=v0.4.0rc1 -f ci_run_id="$REVIEWED_MASTER_RUN_ID"
 ```
 
 Prepare the public release description from the reviewed notes with the actual
@@ -183,3 +183,15 @@ use `--clobber` or recreate the release. Attach only missing identical resources
    public package/plugin calls, resource downloads and deployed HTTPS content
    are verified. The documentation commit may be newer than the immutable
    release commit; it never reconstructs or replaces published packages.
+
+### Resume after a publication-script correction
+
+If an immutable release tag predates a correction to publication tooling, merge
+and qualify the tooling fix on master, then create a separate
+`vVERSION-publishN` tag on that qualified commit. Dispatch that tag with
+`release_tag=vVERSION` and the original reviewed master CI run. The publisher
+resolves the existing artifact tag, verifies its exact source and provenance,
+and signs and uploads the original archives. It never rebuilds them or moves
+the original tag. Both dispatch references remain subject to the existing
+protected `v*` environment rules and maintainer review. A publication tag is
+an operations record, not another package version or release.

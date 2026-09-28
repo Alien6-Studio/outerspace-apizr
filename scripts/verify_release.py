@@ -40,10 +40,29 @@ def validate_run(run: dict, sha: str, workflow: str) -> None:
         raise ValueError("Unexpected CI repository")
 
 
+def validate_release_tag(tag: str, version: str, sha: str) -> None:
+    """Bind a resumed publication to the existing remote tag, never retag it."""
+    if tag != f"v{version}":
+        raise ValueError("Release tag must match the source version")
+    target = github(f"git/ref/tags/{tag}")["object"]
+    for _ in range(5):
+        if target["type"] == "commit":
+            if target["sha"] != sha:
+                raise ValueError("Checkout must equal the immutable release tag")
+            return
+        if target["type"] != "tag":
+            break
+        target = github(f"git/tags/{target['sha']}")["object"]
+    raise ValueError("Release tag must resolve to a commit")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-id", required=True, type=int)
     parser.add_argument("--github-output", type=Path)
+    parser.add_argument(
+        "--release-tag", help="Existing artifact tag to publish without rebuilding"
+    )
     parser.add_argument("--coordinated", action="store_true")
     parser.add_argument("--source-only", action="store_true")
     parser.add_argument(
@@ -56,11 +75,19 @@ def main() -> None:
     version = project["version"]
     if not re.fullmatch(r"\d+\.\d+\.\d+(?:rc[1-9]\d*)?", version):
         raise ValueError("Expected final or release-candidate version")
-    if not args.preflight and os.environ.get("GITHUB_REF") != f"refs/tags/v{version}":
-        raise ValueError("Dispatch must run on the matching immutable version tag")
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    if not args.preflight and sha != os.environ.get("GITHUB_SHA"):
-        raise ValueError("Checkout must equal the dispatched tag commit")
+    if args.release_tag:
+        if args.preflight or not re.fullmatch(
+            rf"refs/tags/v{re.escape(version)}(?:-publish[1-9]\d*)?",
+            os.environ.get("GITHUB_REF", ""),
+        ):
+            raise ValueError("Publication must run on a matching protected version tag")
+        validate_release_tag(args.release_tag, version, sha)
+    elif not args.preflight:
+        if os.environ.get("GITHUB_REF") != f"refs/tags/v{version}":
+            raise ValueError("Dispatch must run on the matching immutable version tag")
+        if sha != os.environ.get("GITHUB_SHA"):
+            raise ValueError("Checkout must equal the dispatched tag commit")
     validate_run(github(f"actions/runs/{args.run_id}"), sha, "ci.yml")
     if args.coordinated:
         jobs = github(f"actions/runs/{args.run_id}/jobs?per_page=100")["jobs"]
@@ -114,6 +141,10 @@ def main() -> None:
             )
     if args.github_output:
         with args.github_output.open("a") as output:
+            if args.release_tag:
+                output.write(
+                    f"release_sha={sha}\nrelease_tag={args.release_tag}\nrelease_version={version}\n"
+                )
             output.write(f"security_run_id={verified_runs['security.yml']}\n")
     if args.preflight:
         print("Preflight only: no tag, upload or publication authorization")

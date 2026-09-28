@@ -91,3 +91,88 @@ def test_failed_signer_removes_key_and_never_produces_archive(tmp_path, monkeypa
         )
     assert not list((tmp_path / ".attest/keys").iterdir())
     assert not (tmp_path / "output").exists()
+
+
+@pytest.mark.parametrize(
+    "fault", [None, "old_names", "missing", "extra", "version", "evidence"]
+)
+def test_receipt_binds_all_distribution_names_from_release_source(
+    tmp_path, monkeypatch, fault
+):
+    import json
+    import shutil
+    import sys
+
+    source = tmp_path / "source"
+    shutil.copytree(release.ROOT / ".attest", source / ".attest")
+    dist, evidence = tmp_path / "dist", tmp_path / "evidence"
+    dist.mkdir()
+    evidence.mkdir()
+    projects = [
+        (source, "outerspace-apizr"),
+        *(
+            (source / "plugins" / name, f"outerspace-apizr-{name}")
+            for name in ("oci", "attest", "mcp")
+        ),
+    ]
+    for folder, name in projects:
+        folder.mkdir(parents=True, exist_ok=True)
+        version = (
+            "0.4.0rc2" if fault == "version" and name.endswith("mcp") else "0.4.0rc1"
+        )
+        (folder / "pyproject.toml").write_text(
+            f'[project]\nname="{name}"\nversion="{version}"\n'
+        )
+        wheel_name = (
+            name.removeprefix("outerspace-")
+            if fault == "old_names" and folder != source
+            else name
+        )
+        for suffix in ("-py3-none-any.whl", ".tar.gz"):
+            (dist / f"{wheel_name.replace('-', '_')}-0.4.0rc1{suffix}").write_bytes(
+                b"reviewed bytes"
+            )
+    if fault == "missing":
+        next(dist.iterdir()).unlink()
+    if fault == "extra":
+        (dist / "unreviewed.whl").write_bytes(b"extra")
+    (evidence / "ci-evidence.tar.gz").write_bytes(b"evidence")
+    if fault != "evidence":
+        (evidence / "build-provenance.sigstore.json").write_bytes(b"provenance")
+    workspace = tmp_path / "workspace"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "attest_release",
+            "--source-root",
+            str(source),
+            "--attest",
+            "/unused/attest",
+            "--dist",
+            str(dist),
+            "--evidence",
+            str(evidence),
+            "--workspace",
+            str(workspace),
+            "--output",
+            str(tmp_path / "output"),
+            "--commit",
+            "a" * 40,
+            "--ci-run",
+            "123",
+        ],
+    )
+    signed = []
+    monkeypatch.setattr(release, "sign_delivery", lambda *args: signed.append(args))
+    if fault:
+        with pytest.raises(ValueError):
+            release.main()
+        assert signed == []
+    else:
+        release.main()
+        assert signed[0][-1] == source
+        manifest = json.loads((workspace / "delivery/manifest.json").read_text())
+        assert len(manifest["distributions"]) == 8
+        assert set(manifest["distributions"]) == {p.name for p in dist.iterdir()}
+        assert manifest["source_commit"] == "a" * 40

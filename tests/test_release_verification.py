@@ -204,7 +204,7 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
         assert f"inputs.package == '{name}'" in publisher["if"]
         assert "inputs.package == 'all'" in publisher["if"]
         assert "needs.verify.outputs." in publisher["if"]
-    assert jobs["verify-public"]["needs"] == "publish"
+    assert jobs["verify-public"]["needs"] == ["publish", "verify"]
     assert jobs["archive-evidence"]["needs"] == "verify-public"
     assert jobs["archive-evidence"]["if"] == "inputs.package == 'all'"
     provenance = next(
@@ -230,8 +230,9 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
     "fault", [None, "missing", "pending", "failed", "duplicate", "version"]
 )
 @pytest.mark.parametrize("release_version", ["0.4.0", "0.4.0rc1"])
+@pytest.mark.parametrize("resume", [False, True])
 def test_coordinated_release_requires_every_exact_target(
-    tmp_path, monkeypatch, fault, release_version
+    tmp_path, monkeypatch, fault, release_version, resume
 ):
     import sys
 
@@ -248,9 +249,14 @@ def test_coordinated_release_requires_every_exact_target(
         )
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("GITHUB_REF", f"refs/tags/v{release_version}")
-    monkeypatch.setenv("GITHUB_SHA", "abc")
+    monkeypatch.setenv("GITHUB_SHA", "publisher-commit" if resume else "abc")
+    if resume:
+        monkeypatch.setenv("GITHUB_REF", f"refs/tags/v{release_version}-publish1")
     monkeypatch.setattr(
-        sys, "argv", ["verify", "--run-id", "123", "--coordinated", "--source-only"]
+        sys,
+        "argv",
+        ["verify", "--run-id", "123", "--coordinated", "--source-only"]
+        + (["--release-tag", f"v{release_version}"] if resume else []),
     )
     monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
     names = ["distributions", "release-delivery"] + [
@@ -272,6 +278,8 @@ def test_coordinated_release_requires_every_exact_target(
         jobs.append(jobs[-1])
 
     def github(path):
+        if path == f"git/ref/tags/v{release_version}":
+            return {"object": {"type": "commit", "sha": "abc"}}
         if "/jobs?" in path:
             return {"jobs": jobs}
         if path == "actions/runs/123":
@@ -339,3 +347,127 @@ def test_read_only_preflight_needs_no_tag_but_still_validates_source(
         )
         with pytest.raises(ValueError, match="successful master push run"):
             release.main()
+
+
+@pytest.mark.parametrize(
+    "fault", [None, "version", "commit", "tree", "cycle", "annotated"]
+)
+def test_resumed_publication_is_bound_to_existing_remote_tag(monkeypatch, fault):
+    def github(path):
+        if path == "git/ref/tags/v0.4.0rc1":
+            return {
+                "object": {
+                    "type": "tag"
+                    if fault in ("annotated", "cycle")
+                    else "tree"
+                    if fault == "tree"
+                    else "commit",
+                    "sha": "wrong" if fault == "commit" else "abc",
+                }
+            }
+        assert path == "git/tags/abc"
+        return {
+            "object": {"type": "tag" if fault == "cycle" else "commit", "sha": "abc"}
+        }
+
+    monkeypatch.setattr(release, "github", github)
+    tag = "v0.4.0rc2" if fault == "version" else "v0.4.0rc1"
+    if fault in (None, "annotated"):
+        release.validate_release_tag(tag, "0.4.0rc1", "abc")
+    else:
+        with pytest.raises(ValueError):
+            release.validate_release_tag(tag, "0.4.0rc1", "abc")
+
+
+def test_resumed_workflow_keeps_source_and_publisher_separate():
+    import yaml
+
+    root = Path(__file__).resolve().parents[1]
+    workflow = yaml.load(
+        (root / ".github/workflows/publish-pypi.yml").read_text(),
+        Loader=yaml.BaseLoader,
+    )
+    jobs = workflow["jobs"]
+    source = next(
+        step
+        for step in jobs["verify"]["steps"]
+        if step.get("with", {}).get("path") == "release-source"
+    )
+    assert source["with"]["ref"] == "${{ inputs.release_tag }}"
+    gate = next(step for step in jobs["verify"]["steps"] if step.get("id") == "gates")
+    assert gate["working-directory"] == "release-source"
+    assert '--release-tag "$RELEASE_TAG"' in gate["run"]
+    for job in ("receipt",):
+        source = next(
+            step
+            for step in jobs[job]["steps"]
+            if step.get("with", {}).get("path") == "release-source"
+        )
+        assert source["with"]["ref"] == "${{ needs.verify.outputs.release_sha }}"
+    receipt = next(
+        step
+        for step in jobs["receipt"]["steps"]
+        if step.get("name") == "Sign, timestamp and verify the exact delivery"
+    )
+    assert "--source-root release-source" in receipt["run"]
+    assert '--commit "$RELEASE_SHA"' in receipt["run"]
+
+
+@pytest.mark.parametrize(
+    "dispatch_ref",
+    [
+        "refs/heads/master",
+        "refs/heads/feature",
+        "refs/tags/v0.4.1-publish1",
+        "refs/tags/v0.4.0rc1-publish0",
+    ],
+)
+def test_resume_refuses_unrelated_or_unprotected_dispatch(
+    tmp_path, monkeypatch, dispatch_ref
+):
+    import sys
+
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname="outerspace-apizr"\nversion="0.4.0rc1"\n'
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GITHUB_REF", dispatch_ref)
+    monkeypatch.setattr(
+        release.subprocess, "check_output", lambda *args, **kwargs: "abc\n"
+    )
+    monkeypatch.setattr(
+        sys, "argv", ["verify", "--run-id", "123", "--release-tag", "v0.4.0rc1"]
+    )
+    monkeypatch.setattr(
+        release,
+        "github",
+        lambda path: pytest.fail("must reject before accessing release data"),
+    )
+    with pytest.raises(ValueError, match="matching protected version tag"):
+        release.main()
+
+
+def test_public_archive_check_does_not_checkout_artifact_source():
+    import yaml
+
+    root = Path(__file__).resolve().parents[1]
+    workflow = yaml.load(
+        (root / ".github/workflows/publish-pypi.yml").read_text(),
+        Loader=yaml.BaseLoader,
+    )
+    steps = workflow["jobs"]["verify-public"]["steps"]
+    checkouts = [
+        step for step in steps if step.get("uses", "").startswith("actions/checkout@")
+    ]
+    assert len(checkouts) == 1
+    assert checkouts[0]["with"] == {"persist-credentials": "false"}
+    public = next(
+        step
+        for step in steps
+        if step.get("name") == "Download and compare published archives"
+    )
+    assert (
+        public["env"]["RELEASE_VERSION"]
+        == "${{ needs.verify.outputs.release_version }}"
+    )
+    assert '--version "$RELEASE_VERSION"' in public["run"]

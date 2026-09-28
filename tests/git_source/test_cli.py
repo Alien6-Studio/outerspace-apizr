@@ -4,6 +4,7 @@ import signal
 import subprocess
 import sys
 import time
+from pathlib import Path
 
 import pytest
 from analysis_authorization import authorized_main as main
@@ -187,7 +188,8 @@ def test_cli_interrupt_is_clean(command, tmp_path, scratch, remote, tls):
             sys.executable,
             "-I",
             "-c",
-            "from apizr.cli import main; import sys; sys.exit(main(sys.argv[1:]))",
+            f"import sys; sys.path.insert(0, {str(Path(__file__).parents[1])!r}); "
+            "from git_source.cleanup_observation import main; sys.exit(main())",
             *command,
             *operator_flags(tmp_path, "https://example.com/a", "main"),
             "--git",
@@ -210,7 +212,7 @@ def test_cli_interrupt_is_clean(command, tmp_path, scratch, remote, tls):
         assert ready.exists()
         process.send_signal(signal.SIGINT)
         out, error = process.communicate(timeout=5)
-        assert process.returncode == 130
+        assert process.returncode == 130, (out, error)
         assert not out and b"git_cancelled" in error and b"Traceback" not in error
         pid = int(ready.read_text())
         with pytest.raises(ProcessLookupError):

@@ -17,6 +17,7 @@ TESTS = [
 
 
 GIT_WORKER_TESTS = [
+    "tests/git_source/test_cli.py::test_cli_interrupt_is_clean",
     "tests/git_source/test_cleanup.py",
     *[
         "tests/git_source/test_ssh.py::test_authentication_refusals_clean_and_recover["
@@ -39,7 +40,7 @@ def main() -> int:
     )
     args = parser.parse_args()
     tests = GIT_WORKER_TESTS if args.suite == "git-worker" else TESTS
-    expected_tests = 9 if args.suite == "git-worker" else 7
+    expected_tests = 11 if args.suite == "git-worker" else 7
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     results: list[dict[str, object]] = []
