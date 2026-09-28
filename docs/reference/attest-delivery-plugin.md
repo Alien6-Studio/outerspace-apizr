@@ -43,26 +43,26 @@ uv build --wheel plugins/attest --out-dir "$work/wheels"
 cd "$work"
 uv venv --seed --python 3.14 prepare
 prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
-  wheels/outerspace_apizr-0.4.0rc1-py3-none-any.whl \
-  wheels/outerspace_apizr_oci-0.4.0rc1-py3-none-any.whl \
-  wheels/outerspace_apizr_attest-0.4.0rc1-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.1rc1-py3-none-any.whl \
+  wheels/outerspace_apizr_oci-0.4.1rc1-py3-none-any.whl \
+  wheels/outerspace_apizr_attest-0.4.1rc1-py3-none-any.whl
 uv venv --python 3.14 core
 uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.0rc1-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.1rc1-py3-none-any.whl
 ```
 
 Use the complete `lock_wheels.py` example on the linked OCI page to create a
 reviewed lock for this wheelhouse. All plugin dependencies go into the plugin's
 own environment; the core stays minimal. No additional mandatory core dependency
-is introduced. The plugin versions remain `0.4.0rc1`, built locally, not released.
+is introduced. The plugin versions remain `0.4.1rc1`, built locally, not released.
 
 ```sh
 prepare/bin/python lock_wheels.py wheels attest.lock
-sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_attest-0.4.0rc1-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_attest-0.4.0rc1-py3-none-any.whl \
+sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_attest-0.4.1rc1-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/outerspace_apizr_attest-0.4.1rc1-py3-none-any.whl \
   --sha256 "$sha" --requirements attest.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-attest --version 0.4.0rc1 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-attest --version 0.4.1rc1 --plugins-dir "$work/plugins"
 ```
 
 

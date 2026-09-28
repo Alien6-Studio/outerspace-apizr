@@ -104,6 +104,8 @@ def apply_project(
     from apizr.project import load_project
 
     config = load_project(args.project) if args.project is not None else None
+    if exposure:
+        args.application = config.application if config is not None else None
     scan = config.scan if config is not None else ScanPolicy()
     graph = config.graph if config is not None else GraphPolicy()
     for name in (

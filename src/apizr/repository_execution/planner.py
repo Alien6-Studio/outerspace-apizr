@@ -62,6 +62,8 @@ def worker_plan(
     context: Literal["local-process", "oci-container"] = "local-process",
 ) -> RepositoryRuntimePlan:
     contract = RepositoryInterface.model_validate(contract.model_dump(mode="json"))
+    if contract.application is not None:
+        raise PolicyRefused("application_inputs_require_direct_service")
     policy = ExecutionPolicy.model_validate(policy.model_dump(mode="json"))
     check_controls(policy, BackendCapabilities(available=True))
     records = evidence(contract, exposure, context)

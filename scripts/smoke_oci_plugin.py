@@ -364,7 +364,7 @@ def main():
         "enable",
         "outerspace-apizr-oci",
         "--version",
-        "0.4.0rc1",
+        "0.4.1rc1",
         "--plugins-dir",
         store,
     )
@@ -382,6 +382,25 @@ def main():
             os.environ.pop("PYTHONDONTWRITEBYTECODE", None)
         else:
             os.environ["PYTHONDONTWRITEBYTECODE"] = old
+    # Application portability reuses the same installed core/plugin and builder.
+    # The registry fixture has separate daemon networking; this proof runs in
+    # the existing service-images job, without any external registry publication.
+    if os.environ.get("APIZR_REGISTRY_PROOF") != "1":
+        from application_portability_proof import exercise as application_portability
+
+        application_portability(
+            REPO,
+            work,
+            python,
+            store,
+            command,
+            engine,
+            base,
+            platform,
+            docker,
+            args.docker_socket,
+            args.buildx,
+        )
     images = []
     containers = []
     results = []

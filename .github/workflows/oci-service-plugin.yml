@@ -37,6 +37,7 @@ jobs:
             ${{ runner.temp }}/oci-service-proof/operator-git-refusals.json
             ${{ runner.temp }}/oci-service-proof/operator-build*.json
             ${{ runner.temp }}/oci-service-proof/results.json
+            ${{ runner.temp }}/oci-service-proof/application-portability.json
             ${{ runner.temp }}/oci-service-proof/interruption.json
             ${{ runner.temp }}/oci-service-proof/refusals.json
             ${{ runner.temp }}/oci-service-proof/*-build.json

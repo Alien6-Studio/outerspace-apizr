@@ -8,6 +8,7 @@ from typing import Literal
 
 from pydantic import Field, field_validator
 
+from apizr.application import ApplicationConfig
 from apizr.capabilities.types import ValueModel
 from apizr.config_files import read_regular
 from apizr.graph import GraphPolicy
@@ -58,6 +59,7 @@ class ProjectConfig(ValueModel):
 
     schema_version: Literal["apizr.project/v1"]
     root: Path = Path(".")
+    application: ApplicationConfig = Field(default_factory=ApplicationConfig)
     plugins: tuple[PluginDeclaration, ...] = Field(default=(), max_length=32)
 
     @field_validator("plugins")

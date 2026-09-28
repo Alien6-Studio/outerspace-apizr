@@ -136,6 +136,7 @@ def main(argv: Sequence[str]) -> int:
                 root,
                 operator_policy=authority,
                 policy=policy,
+                application=args.application,
                 scan_policy=scan_policy(args),
                 graph_policy=graph_policy(args),
                 readiness_policy=readiness_policy,

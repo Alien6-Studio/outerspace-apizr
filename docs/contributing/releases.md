@@ -11,10 +11,10 @@ That tag, release and its artifacts remain immutable. The earlier core-only
 fact does not authorize another final 0.4.0 publication.
 
 The next trajectory is **0.4.0rc1 → 0.4.1rc1 / rc2 … → 0.4.1 → 0.4.2**.
-There will be no new final 0.4.0. Package versions remain 0.4.0rc1 during this
-governance transition; promote all four versions only when preparing an actual
-qualified 0.4.1 candidate. Verification builds are never replacement published
-artifacts, even when their metadata still names the inherited version.
+There will be no new final 0.4.0. The first functional increment sets all four development versions to
+**0.4.1rc1**. Ordinary PR/CI artifacts are development qualification bytes, not a
+published RC. An immutable RC tag and publication still require explicit
+authorization after qualification of the retained exact artifacts.
 
 Follow the [release-branch model](release-branches.md): feature PRs target
 `release/0.4.1`; `master` remains the last integrated qualified baseline.

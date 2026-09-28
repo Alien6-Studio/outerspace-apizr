@@ -40,22 +40,22 @@ uv build --wheel plugins/oci --out-dir "$work/plugin-wheels"
 cd "$work"
 uv venv --seed --python 3.14 prepare
 prepare/bin/python -m pip download --only-binary=:all: --dest plugin-wheels \
-  plugin-wheels/outerspace_apizr-0.4.0rc1-py3-none-any.whl \
-  plugin-wheels/outerspace_apizr_oci-0.4.0rc1-py3-none-any.whl
+  plugin-wheels/outerspace_apizr-0.4.1rc1-py3-none-any.whl \
+  plugin-wheels/outerspace_apizr_oci-0.4.1rc1-py3-none-any.whl
 uv venv --python 3.14 core
 uv pip install --python core/bin/python --offline --no-index \
-  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.0rc1-py3-none-any.whl
+  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.1rc1-py3-none-any.whl
 ```
 
 Create `lock_wheels.py` using the [shared wheel-lock recipe](#prepare-server-dependency-locks) below before continuing.
 
 ```sh
 prepare/bin/python lock_wheels.py plugin-wheels plugin.lock
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/outerspace_apizr_oci-0.4.0rc1-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.0rc1-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/outerspace_apizr_oci-0.4.1rc1-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.1rc1-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse plugin-wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-oci --version 0.4.0rc1 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-oci --version 0.4.1rc1 --plugins-dir "$work/plugins"
 ```
 
 The lock uses the existing restricted requirements syntax: `name==version
@@ -133,8 +133,12 @@ core/bin/python lock_wheels.py rest-wheels rest.lock
 
 Use `mcp-bundle/requirements.txt`, `mcp-wheels` and `mcp.lock` for MCP. Do not use
 macOS wheels in a Linux image. pip performs the resolution and compatibility
-checks. The resolved server dependency closure must equal the lock; additional
-business packages are refused. Installations require hashes, no index, no source
+checks. The resolved server plus declared application dependency closure must
+equal the lock; unrelated packages are refused. For an application bundle,
+concatenate `requirements.txt` and `application-requirements.txt` as the input to
+this same explicit wheel preparation. The generated `requirements.txt` remains
+the canonical server-only contract. Resources are copied from the verified bundle,
+never from the original project. Installations require hashes, no index, no source
 builds and no network in Dockerfile `RUN` instructions. Base-image resolution may
 still contact its registry even when layers are cached; `--network=none` does
 not prevent that. The build operation does not accept registry credentials or private base images.

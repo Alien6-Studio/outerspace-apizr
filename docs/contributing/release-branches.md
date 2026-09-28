@@ -13,10 +13,10 @@ line, not master; it must not be merged as part of the setup task.
    `feature/mandatory-proof` or `fix/...`. Their PRs target `release/0.4.1`.
 2. Keep each feature separately scoped and checked. These examples are future
    scope, not features implemented or issues opened by this governance change.
-3. Prepare coordinated versions only for an actual release candidate. All four
-   projects currently retain **0.4.0rc1**; branch creation requires no version bump.
-   Builds with that inherited version are verification evidence only, not the
-   published RC bytes or a new publication authorization.
+3. Branch creation required no version bump. The first functional increment
+   advances all four development distributions to **0.4.1rc1**. These ordinary
+   PR/CI builds are development evidence, not published RC bytes or publication
+   authorization.
 4. After explicit candidate preparation, qualify the exact release-line push
    commit and original artifacts. Create immutable **tags/releases** `v0.4.1rc1`,
    `v0.4.1rc2`, etc. only when separately authorized. RCs are not long-lived branches.
