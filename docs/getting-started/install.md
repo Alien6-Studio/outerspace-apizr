@@ -3,12 +3,37 @@
 This documentation covers Apizr **0.4**. Install the core, then follow the
 [Quickstart](quickstart.md). Add a plugin profile only when your workflow needs it.
 
-PyPI publication is pending; use the verified installation artifacts below.
+## Install the core
+
+Use Python 3.11–3.14, a POSIX shell and pip. Start in a new working directory:
+
+```sh
+mkdir apizr-workspace
+cd apizr-workspace
+python3 -m venv core
+. core/bin/activate
+python -m pip install outerspace-apizr==0.4.0
+apizr --version
+```
+
+**Observe:** `outerspace-apizr 0.4.0`. Continue with the [Quickstart](quickstart.md)
+to generate and call your first MCP or REST service. No plugin or Docker is needed.
+
+With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.0` or
+`pipx install outerspace-apizr==0.4.0` is an alternative to the virtual environment
+above. Use the executable path reported by your tool.
+
+## Add optional plugin profiles
+
+The core is published on PyPI. The three plugins are not yet published on PyPI;
+use the verified installation files below for MCP analysis, OCI or delivery.
+Keep the working directory above. These profiles install plugins separately and
+do not change the core environment.
 
 <span id="install-the-published-release"></span>
 <span id="evaluate-the-040-candidate"></span>
 
-## Obtain the installation files
+### Obtain the installation files
 
 You need Python 3.11–3.14, a POSIX shell, tar, and an authenticated GitHub CLI (`gh`)
 that can download Actions artifacts and verify attestations. Plugin installation
@@ -22,8 +47,6 @@ commit **37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f**, on **Linux x86-64 / CPython
 Keep the packages and target export from this same verified run.
 
 ```sh
-mkdir apizr-workspace
-cd apizr-workspace
 export REVIEWED_RUN_ID=36396147495
 export EXPECTED_COMMIT=37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f
 export TARGET_ARTIFACT=release-target-ubuntu-latest-3.11
@@ -85,9 +108,10 @@ bytes. Do not substitute other wheels after verification.
 
 <span id="install-the-candidate-with-pip"></span>
 
-## Install the core
+### Install the core offline
 
-This is the principal path; it changes only the new `core/` virtual environment.
+Skip this step if you already installed the core above. As an offline alternative,
+these commands install the same core from verified files in a new environment.
 The selected `PYTHON` must match the target export's Python minor version.
 
 <!-- install:pip -->

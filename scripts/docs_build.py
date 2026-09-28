@@ -10,7 +10,7 @@ CRITICAL = {
     "getting-started/install/index.html": "Install Apizr",
     "getting-started/quickstart-0.4/index.html": "The walkthrough is now at",
     "contributing/publish-0.4/index.html": "Release attachment inventory",
-    "releases/0.4.0/index.html": "Publication pending",
+    "releases/0.4.0/index.html": "Core published on PyPI; plugin publication pending",
     "getting-started/migrate-0.4/index.html": "Migrate from 0.3 to 0.4",
     "reference/operator-policy/index.html": "receipt.sign",
     "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
@@ -48,7 +48,7 @@ def on_config(config):
         "source_dirty": dirty,
         "status": "development",
         "target_version": "0.4.0",
-        "stable_release": "0.3.0",
+        "stable_release": "0.4.0",
     }
     return config
 

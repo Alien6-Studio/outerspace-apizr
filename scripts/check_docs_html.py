@@ -104,7 +104,7 @@ def check(site: Path) -> None:
         failures.append("Missing source analysis permission and stable anchor")
     for name, required in {
         "getting-started/install/index.html": (
-            "PyPI publication is pending",
+            "plugins are not yet published on PyPI",
             "catalog resolve",
             "lock check",
             "pipx",
@@ -122,7 +122,7 @@ def check(site: Path) -> None:
             "SHA256SUMS",
         ),
         "releases/0.4.0/index.html": (
-            "Publication pending",
+            "Core published on PyPI; plugin publication pending",
             "source.analyze",
             "structuredContent",
             "0.4.1",
