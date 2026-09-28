@@ -16,7 +16,7 @@ CRITICAL = {
     "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
     "reference/project-plugin-locks/index.html": "Project plugin declarations and locks",
     "reference/apizr-mcp-server/index.html": "Apizr as a local MCP server",
-    "index.html": "Preparing 0.4",
+    "index.html": "Choose your next step",
     "development/0.4/index.html": "Not released",
     "reference/git-sources/index.html": "One explicit revision",
     "reference/git-ssh/index.html": "ssh-known-hosts",

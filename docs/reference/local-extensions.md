@@ -1,11 +1,6 @@
 # Install and use extensions
 
-!!! warning "0.4 development — not released"
-
-    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
-    for this page's 0.4 commands; they are not available in stable 0.3.0.
-    The [development setup](../development/0.4.md#install-a-development-wheel)
-    is for contributors building their own evaluation wheels.
+For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 Install an explicitly trusted wheel into its own Python
 virtual environment. Installation does not activate or invoke it, and project
@@ -407,7 +402,7 @@ dependencies. The script prints the plugin wheel, SHA-256 and lock paths. For
 other plugins, obtain trusted compatible wheels beforehand and write a lock
 containing every exact version and its independently verified SHA-256.
 
-Using a separately installed Apizr development wheel, run from outside the checkout:
+Using a separately installed Apizr wheel, run from outside the checkout:
 
 ```sh
 apizr plugins install /tmp/apizr-locked-example/wheels/apizr_locked_probe-1.0.0-py3-none-any.whl \
@@ -431,11 +426,11 @@ uv run --locked python scripts/smoke_extension_packaging.py \
 
 ## Portable project locks and local preferences
 
-Development 0.4 adds [project declarations, explicit user preferences and portable artifact locks](project-plugin-locks.md). Use `plugins lock create/check` to validate artifacts and `plugins sync --project apizr.toml --lock apizr.plugins.lock.json --wheelhouse ./wheels --dry-run --json` to preview additive installation. Remove `--dry-run` to install the missing versions explicitly. `--user-config` selects local store preferences on all plugin commands and `mcp serve`; explicit `--plugins-dir` takes precedence. Neither project declarations nor locks activate anything. Synchronization keeps existing versions and activations; [uninstall](#remove-one-unused-version) is a separate explicit operation. See the linked page for partial results, resuming, cancellation and installed-wheel proofs.
+Use [project declarations, explicit user preferences and portable artifact locks](project-plugin-locks.md) to manage reproducible installations. Use `plugins lock create/check` to validate artifacts and `plugins sync --project apizr.toml --lock apizr.plugins.lock.json --wheelhouse ./wheels --dry-run --json` to preview additive installation. Remove `--dry-run` to install the missing versions explicitly. `--user-config` selects local store preferences on all plugin commands and `mcp serve`; explicit `--plugins-dir` takes precedence. Neither project declarations nor locks activate anything. Synchronization keeps existing versions and activations; [uninstall](#remove-one-unused-version) is a separate explicit operation. See the linked page for partial results, resuming, cancellation and installed-wheel proofs.
 
 ## Controlled locked updates
 
-Development **0.4 remains unreleased**. `plugins update` prepares one explicitly
+`plugins update` prepares one explicitly
 locked version in a separate environment. It never modifies an existing
 environment in place or removes an older version. There is no automatic version
 selection, catalogue, dependency download or source build. A complete local

@@ -1,11 +1,6 @@
 # Configure a repository workflow
 
-!!! warning "0.4 development — not released"
-
-    Stable is 0.3.0. Use the [candidate installation](../install.md#evaluate-the-040-candidate)
-    for this page's 0.4 commands; they are not available in stable 0.3.0.
-    The [development setup](../../development/0.4.md#install-a-development-wheel)
-    is for contributors building their own evaluation wheels.
+For prerequisites and package availability, see [Install Apizr](../install.md).
 
 Use `--project` to share readiness and exposure settings in a versioned
 `apizr.toml`. Apizr never searches for or loads this file automatically.
@@ -168,7 +163,9 @@ This exact Python example is also tested from the minimal installed wheel.
 Loader errors are ordinary validation, decoding or filesystem exceptions; the
 loader never prints results or terminates the process.
 
-## Project plugins and operator preferences (development 0.4)
+<span id="project-plugins-and-operator-preferences-development-04"></span>
+
+## Project plugins and operator preferences
 
 The optional `[[plugins]]` declarations identify exact wheels and requirements.
 They never install, activate or execute plugins. See [project plugin locks](../../reference/project-plugin-locks.md) for the format, explicit `--user-config`, precedence and a complete installed-wheel example. Existing analysis root and policy precedence remain unchanged.

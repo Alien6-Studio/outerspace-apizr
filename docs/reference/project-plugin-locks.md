@@ -1,9 +1,6 @@
 # Project plugin declarations and locks
 
-!!! warning "Development 0.4 — not released"
-
-    These commands belong to development wheels for **0.4**.
-    They are not in the published **0.3.0** package.
+For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 ## Four separate kinds of state
 

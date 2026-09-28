@@ -1,11 +1,6 @@
 # Analyze a public Git repository
 
-!!! warning "0.4 development — not released"
-
-    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
-    for this page's 0.4 commands; they are not available in stable 0.3.0.
-    The [development setup](../development/0.4.md#install-a-development-wheel)
-    is for contributors building their own evaluation wheels.
+For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 Readiness and exposure can acquire a public **HTTPS** Git repository directly.
 [Private repositories through an explicit SSH agent](git-ssh.md) use the same snapshot API.

@@ -3,24 +3,25 @@
 
 # Authorize Git acquisition, image builds, signing and publication
 
-!!! warning "0.4 development — explicit policy required"
+!!! warning "Explicit authorization required"
     Remote `--git` commands and `acquire_snapshot` also require an explicit Git grant.
     Managed `apizr-oci build`, `apizr-oci push`, `apizr-attest publish` and `apizr-attest attest` calls require
-    `--operator-policy`. An installed, active plugin alone no longer permits
-    building, publication or signing. This changes development commands, not the published 0.3.0 CLI.
+    `--operator-policy`. An installed, active plugin alone does not permit
+    building, publication or signing.
 
 Installation puts verified wheel bytes in an isolated environment. Activation
 chooses one installed version. **Authorization** permits a particular installed
 build to perform one operation on explicitly selected inputs or a remote repository. None implies the next.
 
+For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
+
 ## Authorize repository analysis
 
-Development 0.4 requires **source.analyze** for filesystem-backed `scan`, `graph`,
+Repository analysis requires **source.analyze** for filesystem-backed `scan`, `graph`,
 `readiness`, `expose plan` and the analysis phase of `expose build rest|mcp`.
 Their Python APIs use the same pure `decide_analysis(policy, target)` decision.
 This is independent of `git.fetch`, image construction, signing and publication.
-It does not select public functions or permit business execution. Historical
-stable 0.3.0 commands are unchanged; development commands add an explicit
+It does not select public functions or permit business execution. From 0.4, these commands require an explicit
 `--operator-policy` or the typed Python `operator_policy` argument.
 
 A complete [local policy](../examples/operator-analysis-local.json):
@@ -121,7 +122,7 @@ fixed `GitSourceError` diagnostics. No plugin installation identity is fabricate
 
 Only the explicitly supplied policy grants authority. Neither `apizr.toml`,
 remote files, a catalog/profile nor environment variables can select or extend it.
-Local development commands require their own `source.analyze` grant; a fetch
+Local analysis commands require their own `source.analyze` grant; a fetch
 grant does not authorize reading a local root. Acquisition limits remain separate
 validated controls. The grant replaces neither server access rights nor TLS/SSH
 trust and provides no build, signing or publication permission. Existing plugin

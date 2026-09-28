@@ -1,11 +1,6 @@
 # Sign and verify an OCI delivery receipt
 
-!!! warning "0.4 development — not released"
-
-    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
-    for this page's 0.4 commands; they are not available in stable 0.3.0.
-    The [development setup](../development/0.4.md#install-a-development-wheel)
-    is for contributors building their own evaluation wheels.
+For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 `apizr-attest` is an optional, separately installed extension. It binds a verified
 OCI delivery to a user-selected Continuum Attest identity and RFC 3161 authority.
