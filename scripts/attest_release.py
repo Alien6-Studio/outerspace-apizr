@@ -90,7 +90,9 @@ def install_key(workspace: Path, key_id: str) -> Path:
     return path
 
 
-def sign_delivery(attest: Path, workspace: Path, output: Path, policy: dict) -> None:
+def sign_delivery(
+    attest: Path, workspace: Path, output: Path, policy: dict, source_root: Path = ROOT
+) -> None:
     key = install_key(workspace, policy["key_id"])
     try:
         subprocess.run(
@@ -118,7 +120,11 @@ def sign_delivery(attest: Path, workspace: Path, output: Path, policy: dict) -> 
     receipt = workspace / "receipt.yaml"
     shutil.copyfile(receipts[0], receipt)
     report = verify(
-        attest, workspace, receipt, ROOT / ".attest/trust", policy["public_key_hex"]
+        attest,
+        workspace,
+        receipt,
+        source_root / ".attest/trust",
+        policy["public_key_hex"],
     )
     output.mkdir(parents=True, exist_ok=False)
     (output / "attest-verification.json").write_text(
@@ -128,12 +134,13 @@ def sign_delivery(attest: Path, workspace: Path, output: Path, policy: dict) -> 
     with tarfile.open(output / "apizr-attest-receipt.tar.gz", "w:gz") as archive:
         for name in ("attest.yaml", "receipt.yaml", "delivery"):
             archive.add(workspace / name, arcname=name)
-        archive.add(ROOT / ".attest/trust", arcname="trust")
-        archive.add(ROOT / "docs/contributing/attest.md", arcname="README.md")
+        archive.add(source_root / ".attest/trust", arcname="trust")
+        archive.add(source_root / "docs/contributing/attest.md", arcname="README.md")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source-root", type=Path, default=ROOT)
     parser.add_argument("--attest", type=Path, required=True)
     parser.add_argument("--dist", type=Path, required=True)
     parser.add_argument("--evidence", type=Path, required=True)
@@ -144,19 +151,31 @@ def main() -> None:
     args = parser.parse_args()
     if not re.fullmatch(r"[0-9a-f]{40}", args.commit) or args.ci_run <= 0:
         raise ValueError("Expected a source commit and positive verified CI run id")
-    policy = tomllib.loads((ROOT / ".attest/release.toml").read_text())
+    source_root = args.source_root.resolve()
+    policy = tomllib.loads((source_root / ".attest/release.toml").read_text())
     workspace = args.workspace.resolve()
     workspace.mkdir(mode=0o700, parents=True, exist_ok=False)
-    shutil.copyfile(ROOT / ".attest/release.yaml", workspace / "attest.yaml")
-    shutil.copytree(ROOT / ".attest/trust", workspace / ".attest/trust")
+    shutil.copyfile(source_root / ".attest/release.yaml", workspace / "attest.yaml")
+    shutil.copytree(source_root / ".attest/trust", workspace / ".attest/trust")
     distributions = copy_files(args.dist, workspace / "delivery/dist")
     evidence = copy_files(args.evidence, workspace / "delivery/evidence")
-    version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
-    expected_distributions = {
-        name + "-" + version + suffix
-        for name in ("outerspace_apizr", "apizr_oci", "apizr_attest", "apizr_mcp")
-        for suffix in ("-py3-none-any.whl", ".tar.gz")
-    }
+    version = tomllib.loads((source_root / "pyproject.toml").read_text())["project"][
+        "version"
+    ]
+    projects = [
+        source_root,
+        *(source_root / "plugins" / name for name in ("oci", "attest", "mcp")),
+    ]
+    expected_distributions = set()
+    for project_root in projects:
+        project = tomllib.loads((project_root / "pyproject.toml").read_text())[
+            "project"
+        ]
+        if project["version"] != version:
+            raise ValueError("Uncoordinated distribution versions")
+        name = re.sub(r"[-_.]+", "_", project["name"]).lower()
+        for suffix in ("-py3-none-any.whl", ".tar.gz"):
+            expected_distributions.add(name + "-" + version + suffix)
     if (
         set(distributions) != expected_distributions
         or "ci-evidence.tar.gz" not in evidence
@@ -174,7 +193,7 @@ def main() -> None:
     (workspace / "delivery/manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     )
-    sign_delivery(args.attest.resolve(), workspace, args.output, policy)
+    sign_delivery(args.attest.resolve(), workspace, args.output, policy, source_root)
 
 
 if __name__ == "__main__":
