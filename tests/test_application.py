@@ -67,6 +67,8 @@ def test_normalization_and_project_contract(tmp_path):
     "pins",
     [
         ["six"],
+        ["six-==1.0"],
+        ["six.==1.0"],
         ["six>=1"],
         ["six==1.*"],
         ["six[extra]==1.0"],

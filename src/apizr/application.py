@@ -12,7 +12,7 @@ from apizr.repository.policy import relative_path
 MAX_RESOURCE_BYTES = 16 * 1024 * 1024
 MAX_APPLICATION_BYTES = 32 * 1024 * 1024
 PIN = re.compile(
-    r"([A-Za-z0-9][A-Za-z0-9._-]{0,127})=="
+    r"([A-Za-z0-9](?:[A-Za-z0-9._-]{0,126}[A-Za-z0-9])?)=="
     r"((?:[0-9]+!)?[0-9]+(?:\.[0-9]+)*(?:(?:a|b|rc)[0-9]+)?"
     r"(?:\.post[0-9]+)?(?:\.dev[0-9]+)?(?:\+[a-z0-9]+(?:[._-][a-z0-9]+)*)?)"
 )
