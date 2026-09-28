@@ -98,7 +98,7 @@ project or protection is created by this preparation.
 | Resource | Public attachment naming | Verification |
 | --- | --- | --- |
 | Four wheels and four sdists | Original exact package filenames, version 0.4.0 | Candidate SHA-256 plus build provenance |
-| Candidate and attachment inventories | `candidate.json`, `release-assets.json`, `SHA256SUMS` | Signed CI evidence membership plus recomputed hashes |
+| Candidate and attachment inventories | `candidate.json`, `release-assets.json`, `SHA256SUMS` | Candidate: signed CI evidence; derived inventory: recomputed hashes of those originals |
 | Six target exports | `apizr-0.4.0-SYSTEM-ARCH-cpython-PATCH.tar.gz` | **Same bytes** as each `target-export.tar.gz`, signed evidence membership |
 | Six qualification reports | Matching `apizr-0.4.0-SYSTEM-ARCH-cpython-PATCH.qualification.json` | Recorded candidate and exact target |
 | Complete validation, delivery and license evidence | `ci-evidence.tar.gz` | `build-provenance.sigstore.json` |

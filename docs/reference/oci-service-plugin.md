@@ -25,7 +25,11 @@ The base, Docker binaries and dependency wheels remain trusted code.
 Follow [Install Apizr → choose a plugin profile](../getting-started/install.md#choose-a-plugin-profile)
 with **`oci`**. Retain its workspace as `$work`, with `core/` and the explicit
 `plugins/` store. Reuse the exported locks; no source build or manual dependency
-closure is needed for installation.
+closure is needed for installation. From that workspace:
+
+```sh
+export work="$PWD"
+```
 
 <details markdown="1">
 <summary>Advanced: build and prepare wheels from a source checkout</summary>
@@ -49,6 +53,33 @@ uv pip install --python core/bin/python --offline --no-index \
   --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.0-py3-none-any.whl
 ```
 
+Create `lock_wheels.py` using the [shared wheel-lock recipe](#prepare-server-dependency-locks) below before continuing.
+
+```sh
+prepare/bin/python lock_wheels.py plugin-wheels plugin.lock
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl \
+  --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse plugin-wheels \
+  --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable apizr-oci --version 0.4.0 --plugins-dir "$work/plugins"
+```
+
+The lock uses the existing restricted requirements syntax: `name==version
+--hash=sha256:HEX`, one SHA-256 per package, comments and continuations allowed.
+Includes, URLs, paths, index options, markers, extras and editable installs are
+refused. Wheel archive and startup-file protections are reused. Metadata identity
+and dependency headers retain their 64 KiB bound; unused long descriptions are
+not parsed or loaded. Compressed/expanded archive limits still apply.
+
+
+</details>
+
+## Prepare server dependency locks
+
+Plugin installation uses the exported locks. Building a generated server image
+also needs its own runtime wheel lock, prepared after generation for the target
+platform. This shared recipe also serves the optional source-build path above.
+
 Create `lock_wheels.py` for the reviewed wheels downloaded for **this** interpreter
 and platform. It records the exact bytes; hashes establish integrity, not trust
 in the author. Keep one wheel per distribution and all transitive dependencies.
@@ -71,24 +102,6 @@ for wheel in sorted(Path(sys.argv[1]).glob("*.whl")):
 Path(sys.argv[2]).write_text("".join(lines))
 ```
 
-```sh
-prepare/bin/python lock_wheels.py plugin-wheels plugin.lock
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install plugin-wheels/apizr_oci-0.4.0-py3-none-any.whl \
-  --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse plugin-wheels \
-  --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable apizr-oci --version 0.4.0 --plugins-dir "$work/plugins"
-```
-
-The lock uses the existing restricted requirements syntax: `name==version
---hash=sha256:HEX`, one SHA-256 per package, comments and continuations allowed.
-Includes, URLs, paths, index options, markers, extras and editable installs are
-refused. Wheel archive and startup-file protections are reused. Metadata identity
-and dependency headers retain their 64 KiB bound; unused long descriptions are
-not parsed or loaded. Compressed/expanded archive limits still apply.
-
-
-</details>
 
 ## Generate a bundle and prepare server dependencies
 
@@ -121,7 +134,7 @@ docker run --rm --user "$(id -u):$(id -g)" --env HOME=/tmp --platform "$platform
   --mount "type=bind,src=$work/rest-wheels,dst=/wheels" \
   --mount "type=bind,src=$work/rest-bundle/requirements.txt,dst=/requirements.txt,readonly" \
   "$base" python -m pip download --only-binary=:all: --dest /wheels -r /requirements.txt
-prepare/bin/python lock_wheels.py rest-wheels rest.lock
+core/bin/python lock_wheels.py rest-wheels rest.lock
 ```
 
 Use `mcp-bundle/requirements.txt`, `mcp-wheels` and `mcp.lock` for MCP. Do not use

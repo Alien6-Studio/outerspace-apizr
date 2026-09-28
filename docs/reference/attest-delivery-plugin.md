@@ -18,7 +18,9 @@ to transport an existing verified proof through an OCI registry.
 
 ## Install explicitly
 
-First complete the [OCI build and push example](oci-service-plugin.md). Keep the
+Choose the **delivery** profile below before completing the
+[OCI build and push example](oci-service-plugin.md); it includes the OCI plugin,
+so use the same workspace/store instead of installing an OCI-only profile. Keep the
 versioned `result` objects from both extension responses as `build-result.json`
 and `push-result.json` (not the enclosing extension protocol envelopes).
 Keep the immutable local image available until attestation finishes.
@@ -26,7 +28,11 @@ Keep the immutable local image available until attestation finishes.
 Follow [Install Apizr → choose a plugin profile](../getting-started/install.md#choose-a-plugin-profile)
 with **`delivery`**. Retain its workspace as `$work`, with `core/` and the explicit
 `plugins/` store. Reuse the exported locks; no source build or manual dependency
-closure is needed for installation.
+closure is needed for installation. Run `export work="$PWD"` from that workspace.
+If OCI was already installed, use a new plan directory and the existing store
+for delivery sync; the existing OCI activation is preserved. Enable Attest
+explicitly. The installation guide’s empty-active-inventory observation applies
+only to a fresh store.
 
 <details markdown="1">
 <summary>Advanced: build and prepare wheels from a source checkout</summary>
