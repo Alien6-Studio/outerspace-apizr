@@ -173,6 +173,7 @@ nav:
       - Package an extension: reference/plugin-authors.md
       - Publication and documentation cutover: contributing/publish-0.4.md
       - Extension packaging ADR: architecture/extension-packaging-v04.md
+      - Release branch governance: contributing/release-branches.md
       - Publish a release: contributing/releases.md
       - Verify builds and releases: contributing/verification.md
       - Managed Attest identity: contributing/attest.md

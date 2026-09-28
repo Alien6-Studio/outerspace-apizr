@@ -1,7 +1,7 @@
 """Stage reviewed release attachments without building, uploading or tagging.
 
 Public names come from recorded targets. Target archives are copied byte-for-byte.
-On master, GitHub provenance is verified before any output is made visible.
+Outside PR previews, GitHub provenance is verified before any output is made visible.
 """
 
 import argparse
@@ -15,6 +15,7 @@ import tempfile
 from pathlib import Path
 
 from coordinated_distributions import PROJECTS, digest, record, verify_records, write
+from verify_release import qualification_branch
 
 REPOSITORY = "Alien6-Studio/outerspace-apizr"
 
@@ -97,7 +98,14 @@ def inspect_target(path, candidate):
     return target, f"{system}-{machine}-cpython-{python}"
 
 
-def prepare(downloads: Path, output: Path, commit: str, run_id: int, preview=False):
+def prepare(
+    downloads: Path,
+    output: Path,
+    commit: str,
+    run_id: int,
+    preview=False,
+    source_ref=None,
+):
     if not re.fullmatch(r"[0-9a-f]{40}", commit) or run_id <= 0 or output.exists():
         raise ValueError("Expected exact source, run and absent output directory")
     candidate_dir = downloads / "release-candidate"
@@ -122,6 +130,15 @@ def prepare(downloads: Path, output: Path, commit: str, run_id: int, preview=Fal
     evidence = downloads / "build-attestations"
     signed = evidence / "ci-evidence.tar.gz"
     if not preview:
+        expected_ref = "refs/heads/" + qualification_branch(version)
+        source_ref = source_ref or expected_ref
+        # The inherited version on the development line is verification-only.
+        # verify_release refuses publication of either historical 0.4.0 version.
+        inherited_baseline = (
+            version == "0.4.0rc1" and source_ref == "refs/heads/release/0.4.1"
+        )
+        if source_ref != expected_ref and not inherited_baseline:
+            raise ValueError("Unexpected qualification source ref")
         subprocess.run(
             [
                 "gh",
@@ -137,7 +154,7 @@ def prepare(downloads: Path, output: Path, commit: str, run_id: int, preview=Fal
                 "--source-digest",
                 commit,
                 "--source-ref",
-                "refs/heads/master",
+                source_ref,
             ],
             check=True,
             timeout=120,
@@ -269,7 +286,8 @@ def prepare(downloads: Path, output: Path, commit: str, run_id: int, preview=Fal
                 "version": version,
                 "commit": commit,
                 "run_id": run_id,
-                "status": "PR preview; no master provenance"
+                "source_ref": None if preview else source_ref,
+                "status": "PR preview; no release provenance"
                 if preview
                 else "provenance verified; human publication approval still required",
                 "artifacts": entries,
@@ -292,12 +310,22 @@ def main():
     parser.add_argument("--commit", required=True)
     parser.add_argument("--run-id", type=int, required=True)
     parser.add_argument(
+        "--source-ref", help="Exact qualification ref; never publication approval"
+    )
+    parser.add_argument(
         "--preview",
         action="store_true",
         help="PR checks only; never publication approval",
     )
     args = parser.parse_args()
-    prepare(args.downloads, args.output, args.commit, args.run_id, args.preview)
+    prepare(
+        args.downloads,
+        args.output,
+        args.commit,
+        args.run_id,
+        args.preview,
+        args.source_ref,
+    )
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ on:
         required: true
         type: string
       ci_run_id:
-        description: Successful master CI run containing the exact reviewed distributions
+        description: Successful approved release-line push CI run containing the exact reviewed distributions
         required: true
         type: string
       package:
@@ -93,6 +93,7 @@ jobs:
       - name: Verify build provenance for all distributions and validation archive
         env:
           RELEASE_SHA: ${{ steps.gates.outputs.release_sha }}
+          SOURCE_REF: ${{ steps.gates.outputs.source_ref }}
           GH_TOKEN: ${{ github.token }}
         run: |
           for artifact in dist/* release-evidence/ci-evidence.tar.gz; do
@@ -100,7 +101,7 @@ jobs:
               --bundle release-evidence/build-provenance.sigstore.json \
               --repo Alien6-Studio/outerspace-apizr \
               --signer-workflow Alien6-Studio/outerspace-apizr/.github/workflows/ci.yml \
-              --source-digest "$RELEASE_SHA" --source-ref refs/heads/master
+              --source-digest "$RELEASE_SHA" --source-ref "$SOURCE_REF"
           done
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

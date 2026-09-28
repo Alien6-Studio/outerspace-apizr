@@ -7,7 +7,9 @@
 ## Move from 0.3 to 0.4
 
 The [0.4.0 notes](../../releases/0.4.0.md) distinguish integrated capabilities
-from remaining distribution/publication work and explicit 0.4.1/0.4.2 deferrals.
+from the completed coordinated 0.4.0rc1 publication and explicit 0.4.1/0.4.2
+deferrals. The [release-branch model](../../contributing/release-branches.md)
+leads next to 0.4.1 RC tags and final 0.4.1; no new final 0.4.0 is planned.
 
 Keep the historical instructions below for the versions they describe.
 

@@ -13,10 +13,10 @@ release = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(release)
 
 
-def valid_run():
+def valid_run(branch="master"):
     return {
         "head_sha": "abc",
-        "head_branch": "master",
+        "head_branch": branch,
         "event": "push",
         "status": "completed",
         "conclusion": "success",
@@ -81,7 +81,7 @@ def test_installed_version_and_current_help(capsys):
         ("pypi_error", None),
     ],
 )
-@pytest.mark.parametrize("release_version", ["0.3.0", "0.4.0rc1"])
+@pytest.mark.parametrize("release_version", ["0.3.0", "0.4.1rc1", "0.4.1"])
 def test_candidate_publication_guards_without_tag_upload_or_signing(
     tmp_path, monkeypatch, capsys, fault, message, release_version
 ):
@@ -89,6 +89,7 @@ def test_candidate_publication_guards_without_tag_upload_or_signing(
     import sys
     import urllib.error
 
+    branch = release.qualification_branch(release_version)
     version = release_version + ".dev0" if fault == "version" else release_version
     (tmp_path / "pyproject.toml").write_text(
         f'[project]\nname="outerspace-apizr"\nversion="{version}"\n'
@@ -106,7 +107,10 @@ def test_candidate_publication_guards_without_tag_upload_or_signing(
     monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
 
     def github(path):
-        run = valid_run()
+        if path.startswith("branches/"):
+            assert path == "branches/release%2F0.4.1"
+            return {"protected": True}
+        run = valid_run(branch)
         if path == "actions/runs/123":
             if fault == "run":
                 run["head_sha"] = "wrong"
@@ -131,13 +135,16 @@ def test_candidate_publication_guards_without_tag_upload_or_signing(
     monkeypatch.setattr(release.urllib.request, "urlopen", pypi)
     if fault is None:
         release.main()
-        assert output.read_text() == "security_run_id=10\n"
+        assert (
+            output.read_text()
+            == f"source_ref=refs/heads/{branch}\nsecurity_run_id=10\n"
+        )
         assert f"Verified {release_version}, abc" in capsys.readouterr().out
     elif fault == "pypi_error":
         with pytest.raises(urllib.error.HTTPError):
             release.main()
     else:
-        with pytest.raises(ValueError, match=message):
+        with pytest.raises(ValueError, match=message.replace("master", branch)):
             release.main()
     if fault:
         assert not output.exists()
@@ -215,7 +222,8 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
     )
     assert (
         "--source-digest" in provenance["run"]
-        and "--source-ref refs/heads/master" in provenance["run"]
+        and '--source-ref "$SOURCE_REF"' in provenance["run"]
+        and provenance["env"]["SOURCE_REF"] == "${{ steps.gates.outputs.source_ref }}"
     )
     receipt = next(
         step
@@ -229,7 +237,7 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
 @pytest.mark.parametrize(
     "fault", [None, "missing", "pending", "failed", "duplicate", "version"]
 )
-@pytest.mark.parametrize("release_version", ["0.4.0", "0.4.0rc1"])
+@pytest.mark.parametrize("release_version", ["0.4.1rc1", "0.4.1rc2", "0.4.1"])
 @pytest.mark.parametrize("resume", [False, True])
 def test_coordinated_release_requires_every_exact_target(
     tmp_path, monkeypatch, fault, release_version, resume
@@ -259,6 +267,7 @@ def test_coordinated_release_requires_every_exact_target(
         + (["--release-tag", f"v{release_version}"] if resume else []),
     )
     monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
+    branch = release.qualification_branch(release_version)
     names = ["distributions", "release-delivery"] + [
         f"release-target ({system}, {python})"
         for system, versions in [
@@ -278,16 +287,18 @@ def test_coordinated_release_requires_every_exact_target(
         jobs.append(jobs[-1])
 
     def github(path):
+        if path.startswith("branches/"):
+            return {"protected": True}
         if path == f"git/ref/tags/v{release_version}":
             return {"object": {"type": "commit", "sha": "abc"}}
         if "/jobs?" in path:
             return {"jobs": jobs}
         if path == "actions/runs/123":
-            return valid_run()
+            return valid_run(branch)
         workflow = path.split("/")[2]
         return {
             "workflow_runs": [
-                {**valid_run(), "id": 10, "path": ".github/workflows/" + workflow}
+                {**valid_run(branch), "id": 10, "path": ".github/workflows/" + workflow}
             ]
         }
 
@@ -471,3 +482,132 @@ def test_public_archive_check_does_not_checkout_artifact_source():
         == "${{ needs.verify.outputs.release_version }}"
     )
     assert '--version "$RELEASE_VERSION"' in public["run"]
+
+
+@pytest.mark.parametrize("version", ["0.4.0", "0.4.0rc1"])
+def test_closed_04_publications_fail_before_network(tmp_path, monkeypatch, version):
+    import sys
+
+    (tmp_path / "pyproject.toml").write_text(
+        f'[project]\nname="outerspace-apizr"\nversion="{version}"\n'
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GITHUB_REF", f"refs/tags/v{version}")
+    monkeypatch.setenv("GITHUB_SHA", "abc")
+    monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
+    monkeypatch.setattr(sys, "argv", ["verify", "--run-id", "123", "--source-only"])
+    monkeypatch.setattr(release, "github", lambda path: pytest.fail("no network"))
+    with pytest.raises(ValueError, match="publication is closed"):
+        release.main()
+
+
+@pytest.mark.parametrize(
+    "version", ["0.4.2rc1", "0.4.2", "0.5.0", "0.4.1.dev0", "0.4.1rc0"]
+)
+def test_future_lines_require_explicit_policy(version):
+    with pytest.raises(ValueError, match="No authorized qualification branch"):
+        release.qualification_branch(version)
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        None,
+        "master",
+        "feature",
+        "release/0.4.2",
+        "pull_request",
+        "unprotected",
+        "security_branch",
+        "docs_branch",
+        "newer_failed",
+        "fork",
+    ],
+)
+def test_041_preflight_binds_all_gates_to_protected_release_line(
+    tmp_path, monkeypatch, fault
+):
+    import sys
+
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname="outerspace-apizr"\nversion="0.4.1rc1"\n'
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        sys, "argv", ["verify", "--run-id", "123", "--preflight", "--source-only"]
+    )
+    monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
+
+    def github(path):
+        run = valid_run("release/0.4.1")
+        if path.startswith("branches/"):
+            assert path == "branches/release%2F0.4.1"
+            return {"protected": fault != "unprotected"}
+        if path == "actions/runs/123":
+            if fault in {"master", "feature", "release/0.4.2"}:
+                run["head_branch"] = fault
+            if fault == "pull_request":
+                run["event"] = fault
+            if fault == "fork":
+                run["repository"] = {"full_name": "other/fork"}
+            return run
+        workflow = path.split("/")[2]
+        run.update(id=10, path=".github/workflows/" + workflow)
+        if (fault, workflow) in {
+            ("security_branch", "security.yml"),
+            ("docs_branch", "mkdocs.yaml"),
+        }:
+            run["head_branch"] = "master"
+        if fault == "newer_failed":
+            return {"workflow_runs": [run, {**run, "id": 11, "conclusion": "failure"}]}
+        return {"workflow_runs": [run]}
+
+    monkeypatch.setattr(release, "github", github)
+    if fault:
+        with pytest.raises(ValueError):
+            release.main()
+    else:
+        release.main()
+
+
+def test_workflows_separate_release_validation_from_external_publication():
+    import yaml
+
+    directory = Path(__file__).resolve().parents[1] / ".github/workflows"
+    workflows = {
+        p.name: yaml.load(p.read_text(), Loader=yaml.BaseLoader)
+        for p in directory.iterdir()
+    }
+    for name in ("ci.yml", "security.yml", "mkdocs.yaml"):
+        triggers = workflows[name]["on"]
+        assert "release/0.4.1" in triggers["push"]["branches"]
+        assert all("*" not in branch for branch in triggers["push"]["branches"])
+        assert not triggers["pull_request"]  # No target-branch or path exclusions.
+    docs = workflows["mkdocs.yaml"]["jobs"]
+    assert (
+        docs["deploy"]["if"]
+        == "github.event_name == 'push' && github.ref == 'refs/heads/master'"
+    )
+    assert set(workflows["publish-pypi.yml"]["on"]) == {"workflow_dispatch"}
+    for name in (
+        "oci-service-plugin.yml",
+        "attest-delivery-plugin.yml",
+        "mcp-server-plugin.yml",
+        "extension-packaging.yml",
+        "extension-cleanup.yml",
+    ):
+        assert set(workflows[name]["on"]) == {"pull_request", "workflow_dispatch"}
+        assert workflows[name]["permissions"] == {"contents": "read"}
+    signer = workflows["ci.yml"]["jobs"]["provenance"]
+    assert " ".join(signer["if"].split()) == (
+        "github.event_name == 'push' && (github.ref == 'refs/heads/master' || "
+        "(github.ref == 'refs/heads/release/0.4.1' && github.ref_protected))"
+    )
+    assert not any(
+        step.get("uses", "").startswith("actions/checkout@") for step in signer["steps"]
+    )
+    for job in ("receipt", "publish"):
+        environment = workflows["publish-pypi.yml"]["jobs"][job]["environment"]
+        assert (
+            environment if isinstance(environment, str) else environment["name"]
+        ) == "pypi"
