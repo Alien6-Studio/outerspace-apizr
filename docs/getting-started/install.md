@@ -1,0 +1,193 @@
+# Install Apizr
+
+Choose **one** path: [published stable](#install-the-published-release),
+[reviewed 0.4 candidate](#evaluate-the-040-candidate), or
+[contributor setup](#develop-from-source). **0.4.0 is in preparation, not published.**
+The published stable remains **0.3.0**. Do not mix a 0.3 installation with 0.4 commands.
+
+## Install the published release
+
+Use Python 3.11–3.14 with `venv` and pip. In a writable directory on macOS/Linux:
+
+```sh
+python3 -m venv core
+. core/bin/activate
+python -m pip install outerspace-apizr==0.3.0
+apizr --version
+```
+
+Observe `outerspace-apizr 0.3.0`, then follow the [stable Quickstart](quickstart.md).
+If you already use uv or pipx, choose `uv tool install outerspace-apizr==0.3.0`
+or `pipx install outerspace-apizr==0.3.0` **instead**. They are alternative tool
+installations, not additional steps. The [release record](../releases/0.3.0.md)
+identifies the verified public version.
+
+## Evaluate the 0.4.0 candidate {#evaluate-the-040-candidate}
+
+You need Python 3.11–3.14, a POSIX shell, tar, and an authenticated GitHub CLI (`gh`)
+that can download Actions artifacts and verify attestations. Plugin installation
+also requires an already installed **uv**. None of these tools is installed by
+Apizr. Use a new workspace, and select the export matching your interpreter,
+system and architecture from the [candidate download table](../contributing/publish-0.4.md#available-candidate-resources).
+Windows and other targets are not qualified by this matrix.
+
+The following concrete example uses the successful master run **36339017308**,
+commit **56de041b06e0ab296955311098c8d110321ce88f**, on **Linux x86-64 / CPython 3.11**.
+It is an existing evaluation candidate, not a published 0.4.0 release. The PR
+changes package descriptions, so its replacement candidate must be qualified
+before release; never mix candidate/target archives from different runs.
+
+```sh
+mkdir apizr-evaluation
+cd apizr-evaluation
+export REVIEWED_RUN_ID=36339017308
+export EXPECTED_COMMIT=56de041b06e0ab296955311098c8d110321ce88f
+export TARGET_ARTIFACT=release-target-ubuntu-latest-3.11
+export PYTHON=python3.11
+gh run view "$REVIEWED_RUN_ID" --repo Alien6-Studio/outerspace-apizr
+gh run download "$REVIEWED_RUN_ID" --repo Alien6-Studio/outerspace-apizr --name release-candidate --dir release/candidate
+gh run download "$REVIEWED_RUN_ID" --repo Alien6-Studio/outerspace-apizr --name "$TARGET_ARTIFACT" --dir release/target-download
+gh run download "$REVIEWED_RUN_ID" --repo Alien6-Studio/outerspace-apizr --name build-attestations --dir release/evidence
+gh attestation verify release/evidence/ci-evidence.tar.gz --bundle release/evidence/build-provenance.sigstore.json --repo Alien6-Studio/outerspace-apizr --signer-workflow Alien6-Studio/outerspace-apizr/.github/workflows/ci.yml --source-digest "$EXPECTED_COMMIT" --source-ref refs/heads/master
+```
+
+**Observe:** the run is successful and the attestation accepts the exact commit,
+workflow and evidence archive. A PR preview has no master attestation and cannot
+substitute for this approval. For another supported target, change only the target
+artifact and installed interpreter using the table; inspect its recorded architecture.
+Actions resources expire after 90 days; the final release will retain the approved
+resources under [unique public names](../contributing/publish-0.4.md#release-attachment-inventory).
+
+Bind **both** the catalog/dependency export and the candidate to the verified
+evidence, then verify all eight package hashes. This is a consistency check after
+identity verification, not an independent trust decision:
+
+```sh
+"$PYTHON" - <<'PY'
+import hashlib
+import json
+import os
+import tarfile
+from pathlib import Path
+candidate = Path("release/candidate")
+export = Path("release/target-download/target-export.tar.gz")
+with tarfile.open("release/evidence/ci-evidence.tar.gz") as evidence:
+    def approved(name, path):
+        source = evidence.extractfile("./coordinated/" + name)
+        assert source is not None
+        digest = hashlib.file_digest(source, "sha256").hexdigest()
+        with path.open("rb") as local:
+            assert hashlib.file_digest(local, "sha256").hexdigest() == digest
+    approved("release-candidate/candidate.json", candidate / "candidate.json")
+    approved(os.environ["TARGET_ARTIFACT"] + "/target-export.tar.gz", export)
+manifest = json.loads((candidate / "candidate.json").read_text())
+assert manifest["commit"] == os.environ["EXPECTED_COMMIT"]
+for item in manifest["artifacts"]:
+    path = candidate / item["file"]
+    assert path.stat().st_size == item["bytes"]
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == item["sha256"]
+print("Verified candidate and complete target export")
+PY
+mkdir release/target
+tar -xzf release/target-download/target-export.tar.gz -C release/target
+export CANDIDATE="$PWD/release/candidate"
+export TARGET="$PWD/release/target"
+export CORE_DIR="$PWD/core"
+```
+
+`target.json` records the actual Python patch version, system and architecture.
+Its file inventory covers catalogs, locks, notices inside wheels and dependency
+bytes. Do not substitute other wheels after verification.
+
+### Install the candidate with pip
+
+This is the principal path; it changes only the new `core/` virtual environment.
+The selected `PYTHON` must match the target export's Python minor version.
+
+<!-- install:pip -->
+```sh
+"$PYTHON" -m venv "$CORE_DIR"
+"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0-py3-none-any.whl"
+"$CORE_DIR/bin/apizr" --version
+```
+
+Observe `outerspace-apizr 0.4.0`, then activate it with `. "$CORE_DIR/bin/activate"`
+and follow the [candidate Quickstart](quickstart-0.4.md).
+
+### Alternatively, install as a tool
+
+With uv already installed, use this **instead of** pip:
+
+<!-- install:uv -->
+```sh
+uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0-py3-none-any.whl"
+```
+
+Or, with pipx already installed, use:
+
+<!-- install:pipx -->
+```sh
+pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0-py3-none-any.whl"
+```
+
+Use the executable path reported by that tool, then check `apizr --version`.
+Do not install plugins with `pipx inject` or manually edit a uv tool environment.
+The profile example below uses the principal pip path (`$CORE_DIR/bin/apizr`);
+for tool installations use that reported Apizr executable instead.
+
+## Choose a plugin profile
+
+The **core** is enough for supported static analysis and generation. Generated
+REST/MCP servers have separate runtime requirements. The **`apizr-mcp` plugin**
+is an analysis server; the historical **`mcp` extra** supplies optional dependencies
+for existing core workflows and does not install that plugin.
+
+| Profile | Plugins | Additional prerequisites when used |
+| --- | --- | --- |
+| `mcp` | apizr-mcp | An MCP client; Python SDK proof needs no AI account |
+| `oci` | apizr-oci | Docker Engine and Buildx for build/push |
+| `delivery` | apizr-oci and apizr-attest | Docker/Buildx; Continuum Attest for receipts; ORAS for proof transport |
+
+From the verified installation workspace, choose **one** profile and absent plan
+and plugin-store directories. The commands below are offline and reuse exported
+requirements. Choose `oci` or `delivery` instead of `mcp` for those paths:
+
+```sh
+export PROFILE=mcp
+export PLAN="$PWD/$PROFILE-plan"
+export PLUGINS_DIR="$PWD/plugins"
+```
+
+<!-- install:profile -->
+```sh
+"$CORE_DIR/bin/apizr" plugins catalog resolve --profile "$PROFILE" --catalog "$TARGET/catalog/catalogue.json" --wheelhouse "$TARGET/wheelhouse" --output-dir "$PLAN" --json
+"$CORE_DIR/bin/apizr" plugins lock check --project "$PLAN/apizr.toml" --lock "$PLAN/apizr.plugins.lock.json" --wheelhouse "$TARGET/wheelhouse" --json
+"$CORE_DIR/bin/apizr" plugins sync --project "$PLAN/apizr.toml" --lock "$PLAN/apizr.plugins.lock.json" --wheelhouse "$TARGET/wheelhouse" --plugins-dir "$PLUGINS_DIR" --json
+"$CORE_DIR/bin/apizr" plugins list --active --json --plugins-dir "$PLUGINS_DIR"
+```
+
+**Observe:** resolution and lock checking succeed; sync records installations.
+On this fresh store, the active inventory is empty. Activate only what you selected:
+
+```sh
+# mcp profile
+"$CORE_DIR/bin/apizr" plugins enable apizr-mcp --version 0.4.0 --plugins-dir "$PLUGINS_DIR"
+# oci profile: enable apizr-oci instead
+# delivery profile: enable both apizr-oci and apizr-attest
+```
+
+**Installation** verifies and stores bytes. **Activation** selects an installed
+version. **Authorization** permits a particular operation and target; neither
+installation nor activation grants it. The [analysis MCP guide](../reference/apizr-mcp-server.md)
+provides a complete project, operator grant and client configuration. The
+[OCI](../reference/oci-service-plugin.md) and [Attest](../reference/attest-delivery-plugin.md)
+guides explain explicit image publication and signing permissions. These are
+trusted programs running with user rights, not a universal sandbox.
+
+## Develop from source
+
+Contributors should follow [development and checks](developer-guide/setup.md).
+[Manual wheel preparation](../development/0.4.md#install-a-development-wheel)
+and the guides' advanced sections remain available for custom evaluation builds.
+Those builds have their own identities and cannot replace approved release bytes.
+See [migration](migrate-0.4.md) before replacing development locks, grants or activations.

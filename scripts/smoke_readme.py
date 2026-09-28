@@ -92,12 +92,14 @@ def main() -> None:
     if args.development:
         development(cli, repository)
         migration(cli, repository)
+        quickstart(cli, repository, candidate=True)
     quickstart(cli, repository)
 
 
-def quickstart(cli: Path, repository: Path) -> None:
-    """Run the published stable shell blocks verbatim, including real client calls."""
-    guide = (repository / "docs/getting-started/quickstart.md").read_text()
+def quickstart(cli: Path, repository: Path, *, candidate: bool = False) -> None:
+    """Run the selected Quickstart blocks verbatim, including real client calls."""
+    page = "quickstart-0.4.md" if candidate else "quickstart.md"
+    guide = (repository / "docs/getting-started" / page).read_text()
     blocks = dict(
         re.findall(r"<!-- quickstart:([a-z-]+) -->\s*```sh\n(.*?)```", guide, re.S)
     )
@@ -113,8 +115,12 @@ def quickstart(cli: Path, repository: Path) -> None:
         "call-rest",
     )
     assert set(blocks) == set(order)
-    assert "outerspace-apizr==0.3.0" in blocks["setup"]
-    assert "/v0.3.0/examples/repository-shop/" in blocks["sources"]
+    if candidate:
+        assert "--operator-policy operator.json" in blocks["generate-mcp"]
+        assert "--operator-policy operator.json" in blocks["generate-rest"]
+    else:
+        assert "outerspace-apizr==0.3.0" in blocks["setup"]
+        assert "/v0.3.0/examples/repository-shop/" in blocks["sources"]
     env = dict(
         os.environ, PATH=str(cli.parent) + os.pathsep + os.environ.get("PATH", "")
     )
@@ -136,19 +142,19 @@ def quickstart(cli: Path, repository: Path) -> None:
         result.check_returncode()
         for expected in (
             "tools: api.quote, inventory.available",
-            "quote: 25.0",
-            "available: true",
+            'quote: {"result": 25.0}' if candidate else "quote: 25.0",
+            'available: {"result": true}' if candidate else "available: true",
         ):
             assert expected in result.stdout
         root = parent / "apizr-quickstart"
-        python = root / ".venv/bin/python"
+        python = cli.parent / "python" if candidate else root / ".venv/bin/python"
         subprocess.run(
             [
                 str(python),
                 "-I",
                 "-c",
                 "import apizr,importlib.metadata; from pathlib import Path; "
-                "assert importlib.metadata.version('outerspace-apizr') == '0.3.0'; "
+                f"assert importlib.metadata.version('outerspace-apizr') == {'0.4.0' if candidate else '0.3.0'!r}; "
                 f"assert not Path(apizr.__file__).resolve().is_relative_to(Path({str(repository)!r}))",
             ],
             cwd=root,
@@ -213,7 +219,7 @@ def quickstart(cli: Path, repository: Path) -> None:
                     process.kill()
                     process.wait(timeout=5)
         print(
-            "PASS: stable Quickstart outside checkout; two selected MCP tools and REST calls; no graphical client claimed"
+            f"PASS: {'candidate 0.4' if candidate else 'stable 0.3'} Quickstart outside checkout; two selected MCP tools and REST calls; no graphical client claimed"
         )
 
 

@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -29,6 +30,15 @@ def measure(command: list[str], cwd: Path, env: dict[str, str]) -> list[float]:
         run(*command, cwd=cwd, env=env, timeout=30)
         samples.append(time.perf_counter() - started)
     return samples
+
+
+def documented(name: str, cwd: Path, env: dict[str, str]) -> None:
+    """Execute the installation page's shell block without rewriting its commands."""
+    page = (ROOT / "docs/getting-started/install.md").read_text()
+    blocks = dict(
+        re.findall(r"<!-- install:([a-z]+) -->\s*```sh\n(.*?)```", page, re.S)
+    )
+    run("/bin/sh", "-c", "set -eu\n" + blocks[name], cwd=cwd, env=env)
 
 
 def qualify(candidate: Path, target: Path, output: Path) -> None:
@@ -63,20 +73,14 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
         env.pop("PYTHONPATH", None)
         env.pop("VIRTUAL_ENV", None)
         # pip bootstrapping is explicit test preparation, not plugin installation.
-        run(sys.executable, "-m", "venv", root / "pip", cwd=root, env=env)
-        python = root / "pip/bin/python"
-        run(
-            python,
-            "-m",
-            "pip",
-            "install",
-            "--no-index",
-            "--find-links",
-            target / "base",
-            core_wheel,
-            cwd=root,
-            env=env,
+        env.update(
+            PYTHON=sys.executable,
+            CORE_DIR=str(root / "pip"),
+            CANDIDATE=str(candidate),
+            TARGET=str(target),
         )
+        documented("pip", root, env)
+        python = root / "pip/bin/python"
         cli = root / "pip/bin/apizr"
         assert (
             run(cli, "--version", cwd=root, env=env).strip()
@@ -97,20 +101,7 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
             "installed_bytes": size(root / "pip"),
             "version_seconds": measure([str(cli), "--version"], root, env),
         }
-        run(
-            "uv",
-            "tool",
-            "install",
-            "--python",
-            sys.executable,
-            "--offline",
-            "--no-index",
-            "--find-links",
-            target / "base",
-            core_wheel,
-            cwd=root,
-            env=env,
-        )
+        documented("uv", root, env)
         assert (
             run(root / "uv-bin/apizr", "--version", cwd=root, env=env)
             .strip()
@@ -136,16 +127,10 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
             cwd=root,
             env=env,
         )
-        run(
-            root / "pipx-tool/bin/pipx",
-            "install",
-            "--python",
-            sys.executable,
-            "--pip-args",
-            f"--no-index --find-links={target / 'base'}",
-            core_wheel,
-            cwd=root,
-            env=env,
+        documented(
+            "pipx",
+            root,
+            {**env, "PATH": str(root / "pipx-tool/bin") + os.pathsep + env["PATH"]},
         )
         assert (
             run(root / "pipx-bin/apizr", "--version", cwd=root, env=env)
@@ -159,42 +144,15 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
         ):
             plan = root / (profile + "-plan")
             store = root / (profile + "-store")
-            run(
-                cli,
-                "plugins",
-                "catalog",
-                "resolve",
-                "--profile",
-                profile,
-                "--catalog",
-                target / "catalog/catalogue.json",
-                "--wheelhouse",
-                target / "wheelhouse",
-                "--output-dir",
-                plan,
-                "--json",
-                cwd=root,
-                env=env,
-            )
-            common = [
-                "--project",
-                plan / "apizr.toml",
-                "--lock",
-                plan / "apizr.plugins.lock.json",
-                "--wheelhouse",
-                target / "wheelhouse",
-            ]
-            run(cli, "plugins", "lock", "check", *common, "--json", cwd=root, env=env)
-            run(
-                cli,
-                "plugins",
-                "sync",
-                *common,
-                "--plugins-dir",
-                store,
-                "--json",
-                cwd=root,
-                env=env,
+            documented(
+                "profile",
+                root,
+                {
+                    **env,
+                    "PROFILE": profile,
+                    "PLAN": str(plan),
+                    "PLUGINS_DIR": str(store),
+                },
             )
             assert (
                 json.loads(

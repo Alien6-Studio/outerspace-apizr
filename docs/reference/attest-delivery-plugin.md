@@ -2,8 +2,10 @@
 
 !!! warning "0.4 development — not released"
 
-    These commands require a wheel built from the development source, not the
-    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
+    for this page's 0.4 commands; they are not available in stable 0.3.0.
+    The [development setup](../development/0.4.md#install-a-development-wheel)
+    is for contributors building their own evaluation wheels.
 
 `apizr-attest` is an optional, separately installed extension. It binds a verified
 OCI delivery to a user-selected Continuum Attest identity and RFC 3161 authority.
@@ -20,6 +22,14 @@ First complete the [OCI build and push example](oci-service-plugin.md). Keep the
 versioned `result` objects from both extension responses as `build-result.json`
 and `push-result.json` (not the enclosing extension protocol envelopes).
 Keep the immutable local image available until attestation finishes.
+
+Follow [Install Apizr → choose a plugin profile](../getting-started/install.md#choose-a-plugin-profile)
+with **`delivery`**. Retain its workspace as `$work`, with `core/` and the explicit
+`plugins/` store. Reuse the exported locks; no source build or manual dependency
+closure is needed for installation.
+
+<details markdown="1">
+<summary>Advanced: build and prepare wheels from a source checkout</summary>
 
 Prepare a separate wheelhouse containing the core, both plugin wheels and their
 reviewed transitive Python dependencies. Only preparation accesses an index:
@@ -53,6 +63,9 @@ core/bin/apizr plugins install wheels/apizr_attest-0.4.0-py3-none-any.whl \
   --plugins-dir "$work/plugins"
 core/bin/apizr plugins enable apizr-attest --version 0.4.0 --plugins-dir "$work/plugins"
 ```
+
+
+</details>
 
 ## Explicit binary, identity and trust
 

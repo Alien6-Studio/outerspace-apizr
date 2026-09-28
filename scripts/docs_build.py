@@ -7,6 +7,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CRITICAL = {
+    "getting-started/install/index.html": "Install Apizr",
+    "getting-started/quickstart-0.4/index.html": "Make your first MCP and REST calls with the 0.4 candidate",
+    "contributing/publish-0.4/index.html": "Release attachment inventory",
     "releases/0.4.0/index.html": "Release preparation — not published",
     "getting-started/migrate-0.4/index.html": "Migrate from 0.3 to 0.4",
     "reference/operator-policy/index.html": "receipt.sign",

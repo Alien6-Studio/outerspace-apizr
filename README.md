@@ -10,16 +10,10 @@ they execute. Your business logic stays in Python.
 **[Quickstart: make your first MCP and REST calls](https://apizr.outerspace.sh/getting-started/quickstart/)** ·
 [The full journey](https://apizr.outerspace.sh/getting-started/introduction/)
 
-**Latest published stable: 0.3.0 · Released 22 September 2026**
-
-**Preparing 0.4.0 — not released.** Read the
-[release notes](https://apizr.outerspace.sh/releases/0.4.0/) and
-[migration guide](https://apizr.outerspace.sh/getting-started/migrate-0.4/) for the
-Python compiler API, project files, remote Git, isolated plugins and authorized
-OCI/Attest delivery. The guide covers the new source-access grants and MCP result
-compatibility. Evaluate the [development build](https://apizr.outerspace.sh/development/0.4/)
-until the exact release distributions are published; these additions are not in
-the stable installation below.
+Choose the [installation guide](https://apizr.outerspace.sh/getting-started/install/)
+for published packages, reviewed candidates or contributor setup. The
+[release record](https://apizr.outerspace.sh/releases/0.4.0/) identifies what is
+actually available; capabilities described here belong to this version of the code.
 
 Python **3.11–3.14** · GPL-3.0-or-later.
 
@@ -30,23 +24,19 @@ Python **3.11–3.14** · GPL-3.0-or-later.
 [![Python](https://img.shields.io/badge/python-3.11%E2%80%933.14-blue.svg)](https://pypi.org/project/outerspace-apizr/)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://apizr.outerspace.sh/about/LICENSE/)
 
-## Install
+## Choose your path
 
-In a Python 3.11–3.14 virtual environment:
+| Your goal | Start here |
+| --- | --- |
+| Expose Python functions as MCP tools or REST endpoints | [Install](https://apizr.outerspace.sh/getting-started/install/) → [Quickstart](https://apizr.outerspace.sh/getting-started/quickstart/) |
+| Analyze a project from an MCP client | [Install the MCP profile](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile) → [analysis server](https://apizr.outerspace.sh/reference/apizr-mcp-server/) |
+| Build and deliver a service | [Install OCI or delivery](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile) → [OCI](https://apizr.outerspace.sh/reference/oci-service-plugin/) and [Attest](https://apizr.outerspace.sh/reference/attest-delivery-plugin/) |
 
-```sh
-python -m pip install outerspace-apizr==0.3.0
-apizr --version
-```
-
-The [Quickstart](https://apizr.outerspace.sh/getting-started/quickstart/)
-shows how to create that environment, fetch a versioned example, select exactly
-two public functions, generate a server and call it. Static Python analysis needs
-only the base installation. Generated MCP and REST servers have their own
-`requirements.txt`, installed explicitly before running them.
-
-For optional notebook, HTTP or historical pipeline workflows, see the
-[installation choices](https://apizr.outerspace.sh/getting-started/introduction/#install).
+The core handles supported static analysis and generation. Generated servers have
+their own runtime dependencies. Optional plugins live in separate environments;
+installation, activation and operator authorization are independent decisions.
+Follow the installation guide for version-specific commands rather than mixing
+an older installed release with this source version's capabilities.
 
 ## Expose the functions you choose
 
@@ -64,7 +54,7 @@ Being ready never makes a function public automatically.
 | REST endpoints for applications | [Generate REST and send two requests](https://apizr.outerspace.sh/getting-started/quickstart/#use-rest-instead) |
 
 The generated MCP server calls your selected functions. The separate,
-[development Apizr MCP server](https://apizr.outerspace.sh/reference/apizr-mcp-server/)
+[Apizr analysis MCP server](https://apizr.outerspace.sh/reference/apizr-mcp-server/)
 analyzes repositories and plans exposure; it does not execute their functions.
 
 ## Choose execution boundaries

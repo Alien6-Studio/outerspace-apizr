@@ -2,15 +2,17 @@
 
 !!! warning "0.4 development — not released"
 
-    These commands require a wheel built from the development source, not the
-    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
+    for this page's 0.4 commands; they are not available in stable 0.3.0.
+    The [development setup](../development/0.4.md#install-a-development-wheel)
+    is for contributors building their own evaluation wheels.
 
 The official `apizr-oci` extension builds a **local service image** from a direct
 repository exposure bundle and publishes it through a separate, explicit `push`
 operation. It does not build governed execution workers or install business
 dependencies. Install and enable it explicitly;
 the minimal Apizr environment does not acquire Docker, REST or MCP dependencies.
-This first package is version `0.4.0`, available from the checkout, not published.
+This first package is version `0.4.0`, available as a reviewed candidate, not a published release.
 
 ## Prerequisites and installation
 
@@ -19,6 +21,14 @@ Unix socket. The target is `linux/amd64` or `linux/arm64`. Cross-platform builds
 require an already configured emulator; Apizr does not install one. Choose and
 review a Python base image with `python`, `venv` and pip, pinned by SHA-256 digest.
 The base, Docker binaries and dependency wheels remain trusted code.
+
+Follow [Install Apizr → choose a plugin profile](../getting-started/install.md#choose-a-plugin-profile)
+with **`oci`**. Retain its workspace as `$work`, with `core/` and the explicit
+`plugins/` store. Reuse the exported locks; no source build or manual dependency
+closure is needed for installation.
+
+<details markdown="1">
+<summary>Advanced: build and prepare wheels from a source checkout</summary>
 
 Build the two wheels, then leave the checkout. These preparation commands may
 access package indexes; installation through `apizr plugins install` is offline.
@@ -76,6 +86,9 @@ Includes, URLs, paths, index options, markers, extras and editable installs are
 refused. Wheel archive and startup-file protections are reused. Metadata identity
 and dependency headers retain their 64 KiB bound; unused long descriptions are
 not parsed or loaded. Compressed/expanded archive limits still apply.
+
+
+</details>
 
 ## Generate a bundle and prepare server dependencies
 

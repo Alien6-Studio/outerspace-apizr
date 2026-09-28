@@ -2,8 +2,10 @@
 
 !!! warning "0.4 development — not released"
 
-    These commands require a wheel built from the development source, not the
-    published `0.3.0` package. Follow the [development installation](../development/0.4.md#install-a-development-wheel) and record its source commit.
+    Stable is 0.3.0. Use the [candidate installation](../getting-started/install.md#evaluate-the-040-candidate)
+    for this page's 0.4 commands; they are not available in stable 0.3.0.
+    The [development setup](../development/0.4.md#install-a-development-wheel)
+    is for contributors building their own evaluation wheels.
 
 A plugin is trusted code in a separate Python environment. Its public interface
 is a wheel manifest plus the existing **`apizr.extension/v1`** request/response
