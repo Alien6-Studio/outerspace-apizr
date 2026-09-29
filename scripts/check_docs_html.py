@@ -104,7 +104,8 @@ def check(site: Path) -> None:
         failures.append("Missing source analysis permission and stable anchor")
     for name, required in {
         "getting-started/install/index.html": (
-            "core and all three plugins are published as",
+            "publication status",
+            "durable GitHub release assets",
             "catalog resolve",
             "lock check",
             "pipx",
@@ -120,6 +121,12 @@ def check(site: Path) -> None:
             "Confirmation mainteneur nécessaire",
             "Official Apizr distribution images remain deferred",
             "SHA256SUMS",
+        ),
+        "releases/0.4.1/index.html": (
+            "0.4.1 is not yet published.",
+            "DeliveryPlan",
+            "0.4.1rc1",
+            "0.4.2",
         ),
         "releases/0.4.0/index.html": (
             "Core and all three plugins published as 0.4.0rc1.",
@@ -145,7 +152,7 @@ def check(site: Path) -> None:
     for required in (
         "getting-started/quickstart/",
         "getting-started/install/",
-        "releases/0.4.0/",
+        "releases/0.4.1/",
         "package availability",
         "Choose your next step",
         "assets/images/illustration.png",

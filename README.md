@@ -11,8 +11,10 @@ they execute. Your business logic stays in Python.
 [The full journey](https://apizr.outerspace.sh/getting-started/introduction/)
 
 Follow [Install Apizr](https://apizr.outerspace.sh/getting-started/install/), then
-the Quickstart. The documentation covers Apizr 0.4; installation instructions
-identify the available packages and verified artifacts.
+the Quickstart. See the [0.4.1 release notes](https://apizr.outerspace.sh/releases/0.4.1/) for
+functionality, compatibility and publication status.
+The journey is Python code → discover/select capabilities → expose as REST/MCP
+→ optionally deliver as OCI.
 
 Python **3.11–3.14** · GPL-3.0-or-later.
 

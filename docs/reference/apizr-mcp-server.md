@@ -47,7 +47,7 @@ prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
   -r dependencies.txt
 uv venv --no-python-downloads --python python3 core
 uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.1rc1-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.1-py3-none-any.whl
 ```
 
 Record one exact version and SHA-256 per distribution, including the plugin,
@@ -71,11 +71,11 @@ for wheel in sorted(Path("wheels").glob("*.whl")):
     lines.append(f"{metadata['Name']}=={metadata['Version']} --hash=sha256:{digest}\n")
 Path("plugin.lock").write_text("".join(lines))
 PY
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.1rc1-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.1rc1-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.1-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.1-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.1rc1 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.1 --plugins-dir "$work/plugins"
 ```
 
 Installation alone leaves the plugin inactive. The existing [locked installation
@@ -264,7 +264,8 @@ synchronized test worker. It checks core files, activations and project contents
 The dedicated CI matrix covers Linux 3.11–3.14 and macOS 3.11/3.14 and preserves
 logs and separate plugin coverage. Linux repeats the installed proof with network
 access removed by a disposable network namespace. These are development proofs,
-not tests of a graphical client or a claim that 0.4 has been published.
+not tests of a graphical client. See the [release record](../releases/0.4.1.md)
+for publication status.
 
 ## Qualification evidence
 

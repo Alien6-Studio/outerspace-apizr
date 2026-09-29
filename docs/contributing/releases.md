@@ -5,16 +5,19 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 ## Current baseline and next release
 
-The coordinated core and three official plugins are published as **0.4.0rc1**.
-That tag, release and its artifacts remain immutable. The earlier core-only
-0.4.0 publication was incomplete and its PyPI version was removed; this historical
-fact does not authorize another final 0.4.0 publication.
+The coordinated core and three official plugins are published as **0.4.1rc1**,
+source `230142ecf53fc250d9026345c350414983648f90`. Qualification #200 and publication
+#201 record the verified public archives. That tag, release, notes and assets
+remain immutable; see the [0.4.1 release record](../releases/0.4.1.md).
 
-The next trajectory is **0.4.0rc1 → 0.4.1rc1 / rc2 … → 0.4.1 → 0.4.2**.
-There will be no new final 0.4.0. The first functional increment sets all four development versions to
-**0.4.1rc1**. Ordinary PR/CI artifacts are development qualification bytes, not a
-published RC. An immutable RC tag and publication still require explicit
-authorization after qualification of the retained exact artifacts.
+The next step is **0.4.1rc1 → 0.4.1**. All four source distributions declare
+**0.4.1**. Ordinary PR/CI artifacts are previews; final qualification must select
+the original artifacts from the protected release-line commit after merge.
+Another RC is needed only for a genuine post-RC product defect, not version or
+documentation changes. Final publication requires separate explicit authorization.
+
+The earlier **0.4.0rc1** remains historical. The core-only 0.4.0 publication was
+incomplete and its PyPI version was removed; no new final 0.4.0 is planned.
 
 Follow the [release-branch model](release-branches.md): feature PRs target
 `release/0.4.1`; `master` remains the last integrated qualified baseline.
@@ -59,7 +62,7 @@ For first-time plugin publishers, PyPI allows only one pending publisher for an
 identical repository/workflow/environment configuration. Register and publish one
 package at a time using the exact `package` input, then finish with `package: all`
 to archive release-wide evidence. These prerequisites do not authorize a new upload.
-The completed 0.4.0rc1 delivery must not be dispatched again.
+Completed 0.4.0rc1 and 0.4.1rc1 deliveries must not be dispatched again.
 
 ## Published 0.3.0
 

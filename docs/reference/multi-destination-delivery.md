@@ -157,7 +157,7 @@ recorded digests after original sources and bundles are removed. Existing
 independent offline proof verification is preserved.
 
 Single-destination APIs and historical evidence remain supported. Versions remain
-`0.4.1rc1`. This increment adds no concurrent delivery, cross-repository proof reuse,
+`0.4.1`. This increment adds no concurrent delivery, cross-repository proof reuse,
 production registry adapters, MCP delivery tools, rollback or automatic proof
 selection. Live-provider qualification, including Docker Hub, is optional
 interoperability validation; it is not a remaining 0.4.1 functional requirement.

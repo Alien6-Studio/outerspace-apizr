@@ -170,11 +170,13 @@ loader never prints results or terminates the process.
 The optional `[[plugins]]` declarations identify exact wheels and requirements.
 They never install, activate or execute plugins. See [project plugin locks](../../reference/project-plugin-locks.md) for the format, explicit `--user-config`, precedence and a complete installed-wheel example. Existing analysis root and policy precedence remain unchanged.
 
-## Application dependencies and resources (0.4.1 development)
+<span id="application-dependencies-and-resources-041-development"></span>
+
+## Application dependencies and resources
 
 This optional table extends the existing `apizr.project/v1` configuration. It is
-available in development builds of all four coordinated **0.4.1rc1** distributions;
-it is not part of the published 0.4.0rc1 packages.
+included in all four coordinated **0.4.1** distributions; see the
+[0.4.1 release record](../../releases/0.4.1.md).
 
 ```toml
 [application]

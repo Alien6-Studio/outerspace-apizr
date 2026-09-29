@@ -1,6 +1,6 @@
 # Delivery identities
 
-The unpublished 0.4.1 line composes the existing repository and publication
+Apizr 0.4.1 composes the existing repository and publication
 contracts into immutable records. It does not grant operator permissions or
 claim that Attest supervised the build.
 
