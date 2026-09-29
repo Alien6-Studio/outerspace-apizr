@@ -3,9 +3,14 @@
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 After [signing a delivery proof](attest-delivery-plugin.md), the optional
-`outerspace-apizr-attest` plugin can store its existing six public files alongside the
+`outerspace-apizr-attest` plugin can store its allowlisted public proof files alongside the
 image. It does not rebuild, retag, re-sign or timestamp anything. The image and
 proof have different manifest digests. No private key or TSA is needed.
+
+Historical proofs contain six files; new 0.4.1 delivery proofs add
+`delivery/apizr-delivery-manifest.json` as a seventh file. Both exact profiles
+remain accepted; arbitrary additional files are refused. See
+[delivery identities](../architecture/delivery-identities.md).
 
 ## Explicit tools and credentials
 
@@ -205,7 +210,7 @@ same pattern. The plugin remains optional and separately installed.
 
 The application type `application/vnd.apizr.attest.delivery.v1` is an Apizr
 profile, not a new OCI standard. It uses an OCI 1.1 image manifest with the exact
-image descriptor as `subject`, empty OCI config, and six individual layers of
+image descriptor as `subject`, empty OCI config, and one layer per allowlisted public file of
 `application/vnd.apizr.attest.delivery.file.v1`, ordered by filename:
 `attest.yaml`, `delivery/build.json`, `delivery/manifest.json`,
 `delivery/oci-manifest.json`, `delivery/push.json`, `receipt.yaml`.
@@ -259,9 +264,13 @@ HTTPS Zot 2.1.21 registry, local TSA and pinned ORAS. It installs wheels
 outside the checkout, publishes two proofs, checks idempotence and direct ORAS
 interoperability, then deletes original proofs and private signing keys. A
 separate consumer has no Docker socket and a registry identity restricted to
-read access by Zot policies, also enforced by its HTTPS test gateway. It fetches the selected digest, compares all six files, and verifies in
+read access by Zot policies, also enforced by its HTTPS test gateway. It fetches the selected digest, compares all public proof files, and verifies in
 a final networkless container with ORAS and registry credentials removed.
 The core's files/distributions are compared before and after. Public results and
-refusals are retained by CI. This fixture does not qualify Docker Hub or Trunx.
+refusals are retained by CI. This fixture qualifies the documented OCI registry
+profile, not any named live provider. Docker Hub live qualification is optional
+interoperability validation, separate from the 0.4.1 functional scope.
 Apizr release attestation, its secrets and the continuum-attest repository are
 unchanged.
+
+See [proof-required delivery admission](delivery-admission.md) for explicit pre-build requirements and the separately authorized final promotion.

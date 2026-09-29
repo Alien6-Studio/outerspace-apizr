@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.4.1 — unreleased
+
+- Apply optional or required proof per delivery plan; required image transfer
+  withholds the destination tag until independent proof verification and admission.
+- Deliver one immutable build to up to eight explicit OCI destinations, preserving
+  independent results, partial failure and evidence-based resume without rebuilding.
+- Define release scope by generic OCI capabilities. Live-provider qualification
+  is optional interoperability validation, not a remaining functional requirement.
+
+- Bind durable source provenance, existing analysis/bundle identities and exact
+  wheel closure into an immutable delivery plan consumed by OCI builds.
+- Link the observed image to a separate delivery manifest, push and signed
+  Attest proof while preserving historical v1 proof verification.
+
+- Add optional explicit application dependency pins and resource files to project
+  configuration and generated direct REST/MCP bundles.
+- Reuse the OCI builder with the verified server/application closure and resource
+  identities; qualify calls after removing the original source repository.
+- Keep core and plugin environments isolated.
+
 ## 0.4.0rc1 — 2026-09-28
 
 - Publish official plugins as `outerspace-apizr-oci`, `outerspace-apizr-mcp` and
@@ -48,7 +68,7 @@ published. The corrected coordinated delivery uses 0.4.0rc1. See the [0.4.0 note
 - Keep Python 3.11–3.14, minimal Pydantic-only core, explicit exposure selection,
   single-source commands, historical YAML pipeline and direct/local/OCI boundaries.
 - Defer application dependencies/resources, shared manifest, multiple destinations,
-  mandatory proof and Docker Hub/Trunx qualification to 0.4.1. MCP delivery,
+  mandatory proof to 0.4.1. MCP delivery,
   Postman, forge integrations, onboarding tools and the Homebrew tap belong to 0.4.2.
 
 ## 0.3.0 — 2026-09-22

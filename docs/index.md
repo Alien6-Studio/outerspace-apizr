@@ -24,9 +24,8 @@ Your business logic stays in Python.
 </div>
 
 See [Install Apizr](getting-started/install.md) for package availability and the
-installation steps for your chosen workflow. The [release notes](releases/0.4.0.md)
-explain version differences,
-including explicit source access and MCP results.
+installation steps for your chosen workflow. The [release notes](releases/0.4.1.md)
+describe **Apizr 0.4.1**, its functionality and publication status.
 
 Python 3.11–3.14 · GPL-3.0-or-later.
 
@@ -109,4 +108,4 @@ project code.
 - [The full journey](getting-started/introduction.md): understand each stage and use your own code.
 - [REST](getting-started/user-guide/rest.md) and [MCP](getting-started/user-guide/mcp.md): modern single-source workflows.
 - [Legacy pipeline — compatibility](getting-started/user-guide/apizr.md): the historical notebook/script pipeline.
-- [Release notes](releases/0.4.0.md) and [compatibility](getting-started/developer-guide/releases.md).
+- [Release notes](releases/0.4.1.md) and [compatibility](getting-started/developer-guide/releases.md).

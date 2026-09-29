@@ -12,7 +12,9 @@ from apizr_oci.snapshot import read
 from .delivery import (
     FILES,
     MAX_FILE,
+    TRANSVERSAL_FILE,
     export,
+    proof_files,
     snapshot,
     tool,
     trust_snapshot,
@@ -61,7 +63,7 @@ def manifest_files(raw: bytes, subject: dict) -> dict[str, dict]:
         or value["config"] != EMPTY
         or value["annotations"] != ANNOTATIONS
         or not isinstance(value["layers"], list)
-        or len(value["layers"]) != len(FILES)
+        or len(value["layers"]) not in {len(FILES), len(FILES) + 1}
     ):
         raise AttestError("invalid_proof_manifest")
     found = {}
@@ -75,13 +77,13 @@ def manifest_files(raw: bytes, subject: dict) -> dict[str, dict]:
         name = annotations["org.opencontainers.image.title"]
         if (
             not isinstance(name, str)
-            or name not in FILES
+            or name not in (*FILES, TRANSVERSAL_FILE)
             or name in found
             or desc["mediaType"] != LAYER_TYPE
         ):
             raise AttestError("invalid_proof_paths")
         found[name] = desc
-    if list(found) != sorted(FILES):
+    if list(found) not in [sorted(FILES), sorted((*FILES, TRANSVERSAL_FILE))]:
         raise AttestError("invalid_proof_order")
     return found
 
@@ -125,7 +127,7 @@ def execute_publish(request: PublishRequest, work: Path) -> PublishResult:
                     "--format",
                     "json",
                     request.expected_reference,
-                    *[name + ":" + LAYER_TYPE for name in sorted(FILES)],
+                    *[name + ":" + LAYER_TYPE for name in sorted(proof_files(proof))],
                 ],
                 cwd=proof,
             )
@@ -141,7 +143,9 @@ def execute_publish(request: PublishRequest, work: Path) -> PublishResult:
         if actual != desc:
             raise AttestError("artifact_descriptor_mismatch")
         files = manifest_files(raw, subject)
-        for name in FILES:
+        if set(files) != set(proof_files(proof)):
+            raise AttestError("artifact_content_mismatch")
+        for name in proof_files(proof):
             source = read(proof, name, MAX_FILE)
             if files[name]["size"] != len(source) or files[name]["digest"] != sha(
                 source
@@ -192,19 +196,9 @@ def execute_fetch(request: FetchRequest, work: Path) -> FetchResult:
     output = Path(request.output_dir)
     if os.path.lexists(output):
         raise AttestError("proof_already_exists")
-    if (
-        request.artifact_reference.split("@")[0]
-        != request.expected_reference.split("@")[0]
-    ):
-        raise AttestError("cross_repository_refused")
-    client = registry(request, work, deadline)
-    _, subject = client.manifest(request.expected_reference)
-    raw, desc = client.manifest(request.artifact_reference)
-    files = manifest_files(raw, subject)
-    proof = work / "proof"
-    for name in FILES:
-        write(proof / name, client.blob(files[name]))
-    verification = check_proof(request, work, proof, deadline, output)
+    _, subject, desc, proof, verification = fetch_verified(
+        request, work, deadline, output
+    )
     export(proof, output)
     return FetchResult(
         image_reference=request.expected_reference,
@@ -214,3 +208,36 @@ def execute_fetch(request: FetchRequest, work: Path) -> FetchResult:
         receipt_sha256=verification.receipt_sha256,
         verification=verification,
     )
+
+
+def fetch_verified(
+    request, work: Path, deadline: float, original: Path, *, require_discoverable=False
+):
+    """One parser and native verifier shared by fetch and admission."""
+    if (
+        request.artifact_reference.split("@")[0]
+        != request.expected_reference.split("@")[0]
+    ):
+        raise AttestError("cross_repository_refused")
+    client = registry(request, work, deadline)
+    _, subject = client.manifest(request.expected_reference)
+    raw, desc = client.manifest(request.artifact_reference)
+    if require_discoverable:
+        candidates = client.discover(ARTIFACT_TYPE)
+        selected = [
+            c for c in candidates if c["reference"] == request.artifact_reference
+        ]
+        if (
+            len(selected) != 1
+            or descriptor(
+                selected[0], allowed={"reference", "artifact_type", "verified"}
+            )
+            != desc
+        ):
+            raise AttestError("artifact_not_discoverable")
+    files = manifest_files(raw, subject)
+    proof = work / "proof"
+    for name in files:
+        write(proof / name, client.blob(files[name]))
+    verification = check_proof(request, work, proof, deadline, original)
+    return client, subject, desc, proof, verification

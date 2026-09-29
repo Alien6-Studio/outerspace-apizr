@@ -43,26 +43,26 @@ uv build --wheel plugins/attest --out-dir "$work/wheels"
 cd "$work"
 uv venv --seed --python 3.14 prepare
 prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
-  wheels/outerspace_apizr-0.4.0rc1-py3-none-any.whl \
-  wheels/outerspace_apizr_oci-0.4.0rc1-py3-none-any.whl \
-  wheels/outerspace_apizr_attest-0.4.0rc1-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.1-py3-none-any.whl \
+  wheels/outerspace_apizr_oci-0.4.1-py3-none-any.whl \
+  wheels/outerspace_apizr_attest-0.4.1-py3-none-any.whl
 uv venv --python 3.14 core
 uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.0rc1-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.1-py3-none-any.whl
 ```
 
 Use the complete `lock_wheels.py` example on the linked OCI page to create a
 reviewed lock for this wheelhouse. All plugin dependencies go into the plugin's
 own environment; the core stays minimal. No additional mandatory core dependency
-is introduced. The plugin versions remain `0.4.0rc1`, built locally, not released.
+is introduced. These commands build local 0.4.1 previews.
 
 ```sh
 prepare/bin/python lock_wheels.py wheels attest.lock
-sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_attest-0.4.0rc1-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_attest-0.4.0rc1-py3-none-any.whl \
+sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_attest-0.4.1-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/outerspace_apizr_attest-0.4.1-py3-none-any.whl \
   --sha256 "$sha" --requirements attest.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-attest --version 0.4.0rc1 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-attest --version 0.4.1 --plugins-dir "$work/plugins"
 ```
 
 
@@ -225,6 +225,13 @@ before recomputation. Each proof file is bounded to 1 MiB; trust to 128 files an
 snapshotted paths are refused. Native stdout/stderr share the configured read
 budget; the total extension timeout also bounds acquisition and signing.
 
+New 0.4.1 proofs additionally contain `delivery/apizr-delivery-manifest.json`.
+The existing `delivery/manifest.json` hashes this file without changing its schema
+or scope. Verification checks the plan/build/push lineage and returns
+`delivery_plan_digest`, `delivery_manifest_digest` and the verified `attest_tool`
+version/hash. Historical proofs omit lineage; their verification remains supported.
+See [delivery identities](../architecture/delivery-identities.md).
+
 ## Python API and boundaries
 
 Install the optional package in a separate application environment, then:
@@ -271,3 +278,5 @@ signed proof with `publish` additionally requires the core
 [operator publication policy](operator-policy.md). That grant covers registry read
 and publish access to the image repository; it requires no new private key or
 signing permission. See [OCI proof transport](attest-oci-artifacts.md).
+
+See [proof-required delivery admission](delivery-admission.md) for explicit pre-build requirements and the separately authorized final promotion.

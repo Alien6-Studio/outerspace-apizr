@@ -9,6 +9,7 @@ from threading import Event, Thread
 import pytest
 from analysis_authorization import analysis_policy
 from analysis_authorization import authorized_main as main
+from provenance_assertions import assert_equivalent_bundles
 
 from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
@@ -318,7 +319,7 @@ def test_cli_exact_parity(ssh_remote, policies, scratch, tmp_path, capfd, comman
                 if p.is_file()
             }
 
-        assert files(local) == files(target)
+        assert_equivalent_bundles(files(local), files(target))
         for name, data in files(target).items():
             assert not any(
                 part in {".git", ".ssh", "known_hosts", "ssh-known-hosts"}
@@ -416,8 +417,9 @@ def test_retained_sources_after_ssh_cleanup(ssh_remote, scratch):
         )
     assert not snapshot.root.exists()
     for interface in ("rest", "mcp"):
-        assert render_bundle(prepared, interface=interface) == render_bundle(
-            local, interface=interface
+        assert_equivalent_bundles(
+            render_bundle(prepared, interface=interface),
+            render_bundle(local, interface=interface),
         )
 
 

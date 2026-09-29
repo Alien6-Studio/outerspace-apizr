@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master, develop, release/0.4.1]
   pull_request:
   workflow_dispatch:
 
@@ -392,7 +392,11 @@ jobs:
           retention-days: 90
 
   provenance:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    # Release-line signing stays disabled until maintainers configure protection.
+    if: >-
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/master' ||
+       (github.ref == 'refs/heads/release/0.4.1' && github.ref_protected))
     needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations, release-target, release-delivery]
     runs-on: ubuntu-latest
     permissions:
@@ -479,8 +483,12 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
         run: |
           flags=()
-          if test "$EVENT_NAME" = pull_request; then flags+=(--preview); fi
-          python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" "${flags[@]}"
+          # Master validates the integrated baseline; publication keeps the
+          # original qualified release-line artifacts and source identity.
+          if test "$EVENT_NAME" = pull_request || test "$GITHUB_REF" = refs/heads/master; then
+            flags+=(--preview)
+          fi
+          python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${flags[@]}"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-assets

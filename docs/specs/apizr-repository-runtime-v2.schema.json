@@ -1,5 +1,62 @@
 {
   "$defs": {
+    "ApplicationInputs": {
+      "additionalProperties": false,
+      "description": "Bounded bundle extension; not a publication or delivery manifest.",
+      "properties": {
+        "dependencies": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 128,
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "repository_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "resources": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ApplicationResource"
+          },
+          "maxItems": 128,
+          "title": "Resources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "repository_digest"
+      ],
+      "title": "ApplicationInputs",
+      "type": "object"
+    },
+    "ApplicationResource": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "size": {
+          "maximum": 16777216,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path",
+        "digest",
+        "size"
+      ],
+      "title": "ApplicationResource",
+      "type": "object"
+    },
     "BundledSource": {
       "additionalProperties": false,
       "properties": {
@@ -424,6 +481,17 @@
     "RepositoryInterface": {
       "additionalProperties": false,
       "properties": {
+        "application": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApplicationInputs"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "capabilities": {
           "items": {
             "$ref": "#/$defs/Capability"

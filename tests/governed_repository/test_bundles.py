@@ -18,8 +18,9 @@ ROOT = Path(__file__).parents[2]
 
 
 def test_direct_baseline_exact_every_artifact():
-    # The original baseline retains all contracts; #163 updates only the MCP
-    # adapter hash and its containing manifest for the result-object correction.
+    # The original baseline retains its no-application contracts. Runtime hashes
+    # include #163/#188 runtime updates and #190 optional acquisition provenance.
+    # These are current generator goldens, not published release evidence.
     pinned = json.loads(
         (ROOT / "tests/fixtures/governed-repository/direct-baseline.json").read_bytes()
     )

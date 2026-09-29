@@ -3,6 +3,7 @@
 import importlib
 import io
 import json
+import os
 import subprocess
 import tarfile
 from pathlib import Path
@@ -100,7 +101,7 @@ def inputs(root, assets, version="0.4.0"):
     return targets
 
 
-@pytest.mark.parametrize("version", ["0.4.0", "0.4.0rc1"])
+@pytest.mark.parametrize("version", ["0.4.0", "0.4.0rc1", "0.4.1rc1", "0.4.1"])
 def test_stage_preserves_bytes_and_uses_recorded_unique_names(
     assets, tmp_path, monkeypatch, version
 ):
@@ -118,7 +119,7 @@ def test_stage_preserves_bytes_and_uses_recorded_unique_names(
         "--source-digest",
         "a" * 40,
         "--source-ref",
-        "refs/heads/master",
+        "refs/heads/" + assets.qualification_branch(version),
     ]
     manifest = json.loads((output / "release-assets.json").read_text())
     assert "human publication approval still required" in manifest["status"]
@@ -134,6 +135,57 @@ def test_stage_preserves_bytes_and_uses_recorded_unique_names(
         digest, name = line.split("  ")
         assert digest == assets.digest(output / name)
     assert not manifest["official_images"]["published"]
+
+
+@pytest.mark.parametrize(
+    ("event", "ref", "preview"),
+    [
+        ("pull_request", "refs/pull/205/merge", True),
+        ("push", "refs/heads/master", True),
+        ("push", "refs/heads/release/0.4.1", False),
+    ],
+)
+def test_workflow_stages_integrated_master_as_preview(
+    assets, tmp_path, monkeypatch, event, ref, preview
+):
+    import yaml
+
+    workflow = yaml.load(
+        (Path(__file__).parents[1] / ".github/workflows/ci.yml").read_text(),
+        Loader=yaml.BaseLoader,
+    )
+    step = next(
+        step
+        for step in workflow["jobs"]["release-assets"]["steps"]
+        if step.get("name") == "Prepare attachments; never upload to a release"
+    )
+    # Execute the actual workflow's argument selection without invoking CI tools.
+    selected = subprocess.check_output(
+        ["bash", "-c", "python3() { printf '%s\\n' \"$@\"; }\n" + step["run"]],
+        env={
+            **os.environ,
+            "EVENT_NAME": event,
+            "GITHUB_REF": ref,
+            "GITHUB_SHA": "a" * 40,
+            "GITHUB_RUN_ID": "123",
+        },
+        text=True,
+    ).splitlines()
+    assert ("--preview" in selected) is preview
+    downloads = tmp_path / "downloads"
+    inputs(downloads, assets, "0.4.1")
+    calls = []
+    monkeypatch.setattr(
+        assets.subprocess, "run", lambda command, **kw: calls.append(command)
+    )
+    output = tmp_path / "assets"
+    assets.prepare(downloads, output, "a" * 40, 123, preview=preview, source_ref=ref)
+    manifest = json.loads((output / "release-assets.json").read_text())
+    assert manifest["source_ref"] == (None if preview else ref)
+    assert bool(calls) is not preview
+    assert (output / "ci-evidence.tar.gz").exists() is not preview
+    if preview:
+        assert manifest["status"] == "verification preview; no release provenance"
 
 
 @pytest.mark.parametrize(
@@ -195,3 +247,42 @@ def test_target_export_rejects_unrecorded_and_escaping_files(assets, tmp_path, n
     archive(path, {"target.json": json.dumps(target).encode(), name: b"unapproved"})
     with pytest.raises(ValueError):
         assets.inspect_target(path, {"commit": "a" * 40})
+
+
+@pytest.mark.parametrize(
+    "source_ref",
+    ["refs/heads/master", "refs/heads/feature", "refs/heads/release/0.4.2"],
+)
+def test_041_assets_refuse_wrong_provenance_ref(
+    assets, tmp_path, monkeypatch, source_ref
+):
+    downloads = tmp_path / "downloads"
+    inputs(downloads, assets, "0.4.1rc1")
+    monkeypatch.setattr(
+        assets.subprocess,
+        "run",
+        lambda *a, **kw: pytest.fail("no verification with wrong ref"),
+    )
+    output = tmp_path / "assets"
+    with pytest.raises(ValueError, match="Unexpected qualification source ref"):
+        assets.prepare(downloads, output, "a" * 40, 123, source_ref=source_ref)
+    assert not output.exists()
+
+
+def test_inherited_version_on_release_line_is_only_verification_evidence(
+    assets, tmp_path, monkeypatch
+):
+    downloads = tmp_path / "downloads"
+    inputs(downloads, assets, "0.4.0rc1")
+    calls = []
+    monkeypatch.setattr(
+        assets.subprocess, "run", lambda command, **kw: calls.append(command)
+    )
+    output = tmp_path / "assets"
+    assets.prepare(
+        downloads, output, "a" * 40, 123, source_ref="refs/heads/release/0.4.1"
+    )
+    assert calls[0][-1] == "refs/heads/release/0.4.1"
+    manifest = json.loads((output / "release-assets.json").read_text())
+    assert manifest["source_ref"] == "refs/heads/release/0.4.1"
+    assert "human publication approval still required" in manifest["status"]

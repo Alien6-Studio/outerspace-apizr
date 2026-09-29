@@ -506,3 +506,33 @@ def test_read_only_observation_preserves_exact_bytes_and_ignores_tag(
     remote[result.digest_reference]["Descriptor"]["digest"] = "sha256:" + "0" * 64
     with pytest.raises(BuildError):
         observe(request, result.digest_reference, workspace=tmp_path)
+
+
+@pytest.mark.parametrize("fault", [None, "substitution", "downgrade", "missing-label"])
+def test_new_image_requires_matching_delivery_lineage(transport, tmp_path, fault):
+    from apizr.capabilities.model import Digest
+    from apizr.delivery import PLAN_LABEL, DeliveryManifest, identity
+
+    request, calls, remote, image = transport
+    manifest = DeliveryManifest(
+        delivery_plan_digest=Digest.of_bytes(b"plan"),
+        image_id=CONFIG,
+        inputs_sha256=INPUTS,
+        platform="linux/amd64",
+    )
+    request = request.model_copy(update={"delivery_manifest": manifest})
+    image["Config"]["Labels"][PLAN_LABEL] = manifest.delivery_plan_digest.value
+    if fault == "substitution":
+        image["Config"]["Labels"][PLAN_LABEL] = "0" * 64
+    if fault == "downgrade":
+        request = request.model_copy(update={"delivery_manifest": None})
+    if fault == "missing-label":
+        image["Config"]["Labels"].pop(PLAN_LABEL)
+    if fault:
+        with pytest.raises(BuildError):
+            push(request, workspace=tmp_path)
+        assert not any(c[:2] in (["image", "tag"], ["image", "push"]) for c in calls)
+    else:
+        result = push(request, workspace=tmp_path)
+        assert result.delivery_manifest_digest == identity(manifest)
+        assert result.delivery_plan_digest == manifest.delivery_plan_digest

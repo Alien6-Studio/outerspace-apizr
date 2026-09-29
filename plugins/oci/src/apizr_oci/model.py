@@ -1,9 +1,7 @@
-"""Explicit, bounded inputs. No Docker command, shell or inherited credentials."""
+"""Compatibility exports of shared input/result contracts and fixed OCI errors."""
 
-from typing import Literal
-
-from pydantic import Field
-
+from apizr.delivery_results import BuildResult as BuildResult
+from apizr.delivery_results import PushResult as PushResult
 from apizr.publication_contracts import (
     Authentication as Authentication,
 )
@@ -23,29 +21,3 @@ from apizr.publication_contracts import (
 
 class BuildError(Exception):
     """Fixed diagnostic codes only; never expose Docker logs or argument values."""
-
-
-class BuildResult(Model):
-    schema_version: Literal["apizr.oci-build-result/v1"] = Field(
-        default="apizr.oci-build-result/v1", alias="schema"
-    )
-    tag: str
-    platform: str
-    image_id: str
-    inputs_sha256: str
-    published: Literal[False] = False
-
-
-class PushResult(Model):
-    schema_version: Literal["apizr.oci-push-result/v1"] = Field(
-        default="apizr.oci-push-result/v1", alias="schema"
-    )
-    destination: str
-    digest_reference: str
-    platform: str
-    image_id: str
-    config_digest: str
-    manifest_digest: str
-    index_digest: None = None
-    inputs_sha256: str
-    published: Literal[True] = True

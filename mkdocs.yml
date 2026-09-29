@@ -117,6 +117,8 @@ nav:
           - OCI service images: reference/oci-service-plugin.md
           - Attest delivery proofs: reference/attest-delivery-plugin.md
           - Attest OCI artifacts: reference/attest-oci-artifacts.md
+          - Proof-required admission: reference/delivery-admission.md
+          - Multi-destination delivery: reference/multi-destination-delivery.md
   - Reference:
       - Commands, parameters and formats: reference/index.md
       - Python compiler API: reference/compiler-api.md
@@ -140,6 +142,7 @@ nav:
       - Subprocess deny: architecture/subprocess-deny.md
       - Governed REST and MCP: architecture/governed-transport-runtime-v1.md
       - OCI-governed REST and MCP: architecture/governed-oci-transports-v2.md
+      - Delivery identities: architecture/delivery-identities.md
       - Artifact principles: architecture/artifact-principles.md
       - Security baseline: architecture/security-baseline.md
   - Legacy pipeline — compatibility:
@@ -162,6 +165,7 @@ nav:
       - Pipeline plugins: getting-started/developer-guide/plugins.md
       - Behavior contract: architecture/legacy-behavior-contract.md
   - Releases:
+      - 0.4.1: releases/0.4.1.md
       - 0.4.0: releases/0.4.0.md
       - 0.3.0: releases/0.3.0.md
       - 0.2.1: releases/0.2.1.md
@@ -173,6 +177,7 @@ nav:
       - Package an extension: reference/plugin-authors.md
       - Publication and documentation cutover: contributing/publish-0.4.md
       - Extension packaging ADR: architecture/extension-packaging-v04.md
+      - Release branch governance: contributing/release-branches.md
       - Publish a release: contributing/releases.md
       - Verify builds and releases: contributing/verification.md
       - Managed Attest identity: contributing/attest.md

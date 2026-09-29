@@ -14,7 +14,7 @@ from apizr.local_plugins.locking import (
     expanded_size,
     read_lock,
 )
-from apizr.local_plugins.models import canonical_name
+from apizr.local_plugins.models import LockedDistribution, canonical_name
 from apizr.local_plugins.wheel import inspect_dependency
 from apizr.repository_interfaces.model import MCPManifest, RestManifest
 from apizr.repository_interfaces.runtime import validate_bundle
@@ -85,6 +85,13 @@ def bundle_snapshot(source: Path, target: Path, interface: str) -> None:
         else {"server.py", "mcp-tools.json"}
     )
     allowed |= {s.bundle_path for s in manifest.sources}
+    if manifest.provenance_digest is not None:
+        allowed.add("apizr-bundle-provenance.json")
+    if manifest.application is not None:
+        allowed.add("application-requirements.txt")
+        allowed |= {
+            "source/" + resource.path for resource in manifest.application.resources
+        }
     if set(manifest.artifacts) != allowed or len(allowed) > MAX_FILES:
         raise BuildError("unsupported_bundle_artifacts")
     target.mkdir()
@@ -100,7 +107,9 @@ def bundle_snapshot(source: Path, target: Path, interface: str) -> None:
     validate_bundle(target, interface)
 
 
-def wheels_snapshot(requirements: Path, wheelhouse: Path, target: Path) -> None:
+def wheels_snapshot(
+    requirements: Path, wheelhouse: Path, target: Path
+) -> tuple[LockedDistribution, ...]:
     lock = read_lock(requirements)
     needed = {p.name: p for p in lock.packages}
     found = set()
@@ -140,6 +149,8 @@ def wheels_snapshot(requirements: Path, wheelhouse: Path, target: Path) -> None:
     (target / "locked-packages.json").write_text(
         json.dumps({p.name: p.version for p in lock.packages}, sort_keys=True)
     )
+
+    return lock.packages
 
 
 def input_digest(root: Path) -> str:

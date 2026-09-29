@@ -6,9 +6,11 @@ import signal
 import stat
 import subprocess
 import time
+from collections.abc import Callable
 from pathlib import Path
 from tempfile import TemporaryFile
-from threading import Event
+from threading import Event, current_thread, main_thread
+from types import FrameType
 
 from .models import AcquisitionLimits, GitSourceError
 
@@ -25,6 +27,7 @@ class GitRunner:
         self.work = work
         self.limits = limits
         self.cancel = cancel
+        self._interrupted: Callable[[], bool] | None = None
         self.deadline = time.monotonic() + limits.total_timeout_ms / 1000
         self.command = [executable]
         for setting in (
@@ -65,6 +68,8 @@ class GitRunner:
         }
 
     def check(self) -> None:
+        if self._interrupted is not None and self._interrupted():
+            raise KeyboardInterrupt
         if self.cancel is not None and self.cancel.is_set():
             raise GitSourceError("git_cancelled")
         if time.monotonic() >= self.deadline:
@@ -94,6 +99,36 @@ class GitRunner:
                         raise GitSourceError("git_acquisition_limit")
 
     def run(
+        self, arguments: list[str], *, payload: bytes = b"", output_limit: int = 4194304
+    ) -> bytes:
+        # Default SIGINT must not raise inside Popen construction or its waitpid
+        # lock acquisition: either can strand an owned child or its wait lock.
+        # Record the request and raise only at our existing safe checkpoints.
+        # Keep the handler installed through bounded cleanup, then restore it.
+        previous = signal.getsignal(signal.SIGINT)
+        if (
+            current_thread() is not main_thread()
+            or previous is not signal.default_int_handler
+        ):
+            return self._run(arguments, payload=payload, output_limit=output_limit)
+        interrupted = False
+
+        def request_interrupt(_signum: int, _frame: FrameType | None) -> None:
+            nonlocal interrupted
+            interrupted = True
+
+        self._interrupted = lambda: interrupted
+        signal.signal(signal.SIGINT, request_interrupt)
+        try:
+            result = self._run(arguments, payload=payload, output_limit=output_limit)
+        finally:
+            self._interrupted = None
+            signal.signal(signal.SIGINT, previous)
+        if interrupted:
+            raise KeyboardInterrupt
+        return result
+
+    def _run(
         self, arguments: list[str], *, payload: bytes = b"", output_limit: int = 4194304
     ) -> bytes:
         self.check()

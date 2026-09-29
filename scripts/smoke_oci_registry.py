@@ -95,7 +95,17 @@ password=secrets.token_hex(24)
 Path('/proof/auth/read-config.json').write_text(json.dumps({'auths':{'registry.test:5443':{'auth':base64.b64encode(('reader:'+password).encode()).decode()}}}))
 r=subprocess.run(['htpasswd','-Bni','reader'],input=password+'\\n',text=True,capture_output=True,check=True)
 with Path('/proof/auth/htpasswd').open('a') as out: out.write(r.stdout)
-Path('/proof/zot.json').write_text(json.dumps({'distSpecVersion':'1.1.1','storage':{'rootDirectory':'/var/lib/registry'},'http':{'address':'0.0.0.0','port':'5443','tls':{'cert':'/proof/certs/ca.crt','key':'/proof/certs/key.pem'},'auth':{'htpasswd':{'path':'/proof/auth/htpasswd'}},'accessControl':{'repositories':{'**':{'policies':[{'users':['fixture'],'actions':['read','create','update','delete']},{'users':['reader'],'actions':['read']}]}}}},'log':{'level':'error'}}))
+config = {'distSpecVersion':'1.1.1','storage':{'rootDirectory':'/var/lib/registry'},'http':{'address':'0.0.0.0','port':'5443','tls':{'cert':'/proof/certs/ca.crt','key':'/proof/certs/key.pem'},'auth':{'htpasswd':{'path':'/proof/auth/htpasswd'}},'accessControl':{'repositories':{'**':{'policies':[{'users':['fixture'],'actions':['read','create','update','delete']},{'users':['reader'],'actions':['read']}]}}}},'log':{'level':'error'}}
+for scope in ('a','b','c'):
+ user='batch-'+scope
+ password=secrets.token_hex(24)
+ auth=Path('/proof/auth/'+user+'.json')
+ auth.write_text(json.dumps({'auths':{'registry.test:5443':{'auth':base64.b64encode((user+':'+password).encode()).decode()}}}))
+ auth.chmod(0o600)
+ record=subprocess.run(['htpasswd','-Bni',user],input=password+'\\n',text=True,capture_output=True,check=True)
+ with Path('/proof/auth/htpasswd').open('a') as out: out.write(record.stdout)
+ config['http']['accessControl']['repositories']['batch-'+scope+'/**']={'policies':[{'users':[user],'actions':['read','create','update']}]}
+Path('/proof/zot.json').write_text(json.dumps(config))
 PY
 """
         command(
@@ -283,8 +293,24 @@ PY
             "operator-push-refusals.json",
             "operator-attest-refusals.json",
             "artifact-results.json",
+            "admission-results.json",
+            "multi-delivery-results.json",
+            "batch-rest-partial.json",
+            "batch-rest-complete.json",
+            "batch-mcp-partial.json",
+            "batch-mcp-complete.json",
+            "batch-managed-calls.jsonl",
+            "batch-managed-calls.jsonl.checkpoints",
+            "batch-docker-calls.jsonl",
+            "batch-rest-evidence",
+            "batch-mcp-evidence",
+            "successful-builds.jsonl",
+            "admission-refusals.json",
+            "operator-admit.json",
             "artifact-refusals.json",
             "results.json",
+            "application-delivery-proof.json",
+            "application-source-proof.json",
             "build-diagnostic.log",
             "build-observation.json",
             "push-results.json",

@@ -434,3 +434,145 @@ def test_python_api_uses_cancellable_runtime(tmp_path, monkeypatch):
         }
     )
     assert api.verify(verify, cancel=cancel) == reply
+
+
+@pytest.fixture
+def transversal(mocked):
+    from apizr.capabilities.model import Digest
+    from apizr.delivery import DeliveryManifest, DeliveryPlan, identity
+
+    digest = Digest.of_bytes(b"reviewed unit evidence").model_dump(mode="json")
+    fields = (
+        "catalog_digest",
+        "graph_digest",
+        "scan_policy_digest",
+        "graph_policy_digest",
+        "readiness_policy_digest",
+        "repository_readiness_digest",
+        "exposure_policy_digest",
+        "exposure_plan_digest",
+        "repository_interface_digest",
+        "bundle_manifest_digest",
+    )
+    plan = DeliveryPlan.model_validate(
+        {
+            **dict.fromkeys(fields, digest),
+            "source": {"kind": "local", "repository_digest": digest},
+            "interface": "rest",
+            "dependency_closure": [
+                {"name": "six", "version": "1.17.0", "sha256": "a" * 64}
+            ],
+            "build_tools": [
+                {"name": name, "version": "0.4.1"}
+                for name in ("outerspace-apizr", "outerspace-apizr-oci")
+            ],
+            "platform": "linux/amd64",
+            "base_image": "python@sha256:" + "b" * 64,
+        }
+    )
+    built = json.loads(Path(mocked.build_result).read_bytes())
+    manifest = DeliveryManifest(
+        delivery_plan_digest=identity(plan),
+        **{k: built[k] for k in ("image_id", "platform", "inputs_sha256")},
+    )
+    built.update(
+        delivery_plan=plan.model_dump(mode="json"),
+        delivery_manifest=manifest.model_dump(mode="json"),
+        delivery_manifest_digest=identity(manifest).model_dump(mode="json"),
+    )
+    pushed = json.loads(Path(mocked.push_result).read_bytes())
+    pushed.update(
+        delivery_plan_digest=identity(plan).model_dump(mode="json"),
+        delivery_manifest_digest=identity(manifest).model_dump(mode="json"),
+    )
+    Path(mocked.build_result).write_bytes(delivery.canonical(built))
+    Path(mocked.push_result).write_bytes(delivery.canonical(pushed))
+    return mocked
+
+
+def test_transversal_export_and_offline_linkage(transversal, tmp_path):
+    from apizr.delivery import identity
+
+    work = tmp_path / "work"
+    work.mkdir()
+    result = delivery.execute_attest(transversal, work)
+    output = Path(transversal.output_dir)
+    assert set(delivery.proof_files(output)) == {
+        *delivery.FILES,
+        delivery.TRANSVERSAL_FILE,
+    }
+    delivery.binding(output, transversal.expected_reference)
+    built, pushed = delivery.results(
+        (output / "delivery/build.json").read_bytes(),
+        (output / "delivery/push.json").read_bytes(),
+        transversal.expected_reference,
+    )
+    assert (
+        result.delivery_manifest_digest
+        == identity(built.delivery_manifest)
+        == pushed.delivery_manifest_digest
+    )
+    assert result.delivery_plan_digest == identity(built.delivery_plan)
+    proof_manifest = json.loads((output / "delivery/manifest.json").read_bytes())
+    assert proof_manifest["schema"] == "apizr.oci-delivery/v1"
+    assert "apizr-delivery-manifest.json" in proof_manifest["files"]
+    verified = VerifyRequest.model_validate(
+        {
+            "schema": "apizr.verify-delivery/v1",
+            "proof_dir": str(output),
+            **transversal.model_dump(
+                include={"expected_reference", "expected_signer", "trust_store", "tool"}
+            ),
+        }
+    )
+    another = tmp_path / "verify"
+    another.mkdir()
+    assert delivery.execute_verify(verified, another) == result
+
+
+@pytest.mark.parametrize(
+    "fault", ["missing", "manifest", "plan", "build", "push", "downgrade"]
+)
+def test_transversal_proof_substitution_refused(transversal, tmp_path, fault):
+    work = tmp_path / "work"
+    work.mkdir()
+    delivery.execute_attest(transversal, work)
+    output = Path(transversal.output_dir)
+    path = output / delivery.TRANSVERSAL_FILE
+    if fault == "missing":
+        path.unlink()
+    else:
+        path = (
+            output
+            / "delivery"
+            / (
+                {
+                    "manifest": "apizr-delivery-manifest.json",
+                    "push": "push.json",
+                    "downgrade": "push.json",
+                }.get(fault, "build.json")
+            )
+        )
+        doc = json.loads(path.read_bytes())
+        if fault == "manifest":
+            doc["inputs_sha256"] = "9" * 64
+        elif fault == "plan":
+            doc["delivery_plan"]["source"]["repository_digest"]["value"] = "9" * 64
+        elif fault == "downgrade":
+            doc.pop("delivery_manifest_digest")
+            doc.pop("delivery_plan_digest")
+        else:
+            doc["delivery_manifest_digest"]["value"] = "9" * 64
+        path.write_bytes(delivery.canonical(doc))
+    with pytest.raises((AttestError, ValueError, OSError)):
+        delivery.binding(output, transversal.expected_reference)
+
+
+def test_historical_proof_cannot_gain_invented_provenance(mocked, tmp_path):
+    work = tmp_path / "work"
+    work.mkdir()
+    delivery.execute_attest(mocked, work)
+    proof = Path(mocked.output_dir)
+    (proof / delivery.TRANSVERSAL_FILE).write_bytes(b"{}\n")
+    with pytest.raises(AttestError):
+        delivery.binding(proof, mocked.expected_reference)

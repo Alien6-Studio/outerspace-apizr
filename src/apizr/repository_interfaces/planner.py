@@ -3,6 +3,7 @@
 from collections.abc import Mapping
 from typing import Literal
 
+from apizr.application import ApplicationInputs
 from apizr.exposure import ExposurePlan, ExposurePolicy, plan_digest, validate_plan
 from apizr.exposure.policy import Interface
 from apizr.graph import Graph
@@ -24,8 +25,15 @@ def plan_repository_interface(
     sources: Mapping[str, bytes],
     *,
     interface: Interface,
+    application: ApplicationInputs | None = None,
     execution_mode: Literal["direct", "local-process", "oci-container"] = "direct",
 ) -> RepositoryInterface:
+    if application is not None:
+        application = ApplicationInputs.model_validate(application.model_dump())
+        if execution_mode != "direct":
+            raise BundleRefused(
+                "Application inputs currently require direct service execution"
+            )
     sources = dict(sources)
     catalog = validated_inputs(catalog, sources)
     validate_plan(exposure, catalog, graph, readiness, policy=policy)
@@ -59,9 +67,13 @@ def plan_repository_interface(
             BundledSource(
                 module=module,
                 source_path=unit.path,
-                bundle_path="source/"
-                + module.replace(".", "/")
-                + ("/__init__.py" if unit.is_package else ".py"),
+                bundle_path=("source/" + unit.path)
+                if application is not None
+                else (
+                    "source/"
+                    + module.replace(".", "/")
+                    + ("/__init__.py" if unit.is_package else ".py")
+                ),
                 source_digest=unit.source_digest,
                 size=unit.size,
                 is_package=unit.is_package,
@@ -97,6 +109,7 @@ def plan_repository_interface(
         graph_digest=exposure.graph_digest,
         repository_readiness_digest=exposure.repository_readiness_digest,
         interface=interface,
+        application=application,
         sources=tuple(bundled),
         capabilities=tuple(sorted(capabilities, key=lambda c: c.capability_id)),
     )

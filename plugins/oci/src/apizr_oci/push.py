@@ -18,6 +18,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Event
 
+from apizr.delivery import PLAN_LABEL, PROOF_LABEL, identity
 from apizr.extension_runtime.protocol import unique_object
 
 from .model import Authentication, BuildError, PushRequest, PushResult
@@ -97,6 +98,22 @@ def local_identity(request: PushRequest, work: Path, deadline: float, cancel):
         or image["Config"]["User"] != "65532:65532"
     ):
         raise BuildError("local_image_unverified")
+    expected_plan = (
+        request.delivery_manifest.delivery_plan_digest.value
+        if request.delivery_manifest is not None
+        else None
+    )
+    if image["Config"]["Labels"].get(PLAN_LABEL) != expected_plan:
+        raise BuildError("delivery_plan_unverified")
+    requirement = (
+        request.delivery_plan.proof_requirement
+        if request.delivery_plan is not None
+        else "optional"
+    )
+    # Older images omit this label; they retain optional behaviour. Required
+    # images cannot discard the plan or substitute an optional one at push.
+    if image["Config"]["Labels"].get(PROOF_LABEL, "optional") != requirement:
+        raise BuildError("proof_requirement_unverified")
     # Build produces a single manifest. Never silently select a member of an index.
     descriptor = image.get("Descriptor")
     if descriptor is not None and descriptor["mediaType"] not in MEDIA:
@@ -216,6 +233,18 @@ def push(
             verified = remote_identity(
                 request, work, request.destination, deadline, cancel, absent=True
             )
+            if request.resume_reference is not None:
+                retained = remote_identity(
+                    request, work, request.resume_reference, deadline, cancel
+                )
+                if (
+                    retained is None
+                    or retained[1] != request.resume_reference.split("@")[1]
+                ):
+                    raise BuildError("remote_manifest_unverified")
+                if verified is not None and verified != retained:
+                    raise BuildError("remote_image_conflict")
+                verified = retained
             if verified is None:
                 staging = repository + ":apizr-upload-" + uuid.uuid4().hex
                 run(
@@ -237,38 +266,24 @@ def push(
                 )
                 verified = remote_identity(request, work, staging, deadline, cancel)
                 assert verified is not None
-                # Recheck immediately before promotion; concurrent registry writers
-                # can still race this check. Registry immutability is the remedy.
-                current = remote_identity(
-                    request, work, request.destination, deadline, cancel, absent=True
-                )
-                if current is None:
-                    run(
-                        request,
-                        work,
-                        [
-                            "buildx",
-                            "imagetools",
-                            "create",
-                            "--prefer-index=false",
-                            "--tag",
-                            request.destination,
-                            repository + "@" + verified[1],
-                        ],
-                        deadline,
-                        cancel,
-                    )
-                elif current != verified:
-                    raise BuildError("remote_image_conflict")
-            # Verify the destination, then the immutable retrieval reference.
-            final = remote_identity(
-                request, work, request.destination, deadline, cancel
-            )
             reference = repository + "@" + verified[1]
-            pinned = remote_identity(request, work, reference, deadline, cancel)
-            if final != verified or pinned != verified:
-                raise BuildError("remote_manifest_unverified")
+            required = (
+                request.delivery_plan is not None
+                and request.delivery_plan.proof_requirement == "required"
+            )
+            if required:
+                if (
+                    remote_identity(request, work, reference, deadline, cancel)
+                    != verified
+                ):
+                    raise BuildError("remote_manifest_unverified")
+            else:
+                promote_verified(request, work, verified, deadline, cancel)
             return PushResult(
+                proof_requirement="required" if required else "optional",
+                transfer_verified=True,
+                destination_promoted=not required,
+                delivery_admitted=False,
                 destination=request.destination,
                 digest_reference=reference,
                 platform=request.platform,
@@ -276,6 +291,12 @@ def push(
                 config_digest=verified[0],
                 manifest_digest=verified[1],
                 inputs_sha256=request.inputs_sha256,
+                delivery_plan_digest=request.delivery_manifest.delivery_plan_digest
+                if request.delivery_manifest is not None
+                else None,
+                delivery_manifest_digest=identity(request.delivery_manifest)
+                if request.delivery_manifest is not None
+                else None,
             )
     except BuildError:
         if upload_started:
@@ -285,3 +306,50 @@ def push(
         if upload_started:
             raise BuildError("remote_state_unconfirmed") from None
         raise BuildError("oci_push_refused") from None
+
+
+def promote_verified(
+    request: PushRequest,
+    work: Path,
+    verified: tuple[str, str],
+    deadline: float,
+    cancel=None,
+) -> None:
+    """Shared digest-only promotion; a post-effect failure never claims rollback."""
+    started = False
+    reference = request.destination.rsplit(":", 1)[0] + "@" + verified[1]
+    try:
+        if remote_identity(request, work, reference, deadline, cancel) != verified:
+            raise BuildError("remote_manifest_unverified")
+        current = remote_identity(
+            request, work, request.destination, deadline, cancel, absent=True
+        )
+        if current is None:
+            started = True
+            run(
+                request,
+                work,
+                [
+                    "buildx",
+                    "imagetools",
+                    "create",
+                    "--prefer-index=false",
+                    "--tag",
+                    request.destination,
+                    reference,
+                ],
+                deadline,
+                cancel,
+            )
+        elif current != verified:
+            raise BuildError("remote_image_conflict")
+        if (
+            remote_identity(request, work, request.destination, deadline, cancel)
+            != verified
+            or remote_identity(request, work, reference, deadline, cancel) != verified
+        ):
+            raise BuildError("remote_manifest_unverified")
+    except (BuildError, OSError, ValueError, KeyError, TypeError, RecursionError):
+        if started:
+            raise BuildError("remote_state_unconfirmed") from None
+        raise

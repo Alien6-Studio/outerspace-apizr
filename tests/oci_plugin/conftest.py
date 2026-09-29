@@ -22,3 +22,22 @@ def bundle(tmp_path):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
     return root
+
+
+@pytest.fixture(autouse=True)
+def installed_oci_metadata(monkeypatch):
+    # Source-only unit tests have no installed OCI distribution. Installed-wheel
+    # qualification independently uses real metadata with no patch.
+    import tomllib
+
+    import apizr.delivery
+
+    actual = apizr.delivery.version
+    declared = tomllib.loads(
+        (Path(__file__).parents[2] / "plugins/oci/pyproject.toml").read_text()
+    )["project"]["version"]
+    monkeypatch.setattr(
+        apizr.delivery,
+        "version",
+        lambda name: declared if name == "outerspace-apizr-oci" else actual(name),
+    )

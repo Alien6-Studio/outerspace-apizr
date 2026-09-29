@@ -7,6 +7,7 @@ import re
 import subprocess
 import tomllib
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -23,10 +24,21 @@ def github(path: str):
     return json.loads(result.stdout)
 
 
-def validate_run(run: dict, sha: str, workflow: str) -> None:
+def qualification_branch(version: str) -> str:
+    """Explicit release lines; a new branch never authorizes a new version."""
+    if version in {"0.2.0", "0.2.1", "0.3.0", "0.4.0", "0.4.0rc1"}:
+        return "master"  # Historical evidence retains its original identity.
+    if re.fullmatch(r"0\.4\.1(?:rc[1-9]\d*)?", version):
+        return "release/0.4.1"
+    raise ValueError("No authorized qualification branch for this version")
+
+
+def validate_run(run: dict, sha: str, workflow: str, branch: str = "master") -> None:
+    if branch not in {"master", "release/0.4.1"}:
+        raise ValueError("Unexpected qualification branch")
     expected = {
         "head_sha": sha,
-        "head_branch": "master",
+        "head_branch": branch,
         "event": "push",
         "status": "completed",
         "conclusion": "success",
@@ -34,7 +46,7 @@ def validate_run(run: dict, sha: str, workflow: str) -> None:
     }
     if any(run.get(key) != value for key, value in expected.items()):
         raise ValueError(
-            f"Release requires successful master push run of {workflow} at {sha}"
+            f"Release requires successful {branch} push run of {workflow} at {sha}"
         )
     if run.get("repository", {}).get("full_name") != REPOSITORY:
         raise ValueError("Unexpected CI repository")
@@ -88,7 +100,16 @@ def main() -> None:
             raise ValueError("Dispatch must run on the matching immutable version tag")
         if sha != os.environ.get("GITHUB_SHA"):
             raise ValueError("Checkout must equal the dispatched tag commit")
-    validate_run(github(f"actions/runs/{args.run_id}"), sha, "ci.yml")
+    if not args.preflight and version in {"0.4.0", "0.4.0rc1"}:
+        raise ValueError(
+            "0.4.0 publication is closed; preserve published 0.4.0rc1 unchanged"
+        )
+    branch = qualification_branch(version)
+    validate_run(github(f"actions/runs/{args.run_id}"), sha, "ci.yml", branch)
+    if branch != "master":
+        source = github("branches/" + urllib.parse.quote(branch, safe=""))
+        if source.get("protected") is not True:
+            raise ValueError("Release qualification branch must be protected")
     if args.coordinated:
         jobs = github(f"actions/runs/{args.run_id}/jobs?per_page=100")["jobs"]
         expected_jobs = {
@@ -125,7 +146,7 @@ def main() -> None:
         if not runs:
             raise ValueError(f"Missing {workflow} verification")
         selected = max(runs, key=lambda run: run["id"])
-        validate_run(selected, sha, workflow)
+        validate_run(selected, sha, workflow, branch)
         verified_runs[workflow] = int(selected["id"])
     if not args.source_only:
         try:
@@ -145,6 +166,7 @@ def main() -> None:
                 output.write(
                     f"release_sha={sha}\nrelease_tag={args.release_tag}\nrelease_version={version}\n"
                 )
+            output.write(f"source_ref=refs/heads/{branch}\n")
             output.write(f"security_run_id={verified_runs['security.yml']}\n")
     if args.preflight:
         print("Preflight only: no tag, upload or publication authorization")

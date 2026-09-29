@@ -168,7 +168,7 @@ def main():
         "enable",
         "outerspace-apizr-attest",
         "--version",
-        "0.4.0rc1",
+        "0.4.1",
         "--plugins-dir",
         store,
     )
@@ -371,7 +371,7 @@ def main():
             {
                 "fetch": result,
                 "refusals": cases + ["interrupted-transfer"],
-                "same_six_files": True,
+                "same_public_files": True,
                 "read_only_enforced": True,
                 "core_unchanged": snapshot(root / "core") == before,
             },

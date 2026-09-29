@@ -56,7 +56,11 @@ def lock_wheels(house, path):
 def refuse_builds(python, document, store, work, environment, runner):
     """Real installed-plugin refusals, including pip's missing transitive closure."""
     inputs = work / "refused-build.json"
-    bundle_file = Path(document["bundle"]) / "source/calculator.py"
+    bundle_root = Path(document["bundle"])
+    source = json.loads((bundle_root / "repository-interface.json").read_text())[
+        "sources"
+    ][0]["bundle_path"]
+    bundle_file = bundle_root / source
     lock = Path(document["requirements"])
     house = Path(document["wheelhouse"])
     wheel = next(house.glob("click-*.whl"))  # uvicorn's transitive dependency
@@ -364,7 +368,7 @@ def main():
         "enable",
         "outerspace-apizr-oci",
         "--version",
-        "0.4.0rc1",
+        "0.4.1",
         "--plugins-dir",
         store,
     )
@@ -382,12 +386,49 @@ def main():
             os.environ.pop("PYTHONDONTWRITEBYTECODE", None)
         else:
             os.environ["PYTHONDONTWRITEBYTECODE"] = old
+    # Application portability reuses the same installed core/plugin and builder.
+    # The registry fixture has separate daemon networking; this proof runs in
+    # the existing service-images job, without any external registry publication.
+    if os.environ.get("APIZR_REGISTRY_PROOF") != "1":
+        from application_portability_proof import exercise as application_portability
+
+        application_portability(
+            REPO,
+            work,
+            python,
+            store,
+            command,
+            engine,
+            base,
+            platform,
+            docker,
+            args.docker_socket,
+            args.buildx,
+        )
+    application_bundles = None
+    if os.environ.get("APIZR_REGISTRY_PROOF") == "1":
+        from delivery_source_proof import prepare as application_source
+
+        application_bundles = application_source(python, REPO, work, command)
     images = []
     containers = []
     results = []
     try:
         for interface in ("rest", "mcp"):
-            bundle = work / "git-proof" / ("remote-" + interface)
+            bundle = (
+                application_bundles / interface
+                if application_bundles is not None
+                else work / "git-proof" / ("remote-" + interface)
+            )
+            combined = work / (interface + "-requirements.in")
+            combined.write_bytes(
+                (bundle / "requirements.txt").read_bytes()
+                + (
+                    (bundle / "application-requirements.txt").read_bytes()
+                    if application_bundles is not None
+                    else b""
+                )
+            )
             wheels = work / (interface + "-wheels")
             wheels.mkdir()
             # Resolve for the actual target interpreter/platform in a disposable container.
@@ -403,7 +444,7 @@ def main():
                 "--mount",
                 f"type=bind,src={wheels},dst=/wheels",
                 "--mount",
-                f"type=bind,src={bundle / 'requirements.txt'},dst=/requirements.txt,readonly",
+                f"type=bind,src={combined},dst=/requirements.txt,readonly",
                 base,
                 "python",
                 "-m",
@@ -421,6 +462,9 @@ def main():
             images.append(tag)
             document = {
                 "schema": "apizr.oci-build/v1",
+                "proof_requirement": "required"
+                if os.environ.get("APIZR_ARTIFACT_PROOF") == "1"
+                else "optional",
                 "bundle": str(bundle),
                 "interface": interface,
                 "base_image": base,
@@ -527,10 +571,37 @@ def main():
                 from smoke_attest_plugin import exercise as attest_delivery
 
                 attest_delivery(python, store, work, results, command, environment)
+                if os.environ.get("APIZR_ARTIFACT_PROOF") == "1":
+                    batch = json.loads(
+                        (work / "multi-delivery-results.json").read_bytes()
+                    )
+                    service_images = [
+                        item["recovered"]["outcomes"][0]["transfer"]["digest_reference"]
+                        for item in batch
+                    ]
+                    config = work / "batch-consumer-auth"
+                    config.mkdir()
+                    (config / "config.json").write_bytes(
+                        Path("/proof/auth/batch-a.json").read_bytes()
+                    )
+                    for reference in service_images:
+                        command(
+                            "/usr/local/bin/docker",
+                            "--host",
+                            "unix:///proof/consumer.sock",
+                            "--config",
+                            config,
+                            "image",
+                            "pull",
+                            reference,
+                        )
+
             images = service_images
             docker_flags[:] = [docker, "--host", "unix:///proof/consumer.sock"]
         shutil.rmtree(work / "git-proof")
         assert not (work / "git-proof").exists()
+        if application_bundles is not None:
+            shutil.rmtree(application_bundles)
         # REST can be called after both source and bundle have gone.
         container = engine(
             "run",
@@ -540,6 +611,7 @@ def main():
             service_images[0],
         )
         containers.append(container)
+        assert not json.loads(engine("container", "inspect", container))[0]["Mounts"]
         address = engine("port", container, "8000/tcp").splitlines()[0]
         if registry_proof:
             address = "consumer.test:" + address.rsplit(":", 1)[1]
@@ -556,12 +628,18 @@ def main():
                     raise
                 time.sleep(0.1)
         request = urllib.request.Request(
-            "http://" + address + "/capabilities/calculator.add",
-            data=b'{"a":2,"b":3}',
+            "http://"
+            + address
+            + (
+                "/capabilities/formatter.message"
+                if registry_proof
+                else "/capabilities/calculator.add"
+            ),
+            data=b"{}" if registry_proof else b'{"a":2,"b":3}',
             headers={"Content-Type": "application/json"},
         )
         with urllib.request.urlopen(request, timeout=5) as response:
-            assert json.load(response) == 5
+            assert json.load(response) == ("PORTABLE CAFÉ" if registry_proof else 5)
         # MCP client remains outside the minimal core and talks through docker stdio.
         mcp_client = work / "mcp-client"
         command("uv", "venv", "--python", sys.executable, mcp_client)
@@ -577,21 +655,43 @@ def main():
             """import asyncio, sys
 from mcp import Client, StdioServerParameters
 async def check():
-    async with Client(StdioServerParameters(command=sys.argv[1], args=['--host',sys.argv[2],'run','--rm','--interactive','--name',sys.argv[3],sys.argv[4]],env={})) as client:
-        assert [t.name for t in (await client.list_tools()).tools] == ['calculator.add']
-        result = await client.call_tool('calculator.add', {'a':2,'b':3})
-        assert not result.is_error and result.structured_content == {"result": 5}
+    async with Client(StdioServerParameters(command=sys.argv[1], args=['--host',sys.argv[2],'run','--interactive','--name',sys.argv[3],sys.argv[4]],env={})) as client:
+        application = sys.argv[5] == 'application'
+        name = 'formatter.message' if application else 'calculator.add'
+        assert [t.name for t in (await client.list_tools()).tools] == [name]
+        result = await client.call_tool(name, {} if application else {'a':2,'b':3})
+        assert not result.is_error and result.structured_content == {"result": 'PORTABLE CAFÉ' if application else 5}
 asyncio.run(check())
 """,
             docker,
             docker_flags[2],
             name,
             service_images[1],
+            "application" if registry_proof else "calculator",
             timeout=45,
         )
+        assert not json.loads(engine("container", "inspect", name))[0]["Mounts"]
         assert snapshot(core_env) == before
         assert command(python, "-I", "-B", "-c", inventory) == before_distributions
         (work / "results.json").write_text(json.dumps(results, indent=2))
+        if registry_proof:
+            assert application_bundles is not None
+            (work / "application-delivery-proof.json").write_text(
+                json.dumps(
+                    {
+                        "source_removed": True,
+                        "bundles_removed": not application_bundles.exists(),
+                        "source_mounts": False,
+                        "rest_result": "PORTABLE CAFÉ",
+                        "mcp_result": {"result": "PORTABLE CAFÉ"},
+                        "core_unchanged": True,
+                        "builds": [r["result"] for r in results],
+                        "pushes": json.loads((work / "push-results.json").read_text()),
+                    },
+                    indent=2,
+                    ensure_ascii=False,
+                )
+            )
         print(
             "PASS Git -> installed/activated plugin -> real REST/MCP images -> sources removed -> successful calls; core unchanged",
             flush=True,

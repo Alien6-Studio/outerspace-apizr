@@ -34,7 +34,7 @@ def exercise(python, store, work, results, command, engine, environment):
     ]["auth"]
     tokens = (secrets.encode(), base64.b64decode(secrets).split(b":", 1)[1])
 
-    def invoke(document, *, refused=False):
+    def invoke(document, *, refused=False, code="plugin_failed"):
         path = work / "push.json"
         path.write_text(json.dumps(document))
         result = subprocess.run(
@@ -67,7 +67,16 @@ def exercise(python, store, work, results, command, engine, environment):
             assert (
                 result.returncode == 2
                 and result.stdout == b""
-                and result.stderr == b"apizr plugins: plugin_failed\n"
+                and (
+                    result.stderr == b"apizr plugins: plugin_failed\n"
+                    if code == "plugin_failed"
+                    else json.loads(result.stderr)
+                    == {
+                        "schema": "apizr.operator-decision/v1",
+                        "allowed": False,
+                        "code": code,
+                    }
+                )
             ), (result.returncode, result.stdout, result.stderr)
             return None
         assert result.returncode == 0, (result.stdout, result.stderr)
@@ -82,6 +91,8 @@ def exercise(python, store, work, results, command, engine, environment):
             "image_id": result["image_id"],
             "platform": result["platform"],
             "inputs_sha256": result["inputs_sha256"],
+            "delivery_manifest": result["delivery_manifest"],
+            "delivery_plan": result["delivery_plan"],
             "destination": "registry.test:5443/services/"
             + ("rest" if index == 0 else "mcp")
             + ":v1",
@@ -170,7 +181,15 @@ def exercise(python, store, work, results, command, engine, environment):
                     }
                 )
             )
-            for fault in ("id", "inputs", "platform", "authentication", "tls"):
+            for fault in (
+                "id",
+                "inputs",
+                "platform",
+                "plan",
+                "downgrade",
+                "authentication",
+                "tls",
+            ):
                 changed = json.loads(json.dumps(document))
                 if fault == "id":
                     changed["image_id"] = "sha256:" + "0" * 64
@@ -219,7 +238,29 @@ def exercise(python, store, work, results, command, engine, environment):
                     )
                     assert check.returncode != 0 and b"x509:" in check.stderr
 
-                invoke(changed, refused=True)
+                if fault in {"id", "inputs", "platform"}:
+                    # Identity/input faults reach independent local-image checks.
+                    # Platform substitution also violates the immutable plan and
+                    # is refused earlier by the shared request validator.
+                    field = {
+                        "id": "image_id",
+                        "inputs": "inputs_sha256",
+                        "platform": "platform",
+                    }[fault]
+                    changed["delivery_manifest"][field] = changed[field]
+                if fault == "plan":
+                    changed["delivery_manifest"]["delivery_plan_digest"]["value"] = (
+                        "0" * 64
+                    )
+                if fault == "downgrade":
+                    changed.pop("delivery_manifest")
+                invoke(
+                    changed,
+                    refused=True,
+                    code="operator_arguments_invalid"
+                    if fault in {"platform", "plan", "downgrade"}
+                    else "plugin_failed",
+                )
                 refusals.append({"case": fault, "refused": True})
             interrupt(python, store, work, document, environment, operator)
             # The build tag can move; publication still selects the recorded ID.
@@ -229,6 +270,25 @@ def exercise(python, store, work, results, command, engine, environment):
         assert published is not None
         assert invoke(document) == published
         outputs.append(published)
+        required = result["delivery_plan"].get("proof_requirement") == "required"
+        if required:
+            assert published["transfer_verified"] is True
+            assert published["destination_promoted"] is False
+            assert published["delivery_admitted"] is False
+            absent = subprocess.run(
+                [
+                    "/usr/local/bin/docker",
+                    "--config",
+                    "/proof/auth",
+                    "manifest",
+                    "inspect",
+                    document["destination"],
+                ],
+                capture_output=True,
+                timeout=15,
+            )
+            assert absent.returncode != 0 and b"no such manifest:" in absent.stderr
+
         if index == 0:
             # Complete the real upload/promotion, then corrupt only the client's
             # verification response. The remote image remains; a normal repeat
@@ -242,7 +302,7 @@ from pathlib import Path
 
 args=sys.argv[1:]
 marker=Path({str(marker)!r})
-if args[:3] == ['buildx','imagetools','create']:
+if args[:{2 if required else 3}] == {["image", "push"] if required else ["buildx", "imagetools", "create"]!r}:
  result=subprocess.run(['/usr/local/bin/docker',*args])
  if result.returncode == 0: marker.write_text('promoted')
  raise SystemExit(result.returncode)
@@ -272,7 +332,32 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
             )
         if index == 1:
             # Same destination as REST, but a different MCP image: never overwrite.
-            invoke(document | {"destination": outputs[0]["destination"]}, refused=True)
+            conflict = outputs[0]["destination"]
+            if required:
+                conflict += "-conflict"
+                # Fixture-only competing writer, through the TLS-configured daemon.
+                command(
+                    "/usr/local/bin/docker",
+                    "--host",
+                    "unix:///proof/builder.sock",
+                    "image",
+                    "tag",
+                    results[0]["result"]["image_id"],
+                    conflict,
+                )
+                command(
+                    "/usr/local/bin/docker",
+                    "--config",
+                    "/proof/auth",
+                    "--host",
+                    "unix:///proof/builder.sock",
+                    "image",
+                    "push",
+                    "--platform",
+                    results[0]["result"]["platform"],
+                    conflict,
+                )
+            invoke(document | {"destination": conflict}, refused=True)
             refusals.append({"case": "tag-conflict", "refused": True})
         command(
             "/usr/local/bin/docker",

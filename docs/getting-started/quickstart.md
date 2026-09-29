@@ -31,7 +31,7 @@ apizr --version
 python3 -m venv runtime
 ```
 
-**Observe:** Apizr reports `0.4.0rc1`. `runtime/` is a separate environment for the
+**Observe:** the package reports `0.4.1`. `runtime/` is a separate environment for the
 generated servers and test client; installing their requirements will not alter
 the compiler environment. No source checkout is needed.
 

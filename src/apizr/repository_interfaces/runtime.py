@@ -116,6 +116,7 @@ class RepositoryLoader(importlib.abc.MetaPathFinder, importlib.abc.Loader):
                 "exec",
                 dont_inherit=True,
             )
+            module.__file__ = str(self.root / source["bundle_path"])
             exec(code, module.__dict__)
         except BaseException:
             raise IntegrityError("Repository module loading failed") from None
@@ -185,6 +186,39 @@ def validate_bundle(
         )
     ):
         raise ValueError("execution compatibility")
+    if manifest.get("provenance_digest") is not None:
+        raw_provenance = artifacts["apizr-bundle-provenance.json"]
+        provenance = json.loads(raw_provenance)
+        if (
+            digest(raw_provenance) != manifest["provenance_digest"]
+            or provenance["schema_version"] != "apizr.bundle-provenance/v1"
+            or provenance["source"]["repository_digest"]
+            != contract["repository_digest"]
+        ):
+            raise ValueError("source provenance binding")
+    application = contract.get("application")
+    if application != manifest.get("application"):
+        raise ValueError("application binding")
+    if application is not None:
+        if application["repository_digest"] != contract["repository_digest"]:
+            raise ValueError("application repository binding")
+        if artifacts["application-requirements.txt"] != "".join(
+            pin + "\n" for pin in application["dependencies"]
+        ).encode("utf-8"):
+            raise ValueError("application requirements binding")
+        paths = [resource["path"] for resource in application["resources"]]
+        if paths != sorted(set(paths)):
+            raise ValueError("application resource identities")
+        for resource in application["resources"]:
+            path = resource["path"]
+            if any(part.startswith(".") for part in path.split("/")):
+                raise ValueError("application resource path")
+            content = artifacts["source/" + path]
+            if (
+                digest(content) != resource["digest"]
+                or len(content) != resource["size"]
+            ):
+                raise ValueError("application resource binding")
     sources = contract["sources"]
     if sources != manifest["sources"]:
         raise ValueError("source binding")
@@ -205,6 +239,8 @@ def validate_bundle(
             + source["module"].replace(".", "/")
             + ("/__init__.py" if source["is_package"] else ".py")
         )
+        if application is not None:
+            path = "source/" + source["source_path"]
         if (
             source["bundle_path"] != path
             or digest(artifacts[path]) != source["source_digest"]

@@ -21,11 +21,13 @@ from apizr.local_plugins.models import (
     canonical_name,
 )
 from apizr.publication_contracts import (
+    AdmitRequest,
     AttestRequest,
     BuildRequest,
     BuildTarget,
     Docker,
     Model,
+    ObserveRequest,
     PublishRequest,
     PushRequest,
     digest_reference,
@@ -107,7 +109,7 @@ class PluginIdentity(Model):
 
 class Grant(Model):
     plugin: PluginIdentity
-    operation: Literal["push", "publish"]
+    operation: Literal["push", "publish", "admit", "observe"]
     repository: str
     permissions: tuple[Permission, ...] = Field(min_length=1, max_length=2)
 
@@ -255,6 +257,8 @@ def load_operator_policy(path: Path) -> OperatorPolicy:
 # Trusted core knowledge, not supplied by a project, profile, catalog or plugin.
 # Trusted effects: publication reads and writes; signing reads, signs and timestamps.
 OPERATIONS = {
+    ("outerspace-apizr-oci", "observe"): "apizr_oci.protocol",
+    ("apizr-oci", "observe"): "apizr_oci.protocol",
     # Existing local installations keep their exact identity and grants.
     ("apizr-oci", "build"): "apizr_oci.protocol",
     ("apizr-oci", "push"): "apizr_oci.protocol",
@@ -264,6 +268,8 @@ OPERATIONS = {
     ("outerspace-apizr-oci", "push"): "apizr_oci.protocol",
     ("outerspace-apizr-attest", "publish"): "apizr_attest.protocol",
     ("outerspace-apizr-attest", "attest"): "apizr_attest.protocol",
+    ("outerspace-apizr-attest", "admit"): "apizr_attest.protocol",
+    ("apizr-attest", "admit"): "apizr_attest.protocol",
 }
 
 
@@ -312,9 +318,15 @@ def decide(
             building = BuildTarget.model_validate(
                 build.model_dump(include=set(BuildTarget.model_fields)), strict=True
             )
+        elif operation == "observe":
+            observation = ObserveRequest.model_validate_json(raw_arguments, strict=True)
+            repository = repository_name(observation.push.destination.rsplit(":", 1)[0])
         elif operation == "push":
             request = PushRequest.model_validate_json(raw_arguments, strict=True)
             repository = repository_name(request.destination.rsplit(":", 1)[0])
+        elif operation == "admit":
+            admission = AdmitRequest.model_validate_json(raw_arguments, strict=True)
+            repository = repository_name(admission.destination.rsplit(":", 1)[0])
         elif operation == "attest":
             signing = AttestRequest.model_validate_json(raw_arguments, strict=True)
             repository = repository_name(
@@ -382,9 +394,12 @@ def decide(
             allowed=allowed,
             code="authorized" if allowed else "operator_permissions_denied",
         )
-    if not any(
-        set(g.permissions) == {"registry.read", "registry.publish"} for g in grants
-    ):
+    required = (
+        {"registry.read"}
+        if operation == "observe"
+        else {"registry.read", "registry.publish"}
+    )
+    if not any(set(g.permissions) == required for g in grants):
         return Decision(allowed=False, code="operator_permissions_denied")
     return Decision(allowed=True, code="authorized")
 

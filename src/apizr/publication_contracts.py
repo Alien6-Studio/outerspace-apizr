@@ -8,7 +8,15 @@ from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from apizr.delivery import (
+    DeliveryManifest,
+    DeliveryPlan,
+    ProofRequirement,
+    check_observation,
+    identity,
+)
 
 DIGEST = re.compile(r"sha256:[0-9a-f]{64}")
 
@@ -50,6 +58,37 @@ class Authentication(Model):
 
 
 class PushRequest(Model):
+    resume_reference: str | None = Field(default=None, exclude_if=lambda v: v is None)
+
+    delivery_plan: DeliveryPlan | None = Field(
+        default=None, exclude_if=lambda v: v is None
+    )
+    delivery_manifest: DeliveryManifest | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+
+    @model_validator(mode="after")
+    def delivery_binding(self):
+        if self.resume_reference is not None:
+            digest_reference(self.resume_reference)
+            if (
+                self.resume_reference.split("@")[0]
+                != self.destination.rsplit(":", 1)[0]
+            ):
+                raise ValueError("Resume requires the exact repository")
+        if self.delivery_plan is not None and (
+            self.delivery_manifest is None
+            or identity(self.delivery_plan)
+            != self.delivery_manifest.delivery_plan_digest
+            or self.delivery_plan.platform != self.platform
+        ):
+            raise ValueError("Delivery plan and manifest disagree")
+        if self.delivery_manifest is not None:
+            check_observation(
+                self.delivery_manifest, self.image_id, self.platform, self.inputs_sha256
+            )
+        return self
+
     schema_version: Literal["apizr.oci-push/v1"] = Field(alias="schema")
     image_id: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
     platform: Literal["linux/amd64", "linux/arm64"]
@@ -117,14 +156,17 @@ class Tool(Model):
     _path = field_validator("executable")(Docker.absolute.__func__)
 
 
-class Common(Model):
-    expected_reference: str
+class VerificationInputs(Model):
     expected_signer: str = Field(pattern=r"^[0-9a-f]{64}$")
     trust_store: str
     tool: Tool
     timeout_ms: int = Field(default=120000, ge=1, le=540000)
     max_output_bytes: int = Field(default=1048576, ge=1024, le=4194304)
     _trust = field_validator("trust_store")(Docker.absolute.__func__)
+
+
+class Common(VerificationInputs):
+    expected_reference: str
 
     @field_validator("expected_reference")
     @classmethod
@@ -145,19 +187,11 @@ class PublishRequest(Common):
     _proof = field_validator("proof_dir")(Docker.absolute.__func__)
 
 
-class AttestRequest(Common):
-    schema_version: Literal["apizr.attest-delivery/v1"] = Field(alias="schema")
-    build_result: str
-    push_result: str
-    docker: Docker
-    authentication: Authentication
+class SigningInputs(Model):
     key_file: str
     key_id: str = Field(pattern=r"^[0-9a-f]{32}$")
     tsa_url: str
-    output_dir: str
-    _paths = field_validator("build_result", "push_result", "key_file", "output_dir")(
-        Docker.absolute.__func__
-    )
+    _key = field_validator("key_file")(Docker.absolute.__func__)
 
     @field_validator("tsa_url")
     @classmethod
@@ -176,9 +210,22 @@ class AttestRequest(Common):
         return value
 
 
+class AttestRequest(Common, SigningInputs):
+    schema_version: Literal["apizr.attest-delivery/v1"] = Field(alias="schema")
+    build_result: str
+    push_result: str
+    docker: Docker
+    authentication: Authentication
+    output_dir: str
+    _paths = field_validator("build_result", "push_result", "output_dir")(
+        Docker.absolute.__func__
+    )
+
+
 class BuildTarget(Model):
     """Exact references and tool parameters shared by build inputs and grants."""
 
+    proof_requirement: ProofRequirement = "optional"
     bundle: str
     interface: Literal["rest", "mcp"]
     base_image: str = Field(
@@ -201,3 +248,55 @@ class BuildRequest(BuildTarget):
     schema_version: Literal["apizr.oci-build/v1"] = Field(alias="schema")
     timeout_ms: int = Field(default=300000, ge=1, le=540000)
     max_log_bytes: int = Field(default=1048576, ge=1024, le=16777216)
+
+
+class AdmitRequest(Common):
+    schema_version: Literal["apizr.admit-delivery/v1"] = Field(alias="schema")
+    push_result: str
+    delivery_manifest: DeliveryManifest
+    destination: str
+    artifact_reference: str
+    transport: Transport
+    docker: Docker
+    _push = field_validator("push_result")(Docker.absolute.__func__)
+    _destination = field_validator("destination")(PushRequest.reference.__func__)
+
+    @field_validator("artifact_reference")
+    @classmethod
+    def artifact(cls, value: str) -> str:
+        return digest_reference(value)
+
+    @model_validator(mode="after")
+    def same_repository(self):
+        if {
+            self.destination.rsplit(":", 1)[0],
+            self.expected_reference.split("@")[0],
+            self.artifact_reference.split("@")[0],
+        } != {self.destination.rsplit(":", 1)[0]}:
+            raise ValueError("Admission requires one exact repository")
+        return self
+
+
+class ObserveRequest(Model):
+    """Read-only remote identity observation, separately authorized per repository."""
+
+    schema_version: Literal["apizr.observe-delivery/v1"] = Field(alias="schema")
+    push: PushRequest
+    expected_reference: str | None = None
+
+    @model_validator(mode="after")
+    def repository(self):
+        if self.expected_reference is not None:
+            digest_reference(self.expected_reference)
+            if (
+                self.expected_reference.split("@")[0]
+                != self.push.destination.rsplit(":", 1)[0]
+            ):
+                raise ValueError("Observation requires the exact repository")
+        return self
+
+
+class VerifyRequest(Common):
+    schema_version: Literal["apizr.verify-delivery/v1"] = Field(alias="schema")
+    proof_dir: str
+    _proof = field_validator("proof_dir")(Docker.absolute.__func__)

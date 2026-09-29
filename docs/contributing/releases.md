@@ -3,98 +3,66 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
-## Prepare the 0.4.0 delivery
+## Current baseline and next release
 
-The [release notes](../releases/0.4.0.md) describe the integrated scope.
-The coordinated core and optional plugins are published as `0.4.0rc1`.
-The release notes retain the exact source and verification evidence. The procedure
-below remains the maintainer workflow for a coordinated delivery; publication is
-always a separate explicit operation.
+The coordinated core and three official plugins are published as **0.4.1rc1**,
+source `230142ecf53fc250d9026345c350414983648f90`. Qualification #200 and publication
+#201 record the verified public archives. That tag, release, notes and assets
+remain immutable; see the [0.4.1 release record](../releases/0.4.1.md).
 
-Before tagging the exact candidate:
+The next step is **0.4.1rc1 → 0.4.1**. All four source distributions declare
+**0.4.1**. Ordinary PR/CI artifacts are previews; final qualification must select
+the original artifacts from the protected release-line commit after merge.
+Another RC is needed only for a genuine post-RC product defect, not version or
+documentation changes. Final publication requires separate explicit authorization.
 
-- Finalize core and official plugin distribution versions, metadata and supported
-  combinations in a release PR. Align locks/catalog artifacts with the actual
-  reviewed filenames and hashes; do not publish development placeholders as final.
-- Qualify those exact wheels outside the checkout: minimal/extra installations,
-  migration and canonical artifacts, Git HTTPS/SSH, plugin lifecycle, real MCP
-  clients, and disposable OCI/Attest delivery. Retain the final commit and runs.
-- Apply the procedure below to the coordinated artifacts. The **Publish PyPI**
-  workflow consumes all eight archives from `python-distributions`, verifies the
-  coordinated matrix and stages only missing public files after comparison.
-  The target exports and qualification reports are release evidence, not PyPI packages.
-- After publication, verify downloaded package bytes and fresh installations.
-  Record the actual date, tag, hashes and evidence in the release notes. Only then
-  change the stable installation guidance, Quickstart pins and documentation build
-  metadata to the verified 0.4.0rc1 delivery; retain historical 0.3.0 release instructions.
-- Qualify the public documentation through the existing Pages/HTTPS checks,
-  including the release notes in `build-info.json`.
+The earlier **0.4.0rc1** remains historical. The core-only 0.4.0 publication was
+incomplete and its PyPI version was removed; no new final 0.4.0 is planned.
 
-The [0.4.1/0.4.2 deferrals](../development/0.4.md#delivery-scope-and-explicit-deferrals)
-remain explicit. Do not add those features to this release-preparation step.
+Follow the [release-branch model](release-branches.md): feature PRs target
+`release/0.4.1`; `master` remains the last integrated qualified baseline.
+RCs are immutable tags/releases on qualified release-line commits, not branches.
+Only after final 0.4.1 qualification and publication is that state reintegrated
+into `master` through its protected PR process. Create `release/0.4.2` only after
+that integration. Future scope remains in the [roadmap](../development/0.4.md#delivery-scope-and-explicit-deferrals).
 
 ## Retain and publish one coordinated artifact set
 
-The CI `distributions` job builds four wheels and four sdists from a clean commit.
-Independent sdist reconstruction checks are marked as tests; their wheels never
-replace the candidate. `release-candidate` contains the manifest and metadata
-reports. `release-target-*` archives hold target-specific wheelhouses, separate
-MCP/OCI/Attest requirements, catalog/profile exports and qualification evidence.
-`release-delivery` exercises the same four candidate packages in disposable
-Docker environments. The governed-worker image identity is retained with
-`validation-oci`: its local image/config digest is not a published registry digest
-or a user service-image release. No public official image destination is invented.
+CI builds four wheels and four sdists once per candidate. Independent sdist
+reconstructions are tests and never replace the selected archives. Retain
+`release-candidate`, the six `release-target-*` exports, `release-delivery`,
+`build-attestations` and `release-assets`. The latter is only an Actions artifact,
+not an automatic upload to a GitHub release. PR previews lack signed provenance
+and cannot authorize publication.
 
-The exact matrix is Linux CPython 3.11–3.14 and macOS 3.11/3.14, plus the Linux
-registry/TSA/ORAS fixture. Consult each target report for the actual architecture,
-Python patch version, byte counts and five timing samples. Download bytes,
-installed file bytes and subprocess startup are separate measures; tooling,
-caches and Docker images are excluded from wheel-download sizes. Do not infer
-other machines' performance from these samples.
+For 0.4.1 select the successful **release/0.4.1 push** run on the exact source
+commit, plus successful Security and Documentation push runs on that same branch
+and commit. Recheck the [active branch protections](release-branches.md#required-maintainer-action).
+The isolated CI signer accepts this exact release branch only when GitHub reports
+it protected. Build evidence records the actual ref. The publication verifier
+binds 0.4.1 versions to `release/0.4.1`, checks its protection and refuses arbitrary
+branches or future release lines. Historical provenance still uses `master`.
 
-Select the successful **master push** run for the release commit, not the PR run
-or a later reconstruction. Its provenance covers the eight distributions and the
-validation archive. The existing runtime SBOM remains scoped to core distributions;
-plugin dependency identities are retained in each target inventory and lock.
-After this PR merges, build and qualify a new set from the selected release commit.
-The PR's artifacts cannot establish approval of that different commit.
+Qualification includes Linux CPython 3.11–3.14, macOS 3.11/3.14 and disposable
+registry/TSA/ORAS fixtures. Target reports record architecture, patch version,
+bytes and timing samples. Runtime SBOM attestations cover the core distributions;
+plugin dependency identities remain in target inventories. Disposable worker
+image identities are test evidence, not official published images.
 
-Publication requires the existing human approval and Trusted Publishing for
-**each** PyPI project. Read-only GitHub checks can verify the environment gate and
-workflow permissions, but cannot establish PyPI ownership or pending-publisher
-configuration for the plugin projects. A maintainer must verify those external
-prerequisites before dispatch. Do not create secrets or publishers implicitly.
+Publication stays manual and requires explicit authorization of the exact
+version, source, CI run and original hashes. Trusted Publishing must be configured
+for all four projects. The workflow uploads **core → OCI → MCP → Attest**,
+requires separate protected receipt/publication approvals, and compares downloaded
+public archives with the original eight files. Existing bytes must match exactly;
+missing files alone are staged. No rebuild, overwrite or `skip-existing` is allowed.
+Network/access errors never mean absence. Verify fresh public installations and
+retain the public comparison and signed timestamped receipt before declaring delivery.
 
-The manual workflow publishes **outerspace-apizr → outerspace-apizr-oci → outerspace-apizr-mcp →
-outerspace-apizr-attest**, preserving exact internal requirements. Only the eight first-party
-archives enter PyPI; catalog exports, third-party dependency wheels, images and
-proofs remain separate evidence/distribution assets. There is no rebuild in the
-publication path and no publication trigger on merge.
-
-For the first upload, PyPI permits only one pending publisher for an identical
-GitHub repository/workflow/environment configuration. Register the pending
-publisher for one plugin name, then dispatch with `package` set to that exact
-distribution name. This verifies and uploads only that package while retaining
-the same provenance, receipt and byte-comparison gates. Once PyPI converts it to
-an active project publisher, register the next plugin and repeat. Finish with
-`package: all`: only this complete verification archives release-wide publication
-evidence. A successful single-package run is not a completed coordinated release.
-
-The prefixed plugin distributions require the matching corrected core. The public
-`outerspace-apizr==0.4.0` archives and tag remain immutable; verification builds
-from later commits must not replace them. The renamed set uses `0.4.0rc1` for
-all four packages, reserving `0.4.1` for functional changes. This is a release
-candidate, ordered before the final `0.4.0`. Install it with an explicit
-`==0.4.0rc1` requirement and mark its GitHub release as a prerelease. Changing only PyPI publisher names does not rename
-wheel metadata or the core's MCP launcher and operator identities.
-
-If publication stops partway through, inspect the public state, then dispatch the
-same tag and approved run again. Every existing filename must match both approved
-SHA-256/size and downloaded bytes. Missing files are staged; a different file,
-unexpected filename, network error or access error stops the procedure before
-upload. `skip-existing` is never used. Following upload, all eight public archives
-are downloaded and compared before the publication evidence is archived. Verify
-fresh public installations as well before marking the release delivered.
+For first-time plugin publishers, PyPI allows only one pending publisher for an
+identical repository/workflow/environment configuration. Register and publish one
+package at a time using the exact `package` input, then finish with `package: all`
+to archive release-wide evidence. These prerequisites do not authorize a new upload.
+Completed 0.4.0rc1 and 0.4.1rc1 deliveries must not be dispatched again.
 
 ## Published 0.3.0
 
@@ -157,10 +125,11 @@ and publisher and is not part of this workflow.
    metadata. `pyproject.toml` is the version source; installed application/CLI
    versions come from distribution metadata. Use the explicitly authorized,
    previously unpublished version; align its release notes and changelog.
-2. Merge through the protected default branch after **all** required checks pass.
-   Wait for CI, Security and Documentation to pass again on the exact master
-   merge commit. Do not disable a gate, lower a coverage floor or use an admin bypass.
-3. From that successful **master push CI run**, download `python-distributions`
+2. Merge the candidate preparation PR into protected `release/0.4.1` after
+   **all** required checks pass. Wait for CI, Security and Documentation to pass
+   again on that exact release-line merge commit. Do not integrate into `master`
+   yet. Do not disable a gate, lower a coverage floor or use an admin bypass.
+3. From that successful **release/0.4.1 push CI run**, download `python-distributions`
    and `distribution-checksums`, plus `release-candidate`, every `release-target-*`
    export and `release-delivery`. The distributions job builds all eight archives
    once. Target jobs install those exact wheels outside checkout. OCI jobs build
@@ -177,7 +146,7 @@ and publisher and is not part of this workflow.
 6. Create `v<version>` on that exact verified merge commit. Release tags are protected
    against deletion/force updates. Prepare the GitHub release notes from
    the reviewed notes for that version and attach the eight reviewed archives, checksums and target exports.
-7. Explicitly dispatch **Publish PyPI** on the tag, passing the verified master
+7. Explicitly dispatch **Publish PyPI** on the tag, passing the verified release-line
    `ci_run_id`. Its verification job checks tag/version/commit, successful coordinated CI,
    Security and Documentation runs, public artifact state, archive
    metadata and original checksums. It downloads and forwards the same bytes;
@@ -197,17 +166,17 @@ and publisher and is not part of this workflow.
    label through a follow-up documentation PR if publication has completed.
 
 Example deliberate dispatch from the verified release checkout, after the new
-tag exists and checks are green. Set `REVIEWED_MASTER_RUN_ID` to the reviewed
-successful master push CI run ID. **Do not run this for an already-published
-0.2.0 or 0.2.1 checkout.**
+tag exists and checks are green. Set `REVIEWED_RELEASE_RUN_ID` to the reviewed
+successful release-line push CI run ID. **Never dispatch the closed 0.4.0 or
+already-published 0.4.0rc1 delivery.**
 
 ```sh
 RELEASE_VERSION=$(python -c 'import pathlib, tomllib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"])')
 gh workflow run publish-pypi.yml --ref "v${RELEASE_VERSION}" \
-  -f ci_run_id="$REVIEWED_MASTER_RUN_ID"
+  -f release_tag="v${RELEASE_VERSION}" -f ci_run_id="$REVIEWED_RELEASE_RUN_ID"
 ```
 
-Publication is never triggered by an ordinary master push or PR. The workflow
+Publication is never triggered by an ordinary branch push or PR. The workflow
 must be present on the default branch before its first manual dispatch.
 
 ## Release checklist
@@ -224,7 +193,7 @@ Complete against the final commit; historical green runs are not sufficient.
 - [ ] License inventory/policy and preserved notices cover the exact universal lock.
 - [ ] Open issues are classified and no release blocker remains unresolved.
 - [ ] Ownership, Trusted Publisher and protected `pypi` environment are verified.
-- [ ] The tag identifies the exact verified master commit and CI artifact run.
+- [ ] The tag identifies the exact verified release-line commit and CI artifact run.
 - [ ] Managed Attest identity, signature, RFC 3161 timestamp and recomputation pass
       for the exact delivery; receipt and public verification material are archived.
 - [ ] PyPI file hashes and fresh index installation are verified after publication.
@@ -242,7 +211,8 @@ remain subject to the site's optional GitHub consent setting. No release number
 is hard-coded in the theme, and no header override is needed. See
 [Material's repository documentation](https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/).
 
-PRs run a strict MkDocs build. A master
+PRs and `release/0.4.1` pushes run strict MkDocs and HTML validation without
+deployment. Stable documentation still follows the integrated baseline. A master
 push builds and publishes the site to `gh-pages`, served at
 [apizr.outerspace.sh](https://apizr.outerspace.sh/). Keep this active publication
 branch; edit Markdown and MkDocs configuration, not generated files.
@@ -270,6 +240,9 @@ No PR deploys; new pages remain **ready in the PR** until an authorized merge an
 successful public verification. Never edit `gh-pages` directly to bypass review.
 
 ## Repository protections
+
+The following describes the **actually configured master protections**. It does
+not yet protect `release/0.4.1`: see the [pending equivalent ruleset](release-branches.md#required-maintainer-action).
 
 Apizr follows the same protection model as `Alien6-Studio/continuum-attest`:
 PR-only changes, no force push/deletion or bypass actors, signed commits on the

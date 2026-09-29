@@ -7,9 +7,10 @@ had the additional controls described below.
 
 ## Evidence from subsequent CI builds
 
-A successful protected `master` build produces:
+A successful baseline `master` build, or a protected `release/0.4.1` push
+with the governance workflow, produces:
 
-- For coordinated 0.4.0 candidates: four tested wheels and four sdists, plus
+- For coordinated candidates: four tested wheels and four sdists, plus
   `SHA256SUMS.json` and the commit-bound candidate inventory. Earlier releases
   contain the core wheel/sdist pair only.
 - `ci-evidence.tar.gz`: exact source archive (including tests and workflows),
@@ -24,8 +25,10 @@ A successful protected `master` build produces:
 - The separately audited dependency report from the successful Security run on
   the same commit.
 
-Only an isolated signing job on a `master` push receives OIDC and attestation
-permissions. It downloads the successful CI artifacts and does not execute
+Only an isolated signing job on a `master` push or an explicitly protected
+`release/0.4.1` push receives OIDC and attestation permissions. The release-line
+protection is a [pending maintainer action](release-branches.md#required-maintainer-action);
+unprotected release pushes cannot sign. It downloads the successful CI artifacts and does not execute
 repository code. Pull requests do not receive signing permissions. The publish
 workflow verifies provenance before forwarding the same distributions to PyPI.
 After publication, it attaches the evidence files to the prepared GitHub release,
@@ -45,14 +48,17 @@ the delivery receipt does not claim that Attest supervised the earlier build.
 
 Download the distribution and evidence from the release you intend to verify.
 Use its recorded commit as `EXPECTED_COMMIT`; do not use the current branch tip.
-The identity is the CI workflow on this repository, on `refs/heads/master`:
+The identity is the CI workflow on this repository. Historical releases through
+0.4.0rc1 use `refs/heads/master`; 0.4.1 candidates/final require exactly
+`refs/heads/release/0.4.1`. Set `EXPECTED_SOURCE_REF` to the recorded approved
+identity, never to an arbitrary branch supplied by an artifact:
 
 ```sh
 gh attestation verify outerspace_apizr-VERSION-py3-none-any.whl \
   --bundle build-provenance.sigstore.json \
   --repo Alien6-Studio/outerspace-apizr \
   --signer-workflow Alien6-Studio/outerspace-apizr/.github/workflows/ci.yml \
-  --source-digest EXPECTED_COMMIT --source-ref refs/heads/master
+  --source-digest EXPECTED_COMMIT --source-ref "$EXPECTED_SOURCE_REF"
 ```
 
 Repeat for every distribution in that release and `ci-evidence.tar.gz`. The attestation verifies the subject
@@ -120,3 +126,19 @@ without accepting a stopped or blocked child as terminated. Separate tests rejec
 a real stopped child and simulated persistent nonterminal states. This changes
 the verification procedure, not the runtime's termination behavior or its
 [containment guarantees](../architecture/execution-policy-v1.md).
+
+## Git interruption regression
+
+The Git runner records the default main-thread SIGINT request and raises
+`KeyboardInterrupt` only at its own checkpoints, after subprocess construction
+has transferred ownership and outside Python's internal waitpid lock. The handler
+stays active through cleanup, then the caller's handler is restored. Custom
+handlers and worker-thread calls retain their existing behavior. Cleanup still
+uses the same two-second deadline; unconfirmed cleanup remains a failure.
+
+`tests/git_source/test_sigint.py` injects a real SIGINT during subprocess
+construction, while the waitpid lock is acquired, and during final cleanup. It
+checks child reaping, closed streams, an unlocked wait lock, handler restoration
+and reuse. The construction and wait-lock cases fail against the earlier runner.
+The existing fixed 25 Git/worker repetitions remain unchanged and retain every
+outcome, including failures; no retry-to-green or deadline increase is used.

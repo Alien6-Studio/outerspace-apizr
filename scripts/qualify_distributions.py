@@ -74,6 +74,7 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
         env.pop("VIRTUAL_ENV", None)
         # pip bootstrapping is explicit test preparation, not plugin installation.
         env.update(
+            APIZR_VERSION=manifest["version"],
             PYTHON=sys.executable,
             CORE_DIR=str(root / "pip"),
             CANDIDATE=str(candidate),

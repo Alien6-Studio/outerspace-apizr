@@ -42,9 +42,36 @@ a remediation trailer in the squash message when its target remains in the
 audited history; omit references to replaced branch commits. Never amend or
 force-push an already published commit to repair its declaration.
 
+For a protected squash whose existing sign-off uses a GitHub login instead of
+its Git author's name, leave that commit unchanged. Open a corrective PR from
+the current protected branch. The new responsible declaration must match the
+corrective commit's author and explicitly identify the original squash:
+
+```text
+Signed-off-by: Your Name <your-email>
+DCO-sign-off-for: FULL_COMMIT_SHA
+```
+
+If that corrective PR is squash-merged, preserve both trailers and ensure the
+resulting author is `Your Name <your-email>`, not the GitHub login.
+
 ## Development workflow
 
-Fork the repository and create a focused branch. Install uv and run:
+For all 0.4.1 work, branch from `release/0.4.1` and target that branch with a
+focused PR (for example `feature/application-dependencies`, `feature/delivery-manifest`,
+`feature/mandatory-proof` or `fix/...`). `master` is the last integrated qualified
+release baseline. RCs such as `v0.4.1rc1` are immutable tags/releases, not branches.
+Do not bump versions merely to create a branch. After final qualification and
+publication, reintegrate 0.4.1 through a protected PR to `master`; only then start
+`release/0.4.2`. See [release governance](docs/contributing/release-branches.md),
+including the protection settings still requiring maintainer action.
+
+```sh
+git fetch origin
+git switch -c feature/my-change origin/release/0.4.1
+```
+
+Fork the repository if needed. Install uv and run:
 
 ```bash
 uv sync --locked --group docs
