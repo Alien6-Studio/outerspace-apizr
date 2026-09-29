@@ -153,7 +153,11 @@ jobs:
           # the same audit range, including in later PRs and push events.
           DCO_AUDIT_BASE: 83e28cb5d8ffbb4cb820122e125b03695e10fda8
         run: |
-          if git merge-base --is-ancestor "$DCO_AUDIT_BASE" "$DCO_BASE"; then
+          if test "$DCO_BASE" = 0000000000000000000000000000000000000000; then
+            # Branch creation has no previous commit; audit its inherited history.
+            git merge-base --is-ancestor "$DCO_AUDIT_BASE" "$DCO_HEAD"
+            DCO_BASE="$DCO_AUDIT_BASE"
+          elif git merge-base --is-ancestor "$DCO_AUDIT_BASE" "$DCO_BASE"; then
             DCO_BASE="$DCO_AUDIT_BASE"
           fi
           uv run --locked python scripts/check_dco.py --base "$DCO_BASE" --head "$DCO_HEAD"
