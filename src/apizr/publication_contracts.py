@@ -58,6 +58,8 @@ class Authentication(Model):
 
 
 class PushRequest(Model):
+    resume_reference: str | None = Field(default=None, exclude_if=lambda v: v is None)
+
     delivery_plan: DeliveryPlan | None = Field(
         default=None, exclude_if=lambda v: v is None
     )
@@ -67,6 +69,13 @@ class PushRequest(Model):
 
     @model_validator(mode="after")
     def delivery_binding(self):
+        if self.resume_reference is not None:
+            digest_reference(self.resume_reference)
+            if (
+                self.resume_reference.split("@")[0]
+                != self.destination.rsplit(":", 1)[0]
+            ):
+                raise ValueError("Resume requires the exact repository")
         if self.delivery_plan is not None and (
             self.delivery_manifest is None
             or identity(self.delivery_plan)
@@ -147,14 +156,17 @@ class Tool(Model):
     _path = field_validator("executable")(Docker.absolute.__func__)
 
 
-class Common(Model):
-    expected_reference: str
+class VerificationInputs(Model):
     expected_signer: str = Field(pattern=r"^[0-9a-f]{64}$")
     trust_store: str
     tool: Tool
     timeout_ms: int = Field(default=120000, ge=1, le=540000)
     max_output_bytes: int = Field(default=1048576, ge=1024, le=4194304)
     _trust = field_validator("trust_store")(Docker.absolute.__func__)
+
+
+class Common(VerificationInputs):
+    expected_reference: str
 
     @field_validator("expected_reference")
     @classmethod
@@ -175,19 +187,11 @@ class PublishRequest(Common):
     _proof = field_validator("proof_dir")(Docker.absolute.__func__)
 
 
-class AttestRequest(Common):
-    schema_version: Literal["apizr.attest-delivery/v1"] = Field(alias="schema")
-    build_result: str
-    push_result: str
-    docker: Docker
-    authentication: Authentication
+class SigningInputs(Model):
     key_file: str
     key_id: str = Field(pattern=r"^[0-9a-f]{32}$")
     tsa_url: str
-    output_dir: str
-    _paths = field_validator("build_result", "push_result", "key_file", "output_dir")(
-        Docker.absolute.__func__
-    )
+    _key = field_validator("key_file")(Docker.absolute.__func__)
 
     @field_validator("tsa_url")
     @classmethod
@@ -204,6 +208,18 @@ class AttestRequest(Common):
         ):
             raise ValueError("explicit timestamp authority required")
         return value
+
+
+class AttestRequest(Common, SigningInputs):
+    schema_version: Literal["apizr.attest-delivery/v1"] = Field(alias="schema")
+    build_result: str
+    push_result: str
+    docker: Docker
+    authentication: Authentication
+    output_dir: str
+    _paths = field_validator("build_result", "push_result", "output_dir")(
+        Docker.absolute.__func__
+    )
 
 
 class BuildTarget(Model):
@@ -259,3 +275,28 @@ class AdmitRequest(Common):
         } != {self.destination.rsplit(":", 1)[0]}:
             raise ValueError("Admission requires one exact repository")
         return self
+
+
+class ObserveRequest(Model):
+    """Read-only remote identity observation, separately authorized per repository."""
+
+    schema_version: Literal["apizr.observe-delivery/v1"] = Field(alias="schema")
+    push: PushRequest
+    expected_reference: str | None = None
+
+    @model_validator(mode="after")
+    def repository(self):
+        if self.expected_reference is not None:
+            digest_reference(self.expected_reference)
+            if (
+                self.expected_reference.split("@")[0]
+                != self.push.destination.rsplit(":", 1)[0]
+            ):
+                raise ValueError("Observation requires the exact repository")
+        return self
+
+
+class VerifyRequest(Common):
+    schema_version: Literal["apizr.verify-delivery/v1"] = Field(alias="schema")
+    proof_dir: str
+    _proof = field_validator("proof_dir")(Docker.absolute.__func__)

@@ -27,6 +27,7 @@ from apizr.publication_contracts import (
     BuildTarget,
     Docker,
     Model,
+    ObserveRequest,
     PublishRequest,
     PushRequest,
     digest_reference,
@@ -108,7 +109,7 @@ class PluginIdentity(Model):
 
 class Grant(Model):
     plugin: PluginIdentity
-    operation: Literal["push", "publish", "admit"]
+    operation: Literal["push", "publish", "admit", "observe"]
     repository: str
     permissions: tuple[Permission, ...] = Field(min_length=1, max_length=2)
 
@@ -256,6 +257,8 @@ def load_operator_policy(path: Path) -> OperatorPolicy:
 # Trusted core knowledge, not supplied by a project, profile, catalog or plugin.
 # Trusted effects: publication reads and writes; signing reads, signs and timestamps.
 OPERATIONS = {
+    ("outerspace-apizr-oci", "observe"): "apizr_oci.protocol",
+    ("apizr-oci", "observe"): "apizr_oci.protocol",
     # Existing local installations keep their exact identity and grants.
     ("apizr-oci", "build"): "apizr_oci.protocol",
     ("apizr-oci", "push"): "apizr_oci.protocol",
@@ -315,6 +318,9 @@ def decide(
             building = BuildTarget.model_validate(
                 build.model_dump(include=set(BuildTarget.model_fields)), strict=True
             )
+        elif operation == "observe":
+            observation = ObserveRequest.model_validate_json(raw_arguments, strict=True)
+            repository = repository_name(observation.push.destination.rsplit(":", 1)[0])
         elif operation == "push":
             request = PushRequest.model_validate_json(raw_arguments, strict=True)
             repository = repository_name(request.destination.rsplit(":", 1)[0])
@@ -388,9 +394,12 @@ def decide(
             allowed=allowed,
             code="authorized" if allowed else "operator_permissions_denied",
         )
-    if not any(
-        set(g.permissions) == {"registry.read", "registry.publish"} for g in grants
-    ):
+    required = (
+        {"registry.read"}
+        if operation == "observe"
+        else {"registry.read", "registry.publish"}
+    )
+    if not any(set(g.permissions) == required for g in grants):
         return Decision(allowed=False, code="operator_permissions_denied")
     return Decision(allowed=True, code="authorized")
 

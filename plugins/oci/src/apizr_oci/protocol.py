@@ -5,9 +5,11 @@ import sys
 from pathlib import Path
 
 from apizr.extension_runtime.protocol import Request, unique_object
+from apizr.publication_contracts import ObserveRequest
 
 from .build import build
 from .model import BuildError, BuildRequest, PushRequest
+from .observe import observe_delivery
 from .push import push
 
 
@@ -26,7 +28,11 @@ def main() -> int:
         key: getattr(request, key) for key in ("protocol", "request_id", "operation")
     }
     try:
-        if request.operation == "build":
+        if request.operation == "observe":
+            result = observe_delivery(
+                ObserveRequest.model_validate(request.arguments), workspace=Path.cwd()
+            )
+        elif request.operation == "build":
             result = build(
                 BuildRequest.model_validate(request.arguments), workspace=Path.cwd()
             )

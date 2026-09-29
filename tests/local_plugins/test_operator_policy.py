@@ -703,3 +703,53 @@ def test_signing_is_not_admission_permission():
     assert decide(
         policy(document(binding, "admit")), binding, "admit", arguments("admit")
     ).allowed
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        None,
+        "absent",
+        "other-repository",
+        "other-operation",
+        "other-identity",
+        "permissions",
+    ],
+)
+def test_observation_has_its_own_exact_read_grant(fault, monkeypatch):
+    from contextlib import contextmanager
+
+    binding = record("push")
+    raw = document(binding)
+    raw["grants"][0].update(operation="observe", permissions=["registry.read"])
+    if fault == "other-repository":
+        raw["grants"][0]["repository"] = "other.example/team/image"
+    elif fault == "other-operation":
+        raw["grants"][0]["operation"] = "push"
+    elif fault == "other-identity":
+        raw["grants"][0]["plugin"]["sha256"] = "0" * 64
+    elif fault == "permissions":
+        raw["grants"][0]["permissions"] = ["registry.publish"]
+    policy = (
+        None
+        if fault == "absent"
+        else OperatorPolicy.model_validate_json(json.dumps(raw))
+    )
+    calls = []
+
+    @contextmanager
+    def admitted(*args, **kwargs):
+        yield binding, 0
+
+    monkeypatch.setattr(activation, "admitted_extension", admitted)
+    monkeypatch.setattr(
+        activation, "invoke_extension", lambda *a, **kw: calls.append(a)
+    )
+    data = {"schema": "apizr.observe-delivery/v1", "push": arguments("push")}
+    if fault is not None:
+        with pytest.raises(AuthorizationDenied):
+            run_extension(binding.name, "observe", data, operator_policy=policy)
+        assert not calls
+    else:
+        run_extension(binding.name, "observe", data, operator_policy=policy)
+        assert len(calls) == 1

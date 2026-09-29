@@ -130,3 +130,5 @@ proof checks, post-promotion uncertainty and recovery, exact destination digests
 and signing-key absence. The existing independent consumer fetches and verifies
 the proof offline. Services run from the recorded digests after original source
 and bundles are removed, with no source mounts.
+
+See [multi-destination delivery](multi-destination-delivery.md) for sequential managed orchestration, independent outcomes and explicit resume of one immutable build.
