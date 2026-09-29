@@ -11,7 +11,7 @@ CRITICAL = {
     "getting-started/quickstart-0.4/index.html": "The walkthrough is now at",
     "contributing/publish-0.4/index.html": "Release attachment inventory",
     "releases/0.4.0/index.html": "Core and all three plugins published as 0.4.0rc1.",
-    "releases/0.4.1/index.html": "0.4.1 is not yet published.",
+    "releases/0.4.1/index.html": "0.4.1 is published and verified.",
     "architecture/delivery-identities/index.html": "DeliveryManifest",
     "reference/delivery-admission/index.html": "admission",
     "reference/multi-destination-delivery/index.html": "resume",
@@ -49,9 +49,9 @@ def on_config(config):
         "schema": "apizr.docs-build/v1",
         "source_commit": commit,
         "source_dirty": dirty,
-        "status": "unreleased",
+        "status": "stable",
         "target_version": "0.4.1",
-        "stable_release": "0.3.0",
+        "stable_release": "0.4.1",
     }
     return config
 

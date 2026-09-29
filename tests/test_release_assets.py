@@ -142,6 +142,7 @@ def test_stage_preserves_bytes_and_uses_recorded_unique_names(
     [
         ("pull_request", "refs/pull/205/merge", True),
         ("push", "refs/heads/master", True),
+        ("push", "refs/heads/release/0.4.2", True),
         ("push", "refs/heads/release/0.4.1", False),
     ],
 )

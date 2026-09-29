@@ -123,12 +123,16 @@ def check(site: Path) -> None:
             "SHA256SUMS",
         ),
         "releases/0.4.1/index.html": (
-            "0.4.1 is not yet published.",
+            "0.4.1 is published and verified.",
+            "d08b37d126957593a82784ef3ad096e3f8b4929d",
+            "36601712772",
+            "36608326995",
             "DeliveryPlan",
             "0.4.1rc1",
             "0.4.2",
         ),
         "releases/0.4.0/index.html": (
+            "Apizr 0.4.0rc1",
             "Core and all three plugins published as 0.4.0rc1.",
             "source.analyze",
             "structuredContent",

@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master, develop, release/0.4.1]
+    branches: [master, develop, release/0.4.2]
   pull_request:
   workflow_dispatch:
 
@@ -396,7 +396,7 @@ jobs:
     if: >-
       github.event_name == 'push' &&
       (github.ref == 'refs/heads/master' ||
-       (github.ref == 'refs/heads/release/0.4.1' && github.ref_protected))
+       (github.ref == 'refs/heads/release/0.4.2' && github.ref_protected))
     needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations, release-target, release-delivery]
     runs-on: ubuntu-latest
     permissions:
@@ -483,9 +483,9 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
         run: |
           flags=()
-          # Master validates the integrated baseline; publication keeps the
-          # original qualified release-line artifacts and source identity.
-          if test "$EVENT_NAME" = pull_request || test "$GITHUB_REF" = refs/heads/master; then
+          # Master and the new development line are verification builds.
+          # Publication remains bound to the original qualified source.
+          if test "$EVENT_NAME" = pull_request || test "$GITHUB_REF" != refs/heads/release/0.4.1; then
             flags+=(--preview)
           fi
           python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${flags[@]}"

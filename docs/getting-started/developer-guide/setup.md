@@ -163,8 +163,10 @@ The package job tests the base wheel and each extra in separate environments on
 Python 3.11 and 3.14. Security audits cover the base, each extra, and validation
 groups; archived SBOMs distinguish the base and combined optional runtime.
 
-For 0.4.1 contributions, create feature branches from `release/0.4.1` and target
-that branch with PRs. Release-line pushes validate documentation without deploying
-it; the public site remains on the integrated `master` baseline. See
-[release governance](../../contributing/release-branches.md) for RC semantics and
-pending protection settings.
+For new product development, branch from protected `release/0.4.2` and target
+that branch with PRs. Published documentation maintenance targets `master`.
+Release-line pushes validate documentation without deploying it; the public site
+remains on the integrated `master` baseline. See
+[release governance](../../contributing/release-branches.md) for the active rules.
+The new branch inherits version 0.4.1 until a separately reviewed version update;
+its builds do not replace published packages.

@@ -14,6 +14,9 @@ Apizr is an **open-source capability compiler**. Analyze existing Python, choose
 the public functions, generate their interfaces and define how calls execute.
 Your business logic stays in Python.
 
+**[Apizr 0.4.1](releases/0.4.1.md) is the current stable release**, published and
+verified with its three optional plugins.
+
 <div class="apizr-home-actions" markdown="1">
 
 [Quickstart: MCP and REST calls](getting-started/quickstart.md){ .md-button .md-button--primary }

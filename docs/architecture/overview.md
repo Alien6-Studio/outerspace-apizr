@@ -78,4 +78,4 @@ workflows remain supported. The [legacy pipeline](../getting-started/user-guide/
 is independent and retains its [documented limitations](legacy-behavior-contract.md).
 Canonical artifacts retain their versioned contracts.
 
-See the [release notes and known limitations](../releases/0.4.0.md).
+See the [release notes and known limitations](../releases/0.4.1.md).

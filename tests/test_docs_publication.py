@@ -80,7 +80,7 @@ def test_stale_newer_or_mixed_deployment_is_not_success(site, tls, change):
         if name == "build-info.json" and change != "content":
             marker = json.loads(data)
             if change == "status":
-                marker["status"] = "stable"
+                marker["status"] = "unreleased"
             else:
                 marker["source_commit"] = ("a" if change == "older" else "b") * 40
             return json.dumps(marker).encode()
@@ -172,13 +172,30 @@ def test_marker_uses_source_commit_and_fingerprints(site):
             ["git", "rev-parse", "HEAD"], cwd=SCRIPTS, text=True
         ).strip()
     )
-    assert marker["status"] == "unreleased"
+    assert marker["status"] == "stable"
     assert marker["target_version"] == "0.4.1"
-    assert marker["stable_release"] == "0.3.0"
+    assert marker["stable_release"] == "0.4.1"
     assert (
         marker["files"]["index.html"]
         == hashlib.sha256((site / "index.html").read_bytes()).hexdigest()
     )
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("status", "unreleased"),
+        ("stable_release", "0.3.0"),
+        ("target_version", "0.4.0"),
+    ],
+)
+def test_prepublication_marker_is_rejected(site, field, value):
+    path = site / "build-info.json"
+    marker = json.loads(path.read_text())
+    marker[field] = value
+    path.write_text(json.dumps(marker))
+    with pytest.raises(ValueError, match="Invalid documentation build marker"):
+        checker.marker_at(site)
 
 
 def test_critical_content_required(site):

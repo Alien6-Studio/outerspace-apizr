@@ -5,26 +5,29 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 ## Current baseline and next release
 
-The coordinated core and three official plugins are published as **0.4.1rc1**,
-source `230142ecf53fc250d9026345c350414983648f90`. Qualification #200 and publication
-#201 record the verified public archives. That tag, release, notes and assets
-remain immutable; see the [0.4.1 release record](../releases/0.4.1.md).
+The current stable release is **0.4.1** for the core and all three plugins,
+source `d08b37d126957593a82784ef3ad096e3f8b4929d`. Qualification #203 and
+publication #204 are complete. The original archives from protected release-line
+CI `36601712772` were published by workflow `36608326995` and all eight public
+files matched the qualified bytes. See the [release record](../releases/0.4.1.md).
 
-The next step is **0.4.1rc1 → 0.4.1**. All four source distributions declare
-**0.4.1**. Ordinary PR/CI artifacts are previews; final qualification must select
-the original artifacts from the protected release-line commit after merge.
-Another RC is needed only for a genuine post-RC product defect, not version or
-documentation changes. Final publication requires separate explicit authorization.
+PR #206 integrated the released source into `master` at
+`e49d5f686bc9b2c9610c7849e246594feb48c3d4`, with a CI-only adjustment for master
+verification previews. That commit is not the release source; it never replaces
+the tag or original archives. Documentation maintenance now targets `master`.
 
-The earlier **0.4.0rc1** remains historical. The core-only 0.4.0 publication was
-incomplete and its PyPI version was removed; no new final 0.4.0 is planned.
+The **0.4.1rc1** and **0.4.0rc1** prereleases remain immutable history. The earlier
+core-only 0.4.0 upload was incomplete and removed; no coordinated final 0.4.0
+exists. **RC2 NOT REQUIRED:** the 0.4.1 finalization changed versions and
+documentation without changing runtime behavior, and the final archives were
+independently qualified and publicly verified.
 
-Follow the [release-branch model](release-branches.md): feature PRs target
-`release/0.4.1`; `master` remains the last integrated qualified baseline.
-RCs are immutable tags/releases on qualified release-line commits, not branches.
-Only after final 0.4.1 qualification and publication is that state reintegrated
-into `master` through its protected PR process. Create `release/0.4.2` only after
-that integration. Future scope remains in the [roadmap](../development/0.4.md#delivery-scope-and-explicit-deferrals).
+The maintainer authorized protected `release/0.4.2` to replace the old release
+branch after integration. This opens the development line without bumping
+versions, adding features or authorizing a release candidate. Future publication
+requires a separate policy update and the protected
+[release-branch process](release-branches.md); planned scope remains in the
+[roadmap](../development/0.4.md#delivery-scope-and-explicit-deferrals).
 
 ## Retain and publish one coordinated artifact set
 
@@ -35,13 +38,17 @@ reconstructions are tests and never replace the selected archives. Retain
 not an automatic upload to a GitHub release. PR previews lack signed provenance
 and cannot authorize publication.
 
-For 0.4.1 select the successful **release/0.4.1 push** run on the exact source
-commit, plus successful Security and Documentation push runs on that same branch
-and commit. Recheck the [active branch protections](release-branches.md#required-maintainer-action).
-The isolated CI signer accepts this exact release branch only when GitHub reports
-it protected. Build evidence records the actual ref. The publication verifier
-binds 0.4.1 versions to `release/0.4.1`, checks its protection and refuses arbitrary
-branches or future release lines. Historical provenance still uses `master`.
+The completed 0.4.1 qualification selected the successful protected
+**release/0.4.1 push** run on the exact source commit, plus successful Security
+and Documentation runs on that same branch and commit. The signer recorded
+that protected ref in the retained evidence. The old branch can be retired
+without changing that evidence identity.
+
+The existing publication verifier retains the original 0.4.1 source policy;
+it must not be used to replay a completed release. It continues to reject
+unapproved 0.4.2 versions and refs. New development builds do not authorize a
+publication. Releases through 0.4.0rc1 retain `master` provenance; published
+0.4.1 retains `refs/heads/release/0.4.1` provenance.
 
 Qualification includes Linux CPython 3.11–3.14, macOS 3.11/3.14 and disposable
 registry/TSA/ORAS fixtures. Target reports record architecture, patch version,
@@ -62,7 +69,7 @@ For first-time plugin publishers, PyPI allows only one pending publisher for an
 identical repository/workflow/environment configuration. Register and publish one
 package at a time using the exact `package` input, then finish with `package: all`
 to archive release-wide evidence. These prerequisites do not authorize a new upload.
-Completed 0.4.0rc1 and 0.4.1rc1 deliveries must not be dispatched again.
+Completed 0.4.0rc1, 0.4.1rc1 and 0.4.1 deliveries must not be dispatched again.
 
 ## Published 0.3.0
 
@@ -120,6 +127,11 @@ verify the publisher in PyPI before dispatching. TestPyPI is a separate service
 and publisher and is not part of this workflow.
 
 ## Release procedure
+
+The steps below record the completed **0.4.1** procedure and its original source
+line. Do not replay publication after retiring that branch. Qualification and
+publication of 0.4.2 require a separately reviewed version/ref policy update;
+creating the development branch alone does not enable this procedure for it.
 
 1. Prepare a PR with current README, release notes, compatibility guidance and package
    metadata. `pyproject.toml` is the version source; installed application/CLI
@@ -211,7 +223,7 @@ remain subject to the site's optional GitHub consent setting. No release number
 is hard-coded in the theme, and no header override is needed. See
 [Material's repository documentation](https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/).
 
-PRs and `release/0.4.1` pushes run strict MkDocs and HTML validation without
+PRs and `release/0.4.2` pushes run strict MkDocs and HTML validation without
 deployment. Stable documentation still follows the integrated baseline. A master
 push builds and publishes the site to `gh-pages`, served at
 [apizr.outerspace.sh](https://apizr.outerspace.sh/). Keep this active publication
@@ -241,8 +253,9 @@ successful public verification. Never edit `gh-pages` directly to bypass review.
 
 ## Repository protections
 
-The following describes the **actually configured master protections**. It does
-not yet protect `release/0.4.1`: see the [pending equivalent ruleset](release-branches.md#required-maintainer-action).
+The following describes the **configured master protections**. The equivalent
+release-line ruleset transfers to `release/0.4.2`; see the
+[active release protections](release-branches.md#actual-protections-detected).
 
 Apizr follows the same protection model as `Alien6-Studio/continuum-attest`:
 PR-only changes, no force push/deletion or bypass actors, signed commits on the

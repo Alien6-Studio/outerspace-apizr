@@ -1,9 +1,10 @@
 # Install Apizr
 
-These instructions cover **Apizr 0.4.1**. Check the
-[publication status](../releases/0.4.1.md#publication-status) before downloading packages.
+These instructions cover the published stable **Apizr 0.4.1** release. Its
+[publication status](../releases/0.4.1.md#publication-status) records the verified
+source, archives and public delivery.
 
-After publication, install the core, then follow the
+Install the core, then follow the
 [Quickstart](quickstart.md). Add a plugin profile only when your workflow needs it.
 
 ## Install the core
@@ -31,7 +32,7 @@ above. Use the executable path reported by your tool.
 The coordinated packages are `outerspace-apizr==0.4.1`,
 `outerspace-apizr-oci==0.4.1`, `outerspace-apizr-mcp==0.4.1` and
 `outerspace-apizr-attest==0.4.1`. The
-[release record](../releases/0.4.1.md#publication-status) will identify the qualified
+[release record](../releases/0.4.1.md#publication-status) identifies the qualified
 final archives. These profiles install plugins separately and preserve the core.
 
 <span id="install-the-published-release"></span>
@@ -40,7 +41,7 @@ final archives. These profiles install plugins separately and preserve the core.
 ### Obtain the installation files
 
 Use the **durable GitHub release assets**, not expiring Actions artifacts, for
-normal installation. The commands in this section apply **after final publication**.
+normal installation. The commands below use the published **v0.4.1** assets.
 You need Python 3.11–3.14, a POSIX shell, tar, GitHub CLI (`gh`) for public resource
 retrieval/provenance verification, and an already installed **uv** for plugins.
 Select your system, architecture and Python from [Supported targets](#supported-targets).

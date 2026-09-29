@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.4.1 — unreleased
+## 0.4.1 — 2026-09-29
+
+Published and verified as `v0.4.1`, source
+`d08b37d126957593a82784ef3ad096e3f8b4929d`. Qualification #203 and publication #204
+record the eight original archives and their public-byte verification. See the
+[release record](https://apizr.outerspace.sh/releases/0.4.1/#publication-status).
 
 - Apply optional or required proof per delivery plan; required image transfer
   withholds the destination tag until independent proof verification and admission.
@@ -20,7 +25,7 @@
   identities; qualify calls after removing the original source repository.
 - Keep core and plugin environments isolated.
 
-## 0.4.0rc1 — 2026-09-28
+## 0.4.0rc1 — 2026-09-28 (release candidate)
 
 - Publish official plugins as `outerspace-apizr-oci`, `outerspace-apizr-mcp` and
   `outerspace-apizr-attest`, with matching core and internal package requirements.
@@ -29,10 +34,12 @@
 - Qualify and publish the coordinated replacement without reusing PyPI files.
   The functional 0.4.1 release remains separate; documentation stays in 0.4.
 
-## 0.4.0 — 2026-09-28
+### Superseded core-only 0.4.0 upload — 2026-09-28
 
-The core was published on PyPI; the original plugin distributions were not
-published. The corrected coordinated delivery uses 0.4.0rc1. See the [0.4.0 notes](https://apizr.outerspace.sh/releases/0.4.0/).
+The core-only PyPI upload was removed after coordinated plugin publication did
+not complete. It was not a coordinated final release. The functionality below
+was delivered in **0.4.0rc1**, with the corrected package identities. See the
+[0.4.0rc1 notes](https://apizr.outerspace.sh/releases/0.4.0/).
 
 
 ### Added

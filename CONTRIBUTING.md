@@ -57,18 +57,22 @@ resulting author is `Your Name <your-email>`, not the GitHub login.
 
 ## Development workflow
 
-For all 0.4.1 work, branch from `release/0.4.1` and target that branch with a
-focused PR (for example `feature/application-dependencies`, `feature/delivery-manifest`,
-`feature/mandatory-proof` or `fix/...`). `master` is the last integrated qualified
-release baseline. RCs such as `v0.4.1rc1` are immutable tags/releases, not branches.
-Do not bump versions merely to create a branch. After final qualification and
-publication, reintegrate 0.4.1 through a protected PR to `master`; only then start
-`release/0.4.2`. See [release governance](docs/contributing/release-branches.md),
-including the protection settings still requiring maintainer action.
+The published **0.4.1** release is integrated into `master`. Documentation
+maintenance targets `master`; new product development branches from and targets
+protected `release/0.4.2`, which replaces the retired `release/0.4.1` branch.
+The published source remains accessible through immutable `v0.4.1` and RC tags.
+New verification builds never replace published archives.
+
+Creating the new line does not bump package versions or authorize qualification
+or publication of 0.4.2. Those changes need an explicit candidate policy update.
+See [release governance](docs/contributing/release-branches.md) for the completed
+0.4.1 lifecycle and active protection requirements.
 
 ```sh
 git fetch origin
-git switch -c feature/my-change origin/release/0.4.1
+git switch -c feature/my-change origin/release/0.4.2
+# For published documentation maintenance instead:
+# git switch -c docs/my-change origin/master
 ```
 
 Fork the repository if needed. Install uv and run:

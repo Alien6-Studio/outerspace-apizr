@@ -1,47 +1,50 @@
 # Release branches and qualification
 
-`master` is the last integrated qualified release baseline. All 0.4.1 development
-uses **`release/0.4.1`**, created from master
-`89678f1fa525c98b2b60096536f613bde033304d`. Creating this line changes no product
-state and does not create a release candidate. Feature and maintenance PRs target
-this line, not master. Its additional protection is now active, as verified below.
+`master` now contains the published and verified **0.4.1** baseline. The
+immutable release source remains `d08b37d126957593a82784ef3ad096e3f8b4929d` on
+the former `release/0.4.1` line, retained by immutable tag `v0.4.1`.
+Qualification #203 and publication #204 are complete. [PR #206](https://github.com/Alien6-Studio/outerspace-apizr/pull/206)
+integrated that release at `e49d5f686bc9b2c9610c7849e246594feb48c3d4`.
+Documentation maintenance branches from and targets `master`. New product
+development uses protected `release/0.4.2`, created from the integrated master
+baseline with this documentation update; `release/0.4.1` is retired.
 
 ## Branch and version lifecycle
 
-1. Create short-lived feature/fix branches from `release/0.4.1`, for example
-   `feature/application-dependencies`, `feature/delivery-manifest`,
-   `feature/mandatory-proof` or `fix/...`. Their PRs target `release/0.4.1`.
-2. Keep each feature separately scoped and checked. Application inputs, delivery
-   identities, mandatory admission and resumable multiple destinations are now
-   implemented; see the [readiness audit](../development/0.4.md#041-release-readiness).
-3. All four source distributions now declare **0.4.1**, following the qualified
-   and published **0.4.1rc1**. PR/CI builds remain previews, not publication
-   authorization. The published RC1 source, tag, notes and assets stay immutable.
-4. Qualify the exact release-line push commit and original artifacts. A further
-   RC is required only for a genuine post-RC product defect; version and
-   documentation changes alone do not require RC2. Any new RC tag/publication
-   requires separate authorization. RCs are not long-lived branches.
-5. Qualify final `v0.4.1` on the release line and follow the controlled
-   [publication procedure](releases.md#release-procedure).
-6. Only after final qualification/publication integrate the final state into
-   `master` through its protected PR process and checks. A squash integration
-   creates a different commit: record both identities and verify the resulting
-   baseline; never move the release tag or substitute rebuilt distributions.
-7. Only then create `release/0.4.2`. It does not exist as part of this transition;
-   enabling its qualification requires a future explicit policy change.
+The completed 0.4.1 sequence was:
 
-The current trajectory is **0.4.1rc1 → 0.4.1**; 0.4.2 follows later.
-There will be no new final 0.4.0. Historically the core 0.4.0 reached PyPI but
-coordinated publication failed; that version was superseded/removed. The corrected
-coordinated 0.4.0rc1 is published and immutable. Do not rebuild its published
-artifacts, retag, republish or modify it. The updated publication verifier rejects
-both closed 0.4.0 versions; historical evidence verification remains possible.
+1. Develop bounded changes through protected PRs into `release/0.4.1`.
+2. Qualify and publish immutable `v0.4.1rc1`.
+3. Finalize coordinated versions and documentation. No runtime behavior changed,
+   so RC2 was not required.
+4. Qualify exact final source and archives from protected CI `36601712772`,
+   then publish and independently verify all four packages as **0.4.1**.
+5. Integrate the released state through protected PR #206 into `master`.
+   The integration's only additional change makes master asset staging a
+   verification preview. Publication remains bound to the original release-line
+   source and archives; subsequent CI builds never replace them.
+
+The maintainer authorized replacement of the old release branch with
+`release/0.4.2`. Only the branch reference is retired: published tags, source
+commits, provenance and archives remain unchanged. Rule set 24138072 transfers
+the same PR, signature and required-check protections to the new line.
+
+CI, Security and Documentation validate pushes to `release/0.4.2`. These are
+verification builds of the inherited baseline, not 0.4.2 release candidates.
+Package versions remain 0.4.1 until explicitly updated; the publisher still
+rejects unapproved 0.4.2 versions and refs. Documentation deployment remains
+restricted to `master`.
+
+The historical coordinated **0.4.0rc1** was a prerelease. The earlier core-only
+0.4.0 upload was incomplete and removed; there is no coordinated final 0.4.0.
+Preserve published RC tags, notes and archives. Historical evidence verification
+remains available without replaying publication.
 
 ## Historical branch-creation audit
 
 The [audit issue #186](https://github.com/Alien6-Studio/outerspace-apizr/issues/186)
-records the pre-change inspection on 28 September 2026. Master was exactly the
-source SHA above, with successful push CI `36456323738`, Security `36456323741`
+records the pre-change inspection on 28 September 2026. Master was exactly
+`89678f1fa525c98b2b60096536f613bde033304d`, with successful push CI `36456323738`, Security `36456323741`
 and Documentation `36456323667`. The working tree was clean. Only `master` and
 `gh-pages` existed remotely; no issues or PRs were open. The new release branch
 initially points to that same SHA. No functional 0.4.1 work was assumed.
@@ -77,8 +80,8 @@ Other assumptions found:
 - README badges, baseline source/example links, historical release notes, published
   0.4.0rc1 install/provenance commands and frozen 0.3 fixtures legitimately retain
   master references. Documentation deployment's master check is intentionally retained.
-  `scripts/docs_build.py` still identifies the published 0.4.0rc1 baseline; no
-  version marker is promoted. Product Git-source default-branch refusal and the
+  At that audit, documentation still described the pre-final baseline; the
+  publication update now identifies stable 0.4.1. Product Git-source default-branch refusal and the
   external Moby master link are unrelated to release governance.
 - Dependabot has no `target-branch`, so it uses the default branch. Its active
   configuration is read from master: this PR cannot reroute it by changing only
@@ -116,12 +119,12 @@ which targets only `~DEFAULT_BRANCH`. The legacy branch-protection endpoint retu
   only**. DCO author sign-off is enforced in the existing `quality` job; it is
   distinct from cryptographic signing. CODEOWNERS remains unchanged.
 
-The default-branch ruleset does not cover `release/0.4.1`. The separate active
+The default-branch ruleset does not cover release branches. The separate active
 ruleset **24138072**, [release-line protection](https://github.com/Alien6-Studio/outerspace-apizr/rules/24138072),
-now targets exactly `refs/heads/release/0.4.1`, with the same required checks,
-signed commits and PR restrictions, no exclusions and no bypass actors. Its
-actual enforcement was rechecked on 29 September 2026; the scope/readiness audit
-made no protection changes. Checked-in configuration alone is not enforcement.
+is transferred from retired `release/0.4.1` to `refs/heads/release/0.4.2`, retaining
+the same 17 required checks, signed commits, PR restrictions, deletion/force-push
+prohibitions and no bypass actors. Only its name and branch target change.
+Checked-in configuration alone is not enforcement; verify the live rule set.
 
 The separate active `Release tags` ruleset protects `v*` from deletion/force update.
 The `pypi` environment allows only tags `v*`, requires Coopyrightdmin approval,
@@ -137,7 +140,7 @@ rules through GitHub. The additional release-line ruleset is already active;
 creating or changing protection is not a remaining qualification task. Preserve
 master/tag rulesets, squash-only merging and deployment restrictions.
 
-The checked-in [ruleset payload](https://github.com/Alien6-Studio/outerspace-apizr/blob/release/0.4.1/.github/release-0.4.1-ruleset.json)
+The checked-in [ruleset payload](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/.github/release-0.4.2-ruleset.json)
 documents the intended configuration. It is not applied automatically and cannot
 substitute for checking actual enforcement. No bypass is authorized.
 

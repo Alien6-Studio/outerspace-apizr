@@ -7,8 +7,8 @@ of that completed delivery**, not instructions to execute again. Do not rebuild,
 retag, republish or modify 0.4.0rc1. There will be no new final 0.4.0 publication.
 
 For future work follow the [current release procedure](releases.md) and
-[release-branch model](release-branches.md): 0.4.1 candidates and final originate
-on `release/0.4.1`; final integration into `master` precedes creating `release/0.4.2`.
+[release-branch model](release-branches.md): stable 0.4.1 is published and integrated
+into `master`; `release/0.4.2` replaces the retired development line.
 Historical `REVIEWED_MASTER_RUN_ID` variables below describe the 0.4.0rc1 evidence only.
 
 <span id="available-candidate-resources"></span>
@@ -187,9 +187,10 @@ use `--clobber` or recreate the release. Attach only missing identical resources
 
 ### Historical recovery after a publication-script correction
 
-The completed delivery used this recovery mechanism. For a future authorized
-0.4.1 recovery, qualify tooling on `release/0.4.1` and keep the original release-line
-artifact run; do not use a newer rebuild or change the original tag.
+The completed delivery used this recovery mechanism. The later 0.4.1 publication
+also completed successfully; its old development branch is retired. Do not
+replay recovery against either release or replace their original artifact runs.
+Any future recovery requires a separately authorized source and original bytes.
 
 Historically, if an immutable release tag predated a correction to publication tooling, merge
 and qualify the tooling fix on master, then create a separate
