@@ -42,6 +42,19 @@ a remediation trailer in the squash message when its target remains in the
 audited history; omit references to replaced branch commits. Never amend or
 force-push an already published commit to repair its declaration.
 
+For a protected squash whose existing sign-off uses a GitHub login instead of
+its Git author's name, leave that commit unchanged. Open a corrective PR from
+the current protected branch. The new responsible declaration must match the
+corrective commit's author and explicitly identify the original squash:
+
+```text
+Signed-off-by: Your Name <your-email>
+DCO-sign-off-for: FULL_COMMIT_SHA
+```
+
+If that corrective PR is squash-merged, preserve both trailers and ensure the
+resulting author is `Your Name <your-email>`, not the GitHub login.
+
 ## Development workflow
 
 For all 0.4.1 work, branch from `release/0.4.1` and target that branch with a
