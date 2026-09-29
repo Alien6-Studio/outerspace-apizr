@@ -92,6 +92,9 @@ class RepositoryInterface(ValueModel):
 
 
 class BundleManifest(ValueModel):
+    provenance_digest: Digest | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
     repository_interface_digest: Digest
     exposure_plan_digest: Digest
     application: ApplicationInputs | None = Field(

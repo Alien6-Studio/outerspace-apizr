@@ -16,6 +16,7 @@ FILES = (
     "delivery/push.json",
     "delivery/oci-manifest.json",
     "delivery/manifest.json",
+    "delivery/apizr-delivery-manifest.json",
 )
 
 

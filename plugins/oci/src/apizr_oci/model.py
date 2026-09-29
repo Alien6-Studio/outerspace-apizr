@@ -2,8 +2,10 @@
 
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
+from apizr.capabilities.model import Digest
+from apizr.delivery import DeliveryManifest, DeliveryPlan, check_observation, identity
 from apizr.publication_contracts import (
     Authentication as Authentication,
 )
@@ -26,6 +28,38 @@ class BuildError(Exception):
 
 
 class BuildResult(Model):
+    delivery_plan: DeliveryPlan | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+    delivery_manifest: DeliveryManifest | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+    delivery_manifest_digest: Digest | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+
+    @model_validator(mode="after")
+    def lineage(self):
+        if self.delivery_manifest is None:
+            if (
+                self.delivery_plan is not None
+                or self.delivery_manifest_digest is not None
+            ):
+                raise ValueError("Incomplete delivery lineage")
+        else:
+            if (
+                self.delivery_plan is None
+                or identity(self.delivery_plan)
+                != self.delivery_manifest.delivery_plan_digest
+                or identity(self.delivery_manifest) != self.delivery_manifest_digest
+                or self.delivery_plan.platform != self.platform
+            ):
+                raise ValueError("Delivery lineage mismatch")
+            check_observation(
+                self.delivery_manifest, self.image_id, self.platform, self.inputs_sha256
+            )
+        return self
+
     schema_version: Literal["apizr.oci-build-result/v1"] = Field(
         default="apizr.oci-build-result/v1", alias="schema"
     )
@@ -37,6 +71,21 @@ class BuildResult(Model):
 
 
 class PushResult(Model):
+    delivery_plan_digest: Digest | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+    delivery_manifest_digest: Digest | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+
+    @model_validator(mode="after")
+    def lineage(self):
+        if (self.delivery_plan_digest is None) != (
+            self.delivery_manifest_digest is None
+        ):
+            raise ValueError("Incomplete delivery lineage")
+        return self
+
     schema_version: Literal["apizr.oci-push-result/v1"] = Field(
         default="apizr.oci-push-result/v1", alias="schema"
     )

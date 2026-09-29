@@ -5,6 +5,7 @@ from typing import Literal
 from apizr_oci.model import Docker, Model
 from pydantic import Field, field_validator, model_validator
 
+from apizr.capabilities.model import Digest
 from apizr.publication_contracts import (
     AttestRequest as AttestRequest,
 )
@@ -30,7 +31,22 @@ class VerifyRequest(Common):
     _proof = field_validator("proof_dir")(Docker.absolute.__func__)
 
 
+class VerifiedAttestTool(Model):
+    version: Literal["0.1.0"]
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
 class DeliveryResult(Model):
+    delivery_plan_digest: Digest | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+    delivery_manifest_digest: Digest | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+    attest_tool: VerifiedAttestTool | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+
     schema_version: Literal["apizr.attest-delivery-result/v1"] = Field(
         default="apizr.attest-delivery-result/v1", alias="schema"
     )

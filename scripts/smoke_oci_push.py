@@ -82,6 +82,7 @@ def exercise(python, store, work, results, command, engine, environment):
             "image_id": result["image_id"],
             "platform": result["platform"],
             "inputs_sha256": result["inputs_sha256"],
+            "delivery_manifest": result["delivery_manifest"],
             "destination": "registry.test:5443/services/"
             + ("rest" if index == 0 else "mcp")
             + ":v1",
@@ -170,7 +171,15 @@ def exercise(python, store, work, results, command, engine, environment):
                     }
                 )
             )
-            for fault in ("id", "inputs", "platform", "authentication", "tls"):
+            for fault in (
+                "id",
+                "inputs",
+                "platform",
+                "plan",
+                "downgrade",
+                "authentication",
+                "tls",
+            ):
                 changed = json.loads(json.dumps(document))
                 if fault == "id":
                     changed["image_id"] = "sha256:" + "0" * 64
@@ -219,6 +228,21 @@ def exercise(python, store, work, results, command, engine, environment):
                     )
                     assert check.returncode != 0 and b"x509:" in check.stderr
 
+                if fault in {"id", "inputs", "platform"}:
+                    # Keep the request internally valid to reach the existing
+                    # independent local-image checks rather than admission.
+                    field = {
+                        "id": "image_id",
+                        "inputs": "inputs_sha256",
+                        "platform": "platform",
+                    }[fault]
+                    changed["delivery_manifest"][field] = changed[field]
+                if fault == "plan":
+                    changed["delivery_manifest"]["delivery_plan_digest"]["value"] = (
+                        "0" * 64
+                    )
+                if fault == "downgrade":
+                    changed.pop("delivery_manifest")
                 invoke(changed, refused=True)
                 refusals.append({"case": fault, "refused": True})
             interrupt(python, store, work, document, environment, operator)

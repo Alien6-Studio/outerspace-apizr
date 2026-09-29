@@ -12,9 +12,18 @@ from apizr_oci.observe import observe
 from apizr_oci.push import document
 from apizr_oci.snapshot import read
 
+from apizr.delivery import MANIFEST_FILE, DeliveryManifest, identity
 from apizr.local_plugins.store import installation_lock
+from apizr.repository.serialization import canonical_bytes
 
-from .model import AttestError, AttestRequest, Common, DeliveryResult, VerifyRequest
+from .model import (
+    AttestError,
+    AttestRequest,
+    Common,
+    DeliveryResult,
+    VerifiedAttestTool,
+    VerifyRequest,
+)
 from .process import run
 
 CHECKS = {"schema", "consistency", "signature", "timestamp", "recompute"}
@@ -37,7 +46,14 @@ FILES = (
     "delivery/oci-manifest.json",
     "delivery/manifest.json",
 )
+TRANSVERSAL_FILE = "delivery/" + MANIFEST_FILE
 MAX_FILE = 1048576
+
+
+def proof_files(root: Path) -> tuple[str, ...]:
+    return FILES + (
+        (TRANSVERSAL_FILE,) if os.path.lexists(root / TRANSVERSAL_FILE) else ()
+    )
 
 
 def canonical(value) -> bytes:
@@ -141,6 +157,15 @@ def results(build_raw: bytes, push_raw: bytes, reference: str):
         )
     ):
         raise AttestError("delivery_identity_mismatch")
+    if build.delivery_manifest_digest != push.delivery_manifest_digest or (
+        (
+            build.delivery_manifest.delivery_plan_digest
+            if build.delivery_manifest is not None
+            else None
+        )
+        != push.delivery_plan_digest
+    ):
+        raise AttestError("delivery_lineage_mismatch")
     # Reuse the install/push input validators, without storing operational params.
     import re
 
@@ -190,7 +215,19 @@ def binding(work: Path, reference: str) -> None:
         name: read(work, "delivery/" + name, MAX_FILE)
         for name in ("build.json", "push.json", "oci-manifest.json")
     }
-    _, pushed = results(files["build.json"], files["push.json"], reference)
+    built, pushed = results(files["build.json"], files["push.json"], reference)
+    if built.delivery_manifest is not None:
+        raw_delivery = read(work, TRANSVERSAL_FILE, MAX_FILE)
+        observed = DeliveryManifest.model_validate_json(raw_delivery)
+        if (
+            raw_delivery != canonical_bytes(observed)
+            or identity(observed) != built.delivery_manifest_digest
+            or observed != built.delivery_manifest
+        ):
+            raise AttestError("transversal_manifest_mismatch")
+        files[MANIFEST_FILE] = raw_delivery
+    elif os.path.lexists(work / TRANSVERSAL_FILE):
+        raise AttestError("unexpected_transversal_manifest")
     raw = files["oci-manifest.json"]
     if "sha256:" + hashlib.sha256(raw).hexdigest() != pushed.manifest_digest:
         raise AttestError("manifest_digest_mismatch")
@@ -226,7 +263,19 @@ def verified(
         )
     )
     validate_verdict(report, request.expected_signer)
+    built, _ = results(
+        read(proof, "delivery/build.json", MAX_FILE),
+        read(proof, "delivery/push.json", MAX_FILE),
+        request.expected_reference,
+    )
     return DeliveryResult(
+        delivery_manifest_digest=built.delivery_manifest_digest,
+        delivery_plan_digest=built.delivery_manifest.delivery_plan_digest
+        if built.delivery_manifest is not None
+        else None,
+        attest_tool=VerifiedAttestTool(
+            version=request.tool.version, sha256=request.tool.sha256
+        ),
         reference=request.expected_reference,
         manifest_digest=request.expected_reference.split("@")[1],
         signer=request.expected_signer,
@@ -269,6 +318,9 @@ def execute_attest(request: AttestRequest, work: Path) -> DeliveryResult:
                 "platform": pushed.platform,
                 "inputs_sha256": pushed.inputs_sha256,
                 "destination": pushed.destination,
+                "delivery_manifest": build.delivery_manifest.model_dump(mode="json")
+                if build.delivery_manifest is not None
+                else None,
                 "docker": request.docker.model_dump(),
                 "authentication": request.authentication.model_dump(),
                 "timeout_ms": max(1, int((deadline - time.monotonic()) * 1000)),
@@ -290,6 +342,8 @@ def execute_attest(request: AttestRequest, work: Path) -> DeliveryResult:
         "push.json": canonical(pushed.model_dump(by_alias=True)),
         "oci-manifest.json": observation.manifest,
     }
+    if build.delivery_manifest is not None:
+        files[MANIFEST_FILE] = canonical_bytes(build.delivery_manifest)
     for name, raw in files.items():
         write(proof / "delivery" / name, raw)
     write(proof / "delivery/manifest.json", manifest(request.expected_reference, files))
@@ -326,7 +380,7 @@ def execute_attest(request: AttestRequest, work: Path) -> DeliveryResult:
 
 
 def snapshot(source: Path, target: Path) -> None:
-    for name in FILES:
+    for name in proof_files(source):
         write(target / name, read(source, name, MAX_FILE))
 
 
@@ -340,6 +394,6 @@ def export(proof: Path, output: Path) -> None:
             prefix=".attest-export-", dir=output.parent
         ) as directory:
             stage = Path(directory) / "proof"
-            for name in FILES:
+            for name in proof_files(proof):
                 write(stage / name, read(proof, name, MAX_FILE))
             stage.rename(output)

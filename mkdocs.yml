@@ -140,6 +140,7 @@ nav:
       - Subprocess deny: architecture/subprocess-deny.md
       - Governed REST and MCP: architecture/governed-transport-runtime-v1.md
       - OCI-governed REST and MCP: architecture/governed-oci-transports-v2.md
+      - Delivery identities: architecture/delivery-identities.md
       - Artifact principles: architecture/artifact-principles.md
       - Security baseline: architecture/security-baseline.md
   - Legacy pipeline — compatibility:

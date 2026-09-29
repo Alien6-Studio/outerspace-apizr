@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from bundle_provenance_assertions import assert_equivalent_bundles
 from git_https_fixture import handler, repository, trusted_git
 from https_fixture import certificate, https_server
 from operator_policy_proof import (
@@ -120,8 +121,9 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
                     "local-" + interface,
                 ]
             )
-            assert files(root / ("remote-" + interface)) == files(
-                root / ("local-" + interface)
+            assert_equivalent_bundles(
+                files(root / ("remote-" + interface)),
+                files(root / ("local-" + interface)),
             )
         docs = (
             Path(__file__).resolve().parents[1] / "docs/reference/git-sources.md"
@@ -172,8 +174,9 @@ for interface in ("rest", "mcp"):
         assert result.returncode == 0, result.stderr
         assert not list(scratch.iterdir())
         for interface in ("rest", "mcp"):
-            assert files(root / ("python-" + interface)) == files(
-                root / ("local-" + interface)
+            assert_equivalent_bundles(
+                files(root / ("python-" + interface)),
+                files(root / ("local-" + interface)),
             )
     print(
         "PASS Git HTTPS: minimal wheel, pre-effect CLI/API refusal, authorized four CLI commands and documented Python API; exact parity after snapshot cleanup"

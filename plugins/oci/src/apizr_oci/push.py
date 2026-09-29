@@ -18,6 +18,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Event
 
+from apizr.delivery import PLAN_LABEL, identity
 from apizr.extension_runtime.protocol import unique_object
 
 from .model import Authentication, BuildError, PushRequest, PushResult
@@ -97,6 +98,13 @@ def local_identity(request: PushRequest, work: Path, deadline: float, cancel):
         or image["Config"]["User"] != "65532:65532"
     ):
         raise BuildError("local_image_unverified")
+    expected_plan = (
+        request.delivery_manifest.delivery_plan_digest.value
+        if request.delivery_manifest is not None
+        else None
+    )
+    if image["Config"]["Labels"].get(PLAN_LABEL) != expected_plan:
+        raise BuildError("delivery_plan_unverified")
     # Build produces a single manifest. Never silently select a member of an index.
     descriptor = image.get("Descriptor")
     if descriptor is not None and descriptor["mediaType"] not in MEDIA:
@@ -276,6 +284,12 @@ def push(
                 config_digest=verified[0],
                 manifest_digest=verified[1],
                 inputs_sha256=request.inputs_sha256,
+                delivery_plan_digest=request.delivery_manifest.delivery_plan_digest
+                if request.delivery_manifest is not None
+                else None,
+                delivery_manifest_digest=identity(request.delivery_manifest)
+                if request.delivery_manifest is not None
+                else None,
             )
     except BuildError:
         if upload_started:

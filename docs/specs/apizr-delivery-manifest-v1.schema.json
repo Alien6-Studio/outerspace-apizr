@@ -1,0 +1,64 @@
+{
+  "$defs": {
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Observed build only: schema forbids destinations, receipts and proof identities.",
+  "properties": {
+    "schema_version": {
+      "const": "apizr.delivery-manifest/v1",
+      "default": "apizr.delivery-manifest/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "delivery_plan_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "inputs_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Inputs Sha256",
+      "type": "string"
+    },
+    "platform": {
+      "enum": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "title": "Platform",
+      "type": "string"
+    },
+    "image_id": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Image Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "delivery_plan_digest",
+    "inputs_sha256",
+    "platform",
+    "image_id"
+  ],
+  "title": "DeliveryManifest",
+  "type": "object"
+}

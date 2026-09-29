@@ -174,6 +174,7 @@ def write_git_policy(
     reference,
     *,
     subdir=".",
+    ca_file=None,
     ssh_agent_socket=None,
     ssh_known_hosts=None,
 ):
@@ -182,7 +183,7 @@ def write_git_policy(
         "repository": repository,
         "reference": reference,
         "subdir": subdir,
-        "ca_file": None,
+        "ca_file": str(Path(ca_file).absolute()) if ca_file is not None else None,
         "ssh_agent_socket": str(Path(ssh_agent_socket).absolute())
         if ssh_agent_socket is not None
         else None,
