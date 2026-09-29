@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 from apizr.application import ApplicationConfig, ApplicationInputs, ApplicationResource
 from apizr.application_resources import capture_resources
 from apizr.capabilities.model import Digest
+from apizr.delivery import GitSource, LocalSource, SourceIdentity
 from apizr.execution.policy import ExecutionPolicy
 from apizr.exposure import ExposurePlan, ExposurePolicy, plan_exposure
 from apizr.exposure.policy import Interface
@@ -49,6 +50,7 @@ class PreparedExposure:
     plan: ExposurePlan
     application: ApplicationInputs | None = None
     resources: Mapping[str, bytes] = field(default_factory=lambda: dict[str, bytes]())
+    source: SourceIdentity | None = None
 
 
 def assess_readiness(
@@ -116,8 +118,27 @@ def prepare_exposure(
                     for path, data in sorted(resources.items())
                 ),
             )
+    from apizr.git_source.models import GitSnapshot
+
+    source: SourceIdentity = LocalSource(
+        repository_digest=artifacts.catalog.repository_digest
+    )
+    if isinstance(root, GitSnapshot):
+        import os
+
+        from apizr.git_source.acquisition import snapshot_context
+
+        acquired, anchor = snapshot_context(root)
+        os.close(anchor)
+        source = GitSource(
+            repository=acquired.repository,
+            requested_ref=acquired.reference,
+            resolved_commit=root.commit,
+            subdir=acquired.subdir,
+            repository_digest=artifacts.catalog.repository_digest,
+        )
     return PreparedExposure(
-        artifacts, readiness, policy, plan, inputs, MappingProxyType(resources)
+        artifacts, readiness, policy, plan, inputs, MappingProxyType(resources), source
     )
 
 
@@ -145,6 +166,7 @@ def render_bundle(
         prepared.evidence.sources,
         interface=interface,
         application=prepared.application,
+        source_identity=prepared.source,
         resources=prepared.resources,
         execution_policy=execution_policy,
         runtime_image=runtime_image,

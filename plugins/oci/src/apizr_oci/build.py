@@ -10,10 +10,13 @@ from tempfile import TemporaryDirectory
 from threading import Event
 
 from apizr.application import ApplicationInputs
+from apizr.delivery import PLAN_FILE, PLAN_LABEL, DeliveryManifest, identity
 from apizr.generators.mcp.generator import REQUIREMENTS as MCP_REQUIREMENTS
 from apizr.generators.rest.generator import REQUIREMENTS as REST_REQUIREMENTS
 from apizr.local_plugins.models import PluginError
+from apizr.repository.serialization import canonical_bytes
 
+from .delivery import delivery_plan
 from .model import BuildError, BuildRequest, BuildResult
 from .process import run
 from .snapshot import bundle_snapshot, input_digest, read, wheels_snapshot
@@ -48,6 +51,7 @@ COPY server-requirements.txt /opt/server-requirements.txt
 COPY locked-packages.json /opt/locked-packages.json
 RUN python -m venv /opt/service && /opt/service/bin/python -m pip --isolated install --dry-run --ignore-installed --no-cache-dir --no-index --only-binary=:all: --find-links=/opt/wheels --report=/opt/report.json -r /opt/server-requirements.txt && /opt/service/bin/python -c 'import json,re; expected=json.load(open("/opt/locked-packages.json")); actual={{re.sub("[-_.]+", "-", p["metadata"]["name"]).lower():p["metadata"]["version"] for p in json.load(open("/opt/report.json"))["install"]}}; assert actual == expected, "lock must equal server and application dependency closure"' && /opt/service/bin/python -m pip --isolated install --no-cache-dir --no-compile --no-index --only-binary=:all: --require-hashes --find-links=/opt/wheels -r /opt/requirements.lock && /opt/service/bin/python -m pip --isolated check && rm -rf /opt/wheels /opt/report.json
 COPY bundle /app
+COPY {PLAN_FILE} /app/{PLAN_FILE}
 RUN chmod -R a+rX /app
 USER 65532:65532
 EXPOSE 8000
@@ -102,9 +106,12 @@ def build(
             (context / "server-requirements.txt").write_bytes(
                 expected + application_requirements
             )
-            wheels_snapshot(
+            closure = wheels_snapshot(
                 Path(request.requirements), Path(request.wheelhouse), context
             )
+            plan = delivery_plan(context / "bundle", request, closure)
+            plan_digest = identity(plan)
+            (context / PLAN_FILE).write_bytes(canonical_bytes(plan))
             (context / "Dockerfile").write_text(dockerfile(request))
             (context / "target.json").write_text(
                 json.dumps(
@@ -130,6 +137,8 @@ def build(
                     str(work / "image-id"),
                     "--label",
                     "sh.outerspace.apizr.inputs-sha256=" + digest,
+                    "--label",
+                    PLAN_LABEL + "=" + plan_digest.value,
                     "--file",
                     str(context / "Dockerfile"),
                     str(context),
@@ -168,9 +177,19 @@ def build(
                     "sh.outerspace.apizr.inputs-sha256"
                 )
                 != digest
+                or actual[0]["Config"]["Labels"].get(PLAN_LABEL) != plan_digest.value
             ):
                 raise BuildError("image_unverified")
+            observed = DeliveryManifest(
+                delivery_plan_digest=plan_digest,
+                inputs_sha256=digest,
+                platform=request.platform,
+                image_id=actual[0]["Id"],
+            )
             return BuildResult(
+                delivery_plan=plan,
+                delivery_manifest=observed,
+                delivery_manifest_digest=identity(observed),
                 tag=request.tag,
                 platform=request.platform,
                 image_id=actual[0]["Id"],

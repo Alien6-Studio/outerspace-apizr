@@ -186,6 +186,16 @@ def validate_bundle(
         )
     ):
         raise ValueError("execution compatibility")
+    if manifest.get("provenance_digest") is not None:
+        raw_provenance = artifacts["apizr-bundle-provenance.json"]
+        provenance = json.loads(raw_provenance)
+        if (
+            digest(raw_provenance) != manifest["provenance_digest"]
+            or provenance["schema_version"] != "apizr.bundle-provenance/v1"
+            or provenance["source"]["repository_digest"]
+            != contract["repository_digest"]
+        ):
+            raise ValueError("source provenance binding")
     application = contract.get("application")
     if application != manifest.get("application"):
         raise ValueError("application binding")

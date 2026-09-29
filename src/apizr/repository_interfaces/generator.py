@@ -5,6 +5,13 @@ from importlib.resources import files
 
 from apizr.application import ApplicationInputs
 from apizr.capabilities.model import Digest
+from apizr.delivery import (
+    PROVENANCE_FILE,
+    BundleProvenance,
+    SourceIdentity,
+    UnrecordedSource,
+    installed_identity,
+)
 from apizr.execution.policy import ExecutionPolicy
 from apizr.exposure import ExposurePlan, ExposurePolicy, plan_bytes, policy_bytes
 from apizr.exposure.policy import Interface
@@ -52,6 +59,7 @@ def render_repository_bundle(
     *,
     interface: Interface,
     application: ApplicationInputs | None = None,
+    source_identity: SourceIdentity | None = None,
     resources: Mapping[str, bytes] | None = None,
     execution_policy: ExecutionPolicy | ExecutionPolicyV2 | None = None,
     runtime_image: RuntimeImage | None = None,
@@ -106,6 +114,15 @@ def render_repository_bundle(
     if application is not None:
         artifacts["application-requirements.txt"] = application.requirements()
         artifacts.update({"source/" + path: data for path, data in resources.items()})
+    provenance = BundleProvenance(
+        source=source_identity
+        or UnrecordedSource(repository_digest=contract.repository_digest),
+        generator=installed_identity("outerspace-apizr"),
+    )
+    if provenance.source.repository_digest != contract.repository_digest:
+        raise ValueError("Source provenance and repository disagree")
+    artifacts[PROVENANCE_FILE] = canonical_bytes(provenance)
+    provenance_digest = Digest.of_bytes(artifacts[PROVENANCE_FILE])
     pin = repr(contract_digest.model_dump())
     endpoints = tuple(
         Endpoint(**c.invocation.model_dump(), route="/capabilities/" + c.public_name)
@@ -138,6 +155,7 @@ def render_repository_bundle(
             exposure_plan_digest=contract.exposure_plan_digest,
             sources=contract.sources,
             application=application,
+            provenance_digest=provenance_digest,
             endpoints=endpoints,
             artifacts={
                 name: Digest.of_bytes(content)
@@ -174,6 +192,7 @@ def render_repository_bundle(
             exposure_plan_digest=contract.exposure_plan_digest,
             sources=contract.sources,
             application=application,
+            provenance_digest=provenance_digest,
             tools=tools,
             artifacts={
                 name: Digest.of_bytes(content)

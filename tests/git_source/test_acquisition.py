@@ -3,6 +3,7 @@ from threading import Event
 
 import pytest
 from analysis_authorization import analysis_policy
+from provenance_assertions import assert_equivalent_bundles
 
 from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
@@ -77,7 +78,11 @@ def test_retained_sources_and_moving_branch(remote, tls, scratch):
     assert not snapshot.root.exists()
     for interface in ("rest", "mcp"):
         bundle = render_bundle(prepared, interface=interface)
-        assert bundle == render_bundle(local, interface=interface)
+        assert_equivalent_bundles(bundle, render_bundle(local, interface=interface))
+        assert (
+            prepared.source.requested_ref == "main"
+            and prepared.source.resolved_commit == commit
+        )
         assert all(".git" not in Path(name).parts for name in bundle)
 
 

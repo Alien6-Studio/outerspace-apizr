@@ -8,7 +8,9 @@ from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from apizr.delivery import DeliveryManifest, check_observation
 
 DIGEST = re.compile(r"sha256:[0-9a-f]{64}")
 
@@ -50,6 +52,18 @@ class Authentication(Model):
 
 
 class PushRequest(Model):
+    delivery_manifest: DeliveryManifest | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+
+    @model_validator(mode="after")
+    def delivery_binding(self):
+        if self.delivery_manifest is not None:
+            check_observation(
+                self.delivery_manifest, self.image_id, self.platform, self.inputs_sha256
+            )
+        return self
+
     schema_version: Literal["apizr.oci-push/v1"] = Field(alias="schema")
     image_id: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
     platform: Literal["linux/amd64", "linux/arm64"]

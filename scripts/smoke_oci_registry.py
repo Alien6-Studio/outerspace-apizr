@@ -285,6 +285,8 @@ PY
             "artifact-results.json",
             "artifact-refusals.json",
             "results.json",
+            "application-delivery-proof.json",
+            "application-source-proof.json",
             "build-diagnostic.log",
             "build-observation.json",
             "push-results.json",

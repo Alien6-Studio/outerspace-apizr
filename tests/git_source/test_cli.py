@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 from analysis_authorization import authorized_main as main
+from provenance_assertions import assert_equivalent_bundles
 
 from .authorization import authorized_snapshot
 from .authorization import flags as operator_flags
@@ -81,15 +82,20 @@ def test_remote_and_local_exact_parity(
     assert actual.err == f"Git snapshot: commit {commit}\n"
     assert not list(scratch.iterdir())
     if build:
-        assert {
-            p.relative_to(output): p.read_bytes()
-            for p in output.rglob("*")
-            if p.is_file()
-        } == {
-            p.relative_to(actual_output): p.read_bytes()
-            for p in actual_output.rglob("*")
-            if p.is_file()
-        }
+        provenance = assert_equivalent_bundles(
+            {
+                p.relative_to(output): p.read_bytes()
+                for p in output.rglob("*")
+                if p.is_file()
+            },
+            {
+                p.relative_to(actual_output): p.read_bytes()
+                for p in actual_output.rglob("*")
+                if p.is_file()
+            },
+        )
+        assert provenance["resolved_commit"] == commit
+        assert provenance["requested_ref"] == commit
     else:
         json.loads(actual.out)
 

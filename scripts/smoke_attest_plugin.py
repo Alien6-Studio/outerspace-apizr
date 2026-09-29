@@ -336,6 +336,35 @@ def exercise(python, store, work, builds, command, environment):
                         process.communicate(timeout=5)
         recovered = arguments | {"output_dir": str(work / "recovered-proof")}
         assert invoke("attest", recovered) is not None
+        mcp_build, mcp_push = (
+            work / "attest-mcp-build.json",
+            work / "attest-mcp-push.json",
+        )
+        mcp_build.write_text(json.dumps(builds[1]["result"]))
+        mcp_push.write_text(json.dumps(pushes[1]))
+        mcp_arguments = arguments | {
+            "build_result": str(mcp_build),
+            "push_result": str(mcp_push),
+            "expected_reference": pushes[1]["digest_reference"],
+            "output_dir": str(work / "mcp-delivery-proof"),
+        }
+        mcp_operator = write_signing_policy(
+            python, store, work / "operator-mcp-signing.json", mcp_arguments, command
+        )
+        mcp_signed = invoke("attest", mcp_arguments, selected=mcp_operator)
+        assert mcp_signed is not None
+        for result, built in (
+            (signed, builds[0]["result"]),
+            (mcp_signed, builds[1]["result"]),
+        ):
+            assert (
+                result["delivery_manifest_digest"] == built["delivery_manifest_digest"]
+            )
+            assert (
+                result["delivery_plan_digest"]
+                == built["delivery_manifest"]["delivery_plan_digest"]
+            )
+            assert result["attest_tool"] == {k: tool[k] for k in ("version", "sha256")}
         key.unlink()  # Publication of an existing proof requires no private key.
         offline = {
             k: arguments[k]
@@ -344,6 +373,11 @@ def exercise(python, store, work, builds, command, environment):
         offline |= {"schema": "apizr.verify-delivery/v1", "proof_dir": str(output)}
         calls_before_verify = len(calls)
         assert invoke("verify", offline, offline=True) == signed
+        mcp_offline = offline | {
+            "proof_dir": mcp_arguments["output_dir"],
+            "expected_reference": mcp_arguments["expected_reference"],
+        }
+        assert invoke("verify", mcp_offline, offline=True) == mcp_signed
         assert len(calls) == calls_before_verify
         if os.environ.get("APIZR_ARTIFACT_PROOF") == "1":
             from smoke_artifact_publish import exercise
@@ -393,6 +427,10 @@ def exercise(python, store, work, builds, command, environment):
             "invalid-timestamp",
             "proof-trust",
             "rebound-result",
+            "delivery-manifest",
+            "delivery-plan",
+            "build-lineage",
+            "push-lineage",
         ):
             altered = work / "altered-proof"
             shutil.copytree(copied, altered)
@@ -419,6 +457,27 @@ def exercise(python, store, work, builds, command, environment):
                     )
                 else:
                     path.write_bytes(path.read_bytes() + b" ")
+            if name in {
+                "delivery-manifest",
+                "delivery-plan",
+                "build-lineage",
+                "push-lineage",
+            }:
+                filename = {
+                    "delivery-manifest": "apizr-delivery-manifest.json",
+                    "delivery-plan": "build.json",
+                    "build-lineage": "build.json",
+                    "push-lineage": "push.json",
+                }[name]
+                path = altered / "delivery" / filename
+                value = json.loads(path.read_bytes())
+                if name == "delivery-manifest":
+                    value["delivery_plan_digest"] = "9" * 64
+                elif name == "delivery-plan":
+                    value["delivery_plan"]["base_image"] = "python@sha256:" + "9" * 64
+                else:
+                    value["delivery_manifest_digest"] = "9" * 64
+                path.write_text(json.dumps(value))
             if name == "rebound-result":
                 # Keep all application hashes internally consistent, but change a
                 # signed declaration. Native recomputation must reject it.
@@ -476,6 +535,8 @@ def exercise(python, store, work, builds, command, environment):
                 {
                     "signed": signed,
                     "verified_offline": verified,
+                    "mcp_signed": mcp_signed,
+                    "mcp_verified_offline": mcp_signed,
                     "tsa_calls": len(calls),
                     "private_key_removed": True,
                 },

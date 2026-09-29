@@ -225,6 +225,13 @@ before recomputation. Each proof file is bounded to 1 MiB; trust to 128 files an
 snapshotted paths are refused. Native stdout/stderr share the configured read
 budget; the total extension timeout also bounds acquisition and signing.
 
+New 0.4.1 proofs additionally contain `delivery/apizr-delivery-manifest.json`.
+The existing `delivery/manifest.json` hashes this file without changing its schema
+or scope. Verification checks the plan/build/push lineage and returns
+`delivery_plan_digest`, `delivery_manifest_digest` and the verified `attest_tool`
+version/hash. Historical proofs omit lineage; their verification remains supported.
+See [delivery identities](../architecture/delivery-identities.md).
+
 ## Python API and boundaries
 
 Install the optional package in a separate application environment, then:

@@ -371,7 +371,7 @@ def main():
             {
                 "fetch": result,
                 "refusals": cases + ["interrupted-transfer"],
-                "same_six_files": True,
+                "same_public_files": True,
                 "read_only_enforced": True,
                 "core_unchanged": snapshot(root / "core") == before,
             },

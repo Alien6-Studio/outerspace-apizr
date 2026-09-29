@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from bundle_provenance_assertions import assert_equivalent_bundles
 from git_ssh_fixture import server
 from operator_policy_proof import (
     GIT_ANALYSIS_REFUSAL,
@@ -131,8 +132,8 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
                         f"{name}-{interface}",
                     ]
                 )
-            assert files(root / f"remote-{interface}") == files(
-                root / f"local-{interface}"
+            assert_equivalent_bundles(
+                files(root / f"remote-{interface}"), files(root / f"local-{interface}")
             )
         docs = (
             Path(__file__).resolve().parents[1] / "docs/reference/git-ssh.md"
@@ -182,8 +183,8 @@ for interface in ("rest", "mcp"):
         assert result.returncode == 0, result.stderr
         assert not list(scratch.iterdir())
         for interface in ("rest", "mcp"):
-            assert files(root / f"python-{interface}") == files(
-                root / f"local-{interface}"
+            assert_equivalent_bundles(
+                files(root / f"python-{interface}"), files(root / f"local-{interface}")
             )
     print(
         "PASS Git SSH: isolated agent/server, minimal wheel, pre-effect CLI/API refusal, authorized four CLI commands and documented Python API; parity after cleanup"

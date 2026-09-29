@@ -1,0 +1,169 @@
+{
+  "$defs": {
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "DistributionIdentity": {
+      "additionalProperties": false,
+      "description": "Installed metadata declaration, not a binary/distribution archive attestation.",
+      "properties": {
+        "name": {
+          "enum": [
+            "outerspace-apizr",
+            "outerspace-apizr-oci"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "DistributionIdentity",
+      "type": "object"
+    },
+    "GitSource": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "git",
+          "default": "git",
+          "title": "Kind",
+          "type": "string"
+        },
+        "repository": {
+          "title": "Repository",
+          "type": "string"
+        },
+        "requested_ref": {
+          "title": "Requested Ref",
+          "type": "string"
+        },
+        "resolved_commit": {
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+          "title": "Resolved Commit",
+          "type": "string"
+        },
+        "subdir": {
+          "title": "Subdir",
+          "type": "string"
+        },
+        "repository_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "repository",
+        "requested_ref",
+        "resolved_commit",
+        "subdir",
+        "repository_digest"
+      ],
+      "title": "GitSource",
+      "type": "object"
+    },
+    "LocalSource": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local",
+          "default": "local",
+          "title": "Kind",
+          "type": "string"
+        },
+        "repository_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "repository_digest"
+      ],
+      "title": "LocalSource",
+      "type": "object"
+    },
+    "UnrecordedSource": {
+      "additionalProperties": false,
+      "description": "Historical/lower-level evidence has no established acquisition provenance.",
+      "properties": {
+        "kind": {
+          "const": "unrecorded",
+          "default": "unrecorded",
+          "title": "Kind",
+          "type": "string"
+        },
+        "repository_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "repository_digest"
+      ],
+      "title": "UnrecordedSource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.bundle-provenance/v1",
+      "default": "apizr.bundle-provenance/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source": {
+      "discriminator": {
+        "mapping": {
+          "git": "#/$defs/GitSource",
+          "local": "#/$defs/LocalSource",
+          "unrecorded": "#/$defs/UnrecordedSource"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LocalSource"
+        },
+        {
+          "$ref": "#/$defs/GitSource"
+        },
+        {
+          "$ref": "#/$defs/UnrecordedSource"
+        }
+      ],
+      "title": "Source"
+    },
+    "generator": {
+      "$ref": "#/$defs/DistributionIdentity"
+    }
+  },
+  "required": [
+    "source",
+    "generator"
+  ],
+  "title": "BundleProvenance",
+  "type": "object"
+}

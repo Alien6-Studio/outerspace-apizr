@@ -2,6 +2,11 @@
 
 ## 0.4.1rc1 — development, unpublished
 
+- Bind durable source provenance, existing analysis/bundle identities and exact
+  wheel closure into an immutable delivery plan consumed by OCI builds.
+- Link the observed image to a separate delivery manifest, push and signed
+  Attest proof while preserving historical v1 proof verification.
+
 - Add optional explicit application dependency pins and resource files to project
   configuration and generated direct REST/MCP bundles.
 - Reuse the OCI builder with the verified server/application closure and resource

@@ -211,6 +211,14 @@ published in a registry. `inputs_sha256` hashes the canonical path/hash map of
 private build inputs, including wheels, bundle, lock, generated Dockerfile and
 target. It does not promise bit-reproducible Docker layers or attest provenance.
 
+New 0.4.1 builds also return `delivery_plan`, `delivery_manifest` and
+`delivery_manifest_digest`. Copy the complete `delivery_manifest` object into
+push arguments for these images. The plan digest is checked in
+`sh.outerspace.apizr.delivery-plan-sha256`, alongside the existing inputs label.
+Historical unlabeled images retain the older request form shown below.
+See [delivery identities](../architecture/delivery-identities.md) for the
+pre-build/observed boundary, canonical schemas and compatibility.
+
 ## Limits and cancellation
 
 Only direct repository bundles are accepted. The plugin calls `validate_bundle`,
