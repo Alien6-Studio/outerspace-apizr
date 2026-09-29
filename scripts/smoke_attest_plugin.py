@@ -72,7 +72,7 @@ def exercise(python, store, work, builds, command, environment):
         "enable",
         "outerspace-apizr-attest",
         "--version",
-        "0.4.1rc1",
+        "0.4.1",
         "--plugins-dir",
         store,
     )

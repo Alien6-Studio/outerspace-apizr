@@ -463,7 +463,7 @@ def transversal(mocked):
                 {"name": "six", "version": "1.17.0", "sha256": "a" * 64}
             ],
             "build_tools": [
-                {"name": name, "version": "0.4.1rc1"}
+                {"name": name, "version": "0.4.1"}
                 for name in ("outerspace-apizr", "outerspace-apizr-oci")
             ],
             "platform": "linux/amd64",

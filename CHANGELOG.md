@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.1rc1 — development, unpublished
+## 0.4.1 — unreleased
 
 - Apply optional or required proof per delivery plan; required image transfer
   withholds the destination tag until independent proof verification and admission.
@@ -18,8 +18,7 @@
   configuration and generated direct REST/MCP bundles.
 - Reuse the OCI builder with the verified server/application closure and resource
   identities; qualify calls after removing the original source repository.
-- Keep core and plugin environments isolated. This development version creates
-  no RC tag and does not authorize publication.
+- Keep core and plugin environments isolated.
 
 ## 0.4.0rc1 — 2026-09-28
 

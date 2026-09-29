@@ -37,7 +37,7 @@ def request(tmp_path, required=True, count=3):
         interface="rest",
         dependency_closure=({"name": "six", "version": "1.17.0", "sha256": "a" * 64},),
         build_tools=tuple(
-            {"name": name, "version": "0.4.1rc1"}
+            {"name": name, "version": "0.4.1"}
             for name in ("outerspace-apizr", "outerspace-apizr-oci")
         ),
         platform="linux/amd64",
@@ -540,7 +540,7 @@ def test_managed_authorization_is_independent_at_every_destination_stage(
                 {
                     "schema": "apizr.extension-manifest/v1",
                     "name": name,
-                    "version": "0.4.1rc1",
+                    "version": "0.4.1",
                     "module": module,
                     "protocol": "apizr.extension/v1",
                     "sha256": "a" * 64,

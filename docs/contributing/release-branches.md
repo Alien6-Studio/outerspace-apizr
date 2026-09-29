@@ -14,13 +14,13 @@ this line, not master. Its additional protection is now active, as verified belo
 2. Keep each feature separately scoped and checked. Application inputs, delivery
    identities, mandatory admission and resumable multiple destinations are now
    implemented; see the [readiness audit](../development/0.4.md#041-release-readiness).
-3. Branch creation required no version bump. All four development distributions
-   are now **0.4.1rc1**. These ordinary
-   PR/CI builds are development evidence, not published RC bytes or publication
-   authorization.
-4. After explicit candidate preparation, qualify the exact release-line push
-   commit and original artifacts. Create immutable **tags/releases** `v0.4.1rc1`,
-   `v0.4.1rc2`, etc. only when separately authorized. RCs are not long-lived branches.
+3. All four source distributions now declare **0.4.1**, following the qualified
+   and published **0.4.1rc1**. PR/CI builds remain previews, not publication
+   authorization. The published RC1 source, tag, notes and assets stay immutable.
+4. Qualify the exact release-line push commit and original artifacts. A further
+   RC is required only for a genuine post-RC product defect; version and
+   documentation changes alone do not require RC2. Any new RC tag/publication
+   requires separate authorization. RCs are not long-lived branches.
 5. Qualify final `v0.4.1` on the release line and follow the controlled
    [publication procedure](releases.md#release-procedure).
 6. Only after final qualification/publication integrate the final state into
@@ -30,14 +30,14 @@ this line, not master. Its additional protection is now active, as verified belo
 7. Only then create `release/0.4.2`. It does not exist as part of this transition;
    enabling its qualification requires a future explicit policy change.
 
-The trajectory is **0.4.0rc1 → 0.4.1rc1 / rc2 … → 0.4.1 → 0.4.2**.
+The current trajectory is **0.4.1rc1 → 0.4.1**; 0.4.2 follows later.
 There will be no new final 0.4.0. Historically the core 0.4.0 reached PyPI but
 coordinated publication failed; that version was superseded/removed. The corrected
 coordinated 0.4.0rc1 is published and immutable. Do not rebuild its published
 artifacts, retag, republish or modify it. The updated publication verifier rejects
 both closed 0.4.0 versions; historical evidence verification remains possible.
 
-## Audit before changes
+## Historical branch-creation audit
 
 The [audit issue #186](https://github.com/Alien6-Studio/outerspace-apizr/issues/186)
 records the pre-change inspection on 28 September 2026. Master was exactly the
