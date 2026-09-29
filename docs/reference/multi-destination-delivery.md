@@ -159,4 +159,7 @@ independent offline proof verification is preserved.
 Single-destination APIs and historical evidence remain supported. Versions remain
 `0.4.1rc1`. This increment adds no concurrent delivery, cross-repository proof reuse,
 production registry adapters, MCP delivery tools, rollback or automatic proof
-selection. Docker Hub and Trunx qualification remain a separate next increment.
+selection. Live-provider qualification, including Docker Hub, is optional
+interoperability validation; it is not a remaining 0.4.1 functional requirement.
+The fixture establishes the documented OCI registry profile, not compatibility
+with every registry implementation.

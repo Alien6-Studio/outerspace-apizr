@@ -20,8 +20,10 @@ Keep Python analysis, canonical contracts, selection, exposure planning and
 extension-result validation in the core. Lightweight included adapters load only
 when used; the planned official Git adapter requires an explicitly installed Git.
 Optional OCI, MCP, Postman and Continuum Attest integrations belong in separately
-installed extensions. One OCI integration serves compatible destinations, including
-Docker Hub, GHCR and Trunx. These integrations are roadmap items, not delivered here.
+installed extensions. One OCI integration serves explicit destinations using a
+supported OCI registry profile. This experiment does not qualify live providers;
+the current capabilities and qualification boundaries are documented in the
+[OCI reference](../reference/oci-service-plugin.md).
 
 CLI, CI and a future Apizr MCP server call the same typed core operations. The path
 is **MCP transport → core operation and local authorization → approved extension**;

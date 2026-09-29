@@ -611,3 +611,19 @@ def test_workflows_separate_release_validation_from_external_publication():
         assert (
             environment if isinstance(environment, str) else environment["name"]
         ) == "pypi"
+
+
+def test_current_tracked_tree_keeps_oss_product_scope():
+    import subprocess
+
+    root = Path(__file__).resolve().parents[1]
+    # Encode the excluded product identifier so the assertion itself does not
+    # reintroduce it into the current source tree. History is intentionally ignored.
+    excluded = bytes.fromhex("7472756e78")
+    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=root)
+    matches = [
+        name.decode()
+        for name in tracked.split(b"\0")
+        if name and excluded in (root / name.decode()).read_bytes().lower()
+    ]
+    assert not matches, f"Out-of-scope product references in tracked files: {matches}"
