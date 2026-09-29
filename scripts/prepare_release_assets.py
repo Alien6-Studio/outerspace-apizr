@@ -287,7 +287,7 @@ def prepare(
                 "commit": commit,
                 "run_id": run_id,
                 "source_ref": None if preview else source_ref,
-                "status": "PR preview; no release provenance"
+                "status": "verification preview; no release provenance"
                 if preview
                 else "provenance verified; human publication approval still required",
                 "artifacts": entries,

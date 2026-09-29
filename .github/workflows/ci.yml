@@ -483,7 +483,11 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
         run: |
           flags=()
-          if test "$EVENT_NAME" = pull_request; then flags+=(--preview); fi
+          # Master validates the integrated baseline; publication keeps the
+          # original qualified release-line artifacts and source identity.
+          if test "$EVENT_NAME" = pull_request || test "$GITHUB_REF" = refs/heads/master; then
+            flags+=(--preview)
+          fi
           python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${flags[@]}"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
