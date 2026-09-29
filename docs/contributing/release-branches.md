@@ -3,18 +3,19 @@
 `master` is the last integrated qualified release baseline. All 0.4.1 development
 uses **`release/0.4.1`**, created from master
 `89678f1fa525c98b2b60096536f613bde033304d`. Creating this line changes no product
-state and does not create a release candidate. The governance PR targets this
-line, not master; it must not be merged as part of the setup task.
+state and does not create a release candidate. Feature and maintenance PRs target
+this line, not master. Its additional protection is now active, as verified below.
 
 ## Branch and version lifecycle
 
 1. Create short-lived feature/fix branches from `release/0.4.1`, for example
    `feature/application-dependencies`, `feature/delivery-manifest`,
    `feature/mandatory-proof` or `fix/...`. Their PRs target `release/0.4.1`.
-2. Keep each feature separately scoped and checked. These examples are future
-   scope, not features implemented or issues opened by this governance change.
-3. Branch creation required no version bump. The first functional increment
-   advances all four development distributions to **0.4.1rc1**. These ordinary
+2. Keep each feature separately scoped and checked. Application inputs, delivery
+   identities, mandatory admission and resumable multiple destinations are now
+   implemented; see the [readiness audit](../development/0.4.md#041-release-readiness).
+3. Branch creation required no version bump. All four development distributions
+   are now **0.4.1rc1**. These ordinary
    PR/CI builds are development evidence, not published RC bytes or publication
    authorization.
 4. After explicit candidate preparation, qualify the exact release-line push
@@ -87,7 +88,7 @@ Other assumptions found:
   setup (Python/Actions, weekly) and other default-branch schedules remain intact.
 
 Branch creation itself does not match the baseline workflows' push filters.
-After this PR is merged, release-line pushes produce validation artifacts and,
+Release-line pushes produce validation artifacts and,
 only with actual protection, signed build evidence. They never create tags,
 GitHub releases, PyPI packages, production registry artifacts or stable docs.
 The existing PyPI workflow is already present on master for manual dispatch;
@@ -115,9 +116,12 @@ which targets only `~DEFAULT_BRANCH`. The legacy branch-protection endpoint retu
   only**. DCO author sign-off is enforced in the existing `quality` job; it is
   distinct from cryptographic signing. CODEOWNERS remains unchanged.
 
-**`release/0.4.1` is not protected by that ruleset.** Its effective rules are empty
-at creation. Running these checks or checking in proposed rules is not protection.
-The governance task does not modify repository protections.
+The default-branch ruleset does not cover `release/0.4.1`. The separate active
+ruleset **24138072**, [release-line protection](https://github.com/Alien6-Studio/outerspace-apizr/rules/24138072),
+now targets exactly `refs/heads/release/0.4.1`, with the same required checks,
+signed commits and PR restrictions, no exclusions and no bypass actors. Its
+actual enforcement was rechecked on 29 September 2026; the scope/readiness audit
+made no protection changes. Checked-in configuration alone is not enforcement.
 
 The separate active `Release tags` ruleset protects `v*` from deletion/force update.
 The `pypi` environment allows only tags `v*`, requires Coopyrightdmin approval,
@@ -128,18 +132,14 @@ unchanged; release-line branches must not be added to production environments.
 
 ## Required maintainer action
 
-Before merging development or qualifying a release on the line, configure an
-**additional active branch ruleset** targeting exactly `refs/heads/release/0.4.1`,
-with no excludes or bypass actors and all master rules/checks above. Do not alter
-or remove the existing master/tag rulesets. Preserve squash-only repository merge
-settings and existing deployment restrictions.
+Before merging development or qualifying a release, recheck the effective branch
+rules through GitHub. The additional release-line ruleset is already active;
+creating or changing protection is not a remaining qualification task. Preserve
+master/tag rulesets, squash-only merging and deployment restrictions.
 
-The exact proposed API payload is checked in at
-[`.github/release-0.4.1-ruleset.json`](https://github.com/Alien6-Studio/outerspace-apizr/blob/chore/release-0.4.1-branching/.github/release-0.4.1-ruleset.json).
-It is **not applied automatically** and does not claim enforcement. A maintainer
-must explicitly authorize applying it, then verify the effective branch rules and
-required checks through GitHub before merge. This task has admin capability but
-no authorization to mutate protections. No bypass is used.
+The checked-in [ruleset payload](https://github.com/Alien6-Studio/outerspace-apizr/blob/release/0.4.1/.github/release-0.4.1-ruleset.json)
+documents the intended configuration. It is not applied automatically and cannot
+substitute for checking actual enforcement. No bypass is authorized.
 
 All current mandatory checks retain their names and thresholds. Additional
 candidate-target/delivery/asset jobs remain required by successful overall release

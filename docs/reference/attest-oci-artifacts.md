@@ -267,7 +267,9 @@ separate consumer has no Docker socket and a registry identity restricted to
 read access by Zot policies, also enforced by its HTTPS test gateway. It fetches the selected digest, compares all public proof files, and verifies in
 a final networkless container with ORAS and registry credentials removed.
 The core's files/distributions are compared before and after. Public results and
-refusals are retained by CI. This fixture does not qualify Docker Hub or Trunx.
+refusals are retained by CI. This fixture qualifies the documented OCI registry
+profile, not any named live provider. Docker Hub live qualification is optional
+interoperability validation, separate from the 0.4.1 functional scope.
 Apizr release attestation, its secrets and the continuum-attest repository are
 unchanged.
 

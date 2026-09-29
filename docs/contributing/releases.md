@@ -34,7 +34,7 @@ and cannot authorize publication.
 
 For 0.4.1 select the successful **release/0.4.1 push** run on the exact source
 commit, plus successful Security and Documentation push runs on that same branch
-and commit. First configure the [actual branch protections](release-branches.md#required-maintainer-action).
+and commit. Recheck the [active branch protections](release-branches.md#required-maintainer-action).
 The isolated CI signer accepts this exact release branch only when GitHub reports
 it protected. Build evidence records the actual ref. The publication verifier
 binds 0.4.1 versions to `release/0.4.1`, checks its protection and refuses arbitrary
