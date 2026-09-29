@@ -9,9 +9,11 @@ from apizr_oci.model import BuildError
 from apizr.extension_runtime.protocol import Request, unique_object
 from apizr.local_plugins.models import PluginError
 
+from .admission import execute_admit
 from .artifacts import execute_discover, execute_fetch, execute_publish
 from .delivery import execute_attest, execute_verify
 from .model import (
+    AdmitRequest,
     AttestError,
     AttestRequest,
     DiscoverRequest,
@@ -34,7 +36,11 @@ def main() -> int:
         return 2
     response = {k: getattr(request, k) for k in ("protocol", "request_id", "operation")}
     try:
-        if request.operation == "attest":
+        if request.operation == "admit":
+            result = execute_admit(
+                AdmitRequest.model_validate(request.arguments), Path.cwd()
+            )
+        elif request.operation == "attest":
             result = execute_attest(
                 AttestRequest.model_validate(request.arguments), Path.cwd()
             )

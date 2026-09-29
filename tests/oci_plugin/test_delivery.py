@@ -369,3 +369,16 @@ def test_rehashed_source_provenance_still_requires_repository_binding(portable):
     path.write_text(json.dumps(manifest))
     with pytest.raises(ValueError, match="provenance"):
         delivery_plan(bundle, request, closure)
+
+
+def test_requirement_changes_plan_and_build_identity(build_inputs, tmp_path):
+    optional = build(build_inputs, workspace=tmp_path)
+    required = build(
+        build_inputs.model_copy(update={"proof_requirement": "required"}),
+        workspace=tmp_path,
+    )
+    assert optional.delivery_plan.proof_requirement == "optional"
+    assert b"proof_requirement" not in canonical_bytes(optional.delivery_plan)
+    assert required.delivery_plan.proof_requirement == "required"
+    assert identity(optional.delivery_plan) != identity(required.delivery_plan)
+    assert optional.inputs_sha256 != required.inputs_sha256

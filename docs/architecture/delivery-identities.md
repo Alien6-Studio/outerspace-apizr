@@ -141,3 +141,5 @@ historical proof and operator refusal qualifications remain enabled.
 - [Delivery manifest schema](../specs/apizr-delivery-manifest-v1.schema.json)
 - [OCI build and push](../reference/oci-service-plugin.md)
 - [Attest delivery verification](../reference/attest-delivery-plugin.md)
+
+See [proof-required delivery admission](../reference/delivery-admission.md) for explicit pre-build requirements and the separately authorized final promotion.

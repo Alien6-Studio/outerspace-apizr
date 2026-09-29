@@ -196,19 +196,9 @@ def execute_fetch(request: FetchRequest, work: Path) -> FetchResult:
     output = Path(request.output_dir)
     if os.path.lexists(output):
         raise AttestError("proof_already_exists")
-    if (
-        request.artifact_reference.split("@")[0]
-        != request.expected_reference.split("@")[0]
-    ):
-        raise AttestError("cross_repository_refused")
-    client = registry(request, work, deadline)
-    _, subject = client.manifest(request.expected_reference)
-    raw, desc = client.manifest(request.artifact_reference)
-    files = manifest_files(raw, subject)
-    proof = work / "proof"
-    for name in files:
-        write(proof / name, client.blob(files[name]))
-    verification = check_proof(request, work, proof, deadline, output)
+    _, subject, desc, proof, verification = fetch_verified(
+        request, work, deadline, output
+    )
     export(proof, output)
     return FetchResult(
         image_reference=request.expected_reference,
@@ -218,3 +208,36 @@ def execute_fetch(request: FetchRequest, work: Path) -> FetchResult:
         receipt_sha256=verification.receipt_sha256,
         verification=verification,
     )
+
+
+def fetch_verified(
+    request, work: Path, deadline: float, original: Path, *, require_discoverable=False
+):
+    """One parser and native verifier shared by fetch and admission."""
+    if (
+        request.artifact_reference.split("@")[0]
+        != request.expected_reference.split("@")[0]
+    ):
+        raise AttestError("cross_repository_refused")
+    client = registry(request, work, deadline)
+    _, subject = client.manifest(request.expected_reference)
+    raw, desc = client.manifest(request.artifact_reference)
+    if require_discoverable:
+        candidates = client.discover(ARTIFACT_TYPE)
+        selected = [
+            c for c in candidates if c["reference"] == request.artifact_reference
+        ]
+        if (
+            len(selected) != 1
+            or descriptor(
+                selected[0], allowed={"reference", "artifact_type", "verified"}
+            )
+            != desc
+        ):
+            raise AttestError("artifact_not_discoverable")
+    files = manifest_files(raw, subject)
+    proof = work / "proof"
+    for name in files:
+        write(proof / name, client.blob(files[name]))
+    verification = check_proof(request, work, proof, deadline, original)
+    return client, subject, desc, proof, verification

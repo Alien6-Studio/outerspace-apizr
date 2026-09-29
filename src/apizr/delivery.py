@@ -12,6 +12,9 @@ from apizr.distribution_identity import LockedDistribution, Version
 PLAN_FILE = "apizr-delivery-plan.json"
 MANIFEST_FILE = "apizr-delivery-manifest.json"
 PLAN_LABEL = "sh.outerspace.apizr.delivery-plan-sha256"
+PROOF_LABEL = "sh.outerspace.apizr.proof-requirement"
+ProofRequirement = Literal["optional", "required"]
+
 PROVENANCE_FILE = "apizr-bundle-provenance.json"
 
 
@@ -90,6 +93,10 @@ class BundleProvenance(ValueModel):
 
 
 class DeliveryPlan(ValueModel):
+    # Omission preserves canonical identities of pre-gating plans.
+    proof_requirement: ProofRequirement = Field(
+        default="optional", exclude_if=lambda v: v == "optional"
+    )
     schema_version: Literal["apizr.delivery-plan/v1"] = "apizr.delivery-plan/v1"
     source: SourceIdentity
     catalog_digest: Digest

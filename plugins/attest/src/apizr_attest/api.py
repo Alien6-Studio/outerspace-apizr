@@ -9,6 +9,8 @@ from pydantic import BaseModel
 from apizr.extension_runtime import Limits, invoke_extension
 
 from .model import (
+    AdmissionResult,
+    AdmitRequest,
     AttestRequest,
     DeliveryResult,
     DiscoverRequest,
@@ -83,4 +85,13 @@ def fetch(request: FetchRequest, *, cancel: Event | None = None) -> FetchResult:
         FetchRequest.model_validate(request.model_dump(by_alias=True)),
         cancel,
         FetchResult,
+    )
+
+
+def admit(request: AdmitRequest, *, cancel: Event | None = None) -> AdmissionResult:
+    return _invoke(
+        "admit",
+        AdmitRequest.model_validate(request.model_dump(by_alias=True)),
+        cancel,
+        AdmissionResult,
     )

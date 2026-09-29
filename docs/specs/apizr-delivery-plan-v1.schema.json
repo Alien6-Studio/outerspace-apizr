@@ -154,6 +154,15 @@
   },
   "additionalProperties": false,
   "properties": {
+    "proof_requirement": {
+      "default": "optional",
+      "enum": [
+        "optional",
+        "required"
+      ],
+      "title": "Proof Requirement",
+      "type": "string"
+    },
     "schema_version": {
       "const": "apizr.delivery-plan/v1",
       "default": "apizr.delivery-plan/v1",

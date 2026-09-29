@@ -278,3 +278,5 @@ signed proof with `publish` additionally requires the core
 [operator publication policy](operator-policy.md). That grant covers registry read
 and publish access to the image repository; it requires no new private key or
 signing permission. See [OCI proof transport](attest-oci-artifacts.md).
+
+See [proof-required delivery admission](delivery-admission.md) for explicit pre-build requirements and the separately authorized final promotion.

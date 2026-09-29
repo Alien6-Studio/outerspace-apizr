@@ -10,7 +10,13 @@ from tempfile import TemporaryDirectory
 from threading import Event
 
 from apizr.application import ApplicationInputs
-from apizr.delivery import PLAN_FILE, PLAN_LABEL, DeliveryManifest, identity
+from apizr.delivery import (
+    PLAN_FILE,
+    PLAN_LABEL,
+    PROOF_LABEL,
+    DeliveryManifest,
+    identity,
+)
 from apizr.generators.mcp.generator import REQUIREMENTS as MCP_REQUIREMENTS
 from apizr.generators.rest.generator import REQUIREMENTS as REST_REQUIREMENTS
 from apizr.local_plugins.models import PluginError
@@ -139,6 +145,8 @@ def build(
                     "sh.outerspace.apizr.inputs-sha256=" + digest,
                     "--label",
                     PLAN_LABEL + "=" + plan_digest.value,
+                    "--label",
+                    PROOF_LABEL + "=" + plan.proof_requirement,
                     "--file",
                     str(context / "Dockerfile"),
                     str(context),
@@ -178,6 +186,8 @@ def build(
                 )
                 != digest
                 or actual[0]["Config"]["Labels"].get(PLAN_LABEL) != plan_digest.value
+                or actual[0]["Config"]["Labels"].get(PROOF_LABEL)
+                != plan.proof_requirement
             ):
                 raise BuildError("image_unverified")
             observed = DeliveryManifest(
