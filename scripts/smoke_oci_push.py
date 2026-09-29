@@ -239,8 +239,9 @@ def exercise(python, store, work, results, command, engine, environment):
                     assert check.returncode != 0 and b"x509:" in check.stderr
 
                 if fault in {"id", "inputs", "platform"}:
-                    # Keep the request internally valid to reach the existing
-                    # independent local-image checks rather than admission.
+                    # Identity/input faults reach independent local-image checks.
+                    # Platform substitution also violates the immutable plan and
+                    # is refused earlier by the shared request validator.
                     field = {
                         "id": "image_id",
                         "inputs": "inputs_sha256",
@@ -334,17 +335,27 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
             conflict = outputs[0]["destination"]
             if required:
                 conflict += "-conflict"
+                # Fixture-only competing writer, through the TLS-configured daemon.
+                command(
+                    "/usr/local/bin/docker",
+                    "--host",
+                    "unix:///proof/builder.sock",
+                    "image",
+                    "tag",
+                    results[0]["result"]["image_id"],
+                    conflict,
+                )
                 command(
                     "/usr/local/bin/docker",
                     "--config",
                     "/proof/auth",
-                    "buildx",
-                    "imagetools",
-                    "create",
-                    "--prefer-index=false",
-                    "--tag",
+                    "--host",
+                    "unix:///proof/builder.sock",
+                    "image",
+                    "push",
+                    "--platform",
+                    results[0]["result"]["platform"],
                     conflict,
-                    outputs[0]["digest_reference"],
                 )
             invoke(document | {"destination": conflict}, refused=True)
             refusals.append({"case": "tag-conflict", "refused": True})
