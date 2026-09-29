@@ -560,3 +560,5 @@ PY
 The [compiler reference](compiler-api.md) covers writing, refusals
 and the lower-level filesystem APIs. Already supplied in-memory data is not a
 universal access-control boundary for arbitrary Python code.
+
+See [proof-required delivery admission](delivery-admission.md) for explicit pre-build requirements and the separately authorized final promotion.

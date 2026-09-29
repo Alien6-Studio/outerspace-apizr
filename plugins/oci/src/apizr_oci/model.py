@@ -71,6 +71,40 @@ class BuildResult(Model):
 
 
 class PushResult(Model):
+    # Absent fields preserve historical image-publication semantics.
+    proof_requirement: Literal["optional", "required"] | None = Field(
+        default=None, exclude_if=lambda v: v is None
+    )
+    transfer_verified: Literal[True] | None = Field(
+        default=None, exclude_if=lambda v: v is None
+    )
+    destination_promoted: bool | None = Field(
+        default=None, exclude_if=lambda v: v is None
+    )
+    delivery_admitted: Literal[False] | None = Field(
+        default=None, exclude_if=lambda v: v is None
+    )
+
+    @model_validator(mode="after")
+    def publication_state(self):
+        states = (
+            self.proof_requirement,
+            self.transfer_verified,
+            self.destination_promoted,
+            self.delivery_admitted,
+        )
+        if any(v is not None for v in states):
+            if any(v is None for v in states) or self.destination_promoted != (
+                self.proof_requirement == "optional"
+            ):
+                raise ValueError("Inconsistent publication state")
+            if (
+                self.proof_requirement == "required"
+                and self.delivery_manifest_digest is None
+            ):
+                raise ValueError("Required proof needs delivery lineage")
+        return self
+
     delivery_plan_digest: Digest | None = Field(
         default=None, exclude_if=lambda value: value is None
     )

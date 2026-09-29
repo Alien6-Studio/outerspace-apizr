@@ -166,6 +166,19 @@ def results(build_raw: bytes, push_raw: bytes, reference: str):
         != push.delivery_plan_digest
     ):
         raise AttestError("delivery_lineage_mismatch")
+    if (
+        build.delivery_plan is not None
+        and build.delivery_plan.proof_requirement == "required"
+    ):
+        if (
+            push.proof_requirement != "required"
+            or push.transfer_verified is not True
+            or push.destination_promoted is not False
+            or push.delivery_admitted is not False
+        ):
+            raise AttestError("required_transfer_state_mismatch")
+    elif push.proof_requirement == "required":
+        raise AttestError("required_plan_missing")
     # Reuse the install/push input validators, without storing operational params.
     import re
 
@@ -318,6 +331,9 @@ def execute_attest(request: AttestRequest, work: Path) -> DeliveryResult:
                 "platform": pushed.platform,
                 "inputs_sha256": pushed.inputs_sha256,
                 "destination": pushed.destination,
+                "delivery_plan": build.delivery_plan.model_dump(mode="json")
+                if build.delivery_plan is not None
+                else None,
                 "delivery_manifest": build.delivery_manifest.model_dump(mode="json")
                 if build.delivery_manifest is not None
                 else None,

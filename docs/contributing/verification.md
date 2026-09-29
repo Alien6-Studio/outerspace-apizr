@@ -126,3 +126,19 @@ without accepting a stopped or blocked child as terminated. Separate tests rejec
 a real stopped child and simulated persistent nonterminal states. This changes
 the verification procedure, not the runtime's termination behavior or its
 [containment guarantees](../architecture/execution-policy-v1.md).
+
+## Git interruption regression
+
+The Git runner records the default main-thread SIGINT request and raises
+`KeyboardInterrupt` only at its own checkpoints, after subprocess construction
+has transferred ownership and outside Python's internal waitpid lock. The handler
+stays active through cleanup, then the caller's handler is restored. Custom
+handlers and worker-thread calls retain their existing behavior. Cleanup still
+uses the same two-second deadline; unconfirmed cleanup remains a failure.
+
+`tests/git_source/test_sigint.py` injects a real SIGINT during subprocess
+construction, while the waitpid lock is acquired, and during final cleanup. It
+checks child reaping, closed streams, an unlocked wait lock, handler restoration
+and reuse. The construction and wait-lock cases fail against the earlier runner.
+The existing fixed 25 Git/worker repetitions remain unchanged and retain every
+outcome, including failures; no retry-to-green or deadline increase is used.

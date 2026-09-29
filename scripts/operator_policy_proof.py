@@ -61,6 +61,7 @@ def write_build_policy(python, store, path, arguments, command):
             "tag",
         )
     }
+    target["proof_requirement"] = arguments.get("proof_requirement", "optional")
     path.write_text(
         json.dumps(
             {

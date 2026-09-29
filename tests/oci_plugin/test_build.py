@@ -261,11 +261,12 @@ if args[0]=='build':
  import hashlib
  plan_digest=hashlib.sha256((context/'apizr-delivery-plan.json').read_bytes()).hexdigest()
  assert 'sh.outerspace.apizr.delivery-plan-sha256='+plan_digest in args
+ Path('proof-state').write_text(next(v.split('=',1)[1] for v in args if v.startswith('sh.outerspace.apizr.proof-requirement=')))
  Path('plan-state').write_text(plan_digest)
  Path(args[args.index('--iidfile')+1]).write_text('sha256:'+'b'*64)
  Path(args[args.index('--metadata-file')+1]).write_text(json.dumps({'containerimage.config.digest':'sha256:'+'b'*64,'containerimage.digest':'sha256:'+'c'*64}))
 else:
- print(json.dumps([{'Id':'sha256:'+'b'*64,'Os':'linux','Architecture':'amd64','Config':{'User':'65532:65532','Labels':{'sh.outerspace.apizr.inputs-sha256':Path('state').read_text(),'sh.outerspace.apizr.delivery-plan-sha256':Path('plan-state').read_text()}}}]))
+ print(json.dumps([{'Id':'sha256:'+'b'*64,'Os':'linux','Architecture':'amd64','Config':{'User':'65532:65532','Labels':{'sh.outerspace.apizr.inputs-sha256':Path('state').read_text(),'sh.outerspace.apizr.delivery-plan-sha256':Path('plan-state').read_text(),'sh.outerspace.apizr.proof-requirement':Path('proof-state').read_text()}}}]))
 """
     )
     fake.chmod(0o700)

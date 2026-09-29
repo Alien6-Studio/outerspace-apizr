@@ -60,6 +60,7 @@ def delivery_plan(
         else None
     )
     return DeliveryPlan(
+        proof_requirement=request.proof_requirement,
         source=source,
         catalog_digest=contract.catalog_digest,
         graph_digest=contract.graph_digest,

@@ -57,6 +57,22 @@ def arguments(operation):
             "docker": {"executable": "/native/docker", "socket": "/daemon/docker.sock"},
             "authentication": {"config_file": "/private/credentials.json"},
         }
+    if operation == "admit":
+        data = arguments("publish")
+        data.pop("proof_dir")
+        return data | {
+            "schema": "apizr.admit-delivery/v1",
+            "push_result": "/proof/push.json",
+            "delivery_manifest": {
+                "delivery_plan_digest": {"algorithm": "sha256", "value": "a" * 64},
+                "image_id": "sha256:" + "a" * 64,
+                "inputs_sha256": "b" * 64,
+                "platform": "linux/amd64",
+            },
+            "destination": REPOSITORY + ":v1",
+            "artifact_reference": REPOSITORY + "@sha256:" + "d" * 64,
+            "docker": {"executable": "/native/docker", "socket": "/daemon/docker.sock"},
+        }
     if operation == "attest":
         data = arguments("publish")
         del data["proof_dir"], data["transport"]
@@ -154,7 +170,7 @@ def policy(value):
     return OperatorPolicy.model_validate_json(json.dumps(value), strict=True)
 
 
-@pytest.mark.parametrize("operation", ["push", "publish"])
+@pytest.mark.parametrize("operation", ["push", "publish", "admit"])
 @pytest.mark.parametrize(
     "change,code",
     [
@@ -197,6 +213,9 @@ def test_exact_grants_without_external_io(operation, change, code, monkeypatch):
     if change == "prefix":
         field = "destination" if operation == "push" else "expected_reference"
         args[field] = args[field].replace("/service", "/service-other")
+        if operation == "admit":
+            for key in ("destination", "artifact_reference"):
+                args[key] = args[key].replace("/service", "/service-other")
     if change == "repository":
         grant["repository"] = "registry.example:5443/team/other"
     if change == "read-only":
@@ -324,7 +343,7 @@ def test_bounded_regular_policy_files(tmp_path):
         load_operator_policy(path)
 
 
-@pytest.fixture(params=["push", "publish", "attest", "build"])
+@pytest.fixture(params=["push", "publish", "attest", "build", "admit"])
 def installed(request, wheel_factory, tmp_path):
     operation = request.param
     template = record(operation)
@@ -621,7 +640,7 @@ def test_complete_documented_policy():
     }
 
 
-@pytest.mark.parametrize("operation", ["build", "attest", "push", "publish"])
+@pytest.mark.parametrize("operation", ["build", "attest", "push", "publish", "admit"])
 def test_renamed_and_existing_plugins_require_separate_exact_grants(operation):
     renamed = record(operation)
     existing = renamed.model_copy(
@@ -637,7 +656,7 @@ def test_renamed_and_existing_plugins_require_separate_exact_grants(operation):
         assert not refused.allowed and refused.code == "operator_identity_denied"
 
 
-@pytest.mark.parametrize("operation", ["build", "attest", "push", "publish"])
+@pytest.mark.parametrize("operation", ["build", "attest", "push", "publish", "admit"])
 def test_git_grant_does_not_authorize_plugin_operations(operation):
     selected = OperatorPolicy.model_validate_json(
         json.dumps(
@@ -662,3 +681,25 @@ def test_git_grant_does_not_authorize_plugin_operations(operation):
         decide(selected, record(operation), operation, arguments(operation)).code
         == "operator_identity_denied"
     )
+
+
+def test_build_grant_binds_proof_requirement():
+    binding = record("build")
+    optional = policy(document(binding, "build"))
+    required = arguments("build") | {"proof_requirement": "required"}
+    assert not decide(optional, binding, "build", required).allowed
+    raw = document(binding, "build")
+    raw["grants"][0]["target"]["proof_requirement"] = "required"
+    selected = policy(raw)
+    assert decide(selected, binding, "build", required).allowed
+    assert not decide(selected, binding, "build", arguments("build")).allowed
+
+
+def test_signing_is_not_admission_permission():
+    binding = record("admit")
+    assert not decide(
+        policy(document(binding, "attest")), binding, "admit", arguments("admit")
+    ).allowed
+    assert decide(
+        policy(document(binding, "admit")), binding, "admit", arguments("admit")
+    ).allowed

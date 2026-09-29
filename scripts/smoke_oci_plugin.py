@@ -462,6 +462,9 @@ def main():
             images.append(tag)
             document = {
                 "schema": "apizr.oci-build/v1",
+                "proof_requirement": "required"
+                if os.environ.get("APIZR_ARTIFACT_PROOF") == "1"
+                else "optional",
                 "bundle": str(bundle),
                 "interface": interface,
                 "base_image": base,

@@ -248,21 +248,22 @@ def exercise(python, store, work, builds, command, environment):
             "--host",
             "unix:///proof/builder.sock",
         ]
-        command(
-            *docker,
-            "image",
-            "tag",
-            builds[1]["result"]["image_id"],
-            pushes[0]["destination"],
-        )
-        command(
-            *docker,
-            "image",
-            "push",
-            "--platform",
-            builds[1]["result"]["platform"],
-            pushes[0]["destination"],
-        )
+        if pushes[0].get("proof_requirement") != "required":
+            command(
+                *docker,
+                "image",
+                "tag",
+                builds[1]["result"]["image_id"],
+                pushes[0]["destination"],
+            )
+            command(
+                *docker,
+                "image",
+                "push",
+                "--platform",
+                builds[1]["result"]["platform"],
+                pushes[0]["destination"],
+            )
         signed = invoke("attest", arguments)
         assert signed is not None
         assert signed["checks"] == dict.fromkeys(
@@ -389,6 +390,19 @@ def exercise(python, store, work, builds, command, environment):
                 output,
                 work / "recovered-proof",
                 arguments,
+                command,
+                environment,
+            )
+            from admission_proof import exercise as admit_deliveries
+
+            admit_deliveries(
+                python,
+                store,
+                work,
+                builds,
+                pushes,
+                arguments,
+                mcp_arguments,
                 command,
                 environment,
             )

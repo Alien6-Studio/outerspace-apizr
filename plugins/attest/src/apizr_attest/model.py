@@ -7,6 +7,9 @@ from pydantic import Field, field_validator, model_validator
 
 from apizr.capabilities.model import Digest
 from apizr.publication_contracts import (
+    AdmitRequest as AdmitRequest,
+)
+from apizr.publication_contracts import (
     AttestRequest as AttestRequest,
 )
 from apizr.publication_contracts import (
@@ -141,3 +144,30 @@ class FetchResult(Model):
     artifact_manifest_digest: str
     receipt_sha256: str
     verification: DeliveryResult
+
+
+class AdmissionResult(Model):
+    schema_version: Literal["apizr.delivery-admission/v1"] = Field(
+        default="apizr.delivery-admission/v1", alias="schema"
+    )
+    state: Literal["admitted", "remote_state_unconfirmed"] = "admitted"
+    destination: str
+    image_reference: str
+    delivery_plan_digest: Digest
+    delivery_manifest_digest: Digest
+    proof_artifact_reference: str
+    proof_artifact_manifest_digest: str
+    receipt_sha256: str
+    signer: str
+    transfer_verified: Literal[True] = True
+    destination_promoted: bool | None = True
+    delivery_admitted: bool = True
+
+    @model_validator(mode="after")
+    def confirmation(self):
+        if self.state == "admitted":
+            if not self.delivery_admitted or self.destination_promoted is not True:
+                raise ValueError("Admission requires verified promotion")
+        elif self.delivery_admitted or self.destination_promoted is not None:
+            raise ValueError("Unconfirmed promotion cannot claim admission")
+        return self

@@ -270,3 +270,5 @@ The core's files/distributions are compared before and after. Public results and
 refusals are retained by CI. This fixture does not qualify Docker Hub or Trunx.
 Apizr release attestation, its secrets and the continuum-attest repository are
 unchanged.
+
+See [proof-required delivery admission](delivery-admission.md) for explicit pre-build requirements and the separately authorized final promotion.

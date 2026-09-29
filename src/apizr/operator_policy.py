@@ -21,6 +21,7 @@ from apizr.local_plugins.models import (
     canonical_name,
 )
 from apizr.publication_contracts import (
+    AdmitRequest,
     AttestRequest,
     BuildRequest,
     BuildTarget,
@@ -107,7 +108,7 @@ class PluginIdentity(Model):
 
 class Grant(Model):
     plugin: PluginIdentity
-    operation: Literal["push", "publish"]
+    operation: Literal["push", "publish", "admit"]
     repository: str
     permissions: tuple[Permission, ...] = Field(min_length=1, max_length=2)
 
@@ -264,6 +265,8 @@ OPERATIONS = {
     ("outerspace-apizr-oci", "push"): "apizr_oci.protocol",
     ("outerspace-apizr-attest", "publish"): "apizr_attest.protocol",
     ("outerspace-apizr-attest", "attest"): "apizr_attest.protocol",
+    ("outerspace-apizr-attest", "admit"): "apizr_attest.protocol",
+    ("apizr-attest", "admit"): "apizr_attest.protocol",
 }
 
 
@@ -315,6 +318,9 @@ def decide(
         elif operation == "push":
             request = PushRequest.model_validate_json(raw_arguments, strict=True)
             repository = repository_name(request.destination.rsplit(":", 1)[0])
+        elif operation == "admit":
+            admission = AdmitRequest.model_validate_json(raw_arguments, strict=True)
+            repository = repository_name(admission.destination.rsplit(":", 1)[0])
         elif operation == "attest":
             signing = AttestRequest.model_validate_json(raw_arguments, strict=True)
             repository = repository_name(
