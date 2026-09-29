@@ -61,6 +61,10 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments == ["--version"]:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
         return 0
+    if arguments and arguments[0] == "delivery":
+        from apizr.delivery_cli import main as delivery_command
+
+        return delivery_command(arguments[1:])
     if arguments and arguments[0] == "mcp":
         from apizr.mcp_cli import main as mcp_command
 

@@ -366,6 +366,12 @@ def exercise(python, store, work, builds, command, environment):
                 == built["delivery_manifest"]["delivery_plan_digest"]
             )
             assert result["attest_tool"] == {k: tool[k] for k in ("version", "sha256")}
+        if os.environ.get("APIZR_ARTIFACT_PROOF") == "1":
+            from multi_delivery_proof import exercise as multi_delivery
+
+            multi_delivery(
+                python, store, work, builds, arguments, command, environment, calls
+            )
         key.unlink()  # Publication of an existing proof requires no private key.
         offline = {
             k: arguments[k]

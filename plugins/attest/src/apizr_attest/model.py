@@ -3,9 +3,20 @@
 from typing import Literal
 
 from apizr_oci.model import Docker, Model
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, field_validator
 
-from apizr.capabilities.model import Digest
+from apizr.delivery_results import (
+    AdmissionResult as AdmissionResult,
+)
+from apizr.delivery_results import (
+    DeliveryResult as DeliveryResult,
+)
+from apizr.delivery_results import (
+    PublishResult as PublishResult,
+)
+from apizr.delivery_results import (
+    VerifiedAttestTool as VerifiedAttestTool,
+)
 from apizr.publication_contracts import (
     AdmitRequest as AdmitRequest,
 )
@@ -22,50 +33,13 @@ from apizr.publication_contracts import (
     Tool as Tool,
 )
 from apizr.publication_contracts import Transport, digest_reference
+from apizr.publication_contracts import (
+    VerifyRequest as VerifyRequest,
+)
 
 
 class AttestError(Exception):
     """Fixed codes only. Native diagnostics can contain sensitive paths."""
-
-
-class VerifyRequest(Common):
-    schema_version: Literal["apizr.verify-delivery/v1"] = Field(alias="schema")
-    proof_dir: str
-    _proof = field_validator("proof_dir")(Docker.absolute.__func__)
-
-
-class VerifiedAttestTool(Model):
-    version: Literal["0.1.0"]
-    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
-
-
-class DeliveryResult(Model):
-    delivery_plan_digest: Digest | None = Field(
-        default=None, exclude_if=lambda value: value is None
-    )
-    delivery_manifest_digest: Digest | None = Field(
-        default=None, exclude_if=lambda value: value is None
-    )
-    attest_tool: VerifiedAttestTool | None = Field(
-        default=None, exclude_if=lambda value: value is None
-    )
-
-    schema_version: Literal["apizr.attest-delivery-result/v1"] = Field(
-        default="apizr.attest-delivery-result/v1", alias="schema"
-    )
-    reference: str
-    manifest_digest: str
-    signer: str
-    receipt_sha256: str
-    checks: dict[str, Literal["pass"]]
-    scope: Literal["verified OCI delivery; build not supervised by Attest"] = (
-        "verified OCI delivery; build not supervised by Attest"
-    )
-    receipt_published: Literal[False] = False
-    registry_availability_verified: Literal[False] = False
-
-
-# Transport-only discovery deliberately has no Attest binary or trust inputs.
 
 
 class DiscoverRequest(Model):
@@ -103,37 +77,6 @@ class DiscoverResult(Model):
     complete: Literal[True] = True
 
 
-class PublishResult(Model):
-    schema_version: Literal["apizr.published-proof/v1"] = Field(
-        default="apizr.published-proof/v1", alias="schema"
-    )
-    image_reference: str
-    image_digest: str
-    artifact_reference: str | None = None
-    artifact_manifest_digest: str | None = None
-    receipt_sha256: str
-    verification: DeliveryResult
-    state: Literal["verified", "remote_state_unconfirmed"] = "verified"
-    receipt_published: bool = True
-
-    @model_validator(mode="after")
-    def confirmation(self):
-        if self.state == "verified":
-            if (
-                not self.receipt_published
-                or self.artifact_reference is None
-                or self.artifact_manifest_digest is None
-            ):
-                raise ValueError("verified publication requires artifact identities")
-        elif (
-            self.receipt_published
-            or self.artifact_reference is not None
-            or self.artifact_manifest_digest is not None
-        ):
-            raise ValueError("unconfirmed publication cannot claim remote identities")
-        return self
-
-
 class FetchResult(Model):
     schema_version: Literal["apizr.fetched-proof/v1"] = Field(
         default="apizr.fetched-proof/v1", alias="schema"
@@ -144,30 +87,3 @@ class FetchResult(Model):
     artifact_manifest_digest: str
     receipt_sha256: str
     verification: DeliveryResult
-
-
-class AdmissionResult(Model):
-    schema_version: Literal["apizr.delivery-admission/v1"] = Field(
-        default="apizr.delivery-admission/v1", alias="schema"
-    )
-    state: Literal["admitted", "remote_state_unconfirmed"] = "admitted"
-    destination: str
-    image_reference: str
-    delivery_plan_digest: Digest
-    delivery_manifest_digest: Digest
-    proof_artifact_reference: str
-    proof_artifact_manifest_digest: str
-    receipt_sha256: str
-    signer: str
-    transfer_verified: Literal[True] = True
-    destination_promoted: bool | None = True
-    delivery_admitted: bool = True
-
-    @model_validator(mode="after")
-    def confirmation(self):
-        if self.state == "admitted":
-            if not self.delivery_admitted or self.destination_promoted is not True:
-                raise ValueError("Admission requires verified promotion")
-        elif self.delivery_admitted or self.destination_promoted is not None:
-            raise ValueError("Unconfirmed promotion cannot claim admission")
-        return self

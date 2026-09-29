@@ -562,3 +562,5 @@ and the lower-level filesystem APIs. Already supplied in-memory data is not a
 universal access-control boundary for arbitrary Python code.
 
 See [proof-required delivery admission](delivery-admission.md) for explicit pre-build requirements and the separately authorized final promotion.
+
+See [multi-destination delivery](multi-destination-delivery.md) for sequential managed orchestration, independent outcomes and explicit resume of one immutable build.

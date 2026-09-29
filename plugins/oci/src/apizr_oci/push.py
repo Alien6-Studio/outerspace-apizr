@@ -233,6 +233,18 @@ def push(
             verified = remote_identity(
                 request, work, request.destination, deadline, cancel, absent=True
             )
+            if request.resume_reference is not None:
+                retained = remote_identity(
+                    request, work, request.resume_reference, deadline, cancel
+                )
+                if (
+                    retained is None
+                    or retained[1] != request.resume_reference.split("@")[1]
+                ):
+                    raise BuildError("remote_manifest_unverified")
+                if verified is not None and verified != retained:
+                    raise BuildError("remote_image_conflict")
+                verified = retained
             if verified is None:
                 staging = repository + ":apizr-upload-" + uuid.uuid4().hex
                 run(

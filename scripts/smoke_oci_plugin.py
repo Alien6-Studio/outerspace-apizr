@@ -571,6 +571,31 @@ def main():
                 from smoke_attest_plugin import exercise as attest_delivery
 
                 attest_delivery(python, store, work, results, command, environment)
+                if os.environ.get("APIZR_ARTIFACT_PROOF") == "1":
+                    batch = json.loads(
+                        (work / "multi-delivery-results.json").read_bytes()
+                    )
+                    service_images = [
+                        item["recovered"]["outcomes"][0]["transfer"]["digest_reference"]
+                        for item in batch
+                    ]
+                    config = work / "batch-consumer-auth"
+                    config.mkdir()
+                    (config / "config.json").write_bytes(
+                        Path("/proof/auth/batch-a.json").read_bytes()
+                    )
+                    for reference in service_images:
+                        command(
+                            "/usr/local/bin/docker",
+                            "--host",
+                            "unix:///proof/consumer.sock",
+                            "--config",
+                            config,
+                            "image",
+                            "pull",
+                            reference,
+                        )
+
             images = service_images
             docker_flags[:] = [docker, "--host", "unix:///proof/consumer.sock"]
         shutil.rmtree(work / "git-proof")

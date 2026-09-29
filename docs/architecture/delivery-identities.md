@@ -143,3 +143,5 @@ historical proof and operator refusal qualifications remain enabled.
 - [Attest delivery verification](../reference/attest-delivery-plugin.md)
 
 See [proof-required delivery admission](../reference/delivery-admission.md) for explicit pre-build requirements and the separately authorized final promotion.
+
+See [multi-destination delivery](../reference/multi-destination-delivery.md) for sequential managed orchestration, independent outcomes and explicit resume of one immutable build.

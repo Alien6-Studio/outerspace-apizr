@@ -118,6 +118,7 @@ nav:
           - Attest delivery proofs: reference/attest-delivery-plugin.md
           - Attest OCI artifacts: reference/attest-oci-artifacts.md
           - Proof-required admission: reference/delivery-admission.md
+          - Multi-destination delivery: reference/multi-destination-delivery.md
   - Reference:
       - Commands, parameters and formats: reference/index.md
       - Python compiler API: reference/compiler-api.md

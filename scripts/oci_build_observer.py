@@ -36,6 +36,8 @@ def main():
             if flag in args:
                 saved[flag] = Path(args[args.index(flag) + 1]).read_text()
         Path("/proof/work/build-observation.json").write_text(json.dumps(saved))
+        with Path("/proof/work/successful-builds.jsonl").open("a") as history:
+            history.write(json.dumps(saved) + "\n")
     return code
 
 

@@ -142,3 +142,93 @@ def test_promotion_refusals_and_uncertainty(gated, tmp_path, monkeypatch, fault)
     ):
         promote_verified(request, tmp_path, verified, time.monotonic() + 10)
     assert (request.destination in remote) == (fault in {"after", "interrupted"})
+
+
+def test_read_only_observation_and_digest_resume_never_upload(gated, tmp_path):
+    from apizr_oci.observe import observe_delivery
+
+    from apizr.publication_contracts import ObserveRequest
+
+    request, calls, remote, _ = gated
+    result = push(request, workspace=tmp_path)
+    calls.clear()
+    observed = observe_delivery(
+        ObserveRequest(
+            schema="apizr.observe-delivery/v1",
+            push=request,
+            expected_reference=result.digest_reference,
+        ),
+        workspace=tmp_path,
+    )
+    assert observed.state == "absent"
+    assert observed.image.manifest_digest == result.manifest_digest
+    assert not any(
+        c[:2] in (["image", "push"], ["image", "tag"], ["buildx", "imagetools"])
+        for c in calls
+    )
+    recovered = push(
+        request.model_copy(update={"resume_reference": result.digest_reference}),
+        workspace=tmp_path,
+    )
+    assert recovered == result
+    assert not any(c[:2] == ["image", "push"] for c in calls)
+    promote_verified(
+        request,
+        tmp_path,
+        (result.config_digest, result.manifest_digest),
+        time.monotonic() + 10,
+    )
+    calls.clear()
+    assert (
+        observe_delivery(
+            ObserveRequest(
+                schema="apizr.observe-delivery/v1",
+                push=request,
+                expected_reference=result.digest_reference,
+            ),
+            workspace=tmp_path,
+        ).state
+        == "verified"
+    )
+    assert not any(c[:3] == ["buildx", "imagetools", "create"] for c in calls)
+
+
+@pytest.mark.parametrize("state", ["conflict", "error", "mismatch", "absent"])
+def test_observation_refuses_conflicts_and_does_not_claim_unknown_state(
+    gated, tmp_path, monkeypatch, state
+):
+    from apizr_oci import observe as mod
+
+    from apizr.publication_contracts import ObserveRequest
+
+    request, _, _, _ = gated
+    pushed = push(request, workspace=tmp_path)
+
+    def remote(*args, **kwargs):
+        if state == "conflict":
+            raise BuildError("remote_image_conflict")
+        if state == "error":
+            raise OSError("SECRET")
+        if state == "mismatch":
+            return (pushed.config_digest, "sha256:" + "0" * 64)
+        return None
+
+    monkeypatch.setattr(mod, "remote_identity", remote)
+    result = mod.observe_delivery(
+        ObserveRequest(
+            schema="apizr.observe-delivery/v1",
+            push=request,
+            expected_reference=None if state == "absent" else pushed.digest_reference,
+        ),
+        workspace=tmp_path,
+    )
+    assert (
+        result.state
+        == {
+            "conflict": "conflict",
+            "error": "remote_state_unconfirmed",
+            "mismatch": "remote_state_unconfirmed",
+            "absent": "absent",
+        }[state]
+    )
+    assert "SECRET" not in result.model_dump_json()
