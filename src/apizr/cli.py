@@ -111,6 +111,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
             "Extensions: apizr plugins {install,list,enable,disable,run,uninstall} --help"
         )
         print("Project plugins: apizr plugins {lock,sync,update,catalog} --help")
+        print("Delivery of an existing build: apizr delivery {run,resume} --help")
         print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
         )
