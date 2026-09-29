@@ -330,3 +330,42 @@ def test_published_delivery_schemas(name):
     )
     assert schema == model.model_json_schema()
     Draft202012Validator.check_schema(schema)
+
+
+def test_selection_changes_plan_with_identical_repository_bytes(portable):
+    root, bundle, request, closure = portable
+    source = root / "src/formatter.py"
+    source.write_text(
+        source.read_text() + "\ndef other() -> str:\n    return 'other'\n"
+    )
+    shutil.rmtree(bundle)
+    write_bundle(bundle, render_bundle(prepare(root), interface="rest"))
+    before = delivery_plan(bundle, request, closure)
+    policy = root / "exposure.json"
+    raw = json.loads(policy.read_bytes())
+    raw["selection"]["include"] = ["python:formatter:other"]
+    policy.write_text(json.dumps(raw))
+    shutil.rmtree(bundle)
+    write_bundle(bundle, render_bundle(prepare(root), interface="rest"))
+    after = delivery_plan(bundle, request, closure)
+    assert before.source == after.source
+    assert before.exposure_plan_digest != after.exposure_plan_digest
+    assert identity(before) != identity(after)
+
+
+def test_rehashed_source_provenance_still_requires_repository_binding(portable):
+    _, bundle, request, closure = portable
+    provenance = bundle / "apizr-bundle-provenance.json"
+    value = json.loads(provenance.read_bytes())
+    value["source"]["repository_digest"] = Digest.of_bytes(b"other source").model_dump(
+        mode="json"
+    )
+    provenance.write_text(json.dumps(value))
+    path = bundle / "apizr-repository-rest.json"
+    manifest = json.loads(path.read_bytes())
+    digest = Digest.of_bytes(provenance.read_bytes()).model_dump(mode="json")
+    manifest["artifacts"][provenance.name] = digest
+    manifest["provenance_digest"] = digest
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match="provenance"):
+        delivery_plan(bundle, request, closure)

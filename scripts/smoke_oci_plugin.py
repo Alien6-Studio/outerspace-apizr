@@ -627,7 +627,7 @@ def main():
             """import asyncio, sys
 from mcp import Client, StdioServerParameters
 async def check():
-    async with Client(StdioServerParameters(command=sys.argv[1], args=['--host',sys.argv[2],'run','--rm','--interactive','--name',sys.argv[3],sys.argv[4]],env={})) as client:
+    async with Client(StdioServerParameters(command=sys.argv[1], args=['--host',sys.argv[2],'run','--interactive','--name',sys.argv[3],sys.argv[4]],env={})) as client:
         application = sys.argv[5] == 'application'
         name = 'formatter.message' if application else 'calculator.add'
         assert [t.name for t in (await client.list_tools()).tools] == [name]
@@ -642,6 +642,7 @@ asyncio.run(check())
             "application" if registry_proof else "calculator",
             timeout=45,
         )
+        assert not json.loads(engine("container", "inspect", name))[0]["Mounts"]
         assert snapshot(core_env) == before
         assert command(python, "-I", "-B", "-c", inventory) == before_distributions
         (work / "results.json").write_text(json.dumps(results, indent=2))
