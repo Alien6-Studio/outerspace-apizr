@@ -367,3 +367,24 @@ def test_admit_typed_api_protocol_and_result_states(
     ):
         with pytest.raises(ValueError):
             AdmissionResult.model_validate(reply.model_dump(by_alias=True) | change)
+
+
+def test_valid_remote_proof_for_another_expected_plan_is_refused(required, tmp_path):
+    """The selected proof stays internally valid; the expected plan is different."""
+    from apizr.capabilities.model import Digest
+
+    request, state = required
+    expected_manifest = request.delivery_manifest.model_copy(
+        update={"delivery_plan_digest": Digest.of_bytes(b"another reviewed plan")}
+    )
+    pushed = json.loads(Path(request.push_result).read_bytes())
+    pushed.update(
+        delivery_plan_digest=expected_manifest.delivery_plan_digest.model_dump(),
+        delivery_manifest_digest=identity(expected_manifest).model_dump(),
+    )
+    Path(request.push_result).write_text(json.dumps(pushed))
+    request = request.model_copy(update={"delivery_manifest": expected_manifest})
+    with pytest.raises(AttestError, match="admission_lineage_mismatch"):
+        execute((request, state), tmp_path)
+    assert state["native_checks"] == 1
+    assert state["promotions"] == 0
