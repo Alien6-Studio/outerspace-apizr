@@ -121,7 +121,7 @@ The selected `PYTHON` must match the target export's Python minor version.
 <!-- install:pip -->
 ```sh
 "$PYTHON" -m venv "$CORE_DIR"
-"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0rc1-py3-none-any.whl"
+"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.0rc1}-py3-none-any.whl"
 "$CORE_DIR/bin/apizr" --version
 ```
 
@@ -134,14 +134,14 @@ With uv already installed, use this **instead of** pip:
 
 <!-- install:uv -->
 ```sh
-uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0rc1-py3-none-any.whl"
+uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.0rc1}-py3-none-any.whl"
 ```
 
 Or, with pipx already installed, use:
 
 <!-- install:pipx -->
 ```sh
-pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-0.4.0rc1-py3-none-any.whl"
+pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.0rc1}-py3-none-any.whl"
 ```
 
 Use the executable path reported by that tool, then check `apizr --version`.
@@ -185,7 +185,7 @@ On this fresh store, the active inventory is empty. Activate only what you selec
 
 ```sh
 # mcp profile
-"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version 0.4.0rc1 --plugins-dir "$PLUGINS_DIR"
+"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version "${APIZR_VERSION:-0.4.0rc1}" --plugins-dir "$PLUGINS_DIR"
 # oci profile: enable outerspace-apizr-oci instead
 # delivery profile: enable both outerspace-apizr-oci and outerspace-apizr-attest
 ```

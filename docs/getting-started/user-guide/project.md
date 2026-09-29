@@ -126,7 +126,7 @@ TOML, wrong types and invalid bounds are rejected. Strings, booleans and floats
 are not converted into integer bounds. The CLI reports these as invalid input
 with exit code 2, preserving its existing error presentation.
 
-There are no plugin, execution, output or publication settings in this format.
+There are no execution, output or publication settings in this format.
 It loads local configuration only: it cannot install plugins, execute analyzed
 code, download repositories or publish services.
 
@@ -169,3 +169,79 @@ loader never prints results or terminates the process.
 
 The optional `[[plugins]]` declarations identify exact wheels and requirements.
 They never install, activate or execute plugins. See [project plugin locks](../../reference/project-plugin-locks.md) for the format, explicit `--user-config`, precedence and a complete installed-wheel example. Existing analysis root and policy precedence remain unchanged.
+
+## Application dependencies and resources (0.4.1 development)
+
+This optional table extends the existing `apizr.project/v1` configuration. It is
+available in development builds of all four coordinated **0.4.1rc1** distributions;
+it is not part of the published 0.4.0rc1 packages.
+
+```toml
+[application]
+dependencies = ["six==1.17.0"]
+resources = ["data/message.txt"]
+```
+
+The complete executable fixture is
+[`examples/application-inputs`](https://github.com/Alien6-Studio/outerspace-apizr/tree/release/0.4.1/examples/application-inputs).
+Use the commands above with `examples/application-inputs/apizr.toml` and a
+`source.analyze` grant rooted at that example. Its selected `formatter.message`
+capability reads `data/message.txt` using `__file__`, decodes it with Six and
+returns **`PORTABLE CAFÉ`**. The installed OCI qualification builds both transports,
+removes the project and generated bundles, then invokes REST and MCP with no
+source mounts. Run that existing qualification from a development checkout:
+
+```sh
+uv run --locked python scripts/smoke_oci_plugin.py --work-dir /tmp/apizr-application-proof --docker-socket /var/run/docker.sock
+```
+
+Use a fresh work directory and the actual Docker socket on your system. Test
+preparation explicitly obtains wheels; analysis never does so.
+
+| Dependency group | Installation boundary |
+| --- | --- |
+| Core | Minimal Apizr environment; unchanged by application declarations |
+| Plugins | Existing isolated, locked plugin environments |
+| Application | Generated service environment, with the transport server closure |
+
+Dependency declarations accept a bounded exact `name==version` subset: numeric
+release versions with optional epoch, prerelease (`a`, `b`, `rc`), post/dev and
+lowercase local version components. Names normalize to lowercase with `.`, `_`
+and `-` runs replaced by `-`. Entries sort by normalized name; duplicate names
+are errors even when versions agree. Ranges, extras, markers, direct URLs, local
+projects, options and wildcard versions are unsupported. No resolver or import
+inference runs in Apizr analysis. The existing OCI path consumes an explicitly
+prepared wheelhouse and hashed lock, verifies the exact server/application
+closure offline, and installs it only in the service image.
+
+Resources are explicit regular files relative to the permitted project root,
+independent of scan source roots. Paths normalize and sort deterministically.
+Absolute paths, `..`, backslashes, hidden components, control characters,
+symlinks (including parents), directories, missing files and duplicate normalized
+paths or filesystem identities are refused. Limits are 128 pins, 128 files,
+16 MiB per file and 32 MiB of resource contents in total. Files retain their
+project-relative paths under `source/`, together with Python source paths, so
+ordinary paths derived from `__file__` continue to work. Resource/source path
+collisions are refused. There is no recursive directory inclusion or content-based
+secret detection: explicitly declaring a visible file can disclose its contents.
+Undeclared `.env`, credentials, hidden files and unrelated data are not resources.
+
+Both existing REST/MCP manifests and `repository-interface.json` carry optional
+`application` metadata: normalized pins, resource paths, sizes and SHA-256 digests,
+and the analyzed repository digest. `application-requirements.txt` carries only
+application pins; `requirements.txt` remains server-only. Existing artifact digests
+and OCI input identities bind these bytes. Changing a declared dependency/resource
+changes the bundle and build identity; unrelated data does not. Python files in
+scan roots remain part of the existing source catalog, independently of resources.
+This is an optional bundle extension, not a delivery/publication manifest.
+
+Projects omitting the table (or leaving both lists empty) keep their previous
+layout and need no new metadata fields. `source.analyze` and `git.fetch` remain
+independent authorizations. Capturing resources never imports code, installs or
+downloads packages. Existing readiness eligibility is unchanged: a dependency
+pin does not make an otherwise ineligible function exposable. This fixture uses
+an eligible façade and a helper with a lazy third-party import. The first increment
+supports direct REST/MCP services and their OCI images; governed per-call worker
+bundles, package metadata/resource APIs and arbitrary installed-project layouts
+are outside this contract. A resource capture is bounded and checks individual
+file changes; it is not an atomic snapshot of a mutable local filesystem.

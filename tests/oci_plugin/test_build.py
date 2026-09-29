@@ -558,3 +558,75 @@ def test_manifest_only_build_metadata(build_inputs, tmp_path):
     )
     with pytest.raises(BuildError, match="image_unverified"):
         build(build_inputs, workspace=tmp_path)
+
+
+def test_application_context_and_input_identity(build_inputs, tmp_path):
+    from test_application import EXAMPLE, prepare
+
+    from apizr.application import ApplicationConfig
+    from apizr.compiler import render_bundle
+    from apizr.repository_interfaces.output import write_bundle
+
+    project = tmp_path / "application"
+    shutil.copytree(EXAMPLE, project)
+    bundle = Path(build_inputs.bundle)
+    fake = Path(build_inputs.docker.executable)
+    fake.write_text(
+        fake.read_text().replace(
+            "digest=args[args.index('--label')+1].split('=',1)[1]",
+            "assert (context/'server-requirements.txt').read_bytes() == (context/'bundle/requirements.txt').read_bytes() + (context/'bundle/application-requirements.txt').read_bytes()\n"
+            " assert (context/'bundle/source/data/message.txt').is_file()\n"
+            " assert not (context/'bundle/foreign.txt').exists()\n"
+            " digest=args[args.index('--label')+1].split('=',1)[1]",
+        )
+    )
+
+    def image(application=None):
+        shutil.rmtree(bundle)
+        kwargs = {} if application is None else {"application": application}
+        write_bundle(
+            bundle, render_bundle(prepare(project, **kwargs), interface="rest")
+        )
+        (bundle / "foreign.txt").write_text("never admitted")
+        return build(build_inputs, workspace=tmp_path).inputs_sha256
+
+    first = image()
+    (project / "unrelated.json").write_text("not an input")
+    assert image() == first
+    (project / "data/message.txt").write_text("changed resource")
+    second = image()
+    assert second != first
+    assert (
+        image(
+            ApplicationConfig(
+                dependencies=("six==1.16.0",), resources=("data/message.txt",)
+            )
+        )
+        != second
+    )
+
+
+@pytest.mark.parametrize("fault", ["content", "missing", "symlink", "requirements"])
+def test_application_snapshot_refuses_tampering(tmp_path, fault):
+    from test_application import EXAMPLE, prepare
+
+    from apizr.compiler import render_bundle
+    from apizr.repository_interfaces.output import write_bundle
+
+    project = tmp_path / "application"
+    shutil.copytree(EXAMPLE, project)
+    bundle = tmp_path / "bundle"
+    write_bundle(bundle, render_bundle(prepare(project), interface="rest"))
+    target = bundle / (
+        "application-requirements.txt"
+        if fault == "requirements"
+        else "source/data/message.txt"
+    )
+    if fault in {"content", "requirements"}:
+        target.write_bytes(b"tampered")
+    else:
+        target.unlink()
+        if fault == "symlink":
+            target.symlink_to(project / "data/message.txt")
+    with pytest.raises((BuildError, ValueError, OSError)):
+        bundle_snapshot(bundle, tmp_path / "copy", "rest")

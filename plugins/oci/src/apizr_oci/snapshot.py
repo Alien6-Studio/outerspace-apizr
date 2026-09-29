@@ -85,6 +85,11 @@ def bundle_snapshot(source: Path, target: Path, interface: str) -> None:
         else {"server.py", "mcp-tools.json"}
     )
     allowed |= {s.bundle_path for s in manifest.sources}
+    if manifest.application is not None:
+        allowed.add("application-requirements.txt")
+        allowed |= {
+            "source/" + resource.path for resource in manifest.application.resources
+        }
     if set(manifest.artifacts) != allowed or len(allowed) > MAX_FILES:
         raise BuildError("unsupported_bundle_artifacts")
     target.mkdir()

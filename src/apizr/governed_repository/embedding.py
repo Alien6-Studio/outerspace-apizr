@@ -17,6 +17,7 @@ from apizr.repository_interfaces.model import RepositoryInterface
 from .model import Bridge, ContainerBundle, ExecutionBundle, PlanArtifact
 
 MODULES = (
+    "application.py",
     "capabilities/model.py",
     "capabilities/types.py",
     "interfaces/model.py",

@@ -14,7 +14,7 @@ The Linux/macOS **MCP server plugin** CI artifacts contain `catalog/catalogue.js
 `wheels/` (including `requirements/`) and the exported plans. Choose the artifact
 for your exact Python/platform target and the source commit you intend to use.
 These are development builds, not published releases or a hosted marketplace.
-The core and three official plugins declare `0.4.0rc1`; use the source commit and
+The core and three official plugins declare `0.4.1rc1`; use the source commit and
 SHA-256 values to distinguish builds. A matching version string alone does
 **not** establish artifact identity or qualification.
 
@@ -39,7 +39,7 @@ test/coverage reports occupy another subtree. Use the `apizr` executable install
 
 ```sh
 apizr plugins catalog list --catalog catalog/catalogue.json --json
-apizr plugins catalog show outerspace-apizr-mcp --version 0.4.0rc1 \
+apizr plugins catalog show outerspace-apizr-mcp --version 0.4.1rc1 \
   --catalog catalog/catalogue.json --json
 apizr plugins catalog resolve --profile mcp \
   --catalog catalog/catalogue.json --wheelhouse ./wheels \
@@ -78,7 +78,7 @@ apizr plugins sync --project plugin-plan/apizr.toml \
   --lock plugin-plan/apizr.plugins.lock.json --wheelhouse ./wheels \
   --plugins-dir ./trusted-plugins --json
 apizr plugins list --active --plugins-dir ./trusted-plugins --json
-apizr plugins enable outerspace-apizr-mcp --version 0.4.0rc1 --plugins-dir ./trusted-plugins
+apizr plugins enable outerspace-apizr-mcp --version 0.4.1rc1 --plugins-dir ./trusted-plugins
 ```
 
 `sync` uses installed uv offline, validates constraints and installs into separate
@@ -123,7 +123,7 @@ from pathlib import Path
 from apizr.plugin_catalog import load_catalog, resolve_profile, select_entry
 
 catalog = load_catalog(Path("catalog/catalogue.json"))
-entry = select_entry(catalog, "outerspace-apizr-mcp", "0.4.0rc1")
+entry = select_entry(catalog, "outerspace-apizr-mcp", "0.4.1rc1")
 result = resolve_profile(catalog, "mcp", Path("wheels"), Path("plugin-plan"))
 assert result.installation == "not_performed"
 ```

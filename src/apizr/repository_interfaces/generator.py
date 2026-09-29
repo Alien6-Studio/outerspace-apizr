@@ -3,6 +3,7 @@
 from collections.abc import Mapping
 from importlib.resources import files
 
+from apizr.application import ApplicationInputs
 from apizr.capabilities.model import Digest
 from apizr.execution.policy import ExecutionPolicy
 from apizr.exposure import ExposurePlan, ExposurePolicy, plan_bytes, policy_bytes
@@ -50,6 +51,8 @@ def render_repository_bundle(
     sources: Mapping[str, bytes],
     *,
     interface: Interface,
+    application: ApplicationInputs | None = None,
+    resources: Mapping[str, bytes] | None = None,
     execution_policy: ExecutionPolicy | ExecutionPolicyV2 | None = None,
     runtime_image: RuntimeImage | None = None,
 ) -> dict[str, bytes]:
@@ -67,10 +70,24 @@ def render_repository_bundle(
         exposure,
         sources,
         interface=interface,
+        application=application,
         execution_mode=execution_policy.backend
         if execution_policy is not None
         else "direct",
     )
+    resources = dict(resources or {})
+    application = contract.application
+    expected_resources = (
+        {r.path: r for r in application.resources} if application is not None else {}
+    )
+    if set(resources) != set(expected_resources):
+        raise ValueError("Application resource set does not match declarations")
+    for path, data in resources.items():
+        resource = expected_resources[path]
+        if len(data) != resource.size or Digest.of_bytes(data) != resource.digest:
+            raise ValueError("Application resource content does not match identity")
+        if any(s.bundle_path == "source/" + path for s in contract.sources):
+            raise ValueError("Application resource collides with a source module")
     contract_bytes = canonical_bytes(contract)
     contract_digest = Digest.of_bytes(contract_bytes)
     artifacts = {
@@ -86,6 +103,9 @@ def render_repository_bundle(
         .read_bytes(),
     }
     artifacts.update({s.bundle_path: sources[s.source_path] for s in contract.sources})
+    if application is not None:
+        artifacts["application-requirements.txt"] = application.requirements()
+        artifacts.update({"source/" + path: data for path, data in resources.items()})
     pin = repr(contract_digest.model_dump())
     endpoints = tuple(
         Endpoint(**c.invocation.model_dump(), route="/capabilities/" + c.public_name)
@@ -117,6 +137,7 @@ def render_repository_bundle(
             repository_interface_digest=contract_digest,
             exposure_plan_digest=contract.exposure_plan_digest,
             sources=contract.sources,
+            application=application,
             endpoints=endpoints,
             artifacts={
                 name: Digest.of_bytes(content)
@@ -152,6 +173,7 @@ def render_repository_bundle(
             repository_interface_digest=contract_digest,
             exposure_plan_digest=contract.exposure_plan_digest,
             sources=contract.sources,
+            application=application,
             tools=tools,
             artifacts={
                 name: Digest.of_bytes(content)

@@ -56,7 +56,7 @@ complete bundle without replacing existing contents.
 | Operation | Parameters | Result |
 | --- | --- | --- |
 | `assess_readiness(root, *, operator_policy=None, scan_policy=None, graph_policy=None, readiness_policy=None)` | `str` or `Path`, existing `ScanPolicy`, `GraphPolicy`, `RepositoryReadinessPolicy` | Existing `RepositoryReadinessReport`, including diagnostics and `exit_code` |
-| `prepare_exposure(root, *, policy, operator_policy=None, scan_policy=None, graph_policy=None, readiness_policy=None)` | Same analysis policies plus an explicit `ExposurePolicy` | `PreparedExposure` retaining evidence, readiness, policy and plan |
+| `prepare_exposure(root, *, policy, application=None, operator_policy=None, scan_policy=None, graph_policy=None, readiness_policy=None)` | Same analysis policies plus an explicit `ExposurePolicy` | `PreparedExposure` retaining evidence, readiness, policy and plan |
 | `render_bundle(prepared, *, interface, execution_policy=None, runtime_image=None)` | Prepared context, `"rest"` or `"mcp"`, existing execution policy/image models | Existing bundle filenames and bytes |
 
 `PreparedExposure` is an in-memory container for existing contracts, not a new
@@ -119,3 +119,10 @@ Admission does not authorize exposure, execution, image build, signing or
 publication. Existing contracts, selection refusals and bounds remain. Primitives
 accepting already supplied bytes/artifacts do not read a root and remain outside
 this gate. Arbitrary Python execution is not an authorization sandbox.
+
+Pass an optional `apizr.application.ApplicationConfig` as `application=` for
+[explicit application inputs](../getting-started/user-guide/project.md#application-dependencies-and-resources-041-development).
+Preparation captures declared resource bytes while the authorized root is open;
+rendering never reopens it. This also accepts an acquired Git snapshot while its
+context is active. The CLI still refuses `--git` with `--project` and never loads
+remote configuration implicitly.

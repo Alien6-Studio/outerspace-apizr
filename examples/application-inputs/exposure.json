@@ -1,0 +1,1 @@
+{"selection": {"include": ["python:formatter:message"]}, "interfaces": ["rest", "mcp"], "execution": {"allowed": ["direct"]}, "eligibility": {"allow_conditional": true}}

@@ -4,6 +4,7 @@ from typing import Literal, Self
 
 from pydantic import Field, field_validator, model_validator
 
+from apizr.application import ApplicationInputs
 from apizr.capabilities.model import Digest
 from apizr.capabilities.types import ValueModel, logical_module
 from apizr.exposure.policy import Interface
@@ -31,7 +32,7 @@ class BundledSource(ValueModel):
             + self.module.replace(".", "/")
             + ("/__init__.py" if self.is_package else ".py")
         )
-        if self.bundle_path != expected:
+        if self.bundle_path not in (expected, "source/" + self.source_path):
             raise ValueError("Source module and bundle path disagree")
         return self
 
@@ -63,11 +64,19 @@ class RepositoryInterface(ValueModel):
     graph_digest: Digest
     repository_readiness_digest: Digest
     interface: Interface
+    application: ApplicationInputs | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
     sources: tuple[BundledSource, ...]
     capabilities: tuple[Capability, ...]
 
     @model_validator(mode="after")
     def consistent(self) -> Self:
+        if (
+            self.application is not None
+            and self.application.repository_digest != self.repository_digest
+        ):
+            raise ValueError("Application source identity disagrees with repository")
         modules = {source.module for source in self.sources}
         if len(modules) != len(self.sources) or len(
             {s.source_path for s in self.sources}
@@ -85,6 +94,9 @@ class RepositoryInterface(ValueModel):
 class BundleManifest(ValueModel):
     repository_interface_digest: Digest
     exposure_plan_digest: Digest
+    application: ApplicationInputs | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
     sources: tuple[BundledSource, ...]
     artifacts: dict[str, Digest]
 
