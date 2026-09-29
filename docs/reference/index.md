@@ -4,7 +4,7 @@ For your first project, follow [Quickstart](../getting-started/quickstart.md), t
 Read the [Capability Compiler overview](../architecture/overview.md) for the full flow.
 This reference is for using individual interfaces or understanding their contracts.
 See [Install Apizr](../getting-started/install.md) for package availability and
-prerequisites. The [release notes](../releases/0.4.0.md) explain version differences.
+prerequisites. The [release notes](../releases/0.4.1.md) explain version differences.
 
 ## Commands and parameters
 

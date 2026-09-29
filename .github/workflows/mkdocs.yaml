@@ -3,7 +3,7 @@ name: Documentation
 on:
   pull_request:
   push:
-    branches: [master, release/0.4.1]
+    branches: [master, release/0.4.2]
   workflow_dispatch:
 
 permissions:

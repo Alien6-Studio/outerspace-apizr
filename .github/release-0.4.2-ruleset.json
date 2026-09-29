@@ -1,12 +1,12 @@
 {
-  "name": "Protect release/0.4.1",
+  "name": "Protect release/0.4.2",
   "target": "branch",
   "enforcement": "active",
   "bypass_actors": [],
   "conditions": {
     "ref_name": {
       "include": [
-        "refs/heads/release/0.4.1"
+        "refs/heads/release/0.4.2"
       ],
       "exclude": []
     }

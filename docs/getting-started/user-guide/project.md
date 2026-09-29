@@ -185,7 +185,7 @@ resources = ["data/message.txt"]
 ```
 
 The complete executable fixture is
-[`examples/application-inputs`](https://github.com/Alien6-Studio/outerspace-apizr/tree/release/0.4.1/examples/application-inputs).
+[`examples/application-inputs`](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.4.1/examples/application-inputs).
 Use the commands above with `examples/application-inputs/apizr.toml` and a
 `source.analyze` grant rooted at that example. Its selected `formatter.message`
 capability reads `data/message.txt` using `__file__`, decodes it with Six and

@@ -7,7 +7,7 @@ had the additional controls described below.
 
 ## Evidence from subsequent CI builds
 
-A successful baseline `master` build, or a protected `release/0.4.1` push
+A successful baseline `master` build, or a protected `release/0.4.2` push
 with the governance workflow, produces:
 
 - For coordinated candidates: four tested wheels and four sdists, plus
@@ -26,9 +26,10 @@ with the governance workflow, produces:
   the same commit.
 
 Only an isolated signing job on a `master` push or an explicitly protected
-`release/0.4.1` push receives OIDC and attestation permissions. The release-line
-protection is a [pending maintainer action](release-branches.md#required-maintainer-action);
-unprotected release pushes cannot sign. It downloads the successful CI artifacts and does not execute
+`release/0.4.2` push receives OIDC and attestation permissions. The release line
+uses the [active protection rules](release-branches.md#actual-protections-detected);
+unprotected release pushes cannot sign. Development build provenance does not
+authorize candidate qualification or publication. It downloads the successful CI artifacts and does not execute
 repository code. Pull requests do not receive signing permissions. The publish
 workflow verifies provenance before forwarding the same distributions to PyPI.
 After publication, it attaches the evidence files to the prepared GitHub release,
@@ -51,7 +52,10 @@ Use its recorded commit as `EXPECTED_COMMIT`; do not use the current branch tip.
 The identity is the CI workflow on this repository. Historical releases through
 0.4.0rc1 use `refs/heads/master`; 0.4.1 candidates/final require exactly
 `refs/heads/release/0.4.1`. Set `EXPECTED_SOURCE_REF` to the recorded approved
-identity, never to an arbitrary branch supplied by an artifact:
+identity, never to an arbitrary branch supplied by an artifact. Retiring the old
+branch does not change the source ref recorded in its signed evidence; do not
+substitute `release/0.4.2` when verifying published 0.4.1 archives:
+
 
 ```sh
 gh attestation verify outerspace_apizr-VERSION-py3-none-any.whl \

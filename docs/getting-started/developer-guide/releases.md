@@ -8,9 +8,10 @@
 
 The [0.4.1 notes](../../releases/0.4.1.md) describe application inputs, delivery
 identities, proof/admission and resumable delivery, with compatibility and
-publication status. The [0.4.0 record](../../releases/0.4.0.md) retains the earlier
-coordinated prerelease. The [release-branch model](../../contributing/release-branches.md)
-keeps final qualification on `release/0.4.1` before integration into `master`.
+verified publication. **0.4.1 is the current stable release.** The
+[0.4.0rc1 record](../../releases/0.4.0.md) retains the earlier coordinated RC.
+Final 0.4.1 was qualified on `release/0.4.1`, published, then integrated into
+`master` through the [release-branch model](../../contributing/release-branches.md).
 Explicit 0.4.2 deferrals remain future work.
 
 Keep the historical instructions below for the versions they describe.
