@@ -1,11 +1,13 @@
 """DCO enforcement must reject missing, spoofed and unsubstantiated declarations."""
 
+import os
 import runpy
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
+import yaml
 
 CHECK = runpy.run_path(str(Path(__file__).parents[1] / "scripts/check_dco.py"))
 
@@ -135,3 +137,80 @@ def test_published_squash_repair_and_later_commits_remain_audited(tmp_path):
     git("commit", "--allow-empty", "-m", "Later unsigned contribution")
     failed = audit(baseline)
     assert failed.returncode != 0 and git("rev-parse", "HEAD") in failed.stderr
+
+
+@pytest.mark.parametrize(
+    ("new_branch", "signed", "anchored"),
+    [
+        (True, True, True),
+        (True, False, True),
+        (False, True, True),
+        (False, False, True),
+        (True, True, False),
+    ],
+)
+def test_workflow_audits_branch_creation_without_exempting_contributions(
+    tmp_path, new_branch, signed, anchored
+):
+    root = Path(__file__).parents[1]
+    workflow = yaml.load(
+        (root / ".github/workflows/ci.yml").read_text(), Loader=yaml.BaseLoader
+    )
+    step = next(
+        step
+        for step in workflow["jobs"]["quality"]["steps"]
+        if step.get("name") == "Check DCO declarations for new contributions"
+    )
+
+    def git(*args):
+        return subprocess.check_output(
+            [
+                "git",
+                "-c",
+                "user.name=Ada",
+                "-c",
+                "user.email=ada@example.test",
+                "-c",
+                "commit.gpgsign=false",
+                "-c",
+                f"core.hooksPath={tmp_path / 'no-hooks'}",
+                *args,
+            ],
+            cwd=tmp_path,
+            text=True,
+            timeout=10,
+        ).strip()
+
+    git("init")
+    git("commit", "--allow-empty", "-m", "Audited baseline", "-s")
+    baseline = git("rev-parse", "HEAD")
+    if not anchored:
+        git("checkout", "--orphan", "unrelated")
+    git("commit", "--allow-empty", "-m", "Contribution", *(["-s"] if signed else []))
+    head = git("rev-parse", "HEAD")
+    # Execute the workflow's actual range selection and unchanged DCO validator;
+    # only replace uv's environment launcher with the current test interpreter.
+    result = subprocess.run(
+        [
+            "bash",
+            "-e",
+            "-c",
+            'uv() { shift 4; "$DCO_TEST_PYTHON" "$DCO_TEST_SCRIPT" "$@"; }\n'
+            + step["run"],
+        ],
+        cwd=tmp_path,
+        text=True,
+        capture_output=True,
+        timeout=10,
+        env={
+            **os.environ,
+            "DCO_BASE": "0" * 40 if new_branch else baseline,
+            "DCO_HEAD": head,
+            "DCO_AUDIT_BASE": baseline,
+            "DCO_TEST_PYTHON": sys.executable,
+            "DCO_TEST_SCRIPT": str(root / "scripts/check_dco.py"),
+        },
+    )
+    assert (result.returncode == 0) is (signed and anchored), result.stderr
+    if anchored and not signed:
+        assert "Missing DCO sign-off for: " + head in result.stderr
