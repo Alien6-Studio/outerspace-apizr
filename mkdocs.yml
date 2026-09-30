@@ -93,6 +93,7 @@ nav:
   - Home: index.md
   - Getting started:
       - Install Apizr: getting-started/install.md
+      - Initialize and diagnose (development): getting-started/onboarding.md
       - Quickstart: getting-started/quickstart.md
       - The full journey: getting-started/introduction.md
   - Guides:

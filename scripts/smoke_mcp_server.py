@@ -254,6 +254,35 @@ def prepare(root: Path, python: str) -> dict:
         ],
         root,
     )
+    doctor_before = (snapshot(root / "core"), snapshot(store), snapshot(project.parent))
+    doctor_report = json.loads(
+        run(
+            [
+                root / "core/bin/python",
+                "-I",
+                "-B",
+                REPO / "scripts/doctor_readonly_proof.py",
+                "--project",
+                project,
+                "--operator-policy",
+                authority,
+                "--profile",
+                "mcp",
+                "--plugins-dir",
+                store,
+            ],
+            root,
+        )
+    )
+    assert not any(c["status"] == "fail" for c in doctor_report["doctor"]["checks"]), (
+        doctor_report
+    )
+    assert doctor_before == (
+        snapshot(root / "core"),
+        snapshot(store),
+        snapshot(project.parent),
+    )
+    (root / "doctor-mcp.json").write_text(json.dumps(doctor_report, indent=2) + "\n")
     # Source refusal is checked before launching the active MCP installation.
     denied = subprocess.run(
         [

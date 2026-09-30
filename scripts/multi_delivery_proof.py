@@ -180,6 +180,62 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
             )
         )
 
+        # Diagnose the actual disposable request before delivery starts. Its
+        # intentionally missing B key must be reported, without attempting any
+        # registry/TSA/tool effect or creating the evidence root.
+        doctor_project = project
+        if doctor_project is None:
+            doctor_root = work / (prefix + "-" + interface + "-doctor-project")
+            doctor_root.mkdir()
+            command([python, "-I", "-B", "-m", "apizr.cli", "init", doctor_root], work)
+            doctor_project = doctor_root / "apizr.toml"
+            selected = json.loads(policy.read_text())
+            selected["grants"] += json.loads(
+                (doctor_root / ".apizr/operator.json").read_text()
+            )["grants"]
+            policy.write_text(json.dumps(selected))
+        from smoke_extension_packaging import snapshot
+
+        before_doctor = (snapshot(store), snapshot(doctor_project.parent))
+        before_tsa = len(tsa_calls)
+        report = json.loads(
+            command(
+                [
+                    python,
+                    "-I",
+                    "-B",
+                    "/repo/scripts/doctor_readonly_proof.py",
+                    "--project",
+                    doctor_project,
+                    "--operator-policy",
+                    policy,
+                    "--profile",
+                    "delivery",
+                    "--plugins-dir",
+                    store,
+                    "--delivery-request",
+                    request,
+                ],
+                work,
+            )
+        )
+        failures = [
+            c["code"] for c in report["doctor"]["checks"] if c["status"] == "fail"
+        ]
+        assert failures == ["destination_2_references"], report
+        assert before_doctor == (snapshot(store), snapshot(doctor_project.parent))
+        assert len(tsa_calls) == before_tsa
+        assert not Path(json.loads(request.read_text())["evidence_root"]).exists()
+        report["tsa_requests"] = {"before": before_tsa, "after": len(tsa_calls)}
+        report["registry_requests"] = {
+            "before": 0,
+            "after": 0,
+            "proof": "No socket creation/connect/DNS or external process allowed by installed-interpreter audit; zero attempted network effects.",
+        }
+        (work / (prefix + "-" + interface + "-doctor.json")).write_text(
+            json.dumps(report, indent=2) + "\n"
+        )
+
         def invoke(
             mode,
             expected,

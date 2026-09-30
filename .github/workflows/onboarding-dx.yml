@@ -1,0 +1,57 @@
+name: Local developer experience
+
+on:
+  push:
+    branches: [feature/onboarding-dx]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  local-dx:
+    timeout-minutes: 20
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: '3.11'}
+          - {os: ubuntu-latest, python: '3.14'}
+          - {os: macos-latest, python: '3.11'}
+          - {os: macos-latest, python: '3.14'}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: ${{ matrix.python }}
+      - name: Real bash, zsh and fish prerequisites
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends bash zsh fish
+      - run: uv sync --locked
+      - name: Publication safety, read-only diagnostics and CLI grammar parity
+        env:
+          APIZR_REQUIRE_SHELLS: ${{ runner.os == 'Linux' && '1' || '' }}
+        run: >-
+          uv run --locked pytest tests/onboarding
+          --cov=apizr.onboarding --cov=apizr.onboarding_cli --cov=apizr.completion
+          --cov-report=term-missing --cov-report=json:onboarding-coverage.json
+          --junitxml=onboarding-tests.xml
+      - name: Installed wheel, real onboarding and shell adapters
+        run: >-
+          uv run --locked python scripts/onboarding_proof.py
+          --output "$RUNNER_TEMP/onboarding-proof"
+          ${{ runner.os == 'Linux' && '--require-shells' || '' }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: onboarding-${{ matrix.os }}-${{ matrix.python }}
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            onboarding-tests.xml
+            onboarding-coverage.json
+            ${{ runner.temp }}/onboarding-proof/onboarding-proof.json
+            ${{ runner.temp }}/onboarding-proof/apizr.*

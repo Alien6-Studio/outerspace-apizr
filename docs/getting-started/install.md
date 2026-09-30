@@ -23,6 +23,10 @@ apizr --version
 **Observe:** `outerspace-apizr 0.4.1`. Continue with the [Quickstart](quickstart.md)
 to generate and call your first MCP or REST service. No plugin or Docker is needed.
 
+For the unpublished `0.4.2rc1` development version, optional
+[local onboarding](onboarding.md) adds `apizr init` → `apizr doctor` before the
+Quickstart. These commands are not part of the published `0.4.1` installation above.
+
 With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.1` or
 `pipx install outerspace-apizr==0.4.1` is an alternative to the virtual environment
 above. Use the executable path reported by your tool.
