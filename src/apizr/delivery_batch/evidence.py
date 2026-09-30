@@ -22,7 +22,10 @@ class EvidenceError(Exception):
 
 def read(path: Path) -> bytes:
     raw = read_regular(path, MAX_EVIDENCE_BYTES)
-    json.loads(raw, object_pairs_hook=unique_object)
+    try:
+        json.loads(raw, object_pairs_hook=unique_object)
+    except (ValueError, RecursionError):
+        raise EvidenceError() from None
     return raw
 
 

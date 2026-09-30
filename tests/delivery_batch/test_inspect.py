@@ -78,6 +78,7 @@ def test_status_is_exact_retained_result_without_mutation(
         "order",
         "extra",
         "duplicate",
+        "deep",
         "oversized",
         "symlink",
         "directory",
@@ -109,6 +110,8 @@ def test_status_refuses_conflicting_or_redirected_evidence_without_mutation(
                 '"state": "failed"', '"state": "failed", "state": "failed"', 1
             )
         )
+    elif fault == "deep":
+        saved.write_text("[" * 2000 + "0" + "]" * 2000)
     elif fault == "oversized":
         saved.write_text("x" * 1048577)
     elif fault in {"symlink", "directory"}:
