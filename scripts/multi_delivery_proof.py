@@ -8,6 +8,12 @@ from pathlib import Path
 from operator_policy_proof import installed_identity
 
 
+def registry_request_count():
+    """Count real Zot HTTP completions; retain only counts in proof artifacts."""
+    with Path("/proof/registry-log/requests.jsonl").open() as stream:
+        return sum(json.loads(line).get("message") == "HTTP API" for line in stream)
+
+
 def exercise(
     python,
     store,
@@ -198,6 +204,8 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
 
         before_doctor = (snapshot(store), snapshot(doctor_project.parent))
         before_tsa = len(tsa_calls)
+        before_registry = registry_request_count()
+        assert before_registry > 0, "registry request observation must be active"
         report = json.loads(
             command(
                 [
@@ -225,12 +233,13 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
         assert failures == ["destination_2_references"], report
         assert before_doctor == (snapshot(store), snapshot(doctor_project.parent))
         assert len(tsa_calls) == before_tsa
+        after_registry = registry_request_count()
+        assert after_registry == before_registry
         assert not Path(json.loads(request.read_text())["evidence_root"]).exists()
         report["tsa_requests"] = {"before": before_tsa, "after": len(tsa_calls)}
         report["registry_requests"] = {
-            "before": 0,
-            "after": 0,
-            "proof": "No socket creation/connect/DNS or external process allowed by installed-interpreter audit; zero attempted network effects.",
+            "before": before_registry,
+            "after": after_registry,
         }
         (work / (prefix + "-" + interface + "-doctor.json")).write_text(
             json.dumps(report, indent=2) + "\n"
