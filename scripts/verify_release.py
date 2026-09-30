@@ -30,11 +30,13 @@ def qualification_branch(version: str) -> str:
         return "master"  # Historical evidence retains its original identity.
     if re.fullmatch(r"0\.4\.1(?:rc[1-9]\d*)?", version):
         return "release/0.4.1"
+    if version in {"0.4.2rc1", "0.4.2"}:
+        return "release/0.4.2"
     raise ValueError("No authorized qualification branch for this version")
 
 
 def validate_run(run: dict, sha: str, workflow: str, branch: str = "master") -> None:
-    if branch not in {"master", "release/0.4.1"}:
+    if branch not in {"master", "release/0.4.1", "release/0.4.2"}:
         raise ValueError("Unexpected qualification branch")
     expected = {
         "head_sha": sha,

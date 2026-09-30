@@ -80,7 +80,7 @@ def test_stale_newer_or_mixed_deployment_is_not_success(site, tls, change):
         if name == "build-info.json" and change != "content":
             marker = json.loads(data)
             if change == "status":
-                marker["status"] = "unreleased"
+                marker["status"] = "stable"
             else:
                 marker["source_commit"] = ("a" if change == "older" else "b") * 40
             return json.dumps(marker).encode()
@@ -172,8 +172,8 @@ def test_marker_uses_source_commit_and_fingerprints(site):
             ["git", "rev-parse", "HEAD"], cwd=SCRIPTS, text=True
         ).strip()
     )
-    assert marker["status"] == "stable"
-    assert marker["target_version"] == "0.4.1"
+    assert marker["status"] == "unreleased"
+    assert marker["target_version"] == "0.4.2rc1"
     assert marker["stable_release"] == "0.4.1"
     assert (
         marker["files"]["index.html"]
@@ -184,12 +184,12 @@ def test_marker_uses_source_commit_and_fingerprints(site):
 @pytest.mark.parametrize(
     ("field", "value"),
     [
-        ("status", "unreleased"),
+        ("status", "stable"),
         ("stable_release", "0.3.0"),
         ("target_version", "0.4.0"),
     ],
 )
-def test_prepublication_marker_is_rejected(site, field, value):
+def test_inconsistent_development_marker_is_rejected(site, field, value):
     path = site / "build-info.json"
     marker = json.loads(path.read_text())
     marker[field] = value

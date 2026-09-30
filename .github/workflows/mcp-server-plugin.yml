@@ -29,7 +29,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: uv sync --locked
       - name: Separate plugin branch coverage
-        run: uv run --locked pytest tests/test_mcp_cli.py tests/mcp_plugin --cov=apizr_mcp --cov-report=term-missing --cov-report=json:mcp-coverage.json --junitxml=mcp-tests.xml
+        run: uv run --locked pytest tests/test_mcp_cli.py tests/test_mcp_session.py tests/mcp_plugin --cov=apizr_mcp --cov-report=term-missing --cov-report=json:mcp-coverage.json --junitxml=mcp-tests.xml
       - name: Installed core, plugin and official stdio client
         run: uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-proof"
       - name: Catalog profiles and separate closures without network access

@@ -487,9 +487,9 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
         run: |
           flags=()
-          # Master and the new development line are verification builds.
-          # Publication remains bound to the original qualified source.
-          if test "$EVENT_NAME" = pull_request || test "$GITHUB_REF" != refs/heads/release/0.4.1; then
+          # PRs and master remain previews; protected release-line pushes
+          # retain qualified artifacts without publishing them.
+          if test "$EVENT_NAME" = pull_request || test "$GITHUB_REF" != refs/heads/release/0.4.2; then
             flags+=(--preview)
           fi
           python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${flags[@]}"

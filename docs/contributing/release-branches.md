@@ -29,10 +29,14 @@ The maintainer authorized replacement of the old release branch with
 commits, provenance and archives remain unchanged. Rule set 24138072 transfers
 the same PR, signature and required-check protections to the new line.
 
-CI, Security and Documentation validate pushes to `release/0.4.2`. These are
-verification builds of the inherited baseline, not 0.4.2 release candidates.
-Package versions remain 0.4.1 until explicitly updated; the publisher still
-rejects unapproved 0.4.2 versions and refs. Documentation deployment remains
+CI, Security and Documentation validate pushes to `release/0.4.2`. The first functional increment
+sets all four packages and exact internal pins to **0.4.2rc1, development and
+unpublished**. Future qualification accepts only `0.4.2rc1` or `0.4.2` from
+protected `release/0.4.2`, with exact successful push CI, Security and Documentation
+for the same source SHA and repository. Master, other release lines, feature
+branches, PR runs, unprotected sources and newer failed runs are refused.
+Historical 0.4.1 qualification remains available. Feature/PR artifacts are previews;
+no tag or publication is authorized by this increment. Documentation deployment remains
 restricted to `master`.
 
 The historical coordinated **0.4.0rc1** was a prerelease. The earlier core-only

@@ -3,11 +3,11 @@
 import hashlib
 import json
 import os
-import stat
 from pathlib import Path
 
 from pydantic import BaseModel
 
+from apizr.config_files import read_regular
 from apizr.extension_runtime.protocol import unique_object
 from apizr.local_plugins.store import atomic_write, private_directory
 
@@ -21,13 +21,7 @@ class EvidenceError(Exception):
 
 
 def read(path: Path) -> bytes:
-    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
-    with os.fdopen(descriptor, "rb") as stream:
-        if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
-            raise EvidenceError()
-        raw = stream.read(MAX_EVIDENCE_BYTES + 1)
-    if len(raw) > MAX_EVIDENCE_BYTES:
-        raise EvidenceError()
+    raw = read_regular(path, MAX_EVIDENCE_BYTES)
     json.loads(raw, object_pairs_hook=unique_object)
     return raw
 

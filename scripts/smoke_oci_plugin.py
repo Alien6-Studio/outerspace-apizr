@@ -368,7 +368,7 @@ def main():
         "enable",
         "outerspace-apizr-oci",
         "--version",
-        "0.4.1",
+        "0.4.2rc1",
         "--plugins-dir",
         store,
     )
@@ -561,6 +561,10 @@ def main():
             results.append(result)
         service_images = [item["result"]["tag"] for item in results]
         registry_proof = os.environ.get("APIZR_REGISTRY_PROOF") == "1"
+        shutil.rmtree(work / "git-proof")
+        assert not (work / "git-proof").exists()
+        if application_bundles is not None:
+            shutil.rmtree(application_bundles)
         if registry_proof:
             from smoke_oci_push import exercise as publish
 
@@ -573,7 +577,7 @@ def main():
                 attest_delivery(python, store, work, results, command, environment)
                 if os.environ.get("APIZR_ARTIFACT_PROOF") == "1":
                     batch = json.loads(
-                        (work / "multi-delivery-results.json").read_bytes()
+                        (work / "mcp-delivery-results.json").read_bytes()
                     )
                     service_images = [
                         item["recovered"]["outcomes"][0]["transfer"]["digest_reference"]
@@ -598,10 +602,6 @@ def main():
 
             images = service_images
             docker_flags[:] = [docker, "--host", "unix:///proof/consumer.sock"]
-        shutil.rmtree(work / "git-proof")
-        assert not (work / "git-proof").exists()
-        if application_bundles is not None:
-            shutil.rmtree(application_bundles)
         # REST can be called after both source and bundle have gone.
         container = engine(
             "run",
