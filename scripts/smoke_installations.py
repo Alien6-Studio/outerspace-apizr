@@ -148,7 +148,7 @@ def main():
             '{"selection":{"include":["python:sample:add"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}'
         )
         authority = write_analysis_policy(root / "operator-local.json", source)
-        for extra in ("base", "notebook", "http", "mcp", "legacy"):
+        for extra in ("base", "clients", "notebook", "http", "mcp", "legacy"):
             env = root / ("env-" + extra)
             subprocess.run(
                 ["uv", "venv", "--python", args.python, str(env)],
@@ -297,6 +297,31 @@ print("PASS documented compiler API: base wheel, outside checkout, exact CLI par
                 assert (
                     "[legacy]" in missing.stderr and "Traceback" not in missing.stderr
                 )
+            elif extra == "clients":
+                probe(
+                    "import yaml; from apizr.client_collections import plan_client_collection; from importlib.util import find_spec; assert find_spec('mcp') is None; assert find_spec('fastapi') is None"
+                )
+                for format in ("postman", "bruno", "insomnia"):
+                    command(
+                        "clients",
+                        "export",
+                        "--bundle",
+                        root / "base-rest",
+                        "--format",
+                        format,
+                        "--output-dir",
+                        root / ("clients-" + format),
+                    )
+                    command(
+                        "clients",
+                        "sync",
+                        "--bundle",
+                        root / "base-rest",
+                        "--format",
+                        format,
+                        "--output-dir",
+                        root / ("clients-" + format),
+                    )
             elif extra == "notebook":
                 command("inspect", notebook, "--ir")
                 command(

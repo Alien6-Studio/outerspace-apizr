@@ -2,13 +2,15 @@
 
 ## 0.4.2rc1 — development, unpublished
 
+- Generate deterministic current-native Postman, Bruno and Insomnia collections
+  from verified REST bundles, with safe local regeneration of owned trees.
 - Add opt-in MCP status/run/resume over an operator-selected existing delivery
   request, using the existing coordinator, captured policy and plugin store.
 - Preserve the three default read-only tools and isolate per-operation authority.
 - Advertise the installed MCP package version; coordinate all four packages and
   exact internal pins at 0.4.2rc1 for development validation.
 
-Postman/Bruno/Insomnia, GitHub/GitLab integrations, init, doctor, completion,
+GitHub/GitLab integrations, init, doctor, completion,
 Homebrew and source-to-build MCP orchestration remain future work.
 
 ## 0.4.1 — 2026-09-29

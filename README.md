@@ -75,6 +75,10 @@ for their guarantees and limits.
 ## Existing workflows and limits
 
 Single-source `inspect`, `generate rest/mcp` and `execute` remain supported.
+The unpublished 0.4.2rc1 development line also exports verified REST bundles to
+[Postman, Bruno and Insomnia collections](docs/getting-started/user-guide/client-collections.md),
+with deterministic files and safe local regeneration.
+
 The [historical pipeline](https://apizr.outerspace.sh/getting-started/user-guide/apizr/)
 is a separate compatibility path. See
 [the full journey](https://apizr.outerspace.sh/getting-started/introduction/#compatibility-and-limits)

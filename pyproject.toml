@@ -22,6 +22,7 @@ authors = [
 dependencies = ["pydantic>=2.12,<3"]
 
 [project.optional-dependencies]
+clients = ["PyYAML>=6.0.2,<7"]
 notebook = [
   "nbconvert>=7.17.1,<8",
   "ipython>=9,<10",
@@ -83,6 +84,7 @@ dev = [
     "hypothesis>=6.140,<7",
     "mcp>=2.2,<3",
     "pytest-timeout>=2.4,<3",
+    "jsonschema>=4.23,<5",
 ]
 security = ["pip-audit>=2.9,<3"]
 docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5,<10", "plantuml-markdown>=3.10,<4"]
