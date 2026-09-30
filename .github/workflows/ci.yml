@@ -435,7 +435,7 @@ jobs:
           subject-path: |
             dist/*
             attestations/ci-evidence.tar.gz
-      - uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3
+      - uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
         id: sbom
         with:
           subject-path: dist/outerspace_apizr-*
