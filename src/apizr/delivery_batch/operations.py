@@ -1,6 +1,7 @@
 """Sequential managed delivery: independent effects, explicit retained progress."""
 
 import os
+import time
 from pathlib import Path
 from threading import Event
 from typing import Any, TypeVar
@@ -15,8 +16,14 @@ from apizr.delivery_results import (
     PublishResult,
     PushResult,
 )
-from apizr.extension_runtime import ExtensionError, InvocationCancelled, Limits
+from apizr.extension_runtime import (
+    CleanupFailed,
+    ExtensionError,
+    InvocationCancelled,
+    Limits,
+)
 from apizr.local_plugins import PluginError, run_extension
+from apizr.local_plugins.control import InstallationCancelled, InstallControl
 from apizr.local_plugins.store import installation_lock, private_directory
 from apizr.operator_policy import AuthorizationDenied, OperatorPolicy
 from apizr.publication_contracts import (
@@ -66,6 +73,55 @@ def _aggregate(
             outcomes=tuple(outcomes),
         ).model_dump_json(by_alias=True)
     )
+
+
+def _initial(request: BatchRequest) -> BatchResult:
+    return _aggregate(
+        request,
+        [
+            DestinationOutcome(destination=d.push.destination)
+            for d in request.destinations
+        ],
+    )
+
+
+def _retained(initial: BatchResult, saved: Path) -> BatchResult:
+    previous = BatchResult.model_validate_json(evidence.read(saved), strict=True)
+    if (
+        previous.build,
+        previous.delivery_manifest_digest,
+        previous.proof_requirement,
+        tuple(o.destination for o in previous.outcomes),
+    ) != (
+        initial.build,
+        initial.delivery_manifest_digest,
+        initial.proof_requirement,
+        tuple(o.destination for o in initial.outcomes),
+    ):
+        raise evidence.EvidenceError()
+    return previous
+
+
+def inspect_batch(request: BatchRequest) -> BatchResult:
+    """Inspect retained local evidence only; never create, lock, invoke or observe.
+
+    The existing aggregate contract represents an unstarted batch as ``failed``
+    with every outcome ``not_started`` and no diagnostic or pending operation.
+    """
+    try:
+        request = BatchRequest.model_validate_json(
+            request.model_dump_json(by_alias=True), strict=True
+        )
+        root = Path(request.evidence_root)
+        if root.resolve() != root.absolute():
+            raise evidence.EvidenceError()
+        initial = _initial(request)
+        try:
+            return _retained(initial, root / "batch.json")
+        except FileNotFoundError:
+            return initial
+    except (evidence.EvidenceError, ValueError, TypeError, OSError, PluginError):
+        raise BatchError("batch_evidence_or_request_invalid") from None
 
 
 class Coordinator:
@@ -423,36 +479,24 @@ def deliver_batch(
         if root.resolve() != root.absolute():
             raise evidence.EvidenceError()
         private_directory(root)
-        with installation_lock(root):
-            outcomes = [
-                DestinationOutcome(destination=d.push.destination)
-                for d in request.destinations
-            ]
-            initial = _aggregate(request, outcomes)
+        cancellation = cancel or Event()
+        with installation_lock(
+            root, control=InstallControl(time.monotonic() + 30, cancellation)
+        ):
+            initial = _initial(request)
+            outcomes = list(initial.outcomes)
             saved = root / "batch.json"
             if os.path.lexists(saved):
                 if not resume:
                     raise evidence.EvidenceError()
-                previous = BatchResult.model_validate_json(evidence.read(saved))
-                if (
-                    previous.build,
-                    previous.delivery_manifest_digest,
-                    previous.proof_requirement,
-                    tuple(o.destination for o in previous.outcomes),
-                ) != (
-                    initial.build,
-                    initial.delivery_manifest_digest,
-                    initial.proof_requirement,
-                    tuple(o.destination for o in initial.outcomes),
-                ):
-                    raise evidence.EvidenceError()
+                previous = _retained(initial, saved)
                 outcomes = list(previous.outcomes)
             elif resume:
                 raise evidence.EvidenceError()
             evidence.write_once(root / "build.json", request.build)
             evidence.checkpoint(root, _aggregate(request, outcomes))
             runner = Coordinator(
-                request, root, outcomes, directory, operator_policy, cancel or Event()
+                request, root, outcomes, directory, operator_policy, cancellation
             )
             for index, destination in enumerate(request.destinations):
                 runner.index = index
@@ -462,6 +506,15 @@ def deliver_batch(
                     runner.deliver(destination)
                 except AuthorizationDenied:
                     runner.refuse("authorization_refused")
+                except CleanupFailed:
+                    # An unaccounted native child is fatal, never a reason to
+                    # advance to another destination or accept another tool call.
+                    runner.cancel.set()
+                    try:
+                        runner.refuse("cancelled", uncertain=runner.started)
+                        evidence.checkpoint(root, _aggregate(request, outcomes, True))
+                    finally:
+                        raise CleanupFailed() from None
                 except (InvocationCancelled, KeyboardInterrupt):
                     runner.cancel.set()
                     runner.refuse(
@@ -493,5 +546,7 @@ def deliver_batch(
             result = _aggregate(request, outcomes, runner.cancel.is_set())
             evidence.checkpoint(root, result)
             return result
+    except InstallationCancelled:
+        return _aggregate(request, list(inspect_batch(request).outcomes), True)
     except (evidence.EvidenceError, ValueError, TypeError, OSError, PluginError):
         raise BatchError("batch_evidence_or_request_invalid") from None

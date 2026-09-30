@@ -7,7 +7,7 @@ from .models import (
     DestinationOutcome,
     ProofInputs,
 )
-from .operations import BatchError, deliver_batch
+from .operations import BatchError, deliver_batch, inspect_batch
 
 __all__ = [
     "BatchRequest",
@@ -17,4 +17,5 @@ __all__ = [
     "ProofInputs",
     "BatchError",
     "deliver_batch",
+    "inspect_batch",
 ]

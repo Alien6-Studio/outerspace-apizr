@@ -3,6 +3,8 @@
 import json
 import os
 import stat
+import sys
+import time
 from collections.abc import Generator
 from contextlib import ExitStack, contextmanager
 from pathlib import Path
@@ -16,6 +18,7 @@ from apizr.capabilities.types import ValueModel
 from apizr.extension_runtime import (
     CleanupFailed,
     InvalidInvocation,
+    InvocationCancelled,
     Limits,
     PrerequisiteMissing,
     Response,
@@ -25,7 +28,7 @@ from apizr.extension_runtime import (
 from apizr.extension_runtime.protocol import unique_object
 
 from . import retirement, store, usage
-from .control import InstallControl
+from .control import InstallationCancelled, InstallControl
 from .models import Installation, Inventory, PluginError, canonical_name
 
 if TYPE_CHECKING:
@@ -232,7 +235,11 @@ def run_extension(
     except (ValueError, TypeError, RecursionError):
         raise InvalidInvocation() from None
     try:
-        with admitted_extension(name, directory=directory) as (record, usage_fd):
+        with admitted_extension(
+            name,
+            directory=directory,
+            control=InstallControl(time.monotonic() + 30, cancel),
+        ) as (record, usage_fd):
             decision = decide(operator_policy, record, operation, snapshot)
             if not decision.allowed:
                 raise AuthorizationDenied(decision.code)
@@ -246,22 +253,53 @@ def run_extension(
                 cancel=cancel,
                 usage_fd=usage_fd,
             )
+    except InstallationCancelled:
+        raise InvocationCancelled() from None
     except OSError:
         raise PluginError("activation_unavailable") from None
 
 
 @contextmanager
 def admitted_extension(
-    name: str, *, directory: Path | None = None, inherit: bool = False
+    name: str,
+    *,
+    directory: Path | None = None,
+    inherit: bool = False,
+    control: InstallControl | None = None,
 ) -> Generator[tuple[Installation, int]]:
     """Resolve and protect atomically; exec launchers may inherit the lease FD."""
     name = _name(name)
-    root = store.storage_directory(directory)
+    runtime = Path(sys.prefix).resolve()
+    nested_mcp = (
+        directory is not None
+        and directory.resolve() / "environments" == runtime.parent.parent
+        and runtime.name == "venv"
+    )
+    # Only invocation may read the containing store from an installed MCP
+    # environment. Installation/update/removal retain the ordinary overlap gate.
+    root = store.resolve_storage_directory(
+        directory, invocation_runtime=runtime if nested_mcp else None
+    )
     if not root.exists():
         raise PluginError("plugin_not_installed")
     with ExitStack() as stack:
-        with store.installation_lock(root, create=False):
+        with store.installation_lock(root, create=False, control=control):
             inventory, state = store.read_inventory(root), _read(root)
+            if nested_mcp:
+                caller = next(
+                    (
+                        r
+                        for r in state.activations
+                        if r.name in {"outerspace-apizr-mcp", "apizr-mcp"}
+                        and r.module == "apizr_mcp"
+                        and Path(r.python).parent.parent == runtime
+                    ),
+                    None,
+                )
+                if caller is None:
+                    raise PluginError("plugin_inactive")
+                _validate_binding(caller, inventory)
+                _interpreter(caller, root)
             if not any(item.name == name for item in inventory.installations):
                 raise PluginError("plugin_not_installed")
             record = next((r for r in state.activations if r.name == name), None)

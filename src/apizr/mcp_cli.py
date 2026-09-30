@@ -14,6 +14,8 @@ from apizr.extension_runtime import ExtensionError
 from apizr.local_plugins import PluginError
 from apizr.local_plugins.activation import admitted_extension
 from apizr.local_plugins.models import Installation
+from apizr.local_plugins.store import storage_directory
+from apizr.mcp_session import DeliverySession, McpSession, load_delivery_request
 from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.user_config import plugins_directory
 
@@ -45,10 +47,11 @@ def main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(prog="apizr mcp")
     commands = parser.add_subparsers(dest="command", required=True)
     serve = commands.add_parser(
-        "serve", help="Serve local read-only analysis over stdio"
+        "serve", help="Serve local analysis and explicitly selected delivery over stdio"
     )
     serve.add_argument("--project", type=Path, required=True)
     serve.add_argument("--operator-policy", type=Path)
+    serve.add_argument("--delivery-request", type=Path)
     serve.add_argument("--plugins-dir", type=Path)
     serve.add_argument("--user-config", type=Path)
     serve.add_argument("--timeout-ms", type=int, default=10000)
@@ -58,14 +61,30 @@ def main(argv: Sequence[str]) -> int:
     try:
         if not args.project.is_absolute():
             raise PluginError("absolute_project_required")
+        if args.delivery_request is not None and args.operator_policy is None:
+            print("apizr mcp: delivery_policy_required", file=sys.stderr)
+            return 2
         authority = (
             load_operator_policy(args.operator_policy) if args.operator_policy else None
         )
         scope = load_scope(args.project, authority)
         raw = scope.model_dump_json().encode()
+        directory = plugins_directory(args.plugins_dir, args.user_config)
+        if args.delivery_request is not None:
+            request = load_delivery_request(args.delivery_request)
+            directory = storage_directory(directory)
+            raw = (
+                McpSession(
+                    analysis=scope,
+                    delivery=DeliverySession(
+                        request=request, plugins_dir=str(directory)
+                    ),
+                )
+                .model_dump_json(by_alias=True)
+                .encode()
+            )
         if len(raw) > MAX_SESSION_BYTES:
             raise ValueError("session_too_large")
-        directory = plugins_directory(args.plugins_dir, args.user_config)
         with (
             tempfile.TemporaryFile() as session,
             _admitted_mcp(directory) as (
@@ -103,8 +122,16 @@ def main(argv: Sequence[str]) -> int:
             )
     except AuthorizationDenied as error:
         print(error.decision.model_dump_json(by_alias=True), file=sys.stderr)
-    except ValueError:
-        print("apizr mcp: invalid_analysis_configuration", file=sys.stderr)
+    except (ValueError, RecursionError):
+        print(
+            "apizr mcp: "
+            + (
+                "invalid_delivery_configuration"
+                if args.delivery_request is not None
+                else "invalid_analysis_configuration"
+            ),
+            file=sys.stderr,
+        )
     except (PluginError, ExtensionError) as error:
         print(f"apizr mcp: {error}", file=sys.stderr)
     except OSError:

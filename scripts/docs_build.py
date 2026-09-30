@@ -49,8 +49,8 @@ def on_config(config):
         "schema": "apizr.docs-build/v1",
         "source_commit": commit,
         "source_dirty": dirty,
-        "status": "stable",
-        "target_version": "0.4.1",
+        "status": "unreleased",
+        "target_version": "0.4.2rc1",
         "stable_release": "0.4.1",
     }
     return config

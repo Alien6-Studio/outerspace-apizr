@@ -168,7 +168,7 @@ def main():
         "enable",
         "outerspace-apizr-attest",
         "--version",
-        "0.4.1",
+        "0.4.2rc1",
         "--plugins-dir",
         store,
     )

@@ -2,9 +2,11 @@
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
-The optional **outerspace-apizr-mcp** plugin exposes read-only local analysis and planning
-through stdio. It does not generate bundles, execute business functions, acquire
-Git sources, install plugins or publish artifacts. A **generated business MCP
+The optional **outerspace-apizr-mcp** plugin exposes local analysis and planning
+through stdio. **Default mode remains read-only, with exactly three tools.**
+The unpublished **0.4.2rc1 development version** adds delivery only when the
+operator supplies `--delivery-request` at startup. It does not generate bundles,
+build images, execute business functions, acquire Git sources or install plugins. A **generated business MCP
 server** exposes the capabilities you selected; this server exposes Apizr's
 compiler operations. They are different applications.
 
@@ -30,7 +32,7 @@ dependencies. Installation by Apizr uses only the reviewed local wheelhouse.
 The SDK and a copy of the compiler belong to the plugin's separate environment;
 the minimal core receives neither MCP nor REST dependencies.
 
-From the source checkout:
+For unpublished 0.4.2rc1 development, from the source checkout:
 
 ```sh
 work=$(mktemp -d)
@@ -47,7 +49,7 @@ prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
   -r dependencies.txt
 uv venv --no-python-downloads --python python3 core
 uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.1-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.2rc1-py3-none-any.whl
 ```
 
 Record one exact version and SHA-256 per distribution, including the plugin,
@@ -71,11 +73,11 @@ for wheel in sorted(Path("wheels").glob("*.whl")):
     lines.append(f"{metadata['Name']}=={metadata['Version']} --hash=sha256:{digest}\n")
 Path("plugin.lock").write_text("".join(lines))
 PY
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.1-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.1-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.2rc1-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.2rc1-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.1 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.2rc1 --plugins-dir "$work/plugins"
 ```
 
 Installation alone leaves the plugin inactive. The existing [locked installation
@@ -155,7 +157,7 @@ Start with absolute paths:
   --plugins-dir "$work/plugins"
 ```
 
-Without `--plugins-dir`, the existing default plugin store applies. The core
+Without `--plugins-dir`, the existing `--user-config` selection or default plugin store applies. The resolved selection is captured once at startup. The core
 validates the active installation and replaces itself with that environment's
 interpreter and the registered `apizr_mcp` module. It passes an empty environment,
 uses isolated Python, and reserves stdout for MCP. Diagnostics use stderr.
@@ -191,9 +193,80 @@ Errors have `isError: true` and structured `error.code`/`error.diagnostics`:
 `scope_changed`, `repository_changed`, and redacted runtime/operational codes.
 No internal traceback or raw subprocess diagnostic is returned. Strict tool
 schemas reject client-supplied roots, policy paths, executables or startup limits.
-Tool descriptions and read-only annotations are fixed; repository text remains
+The three analysis tool descriptions and read-only annotations are fixed; repository text remains
 data and cannot create tools or replace server instructions. Annotations alone
 are not an authorization boundary.
+
+## Explicit delivery mode (0.4.2rc1 development, unpublished)
+
+The default launch remains:
+
+```sh
+apizr mcp serve \
+  --project /absolute/project/apizr.toml \
+  --operator-policy /absolute/operator.json
+```
+
+It exposes only analysis, readiness and exposure planning, even when delivery
+plugins and delivery grants already exist. To enable delivery, the operator
+selects one existing [BatchRequest](multi-destination-delivery.md) containing a
+qualified build and its explicit destinations:
+
+```sh
+apizr mcp serve \
+  --project /absolute/project/apizr.toml \
+  --operator-policy /absolute/operator.json \
+  --delivery-request /absolute/delivery.json \
+  --plugins-dir /absolute/plugins
+```
+
+The launcher reads the request once: an absolute regular file, at most 512 KiB,
+with no symlink traversal or duplicate JSON keys. Existing strict `BatchRequest`
+validation binds the shared build, proof requirement and ordered unique destinations.
+A private inherited descriptor carries the frozen request, policy and plugin-store
+selection. Restart to select different values; editing their files does not change
+an active session. Delivery authority is not included in analysis worker jobs.
+
+| Additional tool | Exact accepted arguments | Result and effects |
+| --- | --- | --- |
+| `apizr_delivery_status` | `{}` | Existing `BatchResult`, local evidence only; no directory creation, plugin invocation or network |
+| `apizr_delivery_run` | Required `expected_delivery_manifest_digest` | Existing coordinator starts the captured request; retained evidence prevents a silent restart |
+| `apizr_delivery_resume` | Required `expected_delivery_manifest_digest` | Existing coordinator resumes retained progress and verifies remote state; missing evidence is refused |
+
+The confirmation is the existing digest object:
+
+```json
+{"expected_delivery_manifest_digest":{"algorithm":"sha256","value":"<64 lowercase hexadecimal characters>"}}
+```
+
+All three schemas forbid extra fields. Run/resume require the confirmation to
+match the digest returned by status before any coordinator call. The client
+cannot submit destinations, credentials, keys, plugin paths, evidence roots,
+recovery selections, requests or authority. Each underlying managed operation
+still requires its exact existing operator grant, plugin identity and repository.
+MCP creates no permission or grant; annotations grant no authority.
+
+Status returns the exact retained complete/partial result. Without evidence,
+all destination outcomes are `not_started`; the existing aggregate schema uses
+`state: failed` until a destination completes. This is a successful status call,
+with `isError: false`, and creates no evidence. Run/resume likewise return typed
+`complete`, `partial`, `failed` or `cancelled` business results with `isError: false`.
+They reuse the 0.4.1 `deliver_batch` coordinator and do not rebuild, regenerate,
+resolve dependencies or blindly re-sign completed destinations.
+
+Status is annotated read-only, idempotent and closed-world. Run/resume are
+annotated effectful, non-idempotent and open-world; all three use
+`destructiveHint: false` because they do not delete remote state. Run/resume may
+write local evidence and remote images, proofs and destination tags. No automatic
+retries or rollback are added. Cancellation preserves confirmed progress and
+uncertainty for in-flight mutations, stops later destinations and waits for native
+cleanup. Unconfirmed cleanup produces `cleanup_unconfirmed` and ends the session.
+
+Fixed refusals include `delivery_not_enabled`, `delivery_identity_changed`,
+`delivery_evidence_invalid`, `delivery_operation_failed`, `cleanup_unconfirmed`,
+`invalid_arguments`, `arguments_too_large`, `response_too_large` and `server_busy`.
+When delivery is not enabled its tools are absent and receive the normal
+unknown-tool refusal. No raw exception, operational path or secret is returned.
 
 ## Bounds and lifecycle
 
@@ -201,7 +274,7 @@ Startup-only options:
 
 | Option | Default | Accepted range |
 | --- | --- | --- |
-| `--timeout-ms` | 10,000 per calculation | 1–600,000 |
+| `--timeout-ms` | 10,000 per call | 1–600,000 |
 | `--max-request-bytes` | 65,536 per stdio line | 4,096–1,048,576 |
 | `--max-response-bytes` | 4,194,304 | 2,048–16,777,216 |
 
@@ -214,7 +287,7 @@ connection with a redacted stderr diagnostic such as `request_too_large`.
 Protocol writes have a five-second deadline. Scanner limits still apply; these
 bounds are not an operating-system memory quota or a sandbox.
 
-One calculation runs at a time. Overlapping calls get `server_busy`; discovery
+One call runs at a time across analysis and delivery tools. Overlapping calls get `server_busy`; discovery
 remains responsive. Timeout affects a calculation, not the connection lifetime.
 MCP cancellation, EOF, client disconnection and SIGINT/SIGTERM/SIGHUP cancel active
 work through the existing runtime and wait for pipe closure and child recovery.
@@ -224,7 +297,8 @@ remain outside its documented cleanup guarantees. No plugin or project code is
 imported by the core, and project code is not executed by analysis.
 
 There is no automatic `.env` load, inherited secret environment, HTTP/SSE server,
-OAuth, sampling, LLM call, telemetry, network acquisition or publication. Results
+OAuth, sampling, LLM call, telemetry or Git acquisition. Only explicitly enabled
+delivery can perform the selected registry and proof operations. Results
 may contain project names, docstrings and diagnostics: **the MCP client may send
 them to its model**. Local stdio alone does not guarantee confidentiality.
 
@@ -266,6 +340,15 @@ logs and separate plugin coverage. Linux repeats the installed proof with networ
 access removed by a disposable network namespace. These are development proofs,
 not tests of a graphical client. See the [release record](../releases/0.4.1.md)
 for publication status.
+
+Delivery qualification adds official SDK status/run/resume calls for both protocol
+revisions. `scripts/smoke_oci_registry.py --artifacts --output /absolute/new-proof`
+reuses the disposable authenticated HTTPS registry, TSA, Attest, ORAS and Docker
+fixture. It exercises complete delivery and A/C complete with B failed followed by
+B recovery, checks retained digests, upload/signature counts and zero new builds,
+and runs delivered REST/MCP services after original source and bundle removal.
+The installed lifecycle proof covers cancellation, EOF, disconnection and signals
+with a synchronized native worker and retained batch evidence.
 
 ## Qualification evidence
 
@@ -336,5 +419,7 @@ Device/inode pinning refuses root replacement; descriptor traversal prevents a
 pathname change redirecting analysis. Only explicitly chosen bounded configuration
 is read before admission. Policy/project edits require a restart: no dynamic
 revocation is promised. Clients cannot supply new roots, grants or operator paths.
-Exposure proposals remain selection policies, never source authority. Tools remain
-local stdio analysis/readiness/planning, with no Git, generation or delivery.
+Exposure proposals remain selection policies, never source authority. Default
+tools remain local stdio analysis/readiness/planning. Explicit delivery uses a
+separate captured session section; no Git acquisition, generation or build tool
+is exposed.

@@ -29,6 +29,14 @@ class PlanArguments(Arguments):
     policy: ExposurePolicy | None = None
 
 
+class DeliveryStatusArguments(StrictModel):
+    pass
+
+
+class DeliveryArguments(StrictModel):
+    expected_delivery_manifest_digest: Digest
+
+
 class ServerLimits(StrictModel):
     timeout_ms: int = Field(default=10000, ge=1, le=600000)
     max_request_bytes: int = Field(default=65536, ge=4096, le=1048576)

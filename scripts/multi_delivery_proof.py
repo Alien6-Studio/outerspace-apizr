@@ -8,15 +8,27 @@ from pathlib import Path
 from operator_policy_proof import installed_identity
 
 
-def exercise(python, store, work, builds, signing, command, environment, tsa_calls):
+def exercise(
+    python,
+    store,
+    work,
+    builds,
+    signing,
+    command,
+    environment,
+    tsa_calls,
+    *,
+    mcp_python=None,
+):
+    prefix = "mcp-batch" if mcp_python is not None else "batch"
     oras = Path("/opt/oras/oras")
     transport_tool = {
         "executable": str(oras),
         "version": "1.3.4",
         "sha256": hashlib.sha256(oras.read_bytes()).hexdigest(),
     }
-    trace = work / "batch-managed-calls.jsonl"
-    driver = work / "batch-driver.py"
+    trace = work / (prefix + "-managed-calls.jsonl")
+    driver = work / (prefix + "-driver.py")
     driver.write_text("""import json,sys
 from pathlib import Path
 from apizr.delivery_batch import operations
@@ -45,8 +57,8 @@ def tracked(name, operation, arguments, **kwargs):
 operations.run_extension=tracked
 raise SystemExit(main(sys.argv[2:]))
 """)
-    docker = work / "batch-docker"
-    docker_log = work / "batch-docker-calls.jsonl"
+    docker = work / (prefix + "-docker")
+    docker_log = work / (prefix + "-docker-calls.jsonl")
     docker.write_text(f"""#!/usr/bin/python3
 import json,os,sys
 from pathlib import Path
@@ -74,7 +86,7 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
             == 1
         )
         destinations, grants = [], []
-        broken_key = work / ("batch-" + interface + "-b.key")
+        broken_key = work / (prefix + "-" + interface + "-b.key")
         for scope in ("a", "b", "c"):
             repository = f"registry.test:5443/batch-{scope}/{interface}"
             auth = {
@@ -93,7 +105,8 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
                         "delivery_manifest",
                     )
                 },
-                "destination": repository + ":v1",
+                "destination": repository
+                + (":mcp-v1" if mcp_python is not None else ":v1"),
                 "docker": {
                     "executable": str(docker),
                     "socket": "/proof/builder.sock",
@@ -135,45 +148,95 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
                 if operation == "attest":
                     grant.update(sign | {"expected_signer": signing["expected_signer"]})
                 grants.append(grant)
-        policy = work / ("batch-" + interface + "-policy.json")
+        project = None
+        if mcp_python is not None:
+            project_root = work / (prefix + "-" + interface + "-project")
+            project_root.mkdir()
+            project = project_root / "apizr.toml"
+            project.write_text('schema_version="apizr.project/v1"\nroot="."\n')
+            grants.append(
+                {
+                    "adapter": "repository",
+                    "operation": "analyze",
+                    "target": {"kind": "local", "root": str(project_root)},
+                    "permissions": ["source.analyze"],
+                }
+            )
+        policy = work / (prefix + "-" + interface + "-policy.json")
         policy.write_text(
             json.dumps({"schema": "apizr.operator-policy/v1", "grants": grants})
         )
-        request = work / ("batch-" + interface + "-request.json")
+        request = work / (prefix + "-" + interface + "-request.json")
         request.write_text(
             json.dumps(
                 {
                     "schema": "apizr.delivery-batch-request/v1",
                     "build": build,
                     "destinations": destinations,
-                    "evidence_root": str(work / ("batch-" + interface + "-evidence")),
+                    "evidence_root": str(
+                        work / (prefix + "-" + interface + "-evidence")
+                    ),
                 }
             )
         )
 
-        def invoke(mode, expected, request=request, policy=policy):
-            reply = subprocess.run(
-                [
-                    str(python),
+        def invoke(
+            mode,
+            expected,
+            request=request,
+            policy=policy,
+            interface=interface,
+            project=project,
+        ):
+            invocation = [
+                str(python),
+                "-I",
+                "-B",
+                str(driver),
+                str(trace),
+                "delivery",
+                mode,
+                "--request",
+                str(request),
+                "--operator-policy",
+                str(policy),
+                "--plugins-dir",
+                str(store),
+            ]
+            if mcp_python is not None:
+                config = work / (prefix + "-" + interface + "-session.json")
+                config.write_text(
+                    json.dumps(
+                        {
+                            "cli": str(python.parent / "apizr"),
+                            "project": str(project),
+                            "policy": str(policy),
+                            "store": str(store),
+                            "request": str(request),
+                        }
+                    )
+                )
+                invocation = [
+                    str(mcp_python),
                     "-I",
                     "-B",
-                    str(driver),
-                    str(trace),
-                    "delivery",
+                    "/repo/scripts/mcp_delivery_client.py",
+                    "--config",
+                    str(config),
+                    "--operation",
                     mode,
-                    "--request",
-                    str(request),
-                    "--operator-policy",
-                    str(policy),
-                    "--plugins-dir",
-                    str(store),
-                ],
+                    "--expected-state",
+                    "partial" if expected else "complete",
+                    *(["--legacy"] if interface == "mcp" else []),
+                ]
+            reply = subprocess.run(
+                invocation,
                 env=environment,
                 cwd=work,
                 capture_output=True,
                 timeout=300,
             )
-            assert reply.returncode == expected, (
+            assert reply.returncode == (0 if mcp_python is not None else expected), (
                 reply.returncode,
                 reply.stdout,
                 reply.stderr,
@@ -182,6 +245,23 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
             assert result["state"] == ("partial" if expected else "complete"), result
             return result
 
+        if mcp_python is not None:
+            full = json.loads(request.read_text())
+            full["destinations"] = [full["destinations"][0]]
+            full["destinations"][0]["push"]["destination"] = (
+                full["destinations"][0]["push"]["destination"].rsplit(":", 1)[0]
+                + ":mcp-complete"
+            )
+            full["evidence_root"] = str(
+                work / (prefix + "-" + interface + "-full-evidence")
+            )
+            full_request = work / (prefix + "-" + interface + "-full-request.json")
+            full_request.write_text(json.dumps(full))
+            fully_delivered = invoke("run", 0, request=full_request)
+            assert fully_delivered["state"] == "complete"
+            (work / (prefix + "-" + interface + "-run-complete.json")).write_text(
+                json.dumps(fully_delivered, indent=2)
+            )
         started = len(tsa_calls)
         partial = invoke("run", 1)
         assert [o["state"] for o in partial["outcomes"]] == [
@@ -194,7 +274,9 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
         assert len(tsa_calls) - started == 2
         # B's transferred image is real; its destination has never been promoted.
         b = destinations[1]["push"]
-        auth_dir = work / (interface + "-b-auth")
+        auth_dir = work / (
+            (prefix + "-" if mcp_python is not None else "") + interface + "-b-auth"
+        )
         auth_dir.mkdir()
         (auth_dir / "config.json").write_bytes(
             Path(b["authentication"]["config_file"]).read_bytes()
@@ -235,16 +317,30 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
         # Correct only B's missing key, retaining the same request and grants.
         broken_key.write_bytes(Path(signing["key_file"]).read_bytes())
         broken_key.chmod(0o600)
-        calls_before_resume = len(trace.read_text().splitlines())
+        calls_before_resume = len(
+            (docker_log if mcp_python is not None else trace).read_text().splitlines()
+        )
         recovered = invoke("resume", 0)
         broken_key.unlink()
         assert len(tsa_calls) - started == 3
         resumed_calls = [
             json.loads(line)
-            for line in trace.read_text().splitlines()[calls_before_resume:]
+            for line in (docker_log if mcp_python is not None else trace)
+            .read_text()
+            .splitlines()[calls_before_resume:]
         ]
-        assert not any(item["operation"] in {"build", "push"} for item in resumed_calls)
-        assert sum(item["operation"] == "attest" for item in resumed_calls) == 1
+        if mcp_python is None:
+            assert not any(
+                item["operation"] in {"build", "push"} for item in resumed_calls
+            )
+            assert sum(item["operation"] == "attest" for item in resumed_calls) == 1
+        else:
+            assert not any(
+                token in {"build", "push"} for call in resumed_calls for token in call
+            )
+            # The shared TSA counts independently establish exactly one B signature.
+            assert not (work / "git-proof").exists()
+            assert not (work / "application-bundles").exists()
         for index in (0, 2):
             assert (
                 recovered["outcomes"][index]["proof"]
@@ -269,10 +365,10 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
                 item["admission"]["delivery_plan_digest"]
                 == build["delivery_manifest"]["delivery_plan_digest"]
             )
-        (work / ("batch-" + interface + "-partial.json")).write_text(
+        (work / (prefix + "-" + interface + "-partial.json")).write_text(
             json.dumps(partial, indent=2)
         )
-        (work / ("batch-" + interface + "-complete.json")).write_text(
+        (work / (prefix + "-" + interface + "-complete.json")).write_text(
             json.dumps(recovered, indent=2)
         )
         completed.append(
@@ -289,7 +385,14 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
             }
         )
     assert (work / "successful-builds.jsonl").read_bytes() == before_builds
-    (work / "multi-delivery-results.json").write_text(json.dumps(completed, indent=2))
+    (
+        work
+        / (
+            "mcp-delivery-results.json"
+            if mcp_python is not None
+            else "multi-delivery-results.json"
+        )
+    ).write_text(json.dumps(completed, indent=2))
     print(
         "PASS real REST/MCP multi-destination partial A/B/C and resume; one build per interface, independent credentials, no duplicate signing",
         flush=True,

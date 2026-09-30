@@ -19,6 +19,12 @@ MAX_INVENTORY_BYTES = 1024 * 1024
 
 
 def storage_directory(directory: Path | None = None) -> Path:
+    return resolve_storage_directory(directory)
+
+
+def resolve_storage_directory(
+    directory: Path | None, *, invocation_runtime: Path | None = None
+) -> Path:
     if os.name != "posix":
         raise PluginError("unsupported_platform")
     if directory is None:
@@ -45,9 +51,12 @@ def storage_directory(directory: Path | None = None) -> Path:
                 protected.add(parent)
                 break
     if any(
-        resolved == path
-        or resolved.is_relative_to(path)
-        or path.is_relative_to(resolved)
+        (
+            resolved == path
+            or resolved.is_relative_to(path)
+            or path.is_relative_to(resolved)
+        )
+        and path != invocation_runtime
         for path in protected
     ):
         raise PluginError("plugins_directory_overlaps_core_or_project")

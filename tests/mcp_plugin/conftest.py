@@ -19,3 +19,22 @@ def project(tmp_path):
     shutil.copytree(ROOT / "examples/project-config", root)
     path = root / "apizr.toml"
     return path, load_scope(path, analysis_policy(root))
+
+
+@pytest.fixture(autouse=True)
+def source_distribution_metadata(monkeypatch):
+    # Source unit tests do not install the optional distribution. Installed-wheel
+    # qualification independently checks real importlib.metadata via initialize.
+    import tomllib
+
+    from apizr_mcp import server
+
+    version = tomllib.loads((ROOT / "plugins/mcp/pyproject.toml").read_text())[
+        "project"
+    ]["version"]
+
+    def installed(name):
+        assert name == "outerspace-apizr-mcp"
+        return version
+
+    monkeypatch.setattr(server, "version", installed)
