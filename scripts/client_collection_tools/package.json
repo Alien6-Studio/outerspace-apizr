@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@opencollection/schema": "0.14.0",
+    "@usebruno/cli": "4.2.0",
+    "postman-cli": "1.67.0"
+  }
+}

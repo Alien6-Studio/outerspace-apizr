@@ -103,6 +103,7 @@ nav:
           - Assess readiness: getting-started/user-guide/repository-readiness.md
           - REST/MCP from a repository: getting-started/user-guide/exposure.md
           - REST from a Python file or notebook: getting-started/user-guide/rest.md
+          - Client collections from REST: getting-started/user-guide/client-collections.md
           - MCP from a Python file or notebook: getting-started/user-guide/mcp.md
           - Execute code with a policy: getting-started/user-guide/execute.md
           - Analyze a Git repository: reference/git-sources.md

@@ -267,3 +267,9 @@ no dependency installation/inference or resource-file packaging is added.
 
 See [Governed repository execution](../../architecture/governed-repository-runtime.md)
 for contracts, tamper validation, error mappings and deployment responsibilities.
+
+## Client collections
+
+The unpublished 0.4.2rc1 development line can export the retained REST bundle to
+[Postman, Bruno and Insomnia collections](client-collections.md), with deterministic
+files and safe local regeneration. No source scan or execution is needed.

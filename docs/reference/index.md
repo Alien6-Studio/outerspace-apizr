@@ -24,6 +24,7 @@ historical pipeline.
 | Install and list local extensions offline | [Local extensions](local-extensions.md) |
 | Configure readiness and exposure with a project file | [Project configuration](../getting-started/user-guide/project.md) |
 | Call repository readiness, planning and generation from Python | [Compiler API](compiler-api.md) |
+| Export or safely regenerate Postman, Bruno and Insomnia collections | [Client collections](../getting-started/user-guide/client-collections.md) |
 | Plan and build REST/MCP from a repository | [Repository exposure](../getting-started/user-guide/exposure.md) |
 | Inventory a Python repository | [Scanner](../getting-started/user-guide/scan.md), [graph](../getting-started/user-guide/graph.md) and [repository readiness](../getting-started/user-guide/repository-readiness.md) |
 | Generate MCP from a Python file or notebook | [MCP guide](../getting-started/user-guide/mcp.md) |
