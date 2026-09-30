@@ -193,7 +193,7 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
         if doctor_project is None:
             doctor_root = work / (prefix + "-" + interface + "-doctor-project")
             doctor_root.mkdir()
-            command([python, "-I", "-B", "-m", "apizr.cli", "init", doctor_root], work)
+            command(python, "-I", "-B", "-m", "apizr.cli", "init", doctor_root)
             doctor_project = doctor_root / "apizr.toml"
             selected = json.loads(policy.read_text())
             selected["grants"] += json.loads(
@@ -208,23 +208,20 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
         assert before_registry > 0, "registry request observation must be active"
         report = json.loads(
             command(
-                [
-                    python,
-                    "-I",
-                    "-B",
-                    "/repo/scripts/doctor_readonly_proof.py",
-                    "--project",
-                    doctor_project,
-                    "--operator-policy",
-                    policy,
-                    "--profile",
-                    "delivery",
-                    "--plugins-dir",
-                    store,
-                    "--delivery-request",
-                    request,
-                ],
-                work,
+                python,
+                "-I",
+                "-B",
+                "/repo/scripts/doctor_readonly_proof.py",
+                "--project",
+                doctor_project,
+                "--operator-policy",
+                policy,
+                "--profile",
+                "delivery",
+                "--plugins-dir",
+                store,
+                "--delivery-request",
+                request,
             )
         )
         failures = [
