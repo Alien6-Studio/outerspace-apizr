@@ -2,6 +2,9 @@
 
 ## 0.4.2rc1 — development, unpublished
 
+- Initialize safe project configuration with explicit local analysis authority,
+  diagnose local preparation read-only, and complete modern CLI commands in bash,
+  zsh and fish.
 - Generate deterministic current-native Postman, Bruno and Insomnia collections
   from verified REST bundles, with safe local regeneration of owned trees.
 - Add opt-in MCP status/run/resume over an operator-selected existing delivery
@@ -10,8 +13,8 @@
 - Advertise the installed MCP package version; coordinate all four packages and
   exact internal pins at 0.4.2rc1 for development validation.
 
-GitHub/GitLab integrations, init, doctor, completion,
-Homebrew and source-to-build MCP orchestration remain future work.
+GitHub/GitLab integrations, Homebrew and source-to-build MCP orchestration remain
+future work.
 
 ## 0.4.1 — 2026-09-29
 

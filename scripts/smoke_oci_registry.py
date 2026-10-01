@@ -78,7 +78,7 @@ VOLUME /var/lib/docker
             )
         # Credentials are generated and remain inside the disposable volume.
         preparation = """set -eu
-mkdir -p /proof/certs /proof/auth /proof/bin
+mkdir -p /proof/certs /proof/auth /proof/bin /proof/registry-log
 cp /repo/scripts/oci_build_observer.py /proof/bin/docker
 chmod 700 /proof/bin/docker
 openssl req -x509 -newkey rsa:2048 -nodes -keyout /proof/certs/key.pem -out /proof/certs/ca.crt -days 1 -subj /CN=registry.test -addext subjectAltName=DNS:registry.test,DNS:registry-untrusted.test,DNS:registry-backend.test >/dev/null 2>&1
@@ -105,6 +105,7 @@ for scope in ('a','b','c'):
  record=subprocess.run(['htpasswd','-Bni',user],input=password+'\\n',text=True,capture_output=True,check=True)
  with Path('/proof/auth/htpasswd').open('a') as out: out.write(record.stdout)
  config['http']['accessControl']['repositories']['batch-'+scope+'/**']={'policies':[{'users':[user],'actions':['read','create','update']}]}
+config['log'] = {'level': 'info', 'output': '/logs/requests.jsonl'}
 Path('/proof/zot.json').write_text(json.dumps(config))
 PY
 """
@@ -140,6 +141,14 @@ PY
             "registry-backend.test",
             "--mount",
             f"type=volume,src={volume},dst=/proof,readonly",
+            *(
+                [
+                    "--mount",
+                    f"type=volume,src={volume},dst=/logs,volume-subpath=registry-log",
+                ]
+                if args.artifacts
+                else []
+            ),
             "--env",
             "REGISTRY_HTTP_ADDR=0.0.0.0:5443",
             "--env",
@@ -295,6 +304,10 @@ PY
             "artifact-results.json",
             "admission-results.json",
             "multi-delivery-results.json",
+            "batch-rest-doctor.json",
+            "batch-mcp-doctor.json",
+            "mcp-batch-rest-doctor.json",
+            "mcp-batch-mcp-doctor.json",
             "mcp-delivery-results.json",
             "mcp-delivery-install.json",
             "mcp-batch-rest-run-complete.json",
