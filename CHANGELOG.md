@@ -13,8 +13,13 @@
 - Advertise the installed MCP package version; coordinate all four packages and
   exact internal pins at 0.4.2rc1 for development validation.
 
-GitHub/GitLab integrations, Homebrew and source-to-build MCP orchestration remain
-future work.
+- Validate local repositories and generate REST/MCP bundles through forge-neutral
+  `apizr ci`, with explicit analysis authority and portable retained evidence.
+- Add a real GitHub composite Action and structurally validated, self-contained
+  GitLab CI/CD Component source. GitLab hosted runtime and catalog publication
+  have not been performed.
+
+Homebrew and source-to-build MCP orchestration remain future work.
 
 ## 0.4.1 — 2026-09-29
 

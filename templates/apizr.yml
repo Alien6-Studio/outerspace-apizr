@@ -1,0 +1,120 @@
+spec:
+  inputs:
+    job-name:
+      type: string
+      default: apizr-ci
+      regex: '^apizr-[A-Za-z0-9_-]{1,56}$'
+      description: Unique bounded job name, prefixed with apizr-.
+    stage:
+      type: string
+      default: test
+      regex: '^[A-Za-z][A-Za-z0-9_-]{0,63}$'
+      description: Existing consumer pipeline stage.
+    operation:
+      type: string
+      default: check
+      options: [check, build-rest, build-mcp]
+      description: Static validation or local bundle generation.
+    project:
+      type: string
+      default: apizr.toml
+      description: Checked-out project configuration path; treated as data.
+    authorize-analysis:
+      type: boolean
+      default: false
+      description: Explicit source.analyze authority for the exact local project root.
+    operator-policy:
+      type: string
+      default: ''
+      description: Existing exact operator policy, mutually exclusive with authorization opt-in.
+    output-dir:
+      type: string
+      default: .apizr-ci
+      regex: '^\.apizr-ci(-[A-Za-z0-9_-]{1,48})?$'
+      description: Absent or empty dedicated CI output directory; only this tree is archived.
+    apizr-version:
+      type: string
+      default: 0.4.2rc1
+      regex: '^[0-9]+\.[0-9]+\.[0-9]+(rc[1-9][0-9]*)?$'
+      description: Exact PyPI core version; development RC is not published.
+    python-image:
+      type: string
+      default: python@sha256:51dafde81dbdb6ebde285137a295cf18a47ca95234fe388a343719cb97305b3d
+      regex: '^[A-Za-z0-9][A-Za-z0-9./:_-]*@sha256:[a-f0-9]{64}$'
+      description: Explicit immutable image with Python 3.11–3.14 and venv; overrides are not qualified automatically.
+---
+'$[[ inputs.job-name ]]':
+  stage: $[[ inputs.stage ]]
+  image: $[[ inputs.python-image ]]
+  inherit:
+    default: false
+    variables: false
+  interruptible: true
+  variables:
+    APIZR_OPERATION:
+      value: $[[ inputs.operation ]]
+      expand: false
+    APIZR_PROJECT:
+      value: $[[ inputs.project ]]
+      expand: false
+    APIZR_AUTHORIZE_ANALYSIS:
+      value: 'authorize:$[[ inputs.authorize-analysis ]]'
+      expand: false
+    APIZR_OPERATOR_POLICY:
+      value: $[[ inputs.operator-policy ]]
+      expand: false
+    APIZR_OUTPUT_DIR:
+      value: $[[ inputs.output-dir ]]
+      expand: false
+    APIZR_VERSION:
+      value: $[[ inputs.apizr-version ]]
+      expand: false
+  script:
+    - |
+      set -eu
+      python -I - <<'PY'
+      import os, re, sys
+      from pathlib import Path
+      def refuse(code):
+          print(code, file=sys.stderr)
+          raise SystemExit(2)
+      if not (3, 11) <= sys.version_info[:2] <= (3, 14):
+          refuse("forge_python_unsupported")
+      if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:rc[1-9][0-9]*)?", os.environ["APIZR_VERSION"]):
+          refuse("forge_version_invalid")
+      if not re.fullmatch(r"\.apizr-ci(?:-[A-Za-z0-9_-]{1,48})?", os.environ["APIZR_OUTPUT_DIR"]):
+          refuse("forge_output_invalid")
+      if not Path(os.environ["APIZR_PROJECT"]).is_file():
+          refuse("forge_project_missing_checkout_required")
+      PY
+      case "$APIZR_OPERATION" in
+        check|build-rest|build-mcp) ;;
+        *) echo 'forge_operation_invalid' >&2; exit 2 ;;
+      esac
+      set -- ci "$APIZR_OPERATION" --project "$APIZR_PROJECT" --output-dir "$APIZR_OUTPUT_DIR"
+      case "$APIZR_AUTHORIZE_ANALYSIS" in
+        authorize:true)
+          test -z "$APIZR_OPERATOR_POLICY" || { echo 'forge_authority_required' >&2; exit 2; }
+          set -- "$@" --authorize-project-analysis ;;
+        authorize:false)
+          test -n "$APIZR_OPERATOR_POLICY" || { echo 'forge_authority_required' >&2; exit 2; }
+          set -- "$@" --operator-policy "$APIZR_OPERATOR_POLICY" ;;
+        *) echo 'forge_authority_invalid' >&2; exit 2 ;;
+      esac
+      apizr_environment="$(mktemp -d /tmp/apizr-ci-XXXXXXXX)"
+      python -I -m venv "$apizr_environment"
+      env -i PATH="$PATH" HOME="$apizr_environment" PIP_CONFIG_FILE=/dev/null \
+        "$apizr_environment/bin/python" -I -m pip install --disable-pip-version-check --no-input \
+        --index-url https://pypi.org/simple "outerspace-apizr==$APIZR_VERSION" >/dev/null 2>&1 || {
+          echo 'forge_install_failed' >&2; exit 2;
+        }
+      test "$(env -i PATH="$PATH" "$apizr_environment/bin/apizr" --version)" = "outerspace-apizr $APIZR_VERSION" || {
+        echo 'forge_installed_version_mismatch' >&2; exit 2;
+      }
+      exec env -i PATH="$PATH" HOME="$apizr_environment" PYTHONDONTWRITEBYTECODE=1 \
+        "$apizr_environment/bin/apizr" "$@"
+  artifacts:
+    when: on_success
+    expire_in: 7 days
+    paths:
+      - $[[ inputs.output-dir ]]/

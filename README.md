@@ -33,6 +33,7 @@ Python **3.11–3.14** · GPL-3.0-or-later.
 | Analyze a project from an MCP client | [Install the MCP profile](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile) → [analysis server](https://apizr.outerspace.sh/reference/apizr-mcp-server/) |
 | Build and deliver a service | [Install OCI or delivery](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile) → [OCI](https://apizr.outerspace.sh/reference/oci-service-plugin/) and [Attest](https://apizr.outerspace.sh/reference/attest-delivery-plugin/) |
 | Initialize and diagnose a project (0.4.2 development) | [Safe init, read-only doctor and shell completion](https://apizr.outerspace.sh/getting-started/onboarding/) |
+| Validate/build in CI (0.4.2 development) | [GitHub Action, GitLab component source and apizr ci](https://apizr.outerspace.sh/getting-started/user-guide/ci-integrations/) |
 
 The core handles supported static analysis and generation. Generated servers have
 their own runtime dependencies. Optional plugins live in separate environments;

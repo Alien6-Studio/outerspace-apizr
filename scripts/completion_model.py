@@ -12,6 +12,7 @@ ENTRYPOINTS = {
         name: (f"apizr.{name.replace('-', '_')}_cli", "main")
         for name in (
             "scan",
+            "ci",
             "graph",
             "readiness",
             "repository-readiness",

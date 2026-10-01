@@ -1,0 +1,7 @@
+{
+  "source": "https://gitlab.com/gitlab-org/gitlab/-/raw/4dc642ade3597f7a8ae8d93091cc49b36f74a08d/app/assets/javascripts/editor/schema/ci.json",
+  "commit": "4dc642ade3597f7a8ae8d93091cc49b36f74a08d",
+  "sha256": "ca545816e585b0b2e17cb89a8782d1e93260d215c28c8ebd1427fb19e8fcea8b",
+  "syntax_assumption": "GitLab 18.7 or newer; spec:component audited but not needed by this component",
+  "hosted_runtime": "not executed — no GitLab component project authorized"
+}

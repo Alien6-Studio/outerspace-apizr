@@ -1,0 +1,157 @@
+name: Forge integrations
+
+on:
+  push:
+    branches: [feature/forge-integrations]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: '3.14'
+      - run: uv sync --locked
+      - name: Build original coordinated candidates once for this exact source head
+        run: |
+          uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/forge-candidate"
+          uv run --locked python scripts/check_distribution.py "$RUNNER_TEMP/forge-candidate/dist" --coordinated --manifest "$RUNNER_TEMP/forge-candidate/SHA256SUMS.json"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: forge-candidate
+          path: ${{ runner.temp }}/forge-candidate
+          retention-days: 90
+          if-no-files-found: error
+
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: '3.14'
+      - run: uv sync --locked
+      - name: Shared contract, platform metadata, pinned GitLab schema and actual shell argument parity
+        env:
+          APIZR_FORGE_PARITY_EVIDENCE: forge-parity.json
+        run: >-
+          uv run --locked pytest tests/ci
+          --cov=apizr.ci --cov=apizr.ci_cli --cov-report=term-missing
+          --cov-report=json:forge-coverage.json --junitxml=forge-tests.xml
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: forge-contracts
+          path: |
+            forge-tests.xml
+            forge-coverage.json
+            forge-parity.json
+          retention-days: 90
+          if-no-files-found: error
+
+  composite:
+    needs: candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: forge-candidate
+          path: ${{ runner.temp }}/forge-candidate
+      - name: Select original development wheel bytes
+        id: wheel
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, os
+          from pathlib import Path
+          wheel = Path(os.environ['RUNNER_TEMP']) / 'forge-candidate/dist/outerspace_apizr-0.4.2rc1-py3-none-any.whl'
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+              stream.write(f'path={wheel}\nsha256={hashlib.sha256(wheel.read_bytes()).hexdigest()}\n')
+          PY
+      - name: Explicit authority refusal through the real composite Action
+        id: refused
+        continue-on-error: true
+        uses: ./
+        with:
+          python-version: ${{ matrix.python }}
+          project: tests/fixtures/forge/project/apizr.toml
+          wheel-path: ${{ steps.wheel.outputs.path }}
+          wheel-sha256: ${{ steps.wheel.outputs.sha256 }}
+      - name: Assert refusal did not create evidence or silently authorize
+        env:
+          OUTCOME: ${{ steps.refused.outcome }}
+        run: test "$OUTCOME" = failure && test ! -e .apizr-ci
+      - name: Check using the real composite Action
+        id: check
+        uses: ./
+        with:
+          operation: check
+          python-version: ${{ matrix.python }}
+          project: tests/fixtures/forge/project/apizr.toml
+          authorize-analysis: 'true'
+          output-dir: .apizr-ci-check
+          wheel-path: ${{ steps.wheel.outputs.path }}
+          wheel-sha256: ${{ steps.wheel.outputs.sha256 }}
+      - name: REST bundle using the real composite Action
+        uses: ./
+        with:
+          operation: build-rest
+          python-version: ${{ matrix.python }}
+          project: tests/fixtures/forge/project/apizr.toml
+          authorize-analysis: 'true'
+          output-dir: .apizr-ci-build-rest
+          wheel-path: ${{ steps.wheel.outputs.path }}
+          wheel-sha256: ${{ steps.wheel.outputs.sha256 }}
+      - name: MCP bundle using the real composite Action
+        uses: ./
+        with:
+          operation: build-mcp
+          python-version: ${{ matrix.python }}
+          project: tests/fixtures/forge/project/apizr.toml
+          authorize-analysis: 'true'
+          output-dir: .apizr-ci-build-mcp
+          wheel-path: ${{ steps.wheel.outputs.path }}
+          wheel-sha256: ${{ steps.wheel.outputs.sha256 }}
+      - name: Installed core outside checkout and canonical API/CLI/Action byte parity
+        env:
+          WHEEL_PATH: ${{ steps.wheel.outputs.path }}
+          WHEEL_SHA256: ${{ steps.wheel.outputs.sha256 }}
+          RESULT: ${{ steps.check.outputs.result }}
+          STATE: ${{ steps.check.outputs.state }}
+        run: |
+          test "$RESULT" = .apizr-ci-check/result.json && test "$STATE" = success
+          python -I scripts/forge_integrations_proof.py --wheel "$WHEEL_PATH" --sha256 "$WHEEL_SHA256" --output "$RUNNER_TEMP/forge-proof" --compare-root "$GITHUB_WORKSPACE"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: forge-python-${{ matrix.python }}
+          include-hidden-files: true
+          path: |
+            .apizr-ci-check/
+            .apizr-ci-build-rest/
+            .apizr-ci-build-mcp/
+            ${{ runner.temp }}/forge-proof/forge-proof.json
+          retention-days: 90
+          if-no-files-found: error
