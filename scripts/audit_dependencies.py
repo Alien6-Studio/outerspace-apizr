@@ -16,6 +16,7 @@ SCOPES = {
     "development": ["--only-group", "dev"],
     "documentation": ["--only-group", "docs"],
     "security-tooling": ["--only-group", "security"],
+    "homebrew-build": ["--only-group", "homebrew-build"],
 }
 
 

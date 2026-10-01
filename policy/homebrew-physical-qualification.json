@@ -1,0 +1,41 @@
+{
+  "architecture": "arm64",
+  "audit_refusal_control": true,
+  "build_environment_destroyed": true,
+  "build_inputs_manifest_sha256": "c981a11d84ec319cd10d156b18b31e073ca480e1f2b62f3880c4a17cac0f5405",
+  "build_tool_leakage": false,
+  "build_wheel_sha256": "8528c0f4e50cff41238b74da6c709c0f217e06cf35bef9ba707fee9d470be9ab",
+  "candidate_sha256": "a707f8fbd486106c48550fd82f666f6d8bf28b20c65c30f24d2a3fb22e5abb01",
+  "candidate_source_commit": "78a3d87de13bb5767584cd90c4f125c1d85ab2cb",
+  "doctor_result": true,
+  "dynamic_requirements": [],
+  "empty_initial_cache": true,
+  "formula_qualification": false,
+  "homebrew_version": "Homebrew 7.0.7",
+  "host_kind": "physical",
+  "init_result": true,
+  "macos_version": "27.0.1",
+  "network_attempt_count": 0,
+  "os_denial_control": true,
+  "pep517_isolation": true,
+  "pip_config_file": "/dev/null",
+  "pip_find_links": "build-wheelhouse",
+  "pip_no_index": true,
+  "provider_locations": {
+    "pydantic": "lib/python3.14/site-packages/pydantic/__init__.py",
+    "pydantic_core": "lib/python3.14/site-packages/pydantic_core/__init__.py"
+  },
+  "pydantic_core_version": "2.46.5",
+  "pydantic_version": "2.13.5",
+  "python_version": "3.14.8",
+  "runtime_dependency_resolution": false,
+  "runtime_local_distributions": [
+    [
+      "outerspace-apizr",
+      "0.4.2rc1"
+    ]
+  ],
+  "schema": "apizr.homebrew-physical-qualification/v1",
+  "tier1_eligible": true,
+  "version_result": "outerspace-apizr 0.4.2rc1"
+}
