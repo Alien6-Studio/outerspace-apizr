@@ -2887,21 +2887,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "3d82eccc71cd5ab2530e70a2902a0a79c2729cf03ad140f8c595bcfd821d3c57",
+      "distribution_fingerprint": "e78d06bf2ebdcec1ae312d86b4edf85fdc898b3c37b8ba967f2b59a9b9ac1677",
       "evidence_archive": {
-        "hash": "sha256:77283c83fb56ecf566a886c757a714bc83668e38156de2cce8263302f42e0b86",
-        "url": "https://files.pythonhosted.org/packages/af/c3/8a3b59c25070cc61dc517fbdfa5dc0904670c96f605cc69759dc09166b99/pyjwt-2.14.0.tar.gz"
+        "hash": "sha256:4f259e80cdfb6b3fc18a7de51fd1ef9ec79652f25019bae68975ca2468a34df8",
+        "url": "https://files.pythonhosted.org/packages/43/ea/5194e52748b0da83d71e082d75496eaec6e58f419f5e184786ded517e6a9/pyjwt-2.15.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "pyjwt-2.14.0/LICENSE",
+          "path": "pyjwt-2.15.1/LICENSE",
           "sha256": "797a7a20231d4c433e9f1911db1731d06b5828b98f499819a034f7c0f56f5ce5"
         }
       ],
       "name": "pyjwt",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the hash-verified PyJWT 2.15.1 source archive, its MIT LICENSE, package metadata and Python-only package contents on 2026-10-01. The preserved notice text is unchanged. Retain the copyright and permission notice for unmodified dependency use; this review does not authorize arbitrary vendoring or additional components.",
       "status": "reviewed",
-      "version": "2.14.0"
+      "version": "2.15.1"
     },
     {
       "components": [
