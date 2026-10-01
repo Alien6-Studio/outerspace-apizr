@@ -42,8 +42,15 @@ a remediation trailer in the squash message when its target remains in the
 audited history; omit references to replaced branch commits. Never amend or
 force-push an already published commit to repair its declaration.
 
-For a protected squash whose existing sign-off uses a GitHub login instead of
-its Git author's name, leave that commit unchanged. Open a corrective PR from
+GitHub may retain the pull request author's identity for a Dependabot squash,
+even when the merge request supplies the maintainer's author email. A maintainer
+sign-off alone then does not match the resulting bot author. Check the published
+commit identity as well as the proposed merge message; never add a bot's sign-off
+on its behalf.
+
+For a protected squash whose sign-off does not match its Git author, including
+a retained bot author or a GitHub login used instead of the author's name,
+leave that commit unchanged. Open a corrective PR from
 the current protected branch. The new responsible declaration must match the
 corrective commit's author and explicitly identify the original squash:
 
