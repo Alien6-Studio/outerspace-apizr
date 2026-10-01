@@ -74,7 +74,9 @@ jobs:
           name: homebrew-build-wheelhouse
           path: ${{ runner.temp }}/inputs
       - name: Official Homebrew runtime provider
-        run: brew install python@3.14 pydantic
+        run: |
+          brew update
+          brew install python@3.14 pydantic
       - run: uv sync --locked
       - name: Offline isolated build and independent runtime preflight
         run: >-
