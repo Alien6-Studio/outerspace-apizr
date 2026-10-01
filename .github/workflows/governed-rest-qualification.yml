@@ -1,0 +1,46 @@
+name: Governed REST qualification
+
+on:
+  push:
+    branches: [fix/042-macos-governed-rest]
+  pull_request:
+    paths:
+      - tests/governed/test_transports.py
+      - tests/execution/test_deadline.py
+      - .github/workflows/governed-rest-qualification.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  macos-rest:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: '3.14'
+      - run: uv sync --locked
+      - name: Ten predetermined REST recovery repetitions (no retries)
+        shell: bash
+        run: |
+          mkdir rest-qualification
+          for iteration in {1..10}; do
+            uv run --locked pytest \
+              tests/governed/test_transports.py::test_real_governed_rest_survives_failures_and_tampering \
+              --junitxml="rest-qualification/repetition-${iteration}.xml"
+          done
+      - name: Unchanged short deadlines and HTTP mapping
+        run: >-
+          uv run --locked pytest tests/execution/test_deadline.py tests/governed/test_mapping.py
+          --junitxml=rest-qualification/deadlines-and-mapping.xml
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: governed-rest-macos-python-3.14
+          retention-days: 90
+          if-no-files-found: error
+          path: rest-qualification/*.xml
