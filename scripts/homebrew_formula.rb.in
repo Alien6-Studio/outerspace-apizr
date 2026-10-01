@@ -1,0 +1,52 @@
+class Apizr < Formula
+  include Language::Python::Virtualenv
+
+  desc "Analyze Python repositories and prepare governed application interfaces"
+  homepage "https://apizr.outerspace.sh"
+  url @SOURCE_URL@
+  sha256 "@SOURCE_SHA256@"
+  license "GPL-3.0-or-later"
+
+  depends_on "pydantic"
+  depends_on "python@3.14"
+
+@BUILD_RESOURCES@
+  deny_network_access! :build
+
+  def install
+    # These reviewed wheels feed PEP 517 only; never install resources into libexec.
+    wheelhouse = buildpath/"build-wheelhouse"
+    resources.each { |r| r.stage wheelhouse }
+    python = Formula["python@3.14"].opt_bin/"python3.14"
+    virtualenv_create(libexec, python, system_site_packages: true)
+
+    ENV.keys.grep(/^PIP_/).each { |key| ENV.delete(key) }
+    ENV["PIP_CONFIG_FILE"] = File::NULL
+    ENV["PIP_NO_INDEX"] = "1"
+    ENV["PIP_FIND_LINKS"] = wheelhouse.to_s
+    ENV["PIP_CACHE_DIR"] = (buildpath/"empty-pip-cache").to_s
+    ENV["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
+    ENV["PYTHONDONTWRITEBYTECODE"] = "1"
+    # std_pip_args supplies --no-deps. Its blanket source-only rule must be reset
+    # for the five reviewed build wheels; the application is still this local sdist.
+    system python, "-m", "pip", "--python=#{libexec}/bin/python", "install",
+           *std_pip_args(prefix: false, build_isolation: true),
+           "--no-binary=:none:", "--no-cache-dir", buildpath
+    bin.install_symlink libexec/"bin/apizr"
+  end
+
+  test do
+    assert_match "outerspace-apizr @VERSION@", shell_output("#{bin}/apizr --version")
+    (testpath/"sample.py").write <<~PYTHON
+      def add(a: int, b: int = 2) -> int:
+          return a + b
+    PYTHON
+    system bin/"apizr", "init", testpath, "--json"
+    assert_path_exists testpath/"apizr.toml"
+    system bin/"apizr", "doctor", "--project", testpath/"apizr.toml",
+           "--operator-policy", testpath/".apizr/operator.json", "--json"
+    system bin/"apizr", "ci", "check", "--project", testpath/"apizr.toml",
+           "--output-dir", testpath/"evidence", "--authorize-project-analysis"
+    assert_path_exists testpath/"evidence/result.json"
+  end
+end

@@ -31,6 +31,19 @@ With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.1` or
 `pipx install outerspace-apizr==0.4.1` is an alternative to the virtual environment
 above. Use the executable path reported by your tool.
 
+## Homebrew status for 0.4.2
+
+The core-only `Apizr` Formula is implemented for the Apple Silicon Tier-1 target,
+with a real local-tap installation qualification. It uses Homebrew Python 3.14
+and Pydantic; optional plugins remain separate from the Cellar installation.
+The public Alien6 tap and `0.4.2rc1` are **not published**.
+
+The future command `brew install alien6-studio/tap/apizr` is pending; it is not
+yet a working public installation route. Intel macOS is Tier 3 and not qualified;
+Linux Homebrew runtime is not qualified. See the
+[Formula qualification contract](../contributing/homebrew-build-inputs.md#formula-qualification)
+for the retained evidence and publication boundary.
+
 ## Add optional plugin profiles
 
 The coordinated packages are `outerspace-apizr==0.4.1`,

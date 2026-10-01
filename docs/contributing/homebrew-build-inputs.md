@@ -1,9 +1,10 @@
 # Homebrew build inputs
 
-This prepares the supply chain for Lot 5. It does not deliver an Apizr Formula,
-create a tap, or publish a package. All four packages remain `0.4.2rc1`.
+This records the integrated supply-chain preparation and the separate
+[Formula qualification](#formula-qualification). Neither publishes a
+tap or package. All four packages remain `0.4.2rc1`.
 Issue [#228](https://github.com/Alien6-Studio/outerspace-apizr/issues/228) remains
-open until the actual Formula is implemented and qualified.
+open while the Formula integration is reviewed.
 
 ## Runtime provider
 
@@ -202,3 +203,45 @@ sdist hash must equal the physically tested hash. If it differs, repeat the
 physical proof on the new bytes before opening the preparation PR. Hosted CI
 also qualifies the exact new head independently. Neither receipt qualifies a
 production Formula.
+
+## Formula qualification
+
+`scripts/homebrew_formula.py` deterministically generates `Formula/apizr.rb`,
+`README.md` and a portable source receipt. The Formula uses Homebrew's
+`virtualenv_create` with Python 3.14 and visibility of the Homebrew Pydantic
+provider. Only Apizr is installed into `libexec`, with runtime dependency
+resolution disabled. The five reviewed universal wheels are build-only resources;
+they feed the isolated PEP 517 environment and never enter the runtime.
+Homebrew denies network access during the build. pip uses an empty cache,
+`PIP_NO_INDEX=1`, `PIP_CONFIG_FILE=/dev/null` and only the reviewed wheelhouse.
+
+Qualification mode requires an exact coordinated candidate and source commit.
+It consumes the original sdist through `file://`, without rebuilding or
+recompressing it. The source, Formula and unchanged build-input manifest hashes
+are recorded. Because the qualification URL is local, Formula hashes are compared
+only for the same source location; no private paths appear in the JSON receipts.
+
+Publication mode additionally requires an explicit immutable GitHub release URL,
+source SHA-256, signed CI evidence archive and provenance bundle. The renderer
+verifies the exact protected release-line signature, signed candidate membership,
+and the immutable public asset's digest and size before producing output.
+Local, temporary CI and arbitrary unsigned URLs are rejected. No PyPI URL is
+invented and rendering does not publish anything.
+
+The **Homebrew Formula** workflow builds one coordinated candidate for its exact
+source head, then consumes those original bytes on `macos-26`. The real Formula
+is installed through a disposable local tap, with `brew style`, `readall`,
+`audit --strict`, install, test, info, uninstall and untap checks. Online source
+audit remains deferred until the archive exists publicly. Its installed CLI
+passes version, init, doctor, bash/zsh/fish completion and explicitly authorized
+`ci check` against safe local fixtures. The existing plugin lifecycle, sync and
+update proofs compare the entire Cellar prefix before and after, with plugins
+outside that prefix. `apizr.homebrew-formula/v1` retains only portable facts.
+
+The same candidate can be downloaded for a physical Apple Silicon qualification
+with `scripts/qualify_homebrew_formula.py --host physical`; a hosted VM cannot
+claim that status. Apple Silicon Tier-1 qualification does not qualify Intel
+macOS (Tier 3, non-blocking) or Linux Homebrew runtime. The public Alien6 tap is
+not yet published, Homebrew/core is not targeted, and issue #228 stays open until
+the Formula is integrated. The earlier build-closure receipt is not a
+substitute for the real Formula installation proof.

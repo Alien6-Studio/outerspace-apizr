@@ -124,7 +124,7 @@ apizr completion fish > /path/chosen/by/user/apizr.fish
 
 Apizr writes only stdout and never edits shell profiles. Completion covers modern
 commands, subcommands, long options and fixed choices. File arguments use normal
-shell path completion. The retained legacy generator parser is outside this lot.
+shell path completion. The retained legacy generator parser does not use this completion interface.
 One static command tree feeds all three adapters, with regression tests against
 the actual argparse parsers. Completion never inspects projects, policies, plugin
 stores, capability IDs or remote data, and never starts external tools. Scripts
