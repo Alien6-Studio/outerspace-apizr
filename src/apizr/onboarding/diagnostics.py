@@ -139,7 +139,7 @@ def active_plugins(
 def doctor(
     *,
     project: str | Path = "apizr.toml",
-    operator_policy: str | Path | None = None,
+    operator_policy: str | Path | OperatorPolicy | None = None,
     profiles: tuple[Profile, ...] = ("core",),
     plugins_dir: str | Path | None = None,
     delivery_request: str | Path | None = None,
@@ -244,7 +244,13 @@ def doctor(
         )
     else:
         try:
-            authority = load_json(Path(operator_policy), OperatorPolicy)
+            authority = (
+                OperatorPolicy.model_validate_json(
+                    operator_policy.model_dump_json(by_alias=True), strict=True
+                )
+                if isinstance(operator_policy, OperatorPolicy)
+                else load_json(Path(operator_policy), OperatorPolicy)
+            )
             checks.add(
                 "operator_policy", "pass", "Explicit operator policy schema valid."
             )

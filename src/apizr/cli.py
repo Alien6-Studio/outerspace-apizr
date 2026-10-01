@@ -61,6 +61,10 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments == ["--version"]:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
         return 0
+    if arguments and arguments[0] == "ci":
+        from apizr.ci_cli import main as ci_command
+
+        return ci_command(arguments[1:])
     if arguments and arguments[0] in ("completion", "__complete"):
         from apizr.completion import main as completion_command
 
@@ -122,6 +126,9 @@ def _main(argv: Sequence[str] | None = None) -> int:
             "Local setup: apizr init | apizr doctor | apizr completion {bash,zsh,fish}"
         )
         print("Local client collections: apizr clients {export,sync} --help")
+        print(
+            "Static CI validation/build: apizr ci {check,build-rest,build-mcp} --help"
+        )
         print("Local MCP analysis server (optional plugin): apizr mcp serve --help")
         print(
             "Extensions: apizr plugins {install,list,enable,disable,run,uninstall} --help"
