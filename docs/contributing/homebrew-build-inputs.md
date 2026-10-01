@@ -95,8 +95,110 @@ responsible for building its own Pydantic dependency.
 
 The read-only **Homebrew build inputs** workflow runs on pull requests and manual
 dispatch, with a narrowly scoped branch push trigger for qualification before
-opening the preparation PR. It targets macOS arm64 and maintained
-`macos-26-intel`; actual results, including infrastructure limitations, belong
-in the qualification receipt. Linux Homebrew and Formula installation are not
-qualified by this proof. No final Formula or public tap should be inferred from
-a successful build-input receipt.
+opening the preparation PR. The required build-input proof targets Apple Silicon
+on `macos-26`. Intel provisioning is not a required PR job. Linux Homebrew runtime
+and Formula installation are not qualified by this proof. No final Formula or
+public tap should be inferred from a successful build-input receipt.
+
+## Homebrew distribution qualification boundary
+
+Apizr 0.4.2 Homebrew qualification targets current Homebrew Tier-1 macOS,
+which in the October 2026 support window is Apple Silicon. The intended host
+must meet Homebrew's complete Tier-1 requirements, including supported macOS,
+physical Apple hardware, a compatible prefix and official dependency bottles.
+Homebrew Python 3.14 and Pydantic satisfying `>=2.12,<3` are required; the exact
+versions and import provenance used in each proof remain recorded.
+
+Intel macOS is Homebrew Tier 3 and **not qualified** by Apizr's Homebrew
+distribution. It is documented and non-blocking for this preparation. Linux
+Homebrew runtime is also **not qualified in 0.4.2**. This narrower distribution
+boundary does not change Apizr's Python 3.11–3.14 compatibility declaration.
+
+`policy/homebrew-qualification.json` is a separate, strictly validated
+`apizr.homebrew-qualification/v1` contract. Unknown, duplicate, missing or
+contradictory classifications are rejected. The build-input policy, lock,
+wheel identities and historical manifest remain byte-for-byte unchanged;
+the manifest SHA-256 remains
+`c981a11d84ec319cd10d156b18b31e073ca480e1f2b62f3880c4a17cac0f5405`.
+The boundary validator binds its deterministic receipt to that manifest, and
+release evidence archives both policies.
+
+GitHub's [hosted macOS runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
+are virtual machines. `macos-26` supplies an ARM64 CI proof for the intended
+target; it is **not itself certified as a Homebrew Tier-1 host**. A separate
+physical Apple Silicon Mac proof is required before this preparation PR opens.
+Its host receipt records only a physical-host classification, architecture,
+macOS and provider versions, relative import locations and qualification results.
+Hardware probes are reduced to a classification; device identifiers and private
+paths are not retained. It consumes the same candidate bytes and reviewed
+wheelhouse as CI, and applies the unchanged offline build and runtime acceptance
+criteria.
+
+The upstream audit on 2026-10-01 used Homebrew's
+[Support Tiers revision 5cec100](https://github.com/Homebrew/brew/blob/5cec10029857fd8082da6b11bac5878419f4772a/docs/Support-Tiers.md)
+(commit dated 2026-09-23; document review date 2026-09-21). It lists
+“Intel x86_64 systems running macOS” under Tier 3, without full CI coverage or
+regular bottle production. Apple Silicon macOS 15, 26 and 27 are in its current
+Tier-1 OS window, subject to all configuration requirements.
+
+The official
+[Pydantic formula revision 433eb8a](https://github.com/Homebrew/homebrew-core/blob/433eb8a8d09d686819326f5f03f9ed98eaf18287/Formula/p/pydantic.rb)
+provides Pydantic 2.13.5 bottles for Apple Silicon macOS and Linux, but none for
+Intel macOS. The formula source SHA-256 from the official API is
+`78b3164fbc745cfceb19330c2140b80243709c27b063a383d5cfbc6d7ad60097`.
+These are dated upstream observations, not immutable future provider guarantees.
+
+### Preserved Intel evidence
+
+The [first Intel job](https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/36893243632/job/110473963051)
+correctly refused the runner's stale Pydantic 2.13.4. After refreshing Homebrew,
+the [updated provisioning job](https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/36894062277/job/110476711279)
+entered the native dependency bootstrap for OpenSSL, Python, LLVM, Rust and
+Pydantic. It reached the unchanged 45-minute job limit during LLVM compilation,
+before Pydantic 2.13.5 became available to the runtime-provider preflight.
+The equivalent final-head Intel attempt was then canceled; its records remain
+in [run 36897250817](https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/36897250817)
+and issue #228.
+
+This is an **UPSTREAM PLATFORM QUALIFICATION LIMITATION**. It did not reach
+Apizr's isolated PEP 517 build and is not evidence of a build-closure failure
+or success on Intel. No retry-until-green, relaxed provider version,
+`continue-on-error`, or extended bootstrap timeout is used.
+Intel qualification can be revisited if Homebrew restores a usable supported
+provider path or Apizr intentionally adopts a separately maintained Intel
+strategy; neither is part of the 0.4.2 commitment.
+
+### Preserved Apple Silicon evidence
+
+The [Apple Silicon job](https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/36897250817/job/110487561371)
+passed at `78a3d87de13bb5767584cd90c4f125c1d85ab2cb` with Homebrew 7.0.7,
+Python 3.14.8, Pydantic 2.13.5 and pydantic-core 2.46.5. Its original candidate
+sdist SHA-256 is
+`a707f8fbd486106c48550fd82f666f6d8bf28b20c65c30f24d2a3fb22e5abb01`;
+the resulting wheel SHA-256 is
+`8528c0f4e50cff41238b74da6c709c0f217e06cf35bef9ba707fee9d470be9ab`.
+The isolated build observed no dynamic requirements or network attempts;
+the separate runtime passed version, init and doctor after build-environment
+destruction. These historical bytes and receipts remain unchanged. The boundary
+correction must receive a new exact-head proof through the normal workflow.
+
+### Physical Apple Silicon proof
+
+`policy/homebrew-physical-qualification.json` retains the sanitized physical
+proof for the original candidate above. It passed on macOS 27.0.1 with Homebrew
+7.0.7, Python 3.14.8, Pydantic 2.13.5 and pydantic-core 2.46.5. The current patch,
+physical Apple Silicon host, internal storage, default prefix and official
+provider bottles satisfy the audited Homebrew Tier-1 host requirements.
+
+The isolated build produced the identical wheel SHA-256 recorded above, with
+no dynamic requirements and zero observed network attempts. Both network-refusal
+controls passed. After the build environment was destroyed, the fresh runtime
+installed only Apizr with `--no-deps`, imported Pydantic from the Homebrew keg,
+contained no Hatchling or trove-classifiers, and passed version, init and doctor.
+
+This receipt qualifies exact candidate bytes, not an arbitrary later commit.
+After committing this boundary correction, the new coordinated candidate's core
+sdist hash must equal the physically tested hash. If it differs, repeat the
+physical proof on the new bytes before opening the preparation PR. Hosted CI
+also qualifies the exact new head independently. Neither receipt qualifies a
+production Formula.

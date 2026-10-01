@@ -70,6 +70,8 @@ def main() -> None:
         "dependency-licenses.json",
         "dependency-license-texts.json",
         "homebrew-build-inputs.json",
+        "homebrew-qualification.json",
+        "homebrew-physical-qualification.json",
     ):
         shutil.copyfile(root / "policy" / name, output / name)
     subprocess.run(

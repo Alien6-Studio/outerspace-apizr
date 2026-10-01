@@ -1,0 +1,29 @@
+{
+  "build_inputs_manifest_sha256": "c981a11d84ec319cd10d156b18b31e073ca480e1f2b62f3880c4a17cac0f5405",
+  "evidence": {
+    "ci": {
+      "host": "virtual-machine",
+      "runner": "macos-26"
+    },
+    "physical_mac": {
+      "host": "physical-apple-silicon",
+      "required": true
+    }
+  },
+  "qualification": {
+    "not_qualified": [
+      {
+        "platform": "macos-x86_64",
+        "reason": "homebrew-tier3"
+      },
+      {
+        "platform": "linux",
+        "reason": "runtime-not-qualified-in-0.4.2"
+      }
+    ],
+    "required": [
+      "macos-arm64-tier1"
+    ]
+  },
+  "schema": "apizr.homebrew-qualification/v1"
+}

@@ -32,6 +32,12 @@ jobs:
           uv run --locked python scripts/prepare_homebrew_build_inputs.py --lock uv.lock --policy policy/homebrew-build-inputs.json --output "$RUNNER_TEMP/inputs-repeat"
           diff -r "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/inputs-repeat"
           uv export --locked --offline --only-group homebrew-build --no-emit-project --format cyclonedx1.5 --output-file "$RUNNER_TEMP/inputs/sbom-homebrew-build.cdx.json"
+      - name: Explicit host boundary, preserving the build-input manifest
+        run: >-
+          uv run --locked python scripts/check_homebrew_qualification.py
+          --policy policy/homebrew-qualification.json
+          --manifest "$RUNNER_TEMP/inputs/build-inputs.json"
+          --output "$RUNNER_TEMP/inputs/qualification.json"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: homebrew-build-candidate
@@ -45,14 +51,11 @@ jobs:
           if-no-files-found: error
           path: ${{ runner.temp }}/inputs
 
-  offline-build:
+  offline-build-arm64:
+    name: Offline Apple Silicon build (CI VM for the Tier-1 target)
     needs: candidate
     timeout-minutes: 45
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-26, macos-26-intel]
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-26
     env:
       HOMEBREW_NO_AUTO_UPDATE: '1'
       HOMEBREW_NO_INSTALL_CLEANUP: '1'
@@ -75,6 +78,7 @@ jobs:
           path: ${{ runner.temp }}/inputs
       - name: Official Homebrew runtime provider
         run: |
+          test "$(uname -m)" = arm64
           brew update
           brew install python@3.14 pydantic
       - run: uv sync --locked
@@ -86,7 +90,7 @@ jobs:
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
-          name: homebrew-build-proof-${{ matrix.os }}
+          name: homebrew-build-proof-macos-26
           retention-days: 90
           if-no-files-found: error
           path: |
