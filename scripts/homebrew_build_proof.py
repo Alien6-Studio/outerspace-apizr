@@ -86,7 +86,9 @@ def prove(candidate, commit, inputs, output):
         }
         for f in brew_info["formulae"]
     }
-    if formulas["pydantic"]["installed"] != ["2.13.5"]:
+    # Upgrades may retain older kegs. The import proof below checks the active
+    # provider's exact version and location; unrelated retained kegs are harmless.
+    if "2.13.5" not in formulas["pydantic"]["installed"]:
         raise RuntimeError("The first qualification requires Homebrew Pydantic 2.13.5")
     policy = json.loads((ROOT / "policy/homebrew-build-inputs.json").read_text())
     if (
