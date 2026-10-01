@@ -15,7 +15,8 @@ A source exception requires an explicit policy change in a reviewed PR; there is
 no automatic fallback index.
 
 Export and audit the complete universal lock, including Python/platform variants,
-for runtime, development, documentation and security tooling. Findings and report
+for runtime, development, documentation, security tooling and Homebrew build
+inputs. Findings and report
 collection failures block. Do not silently add ignored advisories. Preserve the
 reports and review the runtime and validation SBOMs when a graph changes.
 
@@ -30,13 +31,13 @@ maintainer has resolved the issue and recorded the decision. Do not treat packag
 metadata or an SBOM entry as a legal compatibility determination.
 
 The required `dependencies` job runs `scripts/check_dependency_licenses.py`.
-Its reviewed baseline covers all **138 third-party versions** in the universal
-lock, including platform alternatives and all four dependency groups:
+Its reviewed baseline covers all **140 third-party versions** in the universal
+lock, including platform alternatives and every dependency group:
 
 - `policy/dependency-licenses.json` records component expressions, review scope,
   notes, the exact evidence archive and its license-file hashes.
-- `policy/dependency-license-texts.json` preserves 196 distinct UTF-8 notice texts
-  from 257 archive paths, including original line endings inside JSON strings.
+- `policy/dependency-license-texts.json` preserves 197 distinct UTF-8 notice texts
+  from 259 archive paths, including original line endings inside JSON strings.
 - `policy/dependency-policy.json` defines the SPDX allowlist, version-specific
   exceptions and named-package denials with upstream references.
 
@@ -104,6 +105,11 @@ test-fixture notices; those are not silently treated as the package's license.
 The package build archives policy, inventory, notice texts and their check report
 alongside the source, lock and SBOMs. The Security artifact also contains the
 license result and hashes of all inputs. They become part of release evidence.
+
+The non-default `homebrew-build` group is a reviewed build toolchain, never a
+runtime dependency or install extra. Its dedicated vulnerability audit and SBOM
+use the same universal lock. See [Homebrew build inputs](homebrew-build-inputs.md)
+for the separate Homebrew runtime provider and offline PEP 517 proof.
 
 References: [SPDX expression syntax](https://spdx.github.io/spdx-spec/v3.0.1/annexes/spdx-license-expressions/),
 [Apache's GPLv3 compatibility guidance](https://www.apache.org/licenses/GPL-compatibility),

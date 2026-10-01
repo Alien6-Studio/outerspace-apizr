@@ -44,6 +44,7 @@ def main() -> None:
         ("runtime", ["--no-default-groups"]),
         ("extras", ["--no-default-groups", "--all-extras"]),
         ("validation", ["--all-groups", "--all-extras"]),
+        ("homebrew-build", ["--only-group", "homebrew-build"]),
     ):
         subprocess.run(
             [
@@ -68,6 +69,7 @@ def main() -> None:
         "dependency-policy.json",
         "dependency-licenses.json",
         "dependency-license-texts.json",
+        "homebrew-build-inputs.json",
     ):
         shutil.copyfile(root / "policy" / name, output / name)
     subprocess.run(
