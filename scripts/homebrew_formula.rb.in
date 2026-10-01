@@ -17,7 +17,7 @@ class Apizr < Formula
     # These reviewed wheels feed PEP 517 only; never install resources into libexec.
     wheelhouse = buildpath/"build-wheelhouse"
     resources.each { |r| r.stage wheelhouse }
-    python = Formula["python@3.14"].opt_bin/"python3.14"
+    python = formula_opt_bin("python@3.14")/"python3.14"
     virtualenv_create(libexec, python, system_site_packages: true)
 
     ENV.keys.grep(/^PIP_/).each { |key| ENV.delete(key) }
