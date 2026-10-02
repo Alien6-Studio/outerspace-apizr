@@ -274,3 +274,12 @@ doctor, three shell completions, CI check and plugin lifecycle/sync/update.
 Apizr imports from Formula libexec; Pydantic imports from the Homebrew provider.
 Plugin environments stay outside the Cellar and the entire core prefix remains
 unchanged. The verification installation was then uninstalled and untapped.
+
+## Master integration identity
+
+Master preserves its previously reviewed test/documentation tool versions.
+Because the build manifest includes the entire lockfile hash, its integration
+identity is `925b8881feec75466ae489e7a0a71f9e97a2b7da0d6b75cdead210781009ea1b`. Only `lock_sha256` differs from the immutable
+release manifest above: all five build wheel identities, root requirements,
+build policy and generated Formula bytes are unchanged. The release manifest
+and public tap remain bound to the original released source and are not relabeled.
