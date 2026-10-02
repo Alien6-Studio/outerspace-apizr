@@ -123,7 +123,9 @@ corresponding tree was produced. Consumers explicitly choose artifact upload and
 retention. The Action itself performs neither checkout nor artifact upload.
 
 For repository qualification only, paired `wheel-path` / `wheel-sha256` inputs
-select a regular local 0.4.2 wheel. The Action checks its SHA-256, embedded core
+select a regular local candidate wheel matching the Action's qualification version.
+The 0.4.3 development line accepts exactly 0.4.3; the published v0.4.2 Action keeps
+its original 0.4.2 policy. The Action checks the SHA-256, embedded core
 distribution/version and installed CLI version, using a snapshot of the original
 verified bytes. URLs, symlinks and mismatched identities are rejected. This is not
 the normal public installation route.
