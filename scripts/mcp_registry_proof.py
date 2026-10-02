@@ -5,6 +5,8 @@ import os
 import shutil
 import subprocess
 import sys
+import zipfile
+from email.parser import BytesParser
 from pathlib import Path
 
 import anyio
@@ -15,12 +17,20 @@ REPO = Path(__file__).resolve().parents[1]
 
 async def main(root: Path):
     config = json.loads((root / "installed.json").read_text())
-    package = json.loads((REPO / "server.json").read_text())["packages"][0]
+    descriptor = json.loads((REPO / "server.json").read_text())
+    package = descriptor["packages"][0]
     assert package["runtimeHint"] == "uvx"
     assert package["transport"] == {"type": "stdio"}
     uvx = shutil.which("uvx")
     assert uvx is not None
     wheel = next((root / "wheels").glob("outerspace_apizr_mcp-*.whl"))
+    with zipfile.ZipFile(wheel) as archive:
+        metadata = BytesParser().parsebytes(
+            archive.read(
+                next(n for n in archive.namelist() if n.endswith(".dist-info/METADATA"))
+            )
+        )
+        assert f"<!-- mcp-name: {descriptor['name']} -->" in metadata.get_payload()
     # Substitute only the unpublished package source. Everything after the
     # executable name comes from the committed descriptor and operator inputs.
     prefix = [
