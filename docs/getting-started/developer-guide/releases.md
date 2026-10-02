@@ -9,7 +9,8 @@
 The [0.4.2 notes](../../releases/0.4.2.md) describe MCP Delivery, client collections,
 onboarding, CI integrations and the qualified Homebrew Formula on top of the
 application inputs, delivery identities, proof/admission and resumable delivery
-introduced in 0.4.1. **0.4.2 is the current stable release.** Its release source and
+introduced in 0.4.1. The [0.4.3 notes](../../releases/0.4.3.md) add the MCP client
+launcher and directory metadata. **0.4.3 is the current stable release.** Its release source and
 archives remain immutable when integrated into master. The
 [release-branch model](../../contributing/release-branches.md) records that distinction.
 The [0.4.0rc1 record](../../releases/0.4.0.md) retains the earlier coordinated RC.

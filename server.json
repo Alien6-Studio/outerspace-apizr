@@ -1,0 +1,46 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Alien6-Studio/outerspace-apizr",
+  "title": "OuterSpace Apizr",
+  "description": "Python capability compiler: local read-only analysis and explicit MCP/REST exposure planning.",
+  "version": "0.4.3",
+  "repository": {
+    "url": "https://github.com/Alien6-Studio/outerspace-apizr",
+    "source": "github",
+    "subfolder": "plugins/mcp"
+  },
+  "websiteUrl": "https://apizr.outerspace.sh/reference/apizr-mcp-server/",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "outerspace-apizr-mcp",
+      "version": "0.4.3",
+      "runtimeHint": "uvx",
+      "transport": {"type": "stdio"},
+      "packageArguments": [
+        {
+          "type": "named",
+          "name": "--project",
+          "description": "Absolute path to the operator-selected apizr.toml project file.",
+          "isRequired": true,
+          "format": "filepath"
+        },
+        {
+          "type": "named",
+          "name": "--operator-policy",
+          "description": "Absolute path to the reviewed policy granting source.analyze for this project.",
+          "isRequired": true,
+          "format": "filepath"
+        },
+        {
+          "type": "named",
+          "name": "--plugins-dir",
+          "description": "Absolute path to the separate store with the matching MCP plugin explicitly installed and activated.",
+          "isRequired": true,
+          "format": "filepath"
+        }
+      ]
+    }
+  ]
+}

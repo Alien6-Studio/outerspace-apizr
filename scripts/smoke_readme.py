@@ -19,6 +19,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("cli", type=Path)
     parser.add_argument("--development", action="store_true")
+    parser.add_argument("--expected-version")
     args = parser.parse_args()
     cli = args.cli.resolve()
     repository = Path(__file__).resolve().parents[1]
@@ -101,11 +102,19 @@ def main() -> None:
     if args.development:
         development(cli, repository)
         migration(cli, repository)
-        quickstart(cli, repository, candidate=True)
+        quickstart(
+            cli, repository, candidate=True, expected_version=args.expected_version
+        )
     quickstart(cli, repository)
 
 
-def quickstart(cli: Path, repository: Path, *, candidate: bool = False) -> None:
+def quickstart(
+    cli: Path,
+    repository: Path,
+    *,
+    candidate: bool = False,
+    expected_version: str | None = None,
+) -> None:
     """Run the selected Quickstart blocks verbatim, including real client calls."""
     directory = (
         "docs/getting-started" if candidate else "tests/fixtures/documentation-0.3"
@@ -159,13 +168,21 @@ def quickstart(cli: Path, repository: Path, *, candidate: bool = False) -> None:
             assert expected in result.stdout
         root = parent / "apizr-quickstart"
         python = cli.parent / "python" if candidate else root / ".venv/bin/python"
+        expected_version = (
+            expected_version
+            or tomllib.loads((repository / "pyproject.toml").read_text())["project"][
+                "version"
+            ]
+            if candidate
+            else "0.3.0"
+        )
         subprocess.run(
             [
                 str(python),
                 "-I",
                 "-c",
                 "import apizr,importlib.metadata; from pathlib import Path; "
-                f"assert importlib.metadata.version('outerspace-apizr') == {tomllib.loads((repository / 'pyproject.toml').read_text())['project']['version'] if candidate else '0.3.0'!r}; "
+                f"assert importlib.metadata.version('outerspace-apizr') == {expected_version!r}; "
                 f"assert not Path(apizr.__file__).resolve().is_relative_to(Path({str(repository)!r}))",
             ],
             cwd=root,

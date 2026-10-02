@@ -25,7 +25,7 @@ from apizr.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
 from apizr.project import load_project
 from apizr.repository_readiness import RepositoryReadinessPolicy, report_bytes
-assert version("outerspace-apizr") == "0.4.2"
+assert version("outerspace-apizr") == "0.4.3"
 assert [r for r in requires("outerspace-apizr") if "extra ==" not in r] == ["pydantic<3,>=2.12"]
 for name in ("yaml", "mcp", "fastapi", "apizr_oci", "apizr_attest", "apizr_mcp"):
     assert find_spec(name) is None, name
@@ -77,7 +77,7 @@ def main():
     root = args.output.resolve()
     assert not root.is_relative_to(ROOT), "Installed proof must be outside checkout"
     adapter = runpy.run_path(str(ROOT / ".github/actions/forge/run.py"))
-    name, raw = adapter["wheel_bytes"](str(args.wheel), args.sha256, "0.4.2")
+    name, raw = adapter["wheel_bytes"](str(args.wheel), args.sha256, "0.4.3")
     root.mkdir(parents=True, exist_ok=False)
     wheel = root / name
     wheel.write_bytes(raw)
@@ -107,7 +107,7 @@ def main():
         environment,
     )
     assert (
-        run([cli, "--version"], root, environment).strip() == "outerspace-apizr 0.4.2"
+        run([cli, "--version"], root, environment).strip() == "outerspace-apizr 0.4.3"
     )
     environment.update(
         GITHUB_TOKEN="SECRET_GITHUB_SENTINEL", CI_JOB_TOKEN="SECRET_GITLAB_SENTINEL"
@@ -140,7 +140,7 @@ def main():
     evidence = {
         "schema": "apizr.forge-proof/v1",
         "wheel_sha256": hashlib.sha256(raw).hexdigest(),
-        "version": "0.4.2",
+        "version": "0.4.3",
         "python": sys.version.split()[0],
         "minimal_core": True,
         "installed_outside_checkout": True,

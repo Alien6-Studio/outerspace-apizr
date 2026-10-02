@@ -173,8 +173,8 @@ def test_marker_uses_source_commit_and_fingerprints(site):
         ).strip()
     )
     assert marker["status"] == "stable"
-    assert marker["target_version"] == "0.4.2"
-    assert marker["stable_release"] == "0.4.2"
+    assert marker["target_version"] == "0.4.3"
+    assert marker["stable_release"] == "0.4.3"
     assert (
         marker["files"]["index.html"]
         == hashlib.sha256((site / "index.html").read_bytes()).hexdigest()

@@ -5,11 +5,11 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 ## Current published baseline
 
-The current stable release is **0.4.2** for the core and all three plugins,
-source `a21cfd41eecc7ca3259e2fb72f6a028a288b9030`. Publication #232 is complete.
-The original archives from protected release-line CI `37010358692` were published
-by workflow `37016836833`; all eight public files match the qualified bytes.
-See the [release record](../releases/0.4.2.md). Master integration and documentation
+The current stable release is **0.4.3** for the core and all three plugins,
+source `cfaa5108c37ab9324297bbe5b38d90d537ea57ad`. Publication is complete.
+The original archives from protected release-line CI `37057658519` were published
+by workflow `37062660371`; all eight public files match the qualified bytes.
+See the [release record](../releases/0.4.3.md). Master integration and documentation
 commits preserve the released product but never replace its immutable source.
 Documentation maintenance targets `master`.
 
@@ -29,6 +29,22 @@ that qualified RC2. Tracking #232 retains the failed run, corrective qualificati
 exact final source and verified publication evidence.
 See the [0.4.2 release record](../releases/0.4.2.md).
 
+## Completed 0.4.3 qualification
+
+The coordinated **0.4.3** core and all three plugins are published and verified.
+The [release record](../releases/0.4.3.md) identifies the exact protected source,
+successful qualification and publication runs, and public-byte comparison.
+The original four wheels, four sdists, target exports, delivery evidence and
+signed provenance remain immutable. Do not replay qualification or package
+publication for this completed release. PR builds remain previews.
+
+Official MCP Registry publication is independent of the package workflow.
+After master integration, manually dispatch `Publish MCP Registry` for `v0.4.3`
+and its recorded source SHA. It verifies the public release and matching
+`server.json`, then authenticates with the repository's GitHub Actions OIDC
+identity. The public PyPI launcher and package ownership marker have passed
+validation. No personal token or rebuild is required.
+
 ## Retain and publish one coordinated artifact set
 
 CI builds four wheels and four sdists once per candidate. Independent sdist
@@ -44,9 +60,9 @@ and Documentation runs on that same branch and commit. The signer recorded
 that protected ref in the retained evidence. The old branch can be retired
 without changing that evidence identity.
 
-The existing publication verifier retains the original 0.4.1 source policy;
-it must not be used to replay a completed release. It accepts only `0.4.2rc1`, `0.4.2rc2` and `0.4.2` from protected `release/0.4.2` and rejects
-unintended versions and refs. New development builds do not authorize a
+The publication verifier accepts exactly `0.4.3` from protected `release/0.4.3`
+and rejects unintended versions and refs. It must not be used to replay this
+completed release. Historical verifier versions retain their original policies. New development builds do not authorize a
 publication. Releases through 0.4.0rc1 retain `master` provenance; published
 0.4.1 retains `refs/heads/release/0.4.1` provenance.
 
@@ -69,7 +85,7 @@ For first-time plugin publishers, PyPI allows only one pending publisher for an
 identical repository/workflow/environment configuration. Register and publish one
 package at a time using the exact `package` input, then finish with `package: all`
 to archive release-wide evidence. These prerequisites do not authorize a new upload.
-Completed 0.4.0rc1, 0.4.1rc1, 0.4.1, 0.4.2rc1 and 0.4.2 deliveries must not be dispatched again.
+Completed 0.4.0rc1, 0.4.1rc1, 0.4.1, 0.4.2rc1, 0.4.2 and 0.4.3 deliveries must not be dispatched again.
 
 ## Published 0.3.0
 
@@ -223,7 +239,7 @@ remain subject to the site's optional GitHub consent setting. No release number
 is hard-coded in the theme, and no header override is needed. See
 [Material's repository documentation](https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/).
 
-PRs and `release/0.4.2` pushes run strict MkDocs and HTML validation without
+PRs and protected release-line pushes run strict MkDocs and HTML validation without
 deployment. Stable documentation still follows the integrated baseline. A master
 push builds and publishes the site to `gh-pages`, served at
 [apizr.outerspace.sh](https://apizr.outerspace.sh/). Keep this active publication

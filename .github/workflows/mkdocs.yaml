@@ -3,7 +3,7 @@ name: Documentation
 on:
   pull_request:
   push:
-    branches: [master, release/0.4.2]
+    branches: [master, release/0.4.2, release/0.4.3]
   workflow_dispatch:
 
 permissions:
@@ -28,8 +28,8 @@ jobs:
           uv pip install --python "$RUNNER_TEMP/docs-stable/bin/python" outerspace-apizr==0.3.0
           uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-stable/bin/apizr"
           uv venv --python 3.11 "$RUNNER_TEMP/docs-public"
-          uv pip install --python "$RUNNER_TEMP/docs-public/bin/python" outerspace-apizr==0.4.2
-          uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-public/bin/apizr" --development
+          uv pip install --python "$RUNNER_TEMP/docs-public/bin/python" outerspace-apizr==0.4.3
+          uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-public/bin/apizr" --development --expected-version 0.4.3
           uv venv --python 3.11 "$RUNNER_TEMP/docs-dev"
           uv pip install --python "$RUNNER_TEMP/docs-dev/bin/python" "$RUNNER_TEMP"/docs-wheel/*.whl
           uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-dev/bin/apizr" --development

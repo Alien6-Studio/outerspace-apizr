@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master, develop, release/0.4.2]
+    branches: [master, develop, release/0.4.2, release/0.4.3]
   pull_request:
   workflow_dispatch:
 
@@ -400,7 +400,7 @@ jobs:
     if: >-
       github.event_name == 'push' &&
       (github.ref == 'refs/heads/master' ||
-       (github.ref == 'refs/heads/release/0.4.2' && github.ref_protected))
+       ((github.ref == 'refs/heads/release/0.4.2' || github.ref == 'refs/heads/release/0.4.3') && github.ref_protected))
     needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations, release-target, release-delivery]
     runs-on: ubuntu-latest
     permissions:
@@ -489,7 +489,7 @@ jobs:
           flags=()
           # PRs and master remain previews; protected release-line pushes
           # retain qualified artifacts without publishing them.
-          if test "$EVENT_NAME" = pull_request || test "$GITHUB_REF" != refs/heads/release/0.4.2; then
+          if test "$EVENT_NAME" = pull_request || { test "$GITHUB_REF" != refs/heads/release/0.4.2 && test "$GITHUB_REF" != refs/heads/release/0.4.3; }; then
             flags+=(--preview)
           fi
           python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${flags[@]}"

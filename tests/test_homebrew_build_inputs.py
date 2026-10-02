@@ -96,13 +96,13 @@ def test_wheel_hash_and_embedded_identity_are_both_verified():
 
 def test_candidate_must_match_selected_commit_and_preserved_bytes(tmp_path):
     (tmp_path / "dist").mkdir()
-    source = tmp_path / "dist/outerspace_apizr-0.4.2.tar.gz"
+    source = tmp_path / "dist/outerspace_apizr-0.4.3.tar.gz"
     source.write_bytes(b"selected-candidate")
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     candidate = {
         "schema": "apizr.release-candidate/v1",
         "repository": "Alien6-Studio/outerspace-apizr",
-        "version": "0.4.2",
+        "version": "0.4.3",
         "commit": "a" * 40,
         "artifacts": [
             {

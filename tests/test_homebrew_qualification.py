@@ -29,10 +29,10 @@ def test_homebrew_boundary_is_explicit_deterministic_and_preserves_build_identit
     assert policy["qualification"]["required"] == ["macos-arm64-tier1"]
     assert policy["qualification"]["not_qualified"] == [
         {"platform": "macos-x86_64", "reason": "homebrew-tier3"},
-        {"platform": "linux", "reason": "runtime-not-qualified-in-0.4.2"},
+        {"platform": "linux", "reason": "runtime-not-qualified-in-0.4.3"},
     ]
     assert policy["build_inputs_manifest_sha256"] == (
-        "925b8881feec75466ae489e7a0a71f9e97a2b7da0d6b75cdead210781009ea1b"
+        "76d36c8d868c866f4bd906980ffd54d1fa58c86860934f566874ea6566f0b0ae"
     )
     reordered = dict(reversed(list(policy.items())))
     assert tool["encoded"](result) == tool["encoded"](

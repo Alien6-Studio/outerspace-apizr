@@ -1,0 +1,76 @@
+name: Publish MCP Registry
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Already published immutable GitHub release tag
+        required: true
+        default: v0.4.3
+      source_sha:
+        description: Reviewed full release source SHA
+        required: true
+        default: cfaa5108c37ab9324297bbe5b38d90d537ea57ad
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-mcp-registry
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag }}
+      RELEASE_SOURCE: ${{ inputs.source_sha }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - name: Verify published release identity
+        run: |
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          from pathlib import Path
+          tag, source = os.environ['RELEASE_TAG'], os.environ['RELEASE_SOURCE']
+          assert re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', tag)
+          assert re.fullmatch(r'[0-9a-f]{40}', source)
+          def gh(*args):
+              return json.loads(subprocess.check_output(['gh', *args]))
+          repo = 'Alien6-Studio/outerspace-apizr'
+          release = gh('api', f'repos/{repo}/releases/tags/{tag}')
+          assert not release['draft'] and not release['prerelease']
+          assert gh('api', f'repos/{repo}/commits/{tag}')['sha'] == source
+          assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip() == source
+          descriptor = json.loads(Path('server.json').read_text())
+          assert descriptor['name'] == 'io.github.Alien6-Studio/outerspace-apizr'
+          assert descriptor['version'] == tag[1:]
+          package, = descriptor['packages']
+          assert package['identifier'] == 'outerspace-apizr-mcp'
+          assert package['version'] == tag[1:] and package['registryType'] == 'pypi'
+          names = {asset['name'] for asset in release['assets']}
+          assert {'public-comparison.json', 'attest-verification.json', 'release-assets.json'} <= names
+          print(f'Publishing exact descriptor from {tag} ({source})')
+          PY
+      - name: Install verified official publisher
+        run: |
+          curl --fail --silent --show-error --location \
+            https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz \
+            --output "$RUNNER_TEMP/mcp-publisher.tar.gz"
+          echo "a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc  $RUNNER_TEMP/mcp-publisher.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/mcp-publisher.tar.gz" -C "$RUNNER_TEMP" mcp-publisher
+      - name: Validate descriptor
+        run: '"$RUNNER_TEMP/mcp-publisher" validate'
+      - name: Authenticate with repository identity and publish
+        run: |
+          "$RUNNER_TEMP/mcp-publisher" login github-oidc
+          "$RUNNER_TEMP/mcp-publisher" publish server.json

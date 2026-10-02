@@ -32,7 +32,7 @@ dependencies. Installation by Apizr uses only the reviewed local wheelhouse.
 The SDK and a copy of the compiler belong to the plugin's separate environment;
 the minimal core receives neither MCP nor REST dependencies.
 
-For contributor verification builds of `0.4.2`, use the source checkout:
+For contributor verification builds of `0.4.3`, use the source checkout:
 
 ```sh
 work=$(mktemp -d)
@@ -49,7 +49,7 @@ prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
   -r dependencies.txt
 uv venv --no-python-downloads --python python3 core
 uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.2-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.3-py3-none-any.whl
 ```
 
 Record one exact version and SHA-256 per distribution, including the plugin,
@@ -73,11 +73,11 @@ for wheel in sorted(Path("wheels").glob("*.whl")):
     lines.append(f"{metadata['Name']}=={metadata['Version']} --hash=sha256:{digest}\n")
 Path("plugin.lock").write_text("".join(lines))
 PY
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.2-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.2-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.3-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.3-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.2 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.3 --plugins-dir "$work/plugins"
 ```
 
 Installation alone leaves the plugin inactive. The existing [locked installation
@@ -166,6 +166,53 @@ This durable connection is **not** `apizr plugins run`: that command retains its
 one-request `apizr.extension/v1` protocol and existing timeout. Internally, the
 MCP server uses that runtime for fresh, isolated **compiler calculations**, not
 as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
+
+## Directory integration (0.4.3)
+
+OuterSpace Apizr remains a local stdio capability compiler. The
+Official MCP Registry identity is
+`io.github.Alien6-Studio/outerspace-apizr`. The matching `mcp-name` marker lives
+in the published MCP package README.
+The root `server.json` and all four coordinated packages describe version
+**0.4.3**, published and verified. See the [release record](../releases/0.4.3.md)
+for qualification and publication status.
+
+The new package command `outerspace-apizr-mcp` accepts the same arguments as
+`apizr mcp serve`. It delegates to that launcher and selects the already
+installed, explicitly activated plugin through the existing admission checks.
+Installing the launcher through `uvx` does not prepare or activate the separate
+plugin store. The minimal core environment remains separate from the MCP SDK.
+
+After installing and activating the verified 0.4.3 MCP
+profile, the descriptor resolves to this command:
+
+```sh
+uvx outerspace-apizr-mcp@0.4.3 \
+  --project /absolute/project/apizr.toml \
+  --operator-policy /absolute/operator.json \
+  --plugins-dir /absolute/plugins
+```
+
+All three paths are supplied by the operator. The descriptor exposes no
+delivery argument or remote endpoint. Missing authority or an absent/inactive
+plugin is refused; startup never installs, activates or repairs a plugin.
+The published 0.4.2 package lacks this console command: continue to use
+`apizr mcp serve` for that version.
+
+The published descriptor and package ownership marker are validated. The public
+PyPI launcher passed both MCP protocol modes and all three read-only tool calls.
+Official Registry publication uses the manually dispatched `Publish MCP Registry`
+workflow after master integration. GitHub Actions OIDC authenticates the repository
+owner without a personal token. The workflow checks the public release, immutable
+source and matching package version before publishing the exact descriptor.
+PyPI and GitHub release delivery are complete.
+See the Registry's [authentication requirements](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/authentication.mdx).
+
+The root `glama.json` declares the verified GitHub maintainer. The
+[Glama listing](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr)
+now exposes all three read-only tools and their schemas after successful
+inspection. The inspection used the public sample project and explicit policy;
+no hosted server was deployed.
 
 ## Tools and results
 

@@ -80,7 +80,7 @@ async def exercise(
             "2025-11-25" if mode == "legacy" else "2026-07-28"
         )
         assert client.server_info is not None
-        assert client.server_info.version == version("outerspace-apizr-mcp") == "0.4.2"
+        assert client.server_info.version == version("outerspace-apizr-mcp") == "0.4.3"
         tools = (await client.list_tools()).tools
         assert tools[:3] == original_tools
         assert [t.name for t in tools] == [
