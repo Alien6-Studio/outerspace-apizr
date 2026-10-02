@@ -99,7 +99,9 @@ steps:
 Use the immutable release tag shared with the Python release, or pin its exact
 commit SHA. There are no moving major/minor Action tags. The Action reference and
 `apizr-version` are separate identities; choose matching releases deliberately.
-The release metadata defaults to **0.4.2**; public installation requires the published version.
+The published `v0.4.2` metadata defaults to **0.4.2**. The candidate 0.4.3
+Action and component source default to **0.4.3**; their public installation
+must wait for that coordinated release to be published.
 
 | Input | Default / behavior |
 | --- | --- |

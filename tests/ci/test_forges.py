@@ -7,6 +7,7 @@ import re
 import runpy
 import subprocess
 import sys
+import tomllib
 import zipfile
 from pathlib import Path
 
@@ -46,6 +47,9 @@ def action_values(**updates):
 
 def test_platform_contracts_and_immutable_supply_chain():
     assert ACTION["name"] and ACTION["description"]
+    version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
+    assert ACTION["inputs"]["apizr-version"]["default"] == version
+    assert INPUTS["apizr-version"]["default"] == version
     assert ACTION["runs"]["using"] == "composite"
     assert set(ACTION["inputs"]) == {
         "operation",
@@ -334,7 +338,7 @@ def test_action_install_is_exact_core_only_and_child_has_no_tokens(
         ADAPTER["main"].__globals__["subprocess"],
         "run",
         lambda *a, **kw: types.SimpleNamespace(
-            returncode=0, stdout=b"outerspace-apizr 0.4.2\n"
+            returncode=0, stdout=b"outerspace-apizr 0.4.3\n"
         ),
     )
     assert ADAPTER["main"]() == 0
@@ -347,12 +351,12 @@ def test_action_install_is_exact_core_only_and_child_has_no_tokens(
         "--no-input",
         "--index-url",
         "https://pypi.org/simple",
-        "outerspace-apizr==0.4.2",
+        "outerspace-apizr==0.4.3",
     ]
     assert calls[1][1:] == ADAPTER["invocation"](values)
     assert (
         (tmp_path / "outputs").read_text()
-        == "result=.apizr-ci/result.json\nartifacts=.apizr-ci\napizr-version=0.4.2\nstate=success\n"
+        == "result=.apizr-ci/result.json\nartifacts=.apizr-ci\napizr-version=0.4.3\nstate=success\n"
     )
 
 
