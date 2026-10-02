@@ -74,8 +74,8 @@ identical bytes across repeat runs and both wrappers.
 
 ## GitHub Actions
 
-The root `action.yml` is a real composite Action. The following is a **future
-stable example, usable only after 0.4.2 publication**:
+The root `action.yml` is a real composite Action. This example uses the
+**published stable v0.4.2 tag**:
 
 ```yaml
 permissions:
