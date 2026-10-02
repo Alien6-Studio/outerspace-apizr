@@ -77,7 +77,7 @@ for their guarantees and limits.
 ## Existing workflows and limits
 
 Single-source `inspect`, `generate rest/mcp` and `execute` remain supported.
-The 0.4.2 line undergoing corrective RC2 qualification also exports verified REST bundles to
+The 0.4.2 line prepared for final publication also exports verified REST bundles to
 [Postman, Bruno and Insomnia collections](https://apizr.outerspace.sh/getting-started/user-guide/client-collections/),
 with deterministic files and safe local regeneration.
 

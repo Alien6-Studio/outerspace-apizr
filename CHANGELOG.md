@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.2rc2 — development, unpublished
+## 0.4.2 — 2026-10-02
 
 - Close both worker pipes even when process-group termination or another pipe
   closure fails, preserving failure reporting and preventing leaked descriptors.
@@ -14,7 +14,7 @@
   request, using the existing coordinator, captured policy and plugin store.
 - Preserve the three default read-only tools and isolate per-operation authority.
 - Advertise the installed MCP package version; coordinate all four packages and
-  exact internal pins at 0.4.2rc2.
+  exact internal pins at 0.4.2.
 
 - Validate local repositories and generate REST/MCP bundles through forge-neutral
   `apizr ci`, with explicit analysis authority and portable retained evidence.

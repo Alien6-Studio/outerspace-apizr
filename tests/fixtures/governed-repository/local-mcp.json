@@ -3,7 +3,7 @@
     "artifacts": {
       "apizr-bundle-provenance.json": {
         "algorithm": "sha256",
-        "value": "92c293bbf008e314daae5d0724f2c09c15cf75b195a26d30c6582db545ccff99"
+        "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
       },
       "apizr_governed/__init__.py": {
         "algorithm": "sha256",
@@ -347,7 +347,7 @@
     "artifacts": {
       "apizr-bundle-provenance.json": {
         "algorithm": "sha256",
-        "value": "92c293bbf008e314daae5d0724f2c09c15cf75b195a26d30c6582db545ccff99"
+        "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
       },
       "apizr_governed/__init__.py": {
         "algorithm": "sha256",
@@ -523,7 +523,7 @@
       },
       "execution/bundle.json": {
         "algorithm": "sha256",
-        "value": "0a47fbaa7609a000592eb5426eebd3f5a69d8c5fbc9b5b0f1049dfeaa6c5360e"
+        "value": "96036a075b245ebc48c91234962a554d4305747ec74ee5b066488c7b4a7821ef"
       },
       "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
         "algorithm": "sha256",
@@ -620,7 +620,7 @@
     },
     "provenance_digest": {
       "algorithm": "sha256",
-      "value": "92c293bbf008e314daae5d0724f2c09c15cf75b195a26d30c6582db545ccff99"
+      "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
     },
     "repository_interface_digest": {
       "algorithm": "sha256",

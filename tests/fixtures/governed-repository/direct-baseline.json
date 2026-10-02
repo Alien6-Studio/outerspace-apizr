@@ -1,8 +1,8 @@
 {
   "artifacts": {
     "mcp": {
-      "apizr-bundle-provenance.json": "55ef2d78724a2e1e1d9143fc1ad38206b2fa3adf2a2c223c072360c80ea9a5c5",
-      "apizr-repository-mcp.json": "e126fc7a393a8448b24071371f7e1589f0fb487fc300679f848dbe44c3335c70",
+      "apizr-bundle-provenance.json": "58f5fc6335089a19f695dbc6242ec306c9c6ab9e0b574341da7055886d39e4fb",
+      "apizr-repository-mcp.json": "b5151b5968f3bdae0b51a663ae4b8306185bc81bc5fe7ad31014fe0a11978b78",
       "apizr_repository_runtime.py": "a9a3b6de32eae39d3b3e59b96371af1ca082f4838bad184acbc3d86b8447ef1d",
       "apizr_runtime.py": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14",
       "capability-catalog.json": "957021149968a303f4faca6c5980528e7379bb038101496d90b84a6a13bffff8",
@@ -21,8 +21,8 @@
       "source/shop/pricing.py": "7784555292558239adc9b7a8c2187816b8ddd02229fd26d01317459d25a5c271"
     },
     "rest": {
-      "apizr-bundle-provenance.json": "55ef2d78724a2e1e1d9143fc1ad38206b2fa3adf2a2c223c072360c80ea9a5c5",
-      "apizr-repository-rest.json": "0e063f002861f530323bf391c9ecd27f8d515a412c54ccdc04a395b55a5c85ca",
+      "apizr-bundle-provenance.json": "58f5fc6335089a19f695dbc6242ec306c9c6ab9e0b574341da7055886d39e4fb",
+      "apizr-repository-rest.json": "c468390ec65cdb81995d0c94a9f00d3637b5fa2a479162fb8f27d7ac4c2c9b44",
       "apizr_repository_runtime.py": "a9a3b6de32eae39d3b3e59b96371af1ca082f4838bad184acbc3d86b8447ef1d",
       "apizr_runtime.py": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14",
       "app.py": "8148ec8d36b4c062451a145e9f178abb115787ac589185bd63ca5352c281d12b",

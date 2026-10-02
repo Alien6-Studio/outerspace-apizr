@@ -24,10 +24,12 @@ independently qualified and publicly verified.
 
 The immutable `v0.4.2rc1` prerelease was published and verified from
 `e8bd1166eff98a3766ec586c6a36c2f58ac14853`; publication #231 is complete.
-The protected `release/0.4.2` line now qualifies corrective `0.4.2rc2` after the final
-qualification exposed a worker-pipe cleanup failure. The runtime fix guarantees
-pipe closure on cleanup errors; third-party dependencies remain unchanged.
-Tracking #232 retains the failed final run and the new corrective qualification.
+Corrective `0.4.2rc2` was qualified at
+`3e58c7969129e368a21f8188b12c94ab3059b421` after the first final qualification
+exposed a worker-pipe cleanup failure. PR #234 fixes pipe closure on cleanup errors.
+The protected line now prepares final `0.4.2` with no runtime or third-party
+dependency change from that qualified RC2. Tracking #232 retains the failed run,
+corrective qualification and exact final publication evidence.
 Final PyPI availability must not be claimed until that publication succeeds.
 See the [0.4.2 release record](../releases/0.4.2.md).
 
