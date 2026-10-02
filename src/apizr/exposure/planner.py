@@ -29,8 +29,14 @@ class Diagnostic(ValueModel):
 
 
 class ExposureRefused(ValueError):
-    def __init__(self, diagnostics: tuple[Diagnostic, ...]):
+    def __init__(
+        self,
+        diagnostics: tuple[Diagnostic, ...],
+        *,
+        readiness: RepositoryReadinessReport | None = None,
+    ):
         self.diagnostics = diagnostics
+        self.readiness = readiness
         super().__init__("Requested exposure is refused by evidence/policy")
 
 

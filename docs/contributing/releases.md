@@ -3,18 +3,15 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
-## Current baseline and next release
+## Current published baseline
 
-The current stable release is **0.4.1** for the core and all three plugins,
-source `d08b37d126957593a82784ef3ad096e3f8b4929d`. Qualification #203 and
-publication #204 are complete. The original archives from protected release-line
-CI `36601712772` were published by workflow `36608326995` and all eight public
-files matched the qualified bytes. See the [release record](../releases/0.4.1.md).
-
-PR #206 integrated the released source into `master` at
-`e49d5f686bc9b2c9610c7849e246594feb48c3d4`, with a CI-only adjustment for master
-verification previews. That commit is not the release source; it never replaces
-the tag or original archives. Documentation maintenance now targets `master`.
+The current stable release is **0.4.2** for the core and all three plugins,
+source `a21cfd41eecc7ca3259e2fb72f6a028a288b9030`. Publication #232 is complete.
+The original archives from protected release-line CI `37010358692` were published
+by workflow `37016836833`; all eight public files match the qualified bytes.
+See the [release record](../releases/0.4.2.md). Master integration and documentation
+commits preserve the released product but never replace its immutable source.
+Documentation maintenance targets `master`.
 
 The **0.4.1rc1** and **0.4.0rc1** prereleases remain immutable history. The earlier
 core-only 0.4.0 upload was incomplete and removed; no coordinated final 0.4.0
@@ -22,12 +19,15 @@ exists. **RC2 NOT REQUIRED:** the 0.4.1 finalization changed versions and
 documentation without changing runtime behavior, and the final archives were
 independently qualified and publicly verified.
 
-The maintainer authorized protected `release/0.4.2` to replace the old release
-branch after integration. This opens the development line without bumping
-versions, adding features or authorizing a release candidate. Future publication
-requires a separate policy update and the protected
-[release-branch process](release-branches.md); planned scope remains in the
-[roadmap](../development/0.4.md#delivery-scope-and-explicit-deferrals).
+The immutable `v0.4.2rc1` prerelease was published and verified from
+`e8bd1166eff98a3766ec586c6a36c2f58ac14853`; publication #231 is complete.
+Corrective `0.4.2rc2` was qualified at
+`3e58c7969129e368a21f8188b12c94ab3059b421` after the first final qualification
+exposed a worker-pipe cleanup failure. PR #234 fixes pipe closure on cleanup errors.
+Final `0.4.2` is published with no runtime or third-party dependency change from
+that qualified RC2. Tracking #232 retains the failed run, corrective qualification,
+exact final source and verified publication evidence.
+See the [0.4.2 release record](../releases/0.4.2.md).
 
 ## Retain and publish one coordinated artifact set
 
@@ -45,8 +45,8 @@ that protected ref in the retained evidence. The old branch can be retired
 without changing that evidence identity.
 
 The existing publication verifier retains the original 0.4.1 source policy;
-it must not be used to replay a completed release. It continues to reject
-unapproved 0.4.2 versions and refs. New development builds do not authorize a
+it must not be used to replay a completed release. It accepts only `0.4.2rc1`, `0.4.2rc2` and `0.4.2` from protected `release/0.4.2` and rejects
+unintended versions and refs. New development builds do not authorize a
 publication. Releases through 0.4.0rc1 retain `master` provenance; published
 0.4.1 retains `refs/heads/release/0.4.1` provenance.
 
@@ -69,7 +69,7 @@ For first-time plugin publishers, PyPI allows only one pending publisher for an
 identical repository/workflow/environment configuration. Register and publish one
 package at a time using the exact `package` input, then finish with `package: all`
 to archive release-wide evidence. These prerequisites do not authorize a new upload.
-Completed 0.4.0rc1, 0.4.1rc1 and 0.4.1 deliveries must not be dispatched again.
+Completed 0.4.0rc1, 0.4.1rc1, 0.4.1, 0.4.2rc1 and 0.4.2 deliveries must not be dispatched again.
 
 ## Published 0.3.0
 
@@ -130,8 +130,8 @@ and publisher and is not part of this workflow.
 
 The steps below record the completed **0.4.1** procedure and its original source
 line. Do not replay publication after retiring that branch. Qualification and
-publication of 0.4.2 require a separately reviewed version/ref policy update;
-creating the development branch alone does not enable this procedure for it.
+publication of 0.4.2 use the reviewed `release/0.4.2` version/ref policy;
+creating a branch alone does not authorize publication.
 
 1. Prepare a PR with current README, release notes, compatibility guidance and package
    metadata. `pyproject.toml` is the version source; installed application/CLI
@@ -230,7 +230,7 @@ push builds and publishes the site to `gh-pages`, served at
 branch; edit Markdown and MkDocs configuration, not generated files.
 
 The generated `build-info.json` records the full **source** commit, whether the
-checkout was dirty, development status, stable release and fingerprints of the
+checkout was dirty, publication status, stable release and fingerprints of the
 home page, Git/OCI/Attest pages and home assets. The footer links to it. It is not
 the generated `gh-pages` commit; no source hash is maintained by hand. A local
 dirty build is a preview and cannot pass publication confirmation.

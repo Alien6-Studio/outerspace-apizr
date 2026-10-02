@@ -6,13 +6,13 @@
 
 ## Move from 0.3 to 0.4
 
-The [0.4.1 notes](../../releases/0.4.1.md) describe application inputs, delivery
-identities, proof/admission and resumable delivery, with compatibility and
-verified publication. **0.4.1 is the current stable release.** The
-[0.4.0rc1 record](../../releases/0.4.0.md) retains the earlier coordinated RC.
-Final 0.4.1 was qualified on `release/0.4.1`, published, then integrated into
-`master` through the [release-branch model](../../contributing/release-branches.md).
-Explicit 0.4.2 deferrals remain future work.
+The [0.4.2 notes](../../releases/0.4.2.md) describe MCP Delivery, client collections,
+onboarding, CI integrations and the qualified Homebrew Formula on top of the
+application inputs, delivery identities, proof/admission and resumable delivery
+introduced in 0.4.1. **0.4.2 is the current stable release.** Its release source and
+archives remain immutable when integrated into master. The
+[release-branch model](../../contributing/release-branches.md) records that distinction.
+The [0.4.0rc1 record](../../releases/0.4.0.md) retains the earlier coordinated RC.
 
 Keep the historical instructions below for the versions they describe.
 

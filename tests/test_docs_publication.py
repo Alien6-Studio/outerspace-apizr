@@ -173,8 +173,8 @@ def test_marker_uses_source_commit_and_fingerprints(site):
         ).strip()
     )
     assert marker["status"] == "stable"
-    assert marker["target_version"] == "0.4.1"
-    assert marker["stable_release"] == "0.4.1"
+    assert marker["target_version"] == "0.4.2"
+    assert marker["stable_release"] == "0.4.2"
     assert (
         marker["files"]["index.html"]
         == hashlib.sha256((site / "index.html").read_bytes()).hexdigest()
@@ -189,7 +189,7 @@ def test_marker_uses_source_commit_and_fingerprints(site):
         ("target_version", "0.4.0"),
     ],
 )
-def test_prepublication_marker_is_rejected(site, field, value):
+def test_inconsistent_stable_marker_is_rejected(site, field, value):
     path = site / "build-info.json"
     marker = json.loads(path.read_text())
     marker[field] = value

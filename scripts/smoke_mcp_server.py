@@ -30,9 +30,8 @@ def run(args, cwd, *, timeout=180, expected=0, env=None):
     return result.stdout
 
 
-def prepare(root: Path, python: str) -> dict:
-    root.mkdir(parents=True, exist_ok=False)
-    house = root / "wheels"
+def prepare_wheels(root: Path, python: str, house: Path) -> None:
+    """Reuse the exact locked MCP closure for installed stdio and delivery proofs."""
     house.mkdir()
     if not copy_closure("mcp", house):
         run(["uv", "build", "--wheel", REPO, "--out-dir", house], root)
@@ -77,6 +76,12 @@ def prepare(root: Path, python: str) -> dict:
             ],
             root,
         )
+
+
+def prepare(root: Path, python: str) -> dict:
+    root.mkdir(parents=True, exist_ok=False)
+    house = root / "wheels"
+    prepare_wheels(root, python, house)
     lock_wheels(house, root / "plugin.lock")
     core_wheel = next(house.glob("outerspace_apizr-*.whl"))
     for name, requirements in [
@@ -243,12 +248,41 @@ def prepare(root: Path, python: str) -> dict:
             "enable",
             "outerspace-apizr-mcp",
             "--version",
-            "0.4.1",
+            "0.4.2",
             "--plugins-dir",
             store,
         ],
         root,
     )
+    doctor_before = (snapshot(root / "core"), snapshot(store), snapshot(project.parent))
+    doctor_report = json.loads(
+        run(
+            [
+                root / "core/bin/python",
+                "-I",
+                "-B",
+                REPO / "scripts/doctor_readonly_proof.py",
+                "--project",
+                project,
+                "--operator-policy",
+                authority,
+                "--profile",
+                "mcp",
+                "--plugins-dir",
+                store,
+            ],
+            root,
+        )
+    )
+    assert not any(c["status"] == "fail" for c in doctor_report["doctor"]["checks"]), (
+        doctor_report
+    )
+    assert doctor_before == (
+        snapshot(root / "core"),
+        snapshot(store),
+        snapshot(project.parent),
+    )
+    (root / "doctor-mcp.json").write_text(json.dumps(doctor_report, indent=2) + "\n")
     # Source refusal is checked before launching the active MCP installation.
     denied = subprocess.run(
         [
@@ -304,7 +338,11 @@ def main():
     root = args.output.resolve()
     config = prepare(root, args.python)
     (root / "installed.json").write_text(json.dumps(config))
-    for script in ("mcp_client_proof.py", "mcp_lifecycle_proof.py"):
+    for script in (
+        "mcp_client_proof.py",
+        "mcp_delivery_local_proof.py",
+        "mcp_lifecycle_proof.py",
+    ):
         result = subprocess.run(
             [root / "client/bin/python", REPO / "scripts" / script, root],
             cwd=root,

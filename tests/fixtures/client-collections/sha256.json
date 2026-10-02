@@ -1,0 +1,19 @@
+{
+  "bruno": {
+    "apizr-client-collection.json": "5724adadada89a1f48be1cd776d8fb64f4fa57940d8ad35e2a856a48b43993d5",
+    "apizr-client-export.json": "bcb98da68989b3d54fbcde8aaa27f98570879a24122ab1e4a29296be027d2e95",
+    "opencollection.yml": "e512fd0bf62900361e04751c9418aad9d30ff205d6a7f69b31e33fc2fcc55a0b",
+    "request-echo-73b0bdb1e9e2af37.yml": "4454631e3261a7d725ee9a69bb17033bb46670c505c7b936ca19c88e90b63436"
+  },
+  "insomnia": {
+    "apizr-client-collection.json": "5724adadada89a1f48be1cd776d8fb64f4fa57940d8ad35e2a856a48b43993d5",
+    "apizr-client-export.json": "93e9a8110d5f937cbc21cfa1d60df2481b659aadf3eb4a5089e4aa7f93223cf3",
+    "collection.yaml": "9884ccf93383c86082ff6200734cf781e60859bc623795af6a67daa0ad5e3073"
+  },
+  "postman": {
+    ".resources/definition.yaml": "23d18c0ddf030ea65303d2c936d09be48970d6dd18d2ba978d71bc7ff55e7d91",
+    "apizr-client-collection.json": "5724adadada89a1f48be1cd776d8fb64f4fa57940d8ad35e2a856a48b43993d5",
+    "apizr-client-export.json": "7861c71b0af37ec77b9dd62e5858664bde399e556d847ffd2f1a7710d06b4404",
+    "request-echo-73b0bdb1e9e2af37.request.yaml": "881985f06a4e548160c2b96bad3b37cf1f61da48187240f5a87ef417050dec78"
+  }
+}

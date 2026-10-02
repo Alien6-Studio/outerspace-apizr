@@ -1,13 +1,13 @@
 # Release branches and qualification
 
-`master` now contains the published and verified **0.4.1** baseline. The
-immutable release source remains `d08b37d126957593a82784ef3ad096e3f8b4929d` on
-the former `release/0.4.1` line, retained by immutable tag `v0.4.1`.
-Qualification #203 and publication #204 are complete. [PR #206](https://github.com/Alien6-Studio/outerspace-apizr/pull/206)
-integrated that release at `e49d5f686bc9b2c9610c7849e246594feb48c3d4`.
-Documentation maintenance branches from and targets `master`. New product
-development uses protected `release/0.4.2`, created from the integrated master
-baseline with this documentation update; `release/0.4.1` is retired.
+The current stable product is **0.4.2**, released from
+`a21cfd41eecc7ca3259e2fb72f6a028a288b9030` and retained by immutable tag `v0.4.2`.
+Publication and verification #232 are complete. Post-release integration targets
+`master`; its integration commit is distinct from the immutable release source.
+Documentation maintenance branches from and targets `master`.
+`release/0.4.2` is retained; no next-version branch or automatic retirement is
+part of this integration. Retire a release branch only after explicit review of
+master integration, public documentation, distribution checks and tag-bound evidence.
 
 ## Branch and version lifecycle
 
@@ -29,10 +29,15 @@ The maintainer authorized replacement of the old release branch with
 commits, provenance and archives remain unchanged. Rule set 24138072 transfers
 the same PR, signature and required-check protections to the new line.
 
-CI, Security and Documentation validate pushes to `release/0.4.2`. These are
-verification builds of the inherited baseline, not 0.4.2 release candidates.
-Package versions remain 0.4.1 until explicitly updated; the publisher still
-rejects unapproved 0.4.2 versions and refs. Documentation deployment remains
+CI, Security and Documentation validate pushes to `release/0.4.2`.
+All four packages and exact internal pins use published **0.4.2**, following the
+cleanup defect in final RC1 qualification, corrective RC2, and verified final publication. The version/ref policy accepts
+only `0.4.2rc1`, `0.4.2rc2` or `0.4.2` from
+protected `release/0.4.2`, with exact successful push CI, Security and Documentation
+for the same source SHA and repository. Master, other release lines, feature
+branches, PR runs, unprotected sources and newer failed runs are refused.
+Historical 0.4.1 qualification remains available. Feature/PR artifacts are previews;
+they never authorize replaying a completed publication. Documentation deployment remains
 restricted to `master`.
 
 The historical coordinated **0.4.0rc1** was a prerelease. The earlier core-only

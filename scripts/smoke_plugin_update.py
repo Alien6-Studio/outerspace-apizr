@@ -20,7 +20,12 @@ def prove(work: Path, core_root: Path) -> None:
     assert not Path(apizr.__file__).resolve().is_relative_to(REPO)
     assert not work.is_relative_to(REPO)
     before = snapshot(core_root)
-    inventory = "import importlib.metadata,json; print(json.dumps(sorted((d.metadata['Name'],d.version) for d in importlib.metadata.distributions())))"
+    inventory = (
+        "import importlib.metadata,json; "
+        "print(json.dumps(sorted(((d.metadata.get('Name'),d.version) "
+        "for d in importlib.metadata.distributions()), "
+        "key=lambda item: (item[0] or '', item[1] or ''))))"
+    )
     distributions_before = subprocess.check_output(
         [sys.executable, "-I", "-B", "-c", inventory], timeout=20
     )

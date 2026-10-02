@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.4.2 — 2026-10-02
+
+- Close both worker pipes even when process-group termination or another pipe
+  closure fails, preserving failure reporting and preventing leaked descriptors.
+
+- Initialize safe project configuration with explicit local analysis authority,
+  diagnose local preparation read-only, and complete modern CLI commands in bash,
+  zsh and fish.
+- Generate deterministic current-native Postman, Bruno and Insomnia collections
+  from verified REST bundles, with safe local regeneration of owned trees.
+- Add opt-in MCP status/run/resume over an operator-selected existing delivery
+  request, using the existing coordinator, captured policy and plugin store.
+- Preserve the three default read-only tools and isolate per-operation authority.
+- Advertise the installed MCP package version; coordinate all four packages and
+  exact internal pins at 0.4.2.
+
+- Validate local repositories and generate REST/MCP bundles through forge-neutral
+  `apizr ci`, with explicit analysis authority and portable retained evidence.
+- Add a real GitHub composite Action and structurally validated, self-contained
+  GitLab CI/CD Component source. GitLab hosted runtime and catalog publication
+  have not been performed.
+
+- Add the core-only Apizr Homebrew Formula, a deterministic local/public source
+  renderer, and real Apple Silicon installation and plugin-isolation qualification.
+  Post-release integration publishes the official Alien6 tap after a real public
+  Apple Silicon install/test and isolated-plugin proof. Intel macOS (Tier 3) and
+  Linux Homebrew runtime remain unqualified.
+
+Source-to-build MCP orchestration remains future work.
+
 ## 0.4.1 — 2026-09-29
 
 Published and verified as `v0.4.1`, source

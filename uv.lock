@@ -641,6 +641,21 @@ wheels = [
 ]
 
 [[package]]
+name = "hatchling"
+version = "1.28.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+    { name = "pathspec" },
+    { name = "pluggy" },
+    { name = "trove-classifiers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0b/8e/e480359492affde4119a131da729dd26da742c2c9b604dff74836e47eef9/hatchling-1.28.0.tar.gz", hash = "sha256:4d50b02aece6892b8cd0b3ce6c82cb218594d3ec5836dbde75bf41a21ab004c8", size = 55365, upload-time = "2025-11-27T00:31:13.766Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0d/a5/48cb7efb8b4718b1a4c0c331e3364a3a33f614ff0d6afd2b93ee883d3c47/hatchling-1.28.0-py3-none-any.whl", hash = "sha256:dc48722b68b3f4bbfa3ff618ca07cdea6750e7d03481289ffa8be1521d18a961", size = 76075, upload-time = "2025-11-27T00:31:12.544Z" },
+]
+
+[[package]]
 name = "httpcore"
 version = "1.0.9"
 source = { registry = "https://pypi.org/simple" }
@@ -1392,13 +1407,16 @@ wheels = [
 
 [[package]]
 name = "outerspace-apizr"
-version = "0.4.1"
+version = "0.4.2"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
 ]
 
 [package.optional-dependencies]
+clients = [
+    { name = "pyyaml" },
+]
 http = [
     { name = "fastapi" },
     { name = "python-multipart" },
@@ -1437,6 +1455,7 @@ dev = [
     { name = "hypothesis" },
     { name = "ipython" },
     { name = "jinja2" },
+    { name = "jsonschema" },
     { name = "mcp" },
     { name = "nbconvert" },
     { name = "packaging" },
@@ -1456,6 +1475,9 @@ docs = [
     { name = "mkdocs" },
     { name = "mkdocs-material" },
     { name = "plantuml-markdown" },
+]
+homebrew-build = [
+    { name = "hatchling" },
 ]
 security = [
     { name = "pip-audit" },
@@ -1477,6 +1499,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.12,<3" },
     { name = "python-multipart", marker = "extra == 'http'", specifier = ">=0.0.31,<1" },
     { name = "python-multipart", marker = "extra == 'legacy'", specifier = ">=0.0.31,<1" },
+    { name = "pyyaml", marker = "extra == 'clients'", specifier = ">=6.0.2,<7" },
     { name = "pyyaml", marker = "extra == 'legacy'", specifier = ">=6.0.2,<7" },
     { name = "questionary", marker = "extra == 'legacy'", specifier = ">=2.0.1,<3" },
     { name = "starlette", marker = "extra == 'http'", specifier = ">=1.3.1" },
@@ -1486,7 +1509,7 @@ requires-dist = [
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'legacy'", specifier = ">=0.30,<1" },
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'mcp'", specifier = ">=0.30,<1" },
 ]
-provides-extras = ["notebook", "http", "mcp", "legacy"]
+provides-extras = ["clients", "notebook", "http", "mcp", "legacy"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1496,6 +1519,7 @@ dev = [
     { name = "hypothesis", specifier = ">=6.140,<7" },
     { name = "ipython", specifier = ">=9,<10" },
     { name = "jinja2", specifier = ">=3.1.6,<4" },
+    { name = "jsonschema", specifier = ">=4.23,<5" },
     { name = "mcp", specifier = ">=2.2,<3" },
     { name = "nbconvert", specifier = ">=7.17.1,<8" },
     { name = "packaging", specifier = ">=24,<27" },
@@ -1516,6 +1540,7 @@ docs = [
     { name = "mkdocs-material", specifier = ">=9.5,<10" },
     { name = "plantuml-markdown", specifier = ">=3.10,<4" },
 ]
+homebrew-build = [{ name = "hatchling", specifier = "==1.28.0" }]
 security = [{ name = "pip-audit", specifier = ">=2.9,<3" }]
 
 [[package]]
@@ -2427,15 +2452,15 @@ wheels = [
 
 [[package]]
 name = "starlette"
-version = "1.7.0"
+version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
     { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/2b/3850dc6bf7ef71b088962eba31dafc6cffd2f96e577ebb0bb316df96da3e/starlette-1.7.0.tar.gz", hash = "sha256:c79f74ea63cff761804fbbfb182f1e0b440c2d07b164d24700c5a1bab5d6ff5d", size = 2736246, upload-time = "2026-09-23T07:30:26.35Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b5/b4/205b0d5241d934e8add0c38aa924c4f9fb7330834ff11e5444db964ec3f9/starlette-1.6.0.tar.gz", hash = "sha256:d4e3ac5e546444960c710297a3c9fc3f7ebae1b7e963f3d36173b49da535be9b", size = 2716969, upload-time = "2026-08-08T18:27:57.512Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/d6/1ec1b290f9e0fb067899b61e1d37a30c923068bad260b216dbe37a7d2967/starlette-1.7.0-py3-none-any.whl", hash = "sha256:67f8e99895493dd2911a03f11314af6ceebeae4e704bb9f43dfc6a9db151c93e", size = 78980, upload-time = "2026-09-23T07:30:24.567Z" },
+    { url = "https://files.pythonhosted.org/packages/c8/cb/6a6a47d5b464bd08695d254f3da6e7986cc70c9fa5d778eda57538edfe56/starlette-1.6.0-py3-none-any.whl", hash = "sha256:a86dd39d14bb45f85a3d18525215a9ef0cfd1f192ac793220e72598c90335f0c", size = 75969, upload-time = "2026-08-08T18:27:56.196Z" },
 ]
 
 [[package]]
@@ -2537,6 +2562,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/2c/2e/a7fbfe268c8a3b32546930c0297c101d65a4a14c304ad5790a9f478f0e4e/traitlets-5.16.1.tar.gz", hash = "sha256:ed900c2b631aa3a112811139fa97b8d2c3bad5e989656bba4b7e52c7852c18c1", size = 166137, upload-time = "2026-08-03T08:32:36.848Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ad/66/0d785f0bc5e4315a96c989bb476d0fc07ea4f85132550c7b156ca2035d52/traitlets-5.16.1-py3-none-any.whl", hash = "sha256:f775618166caa0396c8e337099240f2bd3e5e917d203b2e6fbe21a58d3cb1f6b", size = 86211, upload-time = "2026-08-03T08:32:34.48Z" },
+]
+
+[[package]]
+name = "trove-classifiers"
+version = "2026.9.21.13"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/bf/93/af436dfaa845cab5d96f0adbc1e4f3730532d37fa249e4eb796fb1d7fc82/trove_classifiers-2026.9.21.13.tar.gz", hash = "sha256:0a9ebc8d4e2f3e8a22848c5258033035bec17a3012ac3fea16dbaa764489eb71", size = 17085, upload-time = "2026-09-21T13:29:07.301Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/30/81/0da8afb52a71d0a4f2bd3152357b1a441e393b286374802b9d3addab4ab5/trove_classifiers-2026.9.21.13-py3-none-any.whl", hash = "sha256:8b1ff4f9c191b1040b71c37f1e445ab99732911e3cd91de52838453a854d7a17", size = 14232, upload-time = "2026-09-21T13:29:06.123Z" },
 ]
 
 [[package]]

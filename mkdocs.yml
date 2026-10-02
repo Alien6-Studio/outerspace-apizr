@@ -93,6 +93,7 @@ nav:
   - Home: index.md
   - Getting started:
       - Install Apizr: getting-started/install.md
+      - Initialize and diagnose: getting-started/onboarding.md
       - Quickstart: getting-started/quickstart.md
       - The full journey: getting-started/introduction.md
   - Guides:
@@ -103,6 +104,8 @@ nav:
           - Assess readiness: getting-started/user-guide/repository-readiness.md
           - REST/MCP from a repository: getting-started/user-guide/exposure.md
           - REST from a Python file or notebook: getting-started/user-guide/rest.md
+          - Validate and build in CI: getting-started/user-guide/ci-integrations.md
+          - Client collections from REST: getting-started/user-guide/client-collections.md
           - MCP from a Python file or notebook: getting-started/user-guide/mcp.md
           - Execute code with a policy: getting-started/user-guide/execute.md
           - Analyze a Git repository: reference/git-sources.md
@@ -165,6 +168,7 @@ nav:
       - Pipeline plugins: getting-started/developer-guide/plugins.md
       - Behavior contract: architecture/legacy-behavior-contract.md
   - Releases:
+      - 0.4.2: releases/0.4.2.md
       - 0.4.1: releases/0.4.1.md
       - 0.4.0rc1 (RC): releases/0.4.0.md
       - 0.3.0: releases/0.3.0.md
@@ -182,5 +186,6 @@ nav:
       - Verify builds and releases: contributing/verification.md
       - Managed Attest identity: contributing/attest.md
       - Dependency maintenance: contributing/dependencies.md
+      - Homebrew build inputs: contributing/homebrew-build-inputs.md
       - Code of conduct: about/CODE_OF_CONDUCT.md
       - License: about/LICENSE.md

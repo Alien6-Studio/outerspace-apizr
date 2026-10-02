@@ -15,7 +15,7 @@ from apizr.application_resources import capture_resources
 from apizr.capabilities.model import Digest
 from apizr.delivery import GitSource, LocalSource, SourceIdentity
 from apizr.execution.policy import ExecutionPolicy
-from apizr.exposure import ExposurePlan, ExposurePolicy, plan_exposure
+from apizr.exposure import ExposurePlan, ExposurePolicy, ExposureRefused, plan_exposure
 from apizr.exposure.policy import Interface
 from apizr.graph import (
     GraphPolicy,
@@ -101,7 +101,14 @@ def prepare_exposure(
     readiness = assess_repository(
         artifacts.catalog, artifacts.graph, policy=readiness_policy
     )
-    plan = plan_exposure(artifacts.catalog, artifacts.graph, readiness, policy=policy)
+    try:
+        plan = plan_exposure(
+            artifacts.catalog, artifacts.graph, readiness, policy=policy
+        )
+    except ExposureRefused as error:
+        # Retain the already assessed evidence for callers that archive refusals;
+        # do not rediscover the repository or change the planning decision.
+        raise ExposureRefused(error.diagnostics, readiness=readiness) from None
     inputs = None
     resources: dict[str, bytes] = {}
     if application is not None:
