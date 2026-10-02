@@ -30,7 +30,7 @@ def qualification_branch(version: str) -> str:
         return "master"  # Historical evidence retains its original identity.
     if re.fullmatch(r"0\.4\.1(?:rc[1-9]\d*)?", version):
         return "release/0.4.1"
-    if version in {"0.4.2rc1", "0.4.2"}:
+    if version in {"0.4.2rc1", "0.4.2rc2", "0.4.2"}:
         return "release/0.4.2"
     raise ValueError("No authorized qualification branch for this version")
 

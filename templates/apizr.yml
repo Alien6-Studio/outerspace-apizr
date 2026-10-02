@@ -34,9 +34,9 @@ spec:
       description: Absent or empty dedicated CI output directory; only this tree is archived.
     apizr-version:
       type: string
-      default: 0.4.2
+      default: 0.4.2rc2
       regex: '^[0-9]+\.[0-9]+\.[0-9]+(rc[1-9][0-9]*)?$'
-      description: Exact PyPI core version; final publication must complete before public installation.
+      description: Exact PyPI core version; RC2 is not published.
     python-image:
       type: string
       default: python@sha256:51dafde81dbdb6ebde285137a295cf18a47ca95234fe388a343719cb97305b3d

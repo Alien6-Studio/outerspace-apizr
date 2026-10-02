@@ -196,6 +196,6 @@ the control matrix, sanitized error mappings, integrity checks and trust boundar
 
 ## Client collections
 
-The 0.4.2 line prepared for final publication can export the retained REST bundle to
+The 0.4.2 line undergoing corrective RC2 qualification can export the retained REST bundle to
 [Postman, Bruno and Insomnia collections](client-collections.md), with deterministic
 files and safe local regeneration. No source scan or execution is needed.

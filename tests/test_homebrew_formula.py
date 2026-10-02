@@ -17,7 +17,7 @@ SHA = "a" * 40
 
 def candidate(tmp_path):
     root = tmp_path / "candidate"
-    source = root / "dist/outerspace_apizr-0.4.2.tar.gz"
+    source = root / "dist/outerspace_apizr-0.4.2rc2.tar.gz"
     source.parent.mkdir(parents=True)
     source.write_bytes(b"exact source fixture")
     sha = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -27,7 +27,7 @@ def candidate(tmp_path):
                 "schema": "apizr.release-candidate/v1",
                 "repository": "Alien6-Studio/outerspace-apizr",
                 "commit": SHA,
-                "version": "0.4.2",
+                "version": "0.4.2rc2",
                 "artifacts": [
                     {
                         "file": "dist/" + source.name,
@@ -86,7 +86,7 @@ def test_renderer_rejects_changed_candidate_without_output(tmp_path, change):
         "https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/1/artifacts/2",
         "https://example.com/apizr.tar.gz",
         "https://github.com/Alien6-Studio/outerspace-apizr/archive/refs/heads/main.tar.gz",
-        "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.2/outerspace_apizr-0.4.2.tar.gz",
+        "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.2rc2/outerspace_apizr-0.4.2rc2.tar.gz",
     ],
 )
 def test_unsigned_or_arbitrary_publication_source_is_rejected(tmp_path, url):
@@ -116,7 +116,7 @@ def test_publication_binds_verified_evidence_and_immutable_asset(
     tmp_path, monkeypatch, change
 ):
     root, source, sha = candidate(tmp_path)
-    url = f"https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.2/{source.name}"
+    url = f"https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.2rc2/{source.name}"
     evidence, bundle = tmp_path / "evidence.tar.gz", tmp_path / "bundle.json"
     bundle.write_text("test signature boundary")
     with tarfile.open(evidence, "w:gz") as archive:

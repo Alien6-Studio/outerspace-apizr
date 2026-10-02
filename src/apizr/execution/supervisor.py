@@ -131,11 +131,16 @@ def exchange(
     except (OSError, ValueError, ProtocolError, RecursionError):
         return ExecutionResult(status="worker_failed")
     finally:
-        kill_group(process)
-        if process.stdin is not None:
-            process.stdin.close()
-        if process.stdout is not None:
-            process.stdout.close()
+        try:
+            kill_group(process)
+        finally:
+            # A termination failure must not strand either parent-side pipe.
+            try:
+                if process.stdin is not None:
+                    process.stdin.close()
+            finally:
+                if process.stdout is not None:
+                    process.stdout.close()
 
 
 def execute(

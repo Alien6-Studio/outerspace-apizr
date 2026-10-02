@@ -68,7 +68,7 @@ async def exercise(root: Path, mode: str):
             "2025-11-25" if mode == "legacy" else "2026-07-28"
         )
         assert client.server_info is not None
-        assert client.server_info.version == "0.4.2"
+        assert client.server_info.version == "0.4.2rc2"
         tools = (await client.list_tools()).tools
         assert {t.name for t in tools} == {
             "apizr_analyze",

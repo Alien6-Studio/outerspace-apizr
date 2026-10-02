@@ -238,7 +238,8 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
     "fault", [None, "missing", "pending", "failed", "duplicate", "version"]
 )
 @pytest.mark.parametrize(
-    "release_version", ["0.4.1rc1", "0.4.1rc2", "0.4.1", "0.4.2rc1", "0.4.2"]
+    "release_version",
+    ["0.4.1rc1", "0.4.1rc2", "0.4.1", "0.4.2rc1", "0.4.2rc2", "0.4.2"],
 )
 @pytest.mark.parametrize("resume", [False, True])
 def test_coordinated_release_requires_every_exact_target(
@@ -504,7 +505,7 @@ def test_closed_04_publications_fail_before_network(tmp_path, monkeypatch, versi
 
 
 @pytest.mark.parametrize(
-    "version", ["0.4.2rc2", "0.4.3", "0.5.0", "0.4.1.dev0", "0.4.1rc0"]
+    "version", ["0.4.2rc3", "0.4.3", "0.5.0", "0.4.1.dev0", "0.4.1rc0"]
 )
 def test_future_lines_require_explicit_policy(version):
     with pytest.raises(ValueError, match="No authorized qualification branch"):
@@ -589,7 +590,7 @@ def test_041_preflight_binds_all_gates_to_protected_release_line(
         "fork",
     ],
 )
-@pytest.mark.parametrize("release_version", ["0.4.2rc1", "0.4.2"])
+@pytest.mark.parametrize("release_version", ["0.4.2rc1", "0.4.2rc2", "0.4.2"])
 def test_042_preflight_binds_all_gates_to_protected_release_line(
     tmp_path, monkeypatch, fault, release_version
 ):

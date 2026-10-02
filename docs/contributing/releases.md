@@ -24,9 +24,10 @@ independently qualified and publicly verified.
 
 The immutable `v0.4.2rc1` prerelease was published and verified from
 `e8bd1166eff98a3766ec586c6a36c2f58ac14853`; publication #231 is complete.
-The protected `release/0.4.2` line now prepares `0.4.2` for final publication
-without changing runtime behavior or third-party dependencies. Tracking #232
-records the finalization delta, exact merged qualification and publication.
+The protected `release/0.4.2` line now qualifies corrective `0.4.2rc2` after the final
+qualification exposed a worker-pipe cleanup failure. The runtime fix guarantees
+pipe closure on cleanup errors; third-party dependencies remain unchanged.
+Tracking #232 retains the failed final run and the new corrective qualification.
 Final PyPI availability must not be claimed until that publication succeeds.
 See the [0.4.2 release record](../releases/0.4.2.md).
 
@@ -46,7 +47,7 @@ that protected ref in the retained evidence. The old branch can be retired
 without changing that evidence identity.
 
 The existing publication verifier retains the original 0.4.1 source policy;
-it must not be used to replay a completed release. It accepts only `0.4.2rc1` and `0.4.2` from protected `release/0.4.2` and rejects
+it must not be used to replay a completed release. It accepts only `0.4.2rc1`, `0.4.2rc2` and `0.4.2` from protected `release/0.4.2` and rejects
 unintended versions and refs. New development builds do not authorize a
 publication. Releases through 0.4.0rc1 retain `master` provenance; published
 0.4.1 retains `refs/heads/release/0.4.1` provenance.

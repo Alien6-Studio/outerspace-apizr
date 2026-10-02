@@ -13,8 +13,8 @@ from prepare_release_assets import bound_file
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "Alien6-Studio/outerspace-apizr"
-VERSION = "0.4.2"
-BUILD_MANIFEST = "2ecca88800dc2d4c752f012c7afee472496c729fa5a49e1cc0b6eb9a59052a58"
+VERSION = "0.4.2rc2"
+BUILD_MANIFEST = "aa130065b43006d90a6ee9d54ab755b68a85be7ec837a7c08ff3e20e611011ef"
 
 
 def publication_source(url, sha256, source, commit, candidate, evidence, bundle):

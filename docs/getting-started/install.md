@@ -23,7 +23,7 @@ apizr --version
 **Observe:** `outerspace-apizr 0.4.1`. Continue with the [Quickstart](quickstart.md)
 to generate and call your first MCP or REST service. No plugin or Docker is needed.
 
-For `0.4.2`, prepared for final publication, optional
+For `0.4.2rc2`, currently unpublished, optional
 [local onboarding](onboarding.md) adds `apizr init` → `apizr doctor` before the
 Quickstart. These commands are not part of the published `0.4.1` installation above.
 
@@ -37,7 +37,7 @@ The core-only `Apizr` Formula is implemented for the Apple Silicon Tier-1 target
 with a real local-tap installation qualification. It uses Homebrew Python 3.14
 and Pydantic; optional plugins remain separate from the Cellar installation.
 The public Alien6 tap is **not published**. The verified `v0.4.2rc1` prerelease
-is available; `0.4.2` is prepared for final publication. See the
+is available; `0.4.2rc2` is undergoing qualification. See the
 [0.4.2 release record](../releases/0.4.2.md).
 
 The future command `brew install alien6-studio/tap/apizr` is pending; it is not
