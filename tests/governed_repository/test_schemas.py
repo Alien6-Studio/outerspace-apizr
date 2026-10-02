@@ -34,7 +34,9 @@ def test_committed_schema_matches_model(name, model):
 
 @pytest.mark.parametrize("transport", ["rest", "mcp"])
 @pytest.mark.parametrize("oci", [False, True])
-def test_governed_goldens_and_schema_validation(transport, oci):
+def test_governed_goldens_and_schema_validation(
+    transport, oci, historical_generator_identity
+):
     policy = ExecutionPolicyV2() if oci else ExecutionPolicy()
     files = render_repository_bundle(
         *inputs(policy, transport),

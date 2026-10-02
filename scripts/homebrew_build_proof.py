@@ -38,10 +38,10 @@ def candidate_source(candidate, commit):
         evidence["schema"] != "apizr.release-candidate/v1"
         or evidence["repository"] != "Alien6-Studio/outerspace-apizr"
         or evidence["commit"] != commit
-        or evidence["version"] != "0.4.2"
+        or evidence["version"] != "0.4.3"
     ):
         raise ValueError("Unexpected coordinated candidate identity")
-    filename = "outerspace_apizr-0.4.2.tar.gz"
+    filename = "outerspace_apizr-0.4.3.tar.gz"
     items = [a for a in evidence["artifacts"] if a["file"] == "dist/" + filename]
     if len(items) != 1:
         raise ValueError("Missing exact core sdist")
@@ -217,19 +217,19 @@ def prove(candidate, commit, inputs, output):
     if build.exists():
         raise RuntimeError("Temporary build environment survived")
     built = list(wheels.glob("*.whl"))
-    if len(built) != 1 or built[0].name != "outerspace_apizr-0.4.2-py3-none-any.whl":
+    if len(built) != 1 or built[0].name != "outerspace_apizr-0.4.3-py3-none-any.whl":
         raise RuntimeError("Unexpected built wheel")
     wheel = built[0]
     with zipfile.ZipFile(wheel) as archive:
         metadata = BytesParser().parsebytes(
-            archive.read("outerspace_apizr-0.4.2.dist-info/METADATA")
+            archive.read("outerspace_apizr-0.4.3.dist-info/METADATA")
         )
         runtime_requirements = [
             r for r in metadata.get_all("Requires-Dist", []) if "extra ==" not in r
         ]
         if (
             metadata["Name"] != "outerspace-apizr"
-            or metadata["Version"] != "0.4.2"
+            or metadata["Version"] != "0.4.3"
             or runtime_requirements != ["pydantic<3,>=2.12"]
         ):
             raise RuntimeError("Built runtime metadata changed")
@@ -287,7 +287,7 @@ locations={m.__name__:str(pathlib.Path(m.__file__).resolve().relative_to(provide
 assert pydantic.__version__=='2.13.5' and pydantic_core.__version__=='2.46.5'
 assert importlib.util.find_spec('hatchling') is None and importlib.util.find_spec('trove_classifiers') is None
 local_distributions=sorted((d.metadata['Name'],d.version) for d in importlib.metadata.distributions(path=[str(runtime/'lib/python3.14/site-packages')]))
-assert local_distributions==[('outerspace-apizr','0.4.2')]
+assert local_distributions==[('outerspace-apizr','0.4.3')]
 print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Path(apizr.__file__).resolve().relative_to(runtime)),'provider_modules':locations,'pydantic':pydantic.__version__,'pydantic_core':pydantic_core.__version__,'local_distributions':local_distributions,'distributions':sorted(set((d.metadata.get('Name'),d.version) for d in importlib.metadata.distributions()),key=lambda pair:(pair[0] or '',pair[1] or ''))}))
 """
     inventory = json.loads(
@@ -308,7 +308,7 @@ print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Pat
     )
     cli = [*sandbox, runtime / "bin/apizr"]
     version = run([*cli, "--version"], output, env=runtime_env).strip()
-    if "0.4.2" not in version:
+    if "0.4.3" not in version:
         raise RuntimeError("Installed CLI version mismatch")
     project = output / "project"
     project.mkdir()

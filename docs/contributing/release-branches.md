@@ -14,10 +14,11 @@ no force updates or deletion, and no bypass actors. Its
 [checked-in payload](https://github.com/Alien6-Studio/outerspace-apizr/blob/release/0.4.3/.github/release-0.4.3-ruleset.json)
 is an audit record, not an enforcement mechanism.
 
-CI, Security and Documentation validate the new line. Package versions remain
-at the published baseline until a separately reviewed candidate update.
-Builds from `release/0.4.3` remain previews: the existing publication policy does
-not accept this line, and documentation deployment remains master-only.
+CI, Security and Documentation validate the new line. All four package versions and internal pins are **0.4.3**. The qualification
+policy accepts exactly 0.4.3 from protected `release/0.4.3`, requiring successful
+push CI, Security and Documentation on the same source SHA. Other versions,
+PR artifacts and unprotected sources remain ineligible. Documentation deployment
+remains master-only. Qualification does not itself publish a release.
 The prepared MCP Registry descriptor targets unreleased 0.4.3 and must not be
 published before the corresponding packages and release evidence are available.
 
