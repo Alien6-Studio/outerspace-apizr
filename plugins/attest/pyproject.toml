@@ -1,12 +1,12 @@
 [project]
 name = "outerspace-apizr-attest"
-version = "0.4.2"
+version = "0.4.2rc2"
 description = "Optional Continuum Attest receipts for verified Apizr OCI deliveries"
 requires-python = ">=3.11,<3.15"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
-dependencies = ["outerspace-apizr-oci==0.4.2"]
+dependencies = ["outerspace-apizr-oci==0.4.2rc2"]
 
 [build-system]
 requires = ["hatchling>=1.27,<2"]

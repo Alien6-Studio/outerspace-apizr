@@ -1,6 +1,6 @@
 # Initialize and check a local project
 
-The **0.4.2 version prepared for final publication**, adds an optional first-run path:
+The **0.4.2rc2 version under qualification**, adds an optional first-run path:
 [install a matching development wheel](../development/0.4.md#install-a-development-wheel)
 → `apizr init` → `apizr doctor` → [Quickstart](quickstart.md).
 Manual configurations remain supported; initialization is not mandatory.

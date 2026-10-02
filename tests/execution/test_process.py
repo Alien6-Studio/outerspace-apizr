@@ -331,3 +331,59 @@ def test_descendant_fixture_cleans_failed_preparation(tmp_path, monkeypatch, req
         with pytest.raises(RuntimeError, match="deliberate preparation failure"):
             descendant.assert_descendant_cleanup(invoke, tmp_path, patch, request)
     assert invoke("def f(): return 42").value == 42
+
+
+@pytest.mark.parametrize("failure", ["group", "stdin"])
+def test_cleanup_error_still_closes_worker_pipes(tmp_path, monkeypatch, failure):
+    from apizr.execution import supervisor
+
+    processes = []
+    original_spawn = supervisor.subprocess.Popen
+    original_kill = supervisor.kill_group
+    error = PermissionError("deliberate cleanup failure")
+
+    def spawn(*args, **kwargs):
+        process = original_spawn(*args, **kwargs)
+        processes.append(process)
+        if failure == "stdin":
+            close = process.stdin.close
+
+            def failed_close():
+                close()
+                raise error
+
+            monkeypatch.setattr(process.stdin, "close", failed_close)
+        return process
+
+    def failed_group_cleanup(process):
+        original_kill(process)
+        raise error
+
+    monkeypatch.setattr(supervisor.subprocess, "Popen", spawn)
+    if failure == "group":
+        monkeypatch.setattr(supervisor, "kill_group", failed_group_cleanup)
+    try:
+        # An expired deadline enters final cleanup before either pipe is closed.
+        with pytest.raises(PermissionError) as caught:
+            exchange(
+                [sys.executable, "-I", "-c", "import time; time.sleep(30)"],
+                b"x",
+                tmp_path,
+                {},
+                0,
+                128,
+            )
+        assert caught.value is error
+        assert len(processes) == 1
+        process = processes[0]
+        assert process.returncode is not None
+        assert process.stdin.closed and process.stdout.closed
+        with pytest.raises(ChildProcessError):
+            os.waitpid(process.pid, os.WNOHANG)
+    finally:
+        # Keep the regression safe when exercised against the broken runtime.
+        for process in processes:
+            original_kill(process)
+            for stream in (process.stdin, process.stdout):
+                if stream is not None and not stream.closed:
+                    stream.close()

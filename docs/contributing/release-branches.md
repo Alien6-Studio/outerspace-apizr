@@ -29,8 +29,10 @@ The maintainer authorized replacement of the old release branch with
 commits, provenance and archives remain unchanged. Rule set 24138072 transfers
 the same PR, signature and required-check protections to the new line.
 
-CI, Security and Documentation validate pushes to `release/0.4.2`. The first functional increment
-sets all four packages and exact internal pins to **0.4.2, prepared for final publication**. Future qualification accepts only `0.4.2` or `0.4.2` from
+CI, Security and Documentation validate pushes to `release/0.4.2`.
+All four packages and exact internal pins now use **0.4.2rc2, unpublished**,
+for corrective worker-pipe cleanup qualification. The version/ref policy accepts
+only `0.4.2rc1`, `0.4.2rc2` or `0.4.2` from
 protected `release/0.4.2`, with exact successful push CI, Security and Documentation
 for the same source SHA and repository. Master, other release lines, feature
 branches, PR runs, unprotected sources and newer failed runs are refused.

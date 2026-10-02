@@ -3,7 +3,7 @@
     "artifacts": {
       "apizr-bundle-provenance.json": {
         "algorithm": "sha256",
-        "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
+        "value": "92c293bbf008e314daae5d0724f2c09c15cf75b195a26d30c6582db545ccff99"
       },
       "apizr_governed/__init__.py": {
         "algorithm": "sha256",
@@ -51,7 +51,7 @@
       },
       "apizr_governed/execution/supervisor.py": {
         "algorithm": "sha256",
-        "value": "4b7b6d1657429ed6d30f44f1b4d277bd73ce5da51705b51d5f8c43be0280a0f3"
+        "value": "b439a8627503f29bb74fc50619beed50cb8bc4c5c660dd0a75d5da2b457e787d"
       },
       "apizr_governed/generators/__init__.py": {
         "algorithm": "sha256",
@@ -347,7 +347,7 @@
     "artifacts": {
       "apizr-bundle-provenance.json": {
         "algorithm": "sha256",
-        "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
+        "value": "92c293bbf008e314daae5d0724f2c09c15cf75b195a26d30c6582db545ccff99"
       },
       "apizr_governed/__init__.py": {
         "algorithm": "sha256",
@@ -395,7 +395,7 @@
       },
       "apizr_governed/execution/supervisor.py": {
         "algorithm": "sha256",
-        "value": "4b7b6d1657429ed6d30f44f1b4d277bd73ce5da51705b51d5f8c43be0280a0f3"
+        "value": "b439a8627503f29bb74fc50619beed50cb8bc4c5c660dd0a75d5da2b457e787d"
       },
       "apizr_governed/generators/__init__.py": {
         "algorithm": "sha256",
@@ -527,7 +527,7 @@
       },
       "execution/bundle.json": {
         "algorithm": "sha256",
-        "value": "be089e594a8d03ce943c6f0504b315f745ef0934987b3e715c88ad5076f95e4f"
+        "value": "d029d2580e86fbd6a43e509c15c1c9cd63c398f4703f4488c29b8b210a6fd54f"
       },
       "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
         "algorithm": "sha256",
@@ -804,7 +804,7 @@
     },
     "provenance_digest": {
       "algorithm": "sha256",
-      "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
+      "value": "92c293bbf008e314daae5d0724f2c09c15cf75b195a26d30c6582db545ccff99"
     },
     "repository_interface_digest": {
       "algorithm": "sha256",

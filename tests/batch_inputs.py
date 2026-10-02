@@ -21,7 +21,7 @@ def request(tmp_path, required=True, count=3):
         interface="rest",
         dependency_closure=({"name": "six", "version": "1.17.0", "sha256": "a" * 64},),
         build_tools=tuple(
-            {"name": name, "version": "0.4.2"}
+            {"name": name, "version": "0.4.2rc2"}
             for name in ("outerspace-apizr", "outerspace-apizr-oci")
         ),
         platform="linux/amd64",

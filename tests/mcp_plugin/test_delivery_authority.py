@@ -49,7 +49,7 @@ def test_exact_existing_grants_remain_authoritative(
                 {
                     "schema": "apizr.extension-manifest/v1",
                     "name": name,
-                    "version": "0.4.2",
+                    "version": "0.4.2rc2",
                     "module": module,
                     "protocol": "apizr.extension/v1",
                     "sha256": "a" * 64,
@@ -114,7 +114,7 @@ def test_exact_existing_grants_remain_authoritative(
             raise PluginError("plugin_inactive")
         record = records[name]
         if fault == "version":
-            record = record.model_copy(update={"version": "0.4.2rc2"})
+            record = record.model_copy(update={"version": "0.4.2rc3"})
         if fault == "closure":
             record = record.model_copy(update={"lock_sha256": "d" * 64})
         yield record, 0

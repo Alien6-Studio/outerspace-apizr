@@ -1403,7 +1403,7 @@ wheels = [
 
 [[package]]
 name = "outerspace-apizr"
-version = "0.4.2"
+version = "0.4.2rc2"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
