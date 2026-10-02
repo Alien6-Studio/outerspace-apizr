@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.2rc1 — development, unpublished
+## 0.4.2 — 2026-10-02
 
 - Initialize safe project configuration with explicit local analysis authority,
   diagnose local preparation read-only, and complete modern CLI commands in bash,
@@ -11,7 +11,7 @@
   request, using the existing coordinator, captured policy and plugin store.
 - Preserve the three default read-only tools and isolate per-operation authority.
 - Advertise the installed MCP package version; coordinate all four packages and
-  exact internal pins at 0.4.2rc1 for development validation.
+  exact internal pins at 0.4.2, with no runtime behavior change from v0.4.2rc1.
 
 - Validate local repositories and generate REST/MCP bundles through forge-neutral
   `apizr ci`, with explicit analysis authority and portable retained evidence.

@@ -1,9 +1,11 @@
 # Validate and build in CI
 
-The **unpublished 0.4.2rc1 development line** provides `apizr ci`, a GitHub
-composite Action, and canonical GitLab component source. The RC is not available
-from PyPI. The future `v0.4.2` Action tag and public GitLab component do not exist
-yet. Development qualification installs the exact original locally built wheel.
+The **0.4.2 line prepared for final publication** provides `apizr ci`, a GitHub
+composite Action, and canonical GitLab component source. The verified RC1 is
+available from PyPI; final `0.4.2` availability is pending. The `v0.4.2` Action
+tag becomes usable after final publication. The GitLab component is source-only:
+hosted runtime and catalog publication have not been performed. Qualification
+installs the exact original candidate wheel.
 
 ## One static command
 
@@ -98,7 +100,7 @@ steps:
 Use the immutable release tag shared with the Python release, or pin its exact
 commit SHA. There are no moving major/minor Action tags. The Action reference and
 `apizr-version` are separate identities; choose matching releases deliberately.
-The development metadata defaults to **0.4.2rc1** and must change at finalization.
+The development metadata defaults to **0.4.2** and must change at finalization.
 
 | Input | Default / behavior |
 | --- | --- |
@@ -122,7 +124,7 @@ corresponding tree was produced. Consumers explicitly choose artifact upload and
 retention. The Action itself performs neither checkout nor artifact upload.
 
 For repository qualification only, paired `wheel-path` / `wheel-sha256` inputs
-select a regular local 0.4.2rc1 wheel. The Action checks its SHA-256, embedded core
+select a regular local 0.4.2 wheel. The Action checks its SHA-256, embedded core
 distribution/version and installed CLI version, using a snapshot of the original
 verified bytes. URLs, symlinks and mismatched identities are rejected. This is not
 the normal public installation route.

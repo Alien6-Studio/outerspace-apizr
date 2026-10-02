@@ -22,12 +22,13 @@ exists. **RC2 NOT REQUIRED:** the 0.4.1 finalization changed versions and
 documentation without changing runtime behavior, and the final archives were
 independently qualified and publicly verified.
 
-The maintainer authorized protected `release/0.4.2` to replace the old release
-branch after integration. This opens the development line without bumping
-versions, adding features or authorizing a release candidate. Future publication
-requires a separate policy update and the protected
-[release-branch process](release-branches.md); planned scope remains in the
-[roadmap](../development/0.4.md#delivery-scope-and-explicit-deferrals).
+The immutable `v0.4.2rc1` prerelease was published and verified from
+`e8bd1166eff98a3766ec586c6a36c2f58ac14853`; publication #231 is complete.
+The protected `release/0.4.2` line now prepares `0.4.2` for final publication
+without changing runtime behavior or third-party dependencies. Tracking #232
+records the finalization delta, exact merged qualification and publication.
+Final PyPI availability must not be claimed until that publication succeeds.
+See the [0.4.2 release record](../releases/0.4.2.md).
 
 ## Retain and publish one coordinated artifact set
 
@@ -45,8 +46,8 @@ that protected ref in the retained evidence. The old branch can be retired
 without changing that evidence identity.
 
 The existing publication verifier retains the original 0.4.1 source policy;
-it must not be used to replay a completed release. It continues to reject
-unapproved 0.4.2 versions and refs. New development builds do not authorize a
+it must not be used to replay a completed release. It accepts only `0.4.2rc1` and `0.4.2` from protected `release/0.4.2` and rejects
+unintended versions and refs. New development builds do not authorize a
 publication. Releases through 0.4.0rc1 retain `master` provenance; published
 0.4.1 retains `refs/heads/release/0.4.1` provenance.
 
@@ -130,8 +131,8 @@ and publisher and is not part of this workflow.
 
 The steps below record the completed **0.4.1** procedure and its original source
 line. Do not replay publication after retiring that branch. Qualification and
-publication of 0.4.2 require a separately reviewed version/ref policy update;
-creating the development branch alone does not enable this procedure for it.
+publication of 0.4.2 use the reviewed `release/0.4.2` version/ref policy;
+creating a branch alone does not authorize publication.
 
 1. Prepare a PR with current README, release notes, compatibility guidance and package
    metadata. `pyproject.toml` is the version source; installed application/CLI

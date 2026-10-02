@@ -29,7 +29,7 @@ async def exercise(root: Path):
         ],
         text=True,
     ).strip()
-    assert installed_version == "0.4.2rc1"
+    assert installed_version == "0.4.2"
     results = []
     for mode in ("auto", "legacy"):
         batch = request(root / ("delivery-" + mode), required=False)

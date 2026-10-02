@@ -270,6 +270,6 @@ for contracts, tamper validation, error mappings and deployment responsibilities
 
 ## Client collections
 
-The unpublished 0.4.2rc1 development line can export the retained REST bundle to
+The 0.4.2 line prepared for final publication can export the retained REST bundle to
 [Postman, Bruno and Insomnia collections](client-collections.md), with deterministic
 files and safe local regeneration. No source scan or execution is needed.
