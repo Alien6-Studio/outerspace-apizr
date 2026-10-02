@@ -8,6 +8,9 @@ license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 dependencies = ["outerspace-apizr==0.4.2", "mcp>=2.2,<3"]
 
+[project.scripts]
+outerspace-apizr-mcp = "apizr_mcp.launcher:main"
+
 [build-system]
 requires = ["hatchling>=1.27,<2"]
 build-backend = "hatchling.build"

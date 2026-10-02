@@ -5,9 +5,26 @@ The current stable product is **0.4.2**, released from
 Publication and verification #232 are complete. Post-release integration targets
 `master`; its integration commit is distinct from the immutable release source.
 Documentation maintenance branches from and targets `master`.
-`release/0.4.2` is retained; no next-version branch or automatic retirement is
-part of this integration. Retire a release branch only after explicit review of
-master integration, public documentation, distribution checks and tag-bound evidence.
+Development now branches from and targets protected `release/0.4.3`, created
+from integrated master `2d7602148226dbb6c7025059740e217b78310a73`.
+`release/0.4.2` is retained with its existing protections. Rule set
+[24380834](https://github.com/Alien6-Studio/outerspace-apizr/rules/24380834)
+protects the new line with the same 17 checks, signed commits, required PRs,
+no force updates or deletion, and no bypass actors. Its
+[checked-in payload](https://github.com/Alien6-Studio/outerspace-apizr/blob/release/0.4.3/.github/release-0.4.3-ruleset.json)
+is an audit record, not an enforcement mechanism.
+
+CI, Security and Documentation validate the new line. Package versions remain
+at the published baseline until a separately reviewed candidate update.
+Builds from `release/0.4.3` remain previews: the existing publication policy does
+not accept this line, and documentation deployment remains master-only.
+The prepared MCP Registry descriptor targets unreleased 0.4.3 and must not be
+published before the corresponding packages and release evidence are available.
+
+## Historical 0.4.2 governance
+
+The following records the previous release line and its qualification policy.
+It does not authorize publication or qualification of 0.4.3.
 
 ## Branch and version lifecycle
 
