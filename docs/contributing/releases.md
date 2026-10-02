@@ -29,23 +29,21 @@ that qualified RC2. Tracking #232 retains the failed run, corrective qualificati
 exact final source and verified publication evidence.
 See the [0.4.2 release record](../releases/0.4.2.md).
 
-## 0.4.3 qualification
+## Completed 0.4.3 qualification
 
-The next coordinated candidate is **0.4.3** for the core and all three plugins.
-It adds the MCP Registry launcher and directory metadata described in the
-[release record](../releases/0.4.3.md). The release is not published yet.
+The coordinated **0.4.3** core and all three plugins are published and verified.
+The [release record](../releases/0.4.3.md) identifies the exact protected source,
+successful qualification and publication runs, and public-byte comparison.
+The original four wheels, four sdists, target exports, delivery evidence and
+signed provenance remain immutable. Do not replay qualification or package
+publication for this completed release. PR builds remain previews.
 
-The verifier accepts exactly `0.4.3` from protected `release/0.4.3`. Select the
-successful **push** CI run on the final merge SHA, with Security and Documentation
-successful on that same source. The original four wheels, four sdists, target
-exports, delivery evidence and signed provenance form one immutable candidate.
-Run the read-only preflight before requesting authorization for that exact
-source, CI run and archive hashes. PR builds remain previews.
-
-The existing manual publication procedure applies with `release/0.4.3` and
-`v0.4.3`. A later Registry publication additionally requires the PyPI ownership
-marker, matching `server.json`, a public-byte launcher test and namespace
-owner authentication. No Registry upload is triggered by the package workflow.
+Official MCP Registry publication is independent of the package workflow.
+After master integration, manually dispatch `Publish MCP Registry` for `v0.4.3`
+and its recorded source SHA. It verifies the public release and matching
+`server.json`, then authenticates with the repository's GitHub Actions OIDC
+identity. The public PyPI launcher and package ownership marker have passed
+validation. No personal token or rebuild is required.
 
 ## Retain and publish one coordinated artifact set
 
@@ -62,9 +60,9 @@ and Documentation runs on that same branch and commit. The signer recorded
 that protected ref in the retained evidence. The old branch can be retired
 without changing that evidence identity.
 
-The existing publication verifier retains the original 0.4.1 source policy;
-it must not be used to replay a completed release. It accepts only `0.4.2rc1`, `0.4.2rc2` and `0.4.2` from protected `release/0.4.2` and rejects
-unintended versions and refs. New development builds do not authorize a
+The publication verifier accepts exactly `0.4.3` from protected `release/0.4.3`
+and rejects unintended versions and refs. It must not be used to replay this
+completed release. Historical verifier versions retain their original policies. New development builds do not authorize a
 publication. Releases through 0.4.0rc1 retain `master` provenance; published
 0.4.1 retains `refs/heads/release/0.4.1` provenance.
 

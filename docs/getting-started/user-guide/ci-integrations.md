@@ -1,8 +1,8 @@
 # Validate and build in CI
 
-The **published Apizr 0.4.2 release** provides `apizr ci`, a GitHub
-composite Action, and canonical GitLab component source. Final `0.4.2` is
-available from PyPI; the immutable `v0.4.2` Action tag selects the released source. The GitLab component is source-only:
+The **published Apizr 0.4.3 release** provides `apizr ci`, a GitHub
+composite Action, and canonical GitLab component source. Final `0.4.3` is
+available from PyPI; the immutable `v0.4.3` Action tag selects the released source. The GitLab component is source-only:
 hosted runtime and catalog publication have not been performed. Qualification
 installs the exact original candidate wheel.
 
@@ -75,7 +75,7 @@ identical bytes across repeat runs and both wrappers.
 ## GitHub Actions
 
 The root `action.yml` is a real composite Action. This example uses the
-**published stable v0.4.2 tag**:
+**published stable v0.4.3 tag**:
 
 ```yaml
 permissions:
@@ -85,13 +85,13 @@ steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     with:
       persist-credentials: false
-  - uses: Alien6-Studio/outerspace-apizr@v0.4.2
+  - uses: Alien6-Studio/outerspace-apizr@v0.4.3
     id: apizr
     with:
       operation: check
       project: apizr.toml
       authorize-analysis: "true"
-      apizr-version: "0.4.2"
+      apizr-version: "0.4.3"
       python-version: "3.14"
       output-dir: .apizr-ci
 ```
@@ -99,9 +99,8 @@ steps:
 Use the immutable release tag shared with the Python release, or pin its exact
 commit SHA. There are no moving major/minor Action tags. The Action reference and
 `apizr-version` are separate identities; choose matching releases deliberately.
-The published `v0.4.2` metadata defaults to **0.4.2**. The candidate 0.4.3
-Action and component source default to **0.4.3**; their public installation
-must wait for that coordinated release to be published.
+The published `v0.4.3` Action and component source default to **0.4.3**.
+The matching coordinated packages are available from PyPI.
 
 | Input | Default / behavior |
 | --- | --- |
@@ -126,8 +125,8 @@ retention. The Action itself performs neither checkout nor artifact upload.
 
 For repository qualification only, paired `wheel-path` / `wheel-sha256` inputs
 select a regular local candidate wheel matching the Action's qualification version.
-The 0.4.3 development line accepts exactly 0.4.3; the published v0.4.2 Action keeps
-its original 0.4.2 policy. The Action checks the SHA-256, embedded core
+The v0.4.3 Action accepts exactly 0.4.3 for qualification; historical Action tags
+retain their original version policies. The Action checks the SHA-256, embedded core
 distribution/version and installed CLI version, using a snapshot of the original
 verified bytes. URLs, symlinks and mismatched identities are rejected. This is not
 the normal public installation route.
@@ -145,14 +144,14 @@ instance; it is not a live component URL:
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/<alien6-component-project>/apizr@0.4.2
+  - component: $CI_SERVER_FQDN/<alien6-component-project>/apizr@0.4.3
     inputs:
       job-name: apizr-check
       stage: test
       operation: check
       project: apizr.toml
       authorize-analysis: true
-      apizr-version: "0.4.2"
+      apizr-version: "0.4.3"
       output-dir: .apizr-ci
 ```
 
