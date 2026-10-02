@@ -9,7 +9,7 @@ QUALIFICATION = {
     "required": ["macos-arm64-tier1"],
     "not_qualified": [
         {"platform": "macos-x86_64", "reason": "homebrew-tier3"},
-        {"platform": "linux", "reason": "runtime-not-qualified-in-0.4.2"},
+        {"platform": "linux", "reason": "runtime-not-qualified-in-0.4.3"},
     ],
 }
 EVIDENCE = {

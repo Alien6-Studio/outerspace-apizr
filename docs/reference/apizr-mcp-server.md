@@ -167,16 +167,15 @@ one-request `apizr.extension/v1` protocol and existing timeout. Internally, the
 MCP server uses that runtime for fresh, isolated **compiler calculations**, not
 as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
 
-## Directory integration (unreleased 0.4.3)
+## Directory integration (0.4.3)
 
 OuterSpace Apizr remains a local stdio capability compiler. The prepared
 Official MCP Registry identity is
 `io.github.Alien6-Studio/outerspace-apizr`. The matching `mcp-name` marker lives
 in the MCP plugin README so it will be included in the next PyPI distribution.
-The root `server.json` describes version **0.4.3**, which is not published yet.
-Package versions on the development line still use the 0.4.2 baseline; the
-descriptor is preparation for the next coordinated release, not a claim that
-those packages are available.
+The root `server.json` and all four coordinated packages describe version
+**0.4.3**, which is not published yet. See the [release record](../releases/0.4.3.md)
+for qualification and publication status.
 
 The new package command `outerspace-apizr-mcp` accepts the same arguments as
 `apizr mcp serve`. It delegates to that launcher and selects the already

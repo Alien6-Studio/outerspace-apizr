@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.3 (unreleased)
 
 - Declare the OuterSpace Apizr maintainer for Glama and prepare the Official MCP
   Registry identity and PyPI ownership metadata for 0.4.3.

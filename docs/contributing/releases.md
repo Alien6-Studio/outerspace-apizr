@@ -29,6 +29,24 @@ that qualified RC2. Tracking #232 retains the failed run, corrective qualificati
 exact final source and verified publication evidence.
 See the [0.4.2 release record](../releases/0.4.2.md).
 
+## 0.4.3 qualification
+
+The next coordinated candidate is **0.4.3** for the core and all three plugins.
+It adds the MCP Registry launcher and directory metadata described in the
+[release record](../releases/0.4.3.md). The release is not published yet.
+
+The verifier accepts exactly `0.4.3` from protected `release/0.4.3`. Select the
+successful **push** CI run on the final merge SHA, with Security and Documentation
+successful on that same source. The original four wheels, four sdists, target
+exports, delivery evidence and signed provenance form one immutable candidate.
+Run the read-only preflight before requesting authorization for that exact
+source, CI run and archive hashes. PR builds remain previews.
+
+The existing manual publication procedure applies with `release/0.4.3` and
+`v0.4.3`. A later Registry publication additionally requires the PyPI ownership
+marker, matching `server.json`, a public-byte launcher test and namespace
+owner authentication. No Registry upload is triggered by the package workflow.
+
 ## Retain and publish one coordinated artifact set
 
 CI builds four wheels and four sdists once per candidate. Independent sdist

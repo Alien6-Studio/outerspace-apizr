@@ -283,3 +283,14 @@ identity is `925b8881feec75466ae489e7a0a71f9e97a2b7da0d6b75cdead210781009ea1b`. 
 release manifest above: all five build wheel identities, root requirements,
 build policy and generated Formula bytes are unchanged. The release manifest
 and public tap remain bound to the original released source and are not relabeled.
+
+## 0.4.3 candidate identity
+
+The 0.4.3 candidate manifest is
+`76d36c8d868c866f4bd906980ffd54d1fa58c86860934f566874ea6566f0b0ae`.
+Only `lock_sha256` changes from the master integration identity above, because
+the lock records the core version. All five build wheels, their hashes, root
+requirements and the build-input policy are identical. The active qualification
+policy binds the new manifest and retains the same host boundary. Historical
+physical and public-tap evidence still describes its original source; it is not
+relabeled as a 0.4.3 qualification.

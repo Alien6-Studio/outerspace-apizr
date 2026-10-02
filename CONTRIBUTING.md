@@ -69,8 +69,9 @@ maintenance targets `master`; new product development branches from and targets
 protected `release/0.4.3`. The previous release line and published tags remain
 unchanged. Development builds are previews, not replacement release archives.
 
-Creating the new line does not bump package versions or authorize qualification
-or publication of 0.4.3. Those changes need an explicit candidate policy update.
+The coordinated 0.4.3 candidate is qualified through the exact protected
+release-line policy. Publication requires review of its source and original
+archives; opening or merging an ordinary PR never publishes a release.
 See [release governance](docs/contributing/release-branches.md).
 
 ```sh

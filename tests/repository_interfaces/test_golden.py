@@ -62,7 +62,7 @@ def render(root, interface):
 
 
 @pytest.mark.parametrize("interface", ["rest", "mcp"])
-def test_golden_and_relocation(tmp_path, interface):
+def test_golden_and_relocation(tmp_path, interface, historical_generator_identity):
     shutil.copytree(FIXTURE / "project", tmp_path / "moved")
     original = render(FIXTURE / "project", interface)
     assert render(tmp_path / "moved", interface) == original
@@ -77,6 +77,21 @@ def test_golden_and_relocation(tmp_path, interface):
         b"shop.api.quote"
         not in original["openapi.json" if interface == "rest" else "mcp-tools.json"]
     )
+
+
+def test_provenance_records_current_installed_generator():
+    from importlib.metadata import version
+
+    from apizr.capabilities.model import Digest
+
+    artifacts = render(FIXTURE / "project", "rest")
+    provenance = artifacts["apizr-bundle-provenance.json"]
+    assert json.loads(provenance)["generator"] == {
+        "name": "outerspace-apizr",
+        "version": version("outerspace-apizr"),
+    }
+    manifest = json.loads(artifacts["apizr-repository-rest.json"])
+    assert manifest["provenance_digest"] == Digest.of_bytes(provenance).model_dump()
 
 
 @pytest.mark.parametrize(

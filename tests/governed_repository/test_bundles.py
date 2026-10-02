@@ -17,7 +17,7 @@ from .helpers import inputs
 ROOT = Path(__file__).parents[2]
 
 
-def test_direct_baseline_exact_every_artifact():
+def test_direct_baseline_exact_every_artifact(historical_generator_identity):
     # The original baseline retains its no-application contracts. Runtime hashes
     # include #163/#188 runtime updates and #190 optional acquisition provenance.
     # These are current generator goldens, not published release evidence.

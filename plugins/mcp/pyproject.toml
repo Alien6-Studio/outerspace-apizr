@@ -1,12 +1,12 @@
 [project]
 name = "outerspace-apizr-mcp"
-version = "0.4.2"
+version = "0.4.3"
 description = "Optional local stdio MCP server for Apizr analysis and explicitly enabled delivery"
 requires-python = ">=3.11,<3.15"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
-dependencies = ["outerspace-apizr==0.4.2", "mcp>=2.2,<3"]
+dependencies = ["outerspace-apizr==0.4.3", "mcp>=2.2,<3"]
 
 [project.scripts]
 outerspace-apizr-mcp = "apizr_mcp.launcher:main"

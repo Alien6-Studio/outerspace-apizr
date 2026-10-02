@@ -87,7 +87,7 @@ jobs:
           python3 - <<'PY'
           import hashlib, os
           from pathlib import Path
-          wheel = Path(os.environ['RUNNER_TEMP']) / 'forge-candidate/dist/outerspace_apizr-0.4.2-py3-none-any.whl'
+          wheel = Path(os.environ['RUNNER_TEMP']) / 'forge-candidate/dist/outerspace_apizr-0.4.3-py3-none-any.whl'
           with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
               stream.write(f'path={wheel}\nsha256={hashlib.sha256(wheel.read_bytes()).hexdigest()}\n')
           PY
@@ -97,6 +97,7 @@ jobs:
         uses: ./
         with:
           python-version: ${{ matrix.python }}
+          apizr-version: '0.4.3'
           project: tests/fixtures/forge/project/apizr.toml
           wheel-path: ${{ steps.wheel.outputs.path }}
           wheel-sha256: ${{ steps.wheel.outputs.sha256 }}
@@ -110,6 +111,7 @@ jobs:
         with:
           operation: check
           python-version: ${{ matrix.python }}
+          apizr-version: '0.4.3'
           project: tests/fixtures/forge/project/apizr.toml
           authorize-analysis: 'true'
           output-dir: .apizr-ci-check
@@ -120,6 +122,7 @@ jobs:
         with:
           operation: build-rest
           python-version: ${{ matrix.python }}
+          apizr-version: '0.4.3'
           project: tests/fixtures/forge/project/apizr.toml
           authorize-analysis: 'true'
           output-dir: .apizr-ci-build-rest
@@ -130,6 +133,7 @@ jobs:
         with:
           operation: build-mcp
           python-version: ${{ matrix.python }}
+          apizr-version: '0.4.3'
           project: tests/fixtures/forge/project/apizr.toml
           authorize-analysis: 'true'
           output-dir: .apizr-ci-build-mcp

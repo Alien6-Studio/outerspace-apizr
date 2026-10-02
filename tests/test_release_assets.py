@@ -102,7 +102,7 @@ def inputs(root, assets, version="0.4.0"):
 
 
 @pytest.mark.parametrize(
-    "version", ["0.4.0", "0.4.0rc1", "0.4.1rc1", "0.4.1", "0.4.2rc1", "0.4.2"]
+    "version", ["0.4.0", "0.4.0rc1", "0.4.1rc1", "0.4.1", "0.4.2rc1", "0.4.2", "0.4.3"]
 )
 def test_stage_preserves_bytes_and_uses_recorded_unique_names(
     assets, tmp_path, monkeypatch, version
@@ -145,6 +145,7 @@ def test_stage_preserves_bytes_and_uses_recorded_unique_names(
         ("pull_request", "refs/pull/205/merge", True),
         ("push", "refs/heads/master", True),
         ("push", "refs/heads/release/0.4.2", False),
+        ("push", "refs/heads/release/0.4.3", False),
         ("push", "refs/heads/release/0.4.1", True),
     ],
 )
@@ -176,7 +177,9 @@ def test_workflow_stages_integrated_master_as_preview(
     ).splitlines()
     assert ("--preview" in selected) is preview
     downloads = tmp_path / "downloads"
-    inputs(downloads, assets, "0.4.2rc1")
+    inputs(
+        downloads, assets, "0.4.3" if ref == "refs/heads/release/0.4.3" else "0.4.2rc1"
+    )
     calls = []
     monkeypatch.setattr(
         assets.subprocess, "run", lambda command, **kw: calls.append(command)
