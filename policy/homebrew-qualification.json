@@ -1,5 +1,5 @@
 {
-  "build_inputs_manifest_sha256": "c981a11d84ec319cd10d156b18b31e073ca480e1f2b62f3880c4a17cac0f5405",
+  "build_inputs_manifest_sha256": "2ecca88800dc2d4c752f012c7afee472496c729fa5a49e1cc0b6eb9a59052a58",
   "evidence": {
     "ci": {
       "host": "virtual-machine",

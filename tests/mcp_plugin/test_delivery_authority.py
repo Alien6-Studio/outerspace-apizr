@@ -49,7 +49,7 @@ def test_exact_existing_grants_remain_authoritative(
                 {
                     "schema": "apizr.extension-manifest/v1",
                     "name": name,
-                    "version": "0.4.2rc1",
+                    "version": "0.4.2",
                     "module": module,
                     "protocol": "apizr.extension/v1",
                     "sha256": "a" * 64,

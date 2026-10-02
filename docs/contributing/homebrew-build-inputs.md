@@ -2,13 +2,14 @@
 
 This records the integrated supply-chain preparation and the separate
 [Formula qualification](#formula-qualification). Neither publishes a
-tap or package. All four packages remain `0.4.2rc1`.
-Issue [#228](https://github.com/Alien6-Studio/outerspace-apizr/issues/228) remains
-open while the Formula integration is reviewed.
+tap or package. All four packages are `0.4.2`, prepared for final publication.
+Issue [#228](https://github.com/Alien6-Studio/outerspace-apizr/issues/228) records
+the completed Formula integration. Final-version qualification and publication
+are tracked in [#232](https://github.com/Alien6-Studio/outerspace-apizr/issues/232).
 
 ## Runtime provider
 
-The proposed runtime uses Homebrew `python@3.14`, a system-site-packages virtual
+The runtime uses Homebrew `python@3.14`, a system-site-packages virtual
 environment and the official `pydantic` formula. The first qualification requires
 Pydantic **2.13.5** and pydantic-core **2.46.5**. Import locations must resolve into
 that formula's keg. The proof reproduces the dependency `.pth` written by
@@ -245,3 +246,13 @@ macOS (Tier 3, non-blocking) or Linux Homebrew runtime. The public Alien6 tap is
 not yet published, Homebrew/core is not targeted, and issue #228 stays open until
 the Formula is integrated. The earlier build-closure receipt is not a
 substitute for the real Formula installation proof.
+
+## Final-version qualification
+
+The final `0.4.2` promotion changes only the coordinated project version in
+`uv.lock`; the five reviewed build wheels and their hashes remain unchanged.
+The final build-input manifest SHA-256 is
+`2ecca88800dc2d4c752f012c7afee472496c729fa5a49e1cc0b6eb9a59052a58`.
+The physical build-closure receipt above remains historical RC evidence and is
+not relabeled. Fresh hosted and physical Formula qualification against the exact
+final candidate is recorded in [#232](https://github.com/Alien6-Studio/outerspace-apizr/issues/232).

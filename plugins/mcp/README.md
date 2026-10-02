@@ -1,8 +1,8 @@
 # outerspace-apizr-mcp
 
 Analyze a local Python project from an MCP client without executing its functions.
-Default mode exposes exactly three read-only tools. This **0.4.2rc1 development,
-unpublished** version also supports opt-in status/run/resume for an existing
+Default mode exposes exactly three read-only tools. The **0.4.2** version, prepared for final publication, also supports opt-in
+status/run/resume for an existing
 delivery request selected by the operator with `--delivery-request`. Clients
 cannot choose operational paths, credentials or keys. Existing per-operation
 grants remain required; delivery uses the shared coordinator and may mutate

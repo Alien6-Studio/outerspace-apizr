@@ -4,7 +4,7 @@ For prerequisites and package availability, see [Install Apizr](../getting-start
 
 The optional **outerspace-apizr-mcp** plugin exposes local analysis and planning
 through stdio. **Default mode remains read-only, with exactly three tools.**
-The unpublished **0.4.2rc1 development version** adds delivery only when the
+The **0.4.2 version prepared for final publication** adds delivery only when the
 operator supplies `--delivery-request` at startup. It does not generate bundles,
 build images, execute business functions, acquire Git sources or install plugins. A **generated business MCP
 server** exposes the capabilities you selected; this server exposes Apizr's
@@ -32,7 +32,7 @@ dependencies. Installation by Apizr uses only the reviewed local wheelhouse.
 The SDK and a copy of the compiler belong to the plugin's separate environment;
 the minimal core receives neither MCP nor REST dependencies.
 
-For unpublished 0.4.2rc1 development, from the source checkout:
+For `0.4.2`, prepared for final publication, use the source checkout:
 
 ```sh
 work=$(mktemp -d)
@@ -49,7 +49,7 @@ prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
   -r dependencies.txt
 uv venv --no-python-downloads --python python3 core
 uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.2rc1-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.2-py3-none-any.whl
 ```
 
 Record one exact version and SHA-256 per distribution, including the plugin,
@@ -73,11 +73,11 @@ for wheel in sorted(Path("wheels").glob("*.whl")):
     lines.append(f"{metadata['Name']}=={metadata['Version']} --hash=sha256:{digest}\n")
 Path("plugin.lock").write_text("".join(lines))
 PY
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.2rc1-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.2rc1-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.2-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.2-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.2rc1 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.2 --plugins-dir "$work/plugins"
 ```
 
 Installation alone leaves the plugin inactive. The existing [locked installation
@@ -197,7 +197,7 @@ The three analysis tool descriptions and read-only annotations are fixed; reposi
 data and cannot create tools or replace server instructions. Annotations alone
 are not an authorization boundary.
 
-## Explicit delivery mode (0.4.2rc1 development, unpublished)
+## Explicit delivery mode (0.4.2)
 
 The default launch remains:
 

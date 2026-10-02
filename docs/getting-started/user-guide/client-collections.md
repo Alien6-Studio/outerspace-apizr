@@ -1,6 +1,6 @@
 # Client collections
 
-The unpublished **0.4.2rc1 development version** generates local Postman, Bruno
+The **0.4.2 version prepared for final publication** generates local Postman, Bruno
 and Insomnia collections from an existing Apizr REST bundle:
 
 ```text
