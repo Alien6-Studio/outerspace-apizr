@@ -19,7 +19,12 @@
   GitLab CI/CD Component source. GitLab hosted runtime and catalog publication
   have not been performed.
 
-Homebrew and source-to-build MCP orchestration remain future work.
+- Add the core-only Apizr Homebrew Formula, a deterministic local/public source
+  renderer, and real Apple Silicon installation and plugin-isolation qualification.
+  The public Alien6 tap is not yet published. Intel macOS and Linux Homebrew
+  runtime remain unqualified.
+
+Homebrew tap publication and source-to-build MCP orchestration remain future work.
 
 ## 0.4.1 — 2026-09-29
 

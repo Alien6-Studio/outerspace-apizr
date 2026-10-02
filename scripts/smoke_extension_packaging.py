@@ -95,7 +95,8 @@ def main() -> None:
         raise RuntimeError("Core import did not come from the recorded installation")
     inventory_code = (
         "import json; from importlib.metadata import distributions; "
-        "print(json.dumps(sorted((d.metadata['Name'], d.version) for d in distributions())))"
+        "print(json.dumps(sorted(((d.metadata.get('Name'), d.version) for d in distributions()), "
+        "key=lambda item: (item[0] or '', item[1] or ''))))"
     )
     before = snapshot(core_root)
     distributions = core(inventory_code)
