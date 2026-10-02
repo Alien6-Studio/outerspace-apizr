@@ -342,6 +342,7 @@ def main():
         "mcp_client_proof.py",
         "mcp_delivery_local_proof.py",
         "mcp_lifecycle_proof.py",
+        "mcp_registry_proof.py",
     ):
         result = subprocess.run(
             [root / "client/bin/python", REPO / "scripts" / script, root],

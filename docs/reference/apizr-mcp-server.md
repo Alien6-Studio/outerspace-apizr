@@ -167,6 +167,53 @@ one-request `apizr.extension/v1` protocol and existing timeout. Internally, the
 MCP server uses that runtime for fresh, isolated **compiler calculations**, not
 as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
 
+## Directory integration (unreleased 0.4.3)
+
+OuterSpace Apizr remains a local stdio capability compiler. The prepared
+Official MCP Registry identity is
+`io.github.Alien6-Studio/outerspace-apizr`. The matching `mcp-name` marker lives
+in the MCP plugin README so it will be included in the next PyPI distribution.
+The root `server.json` describes version **0.4.3**, which is not published yet.
+Package versions on the development line still use the 0.4.2 baseline; the
+descriptor is preparation for the next coordinated release, not a claim that
+those packages are available.
+
+The new package command `outerspace-apizr-mcp` accepts the same arguments as
+`apizr mcp serve`. It delegates to that launcher and selects the already
+installed, explicitly activated plugin through the existing admission checks.
+Installing the launcher through `uvx` does not prepare or activate the separate
+plugin store. The minimal core environment remains separate from the MCP SDK.
+
+After 0.4.3 is published, and after installing and activating its verified MCP
+profile, the descriptor resolves to this command:
+
+```sh
+uvx outerspace-apizr-mcp@0.4.3 \
+  --project /absolute/project/apizr.toml \
+  --operator-policy /absolute/operator.json \
+  --plugins-dir /absolute/plugins
+```
+
+All three paths are supplied by the operator. The descriptor exposes no
+delivery argument or remote endpoint. Missing authority or an absent/inactive
+plugin is refused; startup never installs, activates or repairs a plugin.
+The published 0.4.2 package lacks this console command: continue to use
+`apizr mcp serve` for that version.
+
+Before any separately authorized Registry publication, validate `server.json`
+with `mcp-publisher validate`, confirm its exact version agrees with the released
+PyPI package and its README marker, and qualify the command against the public
+bytes. A GitHub owner of the organization must authenticate for the namespace.
+See the Registry's [PyPI ownership requirements](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/package-types.mdx)
+and [authentication requirements](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/authentication.mdx).
+
+The root `glama.json` declares the GitHub maintainer for the Glama listing. It
+does not contain tool schemas or start a hosted service. Claiming the listing
+requires Glama to sync a branch containing that file; merging into this
+development line alone does not establish that the default-branch crawler has
+seen it. Glama's server inspection is a separate step after ownership is
+recognized. No Glama deployment or Registry publication is part of this change.
+
 ## Tools and results
 
 | Tool | Arguments | Structured result |

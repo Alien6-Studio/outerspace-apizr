@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Declare the OuterSpace Apizr maintainer for Glama and prepare the Official MCP
+  Registry identity and PyPI ownership metadata for 0.4.3.
+- Add an MCP package console launcher that preserves explicit plugin activation,
+  operator policy checks and the existing isolated stdio process.
+
 ## 0.4.2 — 2026-10-02
 
 - Close both worker pipes even when process-group termination or another pipe

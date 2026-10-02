@@ -64,20 +64,18 @@ resulting author is `Your Name <your-email>`, not the GitHub login.
 
 ## Development workflow
 
-The published **0.4.1** release is integrated into `master`. Documentation
+The published **0.4.2** release is integrated into `master`. Documentation
 maintenance targets `master`; new product development branches from and targets
-protected `release/0.4.2`, which replaces the retired `release/0.4.1` branch.
-The published source remains accessible through immutable `v0.4.1` and RC tags.
-New verification builds never replace published archives.
+protected `release/0.4.3`. The previous release line and published tags remain
+unchanged. Development builds are previews, not replacement release archives.
 
 Creating the new line does not bump package versions or authorize qualification
-or publication of 0.4.2. Those changes need an explicit candidate policy update.
-See [release governance](docs/contributing/release-branches.md) for the completed
-0.4.1 lifecycle and active protection requirements.
+or publication of 0.4.3. Those changes need an explicit candidate policy update.
+See [release governance](docs/contributing/release-branches.md).
 
 ```sh
 git fetch origin
-git switch -c feature/my-change origin/release/0.4.2
+git switch -c feature/my-change origin/release/0.4.3
 # For published documentation maintenance instead:
 # git switch -c docs/my-change origin/master
 ```
