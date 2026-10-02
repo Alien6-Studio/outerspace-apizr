@@ -20,8 +20,8 @@ inputs:
     description: 'Supported Python minor: 3.11, 3.12, 3.13 or 3.14.'
     default: '3.14'
   apizr-version:
-    description: Exact Apizr version. RC2 is not published.
-    default: 0.4.2rc2
+    description: Exact Apizr version. Final publication must complete before public installation.
+    default: 0.4.2
   wheel-path:
     description: Qualification only; local original qualified wheel, paired with wheel-sha256.
     default: ''

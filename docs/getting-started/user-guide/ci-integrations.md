@@ -1,6 +1,6 @@
 # Validate and build in CI
 
-The **0.4.2 line undergoing corrective RC2 qualification** provides `apizr ci`, a GitHub
+The **0.4.2 line prepared for final publication** provides `apizr ci`, a GitHub
 composite Action, and canonical GitLab component source. The verified RC1 is
 available from PyPI; final `0.4.2` availability is pending. The `v0.4.2` Action
 tag becomes usable after final publication. The GitLab component is source-only:
@@ -100,7 +100,7 @@ steps:
 Use the immutable release tag shared with the Python release, or pin its exact
 commit SHA. There are no moving major/minor Action tags. The Action reference and
 `apizr-version` are separate identities; choose matching releases deliberately.
-The development metadata defaults to **0.4.2rc2** and must change at finalization.
+The release metadata defaults to **0.4.2**; public installation requires the published version.
 
 | Input | Default / behavior |
 | --- | --- |
@@ -124,7 +124,7 @@ corresponding tree was produced. Consumers explicitly choose artifact upload and
 retention. The Action itself performs neither checkout nor artifact upload.
 
 For repository qualification only, paired `wheel-path` / `wheel-sha256` inputs
-select a regular local 0.4.2rc2 wheel. The Action checks its SHA-256, embedded core
+select a regular local 0.4.2 wheel. The Action checks its SHA-256, embedded core
 distribution/version and installed CLI version, using a snapshot of the original
 verified bytes. URLs, symlinks and mismatched identities are rejected. This is not
 the normal public installation route.

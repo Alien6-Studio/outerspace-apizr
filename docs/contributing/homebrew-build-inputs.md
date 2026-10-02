@@ -2,7 +2,7 @@
 
 This records the integrated supply-chain preparation and the separate
 [Formula qualification](#formula-qualification). Neither publishes a
-tap or package. All four packages are `0.4.2rc2`, undergoing corrective RC2 qualification.
+tap or package. All four packages are `0.4.2`, prepared for final publication.
 Issue [#228](https://github.com/Alien6-Studio/outerspace-apizr/issues/228) records
 the completed Formula integration. Final-version qualification and publication
 are tracked in [#232](https://github.com/Alien6-Studio/outerspace-apizr/issues/232).
@@ -247,12 +247,12 @@ not yet published, Homebrew/core is not targeted, and issue #228 stays open unti
 the Formula is integrated. The earlier build-closure receipt is not a
 substitute for the real Formula installation proof.
 
-## Corrective RC2 qualification
+## Final-version qualification
 
-The corrective `0.4.2rc2` version changes only the coordinated project version in
+The final `0.4.2` promotion changes only the coordinated project version in
 `uv.lock`; the five reviewed build wheels and their hashes remain unchanged.
-The RC2 build-input manifest SHA-256 is
-`aa130065b43006d90a6ee9d54ab755b68a85be7ec837a7c08ff3e20e611011ef`.
+The final build-input manifest SHA-256 is
+`2ecca88800dc2d4c752f012c7afee472496c729fa5a49e1cc0b6eb9a59052a58`.
 The physical build-closure receipt above remains historical RC evidence and is
 not relabeled. Fresh hosted and physical Formula qualification against the exact
-RC2 candidate is recorded in [#232](https://github.com/Alien6-Studio/outerspace-apizr/issues/232).
+final candidate is recorded in [#232](https://github.com/Alien6-Studio/outerspace-apizr/issues/232).

@@ -1,6 +1,6 @@
 # Client collections
 
-The **0.4.2rc2 version under qualification** generates local Postman, Bruno
+The **0.4.2 version prepared for final publication** generates local Postman, Bruno
 and Insomnia collections from an existing Apizr REST bundle:
 
 ```text
