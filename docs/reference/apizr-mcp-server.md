@@ -201,9 +201,11 @@ The published 0.4.2 package lacks this console command: continue to use
 
 The published descriptor and package ownership marker are validated. The public
 PyPI launcher passed both MCP protocol modes and all three read-only tool calls.
-Official Registry publication is pending authorization of the organization's
-namespace; PyPI and GitHub release delivery are complete. Publication uses an
-organization owner's GitHub authentication and preserves the exact descriptor.
+Official Registry publication uses the manually dispatched `Publish MCP Registry`
+workflow after master integration. GitHub Actions OIDC authenticates the repository
+owner without a personal token. The workflow checks the public release, immutable
+source and matching package version before publishing the exact descriptor.
+PyPI and GitHub release delivery are complete.
 See the Registry's [authentication requirements](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/authentication.mdx).
 
 The root `glama.json` declares the verified GitHub maintainer. The
