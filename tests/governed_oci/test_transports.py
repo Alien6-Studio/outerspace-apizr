@@ -401,17 +401,25 @@ def test_real_provider_refuses_bad_image_before_serving(worker_image, tmp_path, 
 
 
 @pytest.mark.parametrize("transport", ["rest", "stdio", "streamable-http"])
+@pytest.mark.parametrize(
+    "name,repetitions,wall_time_ms",
+    [("memory", 20, 5000), ("crash", 3, 2000), ("loop", 3, 2000)],
+    ids=["oom", "crash", "timeout"],
+)
 def test_repeated_oom_transport_classification(
-    worker_image, tmp_path, monkeypatch, transport
+    worker_image, tmp_path, monkeypatch, transport, name, repetitions, wall_time_ms
 ):
     """Every sample must pass; no pass-until-success retries."""
+    # Docker attach/startup latency must not race the memory classification
+    # assertion. Timeout keeps its original two-second execution budget;
+    # production timeout precedence is checked independently by the supervisor.
     root = bundle(
         tmp_path / "bundle",
         "rest" if transport == "rest" else "mcp",
         image=worker_image,
         policy=ExecutionPolicyV2.model_validate(
             {
-                "limits": {"wall_time_ms": 2000},
+                "limits": {"wall_time_ms": wall_time_ms},
                 "resources": {"memory_bytes": 100663296},
             }
         ),
@@ -438,38 +446,35 @@ def test_repeated_oom_transport_classification(
         print("OCI provider evidence for failed invocation:", evidence)
         return "See captured provider evidence"
 
-    cases = [("memory", 20), ("crash", 3), ("loop", 3)]
     if transport == "rest":
         with (
             http_server(root, "rest") as (url, process),
             httpx.Client(base_url=url, timeout=15) as client,
         ):
-            for name, repetitions in cases:
-                for sample in range(repetitions):
-                    response = client.post("/capabilities/" + name, json={})
-                    assert (
-                        response.status_code
-                        == {"memory": 503, "crash": 500, "loop": 504}[name]
-                    ), (name, sample, response.text, observations())
-                    assert remaining() == before
+            for sample in range(repetitions):
+                response = client.post("/capabilities/" + name, json={})
+                assert (
+                    response.status_code
+                    == {"memory": 503, "crash": 500, "loop": 504}[name]
+                ), (name, sample, response.text, observations())
+                assert remaining() == before
             assert process.poll() is None
     else:
 
         async def check(connection):
             async with Client(connection, read_timeout_seconds=15) as client:
-                for name, repetitions in cases:
-                    for sample in range(repetitions):
-                        response = await client.call_tool(name, {})
-                        assert response.is_error
-                        assert (
-                            response.content[0].text
-                            == {
-                                "memory": "Tool execution resource limit exceeded",
-                                "crash": "Tool execution failed",
-                                "loop": "Tool execution timed out",
-                            }[name]
-                        ), (name, sample, response, observations())
-                        assert remaining() == before
+                for sample in range(repetitions):
+                    response = await client.call_tool(name, {})
+                    assert response.is_error
+                    assert (
+                        response.content[0].text
+                        == {
+                            "memory": "Tool execution resource limit exceeded",
+                            "crash": "Tool execution failed",
+                            "loop": "Tool execution timed out",
+                        }[name]
+                    ), (name, sample, response, observations())
+                    assert remaining() == before
 
         if transport == "stdio":
             anyio.run(

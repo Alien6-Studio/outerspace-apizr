@@ -1,13 +1,32 @@
 # Release branches and qualification
 
-The current stable product is **0.4.2**, released from
-`a21cfd41eecc7ca3259e2fb72f6a028a288b9030` and retained by immutable tag `v0.4.2`.
-Publication and verification #232 are complete. Post-release integration targets
+The current stable product is **0.4.3**, released from
+`cfaa5108c37ab9324297bbe5b38d90d537ea57ad` and retained by immutable tag `v0.4.3`.
+[Publication and verification](../releases/0.4.3.md#validation) are complete. Post-release integration targets
 `master`; its integration commit is distinct from the immutable release source.
 Documentation maintenance branches from and targets `master`.
-`release/0.4.2` is retained; no next-version branch or automatic retirement is
-part of this integration. Retire a release branch only after explicit review of
-master integration, public documentation, distribution checks and tag-bound evidence.
+Development now branches from and targets protected `release/0.4.3`, created
+from integrated master `2d7602148226dbb6c7025059740e217b78310a73`.
+`release/0.4.2` is retained with its existing protections. Rule set
+[24380834](https://github.com/Alien6-Studio/outerspace-apizr/rules/24380834)
+protects the new line with the same 17 checks, signed commits, required PRs,
+no force updates or deletion, and no bypass actors. Its
+[checked-in payload](https://github.com/Alien6-Studio/outerspace-apizr/blob/release/0.4.3/.github/release-0.4.3-ruleset.json)
+is an audit record, not an enforcement mechanism.
+
+CI, Security and Documentation validate the new line. All four package versions and internal pins are **0.4.3**. The qualification
+policy accepts exactly 0.4.3 from protected `release/0.4.3`, requiring successful
+push CI, Security and Documentation on the same source SHA. Other versions,
+PR artifacts and unprotected sources remain ineligible. Documentation deployment
+remains master-only. Qualification does not itself publish a release.
+The MCP Registry descriptor targets published 0.4.3. Its matching PyPI packages
+and immutable release evidence are available; directory status is recorded in
+the [MCP reference](../reference/apizr-mcp-server.md#directory-integration-043).
+
+## Historical 0.4.2 governance
+
+The following records the previous release line and its qualification policy.
+It does not authorize publication or qualification of 0.4.3.
 
 ## Branch and version lifecycle
 

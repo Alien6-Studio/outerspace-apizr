@@ -7,6 +7,7 @@ import re
 import runpy
 import subprocess
 import sys
+import tomllib
 import zipfile
 from pathlib import Path
 
@@ -46,6 +47,9 @@ def action_values(**updates):
 
 def test_platform_contracts_and_immutable_supply_chain():
     assert ACTION["name"] and ACTION["description"]
+    version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
+    assert ACTION["inputs"]["apizr-version"]["default"] == version
+    assert INPUTS["apizr-version"]["default"] == version
     assert ACTION["runs"]["using"] == "composite"
     assert set(ACTION["inputs"]) == {
         "operation",
@@ -237,11 +241,11 @@ def test_actual_action_python_preflight(tmp_path, version, expected):
     assert not (tmp_path / "INJECTED").exists()
 
 
-def wheel(tmp_path, name="outerspace-apizr", version="0.4.2"):
-    path = tmp_path / "outerspace_apizr-0.4.2-py3-none-any.whl"
+def wheel(tmp_path, name="outerspace-apizr", version="0.4.3"):
+    path = tmp_path / f"outerspace_apizr-{version}-py3-none-any.whl"
     with zipfile.ZipFile(path, "w") as archive:
         archive.writestr(
-            "outerspace_apizr-0.4.2.dist-info/METADATA",
+            f"outerspace_apizr-{version}.dist-info/METADATA",
             f"Name: {name}\nVersion: {version}\n",
         )
     return path, hashlib.sha256(path.read_bytes()).hexdigest()
@@ -249,23 +253,30 @@ def wheel(tmp_path, name="outerspace-apizr", version="0.4.2"):
 
 def test_original_wheel_identity_and_hash(tmp_path):
     path, digest = wheel(tmp_path)
-    name, raw = ADAPTER["wheel_bytes"](str(path), digest, "0.4.2")
+    name, raw = ADAPTER["wheel_bytes"](str(path), digest, "0.4.3")
     assert name == path.name and raw == path.read_bytes()
     with pytest.raises(ValueError, match="hash_mismatch"):
-        ADAPTER["wheel_bytes"](str(path), "0" * 64, "0.4.2")
+        ADAPTER["wheel_bytes"](str(path), "0" * 64, "0.4.3")
     for identity in ("other-distribution", "outerspace_apizr"):
         path, digest = wheel(tmp_path, name=identity)
         with pytest.raises(ValueError, match="identity_mismatch"):
-            ADAPTER["wheel_bytes"](str(path), digest, "0.4.2")
+            ADAPTER["wheel_bytes"](str(path), digest, "0.4.3")
     path, digest = wheel(tmp_path, version="0.4.1")
     with pytest.raises(ValueError, match="identity_mismatch"):
-        ADAPTER["wheel_bytes"](str(path), digest, "0.4.2")
+        ADAPTER["wheel_bytes"](str(path), digest, "0.4.3")
     link = tmp_path / "linked.whl"
     link.symlink_to(path)
     with pytest.raises(OSError):
-        ADAPTER["wheel_bytes"](str(link), digest, "0.4.2")
+        ADAPTER["wheel_bytes"](str(link), digest, "0.4.3")
     with pytest.raises(ValueError, match="path_invalid"):
-        ADAPTER["wheel_bytes"]("https://example.invalid/file.whl", digest, "0.4.2")
+        ADAPTER["wheel_bytes"]("https://example.invalid/file.whl", digest, "0.4.3")
+
+
+@pytest.mark.parametrize("version", ["0.4.2", "0.4.4", "0.4.3rc1"])
+def test_original_wheel_refuses_other_qualification_versions(tmp_path, version):
+    path, digest = wheel(tmp_path, version=version)
+    with pytest.raises(ValueError, match="development_version_required"):
+        ADAPTER["wheel_bytes"](str(path), digest, version)
 
 
 @pytest.mark.parametrize("project_name", ["missing.toml", SENTINEL])
@@ -327,7 +338,7 @@ def test_action_install_is_exact_core_only_and_child_has_no_tokens(
         ADAPTER["main"].__globals__["subprocess"],
         "run",
         lambda *a, **kw: types.SimpleNamespace(
-            returncode=0, stdout=b"outerspace-apizr 0.4.2\n"
+            returncode=0, stdout=b"outerspace-apizr 0.4.3\n"
         ),
     )
     assert ADAPTER["main"]() == 0
@@ -340,12 +351,12 @@ def test_action_install_is_exact_core_only_and_child_has_no_tokens(
         "--no-input",
         "--index-url",
         "https://pypi.org/simple",
-        "outerspace-apizr==0.4.2",
+        "outerspace-apizr==0.4.3",
     ]
     assert calls[1][1:] == ADAPTER["invocation"](values)
     assert (
         (tmp_path / "outputs").read_text()
-        == "result=.apizr-ci/result.json\nartifacts=.apizr-ci\napizr-version=0.4.2\nstate=success\n"
+        == "result=.apizr-ci/result.json\nartifacts=.apizr-ci\napizr-version=0.4.3\nstate=success\n"
     )
 
 
@@ -372,6 +383,7 @@ def test_real_workflow_requires_original_candidate_and_read_only_permissions():
     }
     assert any(s.get("continue-on-error") == "true" for s in steps)
     for step in steps:
+        assert step["with"]["apizr-version"] == "0.4.3"
         assert step["with"]["wheel-path"] == "${{ steps.wheel.outputs.path }}"
         assert step["with"]["wheel-sha256"] == "${{ steps.wheel.outputs.sha256 }}"
     assert (

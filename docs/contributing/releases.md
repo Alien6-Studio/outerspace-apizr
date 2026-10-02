@@ -5,11 +5,11 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 ## Current published baseline
 
-The current stable release is **0.4.2** for the core and all three plugins,
-source `a21cfd41eecc7ca3259e2fb72f6a028a288b9030`. Publication #232 is complete.
-The original archives from protected release-line CI `37010358692` were published
-by workflow `37016836833`; all eight public files match the qualified bytes.
-See the [release record](../releases/0.4.2.md). Master integration and documentation
+The current stable release is **0.4.3** for the core and all three plugins,
+source `cfaa5108c37ab9324297bbe5b38d90d537ea57ad`. Publication is complete.
+The original archives from protected release-line CI `37057658519` were published
+by workflow `37062660371`; all eight public files match the qualified bytes.
+See the [release record](../releases/0.4.3.md). Master integration and documentation
 commits preserve the released product but never replace its immutable source.
 Documentation maintenance targets `master`.
 
@@ -28,6 +28,24 @@ Final `0.4.2` is published with no runtime or third-party dependency change from
 that qualified RC2. Tracking #232 retains the failed run, corrective qualification,
 exact final source and verified publication evidence.
 See the [0.4.2 release record](../releases/0.4.2.md).
+
+## 0.4.3 qualification
+
+The next coordinated candidate is **0.4.3** for the core and all three plugins.
+It adds the MCP Registry launcher and directory metadata described in the
+[release record](../releases/0.4.3.md). The release is not published yet.
+
+The verifier accepts exactly `0.4.3` from protected `release/0.4.3`. Select the
+successful **push** CI run on the final merge SHA, with Security and Documentation
+successful on that same source. The original four wheels, four sdists, target
+exports, delivery evidence and signed provenance form one immutable candidate.
+Run the read-only preflight before requesting authorization for that exact
+source, CI run and archive hashes. PR builds remain previews.
+
+The existing manual publication procedure applies with `release/0.4.3` and
+`v0.4.3`. A later Registry publication additionally requires the PyPI ownership
+marker, matching `server.json`, a public-byte launcher test and namespace
+owner authentication. No Registry upload is triggered by the package workflow.
 
 ## Retain and publish one coordinated artifact set
 
@@ -69,7 +87,7 @@ For first-time plugin publishers, PyPI allows only one pending publisher for an
 identical repository/workflow/environment configuration. Register and publish one
 package at a time using the exact `package` input, then finish with `package: all`
 to archive release-wide evidence. These prerequisites do not authorize a new upload.
-Completed 0.4.0rc1, 0.4.1rc1, 0.4.1, 0.4.2rc1 and 0.4.2 deliveries must not be dispatched again.
+Completed 0.4.0rc1, 0.4.1rc1, 0.4.1, 0.4.2rc1, 0.4.2 and 0.4.3 deliveries must not be dispatched again.
 
 ## Published 0.3.0
 
@@ -223,7 +241,7 @@ remain subject to the site's optional GitHub consent setting. No release number
 is hard-coded in the theme, and no header override is needed. See
 [Material's repository documentation](https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/).
 
-PRs and `release/0.4.2` pushes run strict MkDocs and HTML validation without
+PRs and protected release-line pushes run strict MkDocs and HTML validation without
 deployment. Stable documentation still follows the integrated baseline. A master
 push builds and publishes the site to `gh-pages`, served at
 [apizr.outerspace.sh](https://apizr.outerspace.sh/). Keep this active publication

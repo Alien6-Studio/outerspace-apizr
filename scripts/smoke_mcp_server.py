@@ -248,7 +248,7 @@ def prepare(root: Path, python: str) -> dict:
             "enable",
             "outerspace-apizr-mcp",
             "--version",
-            "0.4.2",
+            "0.4.3",
             "--plugins-dir",
             store,
         ],
@@ -342,6 +342,7 @@ def main():
         "mcp_client_proof.py",
         "mcp_delivery_local_proof.py",
         "mcp_lifecycle_proof.py",
+        "mcp_registry_proof.py",
     ):
         result = subprocess.run(
             [root / "client/bin/python", REPO / "scripts" / script, root],
