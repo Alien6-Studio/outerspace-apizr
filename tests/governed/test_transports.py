@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import time
+from collections import deque
 from pathlib import Path
 
 import anyio
@@ -16,13 +17,23 @@ from .helpers import SERVER, bundle, http_server
 pytestmark = pytest.mark.timeout(60)
 
 
-def test_real_governed_rest_survives_failures_and_tampering(tmp_path, monkeypatch):
+def test_real_governed_rest_survives_failures_and_tampering(
+    tmp_path, monkeypatch, request
+):
+    history = deque(maxlen=64)
+    request.addfinalizer(
+        lambda: request.node.user_properties.append(
+            ("rest_call_history", json.dumps(list(history)))
+        )
+    )
     monkeypatch.setenv("APIZR_TEST_SECRET", "super-secret")
     root = bundle(
         tmp_path / "rest",
         "rest",
         policy=ExecutionPolicy.model_validate(
-            {"limits": {"wall_time_ms": 1000, "max_output_bytes": 256}}
+            # Functional recovery is not a one-second cold-process benchmark.
+            # Short deadlines are tested independently in execution/test_deadline.py.
+            {"limits": {"wall_time_ms": 5000, "max_output_bytes": 256}}
         ),
     )
     with (
@@ -31,9 +42,23 @@ def test_real_governed_rest_survives_failures_and_tampering(tmp_path, monkeypatc
     ):
 
         def call(name, args=None):
-            return client.post(
-                "/capabilities/" + name, json={} if args is None else args
-            )
+            # Retain only bounded, test-owned metadata, including on failure.
+            event = {"capability": name, "outcome": "exception"}
+            started = time.monotonic()
+            try:
+                response = client.post(
+                    "/capabilities/" + name, json={} if args is None else args
+                )
+                event["outcome"] = {
+                    200: "success",
+                    422: "rejected",
+                    500: "error",
+                    504: "timeout",
+                }.get(response.status_code, "unexpected_status")
+                return response
+            finally:
+                event["elapsed_ms"] = round((time.monotonic() - started) * 1000, 3)
+                history.append(event)
 
         assert call("total", {"a": 1}).json() == 6
         assert call("greet", {"name": "Ada"}).json() == "Hello Ada"

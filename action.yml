@@ -1,0 +1,72 @@
+name: Apizr CI
+description: Validate local Python capabilities and generate portable REST or MCP bundles.
+inputs:
+  operation:
+    description: 'check, build-rest or build-mcp'
+    default: check
+  project:
+    description: Path to the checked-out apizr.toml.
+    default: apizr.toml
+  authorize-analysis:
+    description: Explicitly authorize source.analyze for this exact local project root.
+    default: 'false'
+  operator-policy:
+    description: Existing operator policy; mutually exclusive with authorize-analysis.
+    default: ''
+  output-dir:
+    description: Absent or empty workspace-relative output directory; parent must exist.
+    default: .apizr-ci
+  python-version:
+    description: 'Supported Python minor: 3.11, 3.12, 3.13 or 3.14.'
+    default: '3.14'
+  apizr-version:
+    description: Exact Apizr version. Final publication must complete before public installation.
+    default: 0.4.2
+  wheel-path:
+    description: Qualification only; local original qualified wheel, paired with wheel-sha256.
+    default: ''
+  wheel-sha256:
+    description: Qualification only; exact lowercase SHA-256 of wheel-path.
+    default: ''
+outputs:
+  result:
+    description: Workspace-relative CI result JSON path.
+    value: ${{ steps.apizr.outputs.result }}
+  artifacts:
+    description: Workspace-relative retained artifact directory.
+    value: ${{ steps.apizr.outputs.artifacts }}
+  apizr-version:
+    description: Verified installed Apizr version.
+    value: ${{ steps.apizr.outputs.apizr-version }}
+  state:
+    description: Portable success or refusal state.
+    value: ${{ steps.apizr.outputs.state }}
+runs:
+  using: composite
+  steps:
+    - name: Validate supported Python
+      shell: bash
+      env:
+        APIZR_PYTHON_VERSION: ${{ inputs.python-version }}
+      run: |
+        case "$APIZR_PYTHON_VERSION" in
+          3.11|3.12|3.13|3.14) ;;
+          *) echo 'forge_python_unsupported' >&2; exit 2 ;;
+        esac
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Install exact Apizr and run static CI operation
+      id: apizr
+      shell: bash
+      env:
+        APIZR_ACTION_PATH: ${{ github.action_path }}
+        APIZR_OPERATION: ${{ inputs.operation }}
+        APIZR_PROJECT: ${{ inputs.project }}
+        APIZR_AUTHORIZE_ANALYSIS: ${{ inputs.authorize-analysis }}
+        APIZR_OPERATOR_POLICY: ${{ inputs.operator-policy }}
+        APIZR_OUTPUT_DIR: ${{ inputs.output-dir }}
+        APIZR_APIZR_VERSION: ${{ inputs.apizr-version }}
+        APIZR_WHEEL_PATH: ${{ inputs.wheel-path }}
+        APIZR_WHEEL_SHA256: ${{ inputs.wheel-sha256 }}
+      run: python -I "$APIZR_ACTION_PATH/.github/actions/forge/run.py"

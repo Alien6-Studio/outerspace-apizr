@@ -19,7 +19,10 @@ CRITICAL = {
     "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
     "reference/project-plugin-locks/index.html": "Project plugin declarations and locks",
     "reference/apizr-mcp-server/index.html": "Apizr as a local MCP server",
-    "index.html": "Choose your next step",
+    "index.html": "Apizr 0.4.2",
+    "releases/0.4.2/index.html": "0.4.2 is published and verified.",
+    "getting-started/user-guide/ci-integrations/index.html": "apizr ci",
+    "getting-started/onboarding/index.html": "Initialize and check a local project",
     "development/0.4/index.html": "Build and qualify Apizr from source",
     "reference/git-sources/index.html": "One explicit revision",
     "reference/git-ssh/index.html": "ssh-known-hosts",
@@ -50,8 +53,8 @@ def on_config(config):
         "source_commit": commit,
         "source_dirty": dirty,
         "status": "stable",
-        "target_version": "0.4.1",
-        "stable_release": "0.4.1",
+        "target_version": "0.4.2",
+        "stable_release": "0.4.2",
     }
     return config
 

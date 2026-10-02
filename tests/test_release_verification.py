@@ -237,7 +237,10 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
 @pytest.mark.parametrize(
     "fault", [None, "missing", "pending", "failed", "duplicate", "version"]
 )
-@pytest.mark.parametrize("release_version", ["0.4.1rc1", "0.4.1rc2", "0.4.1"])
+@pytest.mark.parametrize(
+    "release_version",
+    ["0.4.1rc1", "0.4.1rc2", "0.4.1", "0.4.2rc1", "0.4.2rc2", "0.4.2"],
+)
 @pytest.mark.parametrize("resume", [False, True])
 def test_coordinated_release_requires_every_exact_target(
     tmp_path, monkeypatch, fault, release_version, resume
@@ -502,7 +505,7 @@ def test_closed_04_publications_fail_before_network(tmp_path, monkeypatch, versi
 
 
 @pytest.mark.parametrize(
-    "version", ["0.4.2rc1", "0.4.2", "0.5.0", "0.4.1.dev0", "0.4.1rc0"]
+    "version", ["0.4.2rc3", "0.4.3", "0.5.0", "0.4.1.dev0", "0.4.1rc0"]
 )
 def test_future_lines_require_explicit_policy(version):
     with pytest.raises(ValueError, match="No authorized qualification branch"):
@@ -546,6 +549,72 @@ def test_041_preflight_binds_all_gates_to_protected_release_line(
         if path == "actions/runs/123":
             if fault in {"master", "feature", "release/0.4.2"}:
                 run["head_branch"] = fault
+            if fault == "pull_request":
+                run["event"] = fault
+            if fault == "fork":
+                run["repository"] = {"full_name": "other/fork"}
+            return run
+        workflow = path.split("/")[2]
+        run.update(id=10, path=".github/workflows/" + workflow)
+        if (fault, workflow) in {
+            ("security_branch", "security.yml"),
+            ("docs_branch", "mkdocs.yaml"),
+        }:
+            run["head_branch"] = "master"
+        if fault == "newer_failed":
+            return {"workflow_runs": [run, {**run, "id": 11, "conclusion": "failure"}]}
+        return {"workflow_runs": [run]}
+
+    monkeypatch.setattr(release, "github", github)
+    if fault:
+        with pytest.raises(ValueError):
+            release.main()
+    else:
+        release.main()
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        None,
+        "master",
+        "feature",
+        "release/0.4.1",
+        "release/0.4.3",
+        "wrong_sha",
+        "pull_request",
+        "unprotected",
+        "security_branch",
+        "docs_branch",
+        "newer_failed",
+        "fork",
+    ],
+)
+@pytest.mark.parametrize("release_version", ["0.4.2rc1", "0.4.2rc2", "0.4.2"])
+def test_042_preflight_binds_all_gates_to_protected_release_line(
+    tmp_path, monkeypatch, fault, release_version
+):
+    import sys
+
+    (tmp_path / "pyproject.toml").write_text(
+        f'[project]\nname="outerspace-apizr"\nversion="{release_version}"\n'
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        sys, "argv", ["verify", "--run-id", "123", "--preflight", "--source-only"]
+    )
+    monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
+
+    def github(path):
+        run = valid_run("release/0.4.2")
+        if path.startswith("branches/"):
+            assert path == "branches/release%2F0.4.2"
+            return {"protected": fault != "unprotected"}
+        if path == "actions/runs/123":
+            if fault in {"master", "feature", "release/0.4.1", "release/0.4.3"}:
+                run["head_branch"] = fault
+            if fault == "wrong_sha":
+                run["head_sha"] = "bad"
             if fault == "pull_request":
                 run["event"] = fault
             if fault == "fork":

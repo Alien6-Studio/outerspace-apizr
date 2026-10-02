@@ -1,7 +1,7 @@
 # Install Apizr
 
-These instructions cover the published stable **Apizr 0.4.1** release. Its
-[publication status](../releases/0.4.1.md#publication-status) records the verified
+These instructions cover the published stable **Apizr 0.4.2** release. Its
+[publication status](../releases/0.4.2.md#publication-status) records the verified
 source, archives and public delivery.
 
 Install the core, then follow the
@@ -16,23 +16,45 @@ mkdir apizr-workspace
 cd apizr-workspace
 python3 -m venv core
 . core/bin/activate
-python -m pip install outerspace-apizr==0.4.1
+python -m pip install outerspace-apizr==0.4.2
 apizr --version
 ```
 
-**Observe:** `outerspace-apizr 0.4.1`. Continue with the [Quickstart](quickstart.md)
+**Observe:** `outerspace-apizr 0.4.2`. Continue with the [Quickstart](quickstart.md)
 to generate and call your first MCP or REST service. No plugin or Docker is needed.
 
-With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.1` or
-`pipx install outerspace-apizr==0.4.1` is an alternative to the virtual environment
+Optional [local onboarding](onboarding.md) adds `apizr init` → `apizr doctor`
+before the Quickstart. These commands are included in the stable release.
+
+With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.2` or
+`pipx install outerspace-apizr==0.4.2` is an alternative to the virtual environment
 above. Use the executable path reported by your tool.
+
+## Homebrew on Apple Silicon
+
+The [official Alien6 tap](https://github.com/Alien6-Studio/homebrew-tap) installs
+Apizr **0.4.2** on qualified physical Apple Silicon macOS:
+
+```sh
+brew tap alien6-studio/tap
+brew install alien6-studio/tap/apizr
+apizr --version
+```
+
+Observe `outerspace-apizr 0.4.2`. This installs the core using Homebrew Python
+3.14 and Pydantic. Optional plugins remain in Apizr-managed isolated environments
+outside the Cellar; use the plugin profiles below when needed.
+The public tap passes install/test, strict online audit, CLI checks and plugin
+lifecycle with an unchanged Formula prefix. Intel macOS is **Tier 3, not qualified**;
+Linux Homebrew runtime is **not qualified**. See the
+[build/runtime separation](../contributing/homebrew-build-inputs.md).
 
 ## Add optional plugin profiles
 
-The coordinated packages are `outerspace-apizr==0.4.1`,
-`outerspace-apizr-oci==0.4.1`, `outerspace-apizr-mcp==0.4.1` and
-`outerspace-apizr-attest==0.4.1`. The
-[release record](../releases/0.4.1.md#publication-status) identifies the qualified
+The coordinated packages are `outerspace-apizr==0.4.2`,
+`outerspace-apizr-oci==0.4.2`, `outerspace-apizr-mcp==0.4.2` and
+`outerspace-apizr-attest==0.4.2`. The
+[release record](../releases/0.4.2.md#publication-status) identifies the qualified
 final archives. These profiles install plugins separately and preserve the core.
 
 <span id="install-the-published-release"></span>
@@ -41,7 +63,7 @@ final archives. These profiles install plugins separately and preserve the core.
 ### Obtain the installation files
 
 Use the **durable GitHub release assets**, not expiring Actions artifacts, for
-normal installation. The commands below use the published **v0.4.1** assets.
+normal installation. The commands below use the published **v0.4.2** assets.
 You need Python 3.11–3.14, a POSIX shell, tar, GitHub CLI (`gh`) for public resource
 retrieval/provenance verification, and an already installed **uv** for plugins.
 Select your system, architecture and Python from [Supported targets](#supported-targets).
@@ -50,8 +72,8 @@ This selection uses Linux x86-64 / Python 3.11. The published inventory supplies
 the exact patch-level export and source commit. Keep all files from the same release:
 
 ```sh
-export APIZR_VERSION=0.4.1
-export RELEASE_TAG=v0.4.1
+export APIZR_VERSION=0.4.2
+export RELEASE_TAG=v0.4.2
 export PYTHON=python3.11
 export TARGET_PATTERN="apizr-${APIZR_VERSION}-linux-x86_64-cpython-3.11.*.tar.gz"
 mkdir -p release/assets release/candidate/dist release/target-download
@@ -64,7 +86,7 @@ gh attestation verify release/assets/ci-evidence.tar.gz \
   --bundle release/assets/build-provenance.sigstore.json \
   --repo Alien6-Studio/outerspace-apizr \
   --signer-workflow Alien6-Studio/outerspace-apizr/.github/workflows/ci.yml \
-  --source-digest "$EXPECTED_COMMIT" --source-ref refs/heads/release/0.4.1
+  --source-digest "$EXPECTED_COMMIT" --source-ref refs/heads/release/0.4.2
 ```
 
 Bind the selected export and candidate inventory to the attested CI evidence,
@@ -86,7 +108,7 @@ candidate = Path("release/candidate")
 inventory = json.loads((assets / "release-assets.json").read_text())
 assert inventory["version"] == os.environ["APIZR_VERSION"]
 assert inventory["commit"] == os.environ["EXPECTED_COMMIT"]
-assert inventory["source_ref"] == "refs/heads/release/0.4.1"
+assert inventory["source_ref"] == "refs/heads/release/0.4.2"
 checksums = dict(line.split("  ", 1)[::-1] for line in (assets / "SHA256SUMS").read_text().splitlines())
 for path in assets.iterdir():
     if path.name != "SHA256SUMS":
@@ -146,11 +168,11 @@ The selected `PYTHON` must match the target export's Python minor version.
 <!-- install:pip -->
 ```sh
 "$PYTHON" -m venv "$CORE_DIR"
-"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.1}-py3-none-any.whl"
+"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.2}-py3-none-any.whl"
 "$CORE_DIR/bin/apizr" --version
 ```
 
-Observe `outerspace-apizr 0.4.1`, then activate it with `. "$CORE_DIR/bin/activate"`
+Observe `outerspace-apizr 0.4.2`, then activate it with `. "$CORE_DIR/bin/activate"`
 and follow the [Quickstart](quickstart.md).
 
 ### Alternatively, install as a tool
@@ -159,14 +181,14 @@ With uv already installed, use this **instead of** pip:
 
 <!-- install:uv -->
 ```sh
-uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.1}-py3-none-any.whl"
+uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.2}-py3-none-any.whl"
 ```
 
 Or, with pipx already installed, use:
 
 <!-- install:pipx -->
 ```sh
-pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.1}-py3-none-any.whl"
+pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.2}-py3-none-any.whl"
 ```
 
 Use the executable path reported by that tool, then check `apizr --version`.
@@ -210,7 +232,7 @@ On this fresh store, the active inventory is empty. Activate only what you selec
 
 ```sh
 # mcp profile
-"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version "${APIZR_VERSION:-0.4.1}" --plugins-dir "$PLUGINS_DIR"
+"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version "${APIZR_VERSION:-0.4.2}" --plugins-dir "$PLUGINS_DIR"
 # oci profile: enable outerspace-apizr-oci instead
 # delivery profile: enable both outerspace-apizr-oci and outerspace-apizr-attest
 ```
@@ -232,12 +254,12 @@ its exact patch version and architecture.
 
 | System / architecture | Python | Release export pattern |
 | --- | --- | --- |
-| Linux x86-64 | 3.11 | `apizr-0.4.1-linux-x86_64-cpython-3.11.*.tar.gz` |
-| Linux x86-64 | 3.12 | `apizr-0.4.1-linux-x86_64-cpython-3.12.*.tar.gz` |
-| Linux x86-64 | 3.13 | `apizr-0.4.1-linux-x86_64-cpython-3.13.*.tar.gz` |
-| Linux x86-64 | 3.14 | `apizr-0.4.1-linux-x86_64-cpython-3.14.*.tar.gz` |
-| macOS arm64 | 3.11 | `apizr-0.4.1-macos-arm64-cpython-3.11.*.tar.gz` |
-| macOS arm64 | 3.14 | `apizr-0.4.1-macos-arm64-cpython-3.14.*.tar.gz` |
+| Linux x86-64 | 3.11 | `apizr-0.4.2-linux-x86_64-cpython-3.11.*.tar.gz` |
+| Linux x86-64 | 3.12 | `apizr-0.4.2-linux-x86_64-cpython-3.12.*.tar.gz` |
+| Linux x86-64 | 3.13 | `apizr-0.4.2-linux-x86_64-cpython-3.13.*.tar.gz` |
+| Linux x86-64 | 3.14 | `apizr-0.4.2-linux-x86_64-cpython-3.14.*.tar.gz` |
+| macOS arm64 | 3.11 | `apizr-0.4.2-macos-arm64-cpython-3.11.*.tar.gz` |
+| macOS arm64 | 3.14 | `apizr-0.4.2-macos-arm64-cpython-3.14.*.tar.gz` |
 
 ## Develop from source
 

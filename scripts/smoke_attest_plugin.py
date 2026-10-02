@@ -72,7 +72,7 @@ def exercise(python, store, work, builds, command, environment):
         "enable",
         "outerspace-apizr-attest",
         "--version",
-        "0.4.1",
+        "0.4.2",
         "--plugins-dir",
         store,
     )
@@ -371,6 +371,20 @@ def exercise(python, store, work, builds, command, environment):
 
             multi_delivery(
                 python, store, work, builds, arguments, command, environment, calls
+            )
+            from mcp_delivery_proof import install as install_delivery_mcp
+
+            mcp_python = install_delivery_mcp(python, store, work, command)
+            multi_delivery(
+                python,
+                store,
+                work,
+                builds,
+                arguments,
+                command,
+                environment,
+                calls,
+                mcp_python=mcp_python,
             )
         key.unlink()  # Publication of an existing proof requires no private key.
         offline = {

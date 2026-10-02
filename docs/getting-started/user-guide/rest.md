@@ -193,3 +193,9 @@ never imports user source. The capability receives the existing OCI filesystem,
 network and resource limits. Subprocesses remain permitted but contained.
 See the [v2 bridge contract](../../architecture/governed-oci-transports-v2.md) for
 the control matrix, sanitized error mappings, integrity checks and trust boundary.
+
+## Client collections
+
+The published Apizr 0.4.2 release can export the retained REST bundle to
+[Postman, Bruno and Insomnia collections](client-collections.md), with deterministic
+files and safe local regeneration. No source scan or execution is needed.

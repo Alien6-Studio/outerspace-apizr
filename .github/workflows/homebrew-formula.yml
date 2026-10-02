@@ -1,0 +1,71 @@
+name: Homebrew Formula
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: '3.14'
+      - run: uv sync --locked
+      - name: Build the coordinated candidate once for this exact source
+        run: uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/candidate"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: homebrew-formula-candidate
+          path: ${{ runner.temp }}/candidate
+          if-no-files-found: error
+          retention-days: 90
+
+  formula-arm64:
+    name: Real Formula install (Apple Silicon CI VM)
+    needs: candidate
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      HOMEBREW_NO_INSTALL_CLEANUP: '1'
+      HOMEBREW_NO_ANALYTICS: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: '3.14'
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: homebrew-formula-candidate
+          path: /private/tmp/apizr-homebrew-formula/candidate
+      - name: Official runtime providers
+        run: |
+          test "$(uname -m)" = arm64
+          brew update
+          brew install python@3.14 pydantic
+      - run: uv sync --locked
+      - name: Real disposable tap, offline Formula install and plugin lifecycle
+        run: >-
+          uv run --locked python scripts/qualify_homebrew_formula.py
+          --candidate /private/tmp/apizr-homebrew-formula/candidate
+          --source-sha "$(git rev-parse HEAD)"
+          --output /private/tmp/apizr-homebrew-formula/qualification
+          --host hosted-vm
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: homebrew-formula-proof-arm64
+          path: /private/tmp/apizr-homebrew-formula/qualification/evidence
+          if-no-files-found: error
+          retention-days: 90

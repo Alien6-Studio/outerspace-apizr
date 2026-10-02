@@ -47,6 +47,57 @@ def installed(wheel_factory, tmp_path):
     return root, record
 
 
+@pytest.mark.parametrize(
+    "fault", [None, "inactive", "binding", "module", "directory", "installer"]
+)
+def test_managed_mcp_can_only_invoke_from_its_verified_containing_store(
+    installed, monkeypatch, fault
+):
+    root, target = installed
+    enable_extension(target.name, target.version, directory=root)
+    prefix = root / "environments" / ("c" * 32) / "venv"
+    interpreter = prefix / "bin/python"
+    interpreter.parent.mkdir(parents=True)
+    interpreter.write_text("fixture")
+    interpreter.chmod(0o700)
+    caller = target.model_copy(
+        update={
+            "name": "outerspace-apizr-mcp",
+            "module": "apizr_mcp",
+            "environment_id": "c" * 32,
+            "python": str(interpreter),
+        }
+    )
+    inventory = store.read_inventory(root)
+    store.publish(
+        root,
+        inventory.model_copy(
+            update={"installations": [*inventory.installations, caller]}
+        ),
+    )
+    if fault == "binding":
+        caller = caller.model_copy(update={"version": "changed"})
+    if fault == "module":
+        caller = caller.model_copy(update={"module": "other"})
+    activation._publish(root, [target] if fault == "inactive" else [target, caller])
+    monkeypatch.setattr(activation.sys, "prefix", str(prefix))
+    if fault == "installer":
+        with pytest.raises(PluginError, match="overlaps"):
+            store.storage_directory(root)
+        return
+    selected = root.parent if fault == "directory" else root
+    if fault:
+        with pytest.raises(PluginError):
+            with activation.admitted_extension(target.name, directory=selected):
+                pytest.fail("invalid managed caller admitted")
+    else:
+        with activation.admitted_extension(target.name, directory=selected) as (
+            record,
+            lease,
+        ):
+            assert record == target and lease >= 0
+
+
 def test_full_cli_lifecycle(installed, tmp_path, capsys, monkeypatch):
     root, record = installed
     argument_file = tmp_path / "arguments.json"
@@ -449,3 +500,20 @@ def test_concurrent_activations_and_install_preserve_records(installed, wheel_fa
         second,
     ]
     assert len(list_extensions(directory=root).installations) == 3
+
+
+def test_cancel_during_store_lock_wait_never_invokes_plugin(installed, monkeypatch):
+    root, record = installed
+    enable_extension(record.name, record.version, directory=root)
+    cancel = threading.Event()
+    monkeypatch.setattr(
+        activation, "invoke_extension", lambda *a, **k: pytest.fail("plugin invoked")
+    )
+    with store.installation_lock(root):
+        with ThreadPoolExecutor() as pool:
+            future = pool.submit(
+                run_extension, record.name, "probe", {}, directory=root, cancel=cancel
+            )
+            cancel.set()
+            with pytest.raises(InvocationCancelled):
+                future.result(timeout=2)

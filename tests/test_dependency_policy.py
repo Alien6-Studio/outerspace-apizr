@@ -42,6 +42,16 @@ def test_audit_scopes_cover_every_locked_dependency_variant(tmp_path):
     assert any(name == "pytest" for name, _ in by_scope["development"])
     assert any(name == "mkdocs" for name, _ in by_scope["documentation"])
     assert any(name == "pip-audit" for name, _ in by_scope["security-tooling"])
+    assert {name for name, _ in by_scope["homebrew-build"]} == {
+        "hatchling",
+        "packaging",
+        "pathspec",
+        "pluggy",
+        "trove-classifiers",
+    }
+    assert not {"hatchling", "trove-classifiers"} & {
+        name for name, _ in by_scope["runtime"]
+    }
 
 
 def test_dependency_source_policy_refuses_unreviewed_origins_and_missing_hashes():

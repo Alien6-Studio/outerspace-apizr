@@ -27,6 +27,7 @@ GIT_WORKER_TESTS = [
     ],
     "tests/execution/test_process.py::test_ordinary_descendant_is_stopped_with_worker",
     "tests/execution/test_process.py::test_descendant_fixture_cleans_failed_preparation",
+    "tests/execution/test_process.py::test_cleanup_error_still_closes_worker_pipes",
     "tests/repository_execution/test_cleanup.py",
 ]
 
@@ -40,7 +41,7 @@ def main() -> int:
     )
     args = parser.parse_args()
     tests = GIT_WORKER_TESTS if args.suite == "git-worker" else TESTS
-    expected_tests = 11 if args.suite == "git-worker" else 7
+    expected_tests = 13 if args.suite == "git-worker" else 7
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     results: list[dict[str, object]] = []

@@ -36,7 +36,12 @@ def prove(work: Path, core_root: Path) -> None:
     uv = shutil.which("uv")
     assert uv is not None
     before = snapshot(core_root)
-    inventory_program = "import importlib.metadata,json; print(json.dumps(sorted((d.metadata['Name'],d.version) for d in importlib.metadata.distributions())))"
+    inventory_program = (
+        "import importlib.metadata,json; "
+        "print(json.dumps(sorted(((d.metadata.get('Name'),d.version) "
+        "for d in importlib.metadata.distributions()), "
+        "key=lambda item: (item[0] or '', item[1] or ''))))"
+    )
     before_distributions = subprocess.check_output(
         [sys.executable, "-I", "-B", "-c", inventory_program], cwd=work, timeout=20
     )

@@ -1,0 +1,5 @@
+schema_version = "apizr.project/v1"
+exposure_policy = "exposure.json"
+readiness_policy = "readiness-policy.json"
+[scan]
+source_roots = ["src"]

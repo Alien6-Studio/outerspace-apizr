@@ -25,8 +25,8 @@ def marker_at(site: Path) -> dict:
         marker.get("schema") != "apizr.docs-build/v1"
         or not re.fullmatch(r"[0-9a-f]{40}", marker.get("source_commit", ""))
         or marker.get("status") != "stable"
-        or marker.get("target_version") != "0.4.1"
-        or marker.get("stable_release") != "0.4.1"
+        or marker.get("target_version") != "0.4.2"
+        or marker.get("stable_release") != "0.4.2"
         or not isinstance(marker.get("source_dirty"), bool)
         or not isinstance(marker.get("files"), dict)
     ):
@@ -148,7 +148,7 @@ def wait_for_site(args) -> None:
                 raise ValueError(result.stderr.strip())
             print(
                 f"Verified public source {marker['source_commit']} "
-                f"(development), deployment {args.deployment_commit or 'not queried'}"
+                f"(stable), deployment {args.deployment_commit or 'not queried'}"
             )
             return
         except (ValueError, subprocess.SubprocessError) as error:

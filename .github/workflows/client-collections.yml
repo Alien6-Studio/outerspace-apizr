@@ -1,0 +1,64 @@
+name: Client collections
+
+on:
+  push:
+    branches: [feature/client-collections]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-formats:
+    timeout-minutes: 20
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: '3.11'}
+          - {os: ubuntu-latest, python: '3.14'}
+          - {os: macos-latest, python: '3.11'}
+          - {os: macos-latest, python: '3.14'}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.0'
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22.22.2'
+      - run: uv sync --locked
+      - name: Collection contracts, safe sync and branch coverage
+        run: >-
+          uv run --locked pytest tests/client_collections
+          --cov=apizr.client_collections --cov=apizr.clients_cli
+          --cov-report=term-missing --cov-report=json:clients-coverage.json
+          --junitxml=clients-tests.xml
+      - name: Exact vendor tools and dependency integrity, without installation scripts
+        run: npm ci --prefix scripts/client_collection_tools --ignore-scripts --no-audit --no-fund
+      - name: Checksum-pinned Inso CLI
+        run: uv run --locked python scripts/prepare_client_tools.py "$RUNNER_TEMP/inso"
+      - name: Installed wheel, official native validation and real source-free execution
+        run: >-
+          uv run --locked python scripts/client_collections_proof.py
+          --output "$RUNNER_TEMP/client-collections-proof"
+          --tools scripts/client_collection_tools
+          --postman scripts/client_collection_tools/node_modules/.bin/postman
+          --inso "$RUNNER_TEMP/inso/inso"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: client-collections-${{ matrix.os }}-${{ matrix.python }}
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            clients-tests.xml
+            clients-coverage.json
+            ${{ runner.temp }}/client-collections-proof/*.json
+            ${{ runner.temp }}/client-collections-proof/*.log
+            ${{ runner.temp }}/client-collections-proof/postman/
+            ${{ runner.temp }}/client-collections-proof/bruno/
+            ${{ runner.temp }}/client-collections-proof/insomnia/

@@ -61,6 +61,22 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments == ["--version"]:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
         return 0
+    if arguments and arguments[0] == "ci":
+        from apizr.ci_cli import main as ci_command
+
+        return ci_command(arguments[1:])
+    if arguments and arguments[0] in ("completion", "__complete"):
+        from apizr.completion import main as completion_command
+
+        return completion_command(arguments[1:], backend=arguments[0] == "__complete")
+    if arguments and arguments[0] in ("init", "doctor"):
+        from apizr.onboarding_cli import diagnose, init
+
+        return (init if arguments[0] == "init" else diagnose)(arguments[1:])
+    if arguments and arguments[0] == "clients":
+        from apizr.clients_cli import main as clients_command
+
+        return clients_command(arguments[1:])
     if arguments and arguments[0] == "delivery":
         from apizr.delivery_cli import main as delivery_command
 
@@ -106,6 +122,13 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments in (["--help"], ["-h"]):
         print("Apizr — an open-source capability compiler for Python codebases.\n")
         print("Version: apizr --version")
+        print(
+            "Local setup: apizr init | apizr doctor | apizr completion {bash,zsh,fish}"
+        )
+        print("Local client collections: apizr clients {export,sync} --help")
+        print(
+            "Static CI validation/build: apizr ci {check,build-rest,build-mcp} --help"
+        )
         print("Local MCP analysis server (optional plugin): apizr mcp serve --help")
         print(
             "Extensions: apizr plugins {install,list,enable,disable,run,uninstall} --help"
