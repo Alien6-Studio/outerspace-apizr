@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master, develop, release/0.4.2, release/0.4.3]
+    branches: [master]
   pull_request:
   workflow_dispatch:
 
@@ -396,11 +396,10 @@ jobs:
           retention-days: 90
 
   provenance:
-    # Release-line signing stays disabled until maintainers configure protection.
+    # New evidence is limited to the active protected development branch.
     if: >-
       github.event_name == 'push' &&
-      (github.ref == 'refs/heads/master' ||
-       ((github.ref == 'refs/heads/release/0.4.2' || github.ref == 'refs/heads/release/0.4.3') && github.ref_protected))
+      github.ref == 'refs/heads/master' && github.ref_protected
     needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations, release-target, release-delivery]
     runs-on: ubuntu-latest
     permissions:
@@ -486,13 +485,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           EVENT_NAME: ${{ github.event_name }}
         run: |
-          flags=()
-          # PRs and master remain previews; protected release-line pushes
-          # retain qualified artifacts without publishing them.
-          if test "$EVENT_NAME" = pull_request || { test "$GITHUB_REF" != refs/heads/release/0.4.2 && test "$GITHUB_REF" != refs/heads/release/0.4.3; }; then
-            flags+=(--preview)
-          fi
-          python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${flags[@]}"
+          # Completed release lines are retired; current artifacts are previews.
+          python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" --preview
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-assets

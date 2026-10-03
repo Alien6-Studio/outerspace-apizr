@@ -144,12 +144,12 @@ def test_stage_preserves_bytes_and_uses_recorded_unique_names(
     [
         ("pull_request", "refs/pull/205/merge", True),
         ("push", "refs/heads/master", True),
-        ("push", "refs/heads/release/0.4.2", False),
-        ("push", "refs/heads/release/0.4.3", False),
+        ("push", "refs/heads/release/0.4.2", True),
+        ("push", "refs/heads/release/0.4.3", True),
         ("push", "refs/heads/release/0.4.1", True),
     ],
 )
-def test_workflow_stages_integrated_master_as_preview(
+def test_current_workflow_cannot_requalify_retired_release_refs(
     assets, tmp_path, monkeypatch, event, ref, preview
 ):
     import yaml

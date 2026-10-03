@@ -211,6 +211,8 @@ def test_remote_verification_precedes_admission(required, tmp_path):
         "skipped",
         "signer",
         "another-proof-plan",
+        "receipt",
+        "malformed-verdict",
     ],
 )
 def test_substitution_never_promotes(required, tmp_path, monkeypatch, fault):
@@ -284,7 +286,11 @@ def test_substitution_never_promotes(required, tmp_path, monkeypatch, fault):
         from test_delivery import verdict
 
         report = verdict()
-        if fault == "warnings":
+        if fault == "receipt":
+            report["receipt"] = "other.yaml"
+        elif fault == "malformed-verdict":
+            report["checks"][0]["detail"] = None
+        elif fault == "warnings":
             report["warnings"] = ["warning"]
         elif fault == "skipped":
             report["checks"][0]["status"] = "skip"

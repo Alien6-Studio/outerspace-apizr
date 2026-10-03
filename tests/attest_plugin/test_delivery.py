@@ -76,11 +76,13 @@ def documents(tmp_path):
 
 def verdict():
     return {
+        "receipt": "receipt.yaml",
         "verdict": "pass",
         "signed_by": "3" * 64,
         "warnings": [],
         "checks": [
-            {"name": name, "status": "pass"} for name in sorted(delivery.CHECKS)
+            {"name": name, "status": "pass", "detail": "verified"}
+            for name in sorted(delivery.CHECKS)
         ],
     }
 

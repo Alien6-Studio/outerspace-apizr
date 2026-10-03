@@ -163,10 +163,9 @@ The package job tests the base wheel and each extra in separate environments on
 Python 3.11 and 3.14. Security audits cover the base, each extra, and validation
 groups; archived SBOMs distinguish the base and combined optional runtime.
 
-The completed 0.4.2 development cycle branched from protected `release/0.4.2` and targeted
-that branch with PRs. Published documentation maintenance targets `master`.
-Release-line pushes validate documentation without deploying it; the public site
-remains on the integrated `master` baseline. See
+The published 0.4.3 release is integrated into protected `master`. New product
+changes and documentation branches target `master`; the completed 0.4.2 and
+0.4.3 release branches are retired. See
 [release governance](../../contributing/release-branches.md) for the active rules.
-All four packages are 0.4.2. Integration and contributor builds do not replace
+All four packages are 0.4.3. Integration and contributor builds do not replace
 the immutable published archives.

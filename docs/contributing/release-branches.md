@@ -4,29 +4,34 @@ The current stable product is **0.4.3**, released from
 `cfaa5108c37ab9324297bbe5b38d90d537ea57ad` and retained by immutable tag `v0.4.3`.
 [Publication and verification](../releases/0.4.3.md#validation) are complete. Post-release integration targets
 `master`; its integration commit is distinct from the immutable release source.
-Documentation maintenance branches from and targets `master`.
-Development now branches from and targets protected `release/0.4.3`, created
-from integrated master `2d7602148226dbb6c7025059740e217b78310a73`.
-`release/0.4.2` is retained with its existing protections. Rule set
-[24380834](https://github.com/Alien6-Studio/outerspace-apizr/rules/24380834)
-protects the new line with the same 17 checks, signed commits, required PRs,
-no force updates or deletion, and no bypass actors. Its
-[checked-in payload](https://github.com/Alien6-Studio/outerspace-apizr/blob/release/0.4.3/.github/release-0.4.3-ruleset.json)
-is an audit record, not an enforcement mechanism.
+All new product changes and documentation branches target protected `master`.
+The completed `release/0.4.2` and `release/0.4.3` branches are retired after their
+published state and the post-release Attest receipt fix from PR #241 are
+integrated into `master`. Only their branch references and dedicated rulesets
+24138072 and 24380834 are removed. The `master` and release-tag protections,
+required checks, squash-only merging and deployment restrictions stay in place.
+`gh-pages` remains the documentation deployment branch.
 
-CI, Security and Documentation validate the new line. All four package versions and internal pins are **0.4.3**. The qualification
-policy accepts exactly 0.4.3 from protected `release/0.4.3`, requiring successful
-push CI, Security and Documentation on the same source SHA. Other versions,
-PR artifacts and unprotected sources remain ineligible. Documentation deployment
-remains master-only. Qualification does not itself publish a release.
+The checked-in release ruleset payloads are historical audit records, not active
+configuration. Published tags, original source commits, archives and signed
+provenance retain their existing identities. Verification of published evidence
+must use its original source ref, even after that branch is retired.
+
+CI, Security and Documentation validate `master` pushes and all pull requests.
+Only protected `master` pushes can sign new build provenance. Candidate assets
+from the current development workflow are always previews; they cannot replace
+published 0.4.3 artifacts or authorize replaying publication. Historical
+version/ref qualification policies remain available for their recorded releases.
+A future release line and publication require an explicit maintainer decision.
 The MCP Registry descriptor targets published 0.4.3. Its matching PyPI packages
 and immutable release evidence are available; directory status is recorded in
 the [MCP reference](../reference/apizr-mcp-server.md#directory-integration-043).
 
-## Historical 0.4.2 governance
+## Historical release-line governance
 
-The following records the previous release line and its qualification policy.
-It does not authorize publication or qualification of 0.4.3.
+The remaining sections record earlier release-line settings and decisions.
+They are historical, not instructions for current development or authorization
+to recreate a retired branch, change current protections or replay publication.
 
 ## Branch and version lifecycle
 
