@@ -206,6 +206,9 @@ Each call runs `attest verify receipt.yaml --recompute --workspace DIR
 It never executes the pipeline, accesses Docker, or consults old verification
 results. It requires the expected signer, no warnings, and exactly one passing
 check each for `schema`, `consistency`, `signature`, `timestamp`, and `recompute`.
+The native verdict must name exactly `receipt.yaml`. Its fields and check records
+must match the pinned Attest JSON contract; unknown fields or malformed records
+are refused. Check order and diagnostic text do not affect acceptance.
 A zero exit, global pass, missing or skipped check is insufficient. It also
 checks the expected reference, raw OCI bytes and deterministic delivery manifest.
 A receipt for another image is refused. `--trust-receipt-timestamp` is never used.

@@ -7,8 +7,7 @@ had the additional controls described below.
 
 ## Evidence from subsequent CI builds
 
-A successful baseline `master` build, or a protected `release/0.4.2` push
-with the governance workflow, produces:
+A successful protected `master` push with the governance workflow produces:
 
 - For coordinated candidates: four tested wheels and four sdists, plus
   `SHA256SUMS.json` and the commit-bound candidate inventory. Earlier releases
@@ -25,10 +24,10 @@ with the governance workflow, produces:
 - The separately audited dependency report from the successful Security run on
   the same commit.
 
-Only an isolated signing job on a `master` push or an explicitly protected
-`release/0.4.2` push receives OIDC and attestation permissions. The release line
-uses the [active protection rules](release-branches.md#actual-protections-detected);
-unprotected release pushes cannot sign. Development build provenance does not
+Only an isolated signing job on a protected `master` push receives OIDC and
+attestation permissions. The completed release branches are retired; their
+original signed evidence retains its recorded source refs. See the
+[active branch policy](release-branches.md). Development build provenance does not
 authorize candidate qualification or publication. It downloads the successful CI artifacts and does not execute
 repository code. Pull requests do not receive signing permissions. The publish
 workflow verifies provenance before forwarding the same distributions to PyPI.

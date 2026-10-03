@@ -64,21 +64,19 @@ resulting author is `Your Name <your-email>`, not the GitHub login.
 
 ## Development workflow
 
-The published **0.4.2** release is integrated into `master`. Documentation
-maintenance targets `master`; new product development branches from and targets
-protected `release/0.4.3`. The previous release line and published tags remain
-unchanged. Development builds are previews, not replacement release archives.
+The published **0.4.3** release is integrated into `master`. All new work,
+including product fixes and documentation, branches from and targets protected
+`master`. The completed `release/0.4.2` and `release/0.4.3` branches are retired;
+immutable release tags, source commits and published archives remain unchanged.
+Development builds are previews, not replacement release archives.
 
-The coordinated 0.4.3 candidate is qualified through the exact protected
-release-line policy. Publication requires review of its source and original
-archives; opening or merging an ordinary PR never publishes a release.
+A future release line requires an explicit maintainer decision and its own
+qualification policy. Merging a PR into `master` never publishes a release.
 See [release governance](docs/contributing/release-branches.md).
 
 ```sh
 git fetch origin
-git switch -c feature/my-change origin/release/0.4.3
-# For published documentation maintenance instead:
-# git switch -c docs/my-change origin/master
+git switch -c feature/my-change origin/master
 ```
 
 Fork the repository if needed. Install uv and run:

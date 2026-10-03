@@ -715,10 +715,7 @@ def test_workflows_separate_release_validation_from_external_publication():
     }
     for name in ("ci.yml", "security.yml", "mkdocs.yaml"):
         triggers = workflows[name]["on"]
-        assert "release/0.4.2" in triggers["push"]["branches"]
-        assert "release/0.4.3" in triggers["push"]["branches"]
-        assert "release/0.4.1" not in triggers["push"]["branches"]
-        assert all("*" not in branch for branch in triggers["push"]["branches"])
+        assert triggers["push"]["branches"] == ["master"]
         assert not triggers["pull_request"]  # No target-branch or path exclusions.
     docs = workflows["mkdocs.yaml"]["jobs"]
     assert (
@@ -737,8 +734,7 @@ def test_workflows_separate_release_validation_from_external_publication():
         assert workflows[name]["permissions"] == {"contents": "read"}
     signer = workflows["ci.yml"]["jobs"]["provenance"]
     assert " ".join(signer["if"].split()) == (
-        "github.event_name == 'push' && (github.ref == 'refs/heads/master' || "
-        "((github.ref == 'refs/heads/release/0.4.2' || github.ref == 'refs/heads/release/0.4.3') && github.ref_protected))"
+        "github.event_name == 'push' && github.ref == 'refs/heads/master' && github.ref_protected"
     )
     assert not any(
         step.get("uses", "").startswith("actions/checkout@") for step in signer["steps"]
