@@ -28,6 +28,27 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "attest-verdict-receipt-binding",
+        "plugins/attest/src/apizr_attest/verdict.py",
+        '        or report.get("receipt") != "receipt.yaml"\n',
+        "",
+        "tests/attest_plugin/test_admission.py::test_substitution_never_promotes[receipt]",
+    ),
+    Mutation(
+        "attest-verdict-fields",
+        "plugins/attest/src/apizr_attest/verdict.py",
+        "        or set(report) != FIELDS\n",
+        "",
+        "tests/attest_plugin/test_verdict.py::test_unknown_field_refused",
+    ),
+    Mutation(
+        "attest-verdict-check-fields",
+        "plugins/attest/src/apizr_attest/verdict.py",
+        "            or set(check) != CHECK_FIELDS\n",
+        "",
+        "tests/attest_plugin/test_verdict.py::test_malformed_check_refused[extra-value]",
+    ),
+    Mutation(
         "source-analysis-admission",
         "src/apizr/source_access.py",
         "        decision = decide_analysis(operator_policy, target)",
@@ -243,7 +264,7 @@ def main() -> None:
     results = []
     with tempfile.TemporaryDirectory(prefix="apizr-mutations-") as directory:
         checkout = Path(directory)
-        for name in ("src", "tests", "scripts"):
+        for name in ("src", "tests", "scripts", "plugins"):
             shutil.copytree(
                 root / name,
                 checkout / name,

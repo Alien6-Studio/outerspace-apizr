@@ -25,8 +25,9 @@ from .model import (
     VerifyRequest,
 )
 from .process import run
+from .verdict import CHECKS as CHECKS
+from .verdict import validate_verdict
 
-CHECKS = {"schema", "consistency", "signature", "timestamp", "recompute"}
 SCOPE = "verified OCI delivery; build not supervised by Attest"
 PIPELINE = b"""version: "0.1"
 name: "apizr-oci-delivery"
@@ -114,23 +115,6 @@ def trust_snapshot(source: Path, target: Path, proof: Path | None = None) -> Non
             if b"PRIVATE KEY" in raw:
                 raise AttestError("invalid_trust_store")
             write(target / suffix / path.name, raw)
-
-
-def validate_verdict(report, expected_signer: str) -> None:
-    if not isinstance(report, dict):
-        raise AttestError("receipt_verification_failed")
-    checks = report.get("checks")
-    if (
-        report.get("verdict") != "pass"
-        or report.get("signed_by") != expected_signer
-        or report.get("warnings") != []
-        or not isinstance(checks, list)
-        or len(checks) != len(CHECKS)
-        or any(not isinstance(c, dict) for c in checks)
-        or {c.get("name") for c in checks} != CHECKS
-        or any(c.get("status") != "pass" for c in checks)
-    ):
-        raise AttestError("receipt_verification_failed")
 
 
 def results(build_raw: bytes, push_raw: bytes, reference: str):
