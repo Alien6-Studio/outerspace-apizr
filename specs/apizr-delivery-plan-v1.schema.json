@@ -1,0 +1,305 @@
+{
+  "$defs": {
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "DistributionIdentity": {
+      "additionalProperties": false,
+      "description": "Installed metadata declaration, not a binary/distribution archive attestation.",
+      "properties": {
+        "name": {
+          "enum": [
+            "outerspace-apizr",
+            "outerspace-apizr-oci"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "DistributionIdentity",
+      "type": "object"
+    },
+    "GitSource": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "git",
+          "default": "git",
+          "title": "Kind",
+          "type": "string"
+        },
+        "repository": {
+          "title": "Repository",
+          "type": "string"
+        },
+        "requested_ref": {
+          "title": "Requested Ref",
+          "type": "string"
+        },
+        "resolved_commit": {
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+          "title": "Resolved Commit",
+          "type": "string"
+        },
+        "subdir": {
+          "title": "Subdir",
+          "type": "string"
+        },
+        "repository_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "repository",
+        "requested_ref",
+        "resolved_commit",
+        "subdir",
+        "repository_digest"
+      ],
+      "title": "GitSource",
+      "type": "object"
+    },
+    "LocalSource": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local",
+          "default": "local",
+          "title": "Kind",
+          "type": "string"
+        },
+        "repository_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "repository_digest"
+      ],
+      "title": "LocalSource",
+      "type": "object"
+    },
+    "LockedDistribution": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+          "title": "Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "sha256"
+      ],
+      "title": "LockedDistribution",
+      "type": "object"
+    },
+    "UnrecordedSource": {
+      "additionalProperties": false,
+      "description": "Historical/lower-level evidence has no established acquisition provenance.",
+      "properties": {
+        "kind": {
+          "const": "unrecorded",
+          "default": "unrecorded",
+          "title": "Kind",
+          "type": "string"
+        },
+        "repository_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "repository_digest"
+      ],
+      "title": "UnrecordedSource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "proof_requirement": {
+      "default": "optional",
+      "enum": [
+        "optional",
+        "required"
+      ],
+      "title": "Proof Requirement",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "apizr.delivery-plan/v1",
+      "default": "apizr.delivery-plan/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source": {
+      "discriminator": {
+        "mapping": {
+          "git": "#/$defs/GitSource",
+          "local": "#/$defs/LocalSource",
+          "unrecorded": "#/$defs/UnrecordedSource"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LocalSource"
+        },
+        {
+          "$ref": "#/$defs/GitSource"
+        },
+        {
+          "$ref": "#/$defs/UnrecordedSource"
+        }
+      ],
+      "title": "Source"
+    },
+    "catalog_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "graph_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "scan_policy_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "graph_policy_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "readiness_policy_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "repository_readiness_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "exposure_policy_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "exposure_plan_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "repository_interface_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "application_inputs_digest": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Digest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "bundle_manifest_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "interface": {
+      "enum": [
+        "rest",
+        "mcp"
+      ],
+      "title": "Interface",
+      "type": "string"
+    },
+    "dependency_closure": {
+      "items": {
+        "$ref": "#/$defs/LockedDistribution"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "title": "Dependency Closure",
+      "type": "array"
+    },
+    "generator": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DistributionIdentity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "build_tools": {
+      "items": {
+        "$ref": "#/$defs/DistributionIdentity"
+      },
+      "title": "Build Tools",
+      "type": "array"
+    },
+    "platform": {
+      "enum": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "title": "Platform",
+      "type": "string"
+    },
+    "base_image": {
+      "maxLength": 512,
+      "pattern": "^[a-z0-9][a-z0-9./:_-]*@sha256:[0-9a-f]{64}$",
+      "title": "Base Image",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source",
+    "catalog_digest",
+    "graph_digest",
+    "scan_policy_digest",
+    "graph_policy_digest",
+    "readiness_policy_digest",
+    "repository_readiness_digest",
+    "exposure_policy_digest",
+    "exposure_plan_digest",
+    "repository_interface_digest",
+    "bundle_manifest_digest",
+    "interface",
+    "dependency_closure",
+    "build_tools",
+    "platform",
+    "base_image"
+  ],
+  "title": "DeliveryPlan",
+  "type": "object"
+}

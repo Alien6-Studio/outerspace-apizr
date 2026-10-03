@@ -1,0 +1,617 @@
+{
+  "$defs": {
+    "CapabilityNode": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "capability",
+          "default": "capability",
+          "title": "Kind",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "readiness": {
+          "$ref": "#/$defs/State"
+        },
+        "can_generate_interface": {
+          "title": "Can Generate Interface",
+          "type": "boolean"
+        },
+        "execution": {
+          "$ref": "#/$defs/ExecutionForm"
+        }
+      },
+      "required": [
+        "id",
+        "module",
+        "name",
+        "path",
+        "readiness",
+        "can_generate_interface",
+        "execution"
+      ],
+      "title": "CapabilityNode",
+      "type": "object"
+    },
+    "Code": {
+      "enum": [
+        "APIZR-GRAPH-001",
+        "APIZR-GRAPH-002",
+        "APIZR-GRAPH-003",
+        "APIZR-GRAPH-004",
+        "APIZR-GRAPH-005",
+        "APIZR-GRAPH-006",
+        "APIZR-GRAPH-007",
+        "APIZR-GRAPH-008",
+        "APIZR-GRAPH-009",
+        "APIZR-GRAPH-010",
+        "APIZR-GRAPH-011"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/Code"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "enum": [
+                "ast_nodes",
+                "relationships",
+                "calls",
+                "imports",
+                "parser"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "code",
+        "path"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "ExecutionForm": {
+      "enum": [
+        "sync",
+        "async",
+        "generator",
+        "async_generator"
+      ],
+      "title": "ExecutionForm",
+      "type": "string"
+    },
+    "ExternalNode": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "external_module",
+          "default": "external_module",
+          "title": "Kind",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "module"
+      ],
+      "title": "ExternalNode",
+      "type": "object"
+    },
+    "GraphPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "apizr.graph-policy/v1",
+          "default": "apizr.graph-policy/v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "max_ast_nodes": {
+          "default": 500000,
+          "maximum": 2000000,
+          "minimum": 1,
+          "title": "Max Ast Nodes",
+          "type": "integer"
+        },
+        "max_relationships": {
+          "default": 50000,
+          "maximum": 200000,
+          "minimum": 1,
+          "title": "Max Relationships",
+          "type": "integer"
+        },
+        "max_calls": {
+          "default": 50000,
+          "maximum": 200000,
+          "minimum": 1,
+          "title": "Max Calls",
+          "type": "integer"
+        },
+        "max_imports": {
+          "default": 10000,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Max Imports",
+          "type": "integer"
+        }
+      },
+      "title": "GraphPolicy",
+      "type": "object"
+    },
+    "ImportDeclaration": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "column": {
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        },
+        "end_column": {
+          "minimum": 0,
+          "title": "End Column",
+          "type": "integer"
+        },
+        "availability": {
+          "enum": [
+            "unconditional",
+            "conditional"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "module_scope",
+            "capability_scope"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "syntax": {
+          "enum": [
+            "import",
+            "from"
+          ],
+          "title": "Syntax",
+          "type": "string"
+        },
+        "declared_module": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Declared Module"
+        },
+        "relative_level": {
+          "minimum": 0,
+          "title": "Relative Level",
+          "type": "integer"
+        },
+        "names": {
+          "items": {
+            "$ref": "#/$defs/ImportedName"
+          },
+          "title": "Names",
+          "type": "array"
+        },
+        "evidence": {
+          "const": "observed",
+          "default": "observed",
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "line",
+        "end_line",
+        "column",
+        "end_column",
+        "availability",
+        "source",
+        "scope",
+        "syntax",
+        "declared_module",
+        "relative_level",
+        "names"
+      ],
+      "title": "ImportDeclaration",
+      "type": "object"
+    },
+    "ImportedName": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alias"
+        },
+        "resolution": {
+          "enum": [
+            "module",
+            "capability",
+            "external",
+            "unresolved",
+            "ambiguous",
+            "star"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "resolution_evidence": {
+          "default": "unknown",
+          "enum": [
+            "inferred",
+            "unknown"
+          ],
+          "title": "Resolution Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "resolution"
+      ],
+      "title": "ImportedName",
+      "type": "object"
+    },
+    "ModuleNode": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "module",
+          "default": "module",
+          "title": "Kind",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "analyzed": {
+          "title": "Analyzed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "module",
+        "path",
+        "analyzed"
+      ],
+      "title": "ModuleNode",
+      "type": "object"
+    },
+    "Relationship": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "column": {
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        },
+        "end_column": {
+          "minimum": 0,
+          "title": "End Column",
+          "type": "integer"
+        },
+        "availability": {
+          "enum": [
+            "unconditional",
+            "conditional"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/RelationshipKind"
+        },
+        "syntax_evidence": {
+          "const": "observed",
+          "default": "observed",
+          "title": "Syntax Evidence",
+          "type": "string"
+        },
+        "resolution_evidence": {
+          "enum": [
+            "observed",
+            "inferred"
+          ],
+          "title": "Resolution Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "line",
+        "end_line",
+        "column",
+        "end_column",
+        "availability",
+        "source",
+        "target",
+        "kind",
+        "resolution_evidence"
+      ],
+      "title": "Relationship",
+      "type": "object"
+    },
+    "RelationshipKind": {
+      "enum": [
+        "contains",
+        "imports_module",
+        "imports_external_module",
+        "imports_capability",
+        "calls_capability",
+        "references_capability"
+      ],
+      "title": "RelationshipKind",
+      "type": "string"
+    },
+    "State": {
+      "enum": [
+        "ready",
+        "conditional",
+        "unsupported",
+        "ambiguous"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.graph/v1",
+      "default": "apizr.graph/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "catalog_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "repository_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "graph_policy": {
+      "$ref": "#/$defs/GraphPolicy"
+    },
+    "graph_policy_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "catalog_exit_code": {
+      "enum": [
+        0,
+        1
+      ],
+      "title": "Catalog Exit Code",
+      "type": "integer"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "nodes": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "capability": "#/$defs/CapabilityNode",
+            "external_module": "#/$defs/ExternalNode",
+            "module": "#/$defs/ModuleNode"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/ModuleNode"
+          },
+          {
+            "$ref": "#/$defs/CapabilityNode"
+          },
+          {
+            "$ref": "#/$defs/ExternalNode"
+          }
+        ]
+      },
+      "title": "Nodes",
+      "type": "array"
+    },
+    "relationships": {
+      "items": {
+        "$ref": "#/$defs/Relationship"
+      },
+      "title": "Relationships",
+      "type": "array"
+    },
+    "imports": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ImportDeclaration"
+      },
+      "title": "Imports",
+      "type": "array"
+    },
+    "diagnostics": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Diagnostic"
+      },
+      "title": "Diagnostics",
+      "type": "array"
+    }
+  },
+  "required": [
+    "catalog_digest",
+    "repository_digest",
+    "graph_policy",
+    "graph_policy_digest",
+    "catalog_exit_code",
+    "complete",
+    "nodes",
+    "relationships"
+  ],
+  "title": "Graph",
+  "type": "object"
+}

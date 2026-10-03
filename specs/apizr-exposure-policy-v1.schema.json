@@ -1,0 +1,124 @@
+{
+  "$defs": {
+    "Eligibility": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_conditional": {
+          "default": false,
+          "title": "Allow Conditional",
+          "type": "boolean"
+        }
+      },
+      "title": "Eligibility",
+      "type": "object"
+    },
+    "Execution": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "items": {
+            "enum": [
+              "direct",
+              "local-process",
+              "oci-container"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed",
+          "type": "array"
+        },
+        "require": {
+          "default": [],
+          "items": {
+            "enum": [
+              "wall_timeout",
+              "input_limit",
+              "output_limit",
+              "environment",
+              "working_directory",
+              "network_deny",
+              "filesystem_sandbox",
+              "subprocess_deny",
+              "memory_limit",
+              "cpu_limit",
+              "pid_limit"
+            ],
+            "type": "string"
+          },
+          "title": "Require",
+          "type": "array"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "title": "Execution",
+      "type": "object"
+    },
+    "Selection": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Exclude",
+          "type": "array"
+        },
+        "include": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        },
+        "include_all_ready": {
+          "default": false,
+          "title": "Include All Ready",
+          "type": "boolean"
+        }
+      },
+      "title": "Selection",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "eligibility": {
+      "$ref": "#/$defs/Eligibility"
+    },
+    "execution": {
+      "$ref": "#/$defs/Execution"
+    },
+    "interfaces": {
+      "items": {
+        "enum": [
+          "rest",
+          "mcp"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Interfaces",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "apizr.exposure-policy/v1",
+      "default": "apizr.exposure-policy/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "selection": {
+      "$ref": "#/$defs/Selection"
+    }
+  },
+  "required": [
+    "interfaces",
+    "execution"
+  ],
+  "title": "ExposurePolicy",
+  "type": "object"
+}

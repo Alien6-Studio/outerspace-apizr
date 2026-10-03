@@ -1,0 +1,41 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.graph-policy/v1",
+      "default": "apizr.graph-policy/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "max_ast_nodes": {
+      "default": 500000,
+      "maximum": 2000000,
+      "minimum": 1,
+      "title": "Max Ast Nodes",
+      "type": "integer"
+    },
+    "max_relationships": {
+      "default": 50000,
+      "maximum": 200000,
+      "minimum": 1,
+      "title": "Max Relationships",
+      "type": "integer"
+    },
+    "max_calls": {
+      "default": 50000,
+      "maximum": 200000,
+      "minimum": 1,
+      "title": "Max Calls",
+      "type": "integer"
+    },
+    "max_imports": {
+      "default": 10000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Max Imports",
+      "type": "integer"
+    }
+  },
+  "title": "GraphPolicy",
+  "type": "object"
+}

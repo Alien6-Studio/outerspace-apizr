@@ -1,0 +1,139 @@
+/* Keep the original bee logo prominent in the header. */
+.md-header__button.md-logo {
+  display: block;
+}
+
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 5rem;
+  width: 5rem;
+}
+
+@media screen and (max-width: 44.984375em) {
+  .md-header__button.md-logo img,
+  .md-header__button.md-logo svg {
+    height: 3rem;
+    width: 3rem;
+  }
+}
+
+/* Fit the full repository name above Material's native release/star/fork row. */
+@media screen and (min-width: 60em) {
+  .md-header__source {
+    width: 16rem;
+    max-width: none;
+    flex-shrink: 0;
+  }
+}
+
+/* The native repository block moves into the drawer on smaller screens. */
+.md-nav .md-source__repository {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Load the YouTube player only when the visitor activates the local cover. */
+.apizr-demo-video {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-width: 800px;
+  margin: 1rem auto;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.2rem;
+  background: var(--md-default-bg-color);
+}
+
+.apizr-demo-video__cover,
+.apizr-demo-video__cover img,
+.apizr-demo-video iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.apizr-demo-video iframe {
+  position: absolute;
+  inset: 0;
+  border: 0;
+}
+
+.apizr-demo-video__play {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.2rem;
+  background: #ffc107;
+  color: #1e2129;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.apizr-demo-video__cover:focus-visible {
+  outline: 3px solid #ffc107;
+  outline-offset: -3px;
+}
+
+.apizr-demo-section {
+  margin: 1.5rem 0;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  background: var(--md-default-bg-color);
+}
+
+.apizr-demo-section__inner {
+  max-width: 800px;
+  margin-inline: auto;
+  padding: 0;
+}
+
+.apizr-demo-section h2 {
+  margin-top: 0;
+}
+
+.apizr-demo-section__language {
+  font-size: 0.7rem;
+}
+
+.apizr-demo-section .apizr-demo-transcript {
+  margin: 1rem 0 0;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.2rem;
+  box-shadow: none;
+  font-size: 0.8rem;
+}
+
+.apizr-demo-section .apizr-demo-transcript > summary {
+  padding: 0.8rem 1rem;
+  color: var(--md-default-fg-color);
+  background: var(--md-default-fg-color--lightest);
+  cursor: pointer;
+}
+
+.apizr-demo-section .apizr-demo-transcript > summary::before {
+  display: none;
+}
+
+.apizr-demo-transcript__body {
+  padding: 0 1rem 0.5rem;
+}
+
+/* Homepage proposition and actions. */
+.apizr-home-intro h1 {
+  margin-bottom: 0.8rem;
+  color: var(--md-default-fg-color);
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.apizr-home-actions p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
