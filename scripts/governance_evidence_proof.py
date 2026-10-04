@@ -1,6 +1,6 @@
 """Installed-core A/B example: original documents, offline consumption and calls.
 
-No Docker, registry, proof signer or Trunx is simulated by this qualification.
+No Docker, registry, proof signer or external governance is simulated by this qualification.
 Only the explicitly supplied, trusted pricing example is executed in a child.
 """
 
@@ -108,7 +108,7 @@ finally:
     result = {
         "qualification": "installed core; static documents and trusted local invocation",
         "registry_executed": False,
-        "trunx_executed": False,
+        "external_governance_executed": False,
         "variants": records,
     }
     (output / "comparison.json").write_text(

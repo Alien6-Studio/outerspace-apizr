@@ -200,7 +200,7 @@ python -I /path/to/apizr/scripts/governance_evidence_proof.py \
 
 The script retains both REST/MCP JSON exports and `comparison.json`, executes only
 this trusted example, removes generated source, then verifies the documents.
-It explicitly records `registry_executed:false` and `trunx_executed:false`.
+It explicitly records `registry_executed:false` and `external_governance_executed:false`.
 Coordinated target qualification runs it using the retained core wheel.
 
 The separate real disposable HTTPS registry qualification exports documents from

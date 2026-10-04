@@ -11,6 +11,7 @@ from threading import Event
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parents[2] / "scripts"))
+from apizr_oci.absence import main as absence_main
 from apizr_oci.model import BuildError, PushRequest
 from apizr_oci.native import run as native_run
 from apizr_oci.process import run
@@ -84,10 +85,14 @@ def invoke(request, work, **kwargs):
     )
 
 
-def test_exact_authenticated_https_absence_permits_first_push(registry):
+def test_exact_authenticated_https_absence_permits_first_push(registry, monkeypatch):
     request, work, response, calls, auth = registry
     assert invoke(request, work) == b"null"
     assert calls == [("/v2/team/service/manifests/first", auth)]
+    monkeypatch.chdir(work)
+    monkeypatch.setattr(sys, "argv", ["absence.py", request.destination, "5"])
+    assert absence_main() == 0
+    assert calls == [("/v2/team/service/manifests/first", auth)] * 2
 
 
 @pytest.mark.parametrize(
@@ -127,12 +132,18 @@ def test_exact_authenticated_https_absence_permits_first_push(registry):
         "multiple-errors",
     ],
 )
-def test_ambiguous_or_failed_observation_never_means_absent(registry, status, body):
+def test_ambiguous_or_failed_observation_never_means_absent(
+    registry, status, body, monkeypatch
+):
     request, work, response, calls, _ = registry
     response.update(status=status, body=body)
     with pytest.raises(BuildError):
         invoke(request, work)
     assert len(calls) == 1
+    monkeypatch.chdir(work)
+    monkeypatch.setattr(sys, "argv", ["absence.py", request.destination, "5"])
+    assert absence_main() == 1
+    assert len(calls) == 2
 
 
 def test_untrusted_tls_cancel_and_deadline_refuse(registry):

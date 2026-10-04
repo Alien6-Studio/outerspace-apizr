@@ -46,6 +46,6 @@ def test_ab_example_changes_content_identity_not_logical_identity(tmp_path):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     record = module.exercise(root / "examples/governance", tmp_path / "proof")
-    assert record["registry_executed"] is False and record["trunx_executed"] is False
+    assert record["registry_executed"] is False and record["external_governance_executed"] is False
     assert record["variants"]["a"]["observed_total_cents"] == 300
     assert record["variants"]["b"]["observed_total_cents"] == 350
