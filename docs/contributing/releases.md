@@ -3,13 +3,26 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
-## Candidate 0.4.4
+## Finalizing 0.4.4
 
-The [0.4.4 candidate](../releases/0.4.4.md) is prepared through a PR targeting
-master. Its coordinated archives and CI exports are verification previews. No
-new release line or publication is authorized by changing version metadata.
-The historical publication verifier stays closed to 0.4.4 until a separate exact
-source/ref qualification policy and publication decision are reviewed.
+The [0.4.4 release record](../releases/0.4.4.md) defines the reviewed policy:
+**0.4.4 only, from protected master, on the exact final source commit**. Complete
+PR #247 review and all required checks, merge through the protected squash path,
+then require successful push CI, Security and Documentation on that merge SHA.
+Record the full SHA, CI run and all eight hashes before creating `v0.4.4`.
+The earlier frozen candidate archives and evidence remain unchanged; retain the
+final CI's separately built and fully qualified set in a distinct directory.
+
+The coordinated verifier also requires successful provenance and release-assets
+jobs for 0.4.4. PR/manual runs, other refs, an unprotected source and incomplete
+qualification cannot authorize it. Keep all existing signature, branch, tag,
+coverage and protected `pypi` receipt/publication checks. Use the manual workflow
+with the selected tag and CI run; publish the original bytes, compare public
+hashes and verify fresh installations outside checkout before declaring success.
+Stage verified release assets without the preview flag only on a protected
+0.4.4 master push. This does not itself publish anything. Publish the matching
+MCP Registry descriptor separately after the package/release verification, with
+explicit immutable tag and full source SHA inputs.
 
 ## Current published baseline
 
@@ -68,10 +81,10 @@ and Documentation runs on that same branch and commit. The signer recorded
 that protected ref in the retained evidence. The old branch can be retired
 without changing that evidence identity.
 
-The publication verifier accepts exactly `0.4.3` from protected `release/0.4.3`
-and rejects unintended versions and refs. It must not be used to replay this
-completed release. Historical verifier versions retain their original policies. New development builds do not authorize a
-publication. Releases through 0.4.0rc1 retain `master` provenance; published
+The publication verifier adds only `0.4.4` from protected `master`; the historical
+`0.4.3` / `release/0.4.3` policy remains unchanged and must not be replayed.
+Unintended versions and refs are refused. Development builds alone do not
+authorize publication. Releases through 0.4.0rc1 retain `master` provenance; published
 0.4.1 retains `refs/heads/release/0.4.1` provenance.
 
 Qualification includes Linux CPython 3.11–3.14, macOS 3.11/3.14 and disposable
@@ -229,7 +242,7 @@ Complete against the final commit; historical green runs are not sufficient.
 - [ ] License inventory/policy and preserved notices cover the exact universal lock.
 - [ ] Open issues are classified and no release blocker remains unresolved.
 - [ ] Ownership, Trusted Publisher and protected `pypi` environment are verified.
-- [ ] The tag identifies the exact verified release-line commit and CI artifact run.
+- [ ] The tag identifies the exact verified source commit and CI artifact run (protected master for 0.4.4).
 - [ ] Managed Attest identity, signature, RFC 3161 timestamp and recomputation pass
       for the exact delivery; receipt and public verification material are archived.
 - [ ] PyPI file hashes and fresh index installation are verified after publication.

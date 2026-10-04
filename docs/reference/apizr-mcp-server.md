@@ -173,9 +173,11 @@ OuterSpace Apizr remains a local stdio capability compiler. The
 Official MCP Registry identity is
 `io.github.Alien6-Studio/outerspace-apizr`. The matching `mcp-name` marker lives
 in the published MCP package README.
-The root `server.json` and all four coordinated packages describe version
-**0.4.3**, published and verified. See the [release record](../releases/0.4.3.md)
-for qualification and publication status.
+The published **0.4.3** identity and packages remain unchanged; see their
+[release record](../releases/0.4.3.md). The current root `server.json` prepares
+**0.4.4** alongside the four coordinated packages. Its separate directory
+publication requires the matching public release and exact source SHA; see the
+[0.4.4 record](../releases/0.4.4.md) for qualification and publication status.
 
 The new package command `outerspace-apizr-mcp` accepts the same arguments as
 `apizr mcp serve`. It delegates to that launcher and selects the already

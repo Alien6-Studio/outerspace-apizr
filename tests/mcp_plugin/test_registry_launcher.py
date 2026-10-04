@@ -76,7 +76,7 @@ def test_registry_identity_and_read_only_launch_contract():
         "project"
     ]
     assert project["scripts"][package["identifier"]] == "apizr_mcp.launcher:main"
-    assert package["version"] == descriptor["version"] == "0.4.3"
+    assert package["version"] == descriptor["version"] == project["version"] == "0.4.4"
     assert package["transport"] == {"type": "stdio"}
     assert "remotes" not in descriptor
     assert {argument["name"] for argument in package["packageArguments"]} == {

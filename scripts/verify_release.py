@@ -34,6 +34,8 @@ def qualification_branch(version: str) -> str:
         return "release/0.4.2"
     if version == "0.4.3":
         return "release/0.4.3"
+    if version == "0.4.4":
+        return "master"
     raise ValueError("No authorized qualification branch for this version")
 
 
@@ -110,7 +112,7 @@ def main() -> None:
         )
     branch = qualification_branch(version)
     validate_run(github(f"actions/runs/{args.run_id}"), sha, "ci.yml", branch)
-    if branch != "master":
+    if branch != "master" or version == "0.4.4":
         source = github("branches/" + urllib.parse.quote(branch, safe=""))
         if source.get("protected") is not True:
             raise ValueError("Release qualification branch must be protected")
@@ -131,6 +133,8 @@ def main() -> None:
                 )
             ),
         }
+        if version == "0.4.4":
+            expected_jobs.update({"provenance", "release-assets"})
         for name in expected_jobs:
             selected_jobs = [job for job in jobs if job["name"] == name]
             if len(selected_jobs) != 1 or selected_jobs[0]["conclusion"] != "success":

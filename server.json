@@ -3,7 +3,7 @@
   "name": "io.github.Alien6-Studio/outerspace-apizr",
   "title": "OuterSpace Apizr",
   "description": "Python capability compiler: local read-only analysis and explicit MCP/REST exposure planning.",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "repository": {
     "url": "https://github.com/Alien6-Studio/outerspace-apizr",
     "source": "github",
@@ -15,7 +15,7 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "outerspace-apizr-mcp",
-      "version": "0.4.3",
+      "version": "0.4.4",
       "runtimeHint": "uvx",
       "transport": {"type": "stdio"},
       "packageArguments": [

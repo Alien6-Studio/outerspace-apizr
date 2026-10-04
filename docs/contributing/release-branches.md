@@ -21,14 +21,15 @@ CI, Security and Documentation validate `master` pushes and all pull requests.
 Allowlisted web-only changes use the [lighter documentation path](releases.md#web-only-changes)
 while preserving required check names and PR protections. They produce no product
 build or provenance; mixed changes and uncertain comparisons retain full qualification.
-Only protected `master` pushes can sign new build provenance. Candidate assets
-from the current development workflow are always previews; they cannot replace
-published 0.4.3 artifacts or authorize replaying publication. Historical
-version/ref qualification policies remain available for their recorded releases.
-A future release line and publication require an explicit maintainer decision.
-The MCP Registry descriptor targets published 0.4.3. Its matching PyPI packages
-and immutable release evidence are available; directory status is recorded in
-the [MCP reference](../reference/apizr-mcp-server.md#directory-integration-043).
+Only protected `master` pushes can sign new build provenance. For **0.4.4**,
+the reviewed [publication policy](releases.md#finalizing-044) selects the exact
+final PR #247 squash-merge SHA and a successful full push qualification on that
+source. Its verified assets are distinct from the frozen candidate; PRs and
+other versions remain previews. This changes no branch/tag protection and
+creates no release branch. Historical source/ref policies and published 0.4.3
+artifacts retain their identities; completed publications must not be replayed.
+The MCP descriptor prepares 0.4.4; its separate publication requires the matching
+public packages and verified GitHub release, plus explicit tag/source inputs.
 
 ## Historical release-line governance
 
