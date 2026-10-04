@@ -239,11 +239,45 @@ remain subject to the site's optional GitHub consent setting. No release number
 is hard-coded in the theme, and no header override is needed. See
 [Material's repository documentation](https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/).
 
-PRs and protected release-line pushes run strict MkDocs and HTML validation without
-deployment. Stable documentation still follows the integrated baseline. A master
+PRs run strict MkDocs and HTML validation without deployment. A master
 push builds and publishes the site to `gh-pages`, served at
 [apizr.outerspace.sh](https://apizr.outerspace.sh/). Keep this active publication
 branch; edit Markdown and MkDocs configuration, not generated files.
+
+### Web-only changes
+
+PRs targeting `master` and pushes to `master` use a shared change classifier.
+The lighter path accepts only regular, non-executable Markdown files under
+`docs/`, supported images/videos and CSS/JavaScript under their respective
+`docs/assets/` directories, and HTML templates under `overrides/`.
+`scripts/ci_scope.py` defines the exact allowlist. Both sides of a rename count;
+the complete PR diff is inspected, not just its latest commit.
+
+For these changes, DCO and pre-commit checks, strict MkDocs construction and HTML
+validation remain required. Changes to the introduction, quickstart, development
+guide or operator-policy examples also run the existing installed-package example
+checks, including their local candidate wheel. Coordinated package builds,
+product tests, OCI/MCP/Homebrew qualification and product attestations are omitted.
+The existing 17 required check names are preserved:
+required matrix contexts use short Linux jobs reporting that product tests are
+not applicable, while other product jobs are skipped. No branch protection is
+removed and a failed scope job blocks the required `quality` and `build` checks.
+
+Mixed changes and anything outside the allowlist take the complete product path.
+This includes the packaged root README/CHANGELOG, source, plugins, dependencies,
+MkDocs configuration, build scripts and workflows. Symlinks, executable files,
+missing comparison commits and empty diffs also require full qualification.
+Manual runs, scheduled security audits and non-master release-line comparisons
+always use full qualification. A successful web-only run is not release evidence
+and produces no distribution, provenance or release-candidate assets.
+
+### Build once and verify publication
+
+On a master push, the validated `site/` is retained as the `documentation-site`
+artifact for seven days. The deployment job downloads that artifact from the same
+run, validates its source commit, clean-build marker and HTML, then imports it to
+`gh-pages` with `ghp-import`. It does not rebuild the site. No version bump, release
+tag, PyPI publication approval or dedicated Attest receipt is required for the site.
 
 The generated `build-info.json` records the full **source** commit, whether the
 checkout was dirty, publication status, stable release and fingerprints of the
@@ -252,7 +286,7 @@ the generated `gh-pages` commit; no source hash is maintained by hand. A local
 dirty build is a preview and cannot pass publication confirmation.
 
 The workflow checks four distinct stages: strict construction and HTML validation,
-`gh-deploy`, the GitHub Pages build for the generated commit, then exact content
+publication of the retained site, the GitHub Pages build for the generated commit, then exact content
 served over HTTPS. The final check requires the expected marker and matching page
 and asset hashes, not just HTTP 200. TLS and hostname validation remain enabled;
 redirects are refused. Probe subprocesses bound DNS, connection and body reads;
@@ -269,9 +303,9 @@ successful public verification. Never edit `gh-pages` directly to bypass review.
 
 ## Repository protections
 
-The following describes the **configured master protections**. The equivalent
-release-line ruleset transfers to `release/0.4.2`; see the
-[active release protections](release-branches.md#actual-protections-detected).
+The following describes the **configured master protections**. Previous
+release-line rulesets are recorded in the
+[historical release audit](release-branches.md#actual-protections-detected).
 
 Apizr follows the same protection model as `Alien6-Studio/continuum-attest`:
 PR-only changes, no force push/deletion or bypass actors, signed commits on the

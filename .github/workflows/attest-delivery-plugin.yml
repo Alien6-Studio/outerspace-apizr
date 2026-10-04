@@ -8,7 +8,12 @@ permissions:
   contents: read
 
 jobs:
+  scope:
+    uses: ./.github/workflows/change-scope.yml
+
   delivery-receipts:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:

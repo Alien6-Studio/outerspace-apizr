@@ -43,6 +43,15 @@ def marker_at(site: Path) -> dict:
     return marker
 
 
+def publication_marker(site: Path, source_commit: str | None = None) -> dict:
+    marker = marker_at(site)
+    if marker["source_dirty"]:
+        raise ValueError("Refusing to confirm a deployment built from a dirty checkout")
+    if source_commit is not None and marker["source_commit"] != source_commit:
+        raise ValueError("Retained site does not match the expected source commit")
+    return marker
+
+
 def read_https(base: str, name: str, ca_file: str | None = None) -> bytes:
     url = urlsplit(base)
     if (
@@ -110,9 +119,7 @@ def pages_ready(repository: str, deployment_commit: str, timeout: float) -> None
 
 
 def wait_for_site(args) -> None:
-    marker = marker_at(args.site)
-    if marker["source_dirty"]:
-        raise ValueError("Refusing to confirm a deployment built from a dirty checkout")
+    marker = publication_marker(args.site, getattr(args, "source_commit", None))
     if bool(args.repository) != bool(args.deployment_commit):
         raise ValueError("repository and deployment-commit must be provided together")
     deadline = time.monotonic() + args.timeout
@@ -166,12 +173,22 @@ def main() -> None:
     parser.add_argument("--repository")
     parser.add_argument("--deployment-commit")
     parser.add_argument("--ca-file", help="Explicit CA for a disposable HTTPS fixture")
+    parser.add_argument(
+        "--source-commit", help="Require this exact source in the retained site"
+    )
+    parser.add_argument(
+        "--check-local",
+        action="store_true",
+        help="Validate publication inputs without network or deployment",
+    )
     parser.add_argument("--probe", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if not 1 <= args.timeout <= 900:
         parser.error("timeout must be between 1 and 900 seconds")
     try:
-        if args.probe:
+        if args.check_local:
+            publication_marker(args.site, args.source_commit)
+        elif args.probe:
             probe(args.site, args.url, args.ca_file)
         else:
             wait_for_site(args)

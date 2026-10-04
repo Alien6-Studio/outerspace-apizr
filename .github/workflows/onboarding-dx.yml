@@ -10,7 +10,12 @@ permissions:
   contents: read
 
 jobs:
+  scope:
+    uses: ./.github/workflows/change-scope.yml
+
   local-dx:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:

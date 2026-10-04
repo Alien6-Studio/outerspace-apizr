@@ -104,8 +104,14 @@ def test_required_workflow_matches_the_explicit_arm64_boundary():
         (ROOT / ".github/workflows/homebrew-build-inputs.yml").read_text()
     )
     jobs = workflow["jobs"]
-    assert set(jobs) == {"candidate", "offline-build-arm64"}
+    assert set(jobs) == {"scope", "candidate", "offline-build-arm64"}
+    assert jobs["scope"] == {"uses": "./.github/workflows/change-scope.yml"}
+    assert jobs["candidate"]["needs"] == "scope"
+    assert jobs["candidate"]["if"] == (
+        "always() && needs.scope.outputs.product != 'false'"
+    )
     job = jobs["offline-build-arm64"]
+    assert job["needs"] == "candidate"
     policy, _ = policy_and_manifest()
     assert job["runs-on"] == policy["evidence"]["ci"]["runner"]
     assert "strategy" not in job

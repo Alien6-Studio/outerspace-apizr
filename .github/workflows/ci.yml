@@ -10,7 +10,12 @@ permissions:
   contents: read
 
 jobs:
+  scope:
+    uses: ./.github/workflows/change-scope.yml
+
   distributions:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -133,8 +138,17 @@ jobs:
           path: ${{ runner.temp }}/candidate-delivery/
 
   quality:
+    needs: scope
+    if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: Require a successful scope decision
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
+        run: |
+          test "$SCOPE_RESULT" = success
+          test "$PRODUCT_CHECKS" = true || test "$PRODUCT_CHECKS" = false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
@@ -161,28 +175,42 @@ jobs:
             DCO_BASE="$DCO_AUDIT_BASE"
           fi
           uv run --locked python scripts/check_dco.py --base "$DCO_BASE" --head "$DCO_HEAD"
-      - run: uv run --locked ruff check .
-      - run: uv run --locked ruff format --check .
-      - run: uv run --locked pyright
+      - if: needs.scope.outputs.product != 'false'
+        run: uv run --locked ruff check .
+      - if: needs.scope.outputs.product != 'false'
+        run: uv run --locked ruff format --check .
+      - if: needs.scope.outputs.product != 'false'
+        run: uv run --locked pyright
       - run: uv run --locked pre-commit run --all-files
       - uses: ./.github/actions/install-attest
+        if: needs.scope.outputs.product != 'false'
       - name: Verify managed Attest identity and real offline rejection cases
+        if: needs.scope.outputs.product != 'false'
         run: uv run --locked python scripts/check_attest_identity.py --attest "$(command -v attest)"
 
   compatibility:
+    needs: scope
+    if: always()
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python: ['3.11', '3.12', '3.13', '3.14']
+    # Keep every required matrix check name even when product work is omitted.
     steps:
+      - name: Web-only change; product tests are not needed
+        if: needs.scope.outputs.product == 'false'
+        run: echo "Web-only change; validated by quality and Documentation."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.scope.outputs.product != 'false'
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        if: needs.scope.outputs.product != 'false'
         with:
           version: '0.12.0'
           python-version: ${{ matrix.python }}
           enable-cache: true
       - name: Prepare disposable SSH integration prerequisites
+        if: needs.scope.outputs.product != 'false'
         run: |
           if ! test -x /usr/sbin/sshd; then
             sudo apt-get update
@@ -190,32 +218,55 @@ jobs:
           fi
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked pytest --cov --cov-report=term-missing --cov-report=json:coverage.json --cov-report=xml:coverage.xml --junitxml=tests.xml
+        if: needs.scope.outputs.product != 'false'
       - name: Protect the measured legacy coverage separately
+        if: needs.scope.outputs.product != 'false'
         run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
       - run: uv run --locked coverage report --include='src/apizr/capabilities/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/readiness/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/generators/rest/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/generators/mcp/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/interfaces/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/execution/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/extension_runtime/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/git_source/*,src/apizr/git_source_cli.py' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/local_plugins/*,src/apizr/plugins_cli.py' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/governed/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/repository/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/graph/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/repository_readiness/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/repository_interfaces/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/repository_execution/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/governed_repository/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/exposure/*' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/exposure_cli.py' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/readiness_cli.py,src/apizr/repository_readiness_cli.py,src/apizr/repository_cli.py' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
+        if: needs.scope.outputs.product != 'false'
 
       - name: Preserve tests and branch coverage
-        if: always()
+        if: (always()) && needs.scope.outputs.product != 'false'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: validation-linux-python-${{ matrix.python }}
@@ -227,23 +278,34 @@ jobs:
           retention-days: 90
 
   macos:
-    runs-on: macos-latest
+    needs: scope
+    if: always()
+    runs-on: ${{ needs.scope.outputs.product == 'false' && 'ubuntu-latest' || 'macos-latest' }}
     strategy:
       fail-fast: false
       matrix:
         python: ['3.11', '3.14']
+    # Keep every required matrix check name even when product work is omitted.
     steps:
+      - name: Web-only change; product tests are not needed
+        if: needs.scope.outputs.product == 'false'
+        run: echo "Web-only change; validated by quality and Documentation."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.scope.outputs.product != 'false'
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        if: needs.scope.outputs.product != 'false'
         with:
           version: '0.12.0'
           python-version: ${{ matrix.python }}
           enable-cache: true
       - run: uv sync --locked
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked pytest --cov --cov-report=term-missing --cov-report=json:coverage.json --junitxml=tests.xml
+        if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
+        if: needs.scope.outputs.product != 'false'
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
+        if: (always()) && needs.scope.outputs.product != 'false'
         with:
           name: validation-macos-python-${{ matrix.python }}
           path: |
@@ -253,6 +315,8 @@ jobs:
           retention-days: 90
 
   security-mutations:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -311,21 +375,31 @@ jobs:
           retention-days: 90
 
   container:
+    needs: scope
+    if: always()
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python: ['3.11', '3.12', '3.13', '3.14']
+    # Keep every required matrix check name even when product work is omitted.
     steps:
+      - name: Web-only change; product tests are not needed
+        if: needs.scope.outputs.product == 'false'
+        run: echo "Web-only change; validated by quality and Documentation."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.scope.outputs.product != 'false'
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        if: needs.scope.outputs.product != 'false'
         with:
           version: '0.12.0'
           python-version: '3.14'
           enable-cache: true
       - run: uv sync --locked
+        if: needs.scope.outputs.product != 'false'
       # Generate once per target: verifies target-specific dependency resolution in Docker.
       - run: uv run --locked python scripts/smoke_container.py --python-version "${{ matrix.python }}"
+        if: needs.scope.outputs.product != 'false'
 
   oci-isolation:
     needs: distributions

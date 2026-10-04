@@ -74,6 +74,12 @@ A future release line requires an explicit maintainer decision and its own
 qualification policy. Merging a PR into `master` never publishes a release.
 See [release governance](docs/contributing/release-branches.md).
 
+Web-only content changes use a lighter CI path: contribution checks, strict site
+construction, HTML validation and installed examples when their pages change.
+Product, dependency, packaging and workflow changes retain full qualification.
+The [documentation publication guide](docs/contributing/releases.md#web-only-changes)
+defines the boundary and the automatic deployment after merge.
+
 ```sh
 git fetch origin
 git switch -c feature/my-change origin/master

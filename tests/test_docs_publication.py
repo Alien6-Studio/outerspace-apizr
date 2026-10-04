@@ -213,6 +213,92 @@ def test_dirty_checkout_cannot_be_confirmed(site):
         checker.wait_for_site(SimpleNamespace(site=site))
 
 
+def test_retained_site_must_match_the_deploying_source(site):
+    source = checker.marker_at(site)["source_commit"]
+    assert checker.publication_marker(site, source)["source_commit"] == source
+    with pytest.raises(ValueError, match="expected source commit"):
+        checker.publication_marker(site, "f" * 40)
+    (site / "index.html").write_text("Modified after validation")
+    with pytest.raises(ValueError, match="fingerprint"):
+        checker.publication_marker(site, source)
+
+
+def test_local_publication_check_does_not_contact_github_or_https(site, monkeypatch):
+    source = checker.marker_at(site)["source_commit"]
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "check_docs_site.py",
+            "--check-local",
+            "--site",
+            str(site),
+            "--source-commit",
+            source,
+        ],
+    )
+
+    def unexpected(*args, **kwargs):
+        pytest.fail("Local publication validation must not contact external services")
+
+    monkeypatch.setattr(checker, "pages_ready", unexpected)
+    monkeypatch.setattr(checker, "read_https", unexpected)
+    checker.main()
+
+
+def test_deploy_retained_files_without_running_mkdocs(site, tmp_path):
+    # Exercise the publication command against a disposable local remote: it
+    # imports these exact bytes without requiring any source MkDocs project.
+    pytest.importorskip("ghp_import")
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    remote = tmp_path / "remote.git"
+
+    def git(*args):
+        return subprocess.check_output(["git", *args], cwd=repository)
+
+    git("init", "-q")
+    git("config", "user.name", "Documentation fixture")
+    git("config", "user.email", "docs@example.invalid")
+    git("config", "commit.gpgsign", "false")
+    git("init", "-q", "--bare", str(remote))
+    git("remote", "add", "origin", str(remote))
+    # The site fixture and this Git repository share tmp_path; retain only
+    # generated content in the import directory.
+    retained = tmp_path / "retained"
+    retained.mkdir()
+    marker = checker.marker_at(site)
+    for name in [*marker["files"], "build-info.json"]:
+        target = retained / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((site / name).read_bytes())
+    subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ghp_import",
+            "--no-jekyll",
+            "--push",
+            "--force",
+            "--message",
+            "Deploy retained documentation",
+            str(retained),
+        ],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+        timeout=30,
+    )
+    for path in retained.rglob("*"):
+        if path.is_file():
+            name = path.relative_to(retained).as_posix()
+            assert git("show", f"gh-pages:{name}") == path.read_bytes()
+    assert git("show", "gh-pages:.nojekyll") == b""
+    assert git("rev-parse", "gh-pages").strip() in git(
+        "ls-remote", "origin", "gh-pages"
+    )
+
+
 def test_wait_confirms_exact_content(site, tls, capsys):
     with https.https_server(*tls, handler(site)) as url:
         checker.wait_for_site(

@@ -8,7 +8,12 @@ permissions:
   contents: read
 
 jobs:
+  scope:
+    uses: ./.github/workflows/change-scope.yml
+
   stdio:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -61,6 +66,8 @@ jobs:
             ${{ runner.temp }}/mcp-proof/wheels/
 
   generated-recovery:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:

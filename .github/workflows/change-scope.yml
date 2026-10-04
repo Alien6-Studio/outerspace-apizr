@@ -1,0 +1,30 @@
+name: Change scope
+
+on:
+  workflow_call:
+    outputs:
+      product:
+        description: Whether full product qualification is required
+        value: ${{ jobs.classify.outputs.product }}
+      examples:
+        description: Whether installed documentation examples must run
+        value: ${{ jobs.classify.outputs.examples }}
+
+permissions:
+  contents: read
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      product: ${{ steps.scope.outputs.product }}
+      examples: ${{ steps.scope.outputs.examples }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Classify the complete change; uncertainty requires full qualification
+        id: scope
+        run: python3 scripts/ci_scope.py
