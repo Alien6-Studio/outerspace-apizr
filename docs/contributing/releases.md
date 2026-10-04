@@ -22,7 +22,10 @@ hashes and verify fresh installations outside checkout before declaring success.
 Stage verified release assets without the preview flag only on a protected
 0.4.4 master push. This does not itself publish anything. Publish the matching
 MCP Registry descriptor separately after the package/release verification, with
-explicit immutable tag and full source SHA inputs.
+explicit immutable tag and full source SHA inputs. Regenerate the official
+Homebrew tap from the immutable final core sdist and signed master provenance;
+complete its own reviewed audit and real Apple Silicon installation before
+merging the tap update.
 
 ## Current published baseline
 

@@ -13,7 +13,7 @@ from prepare_release_assets import bound_file
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "Alien6-Studio/outerspace-apizr"
-VERSION = "0.4.3"
+VERSION = "0.4.4"
 BUILD_MANIFEST = "4e4d4bcff46f66bbc71ce6ead637d1d978c7013abffaa5849671f5ef2dc95d1e"
 
 
@@ -43,7 +43,7 @@ def publication_source(url, sha256, source, commit, candidate, evidence, bundle)
             "--source-digest",
             commit,
             "--source-ref",
-            "refs/heads/release/0.4.3",
+            "refs/heads/master",
         ],
         check=True,
         capture_output=True,
@@ -138,8 +138,8 @@ def render(
     (output / "README.md").write_text(
         "# Apizr Homebrew tap source\n\n"
         f"Generated in **{mode}** mode for core {candidate_version}. Plugins remain separate.\n\n"
-        "The public Alien6 tap is not yet published. The future command "
-        "`brew install alien6-studio/tap/apizr` is pending and is not a working public installation route.\n\n"
+        "This generated source still requires the explicit tap publication and host "
+        "qualification steps. Earlier public tap releases retain their original identities.\n\n"
         "Qualification targets Apple Silicon Tier-1 hosts, with hosted VM evidence identified separately. "
         "Intel macOS is Tier 3, not qualified and non-blocking. Linux Homebrew runtime is not qualified. "
         "Homebrew/core is not targeted. Online source audit is deferred until publication.\n"
