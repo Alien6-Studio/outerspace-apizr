@@ -18,6 +18,9 @@ provenance retain their existing identities. Verification of published evidence
 must use its original source ref, even after that branch is retired.
 
 CI, Security and Documentation validate `master` pushes and all pull requests.
+Allowlisted web-only changes use the [lighter documentation path](releases.md#web-only-changes)
+while preserving required check names and PR protections. They produce no product
+build or provenance; mixed changes and uncertain comparisons retain full qualification.
 Only protected `master` pushes can sign new build provenance. Candidate assets
 from the current development workflow are always previews; they cannot replace
 published 0.4.3 artifacts or authorize replaying publication. Historical

@@ -8,7 +8,12 @@ permissions:
   contents: read
 
 jobs:
+  scope:
+    uses: ./.github/workflows/change-scope.yml
+
   uv-tool:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     strategy:
       fail-fast: false
       matrix:
@@ -47,6 +52,8 @@ jobs:
           retention-days: 90
 
   homebrew:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     runs-on: macos-latest
     env:
       HOMEBREW_NO_AUTO_UPDATE: '1'

@@ -8,7 +8,12 @@ permissions:
   contents: read
 
 jobs:
+  scope:
+    uses: ./.github/workflows/change-scope.yml
+
   cleanup:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -34,6 +39,8 @@ jobs:
           retention-days: 90
 
   git-worker-cleanup:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
     timeout-minutes: 20
     strategy:
       fail-fast: false
