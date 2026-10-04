@@ -17,8 +17,8 @@ The journey is Python code → discover/select capabilities → expose as REST/M
 → optionally deliver as OCI.
 
 This source prepares the **0.4.4 candidate**. The current public stable release
-remains 0.4.3. See the [candidate record](docs/releases/0.4.4.md) and
-[external governance handoff](docs/reference/external-governance.md).
+remains 0.4.3. See the [candidate record](https://github.com/Alien6-Studio/outerspace-apizr/blob/release/0.4.4-candidate/docs/releases/0.4.4.md) and
+[external governance handoff](https://github.com/Alien6-Studio/outerspace-apizr/blob/release/0.4.4-candidate/docs/reference/external-governance.md).
 
 Python **3.11–3.14** · GPL-3.0-or-later.
 
