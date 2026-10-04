@@ -310,7 +310,13 @@ release-line rulesets are recorded in the
 Apizr follows the same protection model as `Alien6-Studio/continuum-attest`:
 PR-only changes, no force push/deletion or bypass actors, signed commits on the
 default branch, resolved review threads, and required up-to-date checks. GitHub
-squash merging provides a verified merge commit. The original 14 gates remain
+squash merging provides a verified merge commit, but the commits introduced by
+the PR must also have verified signatures. An unsigned source commit can block
+a squash merge even when every check passes. This applies to web-only PRs too.
+Create signed source commits using a registered signing identity or GitHub signed
+commit creation; keep the DCO trailer consistent with the actual commit author.
+See [GitHub signature requirements](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches#require-signed-commits).
+The original 14 gates remain
 required, including `oci-isolation`; additional macOS and security-mutation gates
 protect the expanded validation matrix. Coverage floors are documented in the
 [verification guide](verification.md).
