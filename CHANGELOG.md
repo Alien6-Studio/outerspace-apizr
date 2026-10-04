@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.4 — Unreleased
+
+- Export and verify existing capability/bundle JSON evidence without importing
+  business code, optionally checking its exact existing OCI build lineage.
+- Confirm ambiguous Docker manifest-absence diagnostics through bounded,
+  authenticated HTTPS before first publication; reject uncertain responses.
+- Publish structural schemas for existing delivery results and document the
+  external governance handoff, technical admission boundary and A/B example.
+- Coordinate the four packages at 0.4.4; retain explicit environment approval
+  and runtime enforcement as separate external integration checks.
+
 ## 0.4.3 — 2026-10-02
 
 - Declare the OuterSpace Apizr maintainer for Glama and add the Official MCP

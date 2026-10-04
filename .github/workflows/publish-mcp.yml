@@ -6,11 +6,9 @@ on:
       release_tag:
         description: Already published immutable GitHub release tag
         required: true
-        default: v0.4.3
       source_sha:
         description: Reviewed full release source SHA
         required: true
-        default: cfaa5108c37ab9324297bbe5b38d90d537ea57ad
 
 permissions:
   contents: read

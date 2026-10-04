@@ -1,5 +1,8 @@
 # outerspace-apizr-oci
 
+This checkout prepares the coordinated **0.4.4 candidate**, not a published release.
+The current public stable baseline described below remains 0.4.3.
+
 Build REST/MCP service images and explicitly publish a verified image.
 
 This optional Apizr plugin runs in its own Python environment. Use the

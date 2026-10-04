@@ -1,0 +1,211 @@
+{
+  "$defs": {
+    "DeliveryResult": {
+      "additionalProperties": false,
+      "properties": {
+        "delivery_plan_digest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "delivery_manifest_digest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "attest_tool": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerifiedAttestTool"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "schema": {
+          "const": "apizr.attest-delivery-result/v1",
+          "default": "apizr.attest-delivery-result/v1",
+          "title": "Schema",
+          "type": "string"
+        },
+        "reference": {
+          "title": "Reference",
+          "type": "string"
+        },
+        "manifest_digest": {
+          "title": "Manifest Digest",
+          "type": "string"
+        },
+        "signer": {
+          "title": "Signer",
+          "type": "string"
+        },
+        "receipt_sha256": {
+          "title": "Receipt Sha256",
+          "type": "string"
+        },
+        "checks": {
+          "additionalProperties": {
+            "const": "pass",
+            "type": "string"
+          },
+          "title": "Checks",
+          "type": "object"
+        },
+        "scope": {
+          "const": "verified OCI delivery; build not supervised by Attest",
+          "default": "verified OCI delivery; build not supervised by Attest",
+          "title": "Scope",
+          "type": "string"
+        },
+        "receipt_published": {
+          "const": false,
+          "default": false,
+          "title": "Receipt Published",
+          "type": "boolean"
+        },
+        "registry_availability_verified": {
+          "const": false,
+          "default": false,
+          "title": "Registry Availability Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reference",
+        "manifest_digest",
+        "signer",
+        "receipt_sha256",
+        "checks"
+      ],
+      "title": "DeliveryResult",
+      "type": "object"
+    },
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "VerifiedAttestTool": {
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "0.1.0",
+          "title": "Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "sha256"
+      ],
+      "title": "VerifiedAttestTool",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "apizr.published-proof/v1",
+      "default": "apizr.published-proof/v1",
+      "title": "Schema",
+      "type": "string"
+    },
+    "image_reference": {
+      "title": "Image Reference",
+      "type": "string"
+    },
+    "image_digest": {
+      "title": "Image Digest",
+      "type": "string"
+    },
+    "artifact_reference": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Artifact Reference"
+    },
+    "artifact_manifest_digest": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Artifact Manifest Digest"
+    },
+    "receipt_sha256": {
+      "title": "Receipt Sha256",
+      "type": "string"
+    },
+    "verification": {
+      "$ref": "#/$defs/DeliveryResult"
+    },
+    "state": {
+      "default": "verified",
+      "enum": [
+        "verified",
+        "remote_state_unconfirmed"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "receipt_published": {
+      "default": true,
+      "title": "Receipt Published",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "image_reference",
+    "image_digest",
+    "receipt_sha256",
+    "verification"
+  ],
+  "title": "PublishResult",
+  "type": "object"
+}

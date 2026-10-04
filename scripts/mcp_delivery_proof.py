@@ -37,7 +37,7 @@ def install(python, store, work, command):
         "enable",
         "outerspace-apizr-mcp",
         "--version",
-        "0.4.3",
+        "0.4.4",
         "--plugins-dir",
         store,
     )
@@ -57,12 +57,12 @@ def install(python, store, work, command):
         "-I",
         "-B",
         "-c",
-        "import importlib.util as u; from importlib.metadata import version; assert version('outerspace-apizr-mcp')=='0.4.3'; assert all(u.find_spec(n) is None for n in ('apizr_oci','apizr_attest'))",
+        "import importlib.util as u; from importlib.metadata import version; assert version('outerspace-apizr-mcp')=='0.4.4'; assert all(u.find_spec(n) is None for n in ('apizr_oci','apizr_attest'))",
     )
     assert snapshot(python.parent.parent) == before
     (work / "mcp-delivery-install.json").write_text(
         json.dumps(
-            {"version": "0.4.3", "core_unchanged": True, "isolated_plugins": True}
+            {"version": "0.4.4", "core_unchanged": True, "isolated_plugins": True}
         )
     )
     return Path(installed["python"])

@@ -239,7 +239,16 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
 )
 @pytest.mark.parametrize(
     "release_version",
-    ["0.4.1rc1", "0.4.1rc2", "0.4.1", "0.4.2rc1", "0.4.2rc2", "0.4.2", "0.4.3"],
+    [
+        "0.4.1rc1",
+        "0.4.1rc2",
+        "0.4.1",
+        "0.4.2rc1",
+        "0.4.2rc2",
+        "0.4.2",
+        "0.4.3",
+        "0.4.4",
+    ],
 )
 @pytest.mark.parametrize("resume", [False, True])
 def test_coordinated_release_requires_every_exact_target(
@@ -279,6 +288,8 @@ def test_coordinated_release_requires_every_exact_target(
         ]
         for python in versions
     ]
+    if release_version == "0.4.4":
+        names.extend(["provenance", "release-assets"])
     jobs = [{"name": name, "conclusion": "success"} for name in names]
     if fault == "missing":
         jobs.pop()
@@ -505,7 +516,8 @@ def test_closed_04_publications_fail_before_network(tmp_path, monkeypatch, versi
 
 
 @pytest.mark.parametrize(
-    "version", ["0.4.2rc3", "0.4.3rc1", "0.4.4", "0.5.0", "0.4.1.dev0", "0.4.1rc0"]
+    "version",
+    ["0.4.2rc3", "0.4.3rc1", "0.4.4rc1", "0.4.5", "0.5.0", "0.4.1.dev0", "0.4.1rc0"],
 )
 def test_future_lines_require_explicit_policy(version):
     with pytest.raises(ValueError, match="No authorized qualification branch"):
@@ -705,6 +717,70 @@ def test_043_preflight_binds_all_gates_to_protected_release_line(
         release.main()
 
 
+@pytest.mark.parametrize(
+    "fault",
+    [
+        None,
+        "feature",
+        "release/0.4.4",
+        "wrong_sha",
+        "pull_request",
+        "workflow_dispatch",
+        "unprotected",
+        "security_branch",
+        "docs_branch",
+        "newer_failed",
+        "fork",
+    ],
+)
+def test_044_preflight_requires_exact_protected_master_source(
+    tmp_path, monkeypatch, fault
+):
+    import sys
+
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname="outerspace-apizr"\nversion="0.4.4"\n'
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        sys, "argv", ["verify", "--run-id", "123", "--preflight", "--source-only"]
+    )
+    monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
+
+    def github(path):
+        run = valid_run("master")
+        if path.startswith("branches/"):
+            assert path == "branches/master"
+            return {"protected": fault != "unprotected"}
+        if path == "actions/runs/123":
+            if fault in {"feature", "release/0.4.4"}:
+                run["head_branch"] = fault
+            if fault == "wrong_sha":
+                run["head_sha"] = "bad"
+            if fault in {"pull_request", "workflow_dispatch"}:
+                run["event"] = fault
+            if fault == "fork":
+                run["repository"] = {"full_name": "other/fork"}
+            return run
+        workflow = path.split("/")[2]
+        run.update(id=10, path=".github/workflows/" + workflow)
+        if (fault, workflow) in {
+            ("security_branch", "security.yml"),
+            ("docs_branch", "mkdocs.yaml"),
+        }:
+            run["head_branch"] = "release/0.4.4"
+        if fault == "newer_failed":
+            return {"workflow_runs": [run, {**run, "id": 11, "conclusion": "failure"}]}
+        return {"workflow_runs": [run]}
+
+    monkeypatch.setattr(release, "github", github)
+    if fault:
+        with pytest.raises(ValueError):
+            release.main()
+    else:
+        release.main()
+
+
 def test_workflows_separate_release_validation_from_external_publication():
     import yaml
 
@@ -750,13 +826,21 @@ def test_current_tracked_tree_keeps_oss_product_scope():
     import subprocess
 
     root = Path(__file__).resolve().parents[1]
-    # Encode the excluded product identifier so the assertion itself does not
-    # reintroduce it into the current source tree. History is intentionally ignored.
+    # Product code/configuration remains independent. Only the reviewed optional
+    # handoff and its release/example documentation may name an external consumer.
+    # History is intentionally ignored.
     excluded = bytes.fromhex("7472756e78")
+    documented_boundary = {
+        "docs/reference/external-governance.md",
+        "docs/releases/0.4.4.md",
+        "examples/governance/README.md",
+    }
     tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=root)
     matches = [
         name.decode()
         for name in tracked.split(b"\0")
-        if name and excluded in (root / name.decode()).read_bytes().lower()
+        if name
+        and name.decode() not in documented_boundary
+        and excluded in (root / name.decode()).read_bytes().lower()
     ]
     assert not matches, f"Out-of-scope product references in tracked files: {matches}"

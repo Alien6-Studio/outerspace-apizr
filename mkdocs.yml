@@ -121,6 +121,7 @@ nav:
           - Attest delivery proofs: reference/attest-delivery-plugin.md
           - Attest OCI artifacts: reference/attest-oci-artifacts.md
           - Proof-required admission: reference/delivery-admission.md
+          - External governance: reference/external-governance.md
           - Multi-destination delivery: reference/multi-destination-delivery.md
   - Reference:
       - Commands, parameters and formats: reference/index.md
@@ -168,6 +169,7 @@ nav:
       - Pipeline plugins: getting-started/developer-guide/plugins.md
       - Behavior contract: architecture/legacy-behavior-contract.md
   - Releases:
+      - 0.4.4: releases/0.4.4.md
       - 0.4.3: releases/0.4.3.md
       - 0.4.2: releases/0.4.2.md
       - 0.4.1: releases/0.4.1.md

@@ -3,6 +3,7 @@
 import os
 import selectors
 import subprocess
+import sys
 import time
 from pathlib import Path
 from threading import Event
@@ -95,6 +96,32 @@ def run(
                 and not result
             ):
                 return b"null"
+            if (
+                isinstance(request, PushRequest)
+                and absent_reference is not None
+                and absent_reference == request.destination
+                and arguments == ["manifest", "inspect", "--verbose", absent_reference]
+                and not result
+                and bytes(errors).strip()
+                in {b"manifest unknown", b"manifest unknown: manifest unknown"}
+            ):
+                from .native import run as native_run
+
+                confirmed = native_run(
+                    Path(sys.executable),
+                    [
+                        "-I",
+                        str(Path(__file__).with_name("absence.py")),
+                        absent_reference,
+                        str(max(0.001, min(15, deadline - time.monotonic()))),
+                    ],
+                    work,
+                    deadline,
+                    4096,
+                    cancel=cancel,
+                )
+                if confirmed == b"absent\n":
+                    return b"null"
             raise BuildError("docker_command_failed")
         return bytes(result)
     except OSError:

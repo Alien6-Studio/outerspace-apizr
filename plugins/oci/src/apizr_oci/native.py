@@ -9,6 +9,7 @@ import selectors
 import subprocess
 import time
 from pathlib import Path
+from threading import Event
 
 from .model import BuildError
 
@@ -21,7 +22,10 @@ def run(
     limit: int,
     *,
     stdout_limit: int | None = None,
+    cancel: Event | None = None,
 ) -> bytes:
+    if cancel is not None and cancel.is_set():
+        raise BuildError("native_cancelled")
     if time.monotonic() >= deadline:
         raise BuildError("native_timeout")
     process = None
@@ -49,6 +53,8 @@ def run(
                 os.set_blocking(stream.fileno(), False)
                 selector.register(stream, selectors.EVENT_READ)
             while selector.get_map() or process.poll() is None:
+                if cancel is not None and cancel.is_set():
+                    raise BuildError("native_cancelled")
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     raise BuildError("native_timeout")

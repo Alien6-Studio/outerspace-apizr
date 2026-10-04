@@ -9,7 +9,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from homebrew_formula import BUILD_MANIFEST, ROOT, VERSION, render
+from homebrew_formula import BUILD_MANIFEST, ROOT, render
 from prepare_homebrew_build_inputs import digest, encoded
 from smoke_extension_packaging import snapshot
 
@@ -77,6 +77,7 @@ def qualify(candidate, commit, output, host):
         )
     tap = output / "tap"
     receipt = render(candidate, commit, tap, mode="qualification")
+    candidate_version = receipt["version"]
     run("git-init", ["git", "init", tap])
     run("git-add", ["git", "-C", tap, "add", "."])
     run(
@@ -110,7 +111,7 @@ def qualify(candidate, commit, output, host):
             "formulae"
         ][0]
         if info["name"] != "apizr" or not any(
-            x["version"] == VERSION for x in info["installed"]
+            x["version"] == candidate_version for x in info["installed"]
         ):
             raise RuntimeError("Installed Formula version mismatch")
         prefix = Path(run("prefix", ["brew", "--prefix", FORMULA]).strip()).resolve()
@@ -134,7 +135,7 @@ assert pathlib.Path(apizr.__file__).resolve().is_relative_to(core / 'libexec')
 assert all(pathlib.Path(m.__file__).resolve().is_relative_to(provider) for m in (pydantic, pydantic_core))
 assert not importlib.util.find_spec('hatchling') and not importlib.util.find_spec('trove_classifiers')
 local = sorted((d.metadata['Name'], d.version) for d in md.distributions(path=[str(core / 'libexec/lib/python3.14/site-packages')]))
-assert local == [('outerspace-apizr', '0.4.3')]
+assert local == [('outerspace-apizr', '0.4.4')]
 parts = tuple(map(int, pydantic.__version__.split('.')[:2]))
 assert (2, 12) <= parts < (3, 0)
 print(json.dumps({'python': sys.version.split()[0], 'pydantic': pydantic.__version__,
@@ -150,7 +151,10 @@ print(json.dumps({'python': sys.version.split()[0], 'pydantic': pydantic.__versi
         if any(p.name == "build-wheelhouse" for p in prefix.rglob("*")):
             raise RuntimeError("Build wheelhouse leaked into the runtime")
         cli = prefix / "bin/apizr"
-        if run("version", [cli, "--version"]).strip() != "outerspace-apizr " + VERSION:
+        if (
+            run("version", [cli, "--version"]).strip()
+            != "outerspace-apizr " + candidate_version
+        ):
             raise RuntimeError("Installed CLI version mismatch")
         project = output / "project"
         project.mkdir()

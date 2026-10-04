@@ -47,6 +47,8 @@ jobs:
             ${{ runner.temp }}/oci-service-proof/refusals.json
             ${{ runner.temp }}/oci-service-proof/*-build.json
             ${{ runner.temp }}/oci-service-proof/*.lock
+            ${{ runner.temp }}/oci-service-proof/governance-*/
+            ${{ runner.temp }}/oci-service-proof/*-build-result.json
             ${{ runner.temp }}/oci-service-proof/catalog-oci/
 
   registry-publication:

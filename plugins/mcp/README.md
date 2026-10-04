@@ -1,5 +1,8 @@
 # outerspace-apizr-mcp
 
+This checkout prepares the coordinated **0.4.4 candidate**, not a published release.
+The current public stable baseline described below remains 0.4.3.
+
 <!-- mcp-name: io.github.Alien6-Studio/outerspace-apizr -->
 
 Analyze a local Python project from an MCP client without executing its functions.

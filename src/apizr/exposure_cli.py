@@ -93,7 +93,22 @@ def main(argv: Sequence[str]) -> int:
         help="Immutable local sha256 image ID; required with OCI, never pulled",
     )
     build.add_argument("--runtime-platform", choices=("linux/amd64", "linux/arm64"))
+    export = commands.add_parser(
+        "export", help="Export existing bundle JSON evidence without business code"
+    )
+    export.add_argument("--bundle-dir", type=Path, required=True)
+    export.add_argument("--output-dir", type=Path, required=True)
+    verify = commands.add_parser(
+        "verify", help="Verify exported evidence against a reviewed bundle digest"
+    )
+    verify.add_argument("--evidence-dir", type=Path, required=True)
+    verify.add_argument("--bundle-sha256", required=True)
+    for command in (export, verify):
+        command.add_argument("--interface", choices=("rest", "mcp"), required=True)
+        command.add_argument("--build-result", type=Path)
     args = parser.parse_args(argv)
+    if args.command in {"export", "verify"}:
+        return evidence_command(args)
     execution_policy: ExecutionPolicy | ExecutionPolicyV2 | None = None
     runtime_image: RuntimeImage | None = None
     bundle: dict[str, bytes] = {}
@@ -216,4 +231,52 @@ def main(argv: Sequence[str]) -> int:
         sys.stdout.buffer.write(plan_bytes(plan))
     else:
         print(text_report(plan, readiness), end="")
+    return 0
+
+
+def evidence_command(args: argparse.Namespace) -> int:
+    from apizr.capabilities.model import Digest
+    from apizr.delivery_results import BuildResult
+    from apizr.interfaces.runtime import IntegrityError
+    from apizr.repository.serialization import canonical_bytes
+    from apizr.repository_interfaces.evidence import (
+        export_evidence,
+        read_document,
+        verify_evidence,
+    )
+
+    try:
+        built = (
+            BuildResult.model_validate_json(
+                read_document(args.build_result.parent, args.build_result.name)
+            )
+            if args.build_result is not None
+            else None
+        )
+        if args.command == "export":
+            manifest = export_evidence(
+                args.bundle_dir,
+                args.output_dir,
+                interface=args.interface,
+                build_result=built,
+            )
+        else:
+            manifest = verify_evidence(
+                args.evidence_dir,
+                interface=args.interface,
+                expected=Digest(algorithm="sha256", value=args.bundle_sha256),
+                build_result=built,
+            )
+    except (
+        OSError,
+        ValueError,
+        KeyError,
+        TypeError,
+        RecursionError,
+        IntegrityError,
+        ExposureRefused,
+    ):
+        print("apizr expose: evidence_invalid", file=sys.stderr)
+        return 2
+    sys.stdout.buffer.write(canonical_bytes(manifest))
     return 0

@@ -102,7 +102,8 @@ def inputs(root, assets, version="0.4.0"):
 
 
 @pytest.mark.parametrize(
-    "version", ["0.4.0", "0.4.0rc1", "0.4.1rc1", "0.4.1", "0.4.2rc1", "0.4.2", "0.4.3"]
+    "version",
+    ["0.4.0", "0.4.0rc1", "0.4.1rc1", "0.4.1", "0.4.2rc1", "0.4.2", "0.4.3", "0.4.4"],
 )
 def test_stage_preserves_bytes_and_uses_recorded_unique_names(
     assets, tmp_path, monkeypatch, version
@@ -140,17 +141,19 @@ def test_stage_preserves_bytes_and_uses_recorded_unique_names(
 
 
 @pytest.mark.parametrize(
-    ("event", "ref", "preview"),
+    ("event", "ref", "version", "preview"),
     [
-        ("pull_request", "refs/pull/205/merge", True),
-        ("push", "refs/heads/master", True),
-        ("push", "refs/heads/release/0.4.2", True),
-        ("push", "refs/heads/release/0.4.3", True),
-        ("push", "refs/heads/release/0.4.1", True),
+        ("pull_request", "refs/pull/205/merge", "0.4.4", True),
+        ("push", "refs/heads/master", "0.4.3", True),
+        ("push", "refs/heads/master", "0.4.4", False),
+        ("push", "refs/heads/master", "0.4.5", True),
+        ("push", "refs/heads/release/0.4.2", "0.4.2", True),
+        ("push", "refs/heads/release/0.4.3", "0.4.3", True),
+        ("push", "refs/heads/release/0.4.1", "0.4.1", True),
     ],
 )
 def test_current_workflow_cannot_requalify_retired_release_refs(
-    assets, tmp_path, monkeypatch, event, ref, preview
+    assets, tmp_path, monkeypatch, event, ref, version, preview
 ):
     import yaml
 
@@ -165,10 +168,16 @@ def test_current_workflow_cannot_requalify_retired_release_refs(
     )
     # Execute the actual workflow's argument selection without invoking CI tools.
     selected = subprocess.check_output(
-        ["bash", "-c", "python3() { printf '%s\\n' \"$@\"; }\n" + step["run"]],
+        [
+            "bash",
+            "-c",
+            'python3() { if [ "$1" = -c ]; then printf "%s\\n" "$TEST_VERSION"; else printf "%s\\n" "$@"; fi; }\n'
+            + step["run"],
+        ],
         env={
             **os.environ,
             "EVENT_NAME": event,
+            "TEST_VERSION": version,
             "GITHUB_REF": ref,
             "GITHUB_SHA": "a" * 40,
             "GITHUB_RUN_ID": "123",
@@ -177,9 +186,7 @@ def test_current_workflow_cannot_requalify_retired_release_refs(
     ).splitlines()
     assert ("--preview" in selected) is preview
     downloads = tmp_path / "downloads"
-    inputs(
-        downloads, assets, "0.4.3" if ref == "refs/heads/release/0.4.3" else "0.4.2rc1"
-    )
+    inputs(downloads, assets, version)
     calls = []
     monkeypatch.setattr(
         assets.subprocess, "run", lambda command, **kw: calls.append(command)

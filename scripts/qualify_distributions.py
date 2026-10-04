@@ -97,6 +97,19 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
             env=env,
         )
         before = snapshot(root / "pip")
+        run(
+            python,
+            "-I",
+            "-B",
+            ROOT / "scripts/governance_evidence_proof.py",
+            "--examples",
+            ROOT / "examples/governance",
+            "--output",
+            output / "governance-evidence",
+            cwd=root,
+            env=env,
+        )
+        results["governance_evidence"] = "passed"
         results["measurements"]["core"] = {
             "wheel_bytes": size(target / "base"),
             "installed_bytes": size(root / "pip"),

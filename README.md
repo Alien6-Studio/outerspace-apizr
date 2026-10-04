@@ -16,6 +16,13 @@ for version-specific functionality, compatibility and verified publication.
 The journey is Python code → discover/select capabilities → expose as REST/MCP
 → optionally deliver as OCI.
 
+Apizr **0.4.4** adds portable JSON evidence export/verification and a bounded
+HTTPS check for ambiguous first-publication diagnostics. See the
+[release record](https://apizr.outerspace.sh/releases/0.4.4/) and
+[external governance handoff](https://apizr.outerspace.sh/reference/external-governance/)
+for scope, validation and integration limits. Publication status is recorded in
+the [release history](https://github.com/Alien6-Studio/outerspace-apizr/releases).
+
 Python **3.11–3.14** · GPL-3.0-or-later.
 
 [![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg?cacheSeconds=300)](https://pypi.org/project/outerspace-apizr/)
