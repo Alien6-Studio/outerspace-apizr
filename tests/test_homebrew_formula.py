@@ -172,3 +172,22 @@ def test_publication_binds_verified_evidence_and_immutable_asset(
         "--source-ref",
         "refs/heads/release/0.4.3",
     ]
+
+
+def test_044_candidate_qualifies_without_opening_publication(tmp_path):
+    root, old_source, _ = candidate(tmp_path)
+    source = old_source.with_name("outerspace_apizr-0.4.4.tar.gz")
+    old_source.rename(source)
+    path = root / "candidate.json"
+    record = json.loads(path.read_text())
+    record["version"] = "0.4.4"
+    record["artifacts"][0]["file"] = "dist/" + source.name
+    path.write_text(json.dumps(record))
+    assert (
+        tool["render"](root, SHA, tmp_path / "qualification", mode="qualification")[
+            "version"
+        ]
+        == "0.4.4"
+    )
+    with pytest.raises(ValueError, match="no Homebrew publication authorization"):
+        tool["render"](root, SHA, tmp_path / "public", mode="publication")

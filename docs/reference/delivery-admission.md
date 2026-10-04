@@ -4,6 +4,10 @@ For a proof-required delivery, Apizr may transfer the image to obtain its immuta
 digest, but it withholds promotion to the requested destination tag until an
 explicitly selected remote proof has been independently verified.
 
+Technical delivery admission is not organizational approval for production.
+An external governance system owns environment approval; the pipeline enforces
+that separate decision. See [external governance](external-governance.md).
+
 Image transfer is not delivery admission. Registry blobs, manifests and random
 `apizr-upload-*` staging tags may already exist. Apizr does not delete them,
 claim rollback, control registry garbage collection, or prevent another registry

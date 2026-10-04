@@ -14,7 +14,7 @@ from prepare_release_assets import bound_file
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "Alien6-Studio/outerspace-apizr"
 VERSION = "0.4.3"
-BUILD_MANIFEST = "76d36c8d868c866f4bd906980ffd54d1fa58c86860934f566874ea6566f0b0ae"
+BUILD_MANIFEST = "4e4d4bcff46f66bbc71ce6ead637d1d978c7013abffaa5849671f5ef2dc95d1e"
 
 
 def publication_source(url, sha256, source, commit, candidate, evidence, bundle):
@@ -92,6 +92,11 @@ def render(
     ):
         raise ValueError("Explicit mode and exact source commit required")
     source, source_hash = candidate_source(candidate.resolve(), commit)
+    candidate_version = json.loads((candidate / "candidate.json").read_text())[
+        "version"
+    ]
+    if mode == "publication" and candidate_version != VERSION:
+        raise ValueError("Candidate has no Homebrew publication authorization")
     inputs = manifest(ROOT / "uv.lock", ROOT / "policy/homebrew-build-inputs.json")
     if digest(encoded(inputs)) != BUILD_MANIFEST:
         raise ValueError("Reviewed build-input identity changed")
@@ -123,7 +128,7 @@ def render(
     for token, value in {
         "@SOURCE_URL@": json.dumps(url),
         "@SOURCE_SHA256@": source_hash,
-        "@VERSION@": VERSION,
+        "@VERSION@": candidate_version,
         "@BUILD_RESOURCES@": "\n".join(resources),
     }.items():
         formula = formula.replace(token, value)
@@ -132,7 +137,7 @@ def render(
     (output / "Formula/apizr.rb").write_text(formula)
     (output / "README.md").write_text(
         "# Apizr Homebrew tap source\n\n"
-        f"Generated in **{mode}** mode for core {VERSION}. Plugins remain separate.\n\n"
+        f"Generated in **{mode}** mode for core {candidate_version}. Plugins remain separate.\n\n"
         "The public Alien6 tap is not yet published. The future command "
         "`brew install alien6-studio/tap/apizr` is pending and is not a working public installation route.\n\n"
         "Qualification targets Apple Silicon Tier-1 hosts, with hosted VM evidence identified separately. "
@@ -142,7 +147,7 @@ def render(
     receipt = {
         "schema": "apizr.homebrew-formula-source/v1",
         "mode": mode,
-        "version": VERSION,
+        "version": candidate_version,
         "source_commit": commit,
         "source_sha256": source_hash,
         "formula_sha256": digest(formula.encode()),

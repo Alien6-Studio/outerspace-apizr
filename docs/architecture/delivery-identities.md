@@ -123,7 +123,8 @@ It does not rerun source analysis, reconstruct the build context, re-execute the
 build, inspect an image without Docker or contact the registry. `inputs_sha256`
 is not recomputed from the receipt. This is delivery evidence, not SLSA provenance
 or a claim of build supervision. Signing and publication remain separate actions;
-mandatory-proof gating and multiple destinations are future increments.
+proof-required gating and multiple destinations use the separate admission and
+batch contracts described below.
 
 ## Qualification and schemas
 

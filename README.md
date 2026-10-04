@@ -16,6 +16,10 @@ for version-specific functionality, compatibility and verified publication.
 The journey is Python code → discover/select capabilities → expose as REST/MCP
 → optionally deliver as OCI.
 
+This source prepares the **0.4.4 candidate**. The current public stable release
+remains 0.4.3. See the [candidate record](docs/releases/0.4.4.md) and
+[external governance handoff](docs/reference/external-governance.md).
+
 Python **3.11–3.14** · GPL-3.0-or-later.
 
 [![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg?cacheSeconds=300)](https://pypi.org/project/outerspace-apizr/)

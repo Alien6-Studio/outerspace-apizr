@@ -28,6 +28,20 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "oci-absence-http-status",
+        "plugins/oci/src/apizr_oci/absence.py",
+        "            if error.code != 404:",
+        "            if False:",
+        "tests/oci_plugin/test_absence.py::test_ambiguous_or_failed_observation_never_means_absent[auth]",
+    ),
+    Mutation(
+        "governance-selected-bundle-digest",
+        "src/apizr/repository_interfaces/evidence.py",
+        "    if Digest.of_bytes(raw) != expected:",
+        "    if False:",
+        "tests/repository_interfaces/test_evidence.py::test_export_verify_after_removing_business_code[rest]",
+    ),
+    Mutation(
         "attest-verdict-receipt-binding",
         "plugins/attest/src/apizr_attest/verdict.py",
         '        or report.get("receipt") != "receipt.yaml"\n',

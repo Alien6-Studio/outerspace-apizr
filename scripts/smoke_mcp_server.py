@@ -248,7 +248,7 @@ def prepare(root: Path, python: str) -> dict:
             "enable",
             "outerspace-apizr-mcp",
             "--version",
-            "0.4.3",
+            "0.4.4",
             "--plugins-dir",
             store,
         ],

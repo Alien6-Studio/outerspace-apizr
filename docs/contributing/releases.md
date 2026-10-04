@@ -3,6 +3,14 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
+## Candidate 0.4.4
+
+The [0.4.4 candidate](../releases/0.4.4.md) is prepared through a PR targeting
+master. Its coordinated archives and CI exports are verification previews. No
+new release line or publication is authorized by changing version metadata.
+The historical publication verifier stays closed to 0.4.4 until a separate exact
+source/ref qualification policy and publication decision are reviewed.
+
 ## Current published baseline
 
 The current stable release is **0.4.3** for the core and all three plugins,

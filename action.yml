@@ -21,7 +21,7 @@ inputs:
     default: '3.14'
   apizr-version:
     description: Exact Apizr version. Final publication must complete before public installation.
-    default: 0.4.3
+    default: 0.4.4
   wheel-path:
     description: Qualification only; local original qualified wheel, paired with wheel-sha256.
     default: ''

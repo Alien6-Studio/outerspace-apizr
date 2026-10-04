@@ -368,7 +368,7 @@ def main():
         "enable",
         "outerspace-apizr-oci",
         "--version",
-        "0.4.3",
+        "0.4.4",
         "--plugins-dir",
         store,
     )
@@ -558,6 +558,21 @@ def main():
             assert inspect["Id"] == result["result"]["image_id"]
             assert inspect["Config"]["User"] == "65532:65532"
             assert not inspect["Config"].get("Volumes")
+            evidence_dir = work / ("governance-" + interface)
+            build_result_path = work / (interface + "-build-result.json")
+            build_result_path.write_text(json.dumps(result["result"]))
+            cli(
+                "expose",
+                "export",
+                "--bundle-dir",
+                bundle,
+                "--output-dir",
+                evidence_dir,
+                "--interface",
+                interface,
+                "--build-result",
+                build_result_path,
+            )
             results.append(result)
         service_images = [item["result"]["tag"] for item in results]
         registry_proof = os.environ.get("APIZR_REGISTRY_PROOF") == "1"
@@ -565,6 +580,19 @@ def main():
         assert not (work / "git-proof").exists()
         if application_bundles is not None:
             shutil.rmtree(application_bundles)
+        for interface, built in zip(("rest", "mcp"), results, strict=True):
+            cli(
+                "expose",
+                "verify",
+                "--evidence-dir",
+                work / ("governance-" + interface),
+                "--interface",
+                interface,
+                "--bundle-sha256",
+                built["result"]["delivery_plan"]["bundle_manifest_digest"]["value"],
+                "--build-result",
+                work / (interface + "-build-result.json"),
+            )
         if registry_proof:
             from smoke_oci_push import exercise as publish
 

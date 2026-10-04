@@ -382,3 +382,65 @@ def test_requirement_changes_plan_and_build_identity(build_inputs, tmp_path):
     assert required.delivery_plan.proof_requirement == "required"
     assert identity(optional.delivery_plan) != identity(required.delivery_plan)
     assert optional.inputs_sha256 != required.inputs_sha256
+
+
+def test_governance_export_binds_the_exact_build(portable, tmp_path):
+    from apizr.repository_interfaces.evidence import export_evidence, verify_evidence
+
+    _, bundle, request, closure = portable
+    plan = delivery_plan(bundle, request, closure)
+    manifest = DeliveryManifest(
+        delivery_plan_digest=identity(plan),
+        inputs_sha256="a" * 64,
+        platform=request.platform,
+        image_id="sha256:" + "b" * 64,
+    )
+    built = BuildResult(
+        tag=request.tag,
+        platform=request.platform,
+        image_id=manifest.image_id,
+        inputs_sha256=manifest.inputs_sha256,
+        delivery_plan=plan,
+        delivery_manifest=manifest,
+        delivery_manifest_digest=identity(manifest),
+    )
+    output = tmp_path / "external-documents"
+    exported = export_evidence(bundle, output, interface="rest", build_result=built)
+    shutil.rmtree(bundle)
+    assert (
+        verify_evidence(
+            output, interface="rest", expected=identity(exported), build_result=built
+        )
+        == exported
+    )
+    # Self-consistent build lineage from a different bundle is still refused.
+    changed_plan = plan.model_copy(
+        update={"bundle_manifest_digest": Digest.of_bytes(b"other")}
+    )
+    changed_manifest = manifest.model_copy(
+        update={"delivery_plan_digest": identity(changed_plan)}
+    )
+    other = built.model_copy(
+        update={
+            "delivery_plan": changed_plan,
+            "delivery_manifest": changed_manifest,
+            "delivery_manifest_digest": identity(changed_manifest),
+        }
+    )
+    with pytest.raises(ValueError, match="different evidence"):
+        verify_evidence(
+            output, interface="rest", expected=identity(exported), build_result=other
+        )
+    with pytest.raises(ValueError, match="different evidence"):
+        verify_evidence(
+            output,
+            interface="rest",
+            expected=identity(exported),
+            build_result=built.model_copy(
+                update={
+                    "delivery_plan": None,
+                    "delivery_manifest": None,
+                    "delivery_manifest_digest": None,
+                }
+            ),
+        )
