@@ -343,3 +343,24 @@ original four wheels/four sdists, hashes and qualification evidence remain
 unchanged in `release-evidence/0.4.4-candidate/`. Final source qualification and
 publication records are retained separately in `release-evidence/0.4.4-final/`.
 Independent sdist rebuilds are tests and never replace selected upload bytes.
+
+### Trunx integration qualification
+
+On 5 October 2026, the Trunx operator confirmed qualification of the published
+Apizr 0.4.4 integration: REST/MCP publication, signed proofs, ingestion,
+consumption by immutable references and approval governance. A/B results conform
+and the delivery CI job succeeds with native Docker, without a Trunx adapter.
+No additional blocking Apizr correction was requested. This status is the
+operator's report; Apizr's disposable registry tests remain separate evidence.
+
+<details markdown="1">
+<summary>Earlier staging observations</summary>
+
+Human approvals for MCP A/B were previously verified in Trunx beta on
+`attest-e2e` / `qualification-044`. Two immediate REST B rechecks failed with
+`admission_failed` then `remote_state_unconfirmed`; later explicit resumes
+reportedly completed against the same image/proof without a new build/signature.
+Their cause was not isolated. These historical failures and recovery remain
+retained separately and were not established as a generic Apizr defect.
+
+</details>

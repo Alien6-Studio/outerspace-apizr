@@ -10,8 +10,8 @@ which container contains it. Your platform decides who can deploy and use it.
 Apizr also works on its own, locally.
 
 [Trunx](https://trunx.io/), a private registry for software packages and container
-images, is one integration currently being tested. See the
-[integration status](../releases/0.4.4.md#integration-status) for progress.
+images, uses Apizr 0.4.4 to publish REST and MCP services within its deployment
+approval workflow.
 
 A successful Apizr delivery check confirms technical conditions. It does **not**
 replace your organization's deployment approval or access controls.
@@ -213,12 +213,5 @@ actual REST/MCP builds, verifies them against their BuildResults after deleting
 source/bundles, and exercises push, proof publication, immutable retrieval,
 admission, tampering and resume with independently installed consumers. Its
 registry/TSA are test services, not Trunx. Mocked unit tests are a third, separate
-layer. See the [0.4.4 candidate record](../releases/0.4.4.md) for executed evidence.
-
-Trunx should ingest these existing records and hashes, retain exact immutable
-image/proof references, enforce its environment decisions separately and migrate
-its delivery tooling to the qualified four-package version together. Its custom
-Docker adapter can be retired only after the deployed registry's diagnostics and
-authentication are qualified with this generic path. Human approvals have been
-verified in Trunx beta; deployment and runtime enforcement checks are still in
-progress. See the [integration status](../releases/0.4.4.md#integration-status).
+layer. See the [0.4.4 verification record](../contributing/verification.md#044-publication-record)
+for qualification details.
