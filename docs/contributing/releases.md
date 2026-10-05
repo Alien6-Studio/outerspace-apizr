@@ -11,7 +11,7 @@ The protected procedure below completed for source
 `46c573d7f808f8d491cde1062d474b145288697f`, tag `v0.4.4`, CI `37222486067`
 and publisher `37223902790`. The [release record](../releases/0.4.4.md) retains
 public hashes, independent receipt/install verification and the separate
-Homebrew/Trunx qualification boundaries. Do not replay this completed package
+Homebrew and external integration qualification boundaries. Do not replay this completed package
 publication or replace its archives.
 
 The [0.4.4 release record](../releases/0.4.4.md) defines the reviewed policy:
