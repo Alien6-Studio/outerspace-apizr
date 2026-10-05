@@ -101,8 +101,8 @@ safe to run.
 ## Tools using Apizr
 
 - **[Trunx](https://trunx.io/)** — a private registry for software packages and
-  container images. Trunx uses Apizr to publish REST and MCP services and manage
-  their delivery approvals.
+  container images. Trunx uses Apizr to publish REST and MCP services within its
+  deployment approval workflow.
 
 ## Explore the MCP ecosystem
 

@@ -10,8 +10,8 @@ which container contains it. Your platform decides who can deploy and use it.
 Apizr also works on its own, locally.
 
 [Trunx](https://trunx.io/), a private registry for software packages and container
-images, uses Apizr 0.4.4 to publish REST and MCP services and manage their delivery
-approvals.
+images, uses Apizr 0.4.4 to publish REST and MCP services within its deployment
+approval workflow.
 
 A successful Apizr delivery check confirms technical conditions. It does **not**
 replace your organization's deployment approval or access controls.
