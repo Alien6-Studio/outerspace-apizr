@@ -1,12 +1,35 @@
+---
+title: Generate a REST API from Python
+description: Turn Python code or a notebook into a FastAPI REST API with Apizr. Follow a working example and video tutorial, then call your API with curl.
+---
+
 # Generate REST from a Python file or notebook {#generate-a-rest-interface}
 
 For a multi-module repository, use [REST/MCP from a repository](exposure.md)
 or the [repository Quickstart](../quickstart.md). This guide takes one Python file
 or notebook as its input.
 
-`apizr generate rest` turns eligible Capability IR declarations into a standalone
-FastAPI application, static OpenAPI document and artifact manifest. Generation
-reads one Python file or notebook without running it.
+[Install Apizr](../install.md), then use `apizr generate rest` to turn a Python
+file into a FastAPI application. It includes an OpenAPI description and a copy of
+your selected source. Generation does not run the source.
+
+<details open markdown="1">
+<summary>Watch: Generate a REST API and make HTTP calls · 4:14</summary>
+
+Expose gcd and lcm from keon/algorithms, start the server and try successful requests and an invalid input.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=QdtaLoc-g6o" data-apizr-video="QdtaLoc-g6o" data-apizr-title="Generate a REST API and make HTTP calls" aria-label="Play: Generate a REST API and make HTTP calls">
+    <img src="../../../assets/videos/tutorial-rest.jpg" width="480" height="360" loading="lazy" alt="Generate a REST API and make HTTP calls — Alien6 Studio tutorial" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+English · [Open on YouTube](https://www.youtube.com/watch?v=QdtaLoc-g6o) ·
+[Alien6 Studio](https://www.youtube.com/@Alien6Studio).
+Use the written steps for the current release; a recording may show an earlier version.
+
+</details>
 
 Start with `pricing.py`:
 
@@ -18,8 +41,8 @@ def total(prices: list[float], *, tax: float = 0.2) -> float:
 Inspect and generate:
 
 ```sh
-uv run apizr inspect pricing.py --module-name project.pricing
-uv run apizr generate rest pricing.py --module-name project.pricing --output-dir .output/rest
+apizr inspect pricing.py --module-name project.pricing
+apizr generate rest pricing.py --module-name project.pricing --output-dir .output/rest
 ```
 
 The directory must be new or empty. Existing files and symlink paths are refused;
@@ -27,6 +50,57 @@ there is no destructive `--force` option. Use a physical directory path if a
 filesystem alias such as `/tmp` is a symlink on your system. Safe output writing
 requires the directory-descriptor/no-follow facilities tested on Linux and macOS;
 unsupported hosts fail before writing.
+
+## Start the application
+
+**Direct-mode startup imports and executes the bundled source; governed mode imports it only inside the worker on a call. Run only trusted code.** A
+`ready` result concerns the static interface contract, not runtime safety.
+
+Create a separate environment for the generated server:
+
+```sh
+python3 -m venv .output/runtime
+.output/runtime/bin/python -m pip install -r .output/rest/requirements.txt
+.output/runtime/bin/uvicorn app:app --app-dir .output/rest --host 127.0.0.1 --port 8001
+```
+
+Keep that terminal running. From a second terminal, check the server and call
+`total`:
+
+```sh
+curl -f http://127.0.0.1:8001/health
+curl -f http://127.0.0.1:8001/capabilities/total \
+  -H 'Content-Type: application/json' \
+  -d '{"prices": [10, 20]}'
+# 36.0
+```
+
+Open `/docs` for interactive API documentation or `/openapi.json` for the same
+OpenAPI document generated on disk. Functions always use POST under
+`/capabilities/`; infrastructure routes stay separate.
+
+## Select functions and inspect refusals
+
+```sh
+apizr generate rest pricing.py --select total --output-dir .output/selected
+apizr generate rest examples/pricing.ipynb --module-name project.pricing --output-dir .output/notebook-rest
+```
+
+`--select` accepts comma-separated names or full IDs such as
+`python:project.pricing:total`. Without selection, every callable assessment must
+be eligible. Conditional, unsupported or ambiguous declarations stop generation
+with their readiness reason codes. Selecting a ready function can exclude an
+unrelated unsupported generator, but cannot override uncertainty recorded on the
+selected function itself.
+
+Only `can_generate_interface=true` passes. There is no unsafe override. Use
+[`apizr inspect`](inspect.md) to understand decorators, rebinding, initialization,
+dependencies and unresolved input types before changing the source.
+
+Logical identity defaults to the input filename stem. A dotted `--module-name`
+keeps identity explicit and portable; the bundle contains the corresponding
+package structure. Avoid names already used by the runtime, including `app`
+(the generated bootstrap), `json` or `fastapi`; conflicts fail startup clearly.
 
 ## Choose direct or governed execution
 
@@ -72,55 +146,6 @@ including intentional HTTPException responses, are sanitized at the worker bound
 See [governed transport architecture](../../architecture/governed-transport-runtime-v1.md)
 and the [execution policy guide](execute.md) for defaults, limits, environment
 allowlists and the precise trust boundary.
-
-## Start the application
-
-**Direct-mode startup imports and executes the bundled source; governed mode imports it only inside the worker on a call. Run only trusted code.** A
-`ready` result concerns the static interface contract, not runtime safety.
-
-From the Apizr checkout:
-
-```sh
-uv run uvicorn app:app --app-dir .output/rest --host 127.0.0.1 --port 8001
-```
-
-From a standalone bundle, install its `requirements.txt` in a virtual environment
-and run `uvicorn app:app` from the bundle directory. Apizr itself is not needed.
-
-```sh
-curl -f http://127.0.0.1:8001/health
-curl -f http://127.0.0.1:8001/capabilities/total \
-  -H 'Content-Type: application/json' \
-  -d '{"prices": [10, 20]}'
-# 36.0
-```
-
-Open `/docs` for interactive API documentation or `/openapi.json` for the same
-OpenAPI document generated on disk. Functions always use POST under
-`/capabilities/`; infrastructure routes stay separate.
-
-## Select functions and inspect refusals
-
-```sh
-uv run apizr generate rest pricing.py --select total --output-dir .output/selected
-uv run apizr generate rest examples/pricing.ipynb --module-name project.pricing --output-dir .output/notebook-rest
-```
-
-`--select` accepts comma-separated names or full IDs such as
-`python:project.pricing:total`. Without selection, every callable assessment must
-be eligible. Conditional, unsupported or ambiguous declarations stop generation
-with their readiness reason codes. Selecting a ready function can exclude an
-unrelated unsupported generator, but cannot override uncertainty recorded on the
-selected function itself.
-
-Only `can_generate_interface=true` passes. There is no unsafe override. Use
-[`apizr inspect`](inspect.md) to understand decorators, rebinding, initialization,
-dependencies and unresolved input types before changing the source.
-
-Logical identity defaults to the input filename stem. A dotted `--module-name`
-keeps identity explicit and portable; the bundle contains the corresponding
-package structure. Avoid names already used by the runtime, including `app`
-(the generated bootstrap), `json` or `fastapi`; conflicts fail startup clearly.
 
 ## Requests, defaults and errors
 
@@ -196,6 +221,6 @@ the control matrix, sanitized error mappings, integrity checks and trust boundar
 
 ## Client collections
 
-The published Apizr 0.4.2 release can export the retained REST bundle to
+Apizr can export the retained REST bundle to
 [Postman, Bruno and Insomnia collections](client-collections.md), with deterministic
 files and safe local regeneration. No source scan or execution is needed.

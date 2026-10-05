@@ -10,8 +10,8 @@ description: Discover, understand, assess, select, expose and execute a Python r
 
 <span id="introduction"></span>
 
-Apizr is an open-source capability compiler for Python codebases. The journey
-is **Discover → Understand → Assess → Select → Expose → Execute**.
+Use this guide to understand how Apizr turns a Python project into a service:
+find its functions, choose which ones to expose, generate an interface and run it.
 
 For a first working server and verified calls, start with the [Quickstart](quickstart.md).
 This page explains the separate stages and their diagnostic outputs.
@@ -93,9 +93,9 @@ Path("operator.json").write_text(json.dumps({
 PYTHON
 ```
 
-The first four commands below are optional diagnostics, useful for understanding
-each stage. `expose build` already performs their required analysis and planning;
-you do not need to run them separately before generation. To inspect each stage:
+`expose build` performs the analysis and generates your service in one command.
+The first four commands below let you inspect the intermediate results when
+you need to understand a selection or diagnose a refusal:
 
 ```sh
 apizr scan . --operator-policy operator.json --exclude-dir .output
@@ -115,16 +115,18 @@ and called through `api._price`, but neither helper is public.
 Serve the direct REST bundle:
 
 ```sh
-python -m pip install -r .output/rest/requirements.txt
-uvicorn app:app --app-dir .output/rest --host 127.0.0.1 --port 8000
+python3 -m venv .output/runtime
+.output/runtime/bin/python -m pip install -r .output/rest/requirements.txt
+.output/runtime/bin/uvicorn app:app --app-dir .output/rest --host 127.0.0.1 --port 8000
 ```
 
 POST `{"unit_price":12.5,"quantity":2}` to `/capabilities/api.quote` → `25.0`.
 POST `{"stock":10,"requested":3}` to `/capabilities/inventory.available` → `true`.
-The MCP bundle exposes the same two names. [Connect a client and verify calls](quickstart.md#connect-a-client-and-make-two-calls). Install its `requirements.txt`, then run
-`python .output/mcp/server.py --transport stdio` or use `--transport streamable-http`.
-These generated servers execute trusted code. Use a fresh output directory when
-regenerating. Discovery and generation do not execute project source.
+The separate runtime environment keeps server dependencies out of Apizr's core.
+The MCP bundle exposes the same two names; follow the
+[MCP client steps](quickstart.md#connect-a-client-and-make-two-calls) with
+`.output/mcp` as your bundle directory. These servers execute trusted code.
+Use a fresh output directory when regenerating.
 
 ## Understand the decisions
 

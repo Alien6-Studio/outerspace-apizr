@@ -1,15 +1,20 @@
-# External governance handoff
+---
+title: Connect Apizr to your deployment platform
+description: Share service descriptions and delivery results with your deployment platform. Learn how Apizr works alongside tools such as Trunx.
+---
 
-Apizr 0.4.4 adds an optional **document export and verification** step to the
-existing bundle/delivery journey. Apizr OSS still analyzes, generates and runs
-locally without Trunx, a registry or an approval service.
+# Connect Apizr to your deployment platform {#external-governance-handoff}
 
-Apizr describes capabilities and records technical delivery observations. An
-external system such as Trunx stores artifacts, indexes capabilities, assigns
-organizational responsibility and approves environments. The pipeline applies
-that separate decision before deploying. The runtime or gateway authorizes calls.
-`delivery_admitted: true` is technical proof verification and observed promotion;
-it is **never organizational approval to deploy to production**.
+Use Apizr's exports to tell your deployment platform what a service does and
+which container contains it. Your platform decides who can deploy and use it.
+Apizr also works on its own, locally.
+
+[Trunx](https://trunx.io/), a private registry for software packages and container
+images, is one integration currently being tested. See the
+[integration status](../releases/0.4.4.md#integration-status) for progress.
+
+A successful Apizr delivery check confirms technical conditions. It does **not**
+replace your organization's deployment approval or access controls.
 
 ## Existing documents, one identity graph
 
@@ -214,5 +219,6 @@ Trunx should ingest these existing records and hashes, retain exact immutable
 image/proof references, enforce its environment decisions separately and migrate
 its delivery tooling to the qualified four-package version together. Its custom
 Docker adapter can be retired only after the deployed registry's diagnostics and
-authentication are qualified with this generic path. Live Trunx ingestion,
-organizational approval and production consumption remain external qualification.
+authentication are qualified with this generic path. Human approvals have been
+verified in Trunx beta; deployment and runtime enforcement checks are still in
+progress. See the [integration status](../releases/0.4.4.md#integration-status).

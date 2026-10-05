@@ -9,10 +9,11 @@ document.addEventListener("click", (event) => {
   event.preventDefault();
   const player = document.createElement("iframe");
   player.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0`;
-  player.title = "Apizr demonstration: generate REST and MCP from a Python notebook";
+  player.title = cover.dataset.apizrTitle || "Apizr demonstration: generate REST and MCP from a Python notebook";
   player.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
   player.allowFullscreen = true;
   player.referrerPolicy = "strict-origin-when-cross-origin";
+  player.tabIndex = 0;
   cover.replaceWith(player);
   player.focus();
 });

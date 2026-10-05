@@ -1,15 +1,17 @@
+---
+title: Install Apizr
+description: Install Apizr with pip, uv, pipx or Homebrew, then add optional plugins when you need them.
+---
+
 # Install Apizr
 
-These instructions cover the published stable **Apizr 0.4.4** release. Its
-[publication status](../releases/0.4.4.md#validation) records the verified
-source, archives and public delivery.
-
-Install the core, then follow the
-[Quickstart](quickstart.md). Add a plugin profile only when your workflow needs it.
+Install **Apizr 0.4.4**, then follow the [Quickstart](quickstart.md) to make your
+first REST or MCP calls. The core is enough for that example; plugins are optional.
 
 ## Install the core
 
-Use Python 3.11–3.14, a POSIX shell and pip. Start in a new working directory:
+Use Python 3.11–3.14 on macOS or Linux, with a POSIX shell and pip.
+Choose **one** installation method. For a first try, create a virtual environment:
 
 ```sh
 mkdir apizr-workspace
@@ -20,20 +22,49 @@ python -m pip install outerspace-apizr==0.4.4
 apizr --version
 ```
 
-**Observe:** `outerspace-apizr 0.4.4`. Continue with the [Quickstart](quickstart.md)
-to generate and call your first MCP or REST service. No plugin or Docker is needed.
+You should see `outerspace-apizr 0.4.4`. Keep this terminal open and continue with
+[the Quickstart](quickstart.md). For an existing project, you can also
+[initialize its configuration](onboarding.md).
 
-Optional [local onboarding](onboarding.md) adds `apizr init` → `apizr doctor`
-before the Quickstart. These commands are included in the stable release.
+<details markdown="1">
+<summary>Already using uv or pipx?</summary>
 
-With uv or pipx already installed, `uv tool install outerspace-apizr==0.4.4` or
-`pipx install outerspace-apizr==0.4.4` is an alternative to the virtual environment
-above. Use the executable path reported by your tool.
+Install Apizr as an isolated command-line tool with **one** of:
+
+```sh
+uv tool install outerspace-apizr==0.4.4
+```
+
+```sh
+pipx install outerspace-apizr==0.4.4
+```
+
+Use the executable path reported by your tool. The Quickstart's pip path is
+easier to follow for a first try because it keeps an explicit `core/` directory.
+
+</details>
+
+<details open markdown="1">
+<summary>Watch: Install Apizr with pip, uv, pipx or Homebrew · 6:39</summary>
+
+Compare the installation methods and check which Apizr executable you are using. The Homebrew segment shows a reinstall; for a fresh setup, use the install command below.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=7J6TWqAdx4Q" data-apizr-video="7J6TWqAdx4Q" data-apizr-title="Install Apizr with pip, uv, pipx or Homebrew" aria-label="Play: Install Apizr with pip, uv, pipx or Homebrew">
+    <img src="../../assets/videos/tutorial-install.jpg" width="480" height="360" loading="lazy" alt="Install Apizr with pip, uv, pipx or Homebrew — Alien6 Studio tutorial" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+English · [Open on YouTube](https://www.youtube.com/watch?v=7J6TWqAdx4Q) ·
+[Alien6 Studio](https://www.youtube.com/@Alien6Studio).
+Use the written steps for the current release; a recording may show an earlier version.
+
+</details>
 
 ## Homebrew on Apple Silicon
 
-The [official Alien6 tap](https://github.com/Alien6-Studio/homebrew-tap) supplies
-Apizr **0.4.4** using Homebrew Python 3.14 and Pydantic:
+Use the [official Alien6 tap](https://github.com/Alien6-Studio/homebrew-tap):
 
 ```sh
 brew tap alien6-studio/tap
@@ -41,163 +72,35 @@ brew install alien6-studio/tap/apizr
 apizr --version
 ```
 
-Observe `outerspace-apizr 0.4.4`. Optional plugins remain in Apizr-managed
-isolated environments outside the Cellar. Match plugin profiles to the installed
-core version; managed installation requires uv, with 0.12.0 qualified for this release.
-The exact public Formula passed strict online audit, installation/test, CLI and
-runtime-provider isolation on a hosted Apple Silicon VM. This is distinct from
-physical Tier-1 host qualification. Earlier physical Formula evidence retains
-its original version; a separate 0.4.4 physical build/runtime proof passed.
-Intel macOS and Linux Homebrew runtime are not qualified. See the
-[release record](../releases/0.4.4.md#validation) for the exact scope.
+You should see `outerspace-apizr 0.4.4`. The Formula uses Homebrew Python 3.14.
+Its installation is tested on hosted Apple Silicon; Intel macOS and Linux
+Homebrew runtime are not qualified. See the
+[release record](../releases/0.4.4.md#validation) for details.
 
 ## Add optional plugin profiles
 
-The coordinated packages are `outerspace-apizr==0.4.4`,
-`outerspace-apizr-oci==0.4.4`, `outerspace-apizr-mcp==0.4.4` and
-`outerspace-apizr-attest==0.4.4`. The
-[release record](../releases/0.4.4.md#validation) identifies the qualified
-final archives. These profiles install plugins separately and preserve the core.
+| You want to… | Install |
+| --- | --- |
+| Inspect Python and generate REST/MCP interfaces | Core only |
+| Let an MCP client analyze a project with Apizr | `mcp` profile |
+| Build and publish a service image | `oci` profile |
+| Deliver an image with an Attest receipt | `delivery` profile |
+
+Plugins live in their own environments. Keep all selected core/plugin versions
+at **0.4.4**. Install **uv 0.12.0** separately and check `uv --version` before
+installing or syncing plugins. This also applies to Homebrew installations.
 
 <span id="install-the-published-release"></span>
 <span id="evaluate-the-040-candidate"></span>
 
 ### Obtain the installation files
 
-Use the **durable GitHub release assets**, not expiring Actions artifacts, for
-normal installation. The commands below use the published **v0.4.4** assets.
-You need Python 3.11–3.14, a POSIX shell, tar, GitHub CLI (`gh`) for public resource
-retrieval/provenance verification, and an already installed **uv** for plugins. The release-qualified version is
-**uv 0.12.0**; check `uv --version` before `apizr plugins install` or profile sync.
-Select your system, architecture and Python from [Supported targets](#supported-targets).
-
-This selection uses Linux x86-64 / Python 3.11. The published inventory supplies
-the exact patch-level export and source commit. Keep all files from the same release:
-
-```sh
-export APIZR_VERSION=0.4.4
-export RELEASE_TAG=v0.4.4
-export PYTHON=python3.11
-export TARGET_PATTERN="apizr-${APIZR_VERSION}-linux-x86_64-cpython-3.11.*.tar.gz"
-mkdir -p release/assets release/candidate/dist release/target-download
-export EXPECTED_COMMIT=$(gh api "repos/Alien6-Studio/outerspace-apizr/commits/$RELEASE_TAG" --jq .sha)
-gh release download "$RELEASE_TAG" --repo Alien6-Studio/outerspace-apizr --dir release/assets \
-  --pattern candidate.json --pattern release-assets.json --pattern SHA256SUMS \
-  --pattern 'outerspace_apizr*' --pattern "$TARGET_PATTERN" \
-  --pattern ci-evidence.tar.gz --pattern build-provenance.sigstore.json
-gh attestation verify release/assets/ci-evidence.tar.gz \
-  --bundle release/assets/build-provenance.sigstore.json \
-  --repo Alien6-Studio/outerspace-apizr \
-  --signer-workflow Alien6-Studio/outerspace-apizr/.github/workflows/ci.yml \
-  --source-digest "$EXPECTED_COMMIT" --source-ref refs/heads/master
-```
-
-Bind the selected export and candidate inventory to the attested CI evidence,
-then verify the eight package hashes and the downloaded checksum entries. Local
-copies below preserve the exact bytes and provide the layout used by the offline
-commands; they do not reconstruct any package:
-
-```sh
-"$PYTHON" - <<'PYTHON'
-import fnmatch
-import hashlib
-import json
-import os
-import shutil
-import tarfile
-from pathlib import Path
-assets = Path("release/assets")
-candidate = Path("release/candidate")
-inventory = json.loads((assets / "release-assets.json").read_text())
-assert inventory["version"] == os.environ["APIZR_VERSION"]
-assert inventory["commit"] == os.environ["EXPECTED_COMMIT"]
-assert inventory["source_ref"] == "refs/heads/master"
-checksums = dict(line.split("  ", 1)[::-1] for line in (assets / "SHA256SUMS").read_text().splitlines())
-for path in assets.iterdir():
-    if path.name != "SHA256SUMS":
-        with path.open("rb") as stream:
-            assert hashlib.file_digest(stream, "sha256").hexdigest() == checksums[path.name]
-exports = [item for item in inventory["artifacts"] if fnmatch.fnmatch(item["file"], os.environ["TARGET_PATTERN"])]
-assert len(exports) == 1, "Select exactly one qualified target export"
-export = exports[0]
-assert export["evidence_member"].startswith("coordinated/release-target-")
-assert export["evidence_member"].endswith("/target-export.tar.gz")
-with tarfile.open(assets / "ci-evidence.tar.gz") as evidence:
-    def approved(member, path):
-        source = evidence.extractfile("./" + member)
-        assert source is not None
-        with path.open("rb") as local:
-            assert hashlib.file_digest(local, "sha256").hexdigest() == hashlib.file_digest(source, "sha256").hexdigest()
-    approved("coordinated/release-candidate/candidate.json", assets / "candidate.json")
-    approved(export["evidence_member"], assets / export["file"])
-manifest = json.loads((assets / "candidate.json").read_text())
-assert manifest["commit"] == os.environ["EXPECTED_COMMIT"]
-assert manifest["version"] == os.environ["APIZR_VERSION"]
-assert len(manifest["artifacts"]) == 8
-for item in manifest["artifacts"]:
-    name = Path(item["file"]).name
-    path = assets / name
-    assert path.stat().st_size == item["bytes"]
-    assert hashlib.sha256(path.read_bytes()).hexdigest() == item["sha256"]
-    shutil.copyfile(path, candidate / "dist" / name)
-shutil.copyfile(assets / "candidate.json", candidate / "candidate.json")
-shutil.copyfile(assets / export["file"], "release/target-download/target-export.tar.gz")
-print("Verified release candidate and complete target export")
-PYTHON
-mkdir release/target
-tar -xzf release/target-download/target-export.tar.gz -C release/target
-export CANDIDATE="$PWD/release/candidate"
-export TARGET="$PWD/release/target"
-export CORE_DIR="$PWD/core"
-```
-
-Inspect the qualification report and `target.json` before installation: your
-interpreter must match the recorded target. Release engineers can still use
-[Actions artifacts for exact qualification](../contributing/releases.md); PR
-previews cannot substitute for the final release's attested resources.
-
-`target.json` records the actual Python patch version, system and architecture.
-Its file inventory covers catalogs, locks, notices inside wheels and dependency
-bytes. Do not substitute other wheels after verification.
-
-<span id="install-the-candidate-with-pip"></span>
-
-### Install the core offline
-
-Skip this step if you already installed the core above. As an offline alternative,
-these commands install the same core from verified files in a new environment.
-The selected `PYTHON` must match the target export's Python minor version.
-
-<!-- install:pip -->
-```sh
-"$PYTHON" -m venv "$CORE_DIR"
-"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.4}-py3-none-any.whl"
-"$CORE_DIR/bin/apizr" --version
-```
-
-Observe `outerspace-apizr 0.4.4`, then activate it with `. "$CORE_DIR/bin/activate"`
-and follow the [Quickstart](quickstart.md).
-
-### Alternatively, install as a tool
-
-With uv already installed, use this **instead of** pip:
-
-<!-- install:uv -->
-```sh
-uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.4}-py3-none-any.whl"
-```
-
-Or, with pipx already installed, use:
-
-<!-- install:pipx -->
-```sh
-pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.4}-py3-none-any.whl"
-```
-
-Use the executable path reported by that tool, then check `apizr --version`.
-Do not install plugins with `pipx inject` or manually edit a uv tool environment.
-The profile example below uses the principal pip path (`$CORE_DIR/bin/apizr`);
-for tool installations use that reported Apizr executable instead.
+The **durable GitHub release assets** include the packages, plugin catalog,
+locks and dependencies for each [supported target](#supported-targets).
+[Prepare a verified installation workspace](../contributing/verification.md#prepare-a-verified-installation-workspace)
+once, then return here to choose a profile. That advanced procedure covers
+hash checks and `gh attestation verify`; normal core installation above does
+not need those files.
 
 ## Choose a plugin profile
 
@@ -208,13 +111,15 @@ for existing core workflows and does not install that plugin.
 
 | Profile | Plugins | Additional prerequisites when used |
 | --- | --- | --- |
-| `mcp` | outerspace-apizr-mcp | An MCP client; Python SDK proof needs no AI account |
+| `mcp` | outerspace-apizr-mcp | An MCP client (the Python example needs no AI account) |
 | `oci` | outerspace-apizr-oci | Docker Engine and Buildx for build/push |
 | `delivery` | outerspace-apizr-oci and outerspace-apizr-attest | Docker/Buildx; Continuum Attest for receipts; ORAS for proof transport |
 
-From the verified installation workspace, choose **one** profile and absent plan
-and plugin-store directories. The commands below are offline and reuse exported
-requirements. Choose `oci` or `delivery` instead of `mcp` for those paths:
+First [prepare the installation files](#obtain-the-installation-files). Keep
+that workspace and terminal open: the commands below use its `TARGET`, `CORE_DIR`
+and `APIZR_VERSION` variables. Set `CORE_DIR` to your existing core environment
+if you installed it elsewhere. Choose **one** profile and new plan/plugin-store
+directories. Use `oci` or `delivery` instead of `mcp` when needed:
 
 ```sh
 export PROFILE=mcp
@@ -248,12 +153,57 @@ provides a complete project, operator grant and client configuration. The
 guides explain explicit image publication and signing permissions. These are
 trusted programs running with user rights, not a universal sandbox.
 
+<details markdown="1">
+<summary>Offline core installation with pip, uv or pipx</summary>
+
+<span id="install-the-candidate-with-pip"></span>
+
+## Install the core offline
+
+Use this alternative only when you need an offline installation. First
+[prepare the installation workspace](../contributing/verification.md#prepare-a-verified-installation-workspace).
+Its `PYTHON`, `CORE_DIR`, `TARGET` and `CANDIDATE` variables are used below.
+The interpreter must match the target export's Python minor version.
+
+<!-- install:pip -->
+```sh
+"$PYTHON" -m venv "$CORE_DIR"
+"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.4}-py3-none-any.whl"
+"$CORE_DIR/bin/apizr" --version
+```
+
+Observe `outerspace-apizr 0.4.4`, then activate it with `. "$CORE_DIR/bin/activate"`
+and follow the [Quickstart](quickstart.md).
+
+### Alternatively, install as a tool
+
+With uv already installed, use this **instead of** pip:
+
+<!-- install:uv -->
+```sh
+uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.4}-py3-none-any.whl"
+```
+
+Or, with pipx already installed, use:
+
+<!-- install:pipx -->
+```sh
+pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.4}-py3-none-any.whl"
+```
+
+Use the executable path reported by that tool, then check `apizr --version`.
+Do not install plugins with `pipx inject` or manually edit a uv tool environment.
+The profile example below uses the principal pip path (`$CORE_DIR/bin/apizr`);
+for tool installations use that reported Apizr executable instead.
+
+</details>
+
 ## Supported targets
 
-Choose the release export pattern and interpreter for your machine. Final exports
-will be listed in the final release inventory after qualification/publication;
-patterns below do not claim that final assets already exist. Each export records
-its exact patch version and architecture.
+The published 0.4.4 release includes the following dependency exports for offline
+and plugin installation. Each records the exact Python patch version it supports.
+Choose the matching interpreter and export; the table is not a Windows or Intel
+macOS compatibility claim.
 
 | System / architecture | Python | Release export pattern |
 | --- | --- | --- |
@@ -273,3 +223,6 @@ Those builds have their own identities and cannot replace approved release bytes
 Review [plugin locks](../reference/project-plugin-locks.md) and
 [operator permissions](../reference/operator-policy.md) before replacing
 development locks, grants or activations.
+
+For publication status and changes in this version, see the
+[0.4.4 release notes](../releases/0.4.4.md).

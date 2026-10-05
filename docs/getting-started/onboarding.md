@@ -1,9 +1,17 @@
+---
+title: Initialize and check a local project
+description: Set up Apizr in your Python project, check its configuration and choose the functions to expose.
+---
+
 # Initialize and check a local project
 
-The **published Apizr 0.4.2 release** adds an optional first-run path:
-[install Apizr](install.md)
-→ `apizr init` → `apizr doctor` → [Quickstart](quickstart.md).
-Manual configurations remain supported; initialization is not mandatory.
+Use `apizr init` to create a starting configuration in your own Python project,
+then `apizr doctor` to check it. [Install Apizr](install.md) first. If you want
+to try a complete example before configuring your project, follow the
+[Quickstart](quickstart.md).
+
+Watch the [inspection walkthrough](user-guide/inspect.md) for a project example
+using `init`, `doctor`, `scan` and `inspect`.
 
 ## Initialize an existing directory
 
@@ -30,11 +38,9 @@ apizr.toml
 .apizr/policies/exposure.json
 ```
 
-The existing `apizr.project/v1` configuration defaults to root `.` and scan source
-roots `["."]`. Explicit roots use `ScanPolicy`: duplicates normalize, overlapping
-roots are refused. Up to 128 roots of 256 UTF-8 bytes each are accepted. Init
-does not guess a `src/` layout, read packaging metadata, analyze source or install
-plugins.
+The directory must already exist. If it has an Apizr configuration, review that
+configuration instead of running `init` again. Use `--source-root` to point to
+folders such as `src` or `app`; Apizr does not guess your project layout.
 
 Readiness and exposure use **direct** execution, requiring neither Docker nor a
 plugin and providing no runtime isolation. Exposure enables REST/MCP formats but
@@ -47,6 +53,15 @@ operator authority and no command discovers it automatically. Pass
 `--operator-policy` explicitly. After moving the project, review and explicitly
 replace its local root grant.
 
+<details markdown="1">
+<summary>Initialization limits and recovery</summary>
+
+The existing `apizr.project/v1` configuration defaults to root `.` and scan source
+roots `["."]`. Explicit roots use `ScanPolicy`: duplicates normalize, overlapping
+roots are refused. Up to 128 roots of 256 UTF-8 bytes each are accepted. Init
+does not guess a `src/` layout, read packaging metadata, analyze source or install
+plugins.
+
 The target must exist and cannot traverse a symlink. Existing `apizr.toml`, any
 `.apizr` content, or stale `.apizr-init.stage` state causes refusal. Files are
 staged privately, destinations reserved exclusively and `apizr.toml` published
@@ -54,6 +69,8 @@ last. Caught failures before publication roll back owned files; an interruption
 after publication preserves the complete configuration. A process crash can leave
 an unaccepted `.apizr` tree or staging directory. Preserve and inspect them before
 manual recovery; init refuses to merge or overwrite them. It never runs Git.
+
+</details>
 
 ## Review, then select
 
@@ -69,10 +86,12 @@ Review capability IDs, then explicitly edit `selection.include` in
 [repository exposure workflow](user-guide/exposure.md). Init and doctor never
 select or expose capabilities.
 
-## Diagnose explicit local preparation
+## Check your setup {#diagnose-explicit-local-preparation}
 
-Doctor defaults to `core` and an ordered human report. `--json` emits canonical
-`apizr.doctor/v1` JSON. Repeat `--profile` for additional checks; core always runs.
+`apizr doctor` checks the core setup by default and explains what needs attention.
+An empty exposure selection is a warning until you choose your functions.
+Add a profile when using a plugin; core checks always run. Use `--json` for a
+machine-readable report.
 
 | Profile | Checks |
 | --- | --- |

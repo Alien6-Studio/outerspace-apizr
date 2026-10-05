@@ -1,3 +1,8 @@
+---
+title: Build and publish service images
+description: Build an OCI image from your REST or MCP bundle, then publish it to a registry.
+---
+
 # Build and publish REST and MCP service images
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
@@ -7,6 +12,24 @@ repository exposure bundle and publishes it through a separate, explicit `push`
 operation. It does not build governed execution workers or install business
 dependencies. Install and enable it explicitly;
 the minimal Apizr environment does not acquire Docker, REST or MCP dependencies.
+
+<details open markdown="1">
+<summary>Watch: Build an OCI image and call its MCP tool with Ollama · 8:21</summary>
+
+Follow a repository MCP bundle into an image, then use a small Python bridge to connect a local Ollama model to the container tool. The recording uses the 0.4.3 shop example; follow this guide for current commands.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=_PwRZeBN1fM" data-apizr-video="_PwRZeBN1fM" data-apizr-title="Build an OCI image and call its MCP tool with Ollama" aria-label="Play: Build an OCI image and call its MCP tool with Ollama">
+    <img src="../../assets/videos/tutorial-oci.jpg" width="480" height="360" loading="lazy" alt="Build an OCI image and call its MCP tool with Ollama — Alien6 Studio tutorial" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+English · [Open on YouTube](https://www.youtube.com/watch?v=_PwRZeBN1fM) ·
+[Alien6 Studio](https://www.youtube.com/@Alien6Studio).
+Use the written steps for the current release; a recording may show an earlier version.
+
+</details>
 
 ## Prerequisites and installation
 
@@ -40,22 +63,22 @@ uv build --wheel plugins/oci --out-dir "$work/plugin-wheels"
 cd "$work"
 uv venv --seed --python 3.14 prepare
 prepare/bin/python -m pip download --only-binary=:all: --dest plugin-wheels \
-  plugin-wheels/outerspace_apizr-0.4.1-py3-none-any.whl \
-  plugin-wheels/outerspace_apizr_oci-0.4.1-py3-none-any.whl
+  plugin-wheels/outerspace_apizr-0.4.4-py3-none-any.whl \
+  plugin-wheels/outerspace_apizr_oci-0.4.4-py3-none-any.whl
 uv venv --python 3.14 core
 uv pip install --python core/bin/python --offline --no-index \
-  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.1-py3-none-any.whl
+  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.4-py3-none-any.whl
 ```
 
 Create `lock_wheels.py` using the [shared wheel-lock recipe](#prepare-server-dependency-locks) below before continuing.
 
 ```sh
 prepare/bin/python lock_wheels.py plugin-wheels plugin.lock
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/outerspace_apizr_oci-0.4.1-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.1-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/outerspace_apizr_oci-0.4.4-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.4-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse plugin-wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-oci --version 0.4.1 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-oci --version 0.4.4 --plugins-dir "$work/plugins"
 ```
 
 The lock uses the existing restricted requirements syntax: `name==version

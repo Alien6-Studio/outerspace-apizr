@@ -1,3 +1,8 @@
+---
+title: Choose and install Apizr plugins
+description: Choose the MCP, container or delivery plugins you need and install them from an Apizr plugin catalog.
+---
+
 # Choose plugins from a catalog
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
@@ -10,44 +15,32 @@ versions; it contains no scripts, secrets, activation or execution permissions.
 
 ## Obtain a verified catalog
 
-The Linux/macOS **MCP server plugin** CI artifacts contain `catalog/catalogue.json`,
-`wheels/` (including `requirements/`) and the exported plans. Choose the artifact
-for your exact Python/platform target and the source commit you intend to use.
-For normal installation, use the durable release assets described in
-[Install Apizr](../getting-started/install.md).
-The commands below build local previews.
-The core and three official plugins declare `0.4.1`; use the source commit and
-SHA-256 values to distinguish builds. A matching version string alone does
-**not** establish artifact identity or qualification.
-
-To prepare and qualify these artifacts yourself, from a development checkout
-with uv and an installed Python, use a new directory outside the checkout:
+Use the catalog supplied with the [installation workspace](../contributing/verification.md#prepare-a-verified-installation-workspace)
+for your Python version and platform. In that same terminal, select its catalog
+and wheel directory:
 
 ```sh
-uv run --locked python scripts/smoke_mcp_server.py --output /tmp/apizr-catalog-proof
+export CATALOG="$TARGET/catalog/catalogue.json"
+export WHEELHOUSE="$TARGET/wheelhouse"
 ```
 
-Preparation explicitly builds the core and three plugins and obtains dependency
-wheels. It then generates the catalog from those inspected bytes, exports the
-profiles and tests an installed MCP server with a real client. Preparation may
-use the network; **catalog commands do not**. The wheels are retained and are
-not rebuilt between catalog generation and installation.
+The catalog contains the optional plugin profiles. It lets you choose a profile
+without preparing package lists or dependency locks yourself.
 
 ## Consult, choose and lock
 
-Extract the matching `mcp-stdio-OS-python-VERSION` artifact and enter its
-`_temp/mcp-proof/` directory. It contains `catalog/catalogue.json` and `wheels/`;
-test/coverage reports occupy another subtree. Use the `apizr` executable installed with these artifacts:
+List the available plugins, inspect one version, then create a new installation
+plan. These commands use the Apizr executable installed with the core:
 
 ```sh
-apizr plugins catalog list --catalog catalog/catalogue.json --json
-apizr plugins catalog show outerspace-apizr-mcp --version 0.4.1 \
-  --catalog catalog/catalogue.json --json
+apizr plugins catalog list --catalog "$CATALOG" --json
+apizr plugins catalog show outerspace-apizr-mcp --version 0.4.4 \
+  --catalog "$CATALOG" --json
 apizr plugins catalog resolve --profile mcp \
-  --catalog catalog/catalogue.json --wheelhouse ./wheels \
+  --catalog "$CATALOG" --wheelhouse "$WHEELHOUSE" \
   --output-dir ./plugin-plan --json
 apizr plugins lock check --project plugin-plan/apizr.toml \
-  --lock plugin-plan/apizr.plugins.lock.json --wheelhouse ./wheels --json
+  --lock plugin-plan/apizr.plugins.lock.json --wheelhouse "$WHEELHOUSE" --json
 ```
 
 | Profile | Selected installations | Purpose |
@@ -77,10 +70,10 @@ integrity, not author trust. A catalog cannot grant execution authority.
 
 ```sh
 apizr plugins sync --project plugin-plan/apizr.toml \
-  --lock plugin-plan/apizr.plugins.lock.json --wheelhouse ./wheels \
+  --lock plugin-plan/apizr.plugins.lock.json --wheelhouse "$WHEELHOUSE" \
   --plugins-dir ./trusted-plugins --json
 apizr plugins list --active --plugins-dir ./trusted-plugins --json
-apizr plugins enable outerspace-apizr-mcp --version 0.4.1 --plugins-dir ./trusted-plugins
+apizr plugins enable outerspace-apizr-mcp --version 0.4.4 --plugins-dir ./trusted-plugins
 ```
 
 `sync` uses installed uv offline, validates constraints and installs into separate
@@ -121,12 +114,13 @@ No automatic version fallback, download, subprocess, plugin import, store access
 or project mutation occurs during resolution.
 
 ```python
+import os
 from pathlib import Path
 from apizr.plugin_catalog import load_catalog, resolve_profile, select_entry
 
-catalog = load_catalog(Path("catalog/catalogue.json"))
-entry = select_entry(catalog, "outerspace-apizr-mcp", "0.4.1")
-result = resolve_profile(catalog, "mcp", Path("wheels"), Path("plugin-plan"))
+catalog = load_catalog(Path(os.environ["CATALOG"]))
+entry = select_entry(catalog, "outerspace-apizr-mcp", "0.4.4")
+result = resolve_profile(catalog, "mcp", Path(os.environ["WHEELHOUSE"]), Path("plugin-plan"))
 assert result.installation == "not_performed"
 ```
 
@@ -154,3 +148,37 @@ certify publisher identity, dependency constraints, external-tool availability o
 successful operation. CI qualifies MCP through its real SDK client and OCI/Attest
 through their existing disposable Docker/HTTPS-registry proofs. No registry or
 release is published by preparing a catalog.
+
+## Contributor catalog builds
+
+<details markdown="1">
+<summary>Build and inspect a development catalog</summary>
+
+The Linux/macOS **MCP server plugin** CI artifacts contain `catalog/catalogue.json`,
+`wheels/` (including `requirements/`) and the exported plans. Choose the artifact
+for your exact Python/platform target and the source commit you intend to use.
+For normal installation, use the durable release assets described in
+[Install Apizr](../getting-started/install.md).
+The commands below build local previews.
+The core and three official plugins declare `0.4.4`; use the source commit and
+SHA-256 values to distinguish builds. A matching version string alone does
+**not** establish artifact identity or qualification.
+
+To prepare and qualify these artifacts yourself, from a development checkout
+with uv and an installed Python, use a new directory outside the checkout:
+
+```sh
+uv run --locked python scripts/smoke_mcp_server.py --output /tmp/apizr-catalog-proof
+```
+
+Preparation explicitly builds the core and three plugins and obtains dependency
+wheels. It then generates the catalog from those inspected bytes, exports the
+profiles and tests an installed MCP server with a real client. Preparation may
+use the network; **catalog commands do not**. The wheels are retained and are
+not rebuilt between catalog generation and installation.
+
+When using these development artifacts instead of a published target export,
+set `CATALOG` to their `catalog/catalogue.json` and `WHEELHOUSE` to their `wheels/`
+directory before running the catalog commands above.
+
+</details>

@@ -5,7 +5,8 @@
   <link rel="describedby" type="application/json" href="{{ 'build-info.json' | url }}" />
   <meta name="apizr-source-commit" content="{{ config.extra.docs_build.source_commit }}" />
   <meta name="apizr-docs-status" content="{{ config.extra.docs_build.status }}" />
-  {% set share_title = config.site_name if not page or page.is_homepage else page.title ~ " · " ~ config.site_name %}
+  {% set page_title = page.meta.title or page.title if page else none %}
+  {% set share_title = page_title ~ " · " ~ config.site_name if page_title else config.site_name %}
   {% set share_description = page.meta.description if page and page.meta.description else config.site_description %}
   {% set share_url = page.canonical_url if page else config.site_url %}
   {% set share_image = config.site_url.rstrip('/') ~ '/assets/images/social-card.png' %}
@@ -25,4 +26,24 @@
   <meta name="twitter:description" content="{{ share_description | e }}" />
   <meta name="twitter:image" content="{{ share_image | e }}" />
   <meta name="twitter:image:alt" content="{{ share_alt | e }}" />
+  {% if page and page.is_homepage %}
+  <script type="application/ld+json">
+    {{ {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": config.site_name,
+      "url": config.site_url.rstrip('/') ~ '/',
+      "description": share_description,
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux, macOS",
+      "isAccessibleForFree": true,
+      "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+      "downloadUrl": "https://pypi.org/project/outerspace-apizr/",
+      "sameAs": [
+        "https://github.com/Alien6-Studio/outerspace-apizr",
+        "https://pypi.org/project/outerspace-apizr/"
+      ]
+    } | tojson }}
+  </script>
+  {% endif %}
 {% endblock %}

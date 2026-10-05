@@ -1,3 +1,8 @@
+---
+title: Inspect Python source
+description: Inspect a Python file or notebook, understand readiness states and decide which functions to expose.
+---
+
 # Inspect source without running it
 
 Use `apizr inspect` to inspect one Python file or notebook before deciding how to
@@ -12,6 +17,24 @@ apizr inspect examples/pricing.ipynb
 The default report shows logical source identity, source and IR digests, each
 capability's readiness, execution form, input/return limitations, unknown effects,
 and stable reason codes. Ordinary syntax or file errors appear on stderr.
+
+<details open markdown="1">
+<summary>Watch: Inspect a project and understand readiness · 4:11</summary>
+
+Follow doctor, scan and inspect on the Requests project, then understand why a function can be refused.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Ypgp8fCof0E" data-apizr-video="Ypgp8fCof0E" data-apizr-title="Inspect a project and understand readiness" aria-label="Play: Inspect a project and understand readiness">
+    <img src="../../../assets/videos/tutorial-inspect.jpg" width="480" height="360" loading="lazy" alt="Inspect a project and understand readiness — Alien6 Studio tutorial" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+English · [Open on YouTube](https://www.youtube.com/watch?v=Ypgp8fCof0E) ·
+[Alien6 Studio](https://www.youtube.com/@Alien6Studio).
+Use the written steps for the current release; a recording may show an earlier version.
+
+</details>
 
 ## Read the result
 
