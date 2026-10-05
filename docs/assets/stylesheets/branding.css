@@ -61,6 +61,10 @@
   border: 0;
 }
 
+.apizr-demo-video__cover img {
+  object-fit: cover;
+}
+
 .apizr-demo-video__play {
   position: absolute;
   bottom: 8%;

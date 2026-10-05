@@ -1,10 +1,15 @@
+---
+title: Analyze projects from an MCP client
+description: Use the optional Apizr MCP plugin to inspect Python projects and plan which functions to expose.
+---
+
 # Apizr as a local MCP server
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 The optional **outerspace-apizr-mcp** plugin exposes local analysis and planning
 through stdio. **Default mode remains read-only, with exactly three tools.**
-The **published Apizr 0.4.2 release** adds delivery only when the
+Delivery is available only when the
 operator supplies `--delivery-request` at startup. It does not generate bundles,
 build images, execute business functions, acquire Git sources or install plugins. A **generated business MCP
 server** exposes the capabilities you selected; this server exposes Apizr's

@@ -10,27 +10,25 @@ description: Connect selected Python functions to AI agents through MCP, or expo
 
 # Connect selected Python functions to AI agents through MCP, or expose them as REST APIs.
 
-Apizr is an **open-source capability compiler**. Analyze existing Python, choose
-the public functions, generate their interfaces and define how calls execute.
-Your business logic stays in Python.
+Reuse your Python code in an application or an AI assistant. Apizr reads your
+project, lets you choose the functions to expose, and generates a REST API or
+MCP server that you can inspect and run. Your business logic stays in Python.
 
-**[Apizr 0.4.4](releases/0.4.4.md) is the current stable release**, published and
-verified with its three optional plugins.
+**[Apizr 0.4.4](releases/0.4.4.md) is available.** Python 3.11–3.14 · Open source,
+GPL-3.0-or-later.
 
 <div class="apizr-home-actions" markdown="1">
 
 [Quickstart: MCP and REST calls](getting-started/quickstart.md){ .md-button .md-button--primary }
-[The full journey](getting-started/introduction.md){ .md-button }
+[Install Apizr](getting-started/install.md){ .md-button }
 
 </div>
 
 </div>
 
-See [Install Apizr](getting-started/install.md) for package availability and the
-installation steps for your chosen workflow. The [release notes](releases/0.4.4.md)
-describe **Apizr 0.4.4**, its functionality and publication status.
-
-Python 3.11–3.14 · GPL-3.0-or-later.
+Start with two Python functions and make your first calls in the
+[Quickstart](getting-started/quickstart.md). The core is enough: no plugin,
+Docker or AI account is needed for its REST and Python MCP examples.
 
   <section class="apizr-demo-section md-typeset" aria-labelledby="watch-apizr-in-action">
     <div class="apizr-demo-section__inner">
@@ -69,37 +67,32 @@ Python 3.11–3.14 · GPL-3.0-or-later.
 - **[Analyze a project from an MCP client](reference/apizr-mcp-server.md)** — install the optional analysis server; it does not run your functions.
 - **[Build and deliver a service](reference/oci-service-plugin.md)** — choose the OCI or delivery profile, then explicitly authorize remote publication and, if needed, [Attest proofs](reference/attest-delivery-plugin.md).
 
-Choose the core and optional plugins in the [installation guide](getting-started/install.md).
+See the [installation guide](getting-started/install.md) for package availability
+and optional plugins.
 
 ## Choose what becomes public
 
 <span id="discover-understand-assess"></span>
 <span id="select-expose"></span>
 
-Apizr scans code without executing it. **Readiness** is its assessment of whether
-the available evidence supports an interface. Your **exposure policy** explicitly
-selects the public functions: ready does not mean exposed.
+Apizr scans code without executing it and tells you which functions it can turn
+into an interface. You choose which ones become public. Their private helpers
+can be included without becoming endpoints or tools.
 
-A **bundle** contains the generated server, its contracts and the source needed
-by the selected functions. Support helpers can be included without becoming
-public. Start with [MCP tools](getting-started/quickstart.md#generate-the-mcp-bundle)
-or [REST endpoints](getting-started/quickstart.md#use-rest-instead), then explore
-[selection and policies](getting-started/user-guide/exposure.md).
+The generated **bundle** contains the server, its API or tool definitions and the
+source it needs. Start with [REST endpoints](getting-started/quickstart.md#use-rest-instead)
+or [MCP tools](getting-started/quickstart.md#generate-the-mcp-bundle), then use
+[your own repository](getting-started/onboarding.md).
 
 ## Decide how calls execute
 
 <span id="execute-with-an-explicit-boundary"></span>
 
-Generating a bundle is static analysis. Running that bundle executes your code.
-Use trusted source and dependencies. The Quickstart uses **direct** mode: functions
-run inside the server process, and no Docker is needed.
-
-For **governed** execution, an **execution policy** chooses a fresh process or
-container per call and the required limits. Local workers provide bounds and
-cleanup, but do not isolate files or network access. OCI adds reviewed container
-controls, not a VM or an untrusted-code guarantee. See
-[execution boundaries](architecture/governed-repository-runtime.md) and the
-[optional strict OCI profile](architecture/subprocess-deny.md).
+The Quickstart runs trusted functions inside the generated server. For fresh
+workers, timeouts or container execution, continue with
+[execution policies](getting-started/user-guide/execute.md). Running a generated
+server executes your Python code; static analysis does not make unfamiliar code
+safe to run.
 
 ## Find the right server and guide
 
@@ -112,3 +105,6 @@ project code.
 - [REST](getting-started/user-guide/rest.md) and [MCP](getting-started/user-guide/mcp.md): modern single-source workflows.
 - [Legacy pipeline — compatibility](getting-started/user-guide/apizr.md): the historical notebook/script pipeline.
 - [Release notes](releases/0.4.4.md) and [compatibility](getting-started/developer-guide/releases.md).
+
+Want to improve Apizr? The [contributor guide](about/CONTRIBUTING.md) covers
+development setup, tests and pull requests.

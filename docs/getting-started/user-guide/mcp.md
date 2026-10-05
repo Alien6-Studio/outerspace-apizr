@@ -1,12 +1,36 @@
+---
+title: Generate an MCP server
+description: Expose Python functions as MCP tools and call them from a Python client or an AI assistant.
+---
+
 # Generate MCP from a Python file or notebook {#generate-an-mcp-server}
 
 For a multi-module repository, use [REST/MCP from a repository](exposure.md)
 or the [repository Quickstart](../quickstart.md). This guide takes one Python file
 or notebook as its input.
 
-`apizr generate mcp` exposes readiness-approved functions as Tools for MCP clients.
-It consumes the same static capability and input contracts as REST generation.
-It does not execute your source while generating files.
+[Install Apizr](../install.md), then generate an MCP server from your selected
+Python functions. You can call it from an MCP client or an AI assistant.
+Generation reads your source without running it; the server runs your functions
+when a client calls them.
+
+<details markdown="1">
+<summary>Watch: Generate MCP tools and call them with Python · 5:09</summary>
+
+Expose color conversions from TheAlgorithms/Python, discover the tools and handle their results with the official MCP Python client.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=rJThRd9vq4g" data-apizr-video="rJThRd9vq4g" data-apizr-title="Generate MCP tools and call them with Python" aria-label="Play: Generate MCP tools and call them with Python">
+    <img src="../../../assets/videos/tutorial-mcp.jpg" width="480" height="360" loading="lazy" alt="Generate MCP tools and call them with Python — Alien6 Studio tutorial" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+English · [Open on YouTube](https://www.youtube.com/watch?v=rJThRd9vq4g) ·
+[Alien6 Studio](https://www.youtube.com/@Alien6Studio).
+Use the written steps for the current release; a recording may show an earlier version.
+
+</details>
 
 ## Inspect and generate
 
@@ -40,6 +64,73 @@ non-eligible selections fail. Without selection, any conditional, unsupported or
 ambiguous callable declaration prevents generation. There is no unsafe override.
 Use an empty physical directory without symlink components; existing user files
 are never overwritten.
+
+## Run trusted source
+
+Starting a direct-mode server **imports and executes the bundled source**; a governed server defers that import to its worker on each call. Run
+only source and dependencies you trust. Readiness is not a security sandbox or an
+execution approval.
+
+```bash
+cd generated-mcp
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python server.py --transport stdio
+```
+
+For a local HTTP endpoint instead:
+
+```bash
+.venv/bin/python server.py --transport streamable-http --port 8000
+```
+
+Connect to `http://127.0.0.1:8000/mcp`. Both transports use the official Python MCP
+SDK v2 and target protocol `2026-07-28`. The same generated files serve both. The
+server binds locally by default; exposing it remotely requires your deployment's
+access-control policy.
+
+The runtime environment needs no Apizr installation. `requirements.txt` declares
+`mcp>=2.2,<3`, AnyIO and Uvicorn. Source dependencies are not inferred or bundled.
+
+## Call a Tool with the official SDK
+
+With the HTTP server running, use the official SDK client in another process:
+
+```python
+import asyncio
+
+from mcp import Client
+
+
+async def main():
+    async with Client("http://127.0.0.1:8000/mcp") as client:
+        print((await client.list_tools()).tools)
+        result = await client.call_tool("calculate", {"prices": [10, 20]})
+        if result.is_error:
+            raise RuntimeError(result.content)
+        print(result.structured_content)  # {"total": 30.0, "currency": "EUR"}
+
+
+asyncio.run(main())
+```
+
+The omitted currency uses Python's default. Explicit null is accepted only for
+nullable or unconstrained inputs. Extra fields and invalid types return a Tool
+error. Positional-only inputs remain object fields in MCP; the adapter reconstructs
+the Python call. Supplying a later optional positional-only field requires its
+preceding positional-only fields, exactly as in REST.
+
+Object results stay unchanged. Other finite JSON results use an object envelope:
+`25.0` becomes `{"result": 25.0}`, a list becomes `{"result": [...]}`, and `None`
+becomes `{"result": null}`. Read the value from `result.structured_content["result"]`
+for these functions. The text content serializes the same object. This correction
+requires regenerating older bundles that emit bare values, which strict clients
+can reject. See the [result contract](../../architecture/mcp-generator-v1.md#results-and-public-errors).
+
+Sync and async functions work. Results must be finite JSON-compatible values;
+declared return annotations do not constrain them. Unsupported results and
+unexpected exceptions produce `Tool execution failed` without internal exception
+details. The server does not assign safety annotations because effects are unknown.
 
 ## Choose direct or governed execution
 
@@ -84,71 +175,6 @@ same SDK v2 / MCP 2026-07-28 contract and finite JSON result rules as direct MCP
 See [governed transport architecture](../../architecture/governed-transport-runtime-v1.md)
 and the [execution policy guide](execute.md) for defaults, limits, environment
 allowlists and the precise trust boundary.
-
-## Run trusted source
-
-Starting a direct-mode server **imports and executes the bundled source**; a governed server defers that import to its worker on each call. Run
-only source and dependencies you trust. Readiness is not a security sandbox or an
-execution approval.
-
-```bash
-cd generated-mcp
-uv venv
-uv pip install --python .venv/bin/python -r requirements.txt
-.venv/bin/python server.py --transport stdio
-```
-
-For a local HTTP endpoint instead:
-
-```bash
-.venv/bin/python server.py --transport streamable-http --port 8000
-```
-
-Connect to `http://127.0.0.1:8000/mcp`. Both transports use the official Python MCP
-SDK v2 and target protocol `2026-07-28`. The same generated files serve both. The
-server binds locally by default; exposing it remotely requires your deployment's
-access-control policy.
-
-The runtime environment needs no Apizr installation. `requirements.txt` declares
-`mcp>=2.2,<3`, AnyIO and Uvicorn. Source dependencies are not inferred or bundled.
-
-## Call a Tool with the official SDK
-
-With the HTTP server running, use the official SDK client in another process:
-
-```python
-import asyncio
-
-from mcp import Client
-
-
-async def main():
-    async with Client("http://127.0.0.1:8000/mcp") as client:
-        print((await client.list_tools()).tools)
-        result = await client.call_tool("calculate", {"prices": [10, 20]})
-        print(result.structured_content)  # {"total": 30.0, "currency": "EUR"}
-
-
-asyncio.run(main())
-```
-
-The omitted currency uses Python's default. Explicit null is accepted only for
-nullable or unconstrained inputs. Extra fields and invalid types return a Tool
-error. Positional-only inputs remain object fields in MCP; the adapter reconstructs
-the Python call. Supplying a later optional positional-only field requires its
-preceding positional-only fields, exactly as in REST.
-
-Object results stay unchanged. Other finite JSON results use an object envelope:
-`25.0` becomes `{"result": 25.0}`, a list becomes `{"result": [...]}`, and `None`
-becomes `{"result": null}`. Read the value from `result.structured_content["result"]`
-for these functions. The text content serializes the same object. This correction
-requires regenerating older bundles that emit bare values, which strict clients
-can reject. See the [result contract](../../architecture/mcp-generator-v1.md#results-and-public-errors).
-
-Sync and async functions work. Results must be finite JSON-compatible values;
-declared return annotations do not constrain them. Unsupported results and
-unexpected exceptions produce `Tool execution failed` without internal exception
-details. The server does not assign safety annotations because effects are unknown.
 
 ## Inspect the generated files
 

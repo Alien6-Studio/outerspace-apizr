@@ -1,6 +1,6 @@
 # Client collections
 
-The **published Apizr 0.4.2 release** generates local Postman, Bruno
+Apizr generates local Postman, Bruno
 and Insomnia collections from an existing Apizr REST bundle:
 
 ```text
@@ -12,7 +12,7 @@ First produce the bundle using [repository exposure](exposure.md) or the
 artifacts; it does not rescan, import or execute the original project.
 
 Install the optional `clients` extra with
-`python -m pip install "outerspace-apizr[clients]==0.4.2"`. Contributors can use
+`python -m pip install "outerspace-apizr[clients]==0.4.4"`. Contributors can use
 `uv sync --extra clients` in the development checkout. The extra supplies PyYAML;
 the minimal core still requires only Pydantic. Apizr does not install client apps.
 
