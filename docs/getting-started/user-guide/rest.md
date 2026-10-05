@@ -1,6 +1,6 @@
 ---
-title: Generate a REST API
-description: Generate a REST API from Python, run it in a separate environment and call it with curl.
+title: Generate a REST API from Python
+description: Turn Python code or a notebook into a FastAPI REST API with Apizr. Follow a working example and video tutorial, then call your API with curl.
 ---
 
 # Generate REST from a Python file or notebook {#generate-a-rest-interface}

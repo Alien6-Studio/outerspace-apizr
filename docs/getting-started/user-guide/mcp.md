@@ -1,6 +1,6 @@
 ---
-title: Generate an MCP server
-description: Expose Python functions as MCP tools and call them from a Python client or an AI assistant.
+title: Generate an MCP server from Python
+description: Turn Python functions into MCP tools for AI assistants. Follow a working example and video tutorial to generate a server and make your first calls.
 ---
 
 # Generate MCP from a Python file or notebook {#generate-an-mcp-server}

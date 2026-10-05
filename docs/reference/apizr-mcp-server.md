@@ -1,19 +1,21 @@
 ---
-title: Analyze projects from an MCP client
-description: Use the optional Apizr MCP plugin to inspect Python projects and plan which functions to expose.
+title: Apizr MCP server for Python project analysis
+description: Explore Python projects from your AI assistant with Apizr's MCP plugin. Inspect code, check readiness and choose the functions to expose.
 ---
 
 # Apizr as a local MCP server
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
-The optional **outerspace-apizr-mcp** plugin exposes local analysis and planning
-through stdio. **Default mode remains read-only, with exactly three tools.**
-Delivery is available only when the
-operator supplies `--delivery-request` at startup. It does not generate bundles,
-build images, execute business functions, acquire Git sources or install plugins. A **generated business MCP
-server** exposes the capabilities you selected; this server exposes Apizr's
-compiler operations. They are different applications.
+Let your AI assistant explore a Python project with the optional
+**outerspace-apizr-mcp** plugin. It can inspect code, check which functions are
+ready to expose, and prepare a plan. By default, it is read-only and does not
+execute your project's functions.
+
+Find the plugin on [Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr)
+or the [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Alien6-Studio%2Fouterspace-apizr).
+To make your own functions callable by an assistant, use the
+[MCP generation guide](../getting-started/user-guide/mcp.md).
 
 ## Install and activate explicitly
 
@@ -174,25 +176,15 @@ as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
 
 <span id="directory-integration-043"></span>
 
-## Directory integration (0.4.4)
+## Use the directory launcher {#directory-integration-044}
 
-OuterSpace Apizr remains a local stdio capability compiler. The
-Official MCP Registry identity is
-`io.github.Alien6-Studio/outerspace-apizr`. The matching `mcp-name` marker lives
-in the published MCP package README.
-The published **0.4.4** descriptor matches the exact tagged source and the
-coordinated PyPI packages. The [release record](../releases/0.4.4.md) identifies
-the successful package and directory publication workflows. Earlier versions
-retain their original descriptors and package identities.
+The [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Alien6-Studio%2Fouterspace-apizr)
+lists Apizr as `io.github.Alien6-Studio/outerspace-apizr`.
+[Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr) also lists its
+three analysis tools and their inputs.
 
-The new package command `outerspace-apizr-mcp` accepts the same arguments as
-`apizr mcp serve`. It delegates to that launcher and selects the already
-installed, explicitly activated plugin through the existing admission checks.
-Installing the launcher through `uvx` does not prepare or activate the separate
-plugin store. The minimal core environment remains separate from the MCP SDK.
-
-After installing and activating the verified 0.4.4 MCP
-profile, the descriptor resolves to this command:
+After [installing and activating the MCP profile](../getting-started/install.md#choose-a-plugin-profile),
+you can start it with:
 
 ```sh
 uvx outerspace-apizr-mcp@0.4.4 \
@@ -201,26 +193,12 @@ uvx outerspace-apizr-mcp@0.4.4 \
   --plugins-dir /absolute/plugins
 ```
 
-All three paths are supplied by the operator. The descriptor exposes no
-delivery argument or remote endpoint. Missing authority or an absent/inactive
-plugin is refused; startup never installs, activates or repairs a plugin.
-The published 0.4.2 package lacks this console command: continue to use
-`apizr mcp serve` for that version.
+Replace the three paths with your project, permissions file and plugin directory.
+This starts a local server; it does not install or activate the managed plugin.
+For version 0.4.2, use `apizr mcp serve` instead.
 
-The published descriptor and package ownership marker are validated. The public
-PyPI launcher passed both MCP protocol modes and all three read-only tool calls.
-Official Registry publication uses the manually dispatched `Publish MCP Registry`
-workflow after master integration. GitHub Actions OIDC authenticates the repository
-owner without a personal token. The workflow checks the public release, immutable
-source and matching package version before publishing the exact descriptor.
-PyPI and GitHub release delivery are complete.
-See the Registry's [authentication requirements](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/authentication.mdx).
-
-The root `glama.json` declares the verified GitHub maintainer. The
-[Glama listing](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr)
-now exposes all three read-only tools and their schemas after successful
-inspection. The inspection used the public sample project and explicit policy;
-no hosted server was deployed.
+Contributors can find publication checks in the
+[release record](../contributing/verification.md#044-publication-record).
 
 ## Tools and results
 

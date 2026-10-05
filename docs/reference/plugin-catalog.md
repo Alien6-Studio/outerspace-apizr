@@ -1,3 +1,8 @@
+---
+title: Choose and install Apizr plugins
+description: Choose the MCP, container or delivery plugins you need and install them from an Apizr plugin catalog.
+---
+
 # Choose plugins from a catalog
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).

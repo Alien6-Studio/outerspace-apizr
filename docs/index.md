@@ -1,18 +1,20 @@
 ---
 template: home.html
-title: Connect Python functions to AI agents and REST APIs
-description: Connect selected Python functions to AI agents through MCP, or expose them as REST APIs. Start with a working example and choose the interfaces you need.
+title: Python to REST APIs and MCP servers
+description: Turn Python code and notebooks into REST APIs and MCP tools with Apizr. Open source, with practical guides and video tutorials to get you started.
 ---
 
 <div class="apizr-home-intro" markdown="1">
 
 <span id="apizr"></span>
 
-# Connect selected Python functions to AI agents through MCP, or expose them as REST APIs.
+# Turn Python code into REST APIs and MCP tools
 
-Reuse your Python code in an application or an AI assistant. Apizr reads your
-project, lets you choose the functions to expose, and generates a REST API or
-MCP server that you can inspect and run. Your business logic stays in Python.
+Make your Python functions available to applications and AI assistants.
+Apizr reads your code, lets you choose what to share, and generates a REST API
+or an MCP server. Your business logic stays in Python.
+
+MCP (Model Context Protocol) lets AI assistants discover and use tools.
 
 **[Apizr 0.4.4](releases/0.4.4.md) is available.** Python 3.11–3.14 · Open source,
 GPL-3.0-or-later.
@@ -63,9 +65,9 @@ Docker or AI account is needed for its REST and Python MCP examples.
 
 ## Choose your next step
 
-- **[Expose your Python functions](getting-started/quickstart.md)** — generate a business MCP server or REST API.
-- **[Analyze a project from an MCP client](reference/apizr-mcp-server.md)** — install the optional analysis server; it does not run your functions.
-- **[Build and deliver a service](reference/oci-service-plugin.md)** — choose the OCI or delivery profile, then explicitly authorize remote publication and, if needed, [Attest proofs](reference/attest-delivery-plugin.md).
+- **[Make your first calls](getting-started/quickstart.md)** — turn Python functions into REST endpoints or MCP tools.
+- **[Explore a project with an AI assistant](reference/apizr-mcp-server.md)** — use Apizr's optional analysis plugin.
+- **[Package a service for deployment](reference/oci-service-plugin.md)** — build a container image and publish it to your registry.
 
 See the [installation guide](getting-started/install.md) for package availability
 and optional plugins.
@@ -94,17 +96,18 @@ workers, timeouts or container execution, continue with
 server executes your Python code; static analysis does not make unfamiliar code
 safe to run.
 
-## Find the right server and guide
+<span id="find-the-right-server-and-guide"></span>
 
-The **generated MCP server** serves your selected Python functions. The separate
-**[Apizr analysis MCP server](reference/apizr-mcp-server.md)**
-lets a client inspect repositories and prepare exposure plans without executing
-project code.
+## Explore the MCP ecosystem
 
-- [The full journey](getting-started/introduction.md): understand each stage and use your own code.
-- [REST](getting-started/user-guide/rest.md) and [MCP](getting-started/user-guide/mcp.md): modern single-source workflows.
-- [Legacy pipeline — compatibility](getting-started/user-guide/apizr.md): the historical notebook/script pipeline.
-- [Release notes](releases/0.4.4.md) and [compatibility](getting-started/developer-guide/releases.md).
+Find Apizr's analysis plugin on
+[Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr) and the
+[official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Alien6-Studio%2Fouterspace-apizr).
+It helps an assistant explore your project. To let an assistant call your own
+functions, follow the [MCP guide](getting-started/user-guide/mcp.md).
+
+Watch the tutorials throughout these guides or visit
+[Alien6 Studio on YouTube](https://www.youtube.com/@Alien6Studio).
 
 Want to improve Apizr? The [contributor guide](about/CONTRIBUTING.md) covers
 development setup, tests and pull requests.
