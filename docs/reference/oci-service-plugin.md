@@ -13,7 +13,7 @@ operation. It does not build governed execution workers or install business
 dependencies. Install and enable it explicitly;
 the minimal Apizr environment does not acquire Docker, REST or MCP dependencies.
 
-<details markdown="1">
+<details open markdown="1">
 <summary>Watch: Build an OCI image and call its MCP tool with Ollama · 8:21</summary>
 
 Follow a repository MCP bundle into an image, then use a small Python bridge to connect a local Ollama model to the container tool. The recording uses the 0.4.3 shop example; follow this guide for current commands.

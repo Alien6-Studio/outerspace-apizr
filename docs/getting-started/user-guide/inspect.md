@@ -18,7 +18,7 @@ The default report shows logical source identity, source and IR digests, each
 capability's readiness, execution form, input/return limitations, unknown effects,
 and stable reason codes. Ordinary syntax or file errors appear on stderr.
 
-<details markdown="1">
+<details open markdown="1">
 <summary>Watch: Inspect a project and understand readiness · 4:11</summary>
 
 Follow doctor, scan and inspect on the Requests project, then understand why a function can be refused.

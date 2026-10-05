@@ -14,7 +14,7 @@ Python functions. You can call it from an MCP client or an AI assistant.
 Generation reads your source without running it; the server runs your functions
 when a client calls them.
 
-<details markdown="1">
+<details open markdown="1">
 <summary>Watch: Generate MCP tools and call them with Python · 5:09</summary>
 
 Expose color conversions from TheAlgorithms/Python, discover the tools and handle their results with the official MCP Python client.

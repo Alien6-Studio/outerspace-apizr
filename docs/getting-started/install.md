@@ -44,7 +44,7 @@ easier to follow for a first try because it keeps an explicit `core/` directory.
 
 </details>
 
-<details markdown="1">
+<details open markdown="1">
 <summary>Watch: Install Apizr with pip, uv, pipx or Homebrew · 6:39</summary>
 
 Compare the installation methods and check which Apizr executable you are using. The Homebrew segment shows a reinstall; for a fresh setup, use the install command below.

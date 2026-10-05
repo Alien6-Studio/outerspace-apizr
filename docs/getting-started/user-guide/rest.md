@@ -13,7 +13,7 @@ or notebook as its input.
 file into a FastAPI application. It includes an OpenAPI description and a copy of
 your selected source. Generation does not run the source.
 
-<details markdown="1">
+<details open markdown="1">
 <summary>Watch: Generate a REST API and make HTTP calls · 4:14</summary>
 
 Expose gcd and lcm from keon/algorithms, start the server and try successful requests and an invalid input.
