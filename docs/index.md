@@ -98,6 +98,12 @@ safe to run.
 
 <span id="find-the-right-server-and-guide"></span>
 
+## Tools using Apizr
+
+- **[Trunx](https://trunx.io/)** — a private registry for software packages and
+  container images. Trunx uses Apizr to publish REST and MCP services and manage
+  their delivery approvals.
+
 ## Explore the MCP ecosystem
 
 Find Apizr's analysis plugin on
