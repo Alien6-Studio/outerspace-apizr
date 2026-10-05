@@ -5,7 +5,8 @@
   <link rel="describedby" type="application/json" href="{{ 'build-info.json' | url }}" />
   <meta name="apizr-source-commit" content="{{ config.extra.docs_build.source_commit }}" />
   <meta name="apizr-docs-status" content="{{ config.extra.docs_build.status }}" />
-  {% set share_title = page.title ~ " · " ~ config.site_name if page and page.title else config.site_name %}
+  {% set page_title = page.meta.title or page.title if page else none %}
+  {% set share_title = page_title ~ " · " ~ config.site_name if page_title else config.site_name %}
   {% set share_description = page.meta.description if page and page.meta.description else config.site_description %}
   {% set share_url = page.canonical_url if page else config.site_url %}
   {% set share_image = config.site_url.rstrip('/') ~ '/assets/images/social-card.png' %}
