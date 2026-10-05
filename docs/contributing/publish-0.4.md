@@ -7,7 +7,7 @@ of that completed delivery**, not instructions to execute again. Do not rebuild,
 retag, republish or modify 0.4.0rc1. There will be no new final 0.4.0 publication.
 
 For future work follow the [current release procedure](releases.md) and
-[release-branch model](release-branches.md): stable 0.4.3 is published and verified; its immutable release-line evidence
+[release-branch model](release-branches.md): stable 0.4.4 is published and verified; its immutable protected-master evidence
 remains distinct from post-release master integration.
 Historical `REVIEWED_MASTER_RUN_ID` variables below describe the 0.4.0rc1 evidence only.
 

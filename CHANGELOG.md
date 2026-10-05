@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.4 — Unreleased
+## 0.4.4 — 2026-10-05
 
 - Export and verify existing capability/bundle JSON evidence without importing
   business code, optionally checking its exact existing OCI build lineage.

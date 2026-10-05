@@ -3,7 +3,16 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
-## Finalizing 0.4.4
+<span id="finalizing-044"></span>
+
+## Completed 0.4.4 finalization
+
+The protected procedure below completed for source
+`46c573d7f808f8d491cde1062d474b145288697f`, tag `v0.4.4`, CI `37222486067`
+and publisher `37223902790`. The [release record](../releases/0.4.4.md) retains
+public hashes, independent receipt/install verification and the separate
+Homebrew and external integration qualification boundaries. Do not replay this completed package
+publication or replace its archives.
 
 The [0.4.4 release record](../releases/0.4.4.md) defines the reviewed policy:
 **0.4.4 only, from protected master, on the exact final source commit**. Complete
@@ -29,11 +38,11 @@ merging the tap update.
 
 ## Current published baseline
 
-The current stable release is **0.4.3** for the core and all three plugins,
-source `cfaa5108c37ab9324297bbe5b38d90d537ea57ad`. Publication is complete.
-The original archives from protected release-line CI `37057658519` were published
-by workflow `37062660371`; all eight public files match the qualified bytes.
-See the [release record](../releases/0.4.3.md). Master integration and documentation
+The current stable release is **0.4.4** for the core and all three plugins,
+source `46c573d7f808f8d491cde1062d474b145288697f`. Publication is complete.
+The original archives from protected master CI `37222486067` were published
+by workflow `37223902790`; all eight public files match the qualified bytes.
+See the [release record](../releases/0.4.4.md). Master integration and documentation
 commits preserve the released product but never replace its immutable source.
 Documentation maintenance targets `master`.
 
@@ -63,8 +72,8 @@ signed provenance remain immutable. Do not replay qualification or package
 publication for this completed release. PR builds remain previews.
 
 Official MCP Registry publication is independent of the package workflow.
-After master integration, manually dispatch `Publish MCP Registry` for `v0.4.3`
-and its recorded source SHA. It verifies the public release and matching
+The completed 0.4.3 directory publication used `Publish MCP Registry` with
+`v0.4.3` and its recorded source SHA. The workflow verifies the public release and matching
 `server.json`, then authenticates with the repository's GitHub Actions OIDC
 identity. The public PyPI launcher and package ownership marker have passed
 validation. No personal token or rebuild is required.

@@ -32,7 +32,7 @@ dependencies. Installation by Apizr uses only the reviewed local wheelhouse.
 The SDK and a copy of the compiler belong to the plugin's separate environment;
 the minimal core receives neither MCP nor REST dependencies.
 
-For contributor verification builds of `0.4.3`, use the source checkout:
+For contributor verification builds of `0.4.4`, use the source checkout:
 
 ```sh
 work=$(mktemp -d)
@@ -49,7 +49,7 @@ prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
   -r dependencies.txt
 uv venv --no-python-downloads --python python3 core
 uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.3-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.4-py3-none-any.whl
 ```
 
 Record one exact version and SHA-256 per distribution, including the plugin,
@@ -73,11 +73,11 @@ for wheel in sorted(Path("wheels").glob("*.whl")):
     lines.append(f"{metadata['Name']}=={metadata['Version']} --hash=sha256:{digest}\n")
 Path("plugin.lock").write_text("".join(lines))
 PY
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.3-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.3-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.4-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.4-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.3 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.4 --plugins-dir "$work/plugins"
 ```
 
 Installation alone leaves the plugin inactive. The existing [locked installation
@@ -167,17 +167,18 @@ one-request `apizr.extension/v1` protocol and existing timeout. Internally, the
 MCP server uses that runtime for fresh, isolated **compiler calculations**, not
 as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
 
-## Directory integration (0.4.3)
+<span id="directory-integration-043"></span>
+
+## Directory integration (0.4.4)
 
 OuterSpace Apizr remains a local stdio capability compiler. The
 Official MCP Registry identity is
 `io.github.Alien6-Studio/outerspace-apizr`. The matching `mcp-name` marker lives
 in the published MCP package README.
-The published **0.4.3** identity and packages remain unchanged; see their
-[release record](../releases/0.4.3.md). The current root `server.json` prepares
-**0.4.4** alongside the four coordinated packages. Its separate directory
-publication requires the matching public release and exact source SHA; see the
-[0.4.4 record](../releases/0.4.4.md) for qualification and publication status.
+The published **0.4.4** descriptor matches the exact tagged source and the
+coordinated PyPI packages. The [release record](../releases/0.4.4.md) identifies
+the successful package and directory publication workflows. Earlier versions
+retain their original descriptors and package identities.
 
 The new package command `outerspace-apizr-mcp` accepts the same arguments as
 `apizr mcp serve`. It delegates to that launcher and selects the already
@@ -185,11 +186,11 @@ installed, explicitly activated plugin through the existing admission checks.
 Installing the launcher through `uvx` does not prepare or activate the separate
 plugin store. The minimal core environment remains separate from the MCP SDK.
 
-After installing and activating the verified 0.4.3 MCP
+After installing and activating the verified 0.4.4 MCP
 profile, the descriptor resolves to this command:
 
 ```sh
-uvx outerspace-apizr-mcp@0.4.3 \
+uvx outerspace-apizr-mcp@0.4.4 \
   --project /absolute/project/apizr.toml \
   --operator-policy /absolute/operator.json \
   --plugins-dir /absolute/plugins
