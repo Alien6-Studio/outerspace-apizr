@@ -23,6 +23,7 @@ MODULES = (
     "interfaces/model.py",
     "interfaces/serialization.py",
     "interfaces/runtime.py",
+    "interfaces/results.py",
     "execution/policy.py",
     "execution/invocation.py",
     "execution/protocol.py",
@@ -203,6 +204,7 @@ def govern(
         artifacts[path] = canonical_bytes(plan)
         plans[capability.capability_id] = PlanArtifact(path=path, digest=digest(plan))
     artifacts.pop("apizr_runtime.py")
+    artifacts.pop("apizr_results.py", None)
     artifacts.pop("apizr_repository_runtime.py")
     runtime_artifacts = runtime_files(transport)
     if isinstance(policy, ExecutionPolicyV2) and policy.subprocess.mode == "deny":

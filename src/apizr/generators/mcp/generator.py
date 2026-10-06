@@ -68,12 +68,17 @@ def render(
     )
     runtime = runtime.replace(
         "from apizr.interfaces.runtime import (", "from apizr_runtime import ("
-    )
+    ).replace("from apizr.interfaces.results import", "from apizr_results import")
     artifacts = {
         "server.py": runtime.encode("utf-8"),
         "apizr_runtime.py": files("apizr.interfaces")
         .joinpath("runtime.py")
         .read_bytes(),
+        "apizr_results.py": files("apizr.interfaces")
+        .joinpath("results.py")
+        .read_text(encoding="utf-8")
+        .replace("from apizr.interfaces.runtime import", "from apizr_runtime import")
+        .encode("utf-8"),
         contract.executable_path: executable,
         "capability-ir.json": ir_bytes(inspection.capability_ir),
         "readiness.json": readiness_bytes(inspection.readiness),
