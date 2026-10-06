@@ -40,8 +40,10 @@ source mapping. `graph_repository` keeps its original Catalog/Graph return
 contract. CLI discovery reads source once; all subsequent stages consume those
 same bytes, including when a file changes after discovery.
 
-Generation groups exact selected IDs by Inspection and uses the existing shared
-interface planner. It does not inspect or parse project source again. Existing
+Generation groups exact selected IDs by Inspection, enforces the shared validated
+repository eligibility decision, and uses the same invocation-contract lowering
+primitive as the single-source planner. The single-source planner still requires
+local eligibility. It does not inspect or parse project source again. Existing
 validation recomputes readiness conclusions **from bound artifacts**, and shared
 type lowering parses declared **annotation expressions**; neither operation
 reanalyzes source. Project code is never imported/executed, nor are environment
@@ -97,24 +99,30 @@ isolation is claimed. An explicit execution policy adds the independently versio
 [governed repository runtime](governed-repository-runtime.md), with a fresh local
 process or OCI container per invocation. Direct behavior remains unchanged.
 
-## Existing Readiness v1 limitation
+## Local imports and private implementation support
 
-Local/relative imports in a selected function or its module can make its local
-interface contract ineligible. `allow_conditional` does not override that
-contract. Repository bundling deliberately does not promote these cases to READY.
-Consequently, an exposed `api.quote` containing `from .pricing import calculate`
-is refused by the existing upstream pipeline. Supporting such selections needs
-an explicit Readiness evolution.
+A selected capability may use a uniquely resolved local import when the bound
+[Repository Readiness refinement](repository-readiness-v1.md#resolved-local-import-refinement)
+proves its binding and module initialization evidence. The source-local report
+still records `APIZR-READY-015`; repository eligibility does not forge an Inspection
+or set its local `can_generate_interface` to true. REST and MCP use the same
+repository decision and the same pure signature/type lowering as single-source
+generation. External, dynamic, ambiguous or otherwise unproven imports stay blocked.
 
-The fixture has three eligible selected capabilities, same bare names, a real
-package initializer and an unrelated module. Its selected API calls an unexposed
-helper that imports pricing relatively; this valid plan exercises cross-module
-support without exposing the helper. Readiness v1 assesses declarations locally
-and does not propagate the helper's conditional state to its caller. A separate
-`quote` function with a direct relative import is unselected and explicitly tested
-as refused. End-to-end tests consume real validated plans; additional loader tests
-exercise package/import integrity independently. Neither implies that Readiness
-permits arbitrary cross-module selections or proves transitive runtime safety.
+Selecting `facade.calculate` packages its `helper.py` support but does not create
+a route or Tool for `helper.double`. Required helpers need coherent bindings and
+execution evidence, not their own public JSON input contract. See the
+[user example](../getting-started/user-guide/exposure.md#use-private-helpers-from-the-same-repository).
+The complete inspected source universe is still copied; globally incomplete
+evidence is still refused. No transitive effect/state propagation, selected
+closure, runtime availability or safety claim is introduced.
+
+The historical fixture retains its real, nonempty package initializer and private
+cross-module helper. Its selected API remains eligible without propagating that
+helper's local state. The initializer has no callable Readiness evidence, so its
+unselected functions with direct relative imports remain conditional. Updated
+canonical report/manifest digests retain this additional uncertainty; public
+REST/MCP schemas and source-local reports do not change.
 
 ## Artifacts, output and verification
 

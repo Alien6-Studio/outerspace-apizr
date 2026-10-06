@@ -8,9 +8,10 @@ from apizr.exposure import ExposurePlan, ExposurePolicy, plan_digest, validate_p
 from apizr.exposure.policy import Interface
 from apizr.graph import Graph
 from apizr.graph.builder import validated_inputs
-from apizr.interfaces.planner import plan as invocation_plan
+from apizr.interfaces.planner import invocation_contract
 from apizr.repository import Catalog
 from apizr.repository_readiness import RepositoryReadinessReport
+from apizr.repository_readiness.eligibility import can_generate_interface
 
 from .errors import BundleRefused
 from .model import BundledSource, Capability, RepositoryInterface
@@ -79,6 +80,7 @@ def plan_repository_interface(
                 is_package=unit.is_package,
             )
         )
+    assessments = {a.capability_id: a for a in readiness.assessments}
     capabilities: list[Capability] = []
     for module, unit in sorted(units.items(), key=lambda item: item[0] or ""):
         selected = [
@@ -87,10 +89,16 @@ def plan_repository_interface(
         if not selected:
             continue
         assert unit.inspection is not None and module is not None
-        invocation = invocation_plan(
-            unit.inspection, sources[unit.path], select=selected
-        )
-        for contract in invocation.capabilities:
+        declarations = {c.id: c for c in unit.inspection.capability_ir.capabilities}
+        for identity in sorted(selected):
+            assessment = assessments[identity]
+            if not can_generate_interface(assessment):
+                raise BundleRefused(
+                    "APIZR-BUNDLE-006: repository interface is ineligible"
+                )
+            contract = invocation_contract(
+                declarations[identity], assessment.local_readiness
+            )
             public_name = ".".join(contract.capability_id.split(":")[1:])
             capabilities.append(
                 Capability(

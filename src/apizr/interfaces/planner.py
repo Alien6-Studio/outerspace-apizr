@@ -2,9 +2,10 @@
 
 from collections.abc import Sequence
 
-from apizr.capabilities.model import Digest, Source
+from apizr.capabilities.model import Capability, Digest, Source
 from apizr.capabilities.types import ValueModel
 from apizr.inspection import Inspection
+from apizr.readiness.model import Assessment
 
 from .model import Input, InvocationContract, TypeSpec
 from .schema import lower
@@ -24,6 +25,43 @@ class InterfacePlan(BoundSource):
 
 class GenerationRefused(ValueError):
     """Selected declarations lack readiness eligibility; nothing may be emitted."""
+
+
+def invocation_contract(
+    capability: Capability, assessment: Assessment
+) -> InvocationContract:
+    """Lower validated signature evidence after the caller enforces eligibility.
+
+    Single-source and repository planners own their distinct eligibility checks.
+    This primitive neither grants eligibility nor analyzes project source.
+    """
+    if (
+        capability.id != assessment.capability_id
+        or capability.source != assessment.source
+        or not assessment.in_ir
+    ):
+        raise ValueError("Invocation evidence disagrees with the capability")
+    if capability.execution not in ("sync", "async"):
+        raise ValueError("Inconsistent eligible IR execution form")
+    # Unknown outputs remain documentation; return annotations are not enforced.
+    returns = (
+        TypeSpec(kind="any")
+        if assessment.dimensions.outputs.reasons
+        else lower(capability.signature.returns.annotation)
+    )
+    return InvocationContract(
+        capability_id=capability.id,
+        name=capability.name,
+        execution="async" if capability.execution == "async" else "sync",
+        parameters=tuple(
+            Input(
+                name=p.name, kind=p.kind, required=p.required, type=lower(p.annotation)
+            )
+            for p in capability.signature.parameters
+        ),
+        returns=returns,
+        description=capability.docstring,
+    )
 
 
 def plan(
@@ -104,42 +142,15 @@ def plan(
             "Generation refused; select only eligible capabilities: "
             + "; ".join(details)
         )
-    endpoints: list[InvocationContract] = []
-    for identity in sorted(chosen):
-        capability = capabilities[identity]
-        if capability.execution not in ("sync", "async"):
-            raise ValueError("Inconsistent eligible IR execution form")
-        assessment = assessments[identity]
-        # Readiness already records when output semantics are unresolved. Do not
-        # resolve aliases or pretend this documentation adds return enforcement.
-        returns = (
-            TypeSpec(kind="any")
-            if assessment.dimensions.outputs.reasons
-            else lower(capability.signature.returns.annotation)
-        )
-        endpoints.append(
-            InvocationContract(
-                capability_id=identity,
-                name=capability.name,
-                execution="async" if capability.execution == "async" else "sync",
-                parameters=tuple(
-                    Input(
-                        name=p.name,
-                        kind=p.kind,
-                        required=p.required,
-                        type=lower(p.annotation),
-                    )
-                    for p in capability.signature.parameters
-                ),
-                returns=returns,
-                description=capability.docstring,
-            )
-        )
+    endpoints = tuple(
+        invocation_contract(capabilities[identity], assessments[identity])
+        for identity in sorted(chosen)
+    )
     return InterfacePlan(
         source=ir.source,
         executable_digest=Digest.of_bytes(executable),
         executable_path="source/" + "/".join(ir.source.module.split(".")) + ".py",
         ir_digest=inspected.ir_digest,
         readiness_digest=inspected.readiness_digest,
-        capabilities=tuple(endpoints),
+        capabilities=endpoints,
     )

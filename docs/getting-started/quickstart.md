@@ -257,3 +257,7 @@ calls and error handling with the Python client.
 ones to expose. Review its source and dependencies before running the generated
 service. Follow [The full journey](introduction.md) to understand each stage,
 or the [exposure guide](user-guide/exposure.md) for repository configuration.
+
+For the upcoming 0.4.5 release, your selected function can use statically resolvable
+[private helpers in other modules](user-guide/exposure.md#use-private-helpers-from-the-same-repository)
+without exposing those helpers.

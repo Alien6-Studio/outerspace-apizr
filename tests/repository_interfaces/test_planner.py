@@ -7,7 +7,6 @@ import pytest
 from analysis_authorization import analysis_policy
 
 from apizr.capabilities.model import Digest
-from apizr.exposure import ExposureRefused
 from apizr.generators.mcp.planner import tool_name
 from apizr.graph import analyze_repository
 from apizr.interfaces.planner import plan as invocation_plan
@@ -112,15 +111,20 @@ def test_contradiction_and_namespaces():
     assert "source/a/__init__.py" not in artifacts
 
 
-def test_current_readiness_local_import_boundary():
-    with pytest.raises(ExposureRefused):
-        evidence(
-            {
-                "a.py": b"from b import helper\ndef run(): return helper()\n",
-                "b.py": b"def helper(): return 2\n",
-            },
-            selected=("python:a:run",),
-        )
+@pytest.mark.parametrize("interface", ["rest", "mcp"])
+def test_repository_refines_the_local_import_boundary(interface):
+    values = evidence(
+        {
+            "a.py": b"from b import helper\ndef run(): return helper()\n",
+            "b.py": b"def helper(): return 2\n",
+        },
+        selected=("python:a:run",),
+    )
+    assessment = values[2].assessments[0]
+    assert assessment.local_readiness.state.value == "conditional"
+    assert not assessment.local_readiness.can_generate_interface
+    assert assessment.state.value == "ready"
+    assert render_repository_bundle(*values, interface=interface)
 
 
 def test_no_source_reanalysis(inputs, monkeypatch):

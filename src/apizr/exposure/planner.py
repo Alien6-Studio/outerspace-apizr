@@ -5,11 +5,15 @@ from typing import Literal
 from apizr.capabilities.types import ValueModel
 from apizr.graph.model import CapabilityNode, Graph, ModuleNode
 from apizr.graph.serialization import graph_digest
-from apizr.readiness.model import Assessment, State
+from apizr.readiness.model import State
 from apizr.repository.model import Catalog
 from apizr.repository.serialization import catalog_digest
 from apizr.repository_readiness import execution_compatibility, validate_report
-from apizr.repository_readiness.model import RepositoryReadinessReport
+from apizr.repository_readiness.eligibility import can_generate_interface
+from apizr.repository_readiness.model import (
+    DeclarationAssessment,
+    RepositoryReadinessReport,
+)
 from apizr.repository_readiness.policy import Mode
 from apizr.repository_readiness.serialization import report_digest
 
@@ -40,13 +44,13 @@ class ExposureRefused(ValueError):
         super().__init__("Requested exposure is refused by evidence/policy")
 
 
-def interface_compatibility(assessment: Assessment) -> dict[Interface, bool]:
+def interface_compatibility(assessment: DeclarationAssessment) -> dict[Interface, bool]:
     # These are the shared Interface Contract planner's authoritative eligibility
     # facts. Keep an explicit per-transport adapter so later contract versions can
     # diverge without assuming every transport always has identical eligibility.
     return {
-        "rest": assessment.can_generate_interface,
-        "mcp": assessment.can_generate_interface,
+        "rest": can_generate_interface(assessment),
+        "mcp": can_generate_interface(assessment),
     }
 
 
@@ -88,7 +92,7 @@ def plan_exposure(
                     code="ineligible", capability_id=identity, state=assessment.state
                 )
             )
-        compatibility = interface_compatibility(assessment.local_readiness)
+        compatibility = interface_compatibility(assessment)
         for interface in policy.interfaces:
             if not compatibility[interface]:
                 diagnostics.append(

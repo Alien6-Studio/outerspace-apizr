@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "repository-unproven-dependency-eligibility",
+        "src/apizr/repository_readiness/eligibility.py",
+        "                and reason.line in proven",
+        "                and True",
+        "tests/repository_interfaces/test_local_imports.py::test_external_dependency_is_not_admitted_even_with_complete_graph",
+    ),
+    Mutation(
         "oci-absence-http-status",
         "plugins/oci/src/apizr_oci/absence.py",
         "            if error.code != 404:",

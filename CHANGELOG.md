@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Consume proven local repository import evidence for REST/MCP generation,
+  allowing selected functions to call private same-repository helpers while
+  retaining conservative source-local Readiness and unresolved import refusals (#252).
+
 - Recursively normalize Python tuple results to JSON arrays in direct MCP and
   governed local/OCI workers, including repository bundles, preserving REST/MCP
   business-result parity and rejection of non-finite or unsupported values (#251).

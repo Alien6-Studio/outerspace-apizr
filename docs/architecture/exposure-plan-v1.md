@@ -69,9 +69,10 @@ empty: an empty plan is valid and the human report warns that nothing is planned
   `CONDITIONAL` records require `true`. `AMBIGUOUS` and `UNSUPPORTED` never pass.
 
 REST and MCP compatibility is represented separately. Both v1 adapters consume
-`local_readiness.can_generate_interface`, the authoritative shared Interface
-Contract eligibility fact. Exposure never lowers or reinterprets Python types.
-A conditional repository assessment can pass only if local interface eligibility
+the shared repository-aware eligibility decision over the validated assessment.
+It retains local interface blockers except exactly proven local import reasons;
+see [Repository Readiness](repository-readiness-v1.md#resolved-local-import-refinement). Exposure never lowers or reinterprets Python types.
+A conditional repository assessment can pass only if repository interface eligibility
 still holds (for example, unknown required effect evidence). The opt-in cannot
 bypass an unresolved local callable/type contract. All requested targets must
 pass; there is no partial interface selection.

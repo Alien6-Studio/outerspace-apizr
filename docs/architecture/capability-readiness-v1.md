@@ -83,7 +83,10 @@ Visible `globals`/`locals`/`vars` access, `exec`/`eval` or star imports make nam
 binding uncertain. Dynamic imports (`__import__`, `import_module`, including
 visible imported aliases/attribute calls) create dependency uncertainty. Static
 relative or non-stdlib imports create unresolved local/namespace/external dependency
-reasons; no files or distributions are searched. Imports within a candidate's body
+reasons; no files or distributions are searched. A separately validated
+[repository assessment](repository-readiness-v1.md#resolved-local-import-refinement)
+can discharge a precisely proven local dependency for repository generation while
+retaining this entire source-local report unchanged. Imports within a candidate's body
 are inspected syntactically for dependency uncertainty, including nested scopes,
 without claiming a call graph. Ordinary stdlib imports are a bounded allowance,
 not a promise that their initialization succeeds. The allowed roots are frozen in

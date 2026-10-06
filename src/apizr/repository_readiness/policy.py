@@ -65,6 +65,6 @@ class RepositoryReadinessPolicy(ValueModel):
         default_factory=RelationshipRequirements
     )
     execution: ExecutionRequirements = Field(default_factory=ExecutionRequirements)
-    # Local eligibility always gates READY. This additionally makes it a hard
-    # requirement: even an upstream conditional interface becomes unsupported.
+    # Repository eligibility retains local blockers except proven local imports.
+    # This additionally makes remaining interface uncertainty unsupported.
     require_interface: StrictBool = False

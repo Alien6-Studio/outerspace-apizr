@@ -10,6 +10,7 @@ from apizr.graph.model import (
     module_id,
 )
 from apizr.readiness.model import Assessment
+from apizr.readiness.model import Code as ReadinessCode
 from apizr.repository.model import Catalog
 
 from .model import Dependency, Relationships
@@ -56,6 +57,7 @@ def relationship_evidence(
     graph: Graph,
     local: dict[str, Assessment],
     effects: dict[str, Effects],
+    catalog: Catalog,
 ) -> Relationships:
     if not in_catalog:
         return Relationships(state="unavailable")
@@ -121,6 +123,46 @@ def relationship_evidence(
         for d in imports
         for n in d.names
     )
+    # Module resolution does not establish initialization. Only the imported
+    # modules and their package initializers are considered here; do not walk
+    # a transitive selected closure or propagate callee effects/states.
+    dependency_lines = {
+        reason.line
+        for reason in assessment.dimensions.execution.reasons
+        if reason.code == ReadinessCode.DEPENDENCY
+    }
+    required_modules: set[str] = set()
+    for edge in (*direct, *module_imports):
+        if edge.kind == RelationshipKind.MODULE and edge.line in dependency_lines:
+            target = next((n for n in graph.nodes if n.id == edge.target), None)
+            if isinstance(target, ModuleNode):
+                parts = target.module.split(".")
+                required_modules.update(
+                    ".".join(parts[:index]) for index in range(1, len(parts) + 1)
+                )
+    for unit in catalog.sources:
+        if unit.module not in required_modules:
+            continue
+        if unit.inspection is None:
+            partial = True
+            continue
+        declarations = unit.inspection.readiness.assessments
+        # An empty initializer has exact size/digest-bound evidence. A nonempty
+        # module without callable assessments has no initialization evidence in
+        # Readiness v1, so keep uncertainty rather than parse it again.
+        if (not declarations and unit.size != 0) or any(
+            reason.code == ReadinessCode.INITIALIZATION
+            or (
+                reason.code in {ReadinessCode.DYNAMIC_IMPORT, ReadinessCode.DEPENDENCY}
+                and not any(
+                    other.source.line <= reason.line <= other.source.end_line
+                    for other in declarations
+                )
+            )
+            for declaration in declarations
+            for reason in declaration.dimensions.execution.reasons
+        ):
+            partial = True
     return Relationships(
         state="unavailable" if unavailable else "partial" if partial else "resolved",
         diagnostics=diagnostics,
