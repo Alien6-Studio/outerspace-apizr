@@ -32,6 +32,7 @@ MODULES = (
     "interfaces/schema.py",
     "interfaces/serialization.py",
     "interfaces/runtime.py",
+    "interfaces/results.py",
     "execution/model.py",
     "execution/policy.py",
     "execution/planner.py",
@@ -123,6 +124,7 @@ def govern(
     policy = ExecutionPolicy.model_validate(policy.model_dump(mode="json"))
     # The direct MCP helper is superseded by the single embedded shared binder.
     artifacts.pop("apizr_runtime.py", None)
+    artifacts.pop("apizr_results.py", None)
     manifest_name = f"apizr-{transport}.json"
     manifest = json.loads(artifacts.pop(manifest_name))
     contracts = manifest["capabilities" if transport == "rest" else "tools"]

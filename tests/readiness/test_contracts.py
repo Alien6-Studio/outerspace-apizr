@@ -125,6 +125,36 @@ def test_unresolved_or_non_json_returns_do_not_alone_block_exposure(annotation):
     assert result.capability_ir.capabilities[0].signature.returns.enforcement == "none"
 
 
+@pytest.mark.parametrize("annotation", ["tuple[int, str]", "tuple[int, ...]"])
+def test_declared_tuple_results_remain_representable_without_enforcement(annotation):
+    from apizr.generators.mcp import render
+
+    source = f"def f() -> {annotation}: return (1, 2)".encode()
+    result = inspect_source(source, module_name="tuple_output")
+    assessment = result.readiness.assessments[0]
+    returns = result.capability_ir.capabilities[0].signature.returns
+    assert assessment.state == State.READY and assessment.can_generate_interface
+    assert returns.annotation.declared == annotation and returns.enforcement == "none"
+    assert all(r.code == Code.OUTPUT for r in assessment.dimensions.outputs.reasons)
+    artifacts = render(result, source)
+    import json
+
+    assert (
+        json.loads(artifacts["apizr-mcp.json"])["tools"][0]["returns"]["kind"]
+        == "tuple"
+    )
+    assert b"outputSchema" not in artifacts["mcp-tools.json"]
+
+
+def test_unannotated_result_remains_unknown_not_inferred_from_tuple_literal():
+    result = inspect_source("def f(): return (1, 2)", module_name="unknown_output")
+    returns = result.capability_ir.capabilities[0].signature.returns
+    assert returns.annotation is None and returns.enforcement == "none"
+    assert [
+        r.code for r in result.readiness.assessments[0].dimensions.outputs.reasons
+    ] == [Code.OUTPUT]
+
+
 def test_missing_annotations_are_explicitly_unconstrained_not_inferred_from_default():
     result = inspect_source("def f(x=1): pass", module_name="untyped")
     value = result.readiness.assessments[0]

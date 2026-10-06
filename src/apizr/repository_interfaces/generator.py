@@ -164,6 +164,15 @@ def render_repository_bundle(
         )
     else:
         artifacts["requirements.txt"] = MCP_REQUIREMENTS
+        artifacts["apizr_results.py"] = (
+            files("apizr.interfaces")
+            .joinpath("results.py")
+            .read_text(encoding="utf-8")
+            .replace(
+                "from apizr.interfaces.runtime import", "from apizr_runtime import"
+            )
+            .encode("utf-8")
+        )
         artifacts["mcp-tools.json"] = json_bytes(
             {
                 "schema_version": "apizr.repository-mcp/v1",
@@ -184,7 +193,9 @@ def render_repository_bundle(
             }
         )
         artifacts["server.py"] = (
-            template("mcp_runtime.py")
+            template("mcp_runtime.py").replace(
+                b"from apizr.interfaces.results import", b"from apizr_results import"
+            )
             + f'\n\nif __name__ == "__main__":\n    main({pin})\n'.encode()
         )
         manifest = MCPManifest(

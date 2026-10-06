@@ -290,7 +290,7 @@ def test_finite_result_semantics(value):
 @pytest.mark.parametrize(
     "value", [float("nan"), float("inf"), {1: "a"}, object(), (1, 2), {1, 2}]
 )
-def test_non_json_outputs_refused(value):
+def test_non_json_input_values_refused(value):
     with pytest.raises(ValueError):
         result_value(value)
 

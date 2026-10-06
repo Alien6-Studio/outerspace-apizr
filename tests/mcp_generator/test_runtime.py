@@ -69,7 +69,6 @@ def test_invalid_arguments_are_tool_errors(tmp_path, source, payload):
         "return object()",
         "return {1:'key'}",
         "return float('nan')",
-        "return (1,2)",
         "return {1,2}",
     ],
 )

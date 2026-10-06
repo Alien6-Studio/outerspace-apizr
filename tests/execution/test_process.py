@@ -96,7 +96,6 @@ def test_exception_and_noisy_stdio_do_not_leak():
     [
         "return object()",
         "return {1}",
-        "return (1,2)",
         'return b"x"',
         'return {1:"x"}',
         'return float("nan")',
@@ -175,6 +174,24 @@ def test_output_boundary_property(count):
     )
     result = invoke(f"def f(): return 'x'*{count}", limits={"max_output_bytes": 128})
     assert result.status == ("success" if len(encoded) <= 128 else "output_limit")
+
+
+@pytest.mark.parametrize("fits", [False, True])
+def test_tuple_output_limit_counts_encoded_json_bytes(fits):
+    from apizr.execution.model import ExecutionResult
+    from apizr.execution.protocol import encode
+
+    value = ["é" * 50, {"nested": [True, None]}]
+    encoded = encode(
+        ExecutionResult(status="success", value=value).model_dump(mode="json"), 10000
+    )
+    limit = len(encoded) if fits else len(encoded) - 1
+    result = invoke(
+        "def f(): return ('é' * 50, {'nested': (True, None)})",
+        limits={"max_output_bytes": limit},
+    )
+    assert result.status == ("success" if fits else "output_limit")
+    assert result.value == (value if fits else None)
 
 
 @settings(max_examples=10)
