@@ -84,6 +84,10 @@ def bundle_snapshot(source: Path, target: Path, interface: str) -> None:
         if interface == "rest"
         else {"server.py", "mcp-tools.json"}
     )
+    # Corrected MCP bundles embed the reviewed result normalizer. Older v1
+    # bundles predate that module; retain their existing admission contract.
+    if interface == "mcp" and "apizr_results.py" in manifest.artifacts:
+        allowed.add("apizr_results.py")
     allowed |= {s.bundle_path for s in manifest.sources}
     if manifest.provenance_digest is not None:
         allowed.add("apizr-bundle-provenance.json")

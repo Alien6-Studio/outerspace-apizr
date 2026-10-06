@@ -18,8 +18,11 @@ from apizr_oci.model import BuildError, BuildRequest
 from apizr_oci.process import run
 from apizr_oci.snapshot import bundle_snapshot, input_digest, read, wheels_snapshot
 from pydantic import ValidationError
+from repository_interfaces.conftest import evidence
 
 from apizr.local_plugins.models import PluginError
+from apizr.repository_interfaces.generator import render_repository_bundle
+from apizr.repository_interfaces.output import write_bundle
 
 
 def arguments(tmp_path):
@@ -77,6 +80,31 @@ def test_static_snapshot_ignores_foreign_files(bundle, tmp_path):
     before = input_digest(target)
     (bundle / "source/shop/api.py").write_text("raise RuntimeError('changed')")
     assert input_digest(target) == before
+
+
+@pytest.mark.parametrize("alter", [None, "modified", "foreign"])
+def test_mcp_snapshot_copies_and_verifies_result_normalizer(tmp_path, alter):
+    source = tmp_path / "mcp"
+    write_bundle(source, render_repository_bundle(*evidence(), interface="mcp"))
+    helper = source / "apizr_results.py"
+    original = helper.read_bytes()
+    if alter == "modified":
+        helper.write_text("raise RuntimeError('must not execute')")
+    elif alter == "foreign":
+        manifest = source / "apizr-repository-mcp.json"
+        document = json.loads(manifest.read_bytes())
+        document["artifacts"]["unreviewed_results.py"] = {
+            "algorithm": "sha256",
+            "value": "a" * 64,
+        }
+        manifest.write_text(json.dumps(document))
+    target = tmp_path / "copy"
+    if alter:
+        with pytest.raises((BuildError, ValueError)):
+            bundle_snapshot(source, target, "mcp")
+    else:
+        bundle_snapshot(source, target, "mcp")
+        assert (target / "apizr_results.py").read_bytes() == original
 
 
 @pytest.mark.parametrize(
