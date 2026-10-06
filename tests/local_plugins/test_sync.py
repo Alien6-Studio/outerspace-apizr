@@ -343,9 +343,12 @@ def test_supervised_uv_stopped_and_reaped(tmp_path, cancelled):
     executable = tmp_path / "uv"
     # Readiness is signalled by the worker, not inferred from an arbitrary delay.
     executable.write_text(
-        f"#!{sys.executable}\nimport os,time\nfrom pathlib import Path\nPath({str(marker)!r}).write_text(str(os.getpid()))\ntime.sleep(30)\n"
+        f"#!{sys.executable}\nimport os,sys,time\nfrom pathlib import Path\nif '--prepare' in sys.argv: raise SystemExit(0)\nPath({str(marker)!r}).write_text(str(os.getpid()))\ntime.sleep(30)\n"
     )
     executable.chmod(0o700)
+    # macOS may assess a newly written executable before its first launch.
+    # Prepare the fixture before starting the unchanged supervision deadline.
+    subprocess.run([str(executable), "--prepare"], check=True, timeout=10)
     event = threading.Event()
     control = InstallControl(time.monotonic() + (10 if cancelled else 0.5), event)
     with ThreadPoolExecutor(max_workers=1) as pool:

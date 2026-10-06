@@ -541,9 +541,11 @@ def test_real_uv_timeout_or_cancel_cleans_up_then_recovers(
     marker = tmp_path / "uv-ready"
     executable = tmp_path / "uv-hang"
     executable.write_text(
-        f"#!{sys.executable} -B\nimport os,time\nfrom pathlib import Path\nPath({str(marker)!r}).write_text(str(os.getpid()))\ntime.sleep(30)\n"
+        f"#!{sys.executable} -B\nimport os,sys,time\nfrom pathlib import Path\nif '--prepare' in sys.argv: raise SystemExit(0)\nPath({str(marker)!r}).write_text(str(os.getpid()))\ntime.sleep(30)\n"
     )
     executable.chmod(0o700)
+    # Keep cold executable assessment outside the existing invocation deadline.
+    subprocess.run([str(executable), "--prepare"], check=True, timeout=10)
     event = threading.Event()
     with monkeypatch.context() as context:
         context.setattr(backend, "require_uv", lambda: str(executable))

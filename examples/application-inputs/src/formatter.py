@@ -2,12 +2,14 @@ from pathlib import Path
 
 
 def message() -> str:
-    """Return the packaged message decoded with the application's dependency."""
+    """Return packaged text with the pinned application dependency installed."""
     return _message()
 
 
 def _message() -> str:
-    from six import ensure_text
+    from importlib.metadata import version
 
+    if version("six") != "1.17.0":
+        raise RuntimeError("Application dependency version does not match")
     content = (Path(__file__).parent.parent / "data/message.txt").read_bytes()
-    return ensure_text(content).strip().upper()
+    return content.decode("utf-8").strip().upper()

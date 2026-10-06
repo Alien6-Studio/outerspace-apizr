@@ -126,6 +126,10 @@ The current bundle fixture includes a pure private callable in its nonempty
 package initializer so that retained Readiness can prove initialization. This
 changes full-audit/source/manifest digests, while public REST routes and MCP Tools
 remain unchanged. Initializers without sufficient facts are still refused.
+Application dependency pins configure provisioning; they do not prove foreign
+imports in required helpers. The portable application fixture checks the installed
+`six` version at invocation through the standard-library metadata API and decodes
+its packaged UTF-8 resource, preserving its explicit dependency/resource proof.
 
 ## Artifacts, output and verification
 

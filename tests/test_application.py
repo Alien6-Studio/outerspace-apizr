@@ -17,7 +17,7 @@ from apizr.application_resources import capture_resources
 from apizr.capabilities.model import Digest
 from apizr.compiler import prepare_exposure, render_bundle
 from apizr.execution.policy import ExecutionPolicy
-from apizr.exposure import ExposurePolicy
+from apizr.exposure import ExposurePolicy, ExposureRefused
 from apizr.operator_policy import AuthorizationDenied
 from apizr.project import load_project
 from apizr.repository_interfaces.output import write_bundle
@@ -195,6 +195,23 @@ def test_static_preparation_never_imports_installs_or_downloads(
     for interface in ("rest", "mcp"):
         files = render_bundle(prepared, interface=interface)
         assert "source/.env" not in files and "source/unrelated.json" not in files
+
+
+def test_application_pin_does_not_prove_an_external_private_import(application_project):
+    (application_project / "src/formatter.py").write_text(
+        "def message() -> str: return _message()\n"
+        "def _message() -> str:\n"
+        "    from six import ensure_text\n"
+        "    return ensure_text(b'Portable')\n"
+    )
+    # The exposure policy already opts into conditional readiness.
+    # Neither that opt-in nor an application pin proves a foreign import.
+    with pytest.raises(ExposureRefused) as raised:
+        prepare(application_project)
+    assert any(
+        d.reason == "import" and "python:formatter:_message" in d.dependency_path
+        for d in raised.value.diagnostics
+    )
 
 
 @pytest.mark.parametrize("interface", ["rest", "mcp"])
