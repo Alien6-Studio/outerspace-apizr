@@ -42,7 +42,7 @@ With [uv](https://docs.astral.sh/uv/getting-started/installation/) and Python 3.
 uv tool install outerspace-apizr==0.4.4
 ```
 
-![Install Apizr 0.4.4 with uv](./docs/assets/videos/uv-install.gif)
+![Install Apizr 0.4.4 with uv](https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/54e6c13fe8f2bed62f4ac52a0024002df113df19/docs/assets/videos/uv-install.gif)
 
 ## Choose your path
 
