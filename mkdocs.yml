@@ -66,7 +66,7 @@ extra:
   generator: false
   analytics:
     provider: google
-    property: G-P3BHZB2FVP
+    property: G-MX4P2Y5EG4
   consent:
     title: Cookie consent
     description: >-

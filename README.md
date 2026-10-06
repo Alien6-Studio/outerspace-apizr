@@ -32,6 +32,17 @@ Python **3.11–3.14** · GPL-3.0-or-later.
 [![Python](https://img.shields.io/badge/python-3.11%E2%80%933.14-blue.svg)](https://pypi.org/project/outerspace-apizr/)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://apizr.outerspace.sh/about/LICENSE/)
 [![OuterSpace Apizr MCP server – quality and maintenance score on Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/badges/score.svg)](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr)
+[![MCPLookup Trust Index: silver, 80 out of 100](https://mcplookup.com/badge/io.github.Alien6-Studio/outerspace-apizr?embed=a6d68610-7a46-4689-8add-e364a971ddbf)](https://mcplookup.com/badge/go/a6d68610-7a46-4689-8add-e364a971ddbf/io.github.Alien6-Studio/outerspace-apizr)
+
+## Install with uv
+
+With [uv](https://docs.astral.sh/uv/getting-started/installation/) and Python 3.11–3.14 installed:
+
+```sh
+uv tool install outerspace-apizr==0.4.4
+```
+
+![Install Apizr 0.4.4 with uv](./docs/assets/videos/uv-install.gif)
 
 ## Choose your path
 
