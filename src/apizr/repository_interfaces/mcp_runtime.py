@@ -3,10 +3,8 @@
 import argparse
 import asyncio
 import json
-import math
 from functools import partial
 from pathlib import Path
-from typing import TypeGuard
 
 import anyio
 import uvicorn
@@ -21,6 +19,8 @@ from mcp.types import (
     Tool,
 )
 
+from apizr.interfaces.results import finite_json_value as result_value
+from apizr.interfaces.results import normalize_result_for_json
 from apizr.interfaces.runtime import (
     JSON,
     RuntimeInvocation,
@@ -33,27 +33,6 @@ class RuntimeTool(RuntimeInvocation):
     tool_name: str
     description: str | None
     input_schema: dict[str, JSON]
-
-
-def is_list(value: object) -> TypeGuard[list[object]]:
-    return isinstance(value, list)
-
-
-def is_dict(value: object) -> TypeGuard[dict[object, object]]:
-    return isinstance(value, dict)
-
-
-def result_value(value: object) -> JSON:
-    """Only genuine JSON values; never silently stringify/coerce user objects."""
-    if value is None or isinstance(value, (str, bool, int)):
-        return value
-    if isinstance(value, float) and math.isfinite(value):
-        return value
-    if is_list(value):
-        return [result_value(item) for item in value]
-    if is_dict(value) and all(isinstance(key, str) for key in value):
-        return {str(key): result_value(item) for key, item in value.items()}
-    raise ValueError("Result is not a finite JSON value")
 
 
 def tool_error(message: str) -> CallToolResult:
@@ -106,7 +85,7 @@ def create_server(
                 result = await anyio.to_thread.run_sync(
                     partial(function, *args, **kwargs)
                 )
-            value = result_value(result)
+            value = normalize_result_for_json(result)
             # MCP structuredContent must be an object on every supported protocol.
             value = value if isinstance(value, dict) else {"result": value}
             return CallToolResult(

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Recursively normalize Python tuple results to JSON arrays in direct MCP and
+  governed local/OCI workers, including repository bundles, preserving REST/MCP
+  business-result parity and rejection of non-finite or unsupported values (#251).
+
 ## 0.4.4 — 2026-10-05
 
 - Export and verify existing capability/bundle JSON evidence without importing

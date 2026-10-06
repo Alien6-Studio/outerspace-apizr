@@ -126,9 +126,9 @@ For example, `25.0` becomes `{"result": 25.0}` and Python `None` becomes
 clients consuming `content`, following the
 [MCP structured-content contract](https://modelcontextprotocol.io/specification/2025-06-18/server/tools#structured-content).
 
-This normalization happens only in the MCP adapter, for direct, local-process
-and OCI execution, from a file/notebook or repository. Python execution results
-and REST response bodies retain their original values. Object results containing
+This object-envelope rule happens only in the MCP adapter, for direct,
+local-process and OCI execution, from a file/notebook or repository. REST response
+bodies keep their existing business-value shape. Object results containing
 a `result` key are not wrapped again. Tool errors omit `structuredContent`.
 
 This is a development fix for [#163](https://github.com/Alien6-Studio/outerspace-apizr/issues/163).
@@ -136,12 +136,30 @@ Published 0.3.0 bundles pass non-object values through and can fail with
 `Handler returned an invalid result` in clients such as Claude. Regenerate bundles
 with the corrected compiler; upgrading the client or compiler alone does not
 rewrite existing generated servers.
-Non-JSON values (including arbitrary objects, sets, tuples, non-string object keys
-and non-finite floats) produce a controlled error rather than implicit coercion.
+Python tuples returned by capabilities are recursively normalized to JSON arrays
+at the result transport boundary, preserving their order without mutating the
+Python object. For example, `(1, 2)` becomes `{"result": [1, 2]}` in MCP, while
+`{"support": ("61.8%", 10.674)}` becomes
+`{"support": ["61.8%", 10.674]}` without another envelope. This result rule is
+shared by direct MCP adapters and the fresh local/OCI workers, including
+repository workers; it applies before finite-JSON encoding and output-size
+enforcement. Direct REST retains FastAPI's existing tuple-to-array serialization.
+
+This does not make tuples part of JSON itself or change input validation and
+argument reconstruction. Arbitrary objects, sets, complex numbers, non-string
+dictionary keys and non-finite floats (NaN or either infinity) remain unsupported,
+including nested values. They produce a controlled error rather than implicit
+coercion or stringification. Recursive containers also fail in a controlled way.
+Regenerate existing bundles to receive the tuple correction in
+[#251](https://github.com/Alien6-Studio/outerspace-apizr/issues/251).
 
 Declared return types do not validate results. Tools deliberately omit
 `outputSchema`, because clients may enforce such a schema even if the server does
 not. IR return enforcement remains `none`.
+Supported declared tuple returns retain their array representation in the type
+system. An unannotated return remains statically unknown; analysis does not infer
+its runtime value, and the existing response-schema uncertainty diagnostic also
+remains visible for return declarations that lack a supported representation.
 
 Public errors are deterministic `CallToolResult(is_error=True)` values:
 

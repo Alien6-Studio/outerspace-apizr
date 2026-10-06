@@ -54,6 +54,7 @@ def govern(
     transport: Literal["rest", "mcp"],
 ) -> dict[str, bytes]:
     artifacts.pop("apizr_runtime.py", None)
+    artifacts.pop("apizr_results.py", None)
     manifest_name = f"apizr-{transport}.json"
     manifest = json.loads(artifacts.pop(manifest_name))
     contracts = manifest["capabilities" if transport == "rest" else "tools"]

@@ -34,6 +34,25 @@ def test_mutable_defaults_reset():
         assert execute(plan, exposure, sources, {}).value == [1]
 
 
+@pytest.mark.parametrize("fits", [False, True])
+def test_repository_tuple_limit_uses_encoded_business_result(fits):
+    from apizr.execution.model import ExecutionResult
+    from apizr.execution.protocol import encode
+
+    value = ["é" * 50, {"nested": [True, None]}]
+    encoded = encode(
+        ExecutionResult(status="success", value=value).model_dump(mode="json"), 10000
+    )
+    limit = len(encoded) if fits else len(encoded) - 1
+    plan, exposure, sources, _ = planned(
+        "def run(): return ('é' * 50, {'nested': (True, None)})",
+        policy=ExecutionPolicy.model_validate({"limits": {"max_output_bytes": limit}}),
+    )
+    result = execute(plan, exposure, sources, {})
+    assert result.status == ("success" if fits else "output_limit")
+    assert result.value == (value if fits else None)
+
+
 @pytest.mark.parametrize(
     "source,status",
     [

@@ -251,8 +251,31 @@ def test_environment_allowlist_and_strict_rest_output(tmp_path, monkeypatch):
         try:
             with TestClient(app) as client:
                 result = client.post("/capabilities/f", json={})
-                assert result.status_code == (500 if governed else 200)
-                if not governed:
-                    assert result.json() == [1, 2]
+                assert result.status_code == 200 and result.json() == [1, 2]
         finally:
             sys.modules.pop("result_sample", None)
+
+
+@pytest.mark.parametrize("governed", [False, True])
+def test_nonfinite_rest_result_still_fails_safely(tmp_path, governed):
+    source = b"def f(): return {'nested': (float('nan'),)}"
+    root = tmp_path / "bundle"
+    generate_rest(
+        inspect_source(source, module_name="invalid_result"),
+        source,
+        root,
+        execution_policy=ExecutionPolicy() if governed else None,
+    )
+    doc = manifest(root, "rest")
+    app = (
+        governed_rest(root)
+        if governed
+        else direct_rest(root, {**doc, "endpoints": doc["capabilities"]})
+    )
+    try:
+        with TestClient(app) as client:
+            result = client.post("/capabilities/f", json={})
+            assert result.status_code == 500
+            assert result.json() == {"detail": "Internal server error"}
+    finally:
+        sys.modules.pop("invalid_result", None)

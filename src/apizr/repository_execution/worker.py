@@ -14,11 +14,11 @@ from apizr.execution.protocol import (
     MAX_REQUEST_BYTES,
     SizeExceeded,
     encode,
-    finite_json,
     frame,
     read_frame,
 )
 from apizr.execution.serialization import digest
+from apizr.interfaces.results import normalize_result_for_json
 from apizr.interfaces.runtime import (
     BindingError,
     IntegrityError,
@@ -80,7 +80,9 @@ def handle(request: Request, root: Path) -> ExecutionResult:
         except BaseException:
             return ExecutionResult(status="execution_failed")
         try:
-            outcome = ExecutionResult(status="success", value=finite_json(result))
+            outcome = ExecutionResult(
+                status="success", value=normalize_result_for_json(result)
+            )
             encode(outcome.model_dump(mode="json"), plan.policy.limits.max_output_bytes)
             return outcome
         except SizeExceeded:

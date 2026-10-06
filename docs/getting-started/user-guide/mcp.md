@@ -123,12 +123,20 @@ preceding positional-only fields, exactly as in REST.
 Object results stay unchanged. Other finite JSON results use an object envelope:
 `25.0` becomes `{"result": 25.0}`, a list becomes `{"result": [...]}`, and `None`
 becomes `{"result": null}`. Read the value from `result.structured_content["result"]`
-for these functions. The text content serializes the same object. This correction
+for these functions. Python result tuples, including nested tuples, are recursively
+converted to JSON arrays in order: `(1, 2)` becomes `{"result": [1, 2]}`, and
+`{"support": ("61.8%", 10.674)}` becomes `{"support": ["61.8%", 10.674]}`.
+This applies to direct, local-process and OCI modes, including repository bundles.
+The text content serializes the same object. This correction
 requires regenerating older bundles that emit bare values, which strict clients
 can reject. See the [result contract](../../architecture/mcp-generator-v1.md#results-and-public-errors).
 
-Sync and async functions work. Results must be finite JSON-compatible values;
-declared return annotations do not constrain them. Unsupported results and
+Sync and async functions work. After tuple normalization, results must contain
+only finite JSON scalars, arrays and dictionaries with string keys. NaN, infinity,
+arbitrary objects and sets remain rejected even when nested. Tuples are normalized
+at the result boundary; JSON inputs and Python argument reconstruction keep their
+existing rules. An unannotated return remains unknown during static analysis;
+declared return annotations do not constrain runtime results. Unsupported results and
 unexpected exceptions produce `Tool execution failed` without internal exception
 details. The server does not assign safety annotations because effects are unknown.
 

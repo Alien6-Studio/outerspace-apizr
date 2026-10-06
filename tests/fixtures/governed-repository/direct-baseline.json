@@ -2,8 +2,9 @@
   "artifacts": {
     "mcp": {
       "apizr-bundle-provenance.json": "58f5fc6335089a19f695dbc6242ec306c9c6ab9e0b574341da7055886d39e4fb",
-      "apizr-repository-mcp.json": "b5151b5968f3bdae0b51a663ae4b8306185bc81bc5fe7ad31014fe0a11978b78",
+      "apizr-repository-mcp.json": "d56a60d603c48f4ac4aa021a5380b9030f21ffe2249e12b329474b2e0fa39edb",
       "apizr_repository_runtime.py": "a9a3b6de32eae39d3b3e59b96371af1ca082f4838bad184acbc3d86b8447ef1d",
+      "apizr_results.py": "3e8840723c8bbf8962146e243583455c0f988e2c523ff8c09aa5232c6d484e45",
       "apizr_runtime.py": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14",
       "capability-catalog.json": "957021149968a303f4faca6c5980528e7379bb038101496d90b84a6a13bffff8",
       "capability-graph.json": "5579aea9aa6e3decbe1f1c929f149fc7df1b7f64810f735f3036bb2df2868201",
@@ -13,7 +14,7 @@
       "repository-interface.json": "53e84f43d6b26b06ee5980c5cdf880462a7125e45120e9a78dbb005db88d344a",
       "repository-readiness.json": "620badc432956c07dfb43a543cbd419e9aa2a5a355bf2f7ff15ec55c30ad1a13",
       "requirements.txt": "92af853508dc94ec5da25d834bad8540be7df90930dbf7b4063ae94b098a4353",
-      "server.py": "3a1f879ff7b6cfc5cabe772d5aae79c464ea6a5144671fb57bdc5170b5c15ef6",
+      "server.py": "0b856021512b8e3b075ecac1c1d627c916b4cc888fbfac859564c68e148596af",
       "source/shop/__init__.py": "d6956f548c849543638298bf8e38b4f0728d81e16f006632d0a1ff09e6ec7932",
       "source/shop/admin.py": "74299f981a87e40b384596174832ec7bd2edc55b22daf03bc053003939e38a9e",
       "source/shop/api.py": "8b4e0ac0220ac1ff7fd5d2901d4b3cad98a8ceb5f9c468cae2e9ee984a72d4d7",
