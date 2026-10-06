@@ -125,10 +125,72 @@ def main() -> None:
     if args.development:
         development(cli, repository)
         migration(cli, repository)
+        if args.repository_refinement:
+            selected_scope(cli, repository)
         quickstart(
             cli, repository, candidate=True, expected_version=args.expected_version
         )
     quickstart(cli, repository)
+
+
+def selected_scope(cli: Path, repository: Path) -> None:
+    """Run the documented unfinished-repository example with the candidate."""
+    guide = (repository / "docs/getting-started/user-guide/exposure.md").read_text()
+    block = re.search(r"<!-- smoke:selected-scope -->\s*```sh\n(.*?)```", guide, re.S)
+    assert block
+    with tempfile.TemporaryDirectory(prefix="apizr-selected-scope-") as directory:
+        root = Path(directory).resolve()
+        assert not root.is_relative_to(repository)
+        project = root / "project"
+        shutil.copytree(repository / "examples/research-serving", project)
+        (root / "direct-readiness.json").write_text(
+            '{"execution":{"modes":["direct"]}}\n'
+        )
+        (root / "operator.json").write_text(
+            json.dumps(
+                {
+                    "schema": "apizr.operator-policy/v1",
+                    "grants": [
+                        {
+                            "adapter": "repository",
+                            "operation": "analyze",
+                            "target": {"kind": "local", "root": str(project)},
+                            "permissions": ["source.analyze"],
+                        }
+                    ],
+                }
+            )
+        )
+        environment = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
+        environment["PATH"] = str(cli.parent) + os.pathsep + environment.get("PATH", "")
+        subprocess.run(
+            ["/bin/sh", "-c", "set -eu\n" + block[1]],
+            cwd=root,
+            env=environment,
+            check=True,
+            timeout=60,
+        )
+        plan = json.loads((root / "exposure-plan.json").read_bytes())
+        assert [c["capability_id"] for c in plan["capabilities"]] == [
+            "python:serving:predict"
+        ]
+        for interface in ("rest", "mcp"):
+            bundle = root / (".output/predict-" + interface)
+            graph = json.loads((bundle / "capability-graph.json").read_bytes())
+            assert not graph["complete"]
+            assert any(d["path"] == "old_notebook.py" for d in graph["diagnostics"])
+            assert (bundle / "source/experiments.py").read_bytes() == (
+                project / "experiments.py"
+            ).read_bytes()
+            if interface == "rest":
+                paths = json.loads((bundle / "openapi.json").read_bytes())["paths"]
+                assert {p for p in paths if p.startswith("/capabilities/")} == {
+                    "/capabilities/serving.predict"
+                }
+            else:
+                tools = json.loads((bundle / "mcp-tools.json").read_bytes())["tools"]
+                assert [tool["name"] for tool in tools] == ["serving.predict"]
+        print("PASS documented serving selection; full ambiguous audit retained")
 
 
 def quickstart(

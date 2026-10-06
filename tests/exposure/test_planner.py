@@ -26,7 +26,6 @@ from apizr.exposure import (
     validate_plan,
 )
 from apizr.graph import GraphPolicy, build_graph, graph_repository
-from apizr.graph.model import Code, Diagnostic
 from apizr.readiness import State
 from apizr.repository import scan_sources
 from apizr.repository_readiness import (
@@ -122,13 +121,10 @@ def test_refused_selection_never_returns_partial_plan(source, state):
     assert state.value.upper() in refusal_report(error.value, p)
 
 
-def test_conditional_opt_in_preserves_effect_and_relationship_uncertainty():
+def test_conditional_opt_in_preserves_effect_uncertainty():
     c, g = artifacts()
-    # A validated graph may carry static uncertainty that local interface facts
-    # do not contain. Exposure retains it; it never re-parses to repair evidence.
-    g = g.model_copy(
-        update={"diagnostics": (Diagnostic(code=Code.DYNAMIC, path="a.py", line=1),)}
-    )
+    # Explicit opt-in retains root effect uncertainty; it cannot bypass required
+    # relationship or initialization evidence (covered by selected-scope tests).
     rp = RepositoryReadinessPolicy.model_validate(
         {"effects": {"require_known": ["network"]}}
     )
@@ -143,9 +139,9 @@ def test_conditional_opt_in_preserves_effect_and_relationship_uncertainty():
     assert record.repository_readiness == State.CONDITIONAL
     assert record.effects == r.assessments[0].effects
     assert record.relationships.diagnostics == g.diagnostics
-    assert record.relationships.state == "partial"
+    assert record.relationships.state == "resolved"
     assert record.readiness_reasons == r.assessments[0].reasons
-    assert "APIZR-GRAPH-005" in text_report(result, r)
+    assert "APIZR-REPOREADY-004" in text_report(result, r)
     # include-all-ready deliberately ignores conditional even with opt-in.
     assert not plan_exposure(
         c,
@@ -175,7 +171,9 @@ def test_transport_eligibility_is_explicit_not_an_all_protocol_assumption(monkey
     import apizr.exposure.planner as planner
 
     monkeypatch.setattr(
-        planner, "interface_compatibility", lambda _: {"rest": True, "mcp": False}
+        planner,
+        "interface_compatibility",
+        lambda _, **kwargs: {"rest": True, "mcp": False},
     )
     assert plan(exposure=policy(interfaces=["rest"])).interfaces == ("rest",)
     with pytest.raises(ExposureRefused) as error:
@@ -238,21 +236,20 @@ def test_readiness_modes_are_authoritative_and_exposure_only_narrows():
 
 
 @pytest.mark.parametrize(
-    "files,graph_policy",
+    "graph_policy",
     [
-        ({"a.py": b"def f(): return 1", "broken.py": b"not python !"}, None),
-        (None, GraphPolicy(max_ast_nodes=1)),
+        GraphPolicy(max_ast_nodes=1),
     ],
 )
-def test_globally_incomplete_evidence_blocks_even_empty_selection(files, graph_policy):
+def test_globally_incomplete_evidence_blocks_even_empty_selection(graph_policy):
     with pytest.raises(ExposureRefused) as error:
-        plan(files, exposure=policy(selection={}), graph_policy=graph_policy)
+        plan(exposure=policy(selection={}), graph_policy=graph_policy)
     assert error.value.diagnostics[0].code == "incomplete_evidence"
     assert "Complete repository evidence" in refusal_report(error.value, policy())
 
 
 def test_dependency_relationships_are_evidence_never_transitive_exposure():
-    files = {"a.py": b"def f(): return g()\ndef g(): return h()\ndef h(): yield 1\n"}
+    files = {"a.py": b"def f(): return g()\ndef g(): return h()\ndef h(): return 1\n"}
     result = plan(files)
     assert result.capability_ids() == ("python:a:f",)
     assert [
@@ -513,14 +510,6 @@ def test_canonical_snapshot_sets_normalize_on_deserialization():
     c, g = artifacts(
         {
             "a.py": b"from typing import Any\ndef f(): return g() + h()\ndef g(): return 1\ndef h(): return 2"
-        }
-    )
-    g = g.model_copy(
-        update={
-            "diagnostics": (
-                Diagnostic(code=Code.DYNAMIC, path="a.py", line=2),
-                Diagnostic(code=Code.REBOUND, path="a.py", line=2),
-            )
         }
     )
     r = assess_repository(

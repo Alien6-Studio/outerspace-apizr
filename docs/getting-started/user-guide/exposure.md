@@ -125,7 +125,7 @@ by digest, enabling deterministic review across filesystem locations.
 - `CONDITIONAL` requires explicit opt-in and an eligible shared interface
   contract. The opt-in cannot override unresolved local type/callable contracts.
 - `AMBIGUOUS` and `UNSUPPORTED` are always refused.
-- Globally incomplete repository evidence is always refused.
+- Missing required evidence or a repository-wide integrity failure is refused.
 - Any refused selection blocks the whole plan. No partial result is published.
 
 If A calls B, selecting A **does not expose B**. The plan keeps the direct
@@ -265,10 +265,61 @@ their own public JSON input contract. Their effects are not inferred or propagat
 
 Single-file generation remains conservative because it has no repository evidence.
 `--allow-conditional` does not waive unresolved interface contracts. Repository
-bundles still copy the complete inspected source universe and refuse globally
-incomplete evidence; they do not compute a transitive dependency closure.
+bundles still copy the complete inspected source universe. The upcoming 0.4.5
+release checks the selected function's required helpers and imports as described below.
 See [Repository Readiness](../../architecture/repository-readiness-v1.md#resolved-local-import-refinement)
 for the retained import evidence and its limits.
+
+## Work with unfinished research code
+
+In the upcoming 0.4.5 release, you can expose a serving function without first
+cleaning up every old experiment or notebook in your research repository.
+Apizr checks the function you select and the code it needs. A problem in a
+required feature helper or import still blocks generation.
+
+The committed `examples/research-serving` project contains:
+
+```text
+project/
+├── serving.py       ← predict: selected
+├── features.py      ← normalize: private helper
+├── experiments.py   ← unfinished experiment
+└── old_notebook.py  ← ambiguous import, unrelated to predict
+```
+
+Copy that directory to `project`. Save an analysis grant for its exact root
+in `operator.json` and use the `direct-readiness.json` policy above. With the
+development candidate, run:
+
+<!-- smoke:selected-scope -->
+```sh
+apizr expose plan project --operator-policy operator.json \
+  --readiness-policy direct-readiness.json \
+  --interface rest --interface mcp --execution-mode direct \
+  --select python:serving:predict --plan > exposure-plan.json
+
+apizr expose build rest project --operator-policy operator.json \
+  --readiness-policy direct-readiness.json \
+  --interface rest --execution-mode direct --select python:serving:predict \
+  --output-dir .output/predict-rest
+
+apizr expose build mcp project --operator-policy operator.json \
+  --readiness-policy direct-readiness.json \
+  --interface mcp --execution-mode direct --select python:serving:predict \
+  --output-dir .output/predict-mcp
+```
+
+Only `serving.predict` is public. As in the example above, `{"value": 50.0}`
+returns `0.4` through REST and `{"result": 0.4}` through MCP.
+The full audit still reports the ambiguous import in `old_notebook.py`, and
+the inspected sources remain in both bundles. Unrelated files are not imported
+just because they are included.
+
+If `predict` starts depending on that ambiguous import, Apizr refuses the
+request and shows the dependency path to the problem. Repository-wide limits
+or corrupt evidence also block generation. This helps you separate serving
+code from unfinished training experiments; it does not establish runtime safety.
+Published 0.4.4 keeps the earlier repository-wide completeness requirement.
 
 Build exits 0 on success, 1 on exposure/bundle refusal, and 2 on invalid or
 operational input. A valid empty Exposure Plan is refused for a server build.

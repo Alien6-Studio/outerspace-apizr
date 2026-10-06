@@ -59,7 +59,24 @@ def refusal_report(error: ExposureRefused, policy: ExposurePolicy) -> str:
         if diagnostic.capability_id:
             lines.append(diagnostic.capability_id)
         if diagnostic.code == "incomplete_evidence":
-            lines.append("  Complete repository evidence is required.")
+            if diagnostic.dependency_path:
+                lines.append(
+                    "  Required dependency path: "
+                    + " -> ".join(diagnostic.dependency_path)
+                )
+                location = diagnostic.source_path or "unknown source"
+                if diagnostic.line is not None:
+                    location += ":" + str(diagnostic.line)
+                code = (
+                    diagnostic.evidence_code.value
+                    if diagnostic.evidence_code
+                    else "incomplete_evidence"
+                )
+                lines.append(
+                    f"  {code} at {location}: required {diagnostic.reason} evidence is incomplete."
+                )
+            else:
+                lines.append("  Complete repository evidence is required.")
         elif diagnostic.code == "unknown_id":
             lines.append("  Unknown requested capability ID (include or exclude).")
         elif diagnostic.code == "ineligible":

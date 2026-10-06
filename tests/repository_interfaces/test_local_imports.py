@@ -279,16 +279,13 @@ def test_shared_lowering_requires_matching_ir_evidence_and_supported_execution()
         )
 
 
-def test_unrelated_global_ambiguity_still_blocks_253():
-    with pytest.raises(ExposureRefused) as error:
-        evidence(
-            {
-                **FILES,
-                "unrelated.py": b"def duplicate(): pass\ndef duplicate(): pass\n",
-            },
-            selected=(SELECTED,),
-        )
-    assert any(d.code == "incomplete_evidence" for d in error.value.diagnostics)
+def test_unrelated_global_ambiguity_does_not_block_selected_helpers():
+    values = evidence(
+        {**FILES, "unrelated.py": b"def duplicate(): pass\ndef duplicate(): pass\n"},
+        selected=(SELECTED,),
+    )
+    assert values[4].capability_ids() == (SELECTED,)
+    assert values[0].exit_code == 1 and not values[1].complete
 
 
 @pytest.mark.parametrize(

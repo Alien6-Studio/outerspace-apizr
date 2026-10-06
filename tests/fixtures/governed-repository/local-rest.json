@@ -3,7 +3,7 @@
     "artifacts": {
       "apizr-bundle-provenance.json": {
         "algorithm": "sha256",
-        "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
+        "value": "4236923a880d0f26ccc092b6fa1380c52c7da20eb435fd8ee275116cd239196d"
       },
       "apizr_governed/__init__.py": {
         "algorithm": "sha256",
@@ -179,43 +179,43 @@
       },
       "capability-catalog.json": {
         "algorithm": "sha256",
-        "value": "3374226143f10b3dc4785074ecdf1c1c2d61011dda2a7757505d3e9db2b4617e"
+        "value": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
       },
       "capability-graph.json": {
         "algorithm": "sha256",
-        "value": "1e2c044360f6d4fcdc03ddf2c5a59b02743cb45d67329971e9db26b8a9c8974b"
+        "value": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
       },
       "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
         "algorithm": "sha256",
-        "value": "d0a0472d4939ff4169338eb9e1a2daec9d7597f1f9f459e2fdf46bad180fe797"
+        "value": "bc1f80f1912f03080963b89f7591e40968507ac7c679c61133474fc87befb5e8"
       },
       "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json": {
         "algorithm": "sha256",
-        "value": "5db52a57a5072da0d413f7aa77bd01a89bbc4d8f1eef54be82247a21c3d07696"
+        "value": "fc2ba75ca6e282dff8f2eed2053f9a1e91e944cdc578c91a5354b8afffe30132"
       },
       "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json": {
         "algorithm": "sha256",
-        "value": "73f5035c7856774707c6821fe8ed858055fbede9a031c692f7218cb91626707d"
+        "value": "9e273e56f154a87fee8f587f6ad18c4e5c477de7edc855fba691ddb7a86e2cde"
       },
       "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json": {
         "algorithm": "sha256",
-        "value": "5406b7006a594c8dc4210686dd059ec14d9769e4ea1712d0f8e552eb51b50f1d"
+        "value": "73614a2b512eaa9726985b76cf0f36d6e18453ddbecc0157da952ca8092b0d88"
       },
       "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json": {
         "algorithm": "sha256",
-        "value": "e804712dbef2a39de0d5bbcb2a0f09b5e6cc555a6d40e485be9a20472cd2417b"
+        "value": "4c104c727fdcc0841934100c354b846bd6cf3977845389d59af037dacd95eeb9"
       },
       "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json": {
         "algorithm": "sha256",
-        "value": "7f87f4e0a5962f37057c6fafe243c1829da17dda2cb1edc3b96bede66fedb06a"
+        "value": "dc4da74dd7a505c067cb48b146e9ead564e93bb2cb03af90c1bf9b4fc3fedf00"
       },
       "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json": {
         "algorithm": "sha256",
-        "value": "39341e37d35e3483434df05c07e299afff14f5f7c7b793440fb139be9e71226c"
+        "value": "042752e81230a86ccc41d24c5d7ba24b94ec7110af37babcc936a8a11774cbd8"
       },
       "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json": {
         "algorithm": "sha256",
-        "value": "cf44b7405e4861313871e0cb6995e6ddde2b2e0f4f469842aac60cecec2f7dfb"
+        "value": "fb2e955ffc4c9f9f5f13bdb3453b0dcfad86d40272ec31508fa57208495a5e22"
       },
       "execution/policy.json": {
         "algorithm": "sha256",
@@ -227,7 +227,7 @@
       },
       "exposure-plan.json": {
         "algorithm": "sha256",
-        "value": "0d87e26938b9293c95603f35326a7dad55bed11987a6a3eea7683b6de0c113d9"
+        "value": "2969c738c04545ea7af1d581a779f551f3d7202ee4f43cb2037bf641a10951cd"
       },
       "exposure-policy.json": {
         "algorithm": "sha256",
@@ -239,11 +239,11 @@
       },
       "repository-interface.json": {
         "algorithm": "sha256",
-        "value": "7fe1a5c220420288de810d9e43b5c3238c4ea466546bba3de6c49f7393f736c7"
+        "value": "2e1764d69b73da0e3be304d2662dd9f0228e1ed23fffcaef95968744edc50a06"
       },
       "repository-readiness.json": {
         "algorithm": "sha256",
-        "value": "a7f8aa94605d4a529fa48b0c420dca98a2f0408f0a06e5d87cc3e364d8c16fd7"
+        "value": "782a63477f5448067ec93ed6ccb08a10a43c31a4269d80e42204654aa78dc5ff"
       },
       "requirements.txt": {
         "algorithm": "sha256",
@@ -251,7 +251,7 @@
       },
       "source/sample/__init__.py": {
         "algorithm": "sha256",
-        "value": "c67eb7621f104d5712bdccb66cdc440d46d734036a3a2799b737451d1d4015ad"
+        "value": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
       },
       "source/sample/admin.py": {
         "algorithm": "sha256",
@@ -272,56 +272,56 @@
       "python:sample.api:counter": {
         "digest": {
           "algorithm": "sha256",
-          "value": "5db52a57a5072da0d413f7aa77bd01a89bbc4d8f1eef54be82247a21c3d07696"
+          "value": "fc2ba75ca6e282dff8f2eed2053f9a1e91e944cdc578c91a5354b8afffe30132"
         },
         "path": "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json"
       },
       "python:sample.api:crash": {
         "digest": {
           "algorithm": "sha256",
-          "value": "e804712dbef2a39de0d5bbcb2a0f09b5e6cc555a6d40e485be9a20472cd2417b"
+          "value": "4c104c727fdcc0841934100c354b846bd6cf3977845389d59af037dacd95eeb9"
         },
         "path": "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json"
       },
       "python:sample.api:environment": {
         "digest": {
           "algorithm": "sha256",
-          "value": "7f87f4e0a5962f37057c6fafe243c1829da17dda2cb1edc3b96bede66fedb06a"
+          "value": "dc4da74dd7a505c067cb48b146e9ead564e93bb2cb03af90c1bf9b4fc3fedf00"
         },
         "path": "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json"
       },
       "python:sample.api:fail": {
         "digest": {
           "algorithm": "sha256",
-          "value": "39341e37d35e3483434df05c07e299afff14f5f7c7b793440fb139be9e71226c"
+          "value": "042752e81230a86ccc41d24c5d7ba24b94ec7110af37babcc936a8a11774cbd8"
         },
         "path": "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json"
       },
       "python:sample.api:large": {
         "digest": {
           "algorithm": "sha256",
-          "value": "d0a0472d4939ff4169338eb9e1a2daec9d7597f1f9f459e2fdf46bad180fe797"
+          "value": "bc1f80f1912f03080963b89f7591e40968507ac7c679c61133474fc87befb5e8"
         },
         "path": "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json"
       },
       "python:sample.api:loop": {
         "digest": {
           "algorithm": "sha256",
-          "value": "cf44b7405e4861313871e0cb6995e6ddde2b2e0f4f469842aac60cecec2f7dfb"
+          "value": "fb2e955ffc4c9f9f5f13bdb3453b0dcfad86d40272ec31508fa57208495a5e22"
         },
         "path": "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json"
       },
       "python:sample.api:run": {
         "digest": {
           "algorithm": "sha256",
-          "value": "73f5035c7856774707c6821fe8ed858055fbede9a031c692f7218cb91626707d"
+          "value": "9e273e56f154a87fee8f587f6ad18c4e5c477de7edc855fba691ddb7a86e2cde"
         },
         "path": "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json"
       },
       "python:sample.pricing:run": {
         "digest": {
           "algorithm": "sha256",
-          "value": "5406b7006a594c8dc4210686dd059ec14d9769e4ea1712d0f8e552eb51b50f1d"
+          "value": "73614a2b512eaa9726985b76cf0f36d6e18453ddbecc0157da952ca8092b0d88"
         },
         "path": "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json"
       }
@@ -332,7 +332,7 @@
     },
     "exposure_plan_digest": {
       "algorithm": "sha256",
-      "value": "0d87e26938b9293c95603f35326a7dad55bed11987a6a3eea7683b6de0c113d9"
+      "value": "2969c738c04545ea7af1d581a779f551f3d7202ee4f43cb2037bf641a10951cd"
     },
     "policy_artifact": "execution/policy.json",
     "policy_digest": {
@@ -342,7 +342,7 @@
     "policy_version": "apizr.execution/v1",
     "repository_interface_digest": {
       "algorithm": "sha256",
-      "value": "7fe1a5c220420288de810d9e43b5c3238c4ea466546bba3de6c49f7393f736c7"
+      "value": "2e1764d69b73da0e3be304d2662dd9f0228e1ed23fffcaef95968744edc50a06"
     },
     "schema_version": "apizr.repository-execution-bundle/v1",
     "transport": "rest"
@@ -351,7 +351,7 @@
     "artifacts": {
       "apizr-bundle-provenance.json": {
         "algorithm": "sha256",
-        "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
+        "value": "4236923a880d0f26ccc092b6fa1380c52c7da20eb435fd8ee275116cd239196d"
       },
       "apizr_governed/__init__.py": {
         "algorithm": "sha256",
@@ -527,47 +527,47 @@
       },
       "capability-catalog.json": {
         "algorithm": "sha256",
-        "value": "3374226143f10b3dc4785074ecdf1c1c2d61011dda2a7757505d3e9db2b4617e"
+        "value": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
       },
       "capability-graph.json": {
         "algorithm": "sha256",
-        "value": "1e2c044360f6d4fcdc03ddf2c5a59b02743cb45d67329971e9db26b8a9c8974b"
+        "value": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
       },
       "execution/bundle.json": {
         "algorithm": "sha256",
-        "value": "40bb35a5896b48c60712518d44dd09d69f6176062b45e66d0ded0003e2a05cac"
+        "value": "0879eea1ab3e61c20309623dd59dbd7b9e5252850326bedecbf245fb697088e8"
       },
       "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
         "algorithm": "sha256",
-        "value": "d0a0472d4939ff4169338eb9e1a2daec9d7597f1f9f459e2fdf46bad180fe797"
+        "value": "bc1f80f1912f03080963b89f7591e40968507ac7c679c61133474fc87befb5e8"
       },
       "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json": {
         "algorithm": "sha256",
-        "value": "5db52a57a5072da0d413f7aa77bd01a89bbc4d8f1eef54be82247a21c3d07696"
+        "value": "fc2ba75ca6e282dff8f2eed2053f9a1e91e944cdc578c91a5354b8afffe30132"
       },
       "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json": {
         "algorithm": "sha256",
-        "value": "73f5035c7856774707c6821fe8ed858055fbede9a031c692f7218cb91626707d"
+        "value": "9e273e56f154a87fee8f587f6ad18c4e5c477de7edc855fba691ddb7a86e2cde"
       },
       "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json": {
         "algorithm": "sha256",
-        "value": "5406b7006a594c8dc4210686dd059ec14d9769e4ea1712d0f8e552eb51b50f1d"
+        "value": "73614a2b512eaa9726985b76cf0f36d6e18453ddbecc0157da952ca8092b0d88"
       },
       "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json": {
         "algorithm": "sha256",
-        "value": "e804712dbef2a39de0d5bbcb2a0f09b5e6cc555a6d40e485be9a20472cd2417b"
+        "value": "4c104c727fdcc0841934100c354b846bd6cf3977845389d59af037dacd95eeb9"
       },
       "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json": {
         "algorithm": "sha256",
-        "value": "7f87f4e0a5962f37057c6fafe243c1829da17dda2cb1edc3b96bede66fedb06a"
+        "value": "dc4da74dd7a505c067cb48b146e9ead564e93bb2cb03af90c1bf9b4fc3fedf00"
       },
       "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json": {
         "algorithm": "sha256",
-        "value": "39341e37d35e3483434df05c07e299afff14f5f7c7b793440fb139be9e71226c"
+        "value": "042752e81230a86ccc41d24c5d7ba24b94ec7110af37babcc936a8a11774cbd8"
       },
       "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json": {
         "algorithm": "sha256",
-        "value": "cf44b7405e4861313871e0cb6995e6ddde2b2e0f4f469842aac60cecec2f7dfb"
+        "value": "fb2e955ffc4c9f9f5f13bdb3453b0dcfad86d40272ec31508fa57208495a5e22"
       },
       "execution/policy.json": {
         "algorithm": "sha256",
@@ -579,7 +579,7 @@
       },
       "exposure-plan.json": {
         "algorithm": "sha256",
-        "value": "0d87e26938b9293c95603f35326a7dad55bed11987a6a3eea7683b6de0c113d9"
+        "value": "2969c738c04545ea7af1d581a779f551f3d7202ee4f43cb2037bf641a10951cd"
       },
       "exposure-policy.json": {
         "algorithm": "sha256",
@@ -591,11 +591,11 @@
       },
       "repository-interface.json": {
         "algorithm": "sha256",
-        "value": "7fe1a5c220420288de810d9e43b5c3238c4ea466546bba3de6c49f7393f736c7"
+        "value": "2e1764d69b73da0e3be304d2662dd9f0228e1ed23fffcaef95968744edc50a06"
       },
       "repository-readiness.json": {
         "algorithm": "sha256",
-        "value": "a7f8aa94605d4a529fa48b0c420dca98a2f0408f0a06e5d87cc3e364d8c16fd7"
+        "value": "782a63477f5448067ec93ed6ccb08a10a43c31a4269d80e42204654aa78dc5ff"
       },
       "requirements.txt": {
         "algorithm": "sha256",
@@ -603,7 +603,7 @@
       },
       "source/sample/__init__.py": {
         "algorithm": "sha256",
-        "value": "c67eb7621f104d5712bdccb66cdc440d46d734036a3a2799b737451d1d4015ad"
+        "value": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
       },
       "source/sample/admin.py": {
         "algorithm": "sha256",
@@ -808,15 +808,15 @@
     ],
     "exposure_plan_digest": {
       "algorithm": "sha256",
-      "value": "0d87e26938b9293c95603f35326a7dad55bed11987a6a3eea7683b6de0c113d9"
+      "value": "2969c738c04545ea7af1d581a779f551f3d7202ee4f43cb2037bf641a10951cd"
     },
     "provenance_digest": {
       "algorithm": "sha256",
-      "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
+      "value": "4236923a880d0f26ccc092b6fa1380c52c7da20eb435fd8ee275116cd239196d"
     },
     "repository_interface_digest": {
       "algorithm": "sha256",
-      "value": "7fe1a5c220420288de810d9e43b5c3238c4ea466546bba3de6c49f7393f736c7"
+      "value": "2e1764d69b73da0e3be304d2662dd9f0228e1ed23fffcaef95968744edc50a06"
     },
     "schema_version": "apizr.repository-rest/v1",
     "sources": [
@@ -824,10 +824,10 @@
         "bundle_path": "source/sample/__init__.py",
         "is_package": true,
         "module": "sample",
-        "size": 41,
+        "size": 77,
         "source_digest": {
           "algorithm": "sha256",
-          "value": "c67eb7621f104d5712bdccb66cdc440d46d734036a3a2799b737451d1d4015ad"
+          "value": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
         },
         "source_path": "sample/__init__.py"
       },

@@ -9,6 +9,7 @@ from pathlib import Path, PurePosixPath
 EXAMPLE_PAGES = {
     "docs/getting-started/introduction.md",
     "docs/getting-started/quickstart.md",
+    "docs/getting-started/user-guide/exposure.md",
     "docs/development/0.4.md",
     "docs/reference/operator-policy.md",
 }

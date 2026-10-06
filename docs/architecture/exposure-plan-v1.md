@@ -104,11 +104,41 @@ configuration. Runtime binding belongs to the bundle/runtime stage.
 
 ## Complete evidence and fail-closed behavior
 
-Readiness v1 expresses completeness through `graph_complete` and
-`catalog_exit_code`, rather than a new `complete` field. Exposure requires
-`graph_complete = true` and `catalog_exit_code = 0`, even for empty selections.
-It does not require the report's aggregate exit code to be zero: unrelated
-conditional/unsupported capabilities need not be selected.
+Published 0.4.4 requires `graph_complete = true` and `catalog_exit_code = 0`.
+In the upcoming 0.4.5 release, `exposure.scope.required_evidence` owns the
+selected execution proof. It consumes validated, bound Catalog, Graph and
+Repository Readiness without source parsing, host lookup or execution.
+
+Roots are the exact IDs left after include/include-all-ready/exclude resolution.
+A bounded, iterative closure follows `calls_capability`, `references_capability`,
+`imports_capability` and `imports_module`. References remain conservative because
+the callable can be invoked indirectly. Imports are distinct from calls and require
+module initialization. Each capability requires its owning module and every
+present package ancestor. Missing package parents use the loader's existing
+synthetic namespace contract. `contains` does not select every function in a module.
+Private dependencies need stable bindings and execution evidence, not public JSON
+input/output contracts. They never become public roots. No effects are propagated.
+
+Graph diagnostics join canonical source identities and retained declaration spans:
+an exact unique span owns a function-body diagnostic; other locations belong to
+module initialization. Known-path Catalog parse/encoding/analysis/size/read errors
+can be unrelated. Input, aggregate-limit, collision, unknown-path, invalid module
+identity and unexplained incompleteness are global. Contradictory import trees
+also block the entire copied source manifest. Digest/manifest inconsistencies
+fail canonical validation. Required diagnostics block even with conditional opt-in.
+Unrelated diagnostics stay in the full audit and all full-repository digests.
+
+Shared #252 initialization facts are required for modules and package ancestors.
+A nonempty module without callable Readiness evidence remains unproven. Exact
+retained import locations must match Graph edges; external imports never discharge
+local `APIZR-READY-015`. Valid module-handle/function cycles terminate. A cyclic
+module-scope callable import blocks when the target definition has not yet been
+reached in retained lexical initialization order. No runtime behavior is guessed.
+
+An empty selection tolerates unrelated path diagnostics, but global corruption
+still blocks it. Multiple roots remain atomic. Breadth-first paths use capability
+neighbors before module neighbors, then canonical IDs, yielding deterministic
+shortest dependency paths with relative source location and typed evidence code.
 
 `ExposureRefused.diagnostics` contains deterministic typed reasons for incomplete
 evidence, unknown IDs, ineligible state, incompatible interface or execution.
@@ -120,11 +150,15 @@ all snapshots; structural schema validation alone is not evidence verification.
 ## Snapshot and dependency boundary
 
 Each record retains its capability ID, module, repository-relative POSIX source
-path, readiness state/reasons, requested and compatible interfaces, compatible
+path, selected-scope readiness state/reasons, requested and compatible interfaces, compatible
 execution modes, effect snapshot and relationship evidence. Graph diagnostics,
 import declarations, module import context and direct relationships retain
 uncertainty without repair or effect propagation. Full input documents and
-callee readiness/effect documents are not embedded.
+callee readiness/effect documents are not embedded. In 0.4.5, the plan's readiness
+projection may discharge interface/relationship reasons proven by the required
+closure; the separately bound full Repository Readiness report is unchanged.
+Effect, execution-policy and identity reasons retain their existing precedence.
+The successful v1 schema and full-repository identity semantics are unchanged.
 
 `calls_capability`, `references_capability` and `imports_capability` are evidence
 only: selecting A that calls B does not expose B. `observed_support_modules`

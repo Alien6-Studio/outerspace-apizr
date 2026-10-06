@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Expose independent functions from repositories containing unfinished code,
+  while retaining the full audit and refusing problems in required helpers,
+  imports or module initialization (#253).
+
 - Consume proven local repository import evidence for REST/MCP generation,
   allowing selected functions to call private same-repository helpers while
   retaining conservative source-local Readiness and unresolved import refusals (#252).

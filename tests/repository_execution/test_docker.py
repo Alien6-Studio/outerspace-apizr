@@ -15,6 +15,34 @@ from apizr.repository_execution.supervisor import execute
 from .helpers import IMAGE, planned
 
 
+def test_real_oci_selected_scope_with_unrelated_ambiguity(worker_image):
+    from exposure.test_scope import API, ROOT, UNRELATED
+    from repository_interfaces.conftest import evidence
+
+    from apizr.exposure import plan_bytes
+    from apizr.repository_execution.planner import container_plan
+    from apizr.repository_interfaces.planner import plan_repository_interface
+
+    values = evidence(
+        {"api.py": API, **UNRELATED, "broken.py": b"raise RuntimeError('UNRELATED')\n"},
+        selected=(ROOT,),
+        modes=("oci-container",),
+    )
+    assert not values[1].complete and not values[2].graph_complete
+    contract = plan_repository_interface(
+        *values, interface="rest", execution_mode="oci-container"
+    )
+    exposure = plan_bytes(values[4])
+    plan = container_plan(contract, exposure, ROOT, ExecutionPolicyV2(), worker_image)
+    sources = {
+        source.bundle_path: values[-1][source.source_path]
+        for source in contract.sources
+    }
+    result = execute(plan, exposure, sources, {"left": 2, "right": 3})
+    assert result.status == "success" and result.value == 5
+    assert [cap.capability_id for cap in contract.capabilities] == [ROOT]
+
+
 def test_real_oci_resolved_private_repository_import(worker_image):
     from repository_interfaces.conftest import evidence
     from repository_interfaces.test_local_imports import FILES, SELECTED

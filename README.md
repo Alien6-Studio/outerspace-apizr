@@ -58,6 +58,9 @@ The core handles supported static analysis and generation. Generated servers hav
 their own runtime dependencies. Optional plugins live in separate environments;
 installation, activation and operator authorization are independent decisions.
 
+Upcoming 0.4.5 lets you expose an independent function while unrelated experiments
+remain unfinished; see the [research repository example](https://apizr.outerspace.sh/getting-started/user-guide/exposure/#work-with-unfinished-research-code).
+
 
 ## Expose the functions you choose
 

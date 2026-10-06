@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "selected-scope-required-initialization",
+        "src/apizr/exposure/scope.py",
+        "            reasons = initialization_reasons(unit)",
+        "            reasons = ()",
+        "tests/exposure/test_scope.py::test_required_module_initialization_without_any_callable_is_not_guessed",
+    ),
+    Mutation(
         "repository-unproven-dependency-eligibility",
         "src/apizr/repository_readiness/eligibility.py",
         "                and reason.line in proven",

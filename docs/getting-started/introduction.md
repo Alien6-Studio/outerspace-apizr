@@ -18,6 +18,9 @@ The example below creates a small shop service with two operations: calculate a
 price and check stock. The helper functions stay private.
 
 For the shortest path to a working server, follow the [Quickstart](quickstart.md).
+For a research project with unfinished experiments, see
+[exposing an independent serving function](user-guide/exposure.md#work-with-unfinished-research-code)
+in the upcoming 0.4.5 release.
 
 ## Install
 

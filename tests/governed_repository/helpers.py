@@ -25,7 +25,7 @@ def crash(): os._exit(17)
 def environment(): return "APIZR_TEST_SECRET" in os.environ
 """
 FILES = {
-    "sample/__init__.py": b"from . import pricing\nINITIALIZED = True\n",
+    "sample/__init__.py": b"from . import pricing\nINITIALIZED = True\ndef package_name(): return 'sample'\n",
     "sample/api.py": SOURCE,
     "sample/pricing.py": b"state=[]\nasync def run(x: int): return x+1\ndef double(x: int): return 2*x\ndef count():\n    state.append(1)\n    return len(state)\n",
     "sample/admin.py": b'raise RuntimeError("UNRELATED MUST NOT EXECUTE")\n',

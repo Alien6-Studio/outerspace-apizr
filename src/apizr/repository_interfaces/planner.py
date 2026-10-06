@@ -11,7 +11,6 @@ from apizr.graph.builder import validated_inputs
 from apizr.interfaces.planner import invocation_contract
 from apizr.repository import Catalog
 from apizr.repository_readiness import RepositoryReadinessReport
-from apizr.repository_readiness.eligibility import can_generate_interface
 
 from .errors import BundleRefused
 from .model import BundledSource, Capability, RepositoryInterface
@@ -92,10 +91,9 @@ def plan_repository_interface(
         declarations = {c.id: c for c in unit.inspection.capability_ir.capabilities}
         for identity in sorted(selected):
             assessment = assessments[identity]
-            if not can_generate_interface(assessment):
-                raise BundleRefused(
-                    "APIZR-BUNDLE-006: repository interface is ineligible"
-                )
+            # validate_plan above recomputes the authoritative selected proof,
+            # including private execution support and module initialization.
+            # Do not replace it with a second, source-local eligibility gate.
             contract = invocation_contract(
                 declarations[identity], assessment.local_readiness
             )

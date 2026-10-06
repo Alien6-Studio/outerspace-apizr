@@ -9,7 +9,13 @@ if TYPE_CHECKING:
     from .model import DeclarationAssessment, Relationships
 
 
-def _proven_import(declaration: ImportDeclaration, facts: "Relationships") -> bool:
+def proven_import(
+    declaration: ImportDeclaration,
+    facts: "Relationships",
+    *,
+    execution_ready: frozenset[str] = frozenset(),
+    initialized_modules: frozenset[str] = frozenset(),
+) -> bool:
     if declaration.availability != "unconditional" or not declaration.names:
         return False
     edges = (*facts.direct, *facts.module_imports)
@@ -45,10 +51,15 @@ def _proven_import(declaration: ImportDeclaration, facts: "Relationships") -> bo
                 else module_id(dependency.local_readiness.source.module) == name.target
             )
         ]
-        if not dependencies or any(
+        if not dependencies and name.target not in initialized_modules:
+            return False
+        if any(
             not dependency.in_ir
             or dependency.dimensions.binding.state != State.READY
-            or dependency.dimensions.execution.state != State.READY
+            or (
+                dependency.dimensions.execution.state != State.READY
+                and dependency.capability_id not in execution_ready
+            )
             for dependency in dependencies
         ):
             return False
@@ -56,7 +67,13 @@ def _proven_import(declaration: ImportDeclaration, facts: "Relationships") -> bo
 
 
 def interface_state(
-    local: Assessment, source_path: str, facts: "Relationships"
+    local: Assessment,
+    source_path: str,
+    facts: "Relationships",
+    *,
+    execution_ready: frozenset[str] = frozenset(),
+    initialized_modules: frozenset[str] = frozenset(),
+    scope_complete: bool = False,
 ) -> State:
     """Keep local evidence immutable; discharge an exact import line only.
 
@@ -65,7 +82,7 @@ def interface_state(
     No whole-Graph completeness shortcut, source parsing or package lookup.
     """
     proven: set[int] = set()
-    if local.in_ir and facts.state == "resolved":
+    if local.in_ir and (facts.state == "resolved" or scope_complete):
         declarations: dict[int, list[ImportDeclaration]] = {}
         for declaration in facts.imports:
             if declaration.path == source_path and declaration.source in {
@@ -76,7 +93,15 @@ def interface_state(
         proven = {
             line
             for line, imports in declarations.items()
-            if all(_proven_import(declaration, facts) for declaration in imports)
+            if all(
+                proven_import(
+                    declaration,
+                    facts,
+                    execution_ready=execution_ready,
+                    initialized_modules=initialized_modules,
+                )
+                for declaration in imports
+            )
         }
     dimensions = local.dimensions
     return combine(

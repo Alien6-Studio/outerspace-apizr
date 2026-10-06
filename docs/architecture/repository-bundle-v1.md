@@ -113,16 +113,19 @@ Selecting `facade.calculate` packages its `helper.py` support but does not creat
 a route or Tool for `helper.double`. Required helpers need coherent bindings and
 execution evidence, not their own public JSON input contract. See the
 [user example](../getting-started/user-guide/exposure.md#use-private-helpers-from-the-same-repository).
-The complete inspected source universe is still copied; globally incomplete
-evidence is still refused. No transitive effect/state propagation, selected
-closure, runtime availability or safety claim is introduced.
+The upcoming 0.4.5 builder revalidates the Exposure Plan through the single
+[selected-evidence authority](exposure-plan-v1.md#complete-evidence-and-fail-closed-behavior).
+Required calls, references, imports and package initialization must be proven;
+unrelated path diagnostics remain visible in the bundled full audit. The complete
+inspected source universe is still copied and integrity-checked. The loader remains
+lazy: file presence never causes an import or public route. Contradictory namespace
+trees block the whole manifest. There is no source minimization, transitive effect
+inference or runtime safety claim.
 
-The historical fixture retains its real, nonempty package initializer and private
-cross-module helper. Its selected API remains eligible without propagating that
-helper's local state. The initializer has no callable Readiness evidence, so its
-unselected functions with direct relative imports remain conditional. Updated
-canonical report/manifest digests retain this additional uncertainty; public
-REST/MCP schemas and source-local reports do not change.
+The current bundle fixture includes a pure private callable in its nonempty
+package initializer so that retained Readiness can prove initialization. This
+changes full-audit/source/manifest digests, while public REST routes and MCP Tools
+remain unchanged. Initializers without sufficient facts are still refused.
 
 ## Artifacts, output and verification
 

@@ -100,12 +100,14 @@ def test_empty_wrong_transport_direct_refused():
 
 
 def test_contradiction_and_namespaces():
-    values = evidence(
-        {"a.py": b"def f(): return 1\n", "a/b.py": b"def f(): return 2\n"},
-        selected=("python:a.b:f",),
-    )
-    with pytest.raises(BundleRefused, match="004"):
-        plan_repository_interface(*values, interface="rest")
+    from apizr.exposure import ExposureRefused
+
+    with pytest.raises(ExposureRefused) as error:
+        evidence(
+            {"a.py": b"def f(): return 1\n", "a/b.py": b"def f(): return 2\n"},
+            selected=("python:a.b:f",),
+        )
+    assert any(d.reason == "global" for d in error.value.diagnostics)
     values = evidence({"a/b.py": b"def f(): return 2\n"}, selected=("python:a.b:f",))
     artifacts = render_repository_bundle(*values, interface="rest")
     assert "source/a/__init__.py" not in artifacts

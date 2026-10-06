@@ -13,6 +13,7 @@ from apizr.readiness.model import Assessment
 from apizr.readiness.model import Code as ReadinessCode
 from apizr.repository.model import Catalog
 
+from .initialization import initialization_reasons
 from .model import Dependency, Relationships
 
 
@@ -143,25 +144,11 @@ def relationship_evidence(
     for unit in catalog.sources:
         if unit.module not in required_modules:
             continue
-        if unit.inspection is None:
-            partial = True
-            continue
-        declarations = unit.inspection.readiness.assessments
         # An empty initializer has exact size/digest-bound evidence. A nonempty
         # module without callable assessments has no initialization evidence in
         # Readiness v1, so keep uncertainty rather than parse it again.
-        if (not declarations and unit.size != 0) or any(
-            reason.code == ReadinessCode.INITIALIZATION
-            or (
-                reason.code in {ReadinessCode.DYNAMIC_IMPORT, ReadinessCode.DEPENDENCY}
-                and not any(
-                    other.source.line <= reason.line <= other.source.end_line
-                    for other in declarations
-                )
-            )
-            for declaration in declarations
-            for reason in declaration.dimensions.execution.reasons
-        ):
+        reasons = initialization_reasons(unit)
+        if reasons is None or reasons:
             partial = True
     return Relationships(
         state="unavailable" if unavailable else "partial" if partial else "resolved",

@@ -278,6 +278,13 @@ repository writes, network, subprocesses and unwanted framework imports.
 
 ## Outside Graph v1
 
+In the upcoming 0.4.5 release, Exposure consumes this entire Graph to derive a
+[selected execution proof](exposure-plan-v1.md#complete-evidence-and-fail-closed-behavior).
+Graph v1 still retains all nodes, relationships, diagnostics and completeness.
+It neither stores transitive edges nor hides unrelated failures. The consumer
+follows calls, callable references and local imports, including required module
+and package initialization; dependencies remain private unless explicitly selected.
+
 Graph v1 does not propagate effects/permissions/readiness, store transitive edges,
 rank repositories/agents or provide a graph database, class/method capabilities,
 visualization UI or attestation integration. Repository readiness (#55), exposure
