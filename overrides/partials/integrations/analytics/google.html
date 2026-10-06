@@ -1,0 +1,16 @@
+<script id="__analytics">
+function __md_analytics() {
+  if (location.hostname !== "apizr.outerspace.sh" || window.__apizrAnalyticsLoaded) return;
+  window.__apizrAnalyticsLoaded = true;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+  gtag('js', new Date());
+  gtag('consent', 'update', {analytics_storage: 'granted'});
+  gtag('config', '{{ config.extra.analytics.property }}', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
+  var script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://www.googletagmanager.com/gtag/js?id={{ config.extra.analytics.property }}';
+  document.head.appendChild(script);
+}
+</script>

@@ -120,7 +120,9 @@ from apizr.plugin_catalog import load_catalog, resolve_profile, select_entry
 
 catalog = load_catalog(Path(os.environ["CATALOG"]))
 entry = select_entry(catalog, "outerspace-apizr-mcp", "0.4.4")
-result = resolve_profile(catalog, "mcp", Path(os.environ["WHEELHOUSE"]), Path("plugin-plan"))
+result = resolve_profile(
+    catalog, "mcp", Path(os.environ["WHEELHOUSE"]), Path("plugin-plan")
+)
 assert result.installation == "not_performed"
 ```
 

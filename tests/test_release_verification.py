@@ -826,14 +826,17 @@ def test_current_tracked_tree_keeps_oss_product_scope():
     import subprocess
 
     root = Path(__file__).resolve().parents[1]
-    # Product code/configuration remains independent. Only the reviewed optional
-    # handoff and its release/example documentation may name an external consumer.
+    # Product code/configuration remains independent. Reviewed handoff,
+    # release/example documentation, showcase and qualification notes may name
+    # an external consumer; the exception remains limited to these exact files.
     # History is intentionally ignored.
     excluded = bytes.fromhex("7472756e78")
     documented_boundary = {
         "docs/reference/external-governance.md",
         "docs/releases/0.4.4.md",
         "examples/governance/README.md",
+        "docs/index.md",
+        "docs/contributing/verification.md",
     }
     tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=root)
     matches = [
