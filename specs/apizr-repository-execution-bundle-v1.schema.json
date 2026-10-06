@@ -1,0 +1,121 @@
+{
+  "$defs": {
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "PlanArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "digest"
+      ],
+      "title": "PlanArtifact",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifacts": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Digest"
+      },
+      "title": "Artifacts",
+      "type": "object"
+    },
+    "backend": {
+      "const": "local-process",
+      "default": "local-process",
+      "title": "Backend",
+      "type": "string"
+    },
+    "backend_version": {
+      "const": "apizr.local-process/v1",
+      "default": "apizr.local-process/v1",
+      "title": "Backend Version",
+      "type": "string"
+    },
+    "capabilities": {
+      "additionalProperties": {
+        "$ref": "#/$defs/PlanArtifact"
+      },
+      "title": "Capabilities",
+      "type": "object"
+    },
+    "contract_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "exposure_plan_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "policy_artifact": {
+      "const": "execution/policy.json",
+      "default": "execution/policy.json",
+      "title": "Policy Artifact",
+      "type": "string"
+    },
+    "policy_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "policy_version": {
+      "const": "apizr.execution/v1",
+      "default": "apizr.execution/v1",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "repository_interface_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "schema_version": {
+      "const": "apizr.repository-execution-bundle/v1",
+      "default": "apizr.repository-execution-bundle/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "transport": {
+      "enum": [
+        "rest",
+        "mcp"
+      ],
+      "title": "Transport",
+      "type": "string"
+    }
+  },
+  "required": [
+    "transport",
+    "repository_interface_digest",
+    "exposure_plan_digest",
+    "contract_digest",
+    "policy_digest",
+    "capabilities",
+    "artifacts"
+  ],
+  "title": "ExecutionBundle",
+  "type": "object"
+}

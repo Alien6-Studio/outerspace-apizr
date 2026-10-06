@@ -1,0 +1,1088 @@
+{
+  "$defs": {
+    "Assessment": {
+      "additionalProperties": false,
+      "properties": {
+        "can_generate_interface": {
+          "title": "Can Generate Interface",
+          "type": "boolean"
+        },
+        "capability_id": {
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "dimensions": {
+          "$ref": "#/$defs/Dimensions"
+        },
+        "effects": {
+          "$ref": "#/$defs/Effects"
+        },
+        "in_ir": {
+          "title": "In Ir",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "state": {
+          "$ref": "#/$defs/State"
+        }
+      },
+      "required": [
+        "capability_id",
+        "source",
+        "in_ir",
+        "dimensions",
+        "effects",
+        "state",
+        "can_generate_interface"
+      ],
+      "title": "Assessment",
+      "type": "object"
+    },
+    "Availability": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "value": {
+          "enum": [
+            "unconditional",
+            "unknown"
+          ],
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "evidence"
+      ],
+      "title": "Availability",
+      "type": "object"
+    },
+    "Capability": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/Availability"
+        },
+        "decorators": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Expression"
+          },
+          "title": "Decorators",
+          "type": "array"
+        },
+        "docstring": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docstring"
+        },
+        "effects": {
+          "$ref": "#/$defs/Effects"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "observed"
+        },
+        "execution": {
+          "$ref": "#/$defs/ExecutionForm"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "function",
+          "default": "function",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "overloads": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Overload"
+          },
+          "title": "Overloads",
+          "type": "array"
+        },
+        "qualified_name": {
+          "title": "Qualified Name",
+          "type": "string"
+        },
+        "signature": {
+          "$ref": "#/$defs/Signature"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "qualified_name",
+        "source",
+        "execution",
+        "signature",
+        "availability"
+      ],
+      "title": "Capability",
+      "type": "object"
+    },
+    "CapabilityDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Capability"
+          },
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/apizr__capabilities__model__Diagnostic"
+          },
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "apizr.capability/v1",
+          "default": "apizr.capability/v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "CapabilityDocument",
+      "type": "object"
+    },
+    "CapabilityEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "can_generate_interface": {
+          "title": "Can Generate Interface",
+          "type": "boolean"
+        },
+        "execution": {
+          "$ref": "#/$defs/ExecutionForm"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "ir_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "readiness": {
+          "$ref": "#/$defs/State"
+        },
+        "readiness_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "source_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "source_path": {
+          "title": "Source Path",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "module",
+        "source_path",
+        "source_digest",
+        "ir_digest",
+        "readiness_digest",
+        "readiness",
+        "can_generate_interface",
+        "execution",
+        "span"
+      ],
+      "title": "CapabilityEntry",
+      "type": "object"
+    },
+    "DeclaredType": {
+      "additionalProperties": false,
+      "properties": {
+        "declared": {
+          "title": "Declared",
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "declared"
+        },
+        "form": {
+          "$ref": "#/$defs/TypeForm"
+        }
+      },
+      "required": [
+        "declared",
+        "form"
+      ],
+      "title": "DeclaredType",
+      "type": "object"
+    },
+    "DiagnosticCode": {
+      "enum": [
+        "APIZR-CAP-001",
+        "APIZR-CAP-002",
+        "APIZR-CAP-003",
+        "APIZR-CAP-004",
+        "APIZR-CAP-005",
+        "APIZR-CAP-006"
+      ],
+      "title": "DiagnosticCode",
+      "type": "string"
+    },
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "Dimension": {
+      "additionalProperties": false,
+      "properties": {
+        "reasons": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Reason"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "state": {
+          "$ref": "#/$defs/State"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "Dimension",
+      "type": "object"
+    },
+    "Dimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "binding": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "execution": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "inputs": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "outputs": {
+          "$ref": "#/$defs/Dimension"
+        }
+      },
+      "required": [
+        "binding",
+        "execution",
+        "inputs",
+        "outputs"
+      ],
+      "title": "Dimensions",
+      "type": "object"
+    },
+    "Effect": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "unknown"
+        },
+        "value": {
+          "$ref": "#/$defs/EffectValue",
+          "default": "unknown"
+        }
+      },
+      "title": "Effect",
+      "type": "object"
+    },
+    "EffectValue": {
+      "enum": [
+        "true",
+        "false",
+        "unknown"
+      ],
+      "title": "EffectValue",
+      "type": "string"
+    },
+    "Effects": {
+      "additionalProperties": false,
+      "properties": {
+        "environment": {
+          "$ref": "#/$defs/Effect"
+        },
+        "external_service": {
+          "$ref": "#/$defs/Effect"
+        },
+        "filesystem_read": {
+          "$ref": "#/$defs/Effect"
+        },
+        "filesystem_write": {
+          "$ref": "#/$defs/Effect"
+        },
+        "network": {
+          "$ref": "#/$defs/Effect"
+        },
+        "secrets": {
+          "$ref": "#/$defs/Effect"
+        },
+        "state_mutation": {
+          "$ref": "#/$defs/Effect"
+        },
+        "subprocess": {
+          "$ref": "#/$defs/Effect"
+        }
+      },
+      "title": "Effects",
+      "type": "object"
+    },
+    "Evidence": {
+      "enum": [
+        "declared",
+        "observed",
+        "inferred",
+        "unknown"
+      ],
+      "title": "Evidence",
+      "type": "string"
+    },
+    "ExecutionForm": {
+      "enum": [
+        "sync",
+        "async",
+        "generator",
+        "async_generator"
+      ],
+      "title": "ExecutionForm",
+      "type": "string"
+    },
+    "Expression": {
+      "additionalProperties": false,
+      "properties": {
+        "declared": {
+          "title": "Declared",
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "declared"
+        }
+      },
+      "required": [
+        "declared"
+      ],
+      "title": "Expression",
+      "type": "object"
+    },
+    "Inspection": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_ir": {
+          "$ref": "#/$defs/CapabilityDocument"
+        },
+        "ir_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "readiness": {
+          "$ref": "#/$defs/ReadinessReport"
+        },
+        "readiness_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "schema_version": {
+          "const": "apizr.inspection/v1",
+          "default": "apizr.inspection/v1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capability_ir",
+        "ir_digest",
+        "readiness",
+        "readiness_digest"
+      ],
+      "title": "Inspection",
+      "type": "object"
+    },
+    "Overload": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "declared"
+        },
+        "signature": {
+          "$ref": "#/$defs/Signature"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "source",
+        "signature"
+      ],
+      "title": "Overload",
+      "type": "object"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "annotation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DeclaredType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "default": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expression"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "observed"
+        },
+        "kind": {
+          "$ref": "#/$defs/ParameterKind"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "required"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "ParameterKind": {
+      "enum": [
+        "positional_only",
+        "positional_or_keyword",
+        "keyword_only"
+      ],
+      "title": "ParameterKind",
+      "type": "string"
+    },
+    "ReadinessReport": {
+      "additionalProperties": false,
+      "properties": {
+        "assessments": {
+          "items": {
+            "$ref": "#/$defs/Assessment"
+          },
+          "title": "Assessments",
+          "type": "array"
+        },
+        "ir_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "policy_version": {
+          "const": "apizr.readiness/v1",
+          "default": "apizr.readiness/v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "source",
+        "ir_digest",
+        "assessments"
+      ],
+      "title": "ReadinessReport",
+      "type": "object"
+    },
+    "Reason": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/apizr__readiness__model__Code"
+        },
+        "evidence": {
+          "const": "inferred",
+          "default": "inferred",
+          "title": "Evidence",
+          "type": "string"
+        },
+        "line": {
+          "title": "Line",
+          "type": "integer"
+        },
+        "parameter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parameter"
+        }
+      },
+      "required": [
+        "code",
+        "line"
+      ],
+      "title": "Reason",
+      "type": "object"
+    },
+    "Returns": {
+      "additionalProperties": false,
+      "properties": {
+        "annotation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DeclaredType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "enforcement": {
+          "const": "none",
+          "default": "none",
+          "title": "Enforcement",
+          "type": "string"
+        }
+      },
+      "title": "Returns",
+      "type": "object"
+    },
+    "ScanPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "excluded_directories": {
+          "default": [
+            ".git",
+            ".mypy_cache",
+            ".pytest_cache",
+            ".ruff_cache",
+            ".venv",
+            "__pycache__",
+            "build",
+            "dist",
+            "venv"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Excluded Directories",
+          "type": "array"
+        },
+        "included_suffixes": {
+          "default": [
+            ".py"
+          ],
+          "items": {
+            "const": ".py",
+            "type": "string"
+          },
+          "title": "Included Suffixes",
+          "type": "array"
+        },
+        "max_depth": {
+          "default": 64,
+          "maximum": 128,
+          "minimum": 1,
+          "title": "Max Depth",
+          "type": "integer"
+        },
+        "max_entries": {
+          "default": 20000,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Max Entries",
+          "type": "integer"
+        },
+        "max_file_bytes": {
+          "default": 1048576,
+          "maximum": 16777216,
+          "minimum": 1,
+          "title": "Max File Bytes",
+          "type": "integer"
+        },
+        "max_source_files": {
+          "default": 1000,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Max Source Files",
+          "type": "integer"
+        },
+        "max_total_bytes": {
+          "default": 16777216,
+          "maximum": 268435456,
+          "minimum": 1,
+          "title": "Max Total Bytes",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "apizr.scan/v1",
+          "default": "apizr.scan/v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_roots": {
+          "default": [
+            "."
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Roots",
+          "type": "array"
+        },
+        "symlinks": {
+          "const": "skip",
+          "default": "skip",
+          "title": "Symlinks",
+          "type": "string"
+        }
+      },
+      "title": "ScanPolicy",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "info",
+        "warning",
+        "error"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "Signature": {
+      "additionalProperties": false,
+      "properties": {
+        "parameters": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          },
+          "title": "Parameters",
+          "type": "array"
+        },
+        "returns": {
+          "$ref": "#/$defs/Returns"
+        }
+      },
+      "title": "Signature",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "kind": {
+          "enum": [
+            "python",
+            "notebook"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "transformed_digest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "kind",
+        "module",
+        "digest"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "symbol": {
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module",
+        "symbol",
+        "line",
+        "end_line"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "SourceUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "inspection": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Inspection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "inspection_digest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "is_package": {
+          "title": "Is Package",
+          "type": "boolean"
+        },
+        "module": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Module"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Size"
+        },
+        "source_digest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_root": {
+          "title": "Source Root",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "source_root",
+        "module",
+        "source_digest",
+        "size",
+        "is_package"
+      ],
+      "title": "SourceUnit",
+      "type": "object"
+    },
+    "State": {
+      "enum": [
+        "ready",
+        "conditional",
+        "unsupported",
+        "ambiguous"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "TypeForm": {
+      "enum": [
+        "name",
+        "attribute",
+        "subscript",
+        "union",
+        "forward_reference",
+        "literal",
+        "unknown"
+      ],
+      "title": "TypeForm",
+      "type": "string"
+    },
+    "apizr__capabilities__model__Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/DiagnosticCode"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "source"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "apizr__readiness__model__Code": {
+      "enum": [
+        "APIZR-READY-001",
+        "APIZR-READY-002",
+        "APIZR-READY-003",
+        "APIZR-READY-004",
+        "APIZR-READY-005",
+        "APIZR-READY-006",
+        "APIZR-READY-007",
+        "APIZR-READY-008",
+        "APIZR-READY-009",
+        "APIZR-READY-010",
+        "APIZR-READY-011",
+        "APIZR-READY-012",
+        "APIZR-READY-013",
+        "APIZR-READY-014",
+        "APIZR-READY-015",
+        "APIZR-READY-016",
+        "APIZR-READY-017",
+        "APIZR-READY-018"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "apizr__repository__model__Code": {
+      "enum": [
+        "APIZR-REPO-001",
+        "APIZR-REPO-002",
+        "APIZR-REPO-003",
+        "APIZR-REPO-004",
+        "APIZR-REPO-005",
+        "APIZR-REPO-006",
+        "APIZR-REPO-007",
+        "APIZR-REPO-008",
+        "APIZR-REPO-009",
+        "APIZR-REPO-010"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "apizr__repository__model__Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/apizr__repository__model__Code"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "enum": [
+                "sources",
+                "bytes",
+                "entries",
+                "depth"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "path"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "items": {
+        "$ref": "#/$defs/CapabilityEntry"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "diagnostics": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/apizr__repository__model__Diagnostic"
+      },
+      "title": "Diagnostics",
+      "type": "array"
+    },
+    "repository_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "scan_policy": {
+      "$ref": "#/$defs/ScanPolicy"
+    },
+    "scan_policy_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "schema_version": {
+      "const": "apizr.catalog/v1",
+      "default": "apizr.catalog/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceUnit"
+      },
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "scan_policy",
+    "scan_policy_digest",
+    "repository_digest",
+    "sources",
+    "capabilities"
+  ],
+  "title": "Catalog",
+  "type": "object"
+}

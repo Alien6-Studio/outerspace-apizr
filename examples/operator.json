@@ -1,0 +1,217 @@
+{
+  "schema": "apizr.operator-policy/v1",
+  "grants": [
+    {
+      "plugin": {
+        "name": "outerspace-apizr-oci",
+        "version": "0.4.1",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "dependencies": [
+          {
+            "name": "annotated-types",
+            "version": "0.8.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "outerspace-apizr",
+            "version": "0.3.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "pydantic",
+            "version": "2.13.5",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "pydantic-core",
+            "version": "2.46.5",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "typing-extensions",
+            "version": "4.16.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "typing-inspection",
+            "version": "0.4.4",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          }
+        ]
+      },
+      "operation": "build",
+      "target": {
+        "bundle": "/work/rest-bundle",
+        "interface": "rest",
+        "base_image": "python:3.14-slim@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "platform": "linux/amd64",
+        "tag": "apizr-service:rest-example",
+        "requirements": "/work/rest.lock",
+        "wheelhouse": "/work/rest-wheels",
+        "docker": {
+          "executable": "/usr/bin/docker",
+          "socket": "/var/run/docker.sock",
+          "buildx": null
+        }
+      },
+      "permissions": [
+        "image.build",
+        "registry.read"
+      ]
+    },
+    {
+      "plugin": {
+        "name": "outerspace-apizr-oci",
+        "version": "0.4.1",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "dependencies": [
+          {
+            "name": "annotated-types",
+            "version": "0.8.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "outerspace-apizr",
+            "version": "0.3.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "pydantic",
+            "version": "2.13.5",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "pydantic-core",
+            "version": "2.46.5",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "typing-extensions",
+            "version": "4.16.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "typing-inspection",
+            "version": "0.4.4",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          }
+        ]
+      },
+      "operation": "push",
+      "repository": "registry.example:5443/team/service",
+      "permissions": [
+        "registry.read",
+        "registry.publish"
+      ]
+    },
+    {
+      "plugin": {
+        "name": "outerspace-apizr-attest",
+        "version": "0.4.1",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "dependencies": [
+          {
+            "name": "annotated-types",
+            "version": "0.8.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "outerspace-apizr-oci",
+            "version": "0.4.1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "name": "outerspace-apizr",
+            "version": "0.3.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "pydantic",
+            "version": "2.13.5",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "pydantic-core",
+            "version": "2.46.5",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "typing-extensions",
+            "version": "4.16.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "typing-inspection",
+            "version": "0.4.4",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          }
+        ]
+      },
+      "operation": "publish",
+      "repository": "registry.example:5443/team/service",
+      "permissions": [
+        "registry.read",
+        "registry.publish"
+      ]
+    },
+    {
+      "plugin": {
+        "name": "outerspace-apizr-attest",
+        "version": "0.4.1",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "lock_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "dependencies": [
+          {
+            "name": "annotated-types",
+            "version": "0.8.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "outerspace-apizr-oci",
+            "version": "0.4.1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "name": "outerspace-apizr",
+            "version": "0.3.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "pydantic",
+            "version": "2.13.5",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "pydantic-core",
+            "version": "2.46.5",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "typing-extensions",
+            "version": "4.16.0",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          {
+            "name": "typing-inspection",
+            "version": "0.4.4",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          }
+        ]
+      },
+      "operation": "attest",
+      "repository": "registry.example:5443/team/service",
+      "permissions": [
+        "registry.read",
+        "receipt.sign",
+        "timestamp.request"
+      ],
+      "key_id": "cccccccccccccccccccccccccccccccc",
+      "expected_signer": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "key_file": "/private/operator.key",
+      "tsa_url": "https://tsa.example:8443/timestamp"
+    }
+  ]
+}

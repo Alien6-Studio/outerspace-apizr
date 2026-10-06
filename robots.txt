@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://apizr.outerspace.sh/sitemap.xml

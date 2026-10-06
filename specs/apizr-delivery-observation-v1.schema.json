@@ -1,0 +1,70 @@
+{
+  "$defs": {
+    "ObservedImage": {
+      "additionalProperties": false,
+      "properties": {
+        "digest_reference": {
+          "title": "Digest Reference",
+          "type": "string"
+        },
+        "config_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Config Digest",
+          "type": "string"
+        },
+        "manifest_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Manifest Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "digest_reference",
+        "config_digest",
+        "manifest_digest"
+      ],
+      "title": "ObservedImage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "apizr.delivery-observation/v1",
+      "default": "apizr.delivery-observation/v1",
+      "title": "Schema",
+      "type": "string"
+    },
+    "destination": {
+      "title": "Destination",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "verified",
+        "absent",
+        "conflict",
+        "remote_state_unconfirmed"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "image": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ObservedImage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "destination",
+    "state"
+  ],
+  "title": "ObservationResult",
+  "type": "object"
+}

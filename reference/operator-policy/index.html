@@ -1,0 +1,5061 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs.">
+      
+      
+        <meta name="author" content="Ludovic FERNANDEZ, Alien6">
+      
+      
+        <link rel="canonical" href="https://apizr.outerspace.sh/reference/operator-policy/">
+      
+      
+        <link rel="prev" href="../extension-invocation/">
+      
+      
+        <link rel="next" href="../../getting-started/developer-guide/releases/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Operator permissions - OuterSpace Apizr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/branding.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  <script id="__analytics">
+function __md_analytics() {
+  if (location.hostname !== "apizr.outerspace.sh" || window.__apizrAnalyticsLoaded) return;
+  window.__apizrAnalyticsLoaded = true;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+  gtag('js', new Date());
+  gtag('consent', 'update', {analytics_storage: 'granted'});
+  gtag('config', 'G-P3BHZB2FVP', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
+  var script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P3BHZB2FVP';
+  document.head.appendChild(script);
+}
+</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+  
+  <link rel="describedby" type="application/json" href="../../build-info.json" />
+  <meta name="apizr-source-commit" content="a5c5512a0204d83fc4157ae956cd4aba0a9881f4" />
+  <meta name="apizr-docs-status" content="stable" />
+  
+  
+  
+  
+  
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="OuterSpace Apizr" />
+  <meta property="og:title" content="Operator permissions · OuterSpace Apizr" />
+  <meta property="og:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta property="og:url" content="https://apizr.outerspace.sh/reference/operator-policy/" />
+  <meta property="og:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Operator permissions · OuterSpace Apizr" />
+  <meta name="twitter:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta name="twitter:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
+  <meta name="twitter:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="amber" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#authorize-git-acquisition-image-builds-signing-and-publication" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="OuterSpace Apizr" class="md-header__button md-logo" aria-label="OuterSpace Apizr" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OuterSpace Apizr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Operator permissions
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="amber" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="amber" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/alien6-studio/outerspace-apizr" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">alien6-studio/outerspace-apizr</div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/install/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/user-guide/scan/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/overview/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/user-guide/apizr/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Legacy pipeline — compatibility
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../releases/0.4.4/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Releases
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../about/CONTRIBUTING/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OuterSpace Apizr" class="md-nav__button md-logo" aria-label="OuterSpace Apizr" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.png" alt="logo">
+
+    </a>
+    OuterSpace Apizr
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/alien6-studio/outerspace-apizr" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">alien6-studio/outerspace-apizr</div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Apizr
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Initialize and diagnose
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The full journey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compilation and interfaces
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Compilation and interfaces
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/scan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inventory a Python project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inspect capability relationships
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/inspect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inspect source without running it
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/repository-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Assess readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/exposure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST/MCP from a repository
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/rest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST from a Python file or notebook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/ci-integrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validate and build in CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/client-collections/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client collections from REST
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP from a Python file or notebook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/execute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execute code with a policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git-sources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analyze a Git repository
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH Git sources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configure a project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project-plugin-locks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Declarations and plugin locks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plugins
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugin-catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Choose a catalog profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../local-extensions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install, run, update and uninstall
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apizr-mcp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apizr analysis MCP server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../oci-service-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCI service images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../attest-delivery-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Attest delivery proofs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../attest-oci-artifacts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Attest OCI artifacts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delivery-admission/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Proof-required admission
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../external-governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multi-destination-delivery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-destination delivery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compiler-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python compiler API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extension-invocation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extension invocation API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operator permissions
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operator permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-repository-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize repository analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-a-git-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize a Git source
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write-the-operators-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Write the operator's policy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-an-image-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize an image build
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publish-the-selected-image-and-its-proof" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Publish the selected image and its proof
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-signing-separately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize signing separately
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#match-the-destination-exactly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Match the destination exactly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#call-from-python-and-handle-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call from Python and handle decisions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understand-the-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understand the boundary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verify-local-source-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify local source permissions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pass-the-same-authority-from-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pass the same authority from Python
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/developer-guide/releases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compatibility notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capability Compiler overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/repository-scanner-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Repository Scanner and Catalog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/repository-readiness-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Repository Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/exposure-plan-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exposure Plan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/repository-bundle-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Repository Bundle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/governed-repository-runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governed repository execution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/capability-graph-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capability Graph
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/capability-ir-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capability IR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/capability-readiness-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Static readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/rest-generator-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST generator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp-generator-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP generator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/execution-policy-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execution Policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/oci-container-runtime-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCI container execution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/subprocess-deny/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Subprocess deny
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/governed-transport-runtime-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governed REST and MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/governed-oci-transports-v2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCI-governed REST and MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/delivery-identities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Delivery identities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/artifact-principles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Artifact principles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/security-baseline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security baseline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy pipeline — compatibility
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Legacy pipeline — compatibility
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/apizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate a legacy API and container
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy standalone commands
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Legacy standalone commands
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/code-analyzr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analyze Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/fast-apizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate FastAPI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/dockerizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate Docker files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy pipeline components
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Legacy pipeline components
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/notebook-transformr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook conversion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/code-analyzr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/fast-apizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/dockerizr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy HTTP generation service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Legacy HTTP generation service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/apizr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Service and project upload
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/code-analyzr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python analysis endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/fast-apizr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI generation endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/notebook-transformr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook conversion endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/dockerizr-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker generation endpoints
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/developer-guide/plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/legacy-behavior-contract/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Behavior contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Releases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Releases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.0rc1 (RC)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.3.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.3.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.2.1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.2.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.2.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.2.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/CONTRIBUTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/0.4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build from source
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/developer-guide/setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development and checks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugin-authors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package an extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/publish-0.4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publication and documentation cutover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/extension-packaging-v04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extension packaging ADR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/release-branches/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release branch governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/releases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/verification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Verify builds and releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/attest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Managed Attest identity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dependency maintenance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/homebrew-build-inputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Homebrew build inputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/CODE_OF_CONDUCT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code of conduct
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/LICENSE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    License
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-repository-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize repository analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-a-git-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize a Git source
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write-the-operators-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Write the operator's policy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-an-image-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize an image build
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publish-the-selected-image-and-its-proof" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Publish the selected image and its proof
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-signing-separately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize signing separately
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#match-the-destination-exactly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Match the destination exactly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#call-from-python-and-handle-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Call from Python and handle decisions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understand-the-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understand the boundary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verify-local-source-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify local source permissions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pass-the-same-authority-from-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pass the same authority from Python
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<p><span id="authorize-an-oci-publication"></span>
+<span id="authorize-image-builds-signing-and-publication"></span></p>
+<h1 id="authorize-git-acquisition-image-builds-signing-and-publication">Authorize Git acquisition, image builds, signing and publication</h1>
+<div class="admonition warning">
+<p class="admonition-title">Explicit authorization required</p>
+<p>Remote <code>--git</code> commands and <code>acquire_snapshot</code> also require an explicit Git grant.
+Managed <code>outerspace-apizr-oci build</code>, <code>outerspace-apizr-oci push</code>, <code>outerspace-apizr-attest publish</code> and <code>outerspace-apizr-attest attest</code> calls require
+<code>--operator-policy</code>. An installed, active plugin alone does not permit
+building, publication or signing.</p>
+</div>
+<p>Installation puts verified wheel bytes in an isolated environment. Activation
+chooses one installed version. <strong>Authorization</strong> permits a particular installed
+build to perform one operation on explicitly selected inputs or a remote repository. None implies the next.</p>
+<p>For prerequisites and package availability, see <a href="../../getting-started/install/">Install Apizr</a>.</p>
+<h2 id="authorize-repository-analysis">Authorize repository analysis</h2>
+<p>Repository analysis requires <strong>source.analyze</strong> for filesystem-backed <code>scan</code>, <code>graph</code>,
+<code>readiness</code>, <code>expose plan</code> and the analysis phase of <code>expose build rest|mcp</code>.
+Their Python APIs use the same pure <code>decide_analysis(policy, target)</code> decision.
+This is independent of <code>git.fetch</code>, image construction, signing and publication.
+It does not select public functions or permit business execution. These commands require an explicit
+<code>--operator-policy</code> or the typed Python <code>operator_policy</code> argument.</p>
+<p>A complete <a href="../../examples/operator-analysis-local.json">local policy</a>:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"schema"</span><span class="p">:</span><span class="w"> </span><span class="s2">"apizr.operator-policy/v1"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"grants"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"adapter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"repository"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"operation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"analyze"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"local"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"root"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/work/project"</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">"source.analyze"</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Replace <code>/work/project</code> with the <strong>canonical absolute root</strong> actually used.
+The exact root is authorized, including descendants subject to scan limits,
+source roots and exclusions. It does not grant <code>/work/project-other</code>, another
+root, or an independently requested child root. All path components are opened
+without following symbolic links. Use the physical path (for example
+<code>/private/tmp/project</code> on macOS), not a symlink alias. The directory descriptor
+anchors traversal; changing a pathname cannot redirect it. MCP also pins the
+root's device/inode and refuses replacement. Local file edits affect later
+analyses: use the repository digest guard to detect changes between MCP calls.</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>scan<span class="w"> </span>/work/project<span class="w"> </span>--operator-policy<span class="w"> </span>/private/operator.json<span class="w"> </span>--catalog
+apizr<span class="w"> </span>graph<span class="w"> </span>/work/project<span class="w"> </span>--operator-policy<span class="w"> </span>/private/operator.json<span class="w"> </span>--graph
+apizr<span class="w"> </span>readiness<span class="w"> </span>/work/project<span class="w"> </span>--operator-policy<span class="w"> </span>/private/operator.json<span class="w"> </span>--report
+</code></pre></div>
+<p>Explicitly selected, bounded project/operator/readiness/exposure configuration
+may be read to determine the target and parameters. Source enumeration and reading
+start only after admission. No authority is discovered from a project, profile,
+catalogue or environment variable. Refusals exit 2 with a fixed JSON decision on
+stderr, no partial report on stdout.</p>
+<p>For Git, add a separate analysis grant with target
+<code>{"kind":"git","repository":"https://git.example/team/project.git",
+"reference":"refs/heads/main","subdir":"src"}</code>. Matching uses the exact requested
+repository/ref/subdirectory, never a random temporary path. Both grants are
+checked before combined CLI acquisition. The Python acquisition API separately
+requires <code>git.fetch</code>; pass its <strong>live GitSnapshot object</strong>, plus analysis policy,
+to the compiler. That object is bound to the actual acquisition, resolved commit
+and opened export. Invented, copied or expired snapshots are refused. A branch
+grant admits its name; the resolved commit identifies what was analyzed.
+<code>subdir</code> does not bound all objects transferred during acquisition.</p>
+<p>MCP captures the policy and project scope once at launch, preserving them across
+exec and workers. Policy edits require a <strong>restart</strong>; there is no dynamic
+revocation. Clients cannot choose roots or new authority. See the
+<a href="../apizr-mcp-server/#choose-one-local-project">complete MCP example</a>.</p>
+<h2 id="authorize-a-git-source">Authorize a Git source</h2>
+<p>Git is part of the minimal core, not an installed plugin. Use a separate
+<code>adapter: git</code>, <code>operation: fetch</code> grant with <code>git.fetch</code> permission. Complete
+<a href="../../examples/operator-git-https.json">fictitious HTTPS</a> and
+<a href="../../examples/operator-git-ssh.json">fictitious SSH</a> policies show every field;
+replace the example address, revision, subdirectory and absolute trust references
+with values you have reviewed. Never obtain this policy from the source project.</p>
+<p>The <code>target</code> binds <code>transport</code>, <code>repository</code>, <code>reference</code>, <code>subdir</code>, <code>ca_file</code>,
+<code>ssh_agent_socket</code> and <code>ssh_known_hosts</code>. Repository strings, revision names and
+subdirectories match <strong>literally</strong>: no URL decoding, hostname case folding,
+default-port substitution, <code>.git</code> stripping, wildcard or prefix matching. An SCP
+relative path is not an SSH absolute path; users and ports remain distinct.
+Existing Git validators still reject unsafe URLs and ambiguous branch/tag names.</p>
+<p>Trust references in a policy are absolute paths. API/CLI relative input paths
+are made absolute against the caller's working directory before the decision,
+without resolving symlinks, reading contents or collapsing <code>..</code> components.
+The captured values are then used for acquisition. Existing SSH/CA technical
+checks still run after authorization. Matching a path does <strong>not</strong> pin its bytes,
+the agent's identities or a server certificate.</p>
+<p>A branch grant authorizes that requested name, not a commit known in advance.
+Git resolves it once, then analyzes and generates from that exact commit.
+<code>subdir</code> selects the later analysis root: acquisition processes the repository
+before selecting it. It is <strong>not a confidentiality boundary</strong> limiting which
+objects are transferred or temporarily exported.</p>
+<p><code>acquire_snapshot(..., operator_policy=load_operator_policy(Path("operator.json")))</code>
+applies the same gate as all four remote CLI commands. <code>decide_git(policy, target)</code>
+uses a typed <code>GitTarget</code> and performs no I/O. Missing/invalid/insufficient policy
+refuses before Git, SSH/helpers, network/agent access, trust-file reads or workspace
+creation. The CLI emits the existing structured decision on stderr and exits 2;
+the API raises <code>AuthorizationDenied</code>. Malformed source parameters retain their
+fixed <code>GitSourceError</code> diagnostics. No plugin installation identity is fabricated.</p>
+<p>Only the explicitly supplied policy grants authority. Neither <code>apizr.toml</code>,
+remote files, a catalog/profile nor environment variables can select or extend it.
+Local analysis commands require their own <code>source.analyze</code> grant; a fetch
+grant does not authorize reading a local root. Acquisition limits remain separate
+validated controls. The grant replaces neither server access rights nor TLS/SSH
+trust and provides no build, signing or publication permission. Existing plugin
+grants remain valid and do not authorize Git. See the complete
+<a href="../git-sources/">HTTPS CLI/Python journey</a> and <a href="../git-ssh/">SSH journey</a>.</p>
+<p>Analysis authorization is a separate <code>source.analyze</code> rule; see the complete examples above.</p>
+<h2 id="write-the-operators-policy">Write the operator's policy</h2>
+<p>Download the complete <a href="../../examples/operator.json">operator.json example</a>. It
+contains separate image build, image publication, proof publication and signing grants with
+their dependency identities. Its repeated
+SHA-256 values are illustrative: they deliberately do not authorize your installed
+wheels. Replace every identity with your reviewed installation's metadata.
+<code>lock_sha256</code> identifies the installation requirements lock; <code>dependencies</code> must
+contain the entire installed closure with exact versions and SHA-256 values.
+For a dependency-free installation, explicitly use <code>null</code> and <code>[]</code> respectively.
+The official publishers currently have dependencies.</p>
+<p>To author publication grants using actual installed identities, first install and
+activate the plugins using the <a href="../local-extensions/">local extension guide</a>.
+Review their origin and wheel hashes. Run these commands in a directory you
+control; choose your actual registry and repository in the Python block:</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span>list<span class="w"> </span>--active<span class="w"> </span>--json<span class="w"> </span>&gt;<span class="w"> </span>installed.json
+python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'PY'</span>
+<span class="s">import json</span>
+<span class="s">from pathlib import Path</span>
+
+<span class="s">records = json.loads(Path("installed.json").read_text())["installations"]</span>
+<span class="s">repository = "registry.example:5443/team/service"</span>
+<span class="s">grants = []</span>
+<span class="s">for name, operation in (("outerspace-apizr-oci", "push"), ("outerspace-apizr-attest", "publish")):</span>
+<span class="s">    record = next(item for item in records if item["name"] == name)</span>
+<span class="s">    identity = {key: record[key] for key in (</span>
+<span class="s">        "name", "version", "sha256", "lock_sha256", "dependencies"</span>
+<span class="s">    )}</span>
+<span class="s">    grants.append({</span>
+<span class="s">        "plugin": identity,</span>
+<span class="s">        "operation": operation,</span>
+<span class="s">        "repository": repository,</span>
+<span class="s">        "permissions": ["registry.read", "registry.publish"],</span>
+<span class="s">    })</span>
+<span class="s">with Path("operator.json").open("x") as output:</span>
+<span class="s">    json.dump({"schema": "apizr.operator-policy/v1", "grants": grants}, output, indent=2)</span>
+<span class="s">    output.write("\n")</span>
+<span class="s">PY</span>
+</code></pre></div>
+<p>Use the same explicit <code>--plugins-dir</code> or <code>--user-config</code> for inventory and calls
+if you use a nondefault store. Inspect the resulting file before using it. Reading
+the inventory supplies identities; this explicit authoring step supplies permission.
+Do not obtain the policy from the project being analyzed. Keep it under operator
+control, outside project-controlled inputs. There is no policy discovery or
+<code>APIZR_OPERATOR_POLICY</code> environment variable. <code>apizr.toml</code>, catalogs, profiles and
+operation arguments cannot select or extend a policy.</p>
+<p>The JSON document must specify <code>schema: apizr.operator-policy/v1</code> and <code>grants</code>.
+Files are regular, nonsymlink UTF-8 JSON, at most 65,536 bytes and 128 grants.
+Unknown fields/versions, duplicate JSON keys, duplicate dependency names or
+permissions, and invalid types are refused. Publication grants retain their existing fields and meaning:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>plugin</code></td>
+<td>Canonical distribution name, exact version, primary wheel <code>sha256</code>, <code>lock_sha256</code>, full <code>dependencies</code> array</td>
+</tr>
+<tr>
+<td><code>operation</code></td>
+<td><code>push</code> for outerspace-apizr-oci or <code>publish</code> for outerspace-apizr-attest</td>
+</tr>
+<tr>
+<td><code>repository</code></td>
+<td>Exact registry, optional explicit port, namespace and image repository; no tag, digest or wildcard</td>
+</tr>
+<tr>
+<td><code>permissions</code></td>
+<td>Both <code>registry.read</code> and <code>registry.publish</code> for this operation</td>
+</tr>
+</tbody>
+</table>
+<p>A rebuilt wheel with the same name/version, or a changed lock/dependency set,
+needs a new grant. Reordering dependencies does not change identity. A grant must
+contain both required permissions; separate partial grants are not combined.
+No grant contains credentials, private key bytes or a free-form command.
+Signing grants add explicit references as described below.</p>
+<h2 id="authorize-an-image-build">Authorize an image build</h2>
+<p>Managed <code>outerspace-apizr-oci build</code> requires its own <code>operation: build</code> grant. The complete
+<a href="../../examples/operator.json">operator.json example</a> includes one REST build rule.
+Replace its fictitious plugin and base hashes with reviewed values. To grant MCP
+construction too, add a distinct rule with that interface and its exact inputs/tag.
+Keep the existing publication and signing rules separate.</p>
+<p>Each build grant contains <code>plugin</code>, <code>operation</code>, <code>target</code> and <code>permissions</code>.
+<code>plugin</code> uses the full installed identity and locked closure described above.
+Use <code>apizr plugins list --active --json</code> to obtain those identities from the same
+store used for invocation, then review them and explicitly choose the target.
+The <code>target</code> object shares the builder's existing input validators:</p>
+<table>
+<thead>
+<tr>
+<th>Target field</th>
+<th>Required match</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>base_image</code></td>
+<td>Exact base reference pinned by SHA-256 digest</td>
+</tr>
+<tr>
+<td><code>interface</code>, <code>platform</code></td>
+<td>Exact <code>rest</code>/<code>mcp</code> and <code>linux/amd64</code>/<code>linux/arm64</code></td>
+</tr>
+<tr>
+<td><code>bundle</code>, <code>requirements</code>, <code>wheelhouse</code></td>
+<td>Exact absolute input references</td>
+</tr>
+<tr>
+<td><code>docker</code></td>
+<td>Exact executable, socket and optional Buildx path (<code>null</code> or omitted means none)</td>
+</tr>
+<tr>
+<td><code>tag</code></td>
+<td>Exact local output tag</td>
+</tr>
+</tbody>
+</table>
+<p><code>permissions</code> must contain <strong>both</strong> <code>image.build</code> and <code>registry.read</code> in the same
+matching grant. Partial grants are not combined. These rights permit neither
+signature nor publication. A registry-looking local tag is still only a local
+name; it does not grant permission to push. Existing v1 publication/signing
+policies remain valid and do not authorize construction.</p>
+<p>Base references keep the builder's existing forms, including
+<code>python@sha256:…</code>, <code>python:3.14-slim@sha256:…</code> and registry names with ports. They
+are not validated as push destinations, normalized to another registry spelling
+or matched by prefix. Each input reference is compared exactly, without resolving
+paths, opening files or treating nested/sibling paths as covered by a grant.</p>
+<p>The policy authorizes references and parameters, <strong>not their bytes</strong>. The plugin
+still prepares bounded private snapshots, validates bundles statically, checks
+wheel hashes and installs dependencies without an index. <code>inputs_sha256</code> is only
+known after preparation; it is a build result, not a pre-authorized target field.
+Timeout/log limits remain explicit runtime controls validated by the existing
+request contract, outside the target grant. Project inputs cannot select or
+extend the policy.</p>
+<p>After preparing <a href="../oci-service-plugin/#build-and-run">build.json and the inputs</a>:</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>outerspace-apizr-oci<span class="w"> </span>build<span class="w"> </span>--arguments<span class="w"> </span>build.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--timeout-ms<span class="w"> </span><span class="m">360000</span>
+</code></pre></div>
+<p>The CLI and managed Python API refuse before plugin/tool execution, input reads
+or Docker/network access. The same owned argument snapshot reaches the builder.
+A successful build retains <code>published:false</code>, verified image/platform/input
+identities and a nonprivileged image user. Apizr generates the Dockerfile; it
+never executes a Dockerfile or build script supplied by the analyzed project.
+<code>apizr expose build</code> still generates bundles and does not use this image-build
+rule. Existing governed-worker policies are unchanged.</p>
+<p>The base image or its metadata may require registry access even with cached
+layers. <code>--network=none</code> limits Dockerfile build steps, not all daemon traffic.
+This grant authorizes an invocation's parameters; it is not a daemon sandbox or
+a guarantee about configured registry mirrors, DNS or redirects. Killing the
+client does not confirm cancellation of daemon work: caches or unreported images
+may remain. Existing cancellation, cleanup and result-verification limits apply.</p>
+<h2 id="publish-the-selected-image-and-its-proof">Publish the selected image and its proof</h2>
+<p>Prepare <a href="../oci-service-plugin/#publish-a-verified-service-image">push.json</a> with the
+immutable local image ID, expected platform/input digest and explicit Docker/auth
+configuration. Prepare <a href="../attest-oci-artifacts/">publish.json</a> with the already
+signed proof, image digest, public trust and native verification tools.</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>outerspace-apizr-oci<span class="w"> </span>push<span class="w"> </span>--arguments<span class="w"> </span>push.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--timeout-ms<span class="w"> </span><span class="m">360000</span>
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>outerspace-apizr-attest<span class="w"> </span>publish<span class="w"> </span>--arguments<span class="w"> </span>publish.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--timeout-ms<span class="w"> </span><span class="m">360000</span>
+</code></pre></div>
+<p>The core validates the active installation and acquires its existing usage
+protection. It snapshots the arguments, validates the shared operation contract,
+and decides before starting a plugin, contacting Docker/a registry or reading
+registry credentials. The plugin receives the same checked argument snapshot;
+changing the original file or Python dictionary cannot substitute a destination.
+Authorization does not replace activation, identity, usage, TLS, image/proof
+verification or registry access checks. Existing interruption and unconfirmed
+remote-state behavior is unchanged.</p>
+<p>Successful calls return the existing plugin response. Keep the image
+<code>digest_reference</code> from push and <code>artifact_reference</code> from proof publication.
+Publishing an already signed proof verifies it; it requires no private key and
+no new signature permission.</p>
+<h2 id="authorize-signing-separately">Authorize signing separately</h2>
+<p><code>attest</code> needs its own grant. Installation, activation or a <code>publish</code> grant cannot
+authorize use of a signing key. The complete <a href="../../examples/operator.json">operator.json</a>
+includes this third rule, with fictitious identities. Use the exact reviewed
+<code>outerspace-apizr-attest</code> identity and full locked dependency closure from your installation.</p>
+<p>In addition to <code>plugin</code>, <code>operation: attest</code> and the exact <code>repository</code>, specify:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Operator expectation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key_id</code></td>
+<td>Exact 32-character lowercase hexadecimal key identifier</td>
+</tr>
+<tr>
+<td><code>expected_signer</code></td>
+<td>Exact 64-character lowercase hexadecimal public signer identity</td>
+</tr>
+<tr>
+<td><code>key_file</code></td>
+<td>Exact absolute local file reference from <code>attest.json</code>; no private key contents</td>
+</tr>
+<tr>
+<td><code>tsa_url</code></td>
+<td>Explicit RFC 3161 authority URL from <code>attest.json</code></td>
+</tr>
+<tr>
+<td><code>permissions</code></td>
+<td>All three: <code>registry.read</code>, <code>receipt.sign</code>, <code>timestamp.request</code></td>
+</tr>
+</tbody>
+</table>
+<p>One matching rule must contain all three rights. Partial rules are not combined.
+Signing grants do not accept <code>registry.publish</code>; publication grants do not accept
+signing or timestamp permissions. Existing v1 publication-only documents remain
+valid and do not authorize signing. Add a separate signing rule to authorize it.</p>
+<p>Key paths are compared as exact absolute strings, without resolving symlinks,
+reading files or treating <code>/private/./operator.key</code> as <code>/private/operator.key</code>.
+The reference is not a cryptographic identity of the file's bytes. The native
+plugin must still verify the key, actual signer, timestamp and final receipt.
+Keep keys and operator-selected files protected from untrusted writers.</p>
+<p>TSA comparison uses scheme, hostname, effective port and exact path. Scheme and
+hostname are case-insensitive; omitted ports mean 80 for HTTP or 443 for HTTPS;
+an empty path means <code>/</code>. Other paths, ports and authorities stay distinct, with
+no wildcard or prefix matching. Path escapes are not decoded, and paths are not
+resolved: <code>%74imestamp</code> and <code>timestamp</code> are different policy inputs. Credentials,
+queries, fragments, backslashes, control characters, percent-encoded hostnames
+and invalid ports are refused; the URL is limited to 2,048 characters.
+Both existing HTTP and HTTPS transports remain supported; HTTPS retains TLS
+verification. RFC 3161 trust still comes from independently pinned certificates.</p>
+<p>This decision authorizes the <strong>initial URL passed to the native tool</strong>. It does
+not resolve DNS, pin the server's network address or impose a network sandbox on
+the native client's redirect behavior. Select an authority you trust and retain
+the existing cryptographic trust checks; authorization does not replace them.</p>
+<p>Prepare the operational files using the <a href="../attest-delivery-plugin/">delivery guide</a>.
+With matching, separately reviewed signing and publication grants:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Sign and timestamp a verified delivery.</span>
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>outerspace-apizr-attest<span class="w"> </span>attest<span class="w"> </span>--arguments<span class="w"> </span>attest.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--timeout-ms<span class="w"> </span><span class="m">360000</span>
+<span class="c1"># Verify an existing receipt offline; no signing grant or private key is needed.</span>
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>outerspace-apizr-attest<span class="w"> </span>verify<span class="w"> </span>--arguments<span class="w"> </span>verify.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--timeout-ms<span class="w"> </span><span class="m">180000</span>
+<span class="c1"># Publish that existing receipt using a distinct publication grant.</span>
+apizr<span class="w"> </span>plugins<span class="w"> </span>run<span class="w"> </span>outerspace-apizr-attest<span class="w"> </span>publish<span class="w"> </span>--arguments<span class="w"> </span>publish.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--timeout-ms<span class="w"> </span><span class="m">360000</span>
+</code></pre></div>
+<p>Signing does not publish the proof. After signing, verification and publication
+can run with the private key unavailable. Publication still requires its own
+repository read/publish authorization. A delivery receipt remains evidence of
+verified delivery, <strong>not supervision of the build</strong>.</p>
+<h2 id="match-the-destination-exactly">Match the destination exactly</h2>
+<p>For <code>registry.example:5443/team/service:v1</code>, the authorized repository is
+<code>registry.example:5443/team/service</code>. The same grant covers other explicit tags
+and SHA-256 digests in that repository, not another port, registry, path or
+<code>service-other</code>. Short Docker Hub names such as <code>alpine</code> or <code>team/service</code> remain
+ambiguous and are refused; use <code>docker.io/library/alpine:tag</code> or an explicit
+namespace. The existing <code>index.docker.io</code> alias normalizes to <code>docker.io</code>.
+Other host spellings and explicit ports retain separate identities. Credentials,
+URL schemes, percent encodings, traversal and wildcards are not accepted.</p>
+<p>Both operations read remote state before and after writing, so read-only access
+is insufficient. Push's temporary <code>apizr-upload-*</code> tag stays in the <strong>same</strong>
+repository. Attest attaches the proof to the requested image digest in that same
+repository. Neither step implicitly grants access to a second repository.</p>
+<h2 id="call-from-python-and-handle-decisions">Call from Python and handle decisions</h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apizr.extension_runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">Limits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apizr.local_plugins</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_arguments</span><span class="p">,</span> <span class="n">run_extension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apizr.operator_policy</span><span class="w"> </span><span class="kn">import</span> <span class="n">AuthorizationDenied</span><span class="p">,</span> <span class="n">load_operator_policy</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">run_extension</span><span class="p">(</span>
+        <span class="s2">"outerspace-apizr-oci"</span><span class="p">,</span>
+        <span class="s2">"push"</span><span class="p">,</span>
+        <span class="n">read_arguments</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"push.json"</span><span class="p">)),</span>
+        <span class="n">operator_policy</span><span class="o">=</span><span class="n">load_operator_policy</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"operator.json"</span><span class="p">)),</span>
+        <span class="n">limits</span><span class="o">=</span><span class="n">Limits</span><span class="p">(</span><span class="n">wall_time_ms</span><span class="o">=</span><span class="mi">360000</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="n">AuthorizationDenied</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">decision</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">by_alias</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span>
+</code></pre></div>
+<p><code>decide(policy, installation, operation, arguments)</code> is the typed, pure decision
+API: no file, process, Docker or network access. It returns
+<code>apizr.operator-decision/v1</code>, an <code>allowed</code> boolean and a fixed <code>code</code>. It alone
+does not authenticate an installation; use <code>run_extension</code> for managed execution.
+Loading the explicitly chosen file is a separate operation.</p>
+<p>CLI authorization failures exit <strong>2</strong>, leave stdout empty and write that JSON
+decision to stderr. Python raises <code>AuthorizationDenied</code> with the same decision.
+No paths, reference values, credentials or native diagnostics appear in it.</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>authorized</code></td>
+<td>This operation matches a complete grant</td>
+</tr>
+<tr>
+<td><code>not_required</code></td>
+<td>This operation is outside this first authorization scope</td>
+</tr>
+<tr>
+<td><code>operator_policy_required</code></td>
+<td>No policy was supplied</td>
+</tr>
+<tr>
+<td><code>operator_policy_invalid</code> / <code>operator_policy_unavailable</code> / <code>operator_policy_too_large</code></td>
+<td>Policy refused before invocation</td>
+</tr>
+<tr>
+<td><code>operator_arguments_invalid</code></td>
+<td>Operation arguments do not satisfy the shared contract</td>
+</tr>
+<tr>
+<td><code>operator_identity_denied</code></td>
+<td>Installed build/closure or official entry point does not match</td>
+</tr>
+<tr>
+<td><code>operator_operation_denied</code></td>
+<td>No matching operation grant</td>
+</tr>
+<tr>
+<td><code>operator_repository_denied</code></td>
+<td>No matching exact repository</td>
+</tr>
+<tr>
+<td><code>operator_permissions_denied</code></td>
+<td>The grant lacks a required build, registry, signing or timestamp permission</td>
+</tr>
+<tr>
+<td><code>operator_git_source_denied</code></td>
+<td>Exact Git source, revision, selection or trust references do not match</td>
+</tr>
+<tr>
+<td><code>operator_analysis_denied</code></td>
+<td>Exact analysis root or Git source does not match</td>
+</tr>
+<tr>
+<td><code>operator_source_invalid</code> / <code>operator_source_unavailable</code> / <code>operator_source_changed</code></td>
+<td>Invalid context, inaccessible/link traversal, or changed pinned identity</td>
+</tr>
+<tr>
+<td><code>operator_build_denied</code></td>
+<td>Base, platform, interface, paths, Docker parameters or local tag does not match</td>
+</tr>
+<tr>
+<td><code>operator_key_denied</code></td>
+<td>Key ID, expected signer or key file reference does not match</td>
+</tr>
+<tr>
+<td><code>operator_tsa_denied</code></td>
+<td>Timestamp authority does not match</td>
+</tr>
+</tbody>
+</table>
+<h2 id="understand-the-boundary">Understand the boundary</h2>
+<p>This is admission control for <strong>managed Apizr invocations</strong>, not a sandbox against
+a malicious trusted plugin. Directly invoking a plugin, Docker/ORAS/Attest or the
+low-level <code>extension_runtime.invoke_extension</code> outside the managed installation
+path does not acquire operator authorization. Protect operator files and plugin
+storage from untrusted writers; plugins still execute with the user's rights.</p>
+<p>This control covers managed repository analysis, Git acquisition, image
+<code>build</code>/<code>push</code>, proof <code>publish</code> and signing <code>attest</code>. Single-file/notebook inspection
+and primitives such as <code>scan_sources</code>, <code>build_graph</code>, <code>assess_repository</code> and
+<code>plan_exposure</code> process caller-supplied bytes/artifacts in memory; they cannot
+infer the authority under which those bytes were obtained. <code>render_bundle</code> uses
+retained bytes without rereading sources. This is not universal protection against
+arbitrary Python executed with the user's rights. Verification and plugin lifecycle
+operations retain their controls. Publication through MCP is not added.</p>
+<h2 id="verify-local-source-permissions">Verify local source permissions</h2>
+<p>The following example is self-contained. Start in your working directory with the
+Apizr environment activated. Use an absent <code>permissions-demo</code> directory; the example
+keeps generated files outside the source directory.</p>
+<p>First create two ordinary Python functions and the policies. <strong>Readiness</strong> assesses
+the code evidence, <strong>exposure</strong> selects public functions, and <strong>operator authority</strong>
+permits reading this exact source root. They are separate inputs.</p>
+<!-- migration:prepare -->
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>permissions-demo
+<span class="nb">cd</span><span class="w"> </span>permissions-demo
+mkdir<span class="w"> </span>repository
+cat<span class="w"> </span>&gt;<span class="w"> </span>repository/api.py<span class="w"> </span><span class="s">&lt;&lt;'PY'</span>
+<span class="s">def quote(unit_price: float, quantity: int = 1) -&gt; float:</span>
+<span class="s">    return unit_price * quantity</span>
+<span class="s">PY</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>repository/inventory.py<span class="w"> </span><span class="s">&lt;&lt;'PY'</span>
+<span class="s">def available(stock: int, requested: int = 1) -&gt; bool:</span>
+<span class="s">    return stock &gt;= requested</span>
+<span class="s">PY</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>readiness.json<span class="w"> </span><span class="s">&lt;&lt;'JSON'</span>
+<span class="s">{"execution":{"modes":["direct"]}}</span>
+<span class="s">JSON</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>exposure.json<span class="w"> </span><span class="s">&lt;&lt;'JSON'</span>
+<span class="s">{"selection":{"include":["python:api:quote","python:inventory:available"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}</span>
+<span class="s">JSON</span>
+python<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'PY'</span>
+<span class="s">import json</span>
+<span class="s">from pathlib import Path</span>
+<span class="s">root = str(Path("repository").resolve())</span>
+<span class="s">Path("operator.json").write_text(json.dumps({</span>
+<span class="s">    "schema": "apizr.operator-policy/v1",</span>
+<span class="s">    "grants": [{</span>
+<span class="s">        "adapter": "repository", "operation": "analyze",</span>
+<span class="s">        "target": {"kind": "local", "root": root},</span>
+<span class="s">        "permissions": ["source.analyze"]</span>
+<span class="s">    }]</span>
+<span class="s">}))</span>
+<span class="s">PY</span>
+</code></pre></div>
+<!-- /migration:prepare -->
+
+<p><code>operator.json</code> authorizes only that canonical absolute repository root.
+It does not authorize a neighboring directory, follow symlinks or make functions
+public. For your own code, explicitly choose the root and selected capability IDs;
+do not accept an operator policy supplied by the project or a remote client.</p>
+<p>A repository command without the grant fails before source reads:</p>
+<!-- migration:refuse -->
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>expose<span class="w"> </span>plan<span class="w"> </span>repository<span class="w"> </span>--readiness-policy<span class="w"> </span>readiness.json<span class="w"> </span>--policy<span class="w"> </span>exposure.json<span class="w"> </span>--plan
+</code></pre></div>
+<!-- /migration:refuse -->
+
+<p>Expect exit <strong>2</strong>, a structured <code>operator_policy_required</code> refusal on stderr and
+no plan on stdout. Add the explicit policy to plan and generate:</p>
+<!-- migration:generate -->
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>expose<span class="w"> </span>plan<span class="w"> </span>repository<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--readiness-policy<span class="w"> </span>readiness.json<span class="w"> </span>--policy<span class="w"> </span>exposure.json<span class="w"> </span>--plan<span class="w"> </span>&gt;<span class="w"> </span>plan.json
+apizr<span class="w"> </span>expose<span class="w"> </span>build<span class="w"> </span>rest<span class="w"> </span>repository<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--readiness-policy<span class="w"> </span>readiness.json<span class="w"> </span>--policy<span class="w"> </span>exposure.json<span class="w"> </span>--output-dir<span class="w"> </span>build/rest
+apizr<span class="w"> </span>expose<span class="w"> </span>build<span class="w"> </span>mcp<span class="w"> </span>repository<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--readiness-policy<span class="w"> </span>readiness.json<span class="w"> </span>--policy<span class="w"> </span>exposure.json<span class="w"> </span>--output-dir<span class="w"> </span>build/mcp
+</code></pre></div>
+<!-- /migration:generate -->
+
+<p>Expect a plan selecting <code>python:api:quote</code> and <code>python:inventory:available</code>, a REST
+bundle with <code>openapi.json</code>, and an MCP bundle with <code>mcp-tools.json</code> and <code>server.py</code>.
+Output directories must be absent or empty. Generation already performs the
+necessary analysis and planning; separate <code>scan</code>, <code>graph</code> and <code>readiness</code> commands
+are optional diagnostics, not prerequisites. They accept the same
+<code>--operator-policy operator.json</code> option.</p>
+<p>These commands generate files without running the project. To serve and call
+them, install each bundle's <code>requirements.txt</code> in its own environment and follow
+the <a href="../../getting-started/user-guide/exposure/#build-a-direct-repository-bundle">REST/MCP bundle instructions</a>. The expected
+function results are <code>quote(12.5, 2) = 25.0</code> and <code>available(10, 3) = true</code>.
+Execution requires trusted source and dependencies; an analysis grant is not
+an execution safety guarantee.</p>
+<h2 id="pass-the-same-authority-from-python">Pass the same authority from Python</h2>
+<p>There is no CLI subprocess or implicit policy-file lookup. Load the policy once
+and pass it to the shared compiler. From <code>permissions-demo</code>, the following produces
+the same plan and bundle bytes as the preceding CLI commands:</p>
+<!-- migration:python -->
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'PY'</span>
+<span class="s">from pathlib import Path</span>
+<span class="s">from apizr.compiler import prepare_exposure, render_bundle</span>
+<span class="s">from apizr.exposure import ExposurePolicy, plan_bytes</span>
+<span class="s">from apizr.operator_policy import load_operator_policy</span>
+<span class="s">from apizr.repository_readiness import RepositoryReadinessPolicy</span>
+
+<span class="s">prepared = prepare_exposure(</span>
+<span class="s">    Path("repository"),</span>
+<span class="s">    operator_policy=load_operator_policy(Path("operator.json")),</span>
+<span class="s">    readiness_policy=RepositoryReadinessPolicy.model_validate_json(</span>
+<span class="s">        Path("readiness.json").read_bytes()</span>
+<span class="s">    ),</span>
+<span class="s">    policy=ExposurePolicy.model_validate_json(Path("exposure.json").read_bytes()),</span>
+<span class="s">)</span>
+<span class="s">assert plan_bytes(prepared.plan) == Path("plan.json").read_bytes()</span>
+<span class="s">for interface in ("rest", "mcp"):</span>
+<span class="s">    bundle = render_bundle(prepared, interface=interface)</span>
+<span class="s">    assert all(</span>
+<span class="s">        (Path("build") / interface / name).read_bytes() == data</span>
+<span class="s">        for name, data in bundle.items()</span>
+<span class="s">    )</span>
+<span class="s">print("CLI/Python parity: plan, REST bundle and MCP bundle")</span>
+<span class="s">PY</span>
+</code></pre></div>
+<!-- /migration:python -->
+
+<p><code>prepare_exposure</code> analyzes once; <code>render_bundle</code> uses its retained sources.
+The <a href="../compiler-api/">compiler reference</a> covers writing, refusals
+and the lower-level filesystem APIs. Already supplied in-memory data is not a
+universal access-control boundary for arbitrary Python code.</p>
+<p>See <a href="../delivery-admission/">proof-required delivery admission</a> for explicit pre-build requirements and the separately authorized final promotion.</p>
+<p>See <a href="../multi-destination-delivery/">multi-destination delivery</a> for sequential managed orchestration, independent outcomes and explicit resume of one immutable build.</p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../extension-invocation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Extension invocation API">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Extension invocation API
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../getting-started/developer-guide/releases/" class="md-footer__link md-footer__link--next" aria-label="Next: Compatibility notes">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Compatibility notes
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023–2026 Alien6 · <a href="#__consent">Cookie settings</a>
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+
+<h4>Cookie consent</h4>
+<p>Optional Google Analytics cookies measure documentation visits. Optional GitHub requests show repository statistics. Both stay off until you choose them. You can reject them or change your choice at any time.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" >
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" >
+      <span class="task-list-indicator"></span>
+      GitHub repository statistics
+    </label>
+  </li>
+
+      
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">Accept</button>
+    
+    
+    
+  
+    
+    
+      <button type="reset" class="md-button md-button--primary">Reject</button>
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">Manage settings</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.tooltips", "header.autohide", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/javascripts/video.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,526 @@
+{
+  "$defs": {
+    "Availability": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "value": {
+          "enum": [
+            "unconditional",
+            "unknown"
+          ],
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "evidence"
+      ],
+      "title": "Availability",
+      "type": "object"
+    },
+    "Capability": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/Availability"
+        },
+        "decorators": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Expression"
+          },
+          "title": "Decorators",
+          "type": "array"
+        },
+        "docstring": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docstring"
+        },
+        "effects": {
+          "$ref": "#/$defs/Effects"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "observed"
+        },
+        "execution": {
+          "$ref": "#/$defs/ExecutionForm"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "function",
+          "default": "function",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "overloads": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Overload"
+          },
+          "title": "Overloads",
+          "type": "array"
+        },
+        "qualified_name": {
+          "title": "Qualified Name",
+          "type": "string"
+        },
+        "signature": {
+          "$ref": "#/$defs/Signature"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "qualified_name",
+        "source",
+        "execution",
+        "signature",
+        "availability"
+      ],
+      "title": "Capability",
+      "type": "object"
+    },
+    "DeclaredType": {
+      "additionalProperties": false,
+      "properties": {
+        "declared": {
+          "title": "Declared",
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "declared"
+        },
+        "form": {
+          "$ref": "#/$defs/TypeForm"
+        }
+      },
+      "required": [
+        "declared",
+        "form"
+      ],
+      "title": "DeclaredType",
+      "type": "object"
+    },
+    "Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/DiagnosticCode"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "source"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "DiagnosticCode": {
+      "enum": [
+        "APIZR-CAP-001",
+        "APIZR-CAP-002",
+        "APIZR-CAP-003",
+        "APIZR-CAP-004",
+        "APIZR-CAP-005",
+        "APIZR-CAP-006"
+      ],
+      "title": "DiagnosticCode",
+      "type": "string"
+    },
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "Effect": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "unknown"
+        },
+        "value": {
+          "$ref": "#/$defs/EffectValue",
+          "default": "unknown"
+        }
+      },
+      "title": "Effect",
+      "type": "object"
+    },
+    "EffectValue": {
+      "enum": [
+        "true",
+        "false",
+        "unknown"
+      ],
+      "title": "EffectValue",
+      "type": "string"
+    },
+    "Effects": {
+      "additionalProperties": false,
+      "properties": {
+        "environment": {
+          "$ref": "#/$defs/Effect"
+        },
+        "external_service": {
+          "$ref": "#/$defs/Effect"
+        },
+        "filesystem_read": {
+          "$ref": "#/$defs/Effect"
+        },
+        "filesystem_write": {
+          "$ref": "#/$defs/Effect"
+        },
+        "network": {
+          "$ref": "#/$defs/Effect"
+        },
+        "secrets": {
+          "$ref": "#/$defs/Effect"
+        },
+        "state_mutation": {
+          "$ref": "#/$defs/Effect"
+        },
+        "subprocess": {
+          "$ref": "#/$defs/Effect"
+        }
+      },
+      "title": "Effects",
+      "type": "object"
+    },
+    "Evidence": {
+      "enum": [
+        "declared",
+        "observed",
+        "inferred",
+        "unknown"
+      ],
+      "title": "Evidence",
+      "type": "string"
+    },
+    "ExecutionForm": {
+      "enum": [
+        "sync",
+        "async",
+        "generator",
+        "async_generator"
+      ],
+      "title": "ExecutionForm",
+      "type": "string"
+    },
+    "Expression": {
+      "additionalProperties": false,
+      "properties": {
+        "declared": {
+          "title": "Declared",
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "declared"
+        }
+      },
+      "required": [
+        "declared"
+      ],
+      "title": "Expression",
+      "type": "object"
+    },
+    "Overload": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "declared"
+        },
+        "signature": {
+          "$ref": "#/$defs/Signature"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "source",
+        "signature"
+      ],
+      "title": "Overload",
+      "type": "object"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "annotation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DeclaredType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "default": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expression"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "observed"
+        },
+        "kind": {
+          "$ref": "#/$defs/ParameterKind"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "required"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "ParameterKind": {
+      "enum": [
+        "positional_only",
+        "positional_or_keyword",
+        "keyword_only"
+      ],
+      "title": "ParameterKind",
+      "type": "string"
+    },
+    "Returns": {
+      "additionalProperties": false,
+      "properties": {
+        "annotation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DeclaredType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "enforcement": {
+          "const": "none",
+          "default": "none",
+          "title": "Enforcement",
+          "type": "string"
+        }
+      },
+      "title": "Returns",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "info",
+        "warning",
+        "error"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "Signature": {
+      "additionalProperties": false,
+      "properties": {
+        "parameters": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          },
+          "title": "Parameters",
+          "type": "array"
+        },
+        "returns": {
+          "$ref": "#/$defs/Returns"
+        }
+      },
+      "title": "Signature",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "kind": {
+          "enum": [
+            "python",
+            "notebook"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "transformed_digest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "kind",
+        "module",
+        "digest"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "symbol": {
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module",
+        "symbol",
+        "line",
+        "end_line"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "TypeForm": {
+      "enum": [
+        "name",
+        "attribute",
+        "subscript",
+        "union",
+        "forward_reference",
+        "literal",
+        "unknown"
+      ],
+      "title": "TypeForm",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Capability"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "diagnostics": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Diagnostic"
+      },
+      "title": "Diagnostics",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "apizr.capability/v1",
+      "default": "apizr.capability/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/Source"
+    }
+  },
+  "required": [
+    "source"
+  ],
+  "title": "CapabilityDocument",
+  "type": "object"
+}
