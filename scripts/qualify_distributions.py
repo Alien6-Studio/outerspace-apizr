@@ -260,6 +260,7 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
                     str(ROOT / "scripts/smoke_readme.py"),
                     str(cli),
                     "--development",
+                    "--repository-refinement",
                 ],
                 cwd=root,
                 env=env,
