@@ -1,6 +1,6 @@
 ---
 title: The full journey
-description: Discover, understand, assess, select, expose and execute a Python repository through REST or MCP.
+description: Choose Python functions, create a service and call them through REST or an AI assistant.
 ---
 
 # The full journey
@@ -10,27 +10,26 @@ description: Discover, understand, assess, select, expose and execute a Python r
 
 <span id="introduction"></span>
 
-Use this guide to understand how Apizr turns a Python project into a service:
-find its functions, choose which ones to expose, generate an interface and run it.
+Apizr lets an application or an AI assistant call functions from your Python
+project. You choose the functions. Apizr creates either a REST service, called
+over HTTP, or an MCP server, called by a compatible AI client.
 
-For a first working server and verified calls, start with the [Quickstart](quickstart.md).
-This page explains the separate stages and their diagnostic outputs.
+The example below creates a small shop service with two operations: calculate a
+price and check stock. The helper functions stay private.
+
+For the shortest path to a working server, follow the [Quickstart](quickstart.md).
 
 ## Install
 
-Follow [Install Apizr](install.md), then activate the core environment and check
-`apizr --version`. These guides use Apizr 0.4 and Python 3.11–3.14.
-
-The minimal core handles static Python analysis and generation. Generated servers
-have their own requirements; the [Quickstart](quickstart.md) installs them in a
-separate runtime environment. Optional analysis and delivery plugins are installed
-through [plugin profiles](install.md#choose-a-plugin-profile).
-For notebook or historical pipeline dependencies, see [development setup](developer-guide/setup.md).
+Follow [Install Apizr](install.md), then check `apizr --version` in that environment.
+The current published version is 0.4.4. You will install the generated server's
+dependencies when you are ready to run it.
 
 ## Walk through a small repository
 
-Create these three files in an empty directory (also available in the repository's
-`examples/repository-shop`):
+Create these three files in an empty directory. `pricing.py` calculates a price,
+`inventory.py` checks stock, and `api.py` provides the price operation you will
+make public. You can also find them in `examples/repository-shop`.
 
 **pricing.py**
 
@@ -59,24 +58,22 @@ def _price(unit_price: float, quantity: int) -> float:
     return total(unit_price, quantity)
 ```
 
-Save `readiness-direct.json`:
+Create two small configuration files. The first tells Apizr that this example
+will run in the server's Python process. Save it as `readiness-direct.json`:
 
 ```json
 {"execution":{"modes":["direct"]}}
 ```
 
-Save `exposure-direct.json`:
+The second chooses the two public functions and requests REST and MCP.
+Save it as `exposure-direct.json`:
 
 ```json
 {"selection":{"include":["python:api:quote","python:inventory:available"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}
 ```
 
-**Readiness** assesses whether code evidence supports an interface. The
-**exposure policy** selects the public functions and allowed modes. A **bundle**
-is the generated server, its contracts and the supporting source.
-
-Save an **operator policy** for this directory before reading its source. This
-allows analysis only; readiness, exposure and execution policies stay independent.
+Apizr also needs permission to read your project. Run this command in the same
+directory to create `operator.json` for that directory:
 
 <!-- journey:authorization -->
 ```sh
@@ -93,28 +90,32 @@ Path("operator.json").write_text(json.dumps({
 PYTHON
 ```
 
-`expose build` performs the analysis and generates your service in one command.
-The first four commands below let you inspect the intermediate results when
-you need to understand a selection or diagnose a refusal:
+You can now create the service. If you want to see what Apizr finds first,
+the following checks are optional:
+
+<details markdown="1">
+<summary>Inspect the project before generating the service</summary>
 
 ```sh
 apizr scan . --operator-policy operator.json --exclude-dir .output
 apizr graph . --operator-policy operator.json --exclude-dir .output
 apizr readiness . --operator-policy operator.json --exclude-dir .output --policy readiness-direct.json
 apizr expose plan . --operator-policy operator.json --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json
+```
+
+</details>
+
+Create the REST and MCP servers:
+
+```sh
 apizr expose build rest . --operator-policy operator.json --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/rest
 apizr expose build mcp . --operator-policy operator.json --exclude-dir .output --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir .output/mcp
 ```
 
-The explicit `.output` exclusion keeps generated files outside the scan universe.
-Scan reports three ready functions and one conditional support helper. In the
-upcoming 0.4.5 release, repository Readiness resolves that helper's local import:
-all four repository assessments are ready and its exit code is 0. The helper's
-original local assessment stays conditional. Published 0.4.4 keeps three ready
-repository assessments and one conditional helper, with readiness exit code 1.
-The two explicitly selected public functions are eligible in both versions;
-planning and building succeed. **READY does not mean exposed.** `pricing.total`
-is packaged and called through `api._price`, but neither helper is public.
+`--exclude-dir .output` keeps generated files out of your project's analysis.
+Only `api.quote` and `inventory.available` are public. The generated service
+includes the pricing helper so it can calculate the result, but clients cannot
+call that helper directly.
 
 Serve the direct REST bundle:
 
@@ -126,61 +127,39 @@ python3 -m venv .output/runtime
 
 POST `{"unit_price":12.5,"quantity":2}` to `/capabilities/api.quote` → `25.0`.
 POST `{"stock":10,"requested":3}` to `/capabilities/inventory.available` → `true`.
-The separate runtime environment keeps server dependencies out of Apizr's core.
-The MCP bundle exposes the same two names; follow the
+For MCP, the generated server offers the same two operations. Follow the
 [MCP client steps](quickstart.md#connect-a-client-and-make-two-calls) with
-`.output/mcp` as your bundle directory. These servers execute trusted code.
-Use a fresh output directory when regenerating.
+`.output/mcp` as your server directory.
 
 ## Understand the decisions
 
-| Layer | Responsibility |
-| --- | --- |
-| Repository Readiness policy | Assess evidence and compatible execution contracts |
-| Exposure policy | Explicitly select public capability IDs, interfaces and allowed modes |
-| Execution policy | Configure the one actual worker backend and its required controls |
+Apizr checks your code before generating a server. A function marked `READY`
+can still stay private: your selection determines what clients can call.
 
-**READY does not mean exposed.** The graph describes relationships; it does not
-publish their targets. Here `api.quote` calls private support code in `pricing.py`.
-Only `api.quote` and `inventory.available` appear in REST/MCP.
+You may see `_price` marked `CONDITIONAL` when scanning this example because it
+imports code from another file. In the upcoming 0.4.5 release, the next readiness
+step recognizes that local helper and succeeds. Published 0.4.4 still reports it
+as conditional. The two selected public functions can be built in both versions.
+See [Repository readiness](user-guide/repository-readiness.md) for diagnostic details.
+
+Running the generated server executes your Python code with your user permissions.
+Use code you trust. This example runs calls in the server process; if you need a
+fresh process or container for each call, see
+[execution options](../architecture/governed-repository-runtime.md).
 
 ## Choose your next step
 
 | Task | Guide |
 | --- | --- |
-| Inventory a repository | [Scanner and catalog](user-guide/scan.md) |
-| Understand relationships | [Capability graph](user-guide/graph.md) |
-| Inspect one script or notebook | [Static inspection](user-guide/inspect.md) |
-| Assess eligibility | [Repository readiness](user-guide/repository-readiness.md) |
-| Select and expose a repository | [Exposure and policy examples](user-guide/exposure.md) |
-| Use fresh local/OCI workers | [Governed repository execution](../architecture/governed-repository-runtime.md) |
-| Keep single-source workflows | [REST](user-guide/rest.md) / [MCP](user-guide/mcp.md) |
-| Use the historical notebook/script pipeline | [Legacy guide](user-guide/apizr.md) |
-
-Direct state persists in the transport interpreter. Governed local state resets in
-a fresh process per call; governed OCI state resets in a fresh container per call.
-Local execution provides bounds/environment/cleanup, not filesystem or network
-isolation. OCI uses reviewed container controls and offers an optional
-[strict subprocess-deny profile](../architecture/subprocess-deny.md); it is not a VM. Both require trusted source and dependencies; neither is an automatic
-untrusted-code guarantee. [Architecture and boundaries](../architecture/overview.md).
+| Try a working service | [Quickstart](quickstart.md) |
+| Choose functions from your own project | [Selection and private helpers](user-guide/exposure.md) |
+| Work with one Python file | [REST](user-guide/rest.md) / [MCP](user-guide/mcp.md) |
+| Understand a refused function | [Repository readiness](user-guide/repository-readiness.md) |
+| Work with notebooks | [Notebook guide](../modules/notebook-transformr.md) |
 
 ## Compatibility and limits
 
-Modern single-source `inspect`, `generate rest/mcp` and `execute` commands remain
-supported alongside repository workflows. They are not the legacy pipeline.
-The historical `apizr --script` / `--notebook` pipeline is a separate path; there
-is no automatic migration or publication.
-
-Public capabilities remain top-level functions. Class/method exposure and an
-enterprise control plane are not supported. Repository bundles do not infer
-or install application dependencies or package arbitrary repository data files.
-The [legacy pipeline](user-guide/apizr.md) supports explicit requirements and
-resources, configured notebook cell selection, explicit image builds and installed
-pipeline plugins. It inventories classes and methods separately and refuses
-ambiguous selected definitions/overloads. See the
-[notebook configuration guide](../modules/notebook-transformr.md).
-
-Static readiness/exposure v1 adapters keep their original control vocabulary;
-the strict OCI profile is selected through an **execution policy**, which chooses
-the actual worker backend and its required controls. See
-[compatibility notes](developer-guide/releases.md).
+This workflow exposes top-level Python functions. If your application needs
+extra libraries or data files, prepare those in the server environment yourself.
+Apizr does not deploy the service for you. Use a fresh output directory when
+generating it again.
