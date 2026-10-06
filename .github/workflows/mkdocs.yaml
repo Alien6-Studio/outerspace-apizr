@@ -48,7 +48,7 @@ jobs:
           uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-public/bin/apizr" --development --expected-version 0.4.4
           uv venv --python 3.11 "$RUNNER_TEMP/docs-dev"
           uv pip install --python "$RUNNER_TEMP/docs-dev/bin/python" "$RUNNER_TEMP"/docs-wheel/*.whl
-          uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-dev/bin/apizr" --development
+          uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-dev/bin/apizr" --development --repository-refinement
       - name: Validate the source identity before retaining the built site
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: uv run --locked python scripts/check_docs_site.py --check-local --source-commit "$GITHUB_SHA"

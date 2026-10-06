@@ -107,10 +107,14 @@ apizr expose build mcp . --operator-policy operator.json --exclude-dir .output -
 ```
 
 The explicit `.output` exclusion keeps generated files outside the scan universe.
-Readiness reports three ready functions and one conditional support helper, so its
-exit code is 1. The two explicitly selected public functions are eligible; planning
-and building succeed. **READY does not mean exposed.** `pricing.total` is packaged
-and called through `api._price`, but neither helper is public.
+Scan reports three ready functions and one conditional support helper. In the
+upcoming 0.4.5 release, repository Readiness resolves that helper's local import:
+all four repository assessments are ready and its exit code is 0. The helper's
+original local assessment stays conditional. Published 0.4.4 keeps three ready
+repository assessments and one conditional helper, with readiness exit code 1.
+The two explicitly selected public functions are eligible in both versions;
+planning and building succeed. **READY does not mean exposed.** `pricing.total`
+is packaged and called through `api._price`, but neither helper is public.
 
 Serve the direct REST bundle:
 

@@ -20,7 +20,14 @@ def main() -> None:
     parser.add_argument("cli", type=Path)
     parser.add_argument("--development", action="store_true")
     parser.add_argument("--expected-version")
+    parser.add_argument(
+        "--repository-refinement",
+        action="store_true",
+        help="Expect the candidate's proven local imports to refine repository readiness",
+    )
     args = parser.parse_args()
+    if args.repository_refinement and not args.development:
+        parser.error("--repository-refinement requires --development")
     cli = args.cli.resolve()
     repository = Path(__file__).resolve().parents[1]
     readme = (repository / "README.md").read_text()
@@ -79,11 +86,27 @@ def main() -> None:
                 text=True,
                 timeout=30,
             )
-            # The documented private helper is conditional; this is evidence, not
-            # a failed selected capability or permission to widen its eligibility.
-            assert result.returncode == (1 if command[1] == "readiness" else 0), (
-                result.stderr
+            # Scan retains source-local uncertainty in every version. Only the
+            # candidate's repository stage can refine this proven local import.
+            expected_exit = (
+                1 if command[1] == "readiness" and not args.repository_refinement else 0
             )
+            assert result.returncode == expected_exit, (
+                command,
+                result.returncode,
+                result.stdout,
+                result.stderr,
+            )
+            if command[1] == "scan":
+                assert "Ready: 3\nConditional: 1\n" in result.stdout
+                assert "  _price: CONDITIONAL" in result.stdout
+            elif command[1] == "readiness":
+                state = "READY" if args.repository_refinement else "CONDITIONAL"
+                assert f"python:api:_price: {state}" in result.stdout
+                assert (
+                    "  local: conditional; interface eligible: false" in result.stdout
+                )
+                assert "APIZR-READY-015" in result.stdout
             print(f"$ {' '.join(command)}\n{result.stdout}")
         schema = json.loads((root / ".output/rest/openapi.json").read_text())
         assert {
