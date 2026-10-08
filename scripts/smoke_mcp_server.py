@@ -84,9 +84,10 @@ def prepare(root: Path, python: str) -> dict:
     prepare_wheels(root, python, house)
     lock_wheels(house, root / "plugin.lock")
     core_wheel = next(house.glob("outerspace_apizr-*.whl"))
+    (mcp_wheel,) = house.glob("mcp-*.whl")
     for name, requirements in [
         ("core", [core_wheel]),
-        ("client", [core_wheel, "mcp==2.2.0"]),
+        ("client", [core_wheel, mcp_wheel]),
     ]:
         run(
             ["uv", "venv", "--no-python-downloads", "--python", python, root / name],
