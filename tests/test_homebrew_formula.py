@@ -51,7 +51,8 @@ def test_renderer_is_deterministic_and_keeps_build_inputs_out_of_runtime(tmp_pat
         b / "Formula/apizr.rb"
     ).read_bytes()
     formula = (a / "Formula/apizr.rb").read_text()
-    assert source.as_uri() in formula and formula.count('  resource "') == 5
+    assert source.as_uri() in formula and formula.count('  resource "') == 6
+    assert 'resource "tomlkit"' in formula
     assert "virtualenv_create(libexec, python, system_site_packages: true)" in formula
     assert (
         "build_isolation: true" in formula and "deny_network_access! :build" in formula

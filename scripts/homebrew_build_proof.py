@@ -234,7 +234,9 @@ def prove(candidate, commit, inputs, output):
         ):
             raise RuntimeError("Built runtime metadata changed")
         if any(
-            n.startswith(("hatchling/", "trove_classifiers/", "build-wheelhouse/"))
+            n.startswith(
+                ("hatchling/", "tomlkit/", "trove_classifiers/", "build-wheelhouse/")
+            )
             for n in archive.namelist()
         ):
             raise RuntimeError("Build tooling embedded in Apizr wheel")
@@ -285,7 +287,7 @@ runtime=pathlib.Path(sys.argv[1]).resolve(); provider=pathlib.Path(sys.argv[2]).
 assert pathlib.Path(apizr.__file__).resolve().is_relative_to(runtime)
 locations={m.__name__:str(pathlib.Path(m.__file__).resolve().relative_to(provider)) for m in (pydantic,pydantic_core)}
 assert pydantic.__version__=='2.13.5' and pydantic_core.__version__=='2.46.5'
-assert importlib.util.find_spec('hatchling') is None and importlib.util.find_spec('trove_classifiers') is None
+assert all(importlib.util.find_spec(name) is None for name in ('hatchling', 'tomlkit', 'trove_classifiers'))
 local_distributions=sorted((d.metadata['Name'],d.version) for d in importlib.metadata.distributions(path=[str(runtime/'lib/python3.14/site-packages')]))
 assert local_distributions==[('outerspace-apizr','0.4.4')]
 print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Path(apizr.__file__).resolve().relative_to(runtime)),'provider_modules':locations,'pydantic':pydantic.__version__,'pydantic_core':pydantic_core.__version__,'local_distributions':local_distributions,'distributions':sorted(set((d.metadata.get('Name'),d.version) for d in importlib.metadata.distributions()),key=lambda pair:(pair[0] or '',pair[1] or ''))}))

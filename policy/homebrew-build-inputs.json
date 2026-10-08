@@ -2,12 +2,12 @@
   "build": {
     "distributions": [
       {
-        "filename": "hatchling-1.28.0-py3-none-any.whl",
+        "filename": "hatchling-1.32.4-py3-none-any.whl",
         "name": "hatchling",
-        "sha256": "dc48722b68b3f4bbfa3ff618ca07cdea6750e7d03481289ffa8be1521d18a961",
+        "sha256": "08ecf7548fb48205e7f213d70c71e67b8271b7242093dc3f1da578b42c734a2c",
         "tag": "py3-none-any",
-        "url": "https://files.pythonhosted.org/packages/0d/a5/48cb7efb8b4718b1a4c0c331e3364a3a33f614ff0d6afd2b93ee883d3c47/hatchling-1.28.0-py3-none-any.whl",
-        "version": "1.28.0"
+        "url": "https://files.pythonhosted.org/packages/5f/80/91f51f439c05d4ec4623c22928ce16a938d6d793bf709477830823497859/hatchling-1.32.4-py3-none-any.whl",
+        "version": "1.32.4"
       },
       {
         "filename": "packaging-26.3-py3-none-any.whl",
@@ -34,6 +34,14 @@
         "version": "1.6.0"
       },
       {
+        "filename": "tomlkit-0.15.1-py3-none-any.whl",
+        "name": "tomlkit",
+        "sha256": "177a05aece5a8ca5266fd3c448abb47b8d352f09d477d3ca8332db4d89b24304",
+        "tag": "py3-none-any",
+        "url": "https://files.pythonhosted.org/packages/13/bc/8c13eb66537dce1d2bd3a57132902f38d0e7f5bb46fa9f4daed9fe9d76ee/tomlkit-0.15.1-py3-none-any.whl",
+        "version": "0.15.1"
+      },
+      {
         "filename": "trove_classifiers-2026.9.21.13-py3-none-any.whl",
         "name": "trove-classifiers",
         "sha256": "8b1ff4f9c191b1040b71c37f1e445ab99732911e3cd91de52838453a854d7a17",
@@ -44,7 +52,7 @@
     ],
     "isolation": true,
     "roots": [
-      "hatchling==1.28.0"
+      "hatchling==1.32.4"
     ],
     "runtime_content": false
   },

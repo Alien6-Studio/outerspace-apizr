@@ -47,6 +47,7 @@ def test_audit_scopes_cover_every_locked_dependency_variant(tmp_path):
         "packaging",
         "pathspec",
         "pluggy",
+        "tomlkit",
         "trove-classifiers",
     }
     assert not {"hatchling", "trove-classifiers"} & {

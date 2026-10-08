@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Adopt reviewed Dependabot updates for the 0.4.5 development line, including the isolated Hatchling/tomlkit build closure; retain license notices, exact Homebrew qualification identities and build-tool exclusion from the runtime.
+
 - Expose independent functions from repositories containing unfinished code,
   while retaining the full audit and refusing problems in required helpers,
   imports or module initialization (#253).

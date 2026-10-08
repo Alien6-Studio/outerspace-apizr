@@ -28,7 +28,7 @@ Official references: [Python formula guidance](https://docs.brew.sh/Language-Spe
 
 ## Build-only inputs
 
-`homebrew-build = ["hatchling==1.28.0"]` adds exactly two packages to the universal
+The initial `homebrew-build = ["hatchling==1.28.0"]` review added exactly two packages to the universal
 lock: Hatchling 1.28.0 and trove-classifiers 2026.9.21.13. Existing packaging 26.3,
 pathspec 1.1.1 and pluggy 1.6.0 complete the five-package closure. No existing
 locked version changes. Python <3.11's conditional `tomli` dependency does not
@@ -294,3 +294,22 @@ requirements and the build-input policy are identical. The active qualification
 policy binds the new manifest and retains the same host boundary. Historical
 physical and public-tap evidence still describes its original source; it is not
 relabeled as a 0.4.3 qualification.
+
+## 0.4.5 dependency maintenance
+
+The development branch adopts Hatchling **1.32.4** and its new build-only
+TOML parser, tomlkit **0.15.1**. The reviewed closure now contains six universal
+wheels: Hatchling, packaging, pathspec, pluggy, tomlkit and trove-classifiers.
+The exact source notices, dependency metadata and wheel hashes are retained;
+tomlkit's parser and separate toml-test fixture both retain their MIT notices.
+No build tool is added to the application runtime or an install extra. The
+offline build and Formula proofs also assert that tomlkit is absent from the
+installed runtime.
+
+The active build-input manifest is
+`fff713ae63e75cb01089ff8e7262b5d06ed832f9283dcd762b38a710592bed84`.
+The full lockfile identity includes the reviewed FastAPI 0.142.2, MCP SDK/types
+2.3.0, Hypothesis 6.168.3 and Ruff 0.16.10 updates. The current qualification
+policy and renderer bind this manifest. Historical release, physical-host and
+public-tap receipts continue to describe their original bytes; they are not
+relabeled. These checks prepare development candidates and publish nothing.
