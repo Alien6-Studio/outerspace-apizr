@@ -211,7 +211,7 @@ production Formula.
 `README.md` and a portable source receipt. The Formula uses Homebrew's
 `virtualenv_create` with Python 3.14 and visibility of the Homebrew Pydantic
 provider. Only Apizr is installed into `libexec`, with runtime dependency
-resolution disabled. The five reviewed universal wheels are build-only resources;
+resolution disabled. The six reviewed universal wheels are build-only resources;
 they feed the isolated PEP 517 environment and never enter the runtime.
 Homebrew denies network access during the build. pip uses an empty cache,
 `PIP_NO_INDEX=1`, `PIP_CONFIG_FILE=/dev/null` and only the reviewed wheelhouse.
@@ -307,7 +307,7 @@ offline build and Formula proofs also assert that tomlkit is absent from the
 installed runtime.
 
 The active build-input manifest is
-`fff713ae63e75cb01089ff8e7262b5d06ed832f9283dcd762b38a710592bed84`.
+`13c81fb17da3238ec4e04d238062847bf86c4f43b30fc2c0c1156798594aeb6b`.
 The full lockfile identity includes the reviewed FastAPI 0.142.2, MCP SDK/types
 2.3.0, Hypothesis 6.168.3 and Ruff 0.16.10 updates. The current qualification
 policy and renderer bind this manifest. Historical release, physical-host and

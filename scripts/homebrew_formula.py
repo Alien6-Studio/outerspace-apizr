@@ -14,7 +14,7 @@ from prepare_release_assets import bound_file
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "Alien6-Studio/outerspace-apizr"
 VERSION = "0.4.4"
-BUILD_MANIFEST = "fff713ae63e75cb01089ff8e7262b5d06ed832f9283dcd762b38a710592bed84"
+BUILD_MANIFEST = "13c81fb17da3238ec4e04d238062847bf86c4f43b30fc2c0c1156798594aeb6b"
 
 
 def publication_source(url, sha256, source, commit, candidate, evidence, bundle):

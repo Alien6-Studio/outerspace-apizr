@@ -67,5 +67,5 @@
     "venv_system_site_packages": true
   },
   "schema": "apizr.homebrew-build-inputs/v1",
-  "selection_rationale": "Hatchling 1.28.0 is the first stable minor after the declared 1.27 floor whose reviewed metadata explicitly lists Python 3.14; 1.27.0 does not. Use the existing packaging/pathspec/pluggy versions and only add the classifier data dependency. Qualification and vulnerability audit must pass for these exact bytes."
+  "selection_rationale": "Adopt the reviewed Hatchling 1.32.4 update for 0.4.5; its metadata explicitly supports Python 3.14. Retain the existing packaging/pathspec/pluggy/trove-classifiers versions and add its required tomlkit 0.15.1 dependency only to the isolated build closure. Qualification and vulnerability audit must pass for these exact bytes; build tools remain absent from the installed runtime."
 }
