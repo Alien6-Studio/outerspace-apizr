@@ -55,6 +55,74 @@ later reassignment makes its binding conditional. A generator needs a streaming
 adapter and is unsupported. Missing annotations are explicitly unconstrained;
 arbitrary application classes and forward references remain uncertain.
 
+## Structured model inputs with TypedDict
+
+Describe a model payload with an ordinary Python `TypedDict`. Your prediction or
+calculation function can stay independent of a web framework:
+
+<!-- typed-dict:example -->
+```python
+from typing import TypedDict, Required, NotRequired
+
+
+class Features(TypedDict):
+    age: int
+    score: float
+
+
+class PredictionInput(TypedDict, total=False):
+    customer_id: Required[str]
+    features: Required[Features]
+    note: NotRequired[str]
+
+
+def predict(payload: PredictionInput) -> float:
+    return payload["features"]["age"] * payload["features"]["score"]
+```
+
+Save this as `prediction.py`. Inspect once and generate either interface:
+
+<!-- typed-dict:commands -->
+```sh
+apizr inspect prediction.py --format json
+apizr generate rest prediction.py --output-dir .output/typed-rest
+apizr generate mcp prediction.py --output-dir .output/typed-mcp
+```
+
+Both interfaces accept
+`{"payload":{"customer_id":"c","features":{"age":2,"score":3}}}` and return
+`6.0`. The function receives plain Python dictionaries. Missing required fields,
+wrong field types and extra fields are rejected at every object level. REST
+returns HTTP 422; MCP returns a tool error. Optional fields are omitted rather
+than filled with defaults. A return annotation describes the result; it does not
+enforce its runtime type.
+
+Supported declarations are module-level class forms using an earlier,
+unambiguous `from typing import TypedDict` or `import typing` import (including
+aliases). Fields use the shared JSON type vocabulary and may refer to an earlier
+supported `TypedDict` in the same module. `total=True` is the default;
+`total=False`, `Required[T]` and `NotRequired[T]` determine field presence.
+Qualified and aliased stdlib wrappers work too. Explicit `Any` and bare
+containers retain their existing unconstrained JSON semantics.
+Private class field names follow Python's name mangling: `__value` in `Input`
+becomes the JSON key `_Input__value`; prefer ordinary public field names for API
+payloads.
+
+The class body may contain a docstring, annotated fields and `pass`. Inheritance,
+functional declarations, `typing_extensions`, quoted or recursive/forward
+references, generic TypedDicts, annotation calls, field values, methods,
+decorators, metaclasses and nonliteral `total` are unsupported. Nesting is bounded
+to 32 levels and 4096 expanded type nodes. Duplicate fields and rebound or mutated
+typing names are refused. Ordinary classes, dataclasses, Pydantic models and
+framework response types do not acquire this exemption. `APIZR-READY-019` and
+`readiness.structured_types[].problem` explain an unsupported declaration;
+unsafe class initialization still retains `APIZR-READY-004`.
+
+The retained `readiness.structured_types` evidence records the logical name,
+source span and typed fields, bound to the inspected source digest. It contains
+shape only, without captured values. Analysis never imports or constructs the
+declared class.
+
 ## Machine output and identity
 
 ```sh

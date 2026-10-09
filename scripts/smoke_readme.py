@@ -127,6 +127,9 @@ def main() -> None:
         migration(cli, repository)
         if args.repository_refinement:
             selected_scope(cli, repository)
+            from typed_dict_proof import proof
+
+            proof(cli, Path(sys.executable))
         quickstart(
             cli, repository, candidate=True, expected_version=args.expected_version
         )

@@ -28,6 +28,27 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "structured-stdlib-authority",
+        "src/apizr/readiness/structured.py",
+        'or facts.typing_marker(node.bases[0], {"TypedDict"}) != "TypedDict"',
+        "or False",
+        "tests/structured_contracts/test_static.py::test_authority_failures",
+    ),
+    Mutation(
+        "object-required-fields",
+        "src/apizr/interfaces/runtime.py",
+        'elif field["required"]:',
+        "elif False:",
+        "tests/structured_contracts/test_runtime.py::test_required_extra_fields_and_mapping_order",
+    ),
+    Mutation(
+        "object-extra-fields",
+        "src/apizr/interfaces/runtime.py",
+        'if set(value) - {field["name"] for field in fields}:',
+        "if False:",
+        "tests/structured_contracts/test_runtime.py::test_required_extra_fields_and_mapping_order",
+    ),
+    Mutation(
         "selected-scope-required-initialization",
         "src/apizr/exposure/scope.py",
         "            reasons = initialization_reasons(unit)",

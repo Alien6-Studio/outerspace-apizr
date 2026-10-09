@@ -95,7 +95,13 @@ def plan_repository_interface(
             # including private execution support and module initialization.
             # Do not replace it with a second, source-local eligibility gate.
             contract = invocation_contract(
-                declarations[identity], assessment.local_readiness
+                declarations[identity],
+                assessment.local_readiness,
+                {
+                    declaration.name: declaration.type
+                    for declaration in unit.inspection.readiness.structured_types
+                    if declaration.type is not None
+                },
             )
             public_name = ".".join(contract.capability_id.split(":")[1:])
             capabilities.append(

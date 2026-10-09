@@ -1,0 +1,5 @@
+# Reviewed generated apizr_runtime.py SHA-256, not an API key:
+# b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656
+# Only the two matching entries in the immutable direct-baseline fixture.
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:8
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:28

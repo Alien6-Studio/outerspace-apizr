@@ -1,6 +1,6 @@
 """Validate bound artifacts and consume eligibility; never analyze user source."""
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 from apizr.capabilities.model import Capability, Digest, Source
 from apizr.capabilities.types import ValueModel
@@ -28,7 +28,9 @@ class GenerationRefused(ValueError):
 
 
 def invocation_contract(
-    capability: Capability, assessment: Assessment
+    capability: Capability,
+    assessment: Assessment,
+    structured: Mapping[str, TypeSpec] | None = None,
 ) -> InvocationContract:
     """Lower validated signature evidence after the caller enforces eligibility.
 
@@ -47,7 +49,7 @@ def invocation_contract(
     returns = (
         TypeSpec(kind="any")
         if assessment.dimensions.outputs.reasons
-        else lower(capability.signature.returns.annotation)
+        else lower(capability.signature.returns.annotation, structured)
     )
     return InvocationContract(
         capability_id=capability.id,
@@ -55,7 +57,10 @@ def invocation_contract(
         execution="async" if capability.execution == "async" else "sync",
         parameters=tuple(
             Input(
-                name=p.name, kind=p.kind, required=p.required, type=lower(p.annotation)
+                name=p.name,
+                kind=p.kind,
+                required=p.required,
+                type=lower(p.annotation, structured),
             )
             for p in capability.signature.parameters
         ),
@@ -143,7 +148,15 @@ def plan(
             + "; ".join(details)
         )
     endpoints = tuple(
-        invocation_contract(capabilities[identity], assessments[identity])
+        invocation_contract(
+            capabilities[identity],
+            assessments[identity],
+            {
+                declaration.name: declaration.type
+                for declaration in readiness.structured_types
+                if declaration.type is not None
+            },
+        )
         for identity in sorted(chosen)
     )
     return InterfacePlan(

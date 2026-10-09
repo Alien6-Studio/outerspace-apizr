@@ -25,6 +25,11 @@ the [release history](https://github.com/Alien6-Studio/outerspace-apizr/releases
 
 Python **3.11–3.14** · GPL-3.0-or-later.
 
+The `0.4.5` development branch recognizes supported Python `TypedDict` model
+payloads as shared, nested JSON inputs for REST and MCP. See the
+[source inspection guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/inspect.md#structured-model-inputs-with-typeddict)
+for an executable example and the current declaration limits.
+
 [![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg?cacheSeconds=300)](https://pypi.org/project/outerspace-apizr/)
 [![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml)
 [![Security](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml)

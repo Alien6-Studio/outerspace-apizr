@@ -17,8 +17,10 @@ from .model import (
     ReadinessReport,
     Reason,
     State,
+    StructuredDeclaration,
 )
 from .source import SourceFacts, initialization_risk, unresolved_import
+from .structured import declarations
 
 
 def _reasons(
@@ -43,13 +45,27 @@ def _assessment(
 
 
 def _capability(
-    capability: Capability, facts: SourceFacts, stub_lines: set[int]
+    capability: Capability,
+    facts: SourceFacts,
+    stub_lines: set[int],
+    structured_types: tuple[StructuredDeclaration, ...],
 ) -> Assessment:
     source = capability.source
     function = facts.functions[source.symbol, source.line]
     order = facts.function_orders[source.symbol, source.line]
     binding: list[Reason] = []
     execution: list[Reason] = []
+    safe_classes = {
+        declaration.source.line
+        for declaration in structured_types
+        if declaration.type is not None
+    }
+    shapes = {
+        declaration.name: declaration.type
+        if declaration.source.line < source.line
+        else None
+        for declaration in structured_types
+    }
     if capability.availability.value == "unknown" and function not in facts.tree.body:
         binding.extend(_reasons((Code.CONDITIONAL,), source.line))
     if capability.decorators:
@@ -60,7 +76,9 @@ def _capability(
     for line in facts.namespace_lines:
         binding.extend(_reasons((Code.NAMESPACE,), line))
     for statement in facts.tree.body:
-        if statement.lineno not in stub_lines and initialization_risk(statement):
+        if statement.lineno not in stub_lines | safe_classes and initialization_risk(
+            statement
+        ):
             execution.extend(_reasons((Code.INITIALIZATION,), statement.lineno))
     if capability.execution == "generator":
         execution.extend(_reasons((Code.GENERATOR,), source.line))
@@ -87,6 +105,7 @@ def _capability(
                 if parameter.annotation
                 else None,
                 facts,
+                shapes,
             ),
             line,
             parameter.name,
@@ -96,6 +115,7 @@ def _capability(
     output_codes = classify(
         ast.parse(output_type.declared, mode="eval").body if output_type else None,
         facts,
+        shapes,
     )
     output = _reasons((Code.OUTPUT,), source.line) if output_codes else ()
     return _assessment(
@@ -126,7 +146,10 @@ def assess(document: CapabilityDocument, source: str | bytes) -> ReadinessReport
         source = source.decode(encoding)
     facts = SourceFacts(ast.parse(source, filename="<readiness-source>"))
     stubs = {o.source.line for c in document.capabilities for o in c.overloads}
-    assessments = [_capability(c, facts, stubs) for c in document.capabilities]
+    structured_types = declarations(facts, document.source.module)
+    assessments = [
+        _capability(c, facts, stubs, structured_types) for c in document.capabilities
+    ]
     present = {c.name for c in document.capabilities}
     rejected: dict[str, list[Reason]] = defaultdict(list)
     spans: dict[str, SourceSpan] = {}
@@ -161,4 +184,5 @@ def assess(document: CapabilityDocument, source: str | bytes) -> ReadinessReport
         source=document.source,
         ir_digest=document_digest(document),
         assessments=tuple(assessments),
+        structured_types=structured_types,
     )

@@ -95,7 +95,7 @@
       },
       "apizr_governed/interfaces/model.py": {
         "algorithm": "sha256",
-        "value": "af6cbd6482694fc6ff29f54635425b6844aeae845fc90e7e8c74a4c81e1546fc"
+        "value": "5b1a3374fffbdaf376078d161c87e570f47071c59943dd0532351f964d6a6659"
       },
       "apizr_governed/interfaces/results.py": {
         "algorithm": "sha256",
@@ -103,7 +103,7 @@
       },
       "apizr_governed/interfaces/runtime.py": {
         "algorithm": "sha256",
-        "value": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14"
+        "value": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
       },
       "apizr_governed/interfaces/serialization.py": {
         "algorithm": "sha256",
@@ -264,6 +264,10 @@
       "source/sample/pricing.py": {
         "algorithm": "sha256",
         "value": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+      },
+      "apizr_governed/contract_types.py": {
+        "algorithm": "sha256",
+        "value": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
       }
     },
     "backend": "oci-container",
@@ -449,7 +453,7 @@
       },
       "apizr_governed/interfaces/model.py": {
         "algorithm": "sha256",
-        "value": "af6cbd6482694fc6ff29f54635425b6844aeae845fc90e7e8c74a4c81e1546fc"
+        "value": "5b1a3374fffbdaf376078d161c87e570f47071c59943dd0532351f964d6a6659"
       },
       "apizr_governed/interfaces/results.py": {
         "algorithm": "sha256",
@@ -457,7 +461,7 @@
       },
       "apizr_governed/interfaces/runtime.py": {
         "algorithm": "sha256",
-        "value": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14"
+        "value": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
       },
       "apizr_governed/interfaces/serialization.py": {
         "algorithm": "sha256",
@@ -537,7 +541,7 @@
       },
       "execution/bundle.json": {
         "algorithm": "sha256",
-        "value": "ecbe978f61e61b0b8209f191e40ffdf9b1642edce82b8cfab7f34a2bc23de93c"
+        "value": "751f34bafbf6f64cf13ec3753d932878fbd7e80c354941e348eeb5c793694b4f"
       },
       "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
         "algorithm": "sha256",
@@ -622,6 +626,10 @@
       "source/sample/pricing.py": {
         "algorithm": "sha256",
         "value": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+      },
+      "apizr_governed/contract_types.py": {
+        "algorithm": "sha256",
+        "value": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
       }
     },
     "exposure_plan_digest": {

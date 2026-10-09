@@ -7,6 +7,13 @@ This permission does not expose functions or authorize their execution.
 For one Python file or notebook, use the [REST](rest.md) or [MCP](mcp.md)
 single-source guide. This page covers repository-level selection and bundles.
 
+Functions with [supported TypedDict inputs](inspect.md#structured-model-inputs-with-typeddict)
+use the same structured contracts in repository bundles. Keep each declaration
+and its annotated public function in the same module. Select the function's
+capability ID; its local helpers stay private. An unrelated unfinished module
+remains visible in the global audit while an independent selection can generate.
+The closed nested input shape also travels into local-process and OCI workers.
+
 Readiness describes eligibility under a policy. Exposure records what the
 operator explicitly selects for publication, through which interfaces and under
 which execution requirements. It does not generate or start a server.

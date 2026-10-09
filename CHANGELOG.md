@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Recognize supported Python `TypedDict` inputs as shared structured JSON contracts
+  for REST and MCP, including nested validation, required and optional fields, and
+  strict rejection of missing or extra fields (#254).
+
 - Adopt reviewed Dependabot updates for the 0.4.5 development line, including the isolated Hatchling/tomlkit build closure; retain license notices, exact Homebrew qualification identities and build-tool exclusion from the runtime.
 
 - Expose independent functions from repositories containing unfinished code,

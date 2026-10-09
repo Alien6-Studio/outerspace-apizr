@@ -725,7 +725,8 @@
             "tuple",
             "set",
             "union",
-            "literal"
+            "literal",
+            "object"
           ],
           "title": "Kind",
           "type": "string"
@@ -758,6 +759,14 @@
           "default": false,
           "title": "Variadic",
           "type": "boolean"
+        },
+        "fields": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ObjectField"
+          },
+          "title": "Fields",
+          "type": "array"
         }
       },
       "required": [
@@ -820,6 +829,29 @@
         }
       },
       "title": "Effects",
+      "type": "object"
+    },
+    "ObjectField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "type": {
+          "$ref": "#/$defs/TypeSpec"
+        }
+      },
+      "required": [
+        "name",
+        "required",
+        "type"
+      ],
+      "title": "ObjectField",
       "type": "object"
     }
   },

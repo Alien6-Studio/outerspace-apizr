@@ -556,6 +556,14 @@
         },
         "source": {
           "$ref": "#/$defs/Source"
+        },
+        "structured_types": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StructuredDeclaration"
+          },
+          "title": "Structured Types",
+          "type": "array"
         }
       },
       "required": [
@@ -965,7 +973,8 @@
         "APIZR-READY-015",
         "APIZR-READY-016",
         "APIZR-READY-017",
-        "APIZR-READY-018"
+        "APIZR-READY-018",
+        "APIZR-READY-019"
       ],
       "title": "Code",
       "type": "string"
@@ -1033,6 +1042,145 @@
         "path"
       ],
       "title": "Diagnostic",
+      "type": "object"
+    },
+    "ObjectField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "type": {
+          "$ref": "#/$defs/TypeSpec"
+        }
+      },
+      "required": [
+        "name",
+        "required",
+        "type"
+      ],
+      "title": "ObjectField",
+      "type": "object"
+    },
+    "StructuredDeclaration": {
+      "additionalProperties": false,
+      "description": "Source-bound, statically proven shape or an explicit bounded refusal.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "problem": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Problem"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TypeSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name",
+        "source"
+      ],
+      "title": "StructuredDeclaration",
+      "type": "object"
+    },
+    "TypeSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ObjectField"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "items": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TypeSpec"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "any",
+            "int",
+            "str",
+            "float",
+            "bool",
+            "null",
+            "list",
+            "dict",
+            "tuple",
+            "set",
+            "union",
+            "literal",
+            "object"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "values": {
+          "default": [],
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Values",
+          "type": "array"
+        },
+        "variadic": {
+          "default": false,
+          "title": "Variadic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "TypeSpec",
       "type": "object"
     }
   },

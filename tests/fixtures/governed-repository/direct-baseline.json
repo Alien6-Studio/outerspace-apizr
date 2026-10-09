@@ -2,10 +2,10 @@
   "artifacts": {
     "mcp": {
       "apizr-bundle-provenance.json": "ed6c298cf89b7476c368ca68c028970cbec7c9d6f8356b39b3d1b26348a81604",
-      "apizr-repository-mcp.json": "2c665233988cc95919611268697fc96b6cabfcd482a02f9b157e8309234461be",
+      "apizr-repository-mcp.json": "bc0bc9900e094d042f862c0d918f1cf4109bfb21498360da5c960834c4f7c4b7",
       "apizr_repository_runtime.py": "a9a3b6de32eae39d3b3e59b96371af1ca082f4838bad184acbc3d86b8447ef1d",
       "apizr_results.py": "3e8840723c8bbf8962146e243583455c0f988e2c523ff8c09aa5232c6d484e45",
-      "apizr_runtime.py": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14",
+      "apizr_runtime.py": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656",
       "capability-catalog.json": "9c5fd4ae11d5fb347194f0c4583036b7fb53b5c7093bcf69b8092997c4cde52c",
       "capability-graph.json": "e353f65420050f0f0410e23eb1ce7d8a7fb100e80eedd9c6fb2dfe4504d1a0ba",
       "exposure-plan.json": "9863eb28b550a066c3334686109b42cb5be20b2d9cd4660d8e26449ceef4022d",
@@ -23,9 +23,9 @@
     },
     "rest": {
       "apizr-bundle-provenance.json": "ed6c298cf89b7476c368ca68c028970cbec7c9d6f8356b39b3d1b26348a81604",
-      "apizr-repository-rest.json": "2f14460ee28804bcaad22434a1fce881c66fc2634feef2c8ec441aff85f96b22",
+      "apizr-repository-rest.json": "5333e500e4aee6d0e7c54adfcd76633ff73aa0c0d0103f6a3371dd33526d6f35",
       "apizr_repository_runtime.py": "a9a3b6de32eae39d3b3e59b96371af1ca082f4838bad184acbc3d86b8447ef1d",
-      "apizr_runtime.py": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14",
+      "apizr_runtime.py": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656",
       "app.py": "c130e80b2ed0befa0c118f61a65d6736ea6b74ad0f5465fdc0aa2b0935afe67c",
       "capability-catalog.json": "9c5fd4ae11d5fb347194f0c4583036b7fb53b5c7093bcf69b8092997c4cde52c",
       "capability-graph.json": "e353f65420050f0f0410e23eb1ce7d8a7fb100e80eedd9c6fb2dfe4504d1a0ba",

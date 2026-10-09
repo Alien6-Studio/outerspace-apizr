@@ -2,18 +2,29 @@
 
 import ast
 import math
+from collections.abc import Mapping
+
+from apizr.contract_types import TypeSpec
 
 from .model import Code
 from .source import SourceFacts
 
 
-def classify(node: ast.expr | None, facts: SourceFacts) -> tuple[Code, ...]:
+def classify(
+    node: ast.expr | None,
+    facts: SourceFacts,
+    structured: Mapping[str, TypeSpec | None] | None = None,
+) -> tuple[Code, ...]:
     if node is None:
         return (Code.UNCONSTRAINED,)
+    if isinstance(node, ast.Name) and structured is not None and node.id in structured:
+        return () if structured[node.id] is not None else (Code.STRUCTURED_TYPE,)
     if isinstance(node, ast.Constant):
         return () if node.value is None else (Code.UNRESOLVED_TYPE,)
     if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
-        return classify(node.left, facts) + classify(node.right, facts)
+        return classify(node.left, facts, structured) + classify(
+            node.right, facts, structured
+        )
     base = node.value if isinstance(node, ast.Subscript) else node
     name = facts.typing_name(base)
     if name in {"Callable", "bytes"}:
@@ -40,7 +51,7 @@ def classify(node: ast.expr | None, facts: SourceFacts) -> tuple[Code, ...]:
             return ()
         return (Code.NON_JSON,)
     if name == "Annotated" and len(members) >= 2:
-        return classify(members[0], facts) + (Code.METADATA,)
+        return classify(members[0], facts, structured) + (Code.METADATA,)
     if name in {"Union", "Optional"}:
         if not members or (name == "Optional" and len(members) != 1):
             return (Code.UNRESOLVED_TYPE,)
@@ -61,7 +72,9 @@ def classify(node: ast.expr | None, facts: SourceFacts) -> tuple[Code, ...]:
             members = members[:1]
     else:
         return (Code.UNRESOLVED_TYPE,)
-    return tuple(code for member in members for code in classify(member, facts))
+    return tuple(
+        code for member in members for code in classify(member, facts, structured)
+    )
 
 
 def json_literal(node: ast.expr) -> bool:

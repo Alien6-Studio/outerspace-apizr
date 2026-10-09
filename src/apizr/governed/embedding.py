@@ -22,6 +22,8 @@ from .model import ExecutionBundle, PlanArtifact
 # This is the validation/execution dependency closure, not an Apizr installation.
 # No analyzer, notebook exporter, legacy pipeline or generator is shipped.
 MODULES = (
+    "contract_types.py",
+    "contract_lowering.py",
     "capabilities/model.py",
     "capabilities/types.py",
     "capabilities/serialization.py",

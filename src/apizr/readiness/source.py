@@ -18,6 +18,9 @@ TYPING_NAMES = {
     "Literal",
     "Annotated",
     "Callable",
+    "TypedDict",
+    "Required",
+    "NotRequired",
 }
 
 
@@ -245,6 +248,40 @@ class SourceFacts(ast.NodeVisitor):
                     for a in imported.names
                 ):
                     return node.attr
+        return None
+
+    def typing_marker(self, node: ast.expr, names: set[str]) -> str | None:
+        """Require one earlier, unconditional stdlib import, never just spelling."""
+        root = (
+            node.id
+            if isinstance(node, ast.Name)
+            else (
+                node.value.id
+                if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)
+                else None
+            )
+        )
+        if root is None or root in self.mutated_roots or self.namespace_lines:
+            return None
+        bindings = self.bindings.get(root, [])
+        if len(bindings) != 1:
+            return None
+        imported = bindings[0].node
+        if not isinstance(imported, (ast.Import, ast.ImportFrom)):
+            return None
+        if imported not in self.tree.body or imported.lineno >= node.lineno:
+            return None
+        if isinstance(node, ast.Name) and isinstance(imported, ast.ImportFrom):
+            if imported.module == "typing" and imported.level == 0:
+                for alias in imported.names:
+                    if (alias.asname or alias.name) == root and alias.name in names:
+                        return alias.name
+        if isinstance(node, ast.Attribute) and isinstance(imported, ast.Import):
+            if node.attr in names and any(
+                alias.name == "typing" and (alias.asname or alias.name) == root
+                for alias in imported.names
+            ):
+                return node.attr
         return None
 
     def dynamic_import_lines(self, nodes: tuple[ast.AST, ...]) -> tuple[int, ...]:

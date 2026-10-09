@@ -50,6 +50,12 @@ def example_value(spec: TypeSpec, *, depth: int = 0) -> JsonValue:
         return False
     if spec.kind == "dict":
         return {}
+    if spec.kind == "object":
+        return {
+            field.name: example_value(field.type, depth=depth + 1)
+            for field in spec.fields
+            if field.required
+        }
     if spec.kind in ("list", "set") or (spec.kind == "tuple" and spec.variadic):
         return []
     if spec.kind == "tuple":

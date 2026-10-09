@@ -2,6 +2,51 @@
 
 # Static capability readiness
 
+## Retained structured declarations
+
+`readiness/structured.py` is the authoritative static resolver for supported
+stdlib class-form `TypedDict` declarations. It consumes AST `SourceFacts` and
+retains `StructuredDeclaration` records in `ReadinessReport.structured_types`.
+Each record identifies the module, symbol and source span; the report's source
+and IR digests bind it to the inspected bytes. A record carries either a proven
+object `TypeSpec` or a precise refusal. This is observable evidence, including
+in serialized Catalog inspections, rather than a resolver cache or side channel.
+
+The resolver proves one earlier unconditional stdlib typing import, an unchanged
+binding, literal requiredness and a safe class body. Only a successfully proven
+class span is exempt from `APIZR-READY-004`; every other class remains subject to
+the existing initialization policy. Unsupported structured inputs receive
+`APIZR-READY-019`. [Supported forms and limits](../getting-started/user-guide/inspect.md#structured-model-inputs-with-typeddict)
+include the explicit inheritance, functional, forward-reference and recursion
+refusals. Expanded shapes are bounded to 32 levels and 4096 type nodes.
+
+The neutral `contract_types.py` model adds `kind="object"` and canonical,
+name-sorted `ObjectField(name, required, type)` records. It rejects duplicate or
+invalid names, invalid field contracts and inconsistent object/non-object
+details, including on serialization/revalidation of constructed or copied
+models. `contract_lowering.py` lowers retained annotation expressions using
+these bound shapes. Interface planners consume this evidence; they never parse
+project source to rediscover a declaration. REST, MCP, client examples and
+serialized execution plans therefore share the same object contract.
+
+`interfaces/runtime.py` mirrors the shape in its lightweight `RuntimeType` and
+validates required and extra fields recursively into plain dictionaries. It
+never reads runtime type annotations or instantiates a TypedDict class. The
+same reviewed runtime is copied verbatim into standalone adapters and governed
+workers, with updated integrity hashes. Existing scalar coercion rules remain
+unchanged. Return types remain descriptive (`enforcement="none"`) and MCP tools
+have no `outputSchema`.
+
+This is an additive v1 vocabulary extension. Historical non-object TypeSpecs
+omit `fields`, and reports without structured evidence omit `structured_types`;
+their canonical bytes remain unchanged. Current readers accept historical v1
+artifacts. Older readers need an upgrade to consume the new object vocabulary.
+Published Catalog, Readiness, repository interface and runtime schemas include
+the additive definitions. Existing non-TypedDict golden contracts keep their
+semantics; adapter, embedded model and provenance hashes change when their
+implementation bytes change. No project/package version or publication changes
+are implied by this development feature.
+
 Capability IR records source declarations. Readiness applies a separate, bounded
 policy to those declarations and matching static source evidence. Neither model
 executes source, imports user modules, resolves a repository or guarantees runtime

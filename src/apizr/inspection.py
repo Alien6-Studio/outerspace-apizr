@@ -127,6 +127,11 @@ def text_report(inspection: Inspection) -> str:
                     f"  {reason.code.value} line {reason.line}{parameter}: {reason.message}"
                 )
         lines.append("")
+    for declaration in inspection.readiness.structured_types:
+        lines.append(
+            f"Structured type {declaration.name} line {declaration.source.line}: "
+            + (declaration.problem or "proven stdlib TypedDict shape")
+        )
     lines.append(f"IR diagnostics: {len(ir.diagnostics)}")
     lines.extend(
         f"  {d.code.value} {d.severity.value} {d.source.symbol}: {d.message}"

@@ -11,7 +11,7 @@ import types
 from collections.abc import Awaitable, Callable
 from hashlib import sha256
 from pathlib import Path
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, NotRequired, TypeAlias, TypedDict
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
