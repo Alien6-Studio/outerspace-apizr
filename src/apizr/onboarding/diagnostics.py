@@ -14,8 +14,9 @@ from apizr.environment.python_target import validate_python_target
 from apizr.exposure.policy import ExposurePolicy
 from apizr.extension_runtime import PrerequisiteMissing
 from apizr.extension_runtime.protocol import unique_object
+from apizr.plugins.artifacts.models import PluginError
 from apizr.plugins.local import activation, store
-from apizr.plugins.local.models import Installation, PluginError
+from apizr.plugins.local.models import Installation
 from apizr.repository_readiness.policy import RepositoryReadinessPolicy
 from apizr.workspace.files import absolute_path, directory_fd, read_regular
 from apizr.workspace.operator_policy import (

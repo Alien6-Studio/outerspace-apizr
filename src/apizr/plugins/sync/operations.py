@@ -5,9 +5,10 @@ from pathlib import Path
 from threading import Event
 from typing import Literal
 
+from apizr.plugins.artifacts.models import PluginError
 from apizr.plugins.local import backend, store
 from apizr.plugins.local.control import InstallationCancelled, InstallControl
-from apizr.plugins.local.models import Installation, Inventory, PluginError
+from apizr.plugins.local.models import Installation, Inventory
 from apizr.plugins.lock.models import Diagnostic, LockError, Plugin
 from apizr.plugins.lock.operations import installation_matches, prepared_lock
 

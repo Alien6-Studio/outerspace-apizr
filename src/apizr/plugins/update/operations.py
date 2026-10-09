@@ -7,16 +7,12 @@ from threading import Event
 from pydantic import TypeAdapter
 
 from apizr.extension_runtime import ExtensionError
+from apizr.plugins.artifacts.models import PluginError, Version, canonical_name
 from apizr.plugins.local import activation, backend, store
 from apizr.plugins.local.control import (
     InstallationCancelled,
     InstallationTimeout,
     InstallControl,
-)
-from apizr.plugins.local.models import (
-    PluginError,
-    Version,
-    canonical_name,
 )
 from apizr.plugins.lock.models import Diagnostic, LockError
 from apizr.plugins.lock.operations import installation_matches, prepared_lock

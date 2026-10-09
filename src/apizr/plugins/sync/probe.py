@@ -17,13 +17,14 @@ from apizr.extension_runtime.supervisor import (
     exchange_process,
     signal_process_group,
 )
+from apizr.plugins.artifacts.models import PluginError
 from apizr.plugins.local.activation import _interpreter
 from apizr.plugins.local.control import (
     InstallationCancelled,
     InstallationTimeout,
     InstallControl,
 )
-from apizr.plugins.local.models import Installation, PluginError
+from apizr.plugins.local.models import Installation
 from apizr.plugins.local.usage import protect
 from apizr.plugins.lock.models import Target
 

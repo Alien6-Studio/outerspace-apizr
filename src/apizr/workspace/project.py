@@ -11,7 +11,7 @@ from pydantic import Field, field_validator
 from apizr.capabilities.types import ValueModel
 from apizr.contracts.application import ApplicationConfig
 from apizr.graph import GraphPolicy
-from apizr.plugins.local.models import LockedDistribution
+from apizr.plugins.artifacts.models import LockedDistribution
 from apizr.repository import ScanPolicy
 from apizr.workspace.files import read_regular
 

@@ -14,9 +14,12 @@ from threading import Event
 from pydantic import ConfigDict, Field
 
 from apizr.capabilities.types import ValueModel
+from apizr.plugins.artifacts import requirements as locking
+from apizr.plugins.artifacts import wheel
+from apizr.plugins.artifacts.models import PluginError
 
-from . import _download_worker, backend, locking, wheel
-from .models import Installation, PluginError
+from . import _download_worker, backend
+from .models import Installation
 from .operations import install_extension
 
 

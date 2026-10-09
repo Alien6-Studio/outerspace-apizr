@@ -64,6 +64,21 @@ def test_repository_satisfies_declared_composition():
             "local -> update",
         ),
         ("workspace/user.py", "import mcp\n", "optional adapter"),
+        (
+            "plugins/artifacts/wheel.py",
+            "from apizr.plugins.local.activation import enable_extension\n",
+            "artifacts -> local",
+        ),
+        (
+            "plugins/lock/operations.py",
+            "from apizr.cli.commands.plugins import main\n",
+            "domain depends on CLI",
+        ),
+        (
+            "plugins/artifacts/models.py",
+            "import apizr_mcp\n",
+            "optional adapter",
+        ),
     ],
 )
 def test_architecture_rejects_misplaced_code(tmp_path, path, addition, expected):
@@ -97,7 +112,7 @@ def test_allowed_plugin_dependencies_cannot_introduce_a_cycle(tmp_path):
     manifest.write_text(
         (ROOT / "architecture/packages.toml")
         .read_text()
-        .replace("local = []", 'local = ["update"]')
+        .replace('local = ["artifacts"]', 'local = ["artifacts", "update"]')
     )
     assert any(
         "contains a cycle" in error for error in check(ROOT / "src/apizr", manifest)

@@ -5,7 +5,7 @@ from typing import Literal, Self
 from pydantic import Field, model_validator
 
 from apizr.capabilities.types import ValueModel
-from apizr.plugins.local.models import Manifest, Version
+from apizr.plugins.artifacts.models import Manifest, Version
 from apizr.plugins.lock.models import Requirements, Target, Wheel
 from apizr.workspace.project import PluginDeclaration
 

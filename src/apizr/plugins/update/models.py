@@ -3,7 +3,8 @@
 from typing import Literal
 
 from apizr.capabilities.types import ValueModel
-from apizr.plugins.local.models import Digest, Installation, Version
+from apizr.plugins.artifacts.models import Digest, Version
+from apizr.plugins.local.models import Installation
 from apizr.plugins.lock.models import Diagnostic, Plugin, Target
 
 

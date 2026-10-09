@@ -26,10 +26,11 @@ from apizr.extension_runtime import (
     invoke_extension,
 )
 from apizr.extension_runtime.protocol import unique_object
+from apizr.plugins.artifacts.models import PluginError, canonical_name
 
 from . import retirement, store, usage
 from .control import InstallationCancelled, InstallControl
-from .models import Installation, Inventory, PluginError, canonical_name
+from .models import Installation, Inventory
 
 if TYPE_CHECKING:
     from apizr.workspace.operator_policy import OperatorPolicy

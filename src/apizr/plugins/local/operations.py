@@ -7,11 +7,14 @@ from functools import partial
 from pathlib import Path
 from uuid import uuid4
 
-from . import backend, locking, retirement, store
+from apizr.plugins.artifacts import requirements as locking
+from apizr.plugins.artifacts.models import PluginError
+from apizr.plugins.artifacts.wheel import inspect_wheel
+
+from . import backend, retirement, store
 from .activation import active_inventory
 from .control import InstallControl
-from .models import Installation, Inventory, PluginError
-from .wheel import inspect_wheel
+from .models import Installation, Inventory
 
 
 def list_extensions(

@@ -67,3 +67,19 @@ assert all(name not in sys.modules for name in ('fastapi','mcp','yaml','nbconver
     )
     assert result.stdout.strip() == "outerspace-apizr 0.4.4"
     assert not result.stderr
+
+
+def test_artifact_verification_does_not_import_installed_plugin_lifecycle():
+    code = """
+import sys
+from apizr.plugins.artifacts import requirements, wheel
+from apizr.plugins.artifacts.models import Manifest, PluginError
+assert not any(name.startswith('apizr.plugins.local') for name in sys.modules)
+from apizr.local_plugins.models import Manifest as OldManifest, PluginError as OldError
+from apizr.local_plugins import locking as old_requirements, wheel as old_wheel
+assert OldManifest is Manifest
+assert OldError is PluginError
+assert old_requirements is requirements
+assert old_wheel is wheel
+"""
+    subprocess.run([sys.executable, "-I", "-c", code], check=True, capture_output=True)

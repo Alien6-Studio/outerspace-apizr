@@ -11,10 +11,11 @@ from contextlib import ExitStack, contextmanager
 from pathlib import Path
 
 from apizr.extension_runtime import CleanupFailed
+from apizr.plugins.artifacts.models import PluginError
 
 from . import store
 from .control import InstallControl
-from .models import Installation, PluginError
+from .models import Installation
 
 
 @contextmanager

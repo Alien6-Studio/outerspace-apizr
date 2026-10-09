@@ -7,7 +7,7 @@ from pathlib import Path
 from apizr_oci.model import BuildError
 
 from apizr.extension_runtime.protocol import Request, unique_object
-from apizr.plugins.local.models import PluginError
+from apizr.plugins.artifacts.models import PluginError
 
 from .admission import execute_admit
 from .artifacts import execute_discover, execute_fetch, execute_publish

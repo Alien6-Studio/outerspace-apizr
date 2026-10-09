@@ -25,13 +25,13 @@ from apizr.contracts.publication import (
 )
 from apizr.extension_runtime.protocol import unique_object
 from apizr.git_source.contracts import GitTarget
-from apizr.plugins.local.models import (
+from apizr.plugins.artifacts.models import (
     Digest,
-    Installation,
     LockedDistribution,
     Version,
     canonical_name,
 )
+from apizr.plugins.local.models import Installation
 
 MAX_POLICY_BYTES = 65536
 Permission = Literal["registry.read", "registry.publish"]

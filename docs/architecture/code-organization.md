@@ -60,6 +60,7 @@ src/apizr/
 │   ├── completion.py          bounded, static shell completion
 │   └── completion_spec.py     captured CLI grammar
 ├── plugins/
+│   ├── artifacts/             manifest identity, wheels and admitted requirements
 │   ├── local/                 install, activate, invoke and uninstall
 │   ├── lock/                  portable locks and artifact validation
 │   ├── catalog/               explicit metadata and profile resolution
@@ -124,16 +125,44 @@ bounded extension protocol. It does not import optional plugin distributions,
 REST frameworks or the MCP SDK. Importing `apizr.plugins` performs no discovery,
 installation or activation.
 
-The allowed plugin sibling graph is acyclic and explicit: local imports no sibling;
-lock imports local; catalog imports lock/local; sync imports lock/local; update
-imports sync/lock/local. Reverse dependencies are prohibited.
+The allowed plugin sibling graph is acyclic and explicit. `artifacts` imports no
+plugin sibling. Local installation consumes verified artifact contracts. Portable
+locks and catalogs reuse those same verifiers; the optional installed-state check
+in `lock` also reads `local` records. Sync consumes locks and local installation;
+update consumes sync, locks and local installation. Reverse dependencies are
+prohibited.
+
+The canonical ownership map is:
+
+| Responsibility | Owning implementation |
+| --- | --- |
+| Distribution names, versions and digests | `contracts/distribution.py`, shared with delivery contracts |
+| Plugin manifest identity and artifact errors | `plugins/artifacts/models.py` |
+| Bounded wheel bytes, digests and metadata | `plugins/artifacts/wheel.py` |
+| Strict single-hash requirements, retained wheel snapshots and distribution metadata verification | `plugins/artifacts/requirements.py` |
+| Portable project locks and target compatibility | `plugins/lock` |
+| Versioned catalog metadata and offline profile export | `plugins/catalog` |
+| Installation, local store, explicit activation, invocation and uninstall | `plugins/local` |
+| Additive installation from portable locks | `plugins/sync` |
+| Locked replacement and conditional activation | `plugins/update` |
+
+Artifact verification previously lived in `plugins/local/wheel.py` and
+`plugins/local/locking.py`. Those whole modules now belong to `artifacts`, so
+verification can be imported without importing installation or activation.
+`Manifest` and `PluginError` have the same single definitions, re-exported from
+the old local model module. Installation and inventory records remain local.
+The old wheel and locking modules forward directly to the new modules, preserving
+module identity and patched validation bounds. The strict installer lock remains
+one SHA-256 per exact distribution pin.
 
 The plugin lifecycle follows these dependencies:
 
 ```text
-CLI adapters → catalog / lock / sync / update → local installation operations
-                                               ↓
-                                      policy and extension protocol
+CLI adapters → catalog / lock / sync / update → local installed lifecycle
+                         ↓                               ↓
+                    artifact verification ←──────────────┘
+                         ↓
+               distribution and extension contracts
 ```
 
 The optional `apizr_mcp`, `apizr_oci` and `apizr_attest` packages consume core APIs.

@@ -11,9 +11,10 @@ from pathlib import Path
 from uuid import uuid4
 
 from apizr.extension_runtime.protocol import unique_object
+from apizr.plugins.artifacts.models import PluginError
 
 from .control import InstallControl
-from .models import Inventory, PluginError
+from .models import Inventory
 
 MAX_INVENTORY_BYTES = 1024 * 1024
 

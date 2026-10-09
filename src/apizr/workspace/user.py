@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Literal
 
 from apizr.capabilities.types import ValueModel
-from apizr.plugins.local.models import PluginError
+from apizr.plugins.artifacts.models import PluginError
 from apizr.workspace.files import read_regular
 from apizr.workspace.project import ProjectConfig
 

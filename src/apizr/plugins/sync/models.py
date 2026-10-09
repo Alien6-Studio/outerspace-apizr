@@ -5,7 +5,7 @@ from typing import Literal
 from pydantic import Field
 
 from apizr.capabilities.types import ValueModel
-from apizr.plugins.local.models import Digest
+from apizr.plugins.artifacts.models import Digest
 from apizr.plugins.lock.models import Diagnostic, Target
 
 

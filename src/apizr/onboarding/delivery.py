@@ -14,7 +14,8 @@ from apizr.contracts.publication import (
 )
 from apizr.delivery_batch import BatchError, BatchRequest, inspect_batch
 from apizr.delivery_batch.models import destination_key
-from apizr.plugins.local.models import Installation, PluginError
+from apizr.plugins.artifacts.models import PluginError
+from apizr.plugins.local.models import Installation
 from apizr.plugins.local.store import validate_directory
 from apizr.workspace.files import directory_fd
 from apizr.workspace.operator_policy import OperatorPolicy, decide

@@ -10,11 +10,12 @@ from typing import Literal
 from pydantic import Field, TypeAdapter
 
 from apizr.capabilities.types import ValueModel
+from apizr.plugins.artifacts.models import PluginError, Version, canonical_name
 
 from . import retirement, store, usage
 from .activation import validated_activations
 from .control import InstallationCancelled, InstallationTimeout, InstallControl
-from .models import Installation, Inventory, PluginError, Version, canonical_name
+from .models import Installation, Inventory
 
 MAX_ENTRIES = 100000
 MAX_DEPTH = 64

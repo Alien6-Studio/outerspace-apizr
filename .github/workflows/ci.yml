@@ -245,7 +245,7 @@ jobs:
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/git_source/*,src/apizr/cli/commands/git_source.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked coverage report --include='src/apizr/plugins/local/*,src/apizr/cli/commands/plugins.py' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/plugins/local/*,src/apizr/plugins/artifacts/*,src/apizr/cli/commands/plugins.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/governed/*' --fail-under=90
         if: needs.scope.outputs.product != 'false'

@@ -9,9 +9,9 @@ from pathlib import Path
 
 from apizr.extension_runtime.errors import CleanupFailed
 from apizr.extension_runtime.supervisor import cleanup_process
+from apizr.plugins.artifacts.models import PluginError
 
 from .control import InstallControl
-from .models import PluginError
 
 
 def require_uv() -> str:

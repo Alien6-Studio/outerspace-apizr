@@ -11,14 +11,19 @@ from pathlib import Path
 from uuid import uuid4
 
 from apizr.extension_runtime.protocol import unique_object
-from apizr.plugins.local import list_extensions, locking
-from apizr.plugins.local.models import (
-    Installation,
+from apizr.plugins.artifacts import requirements as locking
+from apizr.plugins.artifacts.models import (
     LockedDistribution,
     PluginError,
     canonical_name,
 )
-from apizr.plugins.local.wheel import MAX_WHEEL_BYTES, inspect_dependency, inspect_wheel
+from apizr.plugins.artifacts.wheel import (
+    MAX_WHEEL_BYTES,
+    inspect_dependency,
+    inspect_wheel,
+)
+from apizr.plugins.local import list_extensions
+from apizr.plugins.local.models import Installation
 from apizr.workspace.files import absolute_path, directory_fd, read_regular
 from apizr.workspace.project import ProjectConfig, load_project
 

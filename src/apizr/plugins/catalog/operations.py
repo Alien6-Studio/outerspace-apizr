@@ -8,8 +8,8 @@ from importlib.metadata import version
 from pathlib import Path
 
 from apizr.extension_runtime.protocol import unique_object
-from apizr.plugins.local import locking
-from apizr.plugins.local.wheel import MAX_WHEEL_BYTES
+from apizr.plugins.artifacts import requirements as locking
+from apizr.plugins.artifacts.wheel import MAX_WHEEL_BYTES
 from apizr.plugins.lock import LockError, ProjectLock, create_lock, current_target
 from apizr.plugins.lock.models import Plugin, Target, Wheel
 from apizr.plugins.lock.operations import wheel_candidates

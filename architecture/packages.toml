@@ -160,7 +160,7 @@ responsibility = "Versioned plugin metadata and explicit preparation for offline
 
 [packages."plugins/local"]
 kind = "domain"
-responsibility = "Explicit installation of local extensions; no discovery or activation."
+responsibility = "Local installed store lifecycle: install, explicitly activate, invoke and uninstall."
 
 [packages."plugins/lock"]
 kind = "domain"
@@ -290,7 +290,7 @@ target = "apizr.plugins.local.download"
 kind = "module"
 
 [compatibility."local_plugins/locking.py"]
-target = "apizr.plugins.local.locking"
+target = "apizr.plugins.artifacts.requirements"
 kind = "module"
 
 [compatibility."local_plugins/models.py"]
@@ -318,7 +318,7 @@ target = "apizr.plugins.local.usage"
 kind = "module"
 
 [compatibility."local_plugins/wheel.py"]
-target = "apizr.plugins.local.wheel"
+target = "apizr.plugins.artifacts.wheel"
 kind = "module"
 
 [compatibility."mcp_cli.py"]
@@ -423,11 +423,12 @@ kind = "module"
 
 # Allowed sibling imports inside core plugin management.
 [plugin_dependencies]
-local = []
-lock = ["local"]
-catalog = ["local", "lock"]
-sync = ["local", "lock"]
-update = ["local", "lock", "sync"]
+artifacts = []
+local = ["artifacts"]
+lock = ["artifacts", "local"]
+catalog = ["artifacts", "lock"]
+sync = ["artifacts", "local", "lock"]
+update = ["artifacts", "local", "lock", "sync"]
 
 [compatibility."analysis_contracts.py"]
 target = "apizr.contracts.analysis"
@@ -547,3 +548,15 @@ kind = "module"
 "readiness/model.py" = ["apizr.contract_types"]
 "repository_interfaces/model.py" = ["apizr.application"]
 "subprocess_guard/single.py" = ["apizr.inspection"]
+
+[packages."plugins/artifacts"]
+kind = "domain"
+responsibility = "Plugin manifest identity, bounded wheel verification and strict admitted requirements; no installation, activation or invocation."
+
+[compatibility."plugins/local/wheel.py"]
+target = "apizr.plugins.artifacts.wheel"
+kind = "module"
+
+[compatibility."plugins/local/locking.py"]
+target = "apizr.plugins.artifacts.requirements"
+kind = "module"

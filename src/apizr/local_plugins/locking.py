@@ -2,7 +2,7 @@
 
 import sys
 
-import apizr.plugins.local.locking as _implementation
-from apizr.plugins.local.locking import *  # noqa: F403
+import apizr.plugins.artifacts.requirements as _implementation
+from apizr.plugins.artifacts.requirements import *  # noqa: F403
 
 sys.modules[__name__] = _implementation

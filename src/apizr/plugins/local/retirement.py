@@ -10,8 +10,9 @@ from pydantic import ConfigDict, Field
 
 from apizr.capabilities.types import ValueModel
 from apizr.extension_runtime.protocol import unique_object
+from apizr.plugins.artifacts.models import PluginError
 
-from .models import Installation, PluginError
+from .models import Installation
 
 
 class Retirement(ValueModel):

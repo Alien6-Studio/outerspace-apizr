@@ -4,7 +4,7 @@ import time
 from dataclasses import dataclass
 from threading import Event
 
-from .models import PluginError
+from apizr.plugins.artifacts.models import PluginError
 
 
 class InstallationCancelled(PluginError):
