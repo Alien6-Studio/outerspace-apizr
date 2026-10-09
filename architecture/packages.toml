@@ -270,7 +270,7 @@ target = "apizr.plugins.local"
 kind = "package"
 
 [compatibility."local_plugins/_download_worker.py"]
-target = "apizr.plugins.local._download_worker"
+target = "apizr.plugins.artifacts._download_worker"
 kind = "module"
 
 [compatibility."local_plugins/activation.py"]
@@ -551,7 +551,7 @@ kind = "module"
 
 [packages."plugins/artifacts"]
 kind = "domain"
-responsibility = "Plugin manifest identity, bounded wheel verification and strict admitted requirements; no installation, activation or invocation."
+responsibility = "Plugin manifest identity, bounded verified wheel transfer, wheel validation and strict admitted requirements; no installation, activation or invocation."
 
 [compatibility."plugins/local/wheel.py"]
 target = "apizr.plugins.artifacts.wheel"
@@ -559,4 +559,8 @@ kind = "module"
 
 [compatibility."plugins/local/locking.py"]
 target = "apizr.plugins.artifacts.requirements"
+kind = "module"
+
+[compatibility."plugins/local/_download_worker.py"]
+target = "apizr.plugins.artifacts._download_worker"
 kind = "module"

@@ -138,6 +138,7 @@ The canonical ownership map is:
 | --- | --- |
 | Distribution names, versions and digests | `contracts/distribution.py`, shared with delivery contracts |
 | Plugin manifest identity and artifact errors | `plugins/artifacts/models.py` |
+| Bounded verified HTTPS wheel transfer | `plugins/artifacts/_download_worker.py`, supervised by its caller |
 | Bounded wheel bytes, digests and metadata | `plugins/artifacts/wheel.py` |
 | Strict single-hash requirements, retained wheel snapshots and distribution metadata verification | `plugins/artifacts/requirements.py` |
 | Portable project locks and target compatibility | `plugins/lock` |

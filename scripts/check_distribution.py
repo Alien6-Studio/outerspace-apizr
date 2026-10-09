@@ -104,6 +104,7 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
                 "apizr/plugins/artifacts/__init__.py",
                 "apizr/plugins/artifacts/models.py",
                 "apizr/plugins/artifacts/wheel.py",
+                "apizr/plugins/artifacts/_download_worker.py",
                 "apizr/plugins/artifacts/requirements.py",
                 "apizr/plugins/local/wheel.py",
                 "apizr/plugins/local/locking.py",
