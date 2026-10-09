@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add explicit summary and exact capability/module detail views to MCP analysis
+  and readiness, with digest-bound pagination and localized, actionable exposure
+  refusals. Existing default/full reports and successful plans stay compatible
+  (#255).
+
 - Recognize supported Python `TypedDict` inputs as shared structured JSON contracts
   for REST and MCP, including nested validation, required and optional fields, and
   strict rejection of missing or extra fields (#254).

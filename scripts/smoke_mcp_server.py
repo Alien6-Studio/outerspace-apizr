@@ -341,6 +341,7 @@ def main():
     (root / "installed.json").write_text(json.dumps(config))
     for script in (
         "mcp_client_proof.py",
+        "mcp_views_proof.py",
         "mcp_delivery_local_proof.py",
         "mcp_lifecycle_proof.py",
         "mcp_registry_proof.py",

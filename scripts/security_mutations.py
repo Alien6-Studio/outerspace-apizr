@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "mcp-view-repository-identity",
+        "plugins/mcp/src/apizr_mcp/worker.py",
+        "and digest.value != job.arguments.expected_repository_digest",
+        "and False",
+        "tests/mcp_plugin/test_views.py::test_every_view_enforces_complete_repository_digest",
+    ),
+    Mutation(
         "structured-stdlib-authority",
         "src/apizr/readiness/structured.py",
         'or facts.typing_marker(node.bases[0], {"TypedDict"}) != "TypedDict"',

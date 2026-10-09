@@ -204,9 +204,9 @@ Contributors can find publication checks in the
 
 | Tool | Arguments | Structured result |
 | --- | --- | --- |
-| `apizr_analyze` | Optional `expected_repository_digest` | Existing canonical `catalog`, `graph`, and `repository_digest`; no retained raw sources |
-| `apizr_readiness` | Optional `expected_repository_digest` | Existing canonical `report`, `repository_digest`, and the report's `exit_code` |
-| `apizr_plan_exposure` | Optional `policy` (existing `ExposurePolicy`) and `expected_repository_digest` | Existing canonical `ExposurePlan`, including `repository_digest` |
+| `apizr_analyze` | Optional `view`, exact detail filter, pagination and `expected_repository_digest` | Default/full: existing canonical `catalog`, `graph`, and `repository_digest`. Summary/detail: explicitly identified evidence view |
+| `apizr_readiness` | Same view arguments | Default/full: existing canonical `report`, `repository_digest`, and `exit_code`. Summary/detail: states and focused evidence |
+| `apizr_plan_exposure` | Optional `policy` (existing `ExposurePolicy`), `expected_repository_digest`, `offset` and `limit` | Existing canonical `ExposurePlan`; optional pagination applies only to refused-plan diagnostics |
 
 For example, call `apizr_analyze` with `{}`, retain
 `result.structured_content["repository_digest"]["value"]`, then call
@@ -229,6 +229,116 @@ schemas reject client-supplied roots, policy paths, executables or startup limit
 The three analysis tool descriptions and read-only annotations are fixed; repository text remains
 data and cannot create tools or replace server instructions. Annotations alone
 are not an authorization boundary.
+
+## Start with a small view (0.4.5 development)
+
+Ask your AI assistant to summarize the repository before inspecting a function:
+
+```json
+{"view":"summary"}
+```
+
+Use this with `apizr_analyze` for source, capability and graph counts, or with
+`apizr_readiness` for READY/CONDITIONAL/AMBIGUOUS/UNSUPPORTED counts, execution
+compatibility and principal blockers. `principal_blockers` reports `total`, at
+most ten `shown` diagnostics, and `has_more`; the sample is never presented as
+all the evidence. Neither summary embeds a Catalog, Graph or Readiness report.
+
+Then ask “Can I expose `python:model:predict`?” using `apizr_readiness`:
+
+```json
+{"view":"detail","capability_id":"python:model:predict"}
+```
+
+`focus` retains the exact identity, source path, local readiness, repository and
+selected-scope states, interface eligibility and reasons. `principal_blockers`
+remain visible on every page. `records` contains the required dependency context,
+relationships, imports, source metadata and diagnostics. Private helpers are
+execution support, with `exposed: false`; being a dependency does not select a
+public function. Required evidence uses the same selected-scope authority as
+exposure planning, including module initialization and incomplete evidence.
+
+For a Data Scientist, this lets an assistant inspect `model.predict`, explain an
+unresolved feature-normalization dependency and see a precise import refusal,
+while unrelated unfinished experiments remain in the complete repository audit.
+Analysis does not execute models or evaluate annotations. The view supplies
+evidence for a later exposure-policy proposal; it does not authorize execution.
+
+To explore one logical module instead, use:
+
+```json
+{"view":"detail","module":"model"}
+```
+
+Module detail retains its own capabilities, states, source metadata, outgoing
+relationships, imports and diagnostics. Module names and capability IDs match
+exactly: no path filter, fuzzy name matching or implicit selection. Detail
+requires exactly one of `module` or `capability_id`; unknown identities yield
+`unknown_module` or `unknown_capability`. Filters, `offset` and `limit` are valid
+only in detail. All incompatible combinations yield `invalid_arguments`.
+Module strings are bounded to 512 characters and capability IDs to 1,024;
+pagination accepts strict integers, never strings or booleans.
+
+### Keep canonical identity and read every page
+
+Every reduced view declares `view: "summary"` or `view: "detail"`. Its `identity`
+contains the **complete** repository, Catalog and Graph digest objects. Readiness
+views also contain `repository_readiness_digest` and `readiness_policy_digest`.
+Filtering and paging never change those identities. A view has no canonical
+artifact schema version and must not be submitted as a Catalog, Graph or
+RepositoryReadinessReport.
+
+Detail returns `page` with `offset`, `limit`, `total`, `returned`, `next_offset`
+and `complete`. The default limit is 50 records; the maximum is 200 and the
+minimum is 1. `offset` starts at zero and is bounded to 2,147,483,647. Filtering
+precedes deterministic ordering, which precedes pagination. Continue with the
+returned `next_offset`, the same filter and the full repository digest value:
+
+```json
+{"view":"detail","capability_id":"python:model:predict","offset":50,"limit":50,"expected_repository_digest":"<64 lowercase hexadecimal characters>"}
+```
+
+A nonzero offset requires that digest. If any included source changes between
+pages, the next call yields `repository_changed`; restart at page zero with the
+new identity. Changing the filter starts another independent collection, whose
+counts and offset describe that filter. There is no persistent analysis cache or
+pagination session. Each call discovers once and uses retained static artifacts.
+Read until `complete: true` to obtain all ancillary records; focus, decision
+states and principal blockers are never paged away.
+
+### Understand a refused exposure plan
+
+`apizr_plan_exposure` retains `isError: true`, `error.code: "exposure_refused"`
+and every existing diagnostic field. An additive `action` names a corrective
+step when supported by evidence. A dependency refusal can identify:
+
+```json
+{"source_path":"config.py","line":1,"dependency_path":["python:serving:predict","python:features:_normalize","python:config:scale","python-module:config"],"evidence_code":"APIZR-GRAPH-002","reason":"import","action":"fix_import"}
+```
+
+This is a diagnostic excerpt, not a replacement response schema. Stable actions
+include `fix_import`, `fix_binding`, `fix_initialization`,
+`select_known_capability`, `resolve_interface_contract`,
+`adjust_execution_requirements` and `inspect_dependency`. Unknown evidence has
+`action: null`; actions express a suggested correction and grant no authority.
+
+For large refusals, optionally request `limit`/`offset` alongside `policy`.
+`error.page` and `error.diagnostic_count` describe the complete deterministic
+diagnostic collection. Continuations require `expected_repository_digest`;
+successful canonical plans remain unchanged even when paging was requested.
+
+### Request the complete audit when needed
+
+Existing clients calling `{}` receive the same complete canonical fields.
+Explicit `{"view":"full"}` returns that same result. Full reports remain useful
+for audit/export; summary and detail improve normal assistant conversations.
+The advertised output schema accepts each strict response variant.
+
+All modes obey the response limit. A full report exceeding it yields
+`response_too_large`; the server never switches silently to a summary. Request a
+summary or smaller detail page explicitly. A page can still exceed the byte
+limit when an individual record is large. Views contain source metadata and
+retained static evidence, never raw source files, host paths or tracebacks.
 
 ## Explicit delivery mode (0.4.2)
 
@@ -313,7 +423,7 @@ Startup-only options:
 
 The argument allowance reserves 2 KiB within the request bound. Worker stdout
 (including its private response envelope) is bounded while reading; an overflow
-returns `size_limit`, never a truncated canonical report. Result serialization
+returns `response_too_large`, never a truncated canonical report. Result serialization
 is also checked (`response_too_large`). The SDK's protocol envelope and schemas
 have a separate 256 KiB allowance. An oversized/invalid byte stream closes the
 connection with a redacted stderr diagnostic such as `request_too_large`.
@@ -337,8 +447,8 @@ them to its model**. Local stdio alone does not guarantee confidentiality.
 
 ## Client configuration and validation
 
-The real integration proof uses the official Python MCP SDK **2.2.0**, its
-[current low-level API](https://github.com/modelcontextprotocol/python-sdk/blob/v2.2.0/docs/advanced/low-level-server.md),
+The real integration proof uses the locked official Python MCP SDK **2.3.0**, its
+[low-level API](https://github.com/modelcontextprotocol/python-sdk/blob/v2.3.0/docs/advanced/low-level-server.md),
 and a real SDK stdio client. It validates revisions **2026-07-28** (`auto`) and
 **2025-11-25** (`legacy`). No JSON-RPC server implementation is duplicated here.
 
@@ -373,6 +483,12 @@ logs and separate plugin coverage. Linux repeats the installed proof with networ
 access removed by a disposable network namespace. These are development proofs,
 not tests of a graphical client. See the [release record](../releases/0.4.1.md)
 for publication status.
+
+`scripts/mcp_views_proof.py` also measures actual structured response bytes on a
+69-file repository, validates every successful view against its advertised
+schema through real stdio, reads the complete dependency slice and checks source
+changes between pages. Both supported protocols prove that a small response
+bound refuses full reports while allowing an explicitly requested summary.
 
 Delivery qualification adds official SDK status/run/resume calls for both protocol
 revisions. `scripts/smoke_oci_registry.py --artifacts --output /absolute/new-proof`

@@ -374,7 +374,8 @@ async def boundary_errors(root: Path):
     async with Client(target, read_timeout_seconds=15) as client:
         large = await client.call_tool("apizr_analyze", {})
         assert (
-            large.is_error and large.structured_content["error"]["code"] == "size_limit"
+            large.is_error
+            and large.structured_content["error"]["code"] == "response_too_large"
         )
         assert len((await client.list_tools()).tools) == 3
     absent_policy = root / "no-policy.toml"

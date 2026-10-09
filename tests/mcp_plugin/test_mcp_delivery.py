@@ -41,6 +41,32 @@ async def result(client, name, args=None):
     return BatchResult.model_validate_json(json.dumps(reply.structured_content))
 
 
+def test_fatal_cleanup_cannot_promote_a_concurrent_delivery_result(
+    project, tmp_path, monkeypatch
+):
+    _, calcs, app = configured(project, tmp_path)
+    calls = []
+
+    async def interrupted(operation, expected):
+        calls.append(operation)
+        calcs.fatal.set()
+        return {"ok": True, "value": {}}
+
+    monkeypatch.setattr(calcs, "call_delivery", interrupted)
+
+    async def exercise():
+        async with Client(app) as client:
+            for _ in range(2):
+                reply = await client.call_tool("apizr_delivery_status", {})
+                assert reply.is_error
+                assert reply.structured_content == {
+                    "error": {"code": "cleanup_unconfirmed", "diagnostics": []}
+                }
+        assert calls == ["status"]
+
+    anyio.run(exercise)
+
+
 def test_default_discovery_does_not_enable_delivery_from_authority(
     project, monkeypatch
 ):

@@ -30,6 +30,11 @@ payloads as shared, nested JSON inputs for REST and MCP. See the
 [source inspection guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/inspect.md#structured-model-inputs-with-typeddict)
 for an executable example and the current declaration limits.
 
+It also adds concise MCP analysis: ask for `view="summary"`, then inspect one
+function with `view="detail", capability_id="python:model:predict"`. The
+[analysis server guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/reference/apizr-mcp-server.md#start-with-a-small-view-045-development)
+explains dependency evidence, pagination and localized exposure refusals.
+
 [![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg?cacheSeconds=300)](https://pypi.org/project/outerspace-apizr/)
 [![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml)
 [![Security](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml)
