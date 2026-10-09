@@ -112,7 +112,7 @@ def test_injection_rejected_before_process(url, monkeypatch):
 )
 def test_cli_ssh_options_only_with_ssh(source, command, monkeypatch):
     monkeypatch.setattr(
-        "apizr.git_source_cli.acquire_snapshot",
+        "apizr.cli.commands.git_source.acquire_snapshot",
         lambda *a, **k: pytest.fail("acquisition"),
     )
     root = [source] if source == "." else ["--git", source, "--ref", "main"]

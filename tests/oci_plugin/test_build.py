@@ -20,7 +20,7 @@ from apizr_oci.snapshot import bundle_snapshot, input_digest, read, wheels_snaps
 from pydantic import ValidationError
 from repository_interfaces.conftest import evidence
 
-from apizr.local_plugins.models import PluginError
+from apizr.plugins.local.models import PluginError
 from apizr.repository_interfaces.generator import render_repository_bundle
 from apizr.repository_interfaces.output import write_bundle
 
@@ -393,7 +393,7 @@ def test_build_failures_cleanup_and_recover(build_inputs, tmp_path, fault):
 def test_cli_timeout_default_override_and_bounds(monkeypatch, capsys, tmp_path):
     from types import SimpleNamespace
 
-    import apizr.plugins_cli as cli
+    import apizr.cli.commands.plugins as cli
 
     captured = []
     monkeypatch.setattr(cli, "read_arguments", lambda *a, **k: {})

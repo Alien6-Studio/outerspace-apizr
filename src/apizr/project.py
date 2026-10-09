@@ -12,7 +12,7 @@ from apizr.application import ApplicationConfig
 from apizr.capabilities.types import ValueModel
 from apizr.config_files import read_regular
 from apizr.graph import GraphPolicy
-from apizr.local_plugins.models import LockedDistribution
+from apizr.plugins.local.models import LockedDistribution
 from apizr.repository import ScanPolicy
 
 MAX_PROJECT_BYTES = 65536

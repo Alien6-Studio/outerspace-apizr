@@ -1,0 +1,421 @@
+"""Argument parsing and presentation for explicitly installed local extensions."""
+
+import argparse
+import sys
+from pathlib import Path
+from typing import Sequence
+
+from apizr.extension_runtime import ExtensionError, InvocationCancelled, Limits
+from apizr.operator_policy import AuthorizationDenied, load_operator_policy
+from apizr.plugins.local import (
+    DownloadCancelled,
+    PluginError,
+    UninstallResult,
+    disable_extension,
+    enable_extension,
+    install_from_source,
+    list_extensions,
+    read_arguments,
+    run_extension,
+    uninstall_extension,
+)
+from apizr.plugins.local.uninstall import UninstallDiagnostic
+from apizr.plugins.lock import LockError, Result, check_lock, create_lock
+from apizr.plugins.lock.models import Diagnostic
+from apizr.plugins.sync import SyncLimits, SyncResult, sync_plugins
+from apizr.plugins.update import UpdateResult, update_plugin
+from apizr.user_config import plugins_directory
+
+
+def timeout_ms(value: str) -> int:
+    try:
+        return Limits(wall_time_ms=int(value)).wall_time_ms
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            "expected an integer from 1 to 600000 ms"
+        ) from None
+
+
+def main(argv: Sequence[str]) -> int:
+    parser = argparse.ArgumentParser(prog="apizr plugins")
+    commands = parser.add_subparsers(dest="command", required=True)
+    catalog = commands.add_parser(
+        "catalog", help="Inspect plugin metadata and prepare offline locks"
+    )
+    catalog_commands = catalog.add_subparsers(dest="catalog_command", required=True)
+    catalog_list = catalog_commands.add_parser("list")
+    catalog_show = catalog_commands.add_parser("show")
+    catalog_show.add_argument("name")
+    catalog_show.add_argument("--version", required=True)
+    catalog_resolve = catalog_commands.add_parser("resolve")
+    catalog_resolve.add_argument("--profile", required=True)
+    catalog_resolve.add_argument("--wheelhouse", type=Path, required=True)
+    catalog_resolve.add_argument("--output-dir", type=Path, required=True)
+    for command in (catalog_list, catalog_show, catalog_resolve):
+        command.add_argument("--catalog", type=Path, required=True)
+        command.add_argument("--json", action="store_true")
+    install = commands.add_parser(
+        "install", help="Install a trusted local or HTTPS wheel by its SHA-256"
+    )
+    install.add_argument("wheel", help="Local wheel path or HTTPS URL")
+    install.add_argument(
+        "--sha256",
+        required=True,
+        help="Expected wheel SHA-256 (integrity, not author trust)",
+    )
+    install.add_argument(
+        "--python", type=Path, help="Absolute path to an already installed Python"
+    )
+    install.add_argument(
+        "--requirements", type=Path, help="Exact versions and SHA-256 requirements lock"
+    )
+    install.add_argument(
+        "--wheelhouse",
+        type=Path,
+        help="Local wheel directory (requires --requirements)",
+    )
+    listing = commands.add_parser("list", help="Read the local installation inventory")
+    listing.add_argument(
+        "--json", action="store_true", help="Emit the versioned inventory"
+    )
+    listing.add_argument(
+        "--active", action="store_true", help="List only explicitly active versions"
+    )
+    enable = commands.add_parser("enable", help="Select an exact installed version")
+    enable.add_argument("name")
+    enable.add_argument("--version", required=True)
+    disable = commands.add_parser("disable", help="Block future calls to a plugin")
+    disable.add_argument("name")
+    run = commands.add_parser(
+        "run", help="Explicitly invoke an active installed plugin"
+    )
+    run.add_argument("name")
+    run.add_argument("operation")
+    run.add_argument(
+        "--operator-policy",
+        type=Path,
+        help="Explicit operator grants for building, signing or publication",
+    )
+    run.add_argument(
+        "--arguments", type=Path, required=True, help="Bounded JSON object file"
+    )
+    run.add_argument(
+        "--timeout-ms",
+        type=timeout_ms,
+        default=Limits().wall_time_ms,
+        help="Explicit invocation deadline in milliseconds (1–600000; default 10000)",
+    )
+    lock = commands.add_parser(
+        "lock", help="Create or check portable project artifact locks"
+    )
+    lock_commands = lock.add_subparsers(dest="lock_command", required=True)
+    create = lock_commands.add_parser(
+        "create", help="Validate local artifacts and write a new lock"
+    )
+    check = lock_commands.add_parser(
+        "check", help="Check artifacts without rewriting the lock"
+    )
+    create.add_argument("--output", type=Path, required=True)
+    check.add_argument("--lock", type=Path, required=True)
+    check.add_argument("--installed", action="store_true")
+    for command in (create, check):
+        command.add_argument("--project", type=Path, required=True)
+        command.add_argument("--wheelhouse", type=Path, required=True)
+        command.add_argument("--json", action="store_true")
+    sync = commands.add_parser(
+        "sync", help="Install missing locked project plugins offline without activation"
+    )
+    sync.add_argument("--project", type=Path, required=True)
+    sync.add_argument("--lock", type=Path, required=True)
+    sync.add_argument("--wheelhouse", type=Path, required=True)
+    sync.add_argument("--dry-run", action="store_true")
+    sync.add_argument("--json", action="store_true")
+    sync.add_argument(
+        "--timeout-ms",
+        type=timeout_ms,
+        default=SyncLimits().timeout_ms,
+        help="Total sync deadline (1–600000 ms; default 120000)",
+    )
+    update = commands.add_parser(
+        "update",
+        help="Prepare one locked version and optionally switch its expected activation",
+    )
+    update.add_argument("name")
+    update.add_argument("--from-version", required=True)
+    update.add_argument("--project", type=Path, required=True)
+    update.add_argument("--lock", type=Path, required=True)
+    update.add_argument("--wheelhouse", type=Path, required=True)
+    update.add_argument("--dry-run", action="store_true")
+    update.add_argument(
+        "--activate",
+        action="store_true",
+        help="Conditionally switch from the expected active version",
+    )
+    update.add_argument("--json", action="store_true")
+    update.add_argument(
+        "--timeout-ms",
+        type=timeout_ms,
+        default=SyncLimits().timeout_ms,
+        help="Total update deadline (1–600000 ms; default 120000)",
+    )
+    uninstall = commands.add_parser(
+        "uninstall",
+        help="Remove one inactive, unused plugin version; resume pending cleanup",
+    )
+    uninstall.add_argument("name")
+    uninstall.add_argument("--version", required=True)
+    uninstall.add_argument("--dry-run", action="store_true")
+    uninstall.add_argument("--json", action="store_true")
+    uninstall.add_argument("--timeout-ms", type=timeout_ms, default=30000)
+    for command in (
+        uninstall,
+        install,
+        listing,
+        enable,
+        disable,
+        run,
+        create,
+        check,
+        sync,
+        update,
+    ):
+        command.add_argument(
+            "--user-config", type=Path, help="Explicit operator preferences file"
+        )
+        command.add_argument(
+            "--plugins-dir",
+            type=Path,
+            help="Explicit user storage directory (also for disposable tests)",
+        )
+    args = parser.parse_args(argv)
+    if args.command == "catalog":
+        return _catalog(args)
+    try:
+        args.plugins_dir = plugins_directory(args.plugins_dir, args.user_config)
+        if args.command == "uninstall":
+            removed = uninstall_extension(
+                args.name,
+                args.version,
+                directory=args.plugins_dir,
+                dry_run=args.dry_run,
+                timeout_ms=args.timeout_ms,
+            )
+            print(
+                removed.model_dump_json()
+                if args.json
+                else f"Plugin uninstall: {removed.state}."
+            )
+            for problem in removed.diagnostics:
+                print(f"apizr plugins: {problem.code}", file=sys.stderr)
+            return removed.exit_code
+        if args.command == "update":
+            updated = update_plugin(
+                args.name,
+                args.from_version,
+                args.project,
+                args.lock,
+                args.wheelhouse,
+                activate=args.activate,
+                dry_run=args.dry_run,
+                directory=args.plugins_dir,
+                timeout_ms=args.timeout_ms,
+            )
+            print(
+                updated.model_dump_json()
+                if args.json
+                else f"Plugin update: {updated.state}; installation={updated.installation}; activation={updated.activation}."
+            )
+            for problem in updated.diagnostics:
+                print(f"apizr plugins: {problem.code}", file=sys.stderr)
+            return updated.exit_code
+        if args.command == "sync":
+            outcome = sync_plugins(
+                args.project,
+                args.lock,
+                args.wheelhouse,
+                dry_run=args.dry_run,
+                directory=args.plugins_dir,
+                timeout_ms=args.timeout_ms,
+            )
+            print(
+                outcome.model_dump_json()
+                if args.json
+                else f"Plugin sync: {outcome.state}."
+            )
+            if not args.json:
+                for item in outcome.plugins:
+                    print(
+                        f"{item.action} {item.name} {item.version}: {item.status}; interpreter_verified={item.interpreter_verified}; active={item.active}"
+                    )
+            for problem in outcome.diagnostics:
+                print(f"apizr plugins: {problem.code}", file=sys.stderr)
+            return outcome.exit_code
+        if args.command == "lock":
+            result = (
+                create_lock(args.project, args.wheelhouse, args.output)
+                if args.lock_command == "create"
+                else check_lock(
+                    args.project,
+                    args.lock,
+                    args.wheelhouse,
+                    installed=args.installed,
+                    directory=args.plugins_dir,
+                )
+            )
+            _show_lock(result, args.json)
+            return 0 if result.valid else 1
+        if args.command == "install":
+            installed = install_from_source(
+                args.wheel,
+                args.sha256,
+                directory=args.plugins_dir,
+                python=args.python,
+                requirements=args.requirements,
+                wheelhouse=args.wheelhouse,
+            )
+            print(f"Installed {installed.name} {installed.version}")
+        elif args.command == "enable":
+            selected = enable_extension(
+                args.name, args.version, directory=args.plugins_dir
+            )
+            print(f"Enabled {selected.name} {selected.version}")
+        elif args.command == "disable":
+            disable_extension(args.name, directory=args.plugins_dir)
+            print("Plugin disabled.")
+        elif args.command == "run":
+            limits = Limits(wall_time_ms=args.timeout_ms)
+            response = run_extension(
+                args.name,
+                args.operation,
+                read_arguments(args.arguments, limits=limits),
+                operator_policy=load_operator_policy(args.operator_policy)
+                if args.operator_policy is not None
+                else None,
+                directory=args.plugins_dir,
+                limits=limits,
+            )
+            print(response.model_dump_json())
+        else:
+            inventory = list_extensions(directory=args.plugins_dir, active=args.active)
+            if args.json:
+                print(inventory.model_dump_json(by_alias=True))
+            elif not inventory.installations:
+                print("No local extensions installed.")
+            else:
+                for item in inventory.installations:
+                    print(f"{item.name} {item.version}  {item.protocol}  {item.module}")
+        return 0
+    except AuthorizationDenied as error:
+        print(error.decision.model_dump_json(by_alias=True), file=sys.stderr)
+        return 2
+    except LockError as error:
+        if args.json:
+            _show_lock(
+                Result(valid=False, diagnostics=(Diagnostic(code=error.code),)), True
+            )
+        print(f"apizr plugins: {error.code}", file=sys.stderr)
+        return 2
+    except (InvocationCancelled, DownloadCancelled) as error:
+        print(f"apizr plugins: {error}", file=sys.stderr)
+        return 130
+    except (PluginError, ExtensionError) as error:
+        if args.command == "uninstall" and args.json:
+            print(
+                UninstallResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    diagnostics=(UninstallDiagnostic(code=str(error)),),
+                ).model_dump_json()
+            )
+        if args.command == "update" and args.json:
+            print(
+                UpdateResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    activation_requested=args.activate,
+                    diagnostics=(Diagnostic(code=str(error)),),
+                ).model_dump_json()
+            )
+        if args.command == "sync" and args.json:
+            print(
+                SyncResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    state="refused",
+                    exit_code=2,
+                    diagnostics=(Diagnostic(code=str(error)),),
+                ).model_dump_json()
+            )
+        if args.command == "lock" and args.json:
+            _show_lock(
+                Result(valid=False, diagnostics=(Diagnostic(code=str(error)),)), True
+            )
+        print(f"apizr plugins: {error}", file=sys.stderr)
+        return 2
+    except KeyboardInterrupt:
+        if args.command == "update" and args.json:
+            print(
+                UpdateResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    state="interrupted",
+                    exit_code=130,
+                    activation_requested=args.activate,
+                    diagnostics=(Diagnostic(code="update_cancelled"),),
+                ).model_dump_json()
+            )
+        if args.command == "sync" and args.json:
+            print(
+                SyncResult(
+                    mode="dry-run" if args.dry_run else "apply",
+                    state="interrupted",
+                    exit_code=130,
+                    diagnostics=(Diagnostic(code="sync_cancelled"),),
+                ).model_dump_json()
+            )
+        reason = (
+            "installation_interrupted" if args.command == "install" else "cancelled"
+        )
+        print(f"apizr plugins: {reason}", file=sys.stderr)
+        return 130
+
+
+def _show_lock(result: Result, as_json: bool) -> None:
+    if as_json:
+        print(result.model_dump_json())
+    else:
+        print("Plugin lock valid." if result.valid else "Plugin lock differs.")
+        for diagnostic in result.diagnostics:
+            print(
+                f"{diagnostic.code}: {diagnostic.plugin or '-'} / {diagnostic.distribution or '-'}"
+            )
+
+
+def _catalog(args: argparse.Namespace) -> int:
+    from apizr.plugins.catalog import (
+        CatalogError,
+        load_catalog,
+        resolve_profile,
+        select_entry,
+    )
+
+    try:
+        catalog = load_catalog(args.catalog)
+        if args.catalog_command == "list":
+            result = catalog
+            text = "\n".join(
+                f"{e.wheel.name} {e.wheel.version}: {e.description} ({e.provenance.status})"
+                for e in catalog.entries
+            )
+        elif args.catalog_command == "show":
+            result = select_entry(catalog, args.name, args.version)
+            text = result.model_dump_json(by_alias=True, indent=2)
+        else:
+            result = resolve_profile(
+                catalog, args.profile, args.wheelhouse, args.output_dir
+            )
+            text = "Plugin plan prepared; nothing installed or activated."
+        print(result.model_dump_json(by_alias=True) if args.json else text)
+        return 0
+    except CatalogError as error:
+        print(f"apizr plugins catalog: {error}", file=sys.stderr)
+        return 2
+    except KeyboardInterrupt:
+        print("apizr plugins catalog: cancelled", file=sys.stderr)
+        return 130

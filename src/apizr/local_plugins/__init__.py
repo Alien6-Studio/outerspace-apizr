@@ -1,38 +1,14 @@
-"""Explicit installation of local extensions; no discovery or activation."""
+"""Compatibility facade for :mod:`apizr.plugins.local`."""
 
-from .activation import (
-    disable_extension,
-    enable_extension,
-    read_arguments,
-    resolve_active_extension,
-    run_extension,
-)
-from .download import (
-    DownloadCancelled,
-    DownloadLimits,
-    install_from_source,
-    install_from_url,
-)
-from .models import Installation, Inventory, Manifest, PluginError
-from .operations import install_extension, list_extensions
-from .uninstall import UninstallResult, uninstall_extension
+from typing import Any
 
-__all__ = [
-    "UninstallResult",
-    "uninstall_extension",
-    "DownloadCancelled",
-    "DownloadLimits",
-    "install_from_source",
-    "install_from_url",
-    "enable_extension",
-    "disable_extension",
-    "run_extension",
-    "read_arguments",
-    "resolve_active_extension",
-    "Installation",
-    "Inventory",
-    "Manifest",
-    "PluginError",
-    "install_extension",
-    "list_extensions",
-]
+import apizr.plugins.local as _implementation
+from apizr.plugins.local import *  # noqa: F403
+
+
+def __getattr__(name: str) -> Any:
+    return getattr(_implementation, name)
+
+
+def __dir__() -> list[str]:
+    return dir(_implementation)

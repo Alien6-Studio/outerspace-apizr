@@ -13,10 +13,10 @@ from apizr.config_files import absolute_path, directory_fd, read_regular
 from apizr.exposure.policy import ExposurePolicy
 from apizr.extension_runtime import PrerequisiteMissing
 from apizr.extension_runtime.protocol import unique_object
-from apizr.local_plugins import activation, store
-from apizr.local_plugins.models import Installation, PluginError
 from apizr.operator_policy import MAX_POLICY_BYTES, AuthorizationDenied, OperatorPolicy
 from apizr.optional import available
+from apizr.plugins.local import activation, store
+from apizr.plugins.local.models import Installation, PluginError
 from apizr.project import load_project
 from apizr.repository_readiness.policy import RepositoryReadinessPolicy
 from apizr.runtime import validate_python_target

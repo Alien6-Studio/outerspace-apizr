@@ -15,8 +15,8 @@ from analysis_authorization import analysis_policy
 from apizr import mcp_cli
 from apizr.cli import main
 from apizr.config_files import read_regular
-from apizr.local_plugins import enable_extension, install_extension
-from apizr.plugin_lock import LockError, check_lock, create_lock, operations
+from apizr.plugins.local import enable_extension, install_extension
+from apizr.plugins.lock import LockError, check_lock, create_lock, operations
 from apizr.project import load_project
 from apizr.user_config import load_user_config, plugins_directory
 

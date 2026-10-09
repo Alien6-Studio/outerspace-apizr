@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Group CLI adapters under `apizr.cli` and core plugin management under
+  `apizr.plugins`, preserving historical imports and command behavior. Document
+  compiler/execution boundaries and protect them with architecture checks.
+
 - Add explicit summary and exact capability/module detail views to MCP analysis
   and readiness, with digest-bound pagination and localized, actionable exposure
   refusals. Existing default/full reports and successful plans stay compatible

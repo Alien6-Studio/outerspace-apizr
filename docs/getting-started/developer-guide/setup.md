@@ -12,6 +12,10 @@ lockfile. Use `uv lock --upgrade` deliberately for dependency updates and commit
 the resulting lockfile with the tested changes. The installed namespace is
 `apizr`, with a conventional `src/apizr/` layout.
 
+See [Code organization](../../architecture/code-organization.md) for CLI adapters,
+core plugin management, compiler domains and the supported compatibility imports
+on the `0.4.5` development branch.
+
 <span id="foundation-quality-gates"></span>
 
 ## Quality gates
@@ -32,7 +36,7 @@ uv run coverage report --include='src/apizr/governed/*' --fail-under=90
 uv run coverage report --include='src/apizr/repository/*' --fail-under=90
 uv run coverage report --include='src/apizr/graph/*' --fail-under=90
 uv run coverage report --include='src/apizr/exposure/*' --fail-under=90
-uv run coverage report --include='src/apizr/exposure_cli.py' --fail-under=90
+uv run coverage report --include='src/apizr/cli/commands/exposure.py' --fail-under=90
 uv run coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
 uv run pre-commit run --all-files
 uv build

@@ -9,9 +9,9 @@ from typing import Any
 from apizr.config_files import directory_fd
 from apizr.delivery_batch import BatchError, BatchRequest, inspect_batch
 from apizr.delivery_batch.models import destination_key
-from apizr.local_plugins.models import Installation, PluginError
-from apizr.local_plugins.store import validate_directory
 from apizr.operator_policy import OperatorPolicy, decide
+from apizr.plugins.local.models import Installation, PluginError
+from apizr.plugins.local.store import validate_directory
 from apizr.publication_contracts import (
     AdmitRequest,
     AttestRequest,

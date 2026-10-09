@@ -10,21 +10,21 @@ import json
 import shutil
 from pathlib import Path
 
-from apizr.plugin_catalog import (
+from apizr.cli.commands.plugins import main
+from apizr.plugins.catalog import (
     generate_entries,
     load_catalog,
     resolve_profile,
     serialize,
 )
-from apizr.plugin_catalog.models import (
+from apizr.plugins.catalog.models import (
     Catalog,
     Identity,
     Prerequisite,
     Profile,
     Provenance,
 )
-from apizr.plugin_lock import check_lock, create_lock
-from apizr.plugins_cli import main
+from apizr.plugins.lock import check_lock, create_lock
 
 DESCRIPTIONS = {
     "outerspace-apizr-mcp": "Read-only repository analysis over a persistent MCP stdio server.",

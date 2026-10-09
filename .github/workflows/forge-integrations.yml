@@ -57,7 +57,7 @@ jobs:
           APIZR_FORGE_PARITY_EVIDENCE: forge-parity.json
         run: >-
           uv run --locked pytest tests/ci
-          --cov=apizr.ci --cov=apizr.ci_cli --cov-report=term-missing
+          --cov=apizr.ci --cov=apizr.cli.commands.ci --cov-report=term-missing
           --cov-report=json:forge-coverage.json --junitxml=forge-tests.xml
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()

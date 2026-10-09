@@ -8,7 +8,7 @@ from analysis_authorization import analysis_policy
 from apizr_mcp import launcher
 
 from apizr import mcp_cli
-from apizr.local_plugins import PluginError
+from apizr.plugins.local import PluginError
 
 
 @pytest.fixture

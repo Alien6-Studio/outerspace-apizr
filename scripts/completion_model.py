@@ -9,7 +9,7 @@ from unittest.mock import patch
 ENTRYPOINTS = {
     "inspect": ("apizr.cli", "_inspect"),
     **{
-        name: (f"apizr.{name.replace('-', '_')}_cli", "main")
+        name: (f"apizr.cli.commands.{name.replace('-', '_')}", "main")
         for name in (
             "scan",
             "ci",
@@ -25,11 +25,11 @@ ENTRYPOINTS = {
             "plugins",
         )
     },
-    "init": ("apizr.onboarding_cli", "init"),
-    "doctor": ("apizr.onboarding_cli", "diagnose"),
-    "completion": ("apizr.completion", "main"),
+    "init": ("apizr.cli.commands.onboarding", "init"),
+    "doctor": ("apizr.cli.commands.onboarding", "diagnose"),
+    "completion": ("apizr.cli.completion", "main"),
 }
-ENTRYPOINTS["expose"] = ("apizr.exposure_cli", "main")
+ENTRYPOINTS["expose"] = ("apizr.cli.commands.exposure", "main")
 PATH_NAMES = {"source_root", "exclude_dir"}
 
 
@@ -85,7 +85,7 @@ def capture() -> dict:
 
 
 if __name__ == "__main__":
-    target = Path(__file__).resolve().parents[1] / "src/apizr/completion_spec.py"
+    target = Path(__file__).resolve().parents[1] / "src/apizr/cli/completion_spec.py"
     target.write_text(
         '"""Static modern CLI grammar. Regenerate with scripts/completion_model.py."""\n\nimport json\n\nCOMMANDS = json.loads(\n    r\'\'\''
         + json.dumps(capture(), sort_keys=True, separators=(",", ":"))

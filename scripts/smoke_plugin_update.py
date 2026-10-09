@@ -15,7 +15,7 @@ snapshot = runpy.run_path(str(REPO / "scripts/smoke_plugin_sync.py"))["snapshot"
 
 def prove(work: Path, core_root: Path) -> None:
     import apizr
-    from apizr.local_plugins.models import Installation
+    from apizr.plugins.local.models import Installation
 
     assert not Path(apizr.__file__).resolve().is_relative_to(REPO)
     assert not work.is_relative_to(REPO)

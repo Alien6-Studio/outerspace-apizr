@@ -13,7 +13,7 @@ from apizr.delivery import (
 )
 from apizr.exposure.model import ExposurePlan
 from apizr.graph.model import Graph
-from apizr.local_plugins.models import LockedDistribution
+from apizr.plugins.local.models import LockedDistribution
 from apizr.repository.model import Catalog
 from apizr.repository_interfaces.model import (
     MCPManifest,

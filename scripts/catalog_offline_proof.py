@@ -6,11 +6,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-from apizr.local_plugins import list_extensions
-from apizr.plugin_catalog import load_catalog, resolve_profile
-from apizr.plugin_lock import check_lock
-from apizr.plugin_sync import sync_plugins
-from apizr.plugins_cli import main
+from apizr.cli.commands.plugins import main
+from apizr.plugins.catalog import load_catalog, resolve_profile
+from apizr.plugins.local import list_extensions
+from apizr.plugins.lock import check_lock
+from apizr.plugins.sync import sync_plugins
 
 
 def snapshot(root):

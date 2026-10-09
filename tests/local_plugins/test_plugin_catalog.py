@@ -9,8 +9,7 @@ import subprocess
 import pytest
 
 from apizr.cli import main
-from apizr.local_plugins import enable_extension, list_extensions, run_extension
-from apizr.plugin_catalog import (
+from apizr.plugins.catalog import (
     Catalog,
     CatalogError,
     generate_entries,
@@ -19,11 +18,12 @@ from apizr.plugin_catalog import (
     select_entry,
     serialize,
 )
-from apizr.plugin_catalog import operations as catalog_operations
-from apizr.plugin_catalog.models import Identity, Profile, Provenance
-from apizr.plugin_lock import check_lock
-from apizr.plugin_lock import operations as lock_operations
-from apizr.plugin_sync import sync_plugins
+from apizr.plugins.catalog import operations as catalog_operations
+from apizr.plugins.catalog.models import Identity, Profile, Provenance
+from apizr.plugins.local import enable_extension, list_extensions, run_extension
+from apizr.plugins.lock import check_lock
+from apizr.plugins.lock import operations as lock_operations
+from apizr.plugins.sync import sync_plugins
 from apizr.project import load_project
 
 pytestmark = pytest.mark.timeout(30)
@@ -391,7 +391,7 @@ def test_dependency_free_entry_and_no_import(wheel_factory, tmp_path):
 
 @pytest.mark.parametrize("fault", ["requirements", "wheel", "missing", "invalid"])
 def test_generation_checks_reopened_bytes(catalog_setup, monkeypatch, tmp_path, fault):
-    from apizr.plugin_catalog import generation
+    from apizr.plugins.catalog import generation
 
     _, _, house, _ = catalog_setup
     original = generation.create_lock

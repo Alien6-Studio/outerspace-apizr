@@ -11,8 +11,8 @@ from pathlib import Path
 import pytest
 
 from apizr import cli
-from apizr.completion import FILES, candidates, main, script
-from apizr.completion_spec import COMMANDS
+from apizr.cli.completion import FILES, candidates, main, script
+from apizr.cli.completion_spec import COMMANDS
 
 ROOT = Path(__file__).resolve().parents[2]
 

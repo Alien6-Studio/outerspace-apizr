@@ -127,7 +127,7 @@ MUTATIONS = (
     ),
     Mutation(
         "build-operator-admission",
-        "src/apizr/local_plugins/activation.py",
+        "src/apizr/plugins/local/activation.py",
         "            if not decision.allowed:",
         "            if False:",
         "tests/local_plugins/test_build_policy.py::test_build_cli_and_api_refuse_before_effect[missing-operator_policy_required-build]",
@@ -141,7 +141,7 @@ MUTATIONS = (
     ),
     Mutation(
         "signing-operator-admission",
-        "src/apizr/local_plugins/activation.py",
+        "src/apizr/plugins/local/activation.py",
         "            if not decision.allowed:",
         "            if False:",
         "tests/local_plugins/test_signing_policy.py::test_signing_cli_and_api_refuse_before_effect[missing-operator_policy_required-attest]",
@@ -155,7 +155,7 @@ MUTATIONS = (
     ),
     Mutation(
         "publication-operator-admission",
-        "src/apizr/local_plugins/activation.py",
+        "src/apizr/plugins/local/activation.py",
         "            if not decision.allowed:",
         "            if False:",
         "tests/local_plugins/test_operator_policy.py::test_managed_cli_and_api_refuse_before_effect[push]",

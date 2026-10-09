@@ -12,13 +12,6 @@ import pytest
 
 from apizr.cli import main
 from apizr.extension_runtime import Limits, SizeLimitExceeded
-from apizr.local_plugins import (
-    activation,
-    enable_extension,
-    install_extension,
-    run_extension,
-)
-from apizr.local_plugins.models import Installation
 from apizr.operator_policy import (
     MAX_POLICY_BYTES,
     AuthorizationDenied,
@@ -28,6 +21,13 @@ from apizr.operator_policy import (
     load_operator_policy,
     repository_name,
 )
+from apizr.plugins.local import (
+    activation,
+    enable_extension,
+    install_extension,
+    run_extension,
+)
+from apizr.plugins.local.models import Installation
 from apizr.publication_contracts import PublishRequest, PushRequest
 
 pytestmark = pytest.mark.timeout(30)
@@ -486,7 +486,7 @@ def test_other_operations_preserve_current_scope(operation):
 def test_core_import_does_not_load_plugins_or_optional_sdks(tmp_path):
     source = """import sys
 from apizr.operator_policy import OperatorPolicy, decide
-from apizr.local_plugins import run_extension
+from apizr.plugins.local import run_extension
 assert not any(n.split('.')[0] in {'apizr_oci','apizr_attest','apizr_mcp','docker','mcp','fastapi','oras'} for n in sys.modules)
 """
     result = subprocess.run(
@@ -590,7 +590,7 @@ def test_shared_publication_models_are_the_plugin_contracts():
 def test_authorized_cli_and_policy_do_not_replace_activation(
     installed, tmp_path, capsys
 ):
-    from apizr.local_plugins import PluginError, disable_extension
+    from apizr.plugins.local import PluginError, disable_extension
 
     root, binding, operation, marker = installed
     selected = tmp_path / "operator.json"

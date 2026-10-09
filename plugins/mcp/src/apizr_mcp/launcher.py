@@ -2,7 +2,7 @@
 
 import sys
 
-from apizr.mcp_cli import main as serve
+from apizr.cli.commands.mcp import main as serve
 
 
 def main() -> int:

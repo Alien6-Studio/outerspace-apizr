@@ -7,7 +7,7 @@ from typing import Literal
 
 from apizr.capabilities.types import ValueModel
 from apizr.config_files import read_regular
-from apizr.local_plugins.models import PluginError
+from apizr.plugins.local.models import PluginError
 from apizr.project import ProjectConfig
 
 MAX_USER_CONFIG_BYTES = 65536

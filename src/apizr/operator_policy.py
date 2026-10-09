@@ -13,7 +13,7 @@ from apizr.analysis_contracts import AnalysisTarget, GitAnalysisTarget, LocalTar
 from apizr.bounded_json import MAX_REQUEST_BYTES, SizeExceeded, encode
 from apizr.extension_runtime.protocol import unique_object
 from apizr.git_source.contracts import GitTarget
-from apizr.local_plugins.models import (
+from apizr.plugins.local.models import (
     Digest,
     Installation,
     LockedDistribution,

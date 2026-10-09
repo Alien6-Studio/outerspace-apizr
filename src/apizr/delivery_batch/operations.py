@@ -22,10 +22,10 @@ from apizr.extension_runtime import (
     InvocationCancelled,
     Limits,
 )
-from apizr.local_plugins import PluginError, run_extension
-from apizr.local_plugins.control import InstallationCancelled, InstallControl
-from apizr.local_plugins.store import installation_lock, private_directory
 from apizr.operator_policy import AuthorizationDenied, OperatorPolicy
+from apizr.plugins.local import PluginError, run_extension
+from apizr.plugins.local.control import InstallationCancelled, InstallControl
+from apizr.plugins.local.store import installation_lock, private_directory
 from apizr.publication_contracts import (
     AdmitRequest,
     AttestRequest,

@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 from apizr.config_files import read_regular
 from apizr.extension_runtime.protocol import unique_object
-from apizr.local_plugins.store import atomic_write, private_directory
+from apizr.plugins.local.store import atomic_write, private_directory
 
 from .models import destination_key
 

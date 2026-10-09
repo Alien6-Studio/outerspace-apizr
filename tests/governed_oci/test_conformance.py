@@ -8,7 +8,7 @@ from governed.helpers import SOURCE
 from governed.test_conformance import CORPUS
 from mcp import Client
 
-from apizr.execute_cli import main as execute_cli
+from apizr.cli.commands.execute import main as execute_cli
 from apizr.execution import ExecutionPolicy
 from apizr.generators.mcp import generate as mcp_generate
 from apizr.generators.mcp.runtime import create_server as direct_mcp

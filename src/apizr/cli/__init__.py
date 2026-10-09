@@ -62,61 +62,61 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
         return 0
     if arguments and arguments[0] == "ci":
-        from apizr.ci_cli import main as ci_command
+        from apizr.cli.commands.ci import main as ci_command
 
         return ci_command(arguments[1:])
     if arguments and arguments[0] in ("completion", "__complete"):
-        from apizr.completion import main as completion_command
+        from apizr.cli.completion import main as completion_command
 
         return completion_command(arguments[1:], backend=arguments[0] == "__complete")
     if arguments and arguments[0] in ("init", "doctor"):
-        from apizr.onboarding_cli import diagnose, init
+        from apizr.cli.commands.onboarding import diagnose, init
 
         return (init if arguments[0] == "init" else diagnose)(arguments[1:])
     if arguments and arguments[0] == "clients":
-        from apizr.clients_cli import main as clients_command
+        from apizr.cli.commands.clients import main as clients_command
 
         return clients_command(arguments[1:])
     if arguments and arguments[0] == "delivery":
-        from apizr.delivery_cli import main as delivery_command
+        from apizr.cli.commands.delivery import main as delivery_command
 
         return delivery_command(arguments[1:])
     if arguments and arguments[0] == "mcp":
-        from apizr.mcp_cli import main as mcp_command
+        from apizr.cli.commands.mcp import main as mcp_command
 
         return mcp_command(arguments[1:])
     if arguments and arguments[0] == "plugins":
-        from apizr.plugins_cli import main as plugins_command
+        from apizr.cli.commands.plugins import main as plugins_command
 
         return plugins_command(arguments[1:])
     if arguments and arguments[0] == "expose":
-        from apizr.exposure_cli import main as exposure_command
+        from apizr.cli.commands.exposure import main as exposure_command
 
         return exposure_command(arguments[1:])
     if arguments and arguments[0] == "readiness":
-        from apizr.readiness_cli import main as readiness_repo_command
+        from apizr.cli.commands.readiness import main as readiness_repo_command
 
         return readiness_repo_command(arguments[1:])
     if arguments and arguments[0] == "repository-readiness":
-        from apizr.repository_readiness_cli import main as readiness_command
+        from apizr.cli.commands.repository_readiness import main as readiness_command
 
         return readiness_command(arguments[1:])
     if arguments and arguments[0] == "graph":
-        from apizr.graph_cli import main as graph_command
+        from apizr.cli.commands.graph import main as graph_command
 
         return graph_command(arguments[1:])
     if arguments and arguments[0] == "scan":
-        from apizr.scan_cli import main as scan_command
+        from apizr.cli.commands.scan import main as scan_command
 
         return scan_command(arguments[1:])
     if arguments and arguments[0] == "execute":
-        from apizr.execute_cli import main as execute_command
+        from apizr.cli.commands.execute import main as execute_command
 
         return execute_command(arguments[1:])
     if arguments and arguments[0] == "inspect":
         return _inspect(arguments[1:])
     if arguments and arguments[0] == "generate":
-        from apizr.generate_cli import main as generate_modern
+        from apizr.cli.commands.generate import main as generate_modern
 
         return generate_modern(arguments[1:])
     if arguments in (["--help"], ["-h"]):

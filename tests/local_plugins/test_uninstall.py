@@ -14,7 +14,7 @@ from analysis_authorization import analysis_policy
 
 from apizr.cli import main
 from apizr.extension_runtime import CleanupFailed
-from apizr.local_plugins import (
+from apizr.plugins.local import (
     PluginError,
     activation,
     disable_extension,
@@ -27,8 +27,8 @@ from apizr.local_plugins import (
     uninstall_extension,
     usage,
 )
-from apizr.local_plugins import uninstall as removal
-from apizr.local_plugins.control import InstallControl
+from apizr.plugins.local import uninstall as removal
+from apizr.plugins.local.control import InstallControl
 
 
 @pytest.fixture

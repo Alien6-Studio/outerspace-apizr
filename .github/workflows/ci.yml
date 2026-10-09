@@ -241,9 +241,9 @@ jobs:
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/extension_runtime/*' --fail-under=90
         if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked coverage report --include='src/apizr/git_source/*,src/apizr/git_source_cli.py' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/git_source/*,src/apizr/cli/commands/git_source.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked coverage report --include='src/apizr/local_plugins/*,src/apizr/plugins_cli.py' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/plugins/local/*,src/apizr/cli/commands/plugins.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/governed/*' --fail-under=90
         if: needs.scope.outputs.product != 'false'
@@ -261,9 +261,9 @@ jobs:
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/exposure/*' --fail-under=90
         if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked coverage report --include='src/apizr/exposure_cli.py' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/cli/commands/exposure.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked coverage report --include='src/apizr/readiness_cli.py,src/apizr/repository_readiness_cli.py,src/apizr/repository_cli.py' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/cli/commands/readiness.py,src/apizr/cli/commands/repository_readiness.py,src/apizr/cli/commands/repository.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'

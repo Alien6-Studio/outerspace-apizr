@@ -9,8 +9,8 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 from oci.helpers import IMAGE
 
+from apizr.cli.commands.generate import main
 from apizr.execution import ExecutionPolicy
-from apizr.generate_cli import main
 from apizr.generators.mcp import render as mcp_render
 from apizr.generators.rest import render as rest_render
 from apizr.governed.embedding import source
@@ -175,7 +175,7 @@ def guard(event,args):
     if event=="import" and args[0]=="hostile_target": raise AssertionError("source import")
     if event=="exec" and args[0].co_filename==source: raise AssertionError("source execution")
 sys.addaudithook(guard)
-from apizr.generate_cli import main
+from apizr.cli.commands.generate import main
 raise SystemExit(main([sys.argv[4],source,"--execution-policy",sys.argv[2],"--output-dir",sys.argv[3],"--runtime-image",sys.argv[5],"--runtime-platform","linux/amd64"]))
 """
     result = subprocess.run(

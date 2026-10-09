@@ -15,8 +15,6 @@ from batch_inputs import request as batch_request
 from apizr.analysis_contracts import LocalTarget
 from apizr.cli import main
 from apizr.exposure.policy import ExposurePolicy
-from apizr.local_plugins import activation, store
-from apizr.local_plugins.models import Installation, Inventory
 from apizr.onboarding import (
     InitError,
     diagnostics,
@@ -26,6 +24,8 @@ from apizr.onboarding import (
     plan_initialization,
 )
 from apizr.operator_policy import OperatorPolicy, PluginIdentity, decide_analysis
+from apizr.plugins.local import activation, store
+from apizr.plugins.local.models import Installation, Inventory
 from apizr.project import load_project
 from apizr.repository_readiness.policy import RepositoryReadinessPolicy
 

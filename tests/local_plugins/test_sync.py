@@ -14,7 +14,7 @@ import pytest
 
 from apizr.cli import main
 from apizr.extension_runtime import Limits
-from apizr.local_plugins import (
+from apizr.plugins.local import (
     backend,
     enable_extension,
     install_extension,
@@ -22,10 +22,10 @@ from apizr.local_plugins import (
     run_extension,
     store,
 )
-from apizr.local_plugins.control import InstallationCancelled, InstallControl
-from apizr.local_plugins.models import PluginError
-from apizr.plugin_lock import check_lock, create_lock
-from apizr.plugin_sync import operations, probe, sync_plugins
+from apizr.plugins.local.control import InstallationCancelled, InstallControl
+from apizr.plugins.local.models import PluginError
+from apizr.plugins.lock import check_lock, create_lock
+from apizr.plugins.sync import operations, probe, sync_plugins
 
 pytestmark = pytest.mark.timeout(30)
 
@@ -486,7 +486,7 @@ def test_failed_final_probe_does_not_report_earlier_probe_as_current(
 
 
 def test_sync_probes_hold_usage_leases(project, tmp_path, monkeypatch):
-    from apizr.local_plugins import uninstall_extension
+    from apizr.plugins.local import uninstall_extension
 
     root = tmp_path / "plugins"
     original = probe._verify

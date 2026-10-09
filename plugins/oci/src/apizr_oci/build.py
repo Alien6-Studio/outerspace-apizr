@@ -19,7 +19,7 @@ from apizr.delivery import (
 )
 from apizr.generators.mcp.generator import REQUIREMENTS as MCP_REQUIREMENTS
 from apizr.generators.rest.generator import REQUIREMENTS as REST_REQUIREMENTS
-from apizr.local_plugins.models import PluginError
+from apizr.plugins.local.models import PluginError
 from apizr.repository.serialization import canonical_bytes
 
 from .delivery import delivery_plan

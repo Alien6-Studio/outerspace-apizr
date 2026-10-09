@@ -7,15 +7,15 @@ import stat
 from pathlib import Path, PurePosixPath
 
 from apizr.extension_runtime.protocol import unique_object
-from apizr.local_plugins.locking import (
+from apizr.plugins.local.locking import (
     MAX_TOTAL_BYTES,
     MAX_TOTAL_EXPANDED_BYTES,
     MAX_WHEELS,
     expanded_size,
     read_lock,
 )
-from apizr.local_plugins.models import LockedDistribution, canonical_name
-from apizr.local_plugins.wheel import inspect_dependency
+from apizr.plugins.local.models import LockedDistribution, canonical_name
+from apizr.plugins.local.wheel import inspect_dependency
 from apizr.repository_interfaces.model import MCPManifest, RestManifest
 from apizr.repository_interfaces.runtime import validate_bundle
 

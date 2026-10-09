@@ -41,7 +41,7 @@ jobs:
           APIZR_REQUIRE_SHELLS: ${{ runner.os == 'Linux' && '1' || '' }}
         run: >-
           uv run --locked pytest tests/onboarding
-          --cov=apizr.onboarding --cov=apizr.onboarding_cli --cov=apizr.completion
+          --cov=apizr.onboarding --cov=apizr.cli.commands.onboarding --cov=apizr.cli.completion
           --cov-report=term-missing --cov-report=json:onboarding-coverage.json
           --junitxml=onboarding-tests.xml
       - name: Installed wheel, real onboarding and shell adapters

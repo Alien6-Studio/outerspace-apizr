@@ -1,4 +1,14 @@
-"""Explicit, read-only artifact validation and deterministic project locks."""
+"""Compatibility facade for :mod:`apizr.plugins.lock`."""
 
-from .models import LockError, ProjectLock, Result, Target, current_target
-from .operations import check_lock, create_lock, serialize
+from typing import Any
+
+import apizr.plugins.lock as _implementation
+from apizr.plugins.lock import *  # noqa: F403
+
+
+def __getattr__(name: str) -> Any:
+    return getattr(_implementation, name)
+
+
+def __dir__() -> list[str]:
+    return dir(_implementation)

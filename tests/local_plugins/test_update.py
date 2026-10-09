@@ -11,7 +11,7 @@ import pytest
 
 from apizr.cli import main
 from apizr.extension_runtime import Limits
-from apizr.local_plugins import (
+from apizr.plugins.local import (
     activation,
     backend,
     disable_extension,
@@ -21,10 +21,10 @@ from apizr.local_plugins import (
     run_extension,
     store,
 )
-from apizr.local_plugins.control import InstallationCancelled
-from apizr.local_plugins.models import PluginError
-from apizr.plugin_lock import create_lock
-from apizr.plugin_update import operations, update_plugin
+from apizr.plugins.local.control import InstallationCancelled
+from apizr.plugins.local.models import PluginError
+from apizr.plugins.lock import create_lock
+from apizr.plugins.update import operations, update_plugin
 
 pytestmark = pytest.mark.timeout(30)
 
@@ -252,7 +252,7 @@ def test_original_inputs_replaced_after_preparation(setup, monkeypatch):
 
 @pytest.mark.parametrize("case", ["missing", "target"])
 def test_unusable_target_is_not_activated(setup, monkeypatch, case):
-    from apizr.plugin_sync import probe
+    from apizr.plugins.sync import probe
 
     assert update(setup).exit_code == 0
     _, root, source = setup
@@ -573,8 +573,8 @@ def test_real_uv_timeout_or_cancel_cleans_up_then_recovers(
 
 
 def test_update_probe_and_transition_coordinate_with_uninstall(setup, monkeypatch):
-    from apizr.local_plugins import uninstall_extension
-    from apizr.plugin_sync import probe
+    from apizr.plugins.local import uninstall_extension
+    from apizr.plugins.sync import probe
 
     original = probe._verify
     seen = []
@@ -597,7 +597,7 @@ def test_update_probe_and_transition_coordinate_with_uninstall(setup, monkeypatc
 
 
 def test_update_refuses_target_retired_between_probe_and_activation(setup, monkeypatch):
-    from apizr.local_plugins import uninstall_extension
+    from apizr.plugins.local import uninstall_extension
 
     original = operations.verify_interpreter
 

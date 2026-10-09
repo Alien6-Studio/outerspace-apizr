@@ -121,7 +121,7 @@ def test_remote_and_local_exact_parity(
 )
 def test_ambiguous_input_rejected_before_acquisition(command, options, monkeypatch):
     monkeypatch.setattr(
-        "apizr.git_source_cli.acquire_snapshot",
+        "apizr.cli.commands.git_source.acquire_snapshot",
         lambda *a, **k: pytest.fail("acquisition started"),
     )
     with pytest.raises(SystemExit) as error:

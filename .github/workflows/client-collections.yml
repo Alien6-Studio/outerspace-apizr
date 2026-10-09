@@ -39,7 +39,7 @@ jobs:
       - name: Collection contracts, safe sync and branch coverage
         run: >-
           uv run --locked pytest tests/client_collections
-          --cov=apizr.client_collections --cov=apizr.clients_cli
+          --cov=apizr.client_collections --cov=apizr.cli.commands.clients
           --cov-report=term-missing --cov-report=json:clients-coverage.json
           --junitxml=clients-tests.xml
       - name: Exact vendor tools and dependency integrity, without installation scripts
