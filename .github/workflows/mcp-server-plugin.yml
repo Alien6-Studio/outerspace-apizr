@@ -26,7 +26,6 @@ jobs:
           - {os: ubuntu-latest, python: '3.14'}
           - {os: macos-latest, python: '3.11'}
           - {os: macos-latest, python: '3.14'}
-          - {os: macos-15-intel, python: '3.14'}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
@@ -68,6 +67,30 @@ jobs:
             ${{ runner.temp }}/mcp-proof/prepared/preparation.json
             ${{ runner.temp }}/mcp-proof/prepared/requirements.lock
             ${{ runner.temp }}/mcp-proof/prepared/wheelhouse/
+
+  preparation-intel:
+    needs: scope
+    if: always() && needs.scope.outputs.product != 'false'
+    timeout-minutes: 15
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: '0.12.0'
+          python-version: '3.14'
+      - name: Installed preparation refuses the locked wheel unavailable on Intel
+        run: uv run --no-project python scripts/plugin_preparation_intel_proof.py --output "$RUNNER_TEMP/preparation-intel"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: preparation-macos-intel-python-3.14
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/preparation-intel/*.json
+            ${{ runner.temp }}/preparation-intel/*.lock
+            ${{ runner.temp }}/preparation-intel/wheels/
 
   generated-recovery:
     needs: scope

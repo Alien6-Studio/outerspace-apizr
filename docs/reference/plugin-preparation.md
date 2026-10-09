@@ -103,6 +103,18 @@ triple must agree with the explicit interpreter. macOS records the running OS,
 not the interpreter's build deployment minimum. Other targets fail closed;
 this is not cross-compilation.
 
+The current reviewed MCP closure cannot run on macOS Intel: its pinned
+`cryptography==50.0.1` has no compatible wheel. Upstream
+[removed macOS x86_64 wheels in version 49](https://cryptography.io/en/49.0.0/changelog/);
+the older Intel wheels have [known vulnerabilities](https://github.com/pyca/cryptography/security/advisories/GHSA-g6cj-pr64-35w5).
+Qualification on macOS Intel/Python 3.14 therefore proves an installed candidate's
+`compatible_wheel_unavailable` refusal for that reviewed pin, with no output,
+installation or activation. It does **not** claim a successful Intel MCP session.
+The six Linux/macOS ARM matrix entries retain real SDK stdio proofs.
+An unconstrained index resolution can select an older compatible dependency:
+preparation verifies compatibility and integrity, not vulnerability status.
+Use reviewed pins and audit them; an older dependency is not substituted in CI.
+
 Selection follows [PyPA's ordered compatibility tags](https://packaging.pypa.io/en/stable/tags.html)
 for that interpreter. Exact ABI and platform preference can disambiguate native
 wheels; two candidates with the same best priority are refused. A valid hash
