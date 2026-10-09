@@ -29,16 +29,19 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from apizr.experiments import (
-    ExecutionIntent, ExperimentPlan, SourceIdentity,
-    discover_inputs, fingerprint_inputs, parse_input_declaration,
-    plan_digest, select_inputs,
+    ExecutionIntent,
+    ExperimentPlan,
+    SourceIdentity,
+    discover_inputs,
+    fingerprint_inputs,
+    parse_input_declaration,
+    plan_digest,
+    select_inputs,
 )
 
 source = b'import pandas as pd\npd.read_csv("data/train.csv")\n'
 found = discover_inputs(source, source_reference="train.py")
-selection = select_inputs(found, (
-    parse_input_declaration("training=data/train.csv"),
-))
+selection = select_inputs(found, (parse_input_declaration("training=data/train.csv"),))
 
 with TemporaryDirectory() as directory:
     root = Path(directory)
@@ -48,7 +51,9 @@ with TemporaryDirectory() as directory:
     assert not observed.diagnostics
     plan = ExperimentPlan(
         subject=SourceIdentity(
-            kind="python", reference="train.py", digest=sha256(source).hexdigest(),
+            kind="python",
+            reference="train.py",
+            digest=sha256(source).hexdigest(),
             capability_id="python:train:train",
         ),
         execution=ExecutionIntent(kind="training"),
