@@ -6,6 +6,7 @@ import json
 import sys
 from hashlib import sha256
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import apizr.experiments as experiments
 from apizr.experiments import (
@@ -13,12 +14,61 @@ from apizr.experiments import (
     ExperimentPlan,
     ExperimentRun,
     SourceIdentity,
+    discover_inputs,
+    fingerprint_input,
+    parse_input_declaration,
     plan_bytes,
     plan_digest,
     run_bytes,
     run_digest,
     validate_run_binding,
 )
+
+
+def input_producer_proof() -> dict[str, object]:
+    source = b'import pandas as pd\npd.read_csv("data/train.csv")\n'
+    subject = SourceIdentity(
+        kind="python",
+        reference="train.py",
+        digest=sha256(source).hexdigest(),
+        capability_id="python:train:train",
+    )
+    discovery = discover_inputs(source, source_reference="train.py")
+    assert discovery.artifacts[0].reference == "data/train.csv"
+    declaration = parse_input_declaration("training=data/train.csv")
+    with TemporaryDirectory(prefix="apizr-experiment-inputs-") as directory:
+        root = Path(directory)
+        (root / "data").mkdir()
+        target = root / "data/train.csv"
+        target.write_bytes(b"feature,label\n0.25,0\n")
+        observed = fingerprint_input(root, declaration)
+        assert not observed.diagnostics
+        first = ExperimentPlan(
+            subject=subject,
+            execution=ExecutionIntent(kind="training"),
+            inputs=observed.artifacts,
+        )
+        target.write_bytes(b"feature,label\n0.75,0\n")
+        changed = fingerprint_input(root, declaration)
+        second = ExperimentPlan(
+            subject=subject, execution=first.execution, inputs=changed.artifacts
+        )
+        assert first.subject == second.subject
+        assert first.inputs[0].reference == second.inputs[0].reference
+        assert first.inputs[0].digest != second.inputs[0].digest
+        assert plan_digest(first) != plan_digest(second)
+        assert first.inputs[0].origin.value == "declared"
+        assert first.inputs[0].content_origin is not None
+        assert first.inputs[0].content_origin.value == "static"
+        assert str(root).encode() not in plan_bytes(first)
+        assert b"0.25" not in plan_bytes(first)
+        return {
+            "status": "passed",
+            "plan_a": plan_digest(first),
+            "plan_b": plan_digest(second),
+            "capability_unchanged": True,
+            "source_unchanged": True,
+        }
 
 
 def main() -> None:
@@ -40,6 +90,8 @@ def main() -> None:
             "apizr_oci",
             "apizr_attest",
             "numpy",
+            "joblib",
+            "pyarrow",
             "pandas",
             "mlflow",
             "wandb",
@@ -71,6 +123,7 @@ def main() -> None:
                 "optional_sdks_absent": True,
                 "construction_binding_roundtrip": "passed",
                 "goldens": goldens,
+                "input_producer": input_producer_proof(),
             },
             indent=2,
         )

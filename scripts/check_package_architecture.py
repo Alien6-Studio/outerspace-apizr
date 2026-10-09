@@ -167,6 +167,7 @@ def check(source: Path, manifest: Path) -> list[str]:
                     "apizr.capabilities.types",
                     "apizr.contracts.distribution",
                     "apizr.contracts.json",
+                    "apizr.workspace.files",
                 )
                 root = imported.split(".")[0]
                 if not any(

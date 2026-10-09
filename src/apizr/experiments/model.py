@@ -1,5 +1,6 @@
 """Experiment intent and observed evidence; no capture or execution machinery."""
 
+import re
 from collections.abc import Callable, Iterable
 from datetime import UTC, datetime
 from enum import Enum
@@ -40,7 +41,7 @@ T = TypeVar("T")
 N = TypeVar("N", bound=_Named)
 
 
-def _ordered(
+def ordered_evidence(
     items: tuple[T, ...], key: Callable[[T], str | tuple[str, str]]
 ) -> tuple[T, ...]:
     keys = [key(item) for item in items]
@@ -65,6 +66,21 @@ Reference = Annotated[
 ]
 
 
+def _uri(value: str) -> str:
+    # Deliberately narrower than general URL parsing: no credentials, percent
+    # escapes, query, fragment, port, Unicode authority or local-file scheme.
+    if not re.fullmatch(
+        r"(?:https|s3|gs)://[a-z0-9]+(?:[.-][a-z0-9]+)*(?:/[A-Za-z0-9._~-]+)*",
+        value,
+    ) or any(part in (".", "..") for part in value.split("/")[3:]):
+        raise ValueError("experiment_uri_unsupported")
+    return value
+
+
+RemoteURI = Annotated[str, Field(max_length=1024), AfterValidator(_uri)]
+FormatHint = Literal["csv", "parquet", "numpy", "joblib"]
+
+
 class EvidenceOrigin(str, Enum):
     DECLARED = "declared"
     STATIC = "static"
@@ -72,7 +88,7 @@ class EvidenceOrigin(str, Enum):
     UNKNOWN = "unknown"
 
 
-class _Contract(ValueModel):
+class ExperimentValue(ValueModel):
     model_config = ConfigDict(
         frozen=True,
         extra="forbid",
@@ -83,7 +99,7 @@ class _Contract(ValueModel):
     )
 
 
-class SourceIdentity(_Contract):
+class SourceIdentity(ExperimentValue):
     kind: Literal["python", "notebook"]
     reference: Reference
     digest: Digest
@@ -99,23 +115,42 @@ class SourceIdentity(_Contract):
     ) = None
 
 
-class InputArtifact(_Contract):
+class InputArtifact(ExperimentValue):
     name: Name
     reference: Reference | None = None
     digest: Digest | None = None
     size: Size | None = None
     origin: EvidenceOrigin
+    content_origin: EvidenceOrigin | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+    format_hint: FormatHint | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+    uri: RemoteURI | None = Field(default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def unknown_content(self) -> Self:
+        if self.reference is not None and self.uri is not None:
+            raise ValueError("experiment_input_reference_conflict")
+        has_content = self.digest is not None or self.size is not None
+        if self.content_origin is not None and (
+            (self.content_origin == EvidenceOrigin.UNKNOWN) == has_content
+        ):
+            raise ValueError("experiment_input_content_origin_value")
         if self.origin == EvidenceOrigin.UNKNOWN and (
             self.digest is not None or self.size is not None
         ):
             raise ValueError("experiment_unknown_content_has_value")
         return self
 
+    def origins(self) -> Iterable[EvidenceOrigin]:
+        yield self.origin
+        if self.content_origin is not None:
+            yield self.content_origin
 
-class Parameter(_Contract):
+
+class Parameter(ExperimentValue):
     name: Name
     value: FiniteValue
     origin: EvidenceOrigin
@@ -131,7 +166,7 @@ class RandomnessControl(Parameter):
     provider: Name
 
 
-class EnvironmentValue(_Contract):
+class EnvironmentValue(ExperimentValue):
     value: Text | None
     origin: EvidenceOrigin
 
@@ -142,7 +177,7 @@ class EnvironmentValue(_Contract):
         return self
 
 
-class PackageEvidence(_Contract):
+class PackageEvidence(ExperimentValue):
     name: Annotated[Name, AfterValidator(canonical_name)]
     version: Name | None
     origin: EvidenceOrigin
@@ -154,7 +189,7 @@ class PackageEvidence(_Contract):
         return self
 
 
-class EnvironmentEvidence(_Contract):
+class EnvironmentEvidence(ExperimentValue):
     python_implementation: EnvironmentValue | None = None
     python_version: EnvironmentValue | None = None
     platform: EnvironmentValue | None = None
@@ -164,17 +199,19 @@ class EnvironmentEvidence(_Contract):
     @field_validator("packages", "artifacts")
     @classmethod
     def ordered_inventory(cls, items: tuple[N, ...]) -> tuple[N, ...]:
-        return _ordered(items, lambda item: item.name)
+        return ordered_evidence(items, lambda item: item.name)
 
     def origins(self) -> Iterable[EvidenceOrigin]:
         for value in (self.python_implementation, self.python_version, self.platform):
             if value is not None:
                 yield value.origin
-        for record in (*self.packages, *self.artifacts):
+        for record in self.packages:
             yield record.origin
+        for artifact in self.artifacts:
+            yield from artifact.origins()
 
 
-class ExecutionIntent(_Contract):
+class ExecutionIntent(ExperimentValue):
     kind: Name
     policy_digest: Digest | None = None
     controls: Annotated[tuple[Parameter, ...], Field(max_length=128)] = ()
@@ -184,10 +221,10 @@ class ExecutionIntent(_Contract):
     def declared_controls(cls, items: tuple[Parameter, ...]) -> tuple[Parameter, ...]:
         if any(item.origin != EvidenceOrigin.DECLARED for item in items):
             raise ValueError("experiment_execution_control_not_declared")
-        return _ordered(items, lambda item: item.name)
+        return ordered_evidence(items, lambda item: item.name)
 
 
-class Metric(_Contract):
+class Metric(ExperimentValue):
     name: Name
     value: (
         Annotated[int, Field(ge=-(2**63), le=2**63 - 1)]
@@ -206,7 +243,7 @@ class Metric(_Contract):
         return value
 
 
-class OutputArtifact(_Contract):
+class OutputArtifact(ExperimentValue):
     name: Name
     digest: Digest
     size: Size | None = None
@@ -214,14 +251,14 @@ class OutputArtifact(_Contract):
     origin: Literal[EvidenceOrigin.RUNTIME]
 
 
-class RunDiagnostic(_Contract):
+class RunDiagnostic(ExperimentValue):
     code: Annotated[
         str, Field(min_length=1, max_length=128, pattern=r"^[a-z][a-z0-9_.-]*$")
     ]
     origin: Literal[EvidenceOrigin.RUNTIME]
 
 
-class RunTiming(_Contract):
+class RunTiming(ExperimentValue):
     started_at: AwareDatetime | None = None
     ended_at: AwareDatetime | None = None
     duration_seconds: Annotated[float, Field(ge=0, allow_inf_nan=False)] | None = None
@@ -249,7 +286,7 @@ class RunTiming(_Contract):
         return self
 
 
-class ExperimentPlan(_Contract):
+class ExperimentPlan(ExperimentValue):
     schema_version: Literal["apizr.experiment-plan/v1"] = "apizr.experiment-plan/v1"
     subject: SourceIdentity
     execution: ExecutionIntent
@@ -261,20 +298,25 @@ class ExperimentPlan(_Contract):
     @field_validator("inputs", "parameters")
     @classmethod
     def ordered_named(cls, items: tuple[N, ...]) -> tuple[N, ...]:
-        return _ordered(items, lambda item: item.name)
+        return ordered_evidence(items, lambda item: item.name)
 
     @field_validator("randomness")
     @classmethod
     def ordered_controls(
         cls, items: tuple[RandomnessControl, ...]
     ) -> tuple[RandomnessControl, ...]:
-        return _ordered(items, lambda item: (item.provider, item.name))
+        return ordered_evidence(items, lambda item: (item.provider, item.name))
 
     @model_validator(mode="after")
     def intended_evidence(self) -> Self:
         origins = [
             item.origin for item in (*self.inputs, *self.parameters, *self.randomness)
         ]
+        origins.extend(
+            item.content_origin
+            for item in self.inputs
+            if item.content_origin is not None
+        )
         if self.environment is not None:
             origins.extend(self.environment.origins())
         if EvidenceOrigin.RUNTIME in origins:
@@ -282,7 +324,7 @@ class ExperimentPlan(_Contract):
         return self
 
 
-class ExperimentRun(_Contract):
+class ExperimentRun(ExperimentValue):
     schema_version: Literal["apizr.experiment-run/v1"] = "apizr.experiment-run/v1"
     plan_digest: Digest
     subject: SourceIdentity
@@ -299,21 +341,21 @@ class ExperimentRun(_Contract):
     @field_validator("observed_inputs", "effective_parameters", "metrics", "outputs")
     @classmethod
     def ordered_named(cls, items: tuple[N, ...]) -> tuple[N, ...]:
-        return _ordered(items, lambda item: item.name)
+        return ordered_evidence(items, lambda item: item.name)
 
     @field_validator("randomness")
     @classmethod
     def ordered_controls(
         cls, items: tuple[RandomnessControl, ...]
     ) -> tuple[RandomnessControl, ...]:
-        return _ordered(items, lambda item: (item.provider, item.name))
+        return ordered_evidence(items, lambda item: (item.provider, item.name))
 
     @field_validator("diagnostics")
     @classmethod
     def ordered_diagnostics(
         cls, items: tuple[RunDiagnostic, ...]
     ) -> tuple[RunDiagnostic, ...]:
-        return _ordered(items, lambda item: item.code)
+        return ordered_evidence(items, lambda item: item.code)
 
     @model_validator(mode="after")
     def observed_evidence(self) -> Self:
@@ -325,6 +367,11 @@ class ExperimentRun(_Contract):
                 *self.randomness,
             )
         ]
+        origins.extend(
+            item.content_origin
+            for item in self.observed_inputs
+            if item.content_origin is not None
+        )
         if self.environment is not None:
             origins.extend(self.environment.origins())
         if any(

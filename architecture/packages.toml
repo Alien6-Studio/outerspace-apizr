@@ -42,7 +42,7 @@ responsibility = "Explicit governed execution of trusted code in fresh local pro
 
 [packages."experiments"]
 kind = "domain"
-responsibility = "Content-addressed experiment intent and observed-run evidence contracts; no execution, tracking server or scientific inference."
+responsibility = "Content-addressed experiment contracts and bounded local/static input evidence producers; no execution, storage, tracking or scientific inference."
 
 [packages."exposure"]
 kind = "domain"

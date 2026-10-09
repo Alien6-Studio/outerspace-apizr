@@ -1,5 +1,16 @@
 """Public experiment intent and observed-run evidence contracts."""
 
+from apizr.experiments.inputs import (
+    FingerprintPolicy,
+    InputDeclaration,
+    InputDiagnostic,
+    InputResult,
+    discover_inputs,
+    fingerprint_input,
+    fingerprint_inputs,
+    parse_input_declaration,
+    select_inputs,
+)
 from apizr.experiments.model import (
     EnvironmentEvidence,
     EnvironmentValue,
@@ -26,6 +37,15 @@ from apizr.experiments.serialization import (
 )
 
 __all__ = [
+    "FingerprintPolicy",
+    "InputDeclaration",
+    "InputDiagnostic",
+    "InputResult",
+    "discover_inputs",
+    "fingerprint_input",
+    "fingerprint_inputs",
+    "parse_input_declaration",
+    "select_inputs",
     "EnvironmentEvidence",
     "EnvironmentValue",
     "EvidenceOrigin",

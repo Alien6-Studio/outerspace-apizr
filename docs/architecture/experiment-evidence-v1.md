@@ -239,8 +239,38 @@ guess secrets from parameter names.
 
 Experiment Run is an attestable artifact; it is not an attestation format.
 
-The experiment domain depends only on existing primitive contracts and the
+The experiment domain depends on existing primitive contracts, bounded descriptor
+access in `workspace.files`, and the
 existing Pydantic runtime. No Attest, OCI, MCP, FastAPI, MLflow, W&B, DVC or
 DS framework defines these values. External systems may consume their canonical
 bytes later. The [package composition rule](code-organization.md#experiment-evidence)
 records this dependency boundary.
+
+
+## Additive input evidence in 0.4.5 development
+
+#261 adds three optional fields to `InputArtifact`: `content_origin`, `format_hint`
+and `uri`. Absent values are omitted from canonical serialization. Old valid v1
+JSON still validates, and the original #260 Plan and Run golden bytes and SHA-256
+values are unchanged. Both schema versions remain v1; their regenerated schemas
+add optional properties without adding required fields.
+
+`origin` describes the input/reference record. `content_origin`, when supplied,
+describes how digest/size were established. A declared local selection can have
+`origin=declared` and `content_origin=static` after fingerprinting. An absent
+content origin retains legacy semantics: it makes no additional provenance claim.
+`unknown` content requires absent digest and size; a known content origin requires
+at least one of them. The producer always observes both digest and size together.
+Plan evidence rejects runtime content origins, including environment artifacts;
+Run observations permit runtime/unknown content origins. This prevents hiding a
+runtime observation inside a declared Plan record or static evidence inside a Run.
+
+`reference` retains its portable project-relative validation. `uri` is a separate,
+mutually exclusive remote reference; see the exact URI and format vocabulary in
+[experiment inputs](../guides/experiment-inputs.md). A remote URI is not evidence
+of verified bytes. Future runtime producers may observe remote bytes independently;
+#261 never fetches them. Format hints are canonical evidence, not parser guarantees.
+
+JSON Schema describes structure. No schema alone establishes symlink safety,
+exact-byte fingerprinting, changed-during-read detection or remote no-fetch.
+These are responsibilities of the reviewed producer, with executable safety tests.

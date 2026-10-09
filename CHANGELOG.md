@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add bounded local experiment-input fingerprinting and conservative static
+  recognition of common literal data reads, preserving separate reference/content
+  provenance without dataset storage or versioning (#261).
+
 - Add independent content-addressed Experiment Plan and Experiment Run v1 contracts
   to distinguish intended experiment inputs and controls from observed run evidence
   (#260).

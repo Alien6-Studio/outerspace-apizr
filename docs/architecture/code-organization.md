@@ -213,15 +213,19 @@ from shared transport/build/publication primitives in `contracts`.
 `model.py` owns strict Plan/Run values and evidence semantics; `values.py` owns
 bounded, deeply immutable recursive JSON; `serialization.py` owns canonical
 bytes, content digests and explicit Run-to-Plan validation. `__init__.py` exports
-this public API. There is no historical experiment facade.
+this public API. `inputs.py` owns source-only input recognition, explicit selection
+and bounded local fingerprinting; it uses the existing `workspace.files` descriptor
+primitive without importing workspace configuration or compilation. There is no
+historical experiment facade.
 
 An Experiment Plan describes intended experiment inputs and controls. An Experiment Run records observed execution evidence. Neither proves scientific causality or reproducibility.
 
 The dependency gate permits only experiment siblings, the existing `ValueModel`
 and logical-module primitive, distribution names/digests, canonical JSON,
-standard-library modules and the existing Pydantic typing runtime. CLI, execution,
+bounded descriptor access in `workspace.files`, standard-library modules and the
+existing Pydantic typing runtime. CLI, execution,
 exposure, optional adapters and data-science SDKs are outside this boundary.
-No inspector, runner or store is part of these contracts. See
+No experiment runner or store is part of this domain. See
 [Experiment evidence v1](experiment-evidence-v1.md) for origins, identities and
 producer obligations.
 
