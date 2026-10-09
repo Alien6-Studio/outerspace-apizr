@@ -1,16 +1,60 @@
 # Code organization (0.4.5 development)
 
-Start with the responsibility you need to change. CLI adapters and plugin
-management have their own namespaces; static compiler domains and execution
-contracts remain explicit packages. Optional plugin distributions live outside
-the core package.
+## Accepted package composition rule
+
+This rule governs new code and the ongoing 0.4.5 migration. Organize by domain
+responsibility. A domain owns its models, policy and operations; transports and
+optional providers consume those contracts. Do not introduce a global `models/`,
+`services/`, `utils/`, `helpers/` or `common/` collection.
+
+Each Python package has one declared owner and exactly one composition role in
+`architecture/packages.toml`:
+
+| Role | Allowed composition | Example |
+| --- | --- | --- |
+| Domain leaf | Cohesive implementation modules; no child Python packages | `plugins/lock`, `workspace`, `repository_views` |
+| Composition | Declared subdomains, exports, explicit entrypoints and named shared adapter support; no business implementation in its initializer | `plugins`, `generators`, `cli` |
+| Historical | Existing generation pipeline, explicitly inventoried; no precedent for new layout | `modules`, `extensions` |
+| Compatibility facade | Exact forwarding shape to one canonical implementation; no business code | `project.py`, `local_plugins/` |
+
+The package name answers **what responsibility lives here**. Its module names
+answer **which part of that responsibility lives here**, such as `models.py`,
+`policy.py`, `operations.py`, `serialization.py`, `planner.py` or `worker.py`.
+These are roles, not mandatory empty files. Keep a small cohesive domain together;
+file counts and line counts alone do not justify another directory.
+
+Create a child package when it has a distinct contract, dependency boundary or
+lifecycle that can be named and explained. Convert the parent from domain leaf to
+composition and declare both responsibilities in the inventory. For example,
+`plugins/lock` owns lock validation; `plugins/local` owns installation and
+activation. A new provider belongs beside the other providers rather than inside
+lock validation. Do not split one responsibility just to create symmetry.
+
+Initializers expose the owned API or remain lazy namespaces. Only the CLI
+composition initializer has declared dispatch functions (`main`, `_main`);
+argument parsing lives in `cli/commands`. Importing composition namespaces must
+not read project configuration, discover or activate plugins, or import optional
+SDKs. Cross-domain callers use the owning package's supported contracts, never
+compatibility paths or private implementation helpers.
+
+Before adding code, identify its owner, role, dependencies and import/resource
+compatibility requirements. Adding a domain requires an inventory entry and an
+explanation of its boundary in review. New root implementation files and new
+migration exceptions are prohibited.
+
+## Current migration state
+
+CLI adapters and plugin management have canonical namespaces. Project declarations,
+operator preferences and bounded explicit file access form the `workspace` domain.
+Static compiler domains and execution contracts remain explicit packages. Optional
+plugin distributions live outside the core package.
 
 ```text
 src/apizr/
 ├── cli/
 │   ├── __init__.py            command dispatch and Python/console entrypoint
 │   ├── __main__.py            python -m apizr.cli
-│   ├── commands/              argument parsing and result presentation
+│   ├── commands/              argument parsing and result presentation, including inspect
 │   ├── completion.py          bounded, static shell completion
 │   └── completion_spec.py     captured CLI grammar
 ├── plugins/
@@ -19,6 +63,10 @@ src/apizr/
 │   ├── catalog/               explicit metadata and profile resolution
 │   ├── sync/                  additive installation from a project lock
 │   └── update/                locked replacement and explicit activation
+├── workspace/
+│   ├── project.py             explicit project declarations
+│   ├── user.py                explicit operator preferences
+│   └── files.py               bounded regular-file access
 ├── capabilities/             source-local capability IR
 ├── repository/               bounded discovery and complete Catalog
 ├── graph/                    imports, bindings and dependency evidence
@@ -41,20 +89,33 @@ plugins/{mcp,oci,attest}/      separately packaged optional distributions
 ```
 
 The root also retains compatibility facades such as `plugins_cli.py` and
-`local_plugins/`. Their implementations are in the namespaces above. New core
+`local_plugins/`. Their implementations are in the namespaces above. `root_debt` separately records
+the remaining root business modules, including `compiler.py`, analysis sessions
+and shared delivery contracts. They are explicit migration debt, not a completed
+application of the domain rule. Do not add another entry. Remove each exception
+when its implementation moves, with installed-import and embedded-resource parity. New core
 code imports the canonical namespaces; historical callers keep their existing
 imports.
 
-## Dependency direction
+## Required dependency direction
 
 CLI commands parse input, call operations and present results. Core operations
 and plugin management must not import CLI adapters. `compiler.py` remains usable
 without importing CLI commands or optional REST/MCP/notebook dependencies.
 
+Bounded file access (`workspace.files`) has no Apizr domain dependencies. Workspace
+configuration and plugin management have no optional SDK or plugin-distribution
+dependencies. Project loading reads only the explicit project file and grants no
+operator authority.
+
 Plugin management depends on core policy, project declarations, locks and the
 bounded extension protocol. It does not import optional plugin distributions,
 REST frameworks or the MCP SDK. Importing `apizr.plugins` performs no discovery,
 installation or activation.
+
+The allowed plugin sibling graph is acyclic and explicit: local imports no sibling;
+lock imports local; catalog imports lock/local; sync imports lock/local; update
+imports sync/lock/local. Reverse dependencies are prohibited.
 
 The plugin lifecycle follows these dependencies:
 
@@ -98,6 +159,8 @@ or deployment semantics interchangeable.
 For core maintenance, use:
 
 ```python
+from apizr.workspace.project import load_project
+from apizr.workspace.user import load_user_config
 from apizr.cli.commands.plugins import main
 from apizr.plugins.local import install_extension, run_extension
 from apizr.plugins.lock import create_lock, check_lock
@@ -112,6 +175,7 @@ The following previous paths remain supported:
 | --- | --- |
 | `apizr.<name>_cli` | `apizr.cli.commands.<name>` |
 | `apizr.completion`, `apizr.completion_spec` | corresponding `apizr.cli` modules |
+| `apizr.project`, `apizr.user_config`, `apizr.config_files` | `apizr.workspace.project`, `.user`, `.files` |
 | `apizr.local_plugins` | `apizr.plugins.local` |
 | `apizr.plugin_lock` | `apizr.plugins.lock` |
 | `apizr.plugin_catalog` | `apizr.plugins.catalog` |
@@ -129,12 +193,39 @@ canonical JSON and generated business runtime contracts are unchanged.
 
 ## Maintaining the boundaries
 
-`tests/test_package_architecture.py` protects old imports, module identity, lazy
-namespace imports and the direction of dependencies. Production implementations
-must use canonical paths rather than importing compatibility facades. CLI
-parsers remain covered by the captured grammar test.
+Run the structural gate directly:
 
-Coverage gates and security mutation targets follow the moved implementation
-files. Their existing thresholds and mutations are preserved. Continue to run
+```sh
+python3 scripts/check_package_architecture.py
+```
+
+It runs in pre-commit and the CI quality job. It checks every Python package
+against the ownership inventory, rejects undeclared folders and root modules,
+prevents adding children to a leaf without explicit recomposition, checks
+composition initializers and snake_case module names, and validates the complete
+AST of each historical forwarding facade. A `Compatibility` docstring never
+exempts code from checks.
+
+Dependency checks resolve absolute imports, relative imports, `from apizr import`
+and literal dynamic imports, including imports inside functions and type-checking
+blocks. They reject implementation imports of historical aliases, domain-to-CLI
+imports, management-to-optional-adapter imports, forbidden plugin sibling edges
+and domain dependencies from bounded file access. Computed dynamic imports and
+semantic cohesion still require review; the gate is not a complete Python call
+or import graph analyzer.
+
+`tests/test_folder_composition.py` deliberately misplaces code and verifies
+rejection. `tests/test_package_architecture.py` separately protects installed old
+imports, module identity and lazy namespace imports. CLI parsers remain covered
+by the captured grammar test. Passing compatibility tests alone does not establish
+that a domain composition is appropriate.
+
+The remaining root debt and historical pipelines are recorded explicitly. Runtime
+source embedding in `governed*/embedding.py` and generator resource reads must
+keep using real implementation sources, never compatibility facade source text.
+Keep the three execution contract identities separate during any later migration.
+
+Coverage gates and security mutation targets follow the moved implementations.
+Their existing thresholds and mutations are preserved. Continue to run
 installed-wheel and isolated plugin proofs: source-tree imports alone cannot
 qualify a package layout change.

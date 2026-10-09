@@ -3,6 +3,12 @@ exclude: ^tests/fixtures/
 repos:
   - repo: local
     hooks:
+      - id: package-architecture
+        name: Package composition and dependency boundaries
+        entry: python3 scripts/check_package_architecture.py
+        language: system
+        pass_filenames: false
+        always_run: true
       - id: ruff-check
         name: Ruff check
         entry: uv run --locked ruff check

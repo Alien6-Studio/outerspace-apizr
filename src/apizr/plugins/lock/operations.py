@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from uuid import uuid4
 
-from apizr.config_files import absolute_path, directory_fd, read_regular
 from apizr.extension_runtime.protocol import unique_object
 from apizr.plugins.local import list_extensions, locking
 from apizr.plugins.local.models import (
@@ -20,7 +19,8 @@ from apizr.plugins.local.models import (
     canonical_name,
 )
 from apizr.plugins.local.wheel import MAX_WHEEL_BYTES, inspect_dependency, inspect_wheel
-from apizr.project import ProjectConfig, load_project
+from apizr.workspace.files import absolute_path, directory_fd, read_regular
+from apizr.workspace.project import ProjectConfig, load_project
 
 from .models import (
     Diagnostic,

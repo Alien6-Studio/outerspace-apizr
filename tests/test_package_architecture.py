@@ -1,9 +1,9 @@
 """Public import compatibility and one-way CLI/plugin architecture boundaries."""
 
-import ast
 import importlib
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -16,32 +16,12 @@ PACKAGES = {
     "plugin_sync": "plugins.sync",
     "plugin_update": "plugins.update",
 }
-COMMANDS = (
-    "ci",
-    "clients",
-    "delivery",
-    "execute",
-    "exposure",
-    "generate",
-    "git_source",
-    "graph",
-    "mcp",
-    "onboarding",
-    "plugins",
-    "readiness",
-    "repository",
-    "repository_readiness",
-    "scan",
-)
+INVENTORY = tomllib.loads((ROOT / "architecture/packages.toml").read_text())
 ALIASES = {
-    **{name + "_cli": "cli.commands." + name for name in COMMANDS},
-    "completion": "cli.completion",
-    "completion_spec": "cli.completion_spec",
+    path.removesuffix(".py").replace("/", "."): entry["target"].removeprefix("apizr.")
+    for path, entry in INVENTORY["compatibility"].items()
+    if entry["kind"] == "module"
 }
-for old, new in PACKAGES.items():
-    for source in (ROOT / "src/apizr" / new.replace(".", "/")).glob("*.py"):
-        if source.name != "__init__.py":
-            ALIASES[old + "." + source.stem] = new + "." + source.stem
 
 
 @pytest.mark.parametrize("old,new", sorted(ALIASES.items()))
@@ -72,8 +52,10 @@ def test_namespace_imports_remain_lazy_and_cli_module_entrypoint_works():
 import sys
 import apizr.cli
 import apizr.plugins
+import apizr.workspace
 assert not any(name.startswith('apizr.plugins.') for name in sys.modules)
 assert not any(name.startswith('apizr.cli.commands.') for name in sys.modules)
+assert not any(name.startswith('apizr.workspace.') for name in sys.modules)
 assert all(name not in sys.modules for name in ('fastapi','mcp','yaml','nbconvert'))
 """
     subprocess.run([sys.executable, "-I", "-c", code], check=True, capture_output=True)
@@ -85,35 +67,3 @@ assert all(name not in sys.modules for name in ('fastapi','mcp','yaml','nbconver
     )
     assert result.stdout.strip() == "outerspace-apizr 0.4.4"
     assert not result.stderr
-
-
-def test_core_and_plugin_management_do_not_depend_on_cli_or_compatibility_facades():
-    old_prefixes = tuple("apizr." + name for name in (*PACKAGES, *ALIASES))
-    for source in (ROOT / "src/apizr").rglob("*.py"):
-        tree = ast.parse(source.read_text())
-        if (ast.get_docstring(tree) or "").startswith("Compatibility "):
-            continue
-        imports = []
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                imports.extend(alias.name for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                imports.append(node.module)
-                if node.module == "apizr":
-                    imports.extend("apizr." + alias.name for alias in node.names)
-        assert not any(
-            name == prefix or name.startswith(prefix + ".")
-            for name in imports
-            for prefix in old_prefixes
-        ), source
-        if source.is_relative_to(ROOT / "src/apizr/cli"):
-            continue
-        assert not any(
-            name == "apizr.cli" or name.startswith("apizr.cli.") for name in imports
-        ), source
-        if source.is_relative_to(ROOT / "src/apizr/plugins"):
-            assert not any(
-                name.split(".")[0]
-                in {"fastapi", "mcp", "apizr_mcp", "apizr_oci", "apizr_attest"}
-                for name in imports
-            ), source

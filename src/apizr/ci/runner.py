@@ -6,12 +6,10 @@ from pathlib import Path
 
 from apizr.capabilities.model import Digest
 from apizr.compiler import prepare_exposure, render_bundle
-from apizr.config_files import absolute_path, directory_fd, read_regular
 from apizr.exposure import ExposurePolicy, ExposureRefused, plan_bytes, plan_digest
 from apizr.interfaces.serialization import json_bytes
 from apizr.onboarding.diagnostics import doctor, load_json
 from apizr.operator_policy import OperatorPolicy, load_operator_policy
-from apizr.project import MAX_PROJECT_BYTES, load_project
 from apizr.repository_interfaces import BundleRefused
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import (
@@ -19,6 +17,8 @@ from apizr.repository_readiness import (
     report_bytes,
     report_digest,
 )
+from apizr.workspace.files import absolute_path, directory_fd, read_regular
+from apizr.workspace.project import MAX_PROJECT_BYTES, load_project
 
 from .models import (
     MAX_ARTIFACT_BYTES,

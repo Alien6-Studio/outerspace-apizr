@@ -13,10 +13,10 @@ from apizr.exposure import ExposurePolicy
 from apizr.extension_runtime.protocol import unique_object
 from apizr.graph import GraphPolicy
 from apizr.operator_policy import OperatorPolicy
-from apizr.project import load_project
 from apizr.repository import ScanPolicy
 from apizr.repository_readiness import RepositoryReadinessPolicy
 from apizr.source_access import open_analysis_root
+from apizr.workspace.project import load_project
 
 MAX_SESSION_BYTES = 1048576
 

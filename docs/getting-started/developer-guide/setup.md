@@ -25,6 +25,7 @@ uv sync --locked
 uv run ruff check .
 uv run ruff format --check .
 uv run pyright
+python3 scripts/check_package_architecture.py
 uv run pytest --cov --cov-report=term-missing
 uv run coverage report --include='src/apizr/capabilities/*' --fail-under=90
 uv run coverage report --include='src/apizr/readiness/*' --fail-under=90

@@ -7,7 +7,7 @@ from pydantic import Field, model_validator
 from apizr.capabilities.types import ValueModel
 from apizr.plugins.local.models import Manifest, Version
 from apizr.plugins.lock.models import Requirements, Target, Wheel
-from apizr.project import PluginDeclaration
+from apizr.workspace.project import PluginDeclaration
 
 
 class Identity(ValueModel):

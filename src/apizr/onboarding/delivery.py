@@ -6,7 +6,6 @@ import stat
 from pathlib import Path
 from typing import Any
 
-from apizr.config_files import directory_fd
 from apizr.delivery_batch import BatchError, BatchRequest, inspect_batch
 from apizr.delivery_batch.models import destination_key
 from apizr.operator_policy import OperatorPolicy, decide
@@ -18,6 +17,7 @@ from apizr.publication_contracts import (
     ObserveRequest,
     PublishRequest,
 )
+from apizr.workspace.files import directory_fd
 
 from .diagnostics import Checks
 

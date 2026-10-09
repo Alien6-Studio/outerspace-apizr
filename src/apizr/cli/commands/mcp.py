@@ -17,7 +17,7 @@ from apizr.plugins.local import PluginError
 from apizr.plugins.local.activation import admitted_extension
 from apizr.plugins.local.models import Installation
 from apizr.plugins.local.store import storage_directory
-from apizr.user_config import plugins_directory
+from apizr.workspace.user import plugins_directory
 
 
 @contextmanager

@@ -19,10 +19,10 @@ from apizr.compiler import prepare_exposure, render_bundle
 from apizr.execution.policy import ExecutionPolicy
 from apizr.exposure import ExposurePolicy, ExposureRefused
 from apizr.operator_policy import AuthorizationDenied
-from apizr.project import load_project
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_interfaces.runtime import load_bundle, validate_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy
+from apizr.workspace.project import load_project
 
 EXAMPLE = Path(__file__).parents[1] / "examples/application-inputs"
 

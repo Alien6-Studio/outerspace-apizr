@@ -8,11 +8,11 @@ from pathlib import Path
 from pydantic import field_validator, model_validator
 
 from apizr.analysis_session import MAX_SESSION_BYTES, Scope, check_scope
-from apizr.config_files import read_regular
 from apizr.delivery_batch import BatchRequest
 from apizr.extension_runtime.protocol import unique_object
 from apizr.operator_policy import AnalysisGrant, OperatorPolicy
 from apizr.publication_contracts import Docker, Model
+from apizr.workspace.files import read_regular
 
 MAX_DELIVERY_REQUEST_BYTES = 524288
 

@@ -24,7 +24,7 @@ from apizr.plugins.local import enable_extension, list_extensions, run_extension
 from apizr.plugins.lock import check_lock
 from apizr.plugins.lock import operations as lock_operations
 from apizr.plugins.sync import sync_plugins
-from apizr.project import load_project
+from apizr.workspace.project import load_project
 
 pytestmark = pytest.mark.timeout(30)
 

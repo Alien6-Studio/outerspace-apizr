@@ -181,6 +181,8 @@ jobs:
         run: uv run --locked ruff format --check .
       - if: needs.scope.outputs.product != 'false'
         run: uv run --locked pyright
+      - name: Enforce package composition and dependency boundaries
+        run: uv run --locked python scripts/check_package_architecture.py
       - run: uv run --locked pre-commit run --all-files
       - uses: ./.github/actions/install-attest
         if: needs.scope.outputs.product != 'false'

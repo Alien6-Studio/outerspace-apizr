@@ -24,7 +24,7 @@ from apizr.plugins.lock import LockError, Result, check_lock, create_lock
 from apizr.plugins.lock.models import Diagnostic
 from apizr.plugins.sync import SyncLimits, SyncResult, sync_plugins
 from apizr.plugins.update import UpdateResult, update_plugin
-from apizr.user_config import plugins_directory
+from apizr.workspace.user import plugins_directory
 
 
 def timeout_ms(value: str) -> int:

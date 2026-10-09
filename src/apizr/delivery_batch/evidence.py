@@ -7,9 +7,9 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from apizr.config_files import read_regular
 from apizr.extension_runtime.protocol import unique_object
 from apizr.plugins.local.store import atomic_write, private_directory
+from apizr.workspace.files import read_regular
 
 from .models import destination_key
 

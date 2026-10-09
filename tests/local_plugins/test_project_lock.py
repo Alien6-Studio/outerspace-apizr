@@ -14,11 +14,11 @@ from analysis_authorization import analysis_policy
 
 from apizr import mcp_cli
 from apizr.cli import main
-from apizr.config_files import read_regular
 from apizr.plugins.local import enable_extension, install_extension
 from apizr.plugins.lock import LockError, check_lock, create_lock, operations
-from apizr.project import load_project
-from apizr.user_config import load_user_config, plugins_directory
+from apizr.workspace.files import read_regular
+from apizr.workspace.project import load_project
+from apizr.workspace.user import load_user_config, plugins_directory
 
 pytestmark = pytest.mark.timeout(30)
 

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Define domain-based package composition with an explicit ownership/debt/facade
+  inventory and blocking pre-commit/CI checks. Group project configuration under
+  `apizr.workspace` and keep inspect parsing outside the CLI composition root.
+
 - Group CLI adapters under `apizr.cli` and core plugin management under
   `apizr.plugins`, preserving historical imports and command behavior. Document
   compiler/execution boundaries and protect them with architecture checks.

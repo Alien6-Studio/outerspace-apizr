@@ -15,10 +15,10 @@ from apizr.exposure.serialization import plan_bytes
 from apizr.graph import analyze_repository
 from apizr.graph.serialization import graph_bytes
 from apizr.operator_policy import load_operator_policy
-from apizr.project import load_project
 from apizr.repository.serialization import catalog_bytes
 from apizr.repository_readiness import RepositoryReadinessPolicy
 from apizr.repository_readiness.serialization import report_bytes
+from apizr.workspace.project import load_project
 
 
 def snapshot(root: Path) -> dict:

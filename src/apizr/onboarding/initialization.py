@@ -6,16 +6,16 @@ import stat
 from pathlib import Path
 
 from apizr.analysis_contracts import LocalTarget
-from apizr.config_files import absolute_path, directory_fd
 from apizr.exposure.policy import Execution, ExposurePolicy
 from apizr.interfaces.serialization import json_bytes
 from apizr.operator_policy import AnalysisGrant, OperatorPolicy
-from apizr.project import ProjectConfig
 from apizr.repository.policy import ScanPolicy
 from apizr.repository_readiness.policy import (
     ExecutionRequirements,
     RepositoryReadinessPolicy,
 )
+from apizr.workspace.files import absolute_path, directory_fd
+from apizr.workspace.project import ProjectConfig
 
 from .models import InitError, InitResult
 

@@ -9,7 +9,7 @@ from pydantic import Field, field_validator
 
 from apizr.capabilities.types import ValueModel
 from apizr.plugins.local.models import Digest, LockedDistribution, Manifest
-from apizr.project import PluginDeclaration
+from apizr.workspace.project import PluginDeclaration
 
 
 class Target(ValueModel):

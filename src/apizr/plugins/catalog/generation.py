@@ -5,11 +5,11 @@ import tempfile
 from importlib.metadata import version
 from pathlib import Path
 
-from apizr.config_files import read_regular
 from apizr.plugins.local import locking
 from apizr.plugins.local.wheel import MAX_WHEEL_BYTES
 from apizr.plugins.lock import LockError, ProjectLock, create_lock
 from apizr.plugins.lock.models import Requirements, Wheel
+from apizr.workspace.files import read_regular
 
 from .models import (
     Artifact,

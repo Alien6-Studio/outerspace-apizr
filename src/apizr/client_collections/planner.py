@@ -5,7 +5,6 @@ from pathlib import Path
 from pydantic import JsonValue
 
 from apizr.capabilities.model import CapabilityDocument, Digest
-from apizr.config_files import directory_fd, read_regular
 from apizr.generators.rest.model import Manifest
 from apizr.generators.rest.planner import plan as retained_rest_plan
 from apizr.generators.rest.schema import openapi
@@ -15,6 +14,7 @@ from apizr.interfaces.schema import json_schema, request_schema
 from apizr.interfaces.serialization import json_bytes
 from apizr.readiness.model import ReadinessReport
 from apizr.repository_interfaces.model import RepositoryInterface, RestManifest
+from apizr.workspace.files import directory_fd, read_regular
 
 from .model import (
     MAX_FILE,

@@ -26,8 +26,8 @@ from apizr.onboarding import (
 from apizr.operator_policy import OperatorPolicy, PluginIdentity, decide_analysis
 from apizr.plugins.local import activation, store
 from apizr.plugins.local.models import Installation, Inventory
-from apizr.project import load_project
 from apizr.repository_readiness.policy import RepositoryReadinessPolicy
+from apizr.workspace.project import load_project
 
 
 def snapshot(root):

@@ -7,7 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 ENTRYPOINTS = {
-    "inspect": ("apizr.cli", "_inspect"),
+    "inspect": ("apizr.cli.commands.inspect", "main"),
     **{
         name: (f"apizr.cli.commands.{name.replace('-', '_')}", "main")
         for name in (

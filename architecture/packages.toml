@@ -1,0 +1,522 @@
+# Normative ownership inventory. See docs/architecture/code-organization.md.
+schema_version = 1
+
+[packages.""]
+kind = "composition"
+responsibility = "Package namespace and transitional public import surface."
+modules = ["__init__.py"]
+
+[packages."_prototypes"]
+kind = "domain"
+responsibility = "Private experiments; no supported public API or CLI contract."
+
+[packages."capabilities"]
+kind = "domain"
+responsibility = "Typed, static Capability IR v1; independent of legacy generation."
+
+[packages."ci"]
+kind = "domain"
+responsibility = "Forge-neutral static CI operations and their portable result contract."
+
+[packages."cli"]
+kind = "composition"
+responsibility = "Compose command adapters and lazily dispatch console/Python entrypoints."
+entrypoints = ["main", "_main"]
+modules = ["__init__.py", "__main__.py", "completion.py", "completion_spec.py"]
+
+[packages."cli/commands"]
+kind = "domain"
+responsibility = "CLI adapters: parse arguments, call core operations, present results."
+
+[packages."client_collections"]
+kind = "domain"
+responsibility = "Deterministic client collections from verified retained REST bundles."
+
+[packages."delivery_batch"]
+kind = "domain"
+responsibility = "Managed multi-destination delivery and explicit resume of an existing build."
+
+[packages."execution"]
+kind = "domain"
+responsibility = "Explicit governed execution of trusted code in fresh local processes."
+
+[packages."exposure"]
+kind = "domain"
+responsibility = "Exposure Plan v1: explicit publication decisions over static evidence."
+
+[packages."extension_runtime"]
+kind = "domain"
+responsibility = "Explicit invocation of trusted extensions installed outside the core."
+
+[packages."extensions"]
+kind = "legacy"
+responsibility = "Historical generation step engine and its adapter registrations. Scope: extensions."
+
+[packages."extensions/core"]
+kind = "legacy"
+responsibility = "Historical generation step engine and its adapter registrations. Scope: extensions/core."
+
+[packages."extensions/plugins"]
+kind = "legacy"
+responsibility = "Historical generation step engine and its adapter registrations. Scope: extensions/plugins."
+
+[packages."generators"]
+kind = "composition"
+responsibility = "Compose static REST and MCP interface generators."
+modules = ["__init__.py"]
+
+[packages."generators/mcp"]
+kind = "domain"
+responsibility = "Static MCP Tools compiler; importing it does not import the MCP SDK."
+
+[packages."generators/rest"]
+kind = "domain"
+responsibility = "Static REST/OpenAPI v1 consumer of Capability IR and Readiness."
+
+[packages."git_source"]
+kind = "domain"
+responsibility = "Static HTTPS/SSH Git input; no plugins or optional dependencies."
+
+[packages."governed"]
+kind = "domain"
+responsibility = "Opt-in transport integration; direct generators retain their original bytes."
+
+[packages."governed_oci"]
+kind = "domain"
+responsibility = "Explicit OCI transport bridge; local-process v1 is unchanged."
+
+[packages."governed_repository"]
+kind = "domain"
+responsibility = "Governed repository bridge, independent from direct and single-source contracts."
+
+[packages."graph"]
+kind = "domain"
+responsibility = "Conservative static relationships over a digest-bound Capability Catalog."
+
+[packages."interfaces"]
+kind = "domain"
+responsibility = "Framework-independent interface contracts shared by generated backends."
+
+[packages."modules"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules."
+
+[packages."modules/code_analyzr"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/code_analyzr."
+
+[packages."modules/code_analyzr/analyzr"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/code_analyzr/analyzr."
+
+[packages."modules/code_analyzr/analyzr/ast_node"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/code_analyzr/analyzr/ast_node."
+
+[packages."modules/dockerizr"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/dockerizr."
+
+[packages."modules/dockerizr/generator"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/dockerizr/generator."
+
+[packages."modules/fast_apizr"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/fast_apizr."
+
+[packages."modules/fast_apizr/generator"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/fast_apizr/generator."
+
+[packages."modules/fast_apizr/generator/analyzr"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/fast_apizr/generator/analyzr."
+
+[packages."modules/notebook_transformr"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/notebook_transformr."
+
+[packages."modules/notebook_transformr/transformr"]
+kind = "legacy"
+responsibility = "Historical notebook/script transformation pipeline. Scope: modules/notebook_transformr/transformr."
+
+[packages."oci"]
+kind = "domain"
+responsibility = "OCI-container execution is independent from transport generation."
+
+[packages."onboarding"]
+kind = "domain"
+responsibility = "Safe local project setup and read-only preparation diagnostics."
+
+[packages."plugins"]
+kind = "composition"
+responsibility = "Compose independent core plugin lifecycle domains without activation."
+modules = ["__init__.py"]
+
+[packages."plugins/catalog"]
+kind = "domain"
+responsibility = "Versioned plugin metadata and explicit preparation for offline project sync."
+
+[packages."plugins/local"]
+kind = "domain"
+responsibility = "Explicit installation of local extensions; no discovery or activation."
+
+[packages."plugins/lock"]
+kind = "domain"
+responsibility = "Explicit, read-only artifact validation and deterministic project locks."
+
+[packages."plugins/sync"]
+kind = "domain"
+responsibility = "Explicit, additive synchronization of portable project plugin locks."
+
+[packages."plugins/update"]
+kind = "domain"
+responsibility = "Explicit locked updates, with optional compare-and-select activation."
+
+[packages."readiness"]
+kind = "domain"
+responsibility = "Separate static readiness policy for Capability IR v1."
+
+[packages."repository"]
+kind = "domain"
+responsibility = "Static repository inventory; no graph, imports or execution of user code."
+
+[packages."repository_execution"]
+kind = "domain"
+responsibility = "Fresh-worker execution for the explicit repository source universe."
+
+[packages."repository_interfaces"]
+kind = "domain"
+responsibility = "Direct repository interfaces consuming explicit Exposure Plans."
+
+[packages."repository_readiness"]
+kind = "domain"
+responsibility = "Static repository exposure/governance evidence; no runtime guarantees."
+
+[packages."repository_views"]
+kind = "domain"
+responsibility = "Pure, bounded navigation of complete canonical repository evidence."
+
+[packages."subprocess_guard"]
+kind = "domain"
+responsibility = "Opt-in Linux OCI subprocess prohibition; existing allow runtimes stay frozen."
+
+[packages."workspace"]
+kind = "domain"
+responsibility = "Explicit project declarations, operator preferences and bounded file access."
+
+# Frozen migration debt: no additional root implementations.
+# These entries are exceptions to the domain rule, not examples for new code.
+[root_debt."analysis_contracts.py"]
+reason = "Pure source identities; acquisition and analysis grant different effects."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."analysis_session.py"]
+reason = "Owned analysis scope passed across MCP exec and worker boundaries, without SDK imports."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."app.py"]
+reason = "Local generation API. Uploaded code is never executed by the generator."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."application.py"]
+reason = "Explicit application inputs, independent of core and plugin environments."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."application_resources.py"]
+reason = "Capture only explicit files after independent repository-analysis admission."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."bounded_json.py"]
+reason = "Finite JSON for admission and extensions, without importing execution workers."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."capability_notebooks.py"]
+reason = "Notebook adapter outside the framework-independent capability core."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."compiler.py"]
+reason = "Typed repository orchestration shared by Python callers and the CLI."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."configuration.py"]
+reason = "Validated configuration shared by the CLI and HTTP interfaces."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."contract_lowering.py"]
+reason = "Lower retained annotation expressions; never inspect original project source."
+migration = "Keep resource embedding and generated runtime parity when grouping contracts."
+
+[root_debt."contract_types.py"]
+reason = "Frozen JSON value contracts shared by static evidence and all interfaces."
+migration = "Keep resource embedding and generated runtime parity when grouping contracts."
+
+[root_debt."delivery.py"]
+reason = "Portable, acyclic delivery identities; never operator authority or credentials."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."delivery_results.py"]
+reason = "Shared immutable publication results; no plugin implementation dependencies."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."distribution_identity.py"]
+reason = "Shared pure distribution identities used by plugin locks and delivery plans."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."http.py"]
+reason = "Shared upload validation for the local generation service."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."inspection.py"]
+reason = "Single-source inspection envelope. Presentation is distinct from canonical IR."
+migration = "Keep resource embedding and generated runtime parity when grouping contracts."
+
+[root_debt."legacy_delivery.py"]
+reason = "Explicit resources and local image builds for the notebook/script pipeline."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."main.py"]
+reason = "Command-line entry point for the complete conversion pipeline."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."mcp_session.py"]
+reason = "SDK-independent, operator-captured MCP authority; no operational client input."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."operator_policy.py"]
+reason = "Explicit operator grants for Git, build, signing and publication; decisions perform no I/O."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."optional.py"]
+reason = "Actionable optional-workflow requirements without automatic installation."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."output.py"]
+reason = "Containment and exclusive creation for generated output files."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."prompt.py"]
+reason = "Historical interactive generation prompts."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."publication_contracts.py"]
+reason = "Shared build, signing and publication input contracts: validation only, no tools or file reads."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."runtime.py"]
+reason = "Supported interpreter/target policy; generation never transpiles user code."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+[root_debt."source_access.py"]
+reason = "Admission and descriptor anchoring for filesystem-backed repository analysis."
+migration = "Group with the owning domain in a separate compatibility-preserving change."
+
+# Exact historical aliases: their entire AST must remain a forwarding facade.
+[compatibility."ci_cli.py"]
+target = "apizr.cli.commands.ci"
+kind = "module"
+
+[compatibility."clients_cli.py"]
+target = "apizr.cli.commands.clients"
+kind = "module"
+
+[compatibility."completion.py"]
+target = "apizr.cli.completion"
+kind = "module"
+
+[compatibility."completion_spec.py"]
+target = "apizr.cli.completion_spec"
+kind = "module"
+
+[compatibility."config_files.py"]
+target = "apizr.workspace.files"
+kind = "module"
+
+[compatibility."delivery_cli.py"]
+target = "apizr.cli.commands.delivery"
+kind = "module"
+
+[compatibility."execute_cli.py"]
+target = "apizr.cli.commands.execute"
+kind = "module"
+
+[compatibility."exposure_cli.py"]
+target = "apizr.cli.commands.exposure"
+kind = "module"
+
+[compatibility."generate_cli.py"]
+target = "apizr.cli.commands.generate"
+kind = "module"
+
+[compatibility."git_source_cli.py"]
+target = "apizr.cli.commands.git_source"
+kind = "module"
+
+[compatibility."graph_cli.py"]
+target = "apizr.cli.commands.graph"
+kind = "module"
+
+[compatibility."local_plugins/__init__.py"]
+target = "apizr.plugins.local"
+kind = "package"
+
+[compatibility."local_plugins/_download_worker.py"]
+target = "apizr.plugins.local._download_worker"
+kind = "module"
+
+[compatibility."local_plugins/activation.py"]
+target = "apizr.plugins.local.activation"
+kind = "module"
+
+[compatibility."local_plugins/backend.py"]
+target = "apizr.plugins.local.backend"
+kind = "module"
+
+[compatibility."local_plugins/control.py"]
+target = "apizr.plugins.local.control"
+kind = "module"
+
+[compatibility."local_plugins/download.py"]
+target = "apizr.plugins.local.download"
+kind = "module"
+
+[compatibility."local_plugins/locking.py"]
+target = "apizr.plugins.local.locking"
+kind = "module"
+
+[compatibility."local_plugins/models.py"]
+target = "apizr.plugins.local.models"
+kind = "module"
+
+[compatibility."local_plugins/operations.py"]
+target = "apizr.plugins.local.operations"
+kind = "module"
+
+[compatibility."local_plugins/retirement.py"]
+target = "apizr.plugins.local.retirement"
+kind = "module"
+
+[compatibility."local_plugins/store.py"]
+target = "apizr.plugins.local.store"
+kind = "module"
+
+[compatibility."local_plugins/uninstall.py"]
+target = "apizr.plugins.local.uninstall"
+kind = "module"
+
+[compatibility."local_plugins/usage.py"]
+target = "apizr.plugins.local.usage"
+kind = "module"
+
+[compatibility."local_plugins/wheel.py"]
+target = "apizr.plugins.local.wheel"
+kind = "module"
+
+[compatibility."mcp_cli.py"]
+target = "apizr.cli.commands.mcp"
+kind = "module"
+
+[compatibility."onboarding_cli.py"]
+target = "apizr.cli.commands.onboarding"
+kind = "module"
+
+[compatibility."plugin_catalog/__init__.py"]
+target = "apizr.plugins.catalog"
+kind = "package"
+
+[compatibility."plugin_catalog/generation.py"]
+target = "apizr.plugins.catalog.generation"
+kind = "module"
+
+[compatibility."plugin_catalog/models.py"]
+target = "apizr.plugins.catalog.models"
+kind = "module"
+
+[compatibility."plugin_catalog/operations.py"]
+target = "apizr.plugins.catalog.operations"
+kind = "module"
+
+[compatibility."plugin_lock/__init__.py"]
+target = "apizr.plugins.lock"
+kind = "package"
+
+[compatibility."plugin_lock/models.py"]
+target = "apizr.plugins.lock.models"
+kind = "module"
+
+[compatibility."plugin_lock/operations.py"]
+target = "apizr.plugins.lock.operations"
+kind = "module"
+
+[compatibility."plugin_lock/tags.py"]
+target = "apizr.plugins.lock.tags"
+kind = "module"
+
+[compatibility."plugin_sync/__init__.py"]
+target = "apizr.plugins.sync"
+kind = "package"
+
+[compatibility."plugin_sync/models.py"]
+target = "apizr.plugins.sync.models"
+kind = "module"
+
+[compatibility."plugin_sync/operations.py"]
+target = "apizr.plugins.sync.operations"
+kind = "module"
+
+[compatibility."plugin_sync/preparation.py"]
+target = "apizr.plugins.sync.preparation"
+kind = "module"
+
+[compatibility."plugin_sync/probe.py"]
+target = "apizr.plugins.sync.probe"
+kind = "module"
+
+[compatibility."plugin_update/__init__.py"]
+target = "apizr.plugins.update"
+kind = "package"
+
+[compatibility."plugin_update/models.py"]
+target = "apizr.plugins.update.models"
+kind = "module"
+
+[compatibility."plugin_update/operations.py"]
+target = "apizr.plugins.update.operations"
+kind = "module"
+
+[compatibility."plugins_cli.py"]
+target = "apizr.cli.commands.plugins"
+kind = "module"
+
+[compatibility."project.py"]
+target = "apizr.workspace.project"
+kind = "module"
+
+[compatibility."readiness_cli.py"]
+target = "apizr.cli.commands.readiness"
+kind = "module"
+
+[compatibility."repository_cli.py"]
+target = "apizr.cli.commands.repository"
+kind = "module"
+
+[compatibility."repository_readiness_cli.py"]
+target = "apizr.cli.commands.repository_readiness"
+kind = "module"
+
+[compatibility."scan_cli.py"]
+target = "apizr.cli.commands.scan"
+kind = "module"
+
+[compatibility."user_config.py"]
+target = "apizr.workspace.user"
+kind = "module"
+
+# Allowed sibling imports inside core plugin management.
+[plugin_dependencies]
+local = []
+lock = ["local"]
+catalog = ["local", "lock"]
+sync = ["local", "lock"]
+update = ["local", "lock", "sync"]

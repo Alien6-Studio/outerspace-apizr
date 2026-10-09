@@ -23,7 +23,7 @@ from apizr.ci import execute
 from apizr.ci.runner import analysis_authority
 from apizr.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
-from apizr.project import load_project
+from apizr.workspace.project import load_project
 from apizr.repository_readiness import RepositoryReadinessPolicy, report_bytes
 assert version("outerspace-apizr") == "0.4.4"
 assert [r for r in requires("outerspace-apizr") if "extra ==" not in r] == ["pydantic<3,>=2.12"]

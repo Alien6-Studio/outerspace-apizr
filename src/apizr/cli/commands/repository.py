@@ -101,7 +101,7 @@ def apply_project(
     """
     if root_required and args.root is None and args.project is None:
         parser.error("the following arguments are required: root")
-    from apizr.project import load_project
+    from apizr.workspace.project import load_project
 
     config = load_project(args.project) if args.project is not None else None
     if exposure:
