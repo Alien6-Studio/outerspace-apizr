@@ -31,7 +31,9 @@ def main() -> None:
         )
     for name, data in sorted(report["files"].items()):
         if (
-            name.startswith("src/apizr/plugins/preparation/")
+            name.startswith(
+                ("src/apizr/plugins/preparation/", "src/apizr/experiments/")
+            )
             and data["summary"]["num_statements"]
         ):
             summary = data["summary"]
@@ -43,7 +45,9 @@ def main() -> None:
             ("line", "covered_lines", "num_statements"),
             ("branch", "covered_branches", "num_branches"),
         ):
-            percentage = 100 * summary[covered] / summary[total]
+            percentage = (
+                100 * summary[covered] / summary[total] if summary[total] else 100
+            )
             print(f"{scope} {label} coverage: {percentage:.2f}%")
             if percentage < 95:
                 raise ValueError(f"{scope} {label} coverage is below 95%")

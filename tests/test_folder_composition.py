@@ -24,6 +24,20 @@ def test_repository_satisfies_declared_composition():
 @pytest.mark.parametrize(
     "path,addition,expected",
     [
+        ("experiments/model.py", "from ..cli import main\n", "non-primitive"),
+        (
+            "experiments/model.py",
+            "from apizr.exposure import ExposurePlan\n",
+            "non-primitive",
+        ),
+        ("experiments/model.py", "import mcp\n", "non-primitive"),
+        ("experiments/model.py", "import fastapi\n", "non-primitive"),
+        ("experiments/model.py", "import apizr_attest\n", "non-primitive"),
+        ("experiments/model.py", "import apizr_oci\n", "non-primitive"),
+        ("experiments/model.py", "import mlflow\n", "non-primitive"),
+        ("experiments/model.py", "import wandb\n", "non-primitive"),
+        ("experiments/model.py", "import dvc\n", "non-primitive"),
+        ("experiments/model.py", "import external_governance_sdk\n", "non-primitive"),
         ("another_service.py", "def run(): pass\n", "composition namespace"),
         (
             "new_domain/__init__.py",

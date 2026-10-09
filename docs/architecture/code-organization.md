@@ -85,6 +85,7 @@ src/apizr/
 ├── readiness/                conservative source-local assessment
 ├── repository_readiness/     repository evidence assessment
 ├── repository_views/         pure bounded projections of complete evidence
+├── experiments/              intended experiment controls and observed-run evidence
 ├── exposure/                 explicit selection and required-evidence planning
 ├── interfaces/               shared interface contracts and runtime validation
 ├── repository_interfaces/    retained multi-source bundles
@@ -204,6 +205,25 @@ Execution package variants represent different contracts:
 Keep these identities explicit when changing workers, policies or generated
 bundles. Their similar file names do not make their source authority, protocol
 or deployment semantics interchangeable.
+
+## Experiment evidence
+
+`experiments` is a domain leaf with an independent evidence lifecycle, separate
+from shared transport/build/publication primitives in `contracts`.
+`model.py` owns strict Plan/Run values and evidence semantics; `values.py` owns
+bounded, deeply immutable recursive JSON; `serialization.py` owns canonical
+bytes, content digests and explicit Run-to-Plan validation. `__init__.py` exports
+this public API. There is no historical experiment facade.
+
+An Experiment Plan describes intended experiment inputs and controls. An Experiment Run records observed execution evidence. Neither proves scientific causality or reproducibility.
+
+The dependency gate permits only experiment siblings, the existing `ValueModel`
+and logical-module primitive, distribution names/digests, canonical JSON,
+standard-library modules and the existing Pydantic typing runtime. CLI, execution,
+exposure, optional adapters and data-science SDKs are outside this boundary.
+No inspector, runner or store is part of these contracts. See
+[Experiment evidence v1](experiment-evidence-v1.md) for origins, identities and
+producer obligations.
 
 ## Canonical imports and compatibility
 

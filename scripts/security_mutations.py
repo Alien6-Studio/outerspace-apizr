@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "experiment-plan-binding",
+        "src/apizr/experiments/serialization.py",
+        "    if run.plan_digest != plan_digest(plan):",
+        "    if False:",
+        "tests/experiments/test_identity.py::test_binding_rejects_wrong_plan_digest",
+    ),
+    Mutation(
         "preparation-admitted-hash",
         "src/apizr/plugins/preparation/selection.py",
         "    if selected.sha256 not in pin.hashes:",

@@ -110,6 +110,19 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
             env=env,
         )
         results["governance_evidence"] = "passed"
+        run(
+            python,
+            "-I",
+            "-B",
+            ROOT / "scripts/experiment_contract_proof.py",
+            "--fixtures",
+            ROOT / "tests/fixtures/experiments/v1",
+            "--output",
+            output / "experiment-contracts.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_contracts"] = "passed"
         results["measurements"]["core"] = {
             "wheel_bytes": size(target / "base"),
             "installed_bytes": size(root / "pip"),

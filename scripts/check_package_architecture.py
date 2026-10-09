@@ -3,6 +3,7 @@
 import argparse
 import ast
 import re
+import sys
 import tomllib
 from pathlib import Path
 
@@ -160,6 +161,22 @@ def check(source: Path, manifest: Path) -> list[str]:
                             f"{path}: composition initializer defines {node.name}"
                         )
         for imported in sorted(names):
+            if path.startswith("experiments/"):
+                primitives = (
+                    "apizr.experiments",
+                    "apizr.capabilities.types",
+                    "apizr.contracts.distribution",
+                    "apizr.contracts.json",
+                )
+                root = imported.split(".")[0]
+                if not any(
+                    within(imported, allowed) for allowed in primitives
+                ) and root not in (
+                    sys.stdlib_module_names | {"pydantic", "typing_extensions"}
+                ):
+                    errors.append(
+                        f"{path}: experiment contracts depend on non-primitive {imported}"
+                    )
             embedded = config.get("embedded_imports", {}).get(path, [])
             if any(within(imported, module_name(old)) for old in aliases) and not any(
                 within(imported, allowed) for allowed in embedded

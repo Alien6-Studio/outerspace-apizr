@@ -40,6 +40,10 @@ responsibility = "Managed multi-destination delivery and explicit resume of an e
 kind = "domain"
 responsibility = "Explicit governed execution of trusted code in fresh local processes."
 
+[packages."experiments"]
+kind = "domain"
+responsibility = "Content-addressed experiment intent and observed-run evidence contracts; no execution, tracking server or scientific inference."
+
 [packages."exposure"]
 kind = "domain"
 responsibility = "Exposure Plan v1: explicit publication decisions over static evidence."

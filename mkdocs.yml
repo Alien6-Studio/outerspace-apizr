@@ -141,6 +141,7 @@ nav:
       - Capability Compiler overview: architecture/overview.md
       - Repository Scanner and Catalog: architecture/repository-scanner-v1.md
       - Repository Readiness: architecture/repository-readiness-v1.md
+      - Experiment evidence: architecture/experiment-evidence-v1.md
       - Exposure Plan: architecture/exposure-plan-v1.md
       - Repository Bundle: architecture/repository-bundle-v1.md
       - Governed repository execution: architecture/governed-repository-runtime.md

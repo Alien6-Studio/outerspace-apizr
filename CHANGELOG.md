@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add independent content-addressed Experiment Plan and Experiment Run v1 contracts
+  to distinguish intended experiment inputs and controls from observed run evidence
+  (#260).
+
 - Add verified target-aware plugin preparation with compatible-wheel selection,
   normalized artifact-bound locks and isolated temporary profiles. Keep installation
   and activation explicit; clarify shared artifact verification and preparation
