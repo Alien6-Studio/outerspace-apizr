@@ -28,6 +28,34 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "preparation-admitted-hash",
+        "src/apizr/plugins/preparation/selection.py",
+        "    if selected.sha256 not in pin.hashes:",
+        "    if False:",
+        "tests/local_plugins/test_preparation_selection.py::test_best_wheel_with_unadmitted_hash_does_not_fallback_to_weaker_match",
+    ),
+    Mutation(
+        "preparation-retained-bytes",
+        "src/apizr/plugins/preparation/selection.py",
+        "        if digest not in pin.hashes or digest != selected.sha256:",
+        "        if False:",
+        "tests/local_plugins/test_preparation_selection.py::test_real_download_checks_retained_bytes_and_admitted_hashes[post_transfer_tamper]",
+    ),
+    Mutation(
+        "preparation-ambiguous-selection",
+        "src/apizr/plugins/preparation/selection.py",
+        "    if len(compatible) != 1:",
+        "    if False:",
+        "tests/local_plugins/test_preparation.py::test_refusal_never_publishes_partial_output[ambiguous-wheel_selection_ambiguous]",
+    ),
+    Mutation(
+        "preparation-offline-closure",
+        "src/apizr/plugins/preparation/operations.py",
+        "                if actual != {",
+        "                if False and actual != {",
+        "tests/local_plugins/test_preparation_boundaries.py::test_failed_transaction_has_no_partial_publication[closure_changed-resolver_lock_mismatch]",
+    ),
+    Mutation(
         "mcp-view-repository-identity",
         "plugins/mcp/src/apizr_mcp/worker.py",
         "and digest.value != job.arguments.expected_repository_digest",

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add verified target-aware plugin preparation with compatible-wheel selection,
+  normalized artifact-bound locks and isolated temporary profiles. Keep installation
+  and activation explicit; clarify shared artifact verification and preparation
+  ownership while preserving historical imports (#256).
+
 - Define domain-based package composition with an explicit ownership/debt/facade
   inventory and blocking pre-commit/CI checks. Group project configuration under
   `apizr.workspace` and keep inspect parsing outside the CLI composition root.

@@ -29,6 +29,15 @@ def main() -> None:
         scopes.append(
             (function, report["files"][name]["functions"][function]["summary"])
         )
+    for name, data in sorted(report["files"].items()):
+        if (
+            name.startswith("src/apizr/plugins/preparation/")
+            and data["summary"]["num_statements"]
+        ):
+            summary = data["summary"]
+            if summary["covered_lines"] != summary["num_statements"]:
+                raise ValueError(f"{name} line coverage is below 100%")
+            scopes.append((name, summary))
     for scope, summary in scopes:
         for label, covered, total in (
             ("line", "covered_lines", "num_statements"),

@@ -79,6 +79,16 @@ def test_repository_satisfies_declared_composition():
             "import apizr_mcp\n",
             "optional adapter",
         ),
+        (
+            "plugins/local/activation.py",
+            "from apizr.plugins.preparation.operations import prepare_plugin\n",
+            "local -> preparation",
+        ),
+        (
+            "plugins/preparation/operations.py",
+            "from apizr.local_plugins import install_extension\n",
+            "imports compatibility path",
+        ),
     ],
 )
 def test_architecture_rejects_misplaced_code(tmp_path, path, addition, expected):

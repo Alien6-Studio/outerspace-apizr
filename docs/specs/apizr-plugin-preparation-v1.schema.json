@@ -1,0 +1,329 @@
+{
+  "$defs": {
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+          "title": "Version",
+          "type": "string"
+        },
+        "filename": {
+          "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.+!-]{0,240}\\.whl$",
+          "title": "Filename",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "exclusiveMinimum": 0,
+          "maximum": 67108864,
+          "title": "Size",
+          "type": "integer"
+        },
+        "admitted_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 512,
+          "minItems": 1,
+          "title": "Admitted Hashes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "filename",
+        "sha256",
+        "size",
+        "admitted_hashes"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "pattern": "^[a-z][a-z0-9_]{0,79}$",
+          "title": "Reason",
+          "type": "string"
+        },
+        "distribution": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distribution"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Target"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "suggested_operation": {
+          "const": "prepare",
+          "default": "prepare",
+          "title": "Suggested Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "Manifest": {
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "apizr.extension-manifest/v1",
+          "title": "Schema",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+          "title": "Version",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "protocol": {
+          "const": "apizr.extension/v1",
+          "title": "Protocol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "name",
+        "version",
+        "module",
+        "protocol"
+      ],
+      "title": "Manifest",
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "implementation": {
+          "maxLength": 64,
+          "title": "Implementation",
+          "type": "string"
+        },
+        "python": {
+          "pattern": "^3\\.[0-9]+\\.[0-9]+$",
+          "title": "Python",
+          "type": "string"
+        },
+        "platform": {
+          "maxLength": 128,
+          "title": "Platform",
+          "type": "string"
+        },
+        "machine": {
+          "maxLength": 64,
+          "title": "Machine",
+          "type": "string"
+        },
+        "abi": {
+          "maxLength": 128,
+          "title": "Abi",
+          "type": "string"
+        }
+      },
+      "required": [
+        "implementation",
+        "python",
+        "platform",
+        "machine",
+        "abi"
+      ],
+      "title": "Target",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.plugin-preparation/v1",
+      "default": "apizr.plugin-preparation/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "prepared",
+        "refused",
+        "interrupted"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "target": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Target"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "plugin": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Manifest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "maxItems": 128,
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "requirements": {
+      "anyOf": [
+        {
+          "const": "requirements.lock",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Requirements"
+    },
+    "wheelhouse": {
+      "anyOf": [
+        {
+          "const": "wheelhouse",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Wheelhouse"
+    },
+    "profile": {
+      "anyOf": [
+        {
+          "const": "profile",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Profile"
+    },
+    "resolver": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Resolver"
+    },
+    "resolver_platform": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Resolver Platform"
+    },
+    "diagnostics": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Diagnostic"
+      },
+      "maxItems": 16,
+      "title": "Diagnostics",
+      "type": "array"
+    },
+    "installation": {
+      "const": "not_performed",
+      "default": "not_performed",
+      "title": "Installation",
+      "type": "string"
+    },
+    "activation": {
+      "const": "not_performed",
+      "default": "not_performed",
+      "title": "Activation",
+      "type": "string"
+    }
+  },
+  "required": [
+    "state"
+  ],
+  "title": "PreparationResult",
+  "type": "object"
+}

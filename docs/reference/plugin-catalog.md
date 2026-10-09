@@ -13,6 +13,10 @@ versions; it contains no scripts, secrets, activation or execution permissions.
 
 <span id="obtain-a-development-catalog"></span>
 
+For explicit target-aware acquisition or multi-hash normalization, use
+[`plugins prepare`](plugin-preparation.md). Catalog resolution remains offline
+and consumes artifacts that are already present.
+
 ## Obtain a verified catalog
 
 Use the catalog supplied with the [installation workspace](../contributing/verification.md#prepare-a-verified-installation-workspace)

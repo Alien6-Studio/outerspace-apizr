@@ -302,14 +302,28 @@ TOML parser, tomlkit **0.15.1**. The reviewed closure now contains six universal
 wheels: Hatchling, packaging, pathspec, pluggy, tomlkit and trove-classifiers.
 The exact source notices, dependency metadata and wheel hashes are retained;
 tomlkit's parser and separate toml-test fixture both retain their MIT notices.
-No build tool is added to the application runtime or an install extra. The
+These updates add no build tool to the application runtime or an install extra. The
 offline build and Formula proofs also assert that tomlkit is absent from the
 installed runtime.
 
-The active build-input manifest is
+The dependency-maintenance build-input manifest was
 `13c81fb17da3238ec4e04d238062847bf86c4f43b30fc2c0c1156798594aeb6b`.
 The full lockfile identity includes the reviewed FastAPI 0.142.2, MCP SDK/types
-2.3.0, Hypothesis 6.168.3 and Ruff 0.16.10 updates. The current qualification
-policy and renderer bind this manifest. Historical release, physical-host and
+2.3.0, Hypothesis 6.168.3 and Ruff 0.16.10 updates. The qualification policy and renderer bound this manifest before the
+preparation metadata change below. Historical release, physical-host and
 public-tap receipts continue to describe their original bytes; they are not
 relabeled. These checks prepare development candidates and publish nothing.
+
+## 0.4.5 plugin preparation metadata
+
+The active build-input manifest is
+`74fb506a5cd43b10062f0a3dc1b77dc7245e74d07b51c0578f964f13c7d8ab64`. Adding the optional `[preparation]` extra changes the full lockfile hash.
+The manifest differs from the dependency-maintenance identity **only in
+`lock_sha256`**: all six build wheels, URLs, hashes, roots and the build-input
+policy are identical. The qualification policy and renderer bind this new
+manifest; all identity checks remain in force. Historical physical-host and
+public-tap receipts retain their original identities.
+
+The optional preparation environment uses PyPA `packaging` for runtime wheel-tag
+selection. Homebrew's minimal application runtime remains Pydantic-only, and its
+isolated build tools still do not enter that environment.

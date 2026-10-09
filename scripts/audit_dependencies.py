@@ -9,6 +9,7 @@ from pathlib import Path
 
 SCOPES = {
     "runtime": ["--no-default-groups"],
+    "runtime-preparation": ["--no-default-groups", "--extra", "preparation"],
     "runtime-notebook": ["--no-default-groups", "--extra", "notebook"],
     "runtime-http": ["--no-default-groups", "--extra", "http"],
     "runtime-mcp": ["--no-default-groups", "--extra", "mcp"],

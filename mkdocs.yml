@@ -121,6 +121,7 @@ nav:
           - Configure a project: getting-started/user-guide/project.md
           - Declarations and plugin locks: reference/project-plugin-locks.md
       - Plugins:
+          - Prepare a temporary plugin profile: reference/plugin-preparation.md
           - Choose a catalog profile: reference/plugin-catalog.md
           - Install, run, update and uninstall: reference/local-extensions.md
           - Apizr analysis MCP server: reference/apizr-mcp-server.md

@@ -429,6 +429,7 @@ lock = ["artifacts", "local"]
 catalog = ["artifacts", "lock"]
 sync = ["artifacts", "local", "lock"]
 update = ["artifacts", "local", "lock", "sync"]
+preparation = ["artifacts", "lock"]
 
 [compatibility."analysis_contracts.py"]
 target = "apizr.contracts.analysis"
@@ -552,6 +553,10 @@ kind = "module"
 [packages."plugins/artifacts"]
 kind = "domain"
 responsibility = "Plugin manifest identity, bounded verified wheel transfer, wheel validation and strict admitted requirements; no installation, activation or invocation."
+
+[packages."plugins/preparation"]
+kind = "domain"
+responsibility = "Explicit target-aware dependency resolution, compatible-wheel selection, admitted-hash verification and atomic prepared profile publication; no installation or activation."
 
 [compatibility."plugins/local/wheel.py"]
 target = "apizr.plugins.artifacts.wheel"

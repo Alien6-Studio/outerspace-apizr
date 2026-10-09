@@ -61,6 +61,7 @@ src/apizr/
 │   └── completion_spec.py     captured CLI grammar
 ├── plugins/
 │   ├── artifacts/             manifest identity, wheels and admitted requirements
+│   ├── preparation/           resolve a native target, retain wheels, normalize hashes
 │   ├── local/                 install, activate, invoke and uninstall
 │   ├── lock/                  portable locks and artifact validation
 │   ├── catalog/               explicit metadata and profile resolution
@@ -129,7 +130,9 @@ The allowed plugin sibling graph is acyclic and explicit. `artifacts` imports no
 plugin sibling. Local installation consumes verified artifact contracts. Portable
 locks and catalogs reuse those same verifiers; the optional installed-state check
 in `lock` also reads `local` records. Sync consumes locks and local installation;
-update consumes sync, locks and local installation. Reverse dependencies are
+update consumes sync, locks and local installation. Preparation consumes artifact
+verification and the existing lock target contract; it does not depend on the
+local store. Its optional PyPA extra supplies ordered native wheel tags. Reverse dependencies are
 prohibited.
 
 The canonical ownership map is:
@@ -141,6 +144,8 @@ The canonical ownership map is:
 | Bounded verified HTTPS wheel transfer | `plugins/artifacts/_download_worker.py`, supervised by its caller |
 | Bounded wheel bytes, digests and metadata | `plugins/artifacts/wheel.py` |
 | Strict single-hash requirements, retained wheel snapshots and distribution metadata verification | `plugins/artifacts/requirements.py` |
+| Native target resolution, multi-hash evidence, compatible wheel selection and atomic prepared profiles | `plugins/preparation` |
+| Preparation CLI arguments and outcome presentation | `cli/commands/plugin_preparation.py` |
 | Portable project locks and target compatibility | `plugins/lock` |
 | Versioned catalog metadata and offline profile export | `plugins/catalog` |
 | Installation, local store, explicit activation, invocation and uninstall | `plugins/local` |
@@ -159,11 +164,16 @@ one SHA-256 per exact distribution pin.
 The plugin lifecycle follows these dependencies:
 
 ```text
-CLI adapters → catalog / lock / sync / update → local installed lifecycle
-                         ↓                               ↓
-                    artifact verification ←──────────────┘
-                         ↓
-               distribution and extension contracts
+CLI → preparation → artifacts + lock target contract
+CLI → catalog     → artifacts + lock
+CLI → local       → artifacts
+CLI → lock        → artifacts + local (optional installed-state check)
+CLI → sync        → artifacts + lock + local
+CLI → update      → artifacts + lock + local + sync
+
+requested plugin → preparation → retained wheelhouse + normalized lock
+                                 ↓
+                     local installation → explicit activation → invocation
 ```
 
 The optional `apizr_mcp`, `apizr_oci` and `apizr_attest` packages consume core APIs.

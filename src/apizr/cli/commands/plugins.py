@@ -26,6 +26,8 @@ from apizr.plugins.update import UpdateResult, update_plugin
 from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.workspace.user import plugins_directory
 
+from . import plugin_preparation
+
 
 def timeout_ms(value: str) -> int:
     try:
@@ -39,6 +41,11 @@ def timeout_ms(value: str) -> int:
 def main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(prog="apizr plugins")
     commands = parser.add_subparsers(dest="command", required=True)
+    prepare = commands.add_parser(
+        "prepare",
+        help="Prepare verified wheels and an isolated profile for an explicit target",
+    )
+    plugin_preparation.add_arguments(prepare, timeout_ms)
     catalog = commands.add_parser(
         "catalog", help="Inspect plugin metadata and prepare offline locks"
     )
@@ -188,6 +195,8 @@ def main(argv: Sequence[str]) -> int:
             help="Explicit user storage directory (also for disposable tests)",
         )
     args = parser.parse_args(argv)
+    if args.command == "prepare":
+        return plugin_preparation.run(args)
     if args.command == "catalog":
         return _catalog(args)
     try:
@@ -319,6 +328,8 @@ def main(argv: Sequence[str]) -> int:
         print(f"apizr plugins: {error}", file=sys.stderr)
         return 130
     except (PluginError, ExtensionError) as error:
+        if args.command == "install" and str(error) == "invalid_requirements_lock":
+            plugin_preparation.explain_installer_lock(args.requirements)
         if args.command == "uninstall" and args.json:
             print(
                 UninstallResult(

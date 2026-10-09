@@ -27,7 +27,10 @@ def main_script():
     root = Path(sys.argv[1])
     core = root / "core"
     before = snapshot(core)
-    active = (root / "plugins/activations.json").read_bytes()
+    active = (
+        Path(json.loads((root / "installed.json").read_text())["store"])
+        / "activations.json"
+    ).read_bytes()
     house = root / "wheels"
     path = root / "catalog/catalogue.json"
     catalog = load_catalog(path)
@@ -87,7 +90,11 @@ def main_script():
     )
     assert (
         snapshot(core) == before
-        and (root / "plugins/activations.json").read_bytes() == active
+        and (
+            Path(json.loads((root / "installed.json").read_text())["store"])
+            / "activations.json"
+        ).read_bytes()
+        == active
     )
     # This file is evidence only. Installation does not qualify business operations;
     # the existing real MCP and Docker/Attest proofs exercise those separately.

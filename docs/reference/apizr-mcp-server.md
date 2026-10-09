@@ -30,70 +30,12 @@ export work="$PWD"
 mkdir -p project/src project/policies
 ```
 
-<details markdown="1">
-<summary>Advanced: build and prepare wheels from a source checkout</summary>
+For a temporary isolated profile, use the [verified preparation workflow](plugin-preparation.md).
+It selects compatible wheels and normalizes multi-hash resolver locks without a
+Python normalization script. Preparation installs nothing; installation and
+activation remain explicit. Contributors use the same workflow with a local
+wheelhouse containing core and plugin wheels from the same recorded commit.
 
-Use macOS or Linux, Python 3.11–3.14 and uv. Build the core and plugin from the
-**same recorded commit**. Preparation below can download build tools and locked
-dependencies. Installation by Apizr uses only the reviewed local wheelhouse.
-The SDK and a copy of the compiler belong to the plugin's separate environment;
-the minimal core receives neither MCP nor REST dependencies.
-
-For contributor verification builds of `0.4.4`, use the source checkout:
-
-```sh
-work=$(mktemp -d)
-work=$(cd "$work" && pwd -P)
-git rev-parse HEAD > "$work/source-commit.txt"
-uv build --wheel --out-dir "$work/wheels"
-uv build --wheel plugins/mcp --out-dir "$work/wheels"
-uv export --locked --no-dev --extra mcp --no-emit-project \
-  --output-file "$work/dependencies.txt"
-cp -R examples/project-config "$work/project"
-cd "$work"
-uv venv --seed --no-python-downloads --python python3 prepare
-prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
-  -r dependencies.txt
-uv venv --no-python-downloads --python python3 core
-uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.4-py3-none-any.whl
-```
-
-Record one exact version and SHA-256 per distribution, including the plugin,
-core and all transitive dependencies. The export uses the repository's reviewed
-lock; the final lock describes the actual wheels for this Python/platform.
-Hashes establish integrity, not trust in their authors.
-
-```sh
-prepare/bin/python - <<'PY'
-import hashlib
-import zipfile
-from email.parser import BytesParser
-from pathlib import Path
-
-lines = []
-for wheel in sorted(Path("wheels").glob("*.whl")):
-    with zipfile.ZipFile(wheel) as archive:
-        name = next(n for n in archive.namelist() if n.endswith(".dist-info/METADATA"))
-        metadata = BytesParser().parsebytes(archive.read(name))
-    digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
-    lines.append(f"{metadata['Name']}=={metadata['Version']} --hash=sha256:{digest}\n")
-Path("plugin.lock").write_text("".join(lines))
-PY
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.4-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.4-py3-none-any.whl \
-  --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse wheels \
-  --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.4 --plugins-dir "$work/plugins"
-```
-
-Installation alone leaves the plugin inactive. The existing [locked installation
-rules](local-extensions.md) apply. No installer runs at server
-startup. A missing, inactive, inconsistent or missing-interpreter installation
-is refused without repair.
-
-
-</details>
 
 ## Choose one local project
 

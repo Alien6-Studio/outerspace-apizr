@@ -1448,6 +1448,9 @@ notebook = [
     { name = "ipython" },
     { name = "nbconvert" },
 ]
+preparation = [
+    { name = "packaging" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -1498,6 +1501,7 @@ requires-dist = [
     { name = "nbconvert", marker = "extra == 'legacy'", specifier = ">=7.17.1,<8" },
     { name = "nbconvert", marker = "extra == 'notebook'", specifier = ">=7.17.1,<8" },
     { name = "packaging", marker = "extra == 'legacy'", specifier = ">=24,<27" },
+    { name = "packaging", marker = "extra == 'preparation'", specifier = ">=26.3,<27" },
     { name = "pydantic", specifier = ">=2.12,<3" },
     { name = "python-multipart", marker = "extra == 'http'", specifier = ">=0.0.31,<1" },
     { name = "python-multipart", marker = "extra == 'legacy'", specifier = ">=0.0.31,<1" },
@@ -1511,7 +1515,7 @@ requires-dist = [
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'legacy'", specifier = ">=0.30,<1" },
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'mcp'", specifier = ">=0.30,<1" },
 ]
-provides-extras = ["clients", "notebook", "http", "mcp", "legacy"]
+provides-extras = ["preparation", "clients", "notebook", "http", "mcp", "legacy"]
 
 [package.metadata.requires-dev]
 dev = [
