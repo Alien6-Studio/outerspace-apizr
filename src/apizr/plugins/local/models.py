@@ -5,16 +5,16 @@ from typing import Annotated, Literal
 from pydantic import ConfigDict, Field, field_validator
 
 from apizr.capabilities.types import ValueModel, logical_module
-from apizr.distribution_identity import (
+from apizr.contracts.distribution import (
     Digest as Digest,
 )
-from apizr.distribution_identity import (
+from apizr.contracts.distribution import (
     LockedDistribution as LockedDistribution,
 )
-from apizr.distribution_identity import (
+from apizr.contracts.distribution import (
     Version as Version,
 )
-from apizr.distribution_identity import (
+from apizr.contracts.distribution import (
     canonical_name as canonical_name,
 )
 

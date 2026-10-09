@@ -6,6 +6,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from apizr.capabilities import document_digest
+from apizr.capabilities.inspection import Inspection, inspect_source
 from apizr.execution import (
     ExecutionPolicy,
     ExecutionResult,
@@ -14,7 +15,6 @@ from apizr.execution import (
     plan,
 )
 from apizr.execution.protocol import finite_json
-from apizr.inspection import Inspection, inspect_source
 from apizr.interfaces.planner import GenerationRefused
 from apizr.readiness import assess, report_digest
 
@@ -64,7 +64,7 @@ def main(argv: Sequence[str]) -> int:
             inspected = inspect_source(raw, module_name=module)
             executable = raw
         elif args.source.suffix == ".ipynb":
-            from apizr.capability_notebooks import inspect_notebook_bytes
+            from apizr.generators.notebooks import inspect_notebook_bytes
 
             notebook = inspect_notebook_bytes(raw, module_name=module)
             executable = notebook.python_source.encode("utf-8")

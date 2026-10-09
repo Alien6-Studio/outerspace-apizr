@@ -16,9 +16,9 @@ from apizr.cli.commands.repository_readiness import (
     load_policy,
     write_report,
 )
-from apizr.compiler import assess_readiness
 from apizr.git_source import GitSourceError
-from apizr.operator_policy import AuthorizationDenied
+from apizr.workspace.compiler import assess_readiness
+from apizr.workspace.operator_policy import AuthorizationDenied
 
 
 def main(argv: Sequence[str]) -> int:

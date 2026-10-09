@@ -9,15 +9,15 @@ from pathlib import Path
 import anyio
 from mcp import Client, StdioServerParameters
 
-from apizr.compiler import assess_readiness, prepare_exposure
 from apizr.exposure import ExposurePolicy
 from apizr.exposure.serialization import plan_bytes
 from apizr.graph import analyze_repository
 from apizr.graph.serialization import graph_bytes
-from apizr.operator_policy import load_operator_policy
 from apizr.repository.serialization import catalog_bytes
 from apizr.repository_readiness import RepositoryReadinessPolicy
 from apizr.repository_readiness.serialization import report_bytes
+from apizr.workspace.compiler import assess_readiness, prepare_exposure
+from apizr.workspace.operator_policy import load_operator_policy
 from apizr.workspace.project import load_project
 
 

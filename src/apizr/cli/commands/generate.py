@@ -39,7 +39,7 @@ def main(argv: Sequence[str]) -> int:
         from apizr.generators.rest import generate
     else:
         from apizr.generators.mcp import generate
-    from apizr.inspection import Inspection, inspect_source
+    from apizr.capabilities.inspection import Inspection, inspect_source
     from apizr.interfaces.planner import GenerationRefused
     from apizr.interfaces.schema import ContractError
     from apizr.readiness import assess, report_digest
@@ -55,7 +55,7 @@ def main(argv: Sequence[str]) -> int:
         if args.source.suffix == ".py":
             inspected = inspect_source(raw, module_name=module_name)
         else:
-            from apizr.capability_notebooks import inspect_notebook_bytes
+            from apizr.generators.notebooks import inspect_notebook_bytes
 
             notebook = inspect_notebook_bytes(raw, module_name=module_name)
             executable = notebook.python_source.encode("utf-8")

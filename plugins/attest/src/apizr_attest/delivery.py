@@ -12,7 +12,7 @@ from apizr_oci.observe import observe
 from apizr_oci.push import document
 from apizr_oci.snapshot import read
 
-from apizr.delivery import MANIFEST_FILE, DeliveryManifest, identity
+from apizr.contracts.delivery import MANIFEST_FILE, DeliveryManifest, identity
 from apizr.plugins.local.store import installation_lock
 from apizr.repository.serialization import canonical_bytes
 

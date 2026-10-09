@@ -12,8 +12,8 @@ def main() -> None:
     ]
     for name in (
         "src/apizr/readiness/structured.py",
-        "src/apizr/contract_types.py",
-        "src/apizr/contract_lowering.py",
+        "src/apizr/contracts/types.py",
+        "src/apizr/contracts/lowering.py",
         "src/apizr/repository_views/model.py",
         "src/apizr/repository_views/projection.py",
         "plugins/mcp/src/apizr_mcp/model.py",

@@ -7,7 +7,7 @@ from urllib.parse import unquote, urlsplit
 
 from pydantic import model_validator
 
-from apizr.publication_contracts import Model
+from apizr.contracts.publication import Model
 
 from .models import GitSourceError
 

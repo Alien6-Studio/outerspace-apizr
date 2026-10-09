@@ -63,7 +63,7 @@ responsibility = "Historical generation step engine and its adapter registration
 [packages."generators"]
 kind = "composition"
 responsibility = "Compose static REST and MCP interface generators."
-modules = ["__init__.py"]
+modules = ["__init__.py", "notebooks.py"]
 
 [packages."generators/mcp"]
 kind = "domain"
@@ -206,111 +206,19 @@ responsibility = "Opt-in Linux OCI subprocess prohibition; existing allow runtim
 kind = "domain"
 responsibility = "Explicit project declarations, operator preferences and bounded file access."
 
-# Frozen migration debt: no additional root implementations.
-# These entries are exceptions to the domain rule, not examples for new code.
-[root_debt."analysis_contracts.py"]
-reason = "Pure source identities; acquisition and analysis grant different effects."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
+[packages."contracts"]
+kind = "domain"
+responsibility = "Portable validated source, interface and delivery contracts."
 
-[root_debt."analysis_session.py"]
-reason = "Owned analysis scope passed across MCP exec and worker boundaries, without SDK imports."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
+[packages."environment"]
+kind = "domain"
+responsibility = "Interpreter targets and explicit optional workflow requirements."
 
-[root_debt."app.py"]
-reason = "Local generation API. Uploaded code is never executed by the generator."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
+[packages."legacy"]
+kind = "legacy"
+responsibility = "Historical generation entrypoints, configuration and prompt resources."
 
-[root_debt."application.py"]
-reason = "Explicit application inputs, independent of core and plugin environments."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."application_resources.py"]
-reason = "Capture only explicit files after independent repository-analysis admission."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."bounded_json.py"]
-reason = "Finite JSON for admission and extensions, without importing execution workers."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."capability_notebooks.py"]
-reason = "Notebook adapter outside the framework-independent capability core."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."compiler.py"]
-reason = "Typed repository orchestration shared by Python callers and the CLI."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."configuration.py"]
-reason = "Validated configuration shared by the CLI and HTTP interfaces."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."contract_lowering.py"]
-reason = "Lower retained annotation expressions; never inspect original project source."
-migration = "Keep resource embedding and generated runtime parity when grouping contracts."
-
-[root_debt."contract_types.py"]
-reason = "Frozen JSON value contracts shared by static evidence and all interfaces."
-migration = "Keep resource embedding and generated runtime parity when grouping contracts."
-
-[root_debt."delivery.py"]
-reason = "Portable, acyclic delivery identities; never operator authority or credentials."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."delivery_results.py"]
-reason = "Shared immutable publication results; no plugin implementation dependencies."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."distribution_identity.py"]
-reason = "Shared pure distribution identities used by plugin locks and delivery plans."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."http.py"]
-reason = "Shared upload validation for the local generation service."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."inspection.py"]
-reason = "Single-source inspection envelope. Presentation is distinct from canonical IR."
-migration = "Keep resource embedding and generated runtime parity when grouping contracts."
-
-[root_debt."legacy_delivery.py"]
-reason = "Explicit resources and local image builds for the notebook/script pipeline."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."main.py"]
-reason = "Command-line entry point for the complete conversion pipeline."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."mcp_session.py"]
-reason = "SDK-independent, operator-captured MCP authority; no operational client input."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."operator_policy.py"]
-reason = "Explicit operator grants for Git, build, signing and publication; decisions perform no I/O."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."optional.py"]
-reason = "Actionable optional-workflow requirements without automatic installation."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."output.py"]
-reason = "Containment and exclusive creation for generated output files."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."prompt.py"]
-reason = "Historical interactive generation prompts."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."publication_contracts.py"]
-reason = "Shared build, signing and publication input contracts: validation only, no tools or file reads."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."runtime.py"]
-reason = "Supported interpreter/target policy; generation never transpiles user code."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
-
-[root_debt."source_access.py"]
-reason = "Admission and descriptor anchoring for filesystem-backed repository analysis."
-migration = "Group with the owning domain in a separate compatibility-preserving change."
+[root_debt]
 
 # Exact historical aliases: their entire AST must remain a forwarding facade.
 [compatibility."ci_cli.py"]
@@ -520,3 +428,122 @@ lock = ["local"]
 catalog = ["local", "lock"]
 sync = ["local", "lock"]
 update = ["local", "lock", "sync"]
+
+[compatibility."analysis_contracts.py"]
+target = "apizr.contracts.analysis"
+kind = "module"
+
+[compatibility."application.py"]
+target = "apizr.contracts.application"
+kind = "module"
+
+[compatibility."bounded_json.py"]
+target = "apizr.contracts.json"
+kind = "module"
+
+[compatibility."contract_lowering.py"]
+target = "apizr.contracts.lowering"
+kind = "module"
+
+[compatibility."contract_types.py"]
+target = "apizr.contracts.types"
+kind = "module"
+
+[compatibility."delivery.py"]
+target = "apizr.contracts.delivery"
+kind = "module"
+
+[compatibility."delivery_results.py"]
+target = "apizr.contracts.results"
+kind = "module"
+
+[compatibility."distribution_identity.py"]
+target = "apizr.contracts.distribution"
+kind = "module"
+
+[compatibility."publication_contracts.py"]
+target = "apizr.contracts.publication"
+kind = "module"
+
+[compatibility."optional.py"]
+target = "apizr.environment.extras"
+kind = "module"
+
+[compatibility."runtime.py"]
+target = "apizr.environment.python_target"
+kind = "module"
+
+[compatibility."analysis_session.py"]
+target = "apizr.workspace.analysis_session"
+kind = "module"
+
+[compatibility."application_resources.py"]
+target = "apizr.workspace.application_resources"
+kind = "module"
+
+[compatibility."compiler.py"]
+target = "apizr.workspace.compiler"
+kind = "module"
+
+[compatibility."mcp_session.py"]
+target = "apizr.workspace.mcp_session"
+kind = "module"
+
+[compatibility."operator_policy.py"]
+target = "apizr.workspace.operator_policy"
+kind = "module"
+
+[compatibility."source_access.py"]
+target = "apizr.workspace.source_access"
+kind = "module"
+
+[compatibility."capability_notebooks.py"]
+target = "apizr.generators.notebooks"
+kind = "module"
+
+[compatibility."inspection.py"]
+target = "apizr.capabilities.inspection"
+kind = "module"
+
+[compatibility."output.py"]
+target = "apizr.interfaces.files"
+kind = "module"
+
+[compatibility."app.py"]
+target = "apizr.legacy.app"
+kind = "module"
+
+[compatibility."configuration.py"]
+target = "apizr.legacy.configuration"
+kind = "module"
+
+[compatibility."http.py"]
+target = "apizr.legacy.http"
+kind = "module"
+
+[compatibility."legacy_delivery.py"]
+target = "apizr.legacy.legacy_delivery"
+kind = "module"
+
+[compatibility."main.py"]
+target = "apizr.legacy.main"
+kind = "module"
+entrypoint = "main"
+
+[compatibility."prompt.py"]
+target = "apizr.legacy.prompt"
+kind = "module"
+
+# Frozen autonomous source imports; public facades preserve their runtime namespace.
+[embedded_imports]
+"capabilities/inspection.py" = ["apizr.capability_notebooks"]
+"contracts/lowering.py" = ["apizr.contract_types"]
+"execution/model.py" = ["apizr.inspection"]
+"execution/planner.py" = ["apizr.inspection"]
+"interfaces/model.py" = ["apizr.contract_types"]
+"interfaces/planner.py" = ["apizr.inspection"]
+"interfaces/schema.py" = ["apizr.contract_lowering"]
+"oci/planner.py" = ["apizr.inspection"]
+"readiness/model.py" = ["apizr.contract_types"]
+"repository_interfaces/model.py" = ["apizr.application"]
+"subprocess_guard/single.py" = ["apizr.inspection"]

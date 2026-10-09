@@ -4,7 +4,7 @@ from typing import Literal
 
 from pydantic import Field
 
-from apizr.publication_contracts import Model
+from apizr.contracts.publication import Model
 
 Profile = Literal["core", "mcp", "oci", "delivery", "clients"]
 

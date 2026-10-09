@@ -6,12 +6,12 @@ import sys
 
 import yaml
 
+from apizr.environment.python_target import parse_python_target, python_target_argument
+from apizr.interfaces.files import output_path
 from apizr.modules.fast_apizr.configuration import FastApizrConfiguration
 from apizr.modules.fast_apizr.generator import FastApiAppGenerator
 from apizr.modules.fast_apizr.generator.analyzr import Analyzr
 from apizr.modules.fast_apizr.prompt import ConfigPrompter
-from apizr.output import output_path
-from apizr.runtime import parse_python_target, python_target_argument
 
 # Configure logging settings
 logger = logging.getLogger(__name__)

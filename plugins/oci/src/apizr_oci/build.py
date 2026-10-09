@@ -9,8 +9,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Event
 
-from apizr.application import ApplicationInputs
-from apizr.delivery import (
+from apizr.contracts.application import ApplicationInputs
+from apizr.contracts.delivery import (
     PLAN_FILE,
     PLAN_LABEL,
     PROOF_LABEL,

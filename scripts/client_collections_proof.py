@@ -45,11 +45,11 @@ def write(path, value):
 
 
 def generate(root):
-    from apizr.compiler import prepare_exposure, render_bundle
     from apizr.exposure import ExposurePolicy
-    from apizr.operator_policy import OperatorPolicy
     from apizr.repository_interfaces.output import write_bundle
     from apizr.repository_readiness import RepositoryReadinessPolicy
+    from apizr.workspace.compiler import prepare_exposure, render_bundle
+    from apizr.workspace.operator_policy import OperatorPolicy
 
     source = root / "original-source"
     source.mkdir()

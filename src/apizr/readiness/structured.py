@@ -3,8 +3,8 @@
 import ast
 
 from apizr.capabilities.model import SourceSpan
-from apizr.contract_lowering import lower_node
-from apizr.contract_types import ObjectField, TypeSpec
+from apizr.contracts.lowering import lower_node
+from apizr.contracts.types import ObjectField, TypeSpec
 
 from .contracts import classify
 from .model import Code, StructuredDeclaration

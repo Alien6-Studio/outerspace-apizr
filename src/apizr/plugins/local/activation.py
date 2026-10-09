@@ -13,8 +13,8 @@ from typing import TYPE_CHECKING, Literal
 
 from pydantic import ConfigDict, Field, JsonValue
 
-from apizr.bounded_json import SizeExceeded, encode, finite_json
 from apizr.capabilities.types import ValueModel
+from apizr.contracts.json import SizeExceeded, encode, finite_json
 from apizr.extension_runtime import (
     CleanupFailed,
     InvalidInvocation,
@@ -32,7 +32,7 @@ from .control import InstallationCancelled, InstallControl
 from .models import Installation, Inventory, PluginError, canonical_name
 
 if TYPE_CHECKING:
-    from apizr.operator_policy import OperatorPolicy
+    from apizr.workspace.operator_policy import OperatorPolicy
 
 DEFAULT_LIMITS = Limits()
 
@@ -221,7 +221,7 @@ def run_extension(
     cancel: Event | None = None,
     operator_policy: "OperatorPolicy | None" = None,
 ) -> Response:
-    from apizr.operator_policy import AuthorizationDenied, decide
+    from apizr.workspace.operator_policy import AuthorizationDenied, decide
 
     try:
         # Own the JSON snapshot before authorization. Never pass mutable caller

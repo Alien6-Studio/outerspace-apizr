@@ -3,9 +3,9 @@
 from collections.abc import Mapping
 from importlib.resources import files
 
-from apizr.application import ApplicationInputs
 from apizr.capabilities.model import Digest
-from apizr.delivery import (
+from apizr.contracts.application import ApplicationInputs
+from apizr.contracts.delivery import (
     PROVENANCE_FILE,
     BundleProvenance,
     SourceIdentity,

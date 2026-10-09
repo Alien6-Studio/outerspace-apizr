@@ -12,8 +12,8 @@ from pathlib import Path
 from typing import Literal
 
 from apizr.capabilities.model import Digest
-from apizr.delivery import BundleProvenance, identity
-from apizr.delivery_results import BuildResult
+from apizr.contracts.delivery import BundleProvenance, identity
+from apizr.contracts.results import BuildResult
 from apizr.exposure import ExposurePlan, ExposurePolicy, validate_plan
 from apizr.extension_runtime.protocol import unique_object
 from apizr.graph import Graph

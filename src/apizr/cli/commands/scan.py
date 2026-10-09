@@ -5,9 +5,9 @@ import sys
 from collections.abc import Sequence
 
 from apizr.cli.commands.repository import add_scan_arguments, scan_policy
-from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.repository import catalog_bytes, scan
 from apizr.repository.reporting import envelope_bytes, text_report
+from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
 
 
 def main(argv: Sequence[str]) -> int:

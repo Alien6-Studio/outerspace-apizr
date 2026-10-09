@@ -4,7 +4,6 @@ from typing import Annotated, Literal, Self
 
 from pydantic import ConfigDict, Field, RootModel, model_validator
 
-from apizr.analysis_session import Scope as Scope
 from apizr.capabilities.model import Digest
 from apizr.capabilities.types import ValueModel
 from apizr.exposure import ExposurePolicy
@@ -21,6 +20,7 @@ from apizr.repository_views.model import (
     ReadinessSummary,
     ViewQuery,
 )
+from apizr.workspace.analysis_session import Scope as Scope
 
 
 class StrictModel(ValueModel):

@@ -114,7 +114,12 @@ def check(source: Path, manifest: Path) -> list[str]:
         directory = "" if directory == "." else directory
         if path in aliases:
             entry = aliases[path]
-            expected = ast.parse(facade(entry["target"], entry["kind"]))
+            forwarding = facade(entry["target"], entry["kind"])
+            if entry.get("entrypoint") == "main":
+                forwarding += (
+                    '\nif __name__ == "__main__":\n    _implementation.main()\n'
+                )
+            expected = ast.parse(forwarding)
             if shape(ast.parse(files[path].read_text())) != shape(expected):
                 errors.append(f"{path}: compatibility facade contains implementation")
             target = entry["target"].removeprefix("apizr.").replace(".", "/")
@@ -155,7 +160,10 @@ def check(source: Path, manifest: Path) -> list[str]:
                             f"{path}: composition initializer defines {node.name}"
                         )
         for imported in sorted(names):
-            if any(within(imported, module_name(old)) for old in aliases):
+            embedded = config.get("embedded_imports", {}).get(path, [])
+            if any(within(imported, module_name(old)) for old in aliases) and not any(
+                within(imported, allowed) for allowed in embedded
+            ):
                 errors.append(f"{path}: imports compatibility path {imported}")
             if not path.startswith("cli/") and within(imported, "apizr.cli"):
                 errors.append(f"{path}: domain depends on CLI adapter {imported}")

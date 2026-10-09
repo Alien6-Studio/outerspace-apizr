@@ -9,18 +9,22 @@ from typing import Literal, TypeVar
 
 from pydantic import BaseModel
 
+from apizr.environment.extras import available
+from apizr.environment.python_target import validate_python_target
 from apizr.exposure.policy import ExposurePolicy
 from apizr.extension_runtime import PrerequisiteMissing
 from apizr.extension_runtime.protocol import unique_object
-from apizr.operator_policy import MAX_POLICY_BYTES, AuthorizationDenied, OperatorPolicy
-from apizr.optional import available
 from apizr.plugins.local import activation, store
 from apizr.plugins.local.models import Installation, PluginError
 from apizr.repository_readiness.policy import RepositoryReadinessPolicy
-from apizr.runtime import validate_python_target
-from apizr.source_access import open_analysis_root
 from apizr.workspace.files import absolute_path, directory_fd, read_regular
+from apizr.workspace.operator_policy import (
+    MAX_POLICY_BYTES,
+    AuthorizationDenied,
+    OperatorPolicy,
+)
 from apizr.workspace.project import load_project
+from apizr.workspace.source_access import open_analysis_root
 
 from .models import DoctorCheck, DoctorResult, Profile
 
@@ -295,7 +299,7 @@ def doctor(
     )
     request = None
     if "delivery" in profiles:
-        from apizr.mcp_session import load_delivery_request
+        from apizr.workspace.mcp_session import load_delivery_request
 
         try:
             if delivery_request is None:

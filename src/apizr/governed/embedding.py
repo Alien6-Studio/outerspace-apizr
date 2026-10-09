@@ -5,6 +5,7 @@ import json
 from importlib.resources import files
 from typing import Literal
 
+from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import Digest
 from apizr.execution import (
     ExecutionPolicy,
@@ -14,7 +15,6 @@ from apizr.execution import (
     policy_bytes,
     policy_digest,
 )
-from apizr.inspection import Inspection
 from apizr.interfaces.serialization import json_bytes
 
 from .model import ExecutionBundle, PlanArtifact
@@ -48,8 +48,20 @@ MODULES = (
 )
 
 
+SOURCE_PATHS = {
+    "contract_types.py": "contracts/types.py",
+    "contract_lowering.py": "contracts/lowering.py",
+    "application.py": "contracts/application.py",
+    "inspection.py": "capabilities/inspection.py",
+}
+
+
 def source(path: str) -> str:
-    return files("apizr").joinpath(path).read_text(encoding="utf-8")
+    return (
+        files("apizr")
+        .joinpath(SOURCE_PATHS.get(path, path))
+        .read_text(encoding="utf-8")
+    )
 
 
 def definition(path: str, name: str) -> str:

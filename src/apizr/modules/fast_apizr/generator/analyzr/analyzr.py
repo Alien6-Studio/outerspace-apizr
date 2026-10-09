@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 from pydantic import BaseModel
 
-from apizr.runtime import DEFAULT_PYTHON
+from apizr.environment.python_target import DEFAULT_PYTHON
 
 from .function import Function
 from .importFrom import ImportFrom

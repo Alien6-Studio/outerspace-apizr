@@ -3,7 +3,7 @@
 from collections.abc import Mapping
 from typing import Literal
 
-from apizr.application import ApplicationInputs
+from apizr.contracts.application import ApplicationInputs
 from apizr.exposure import ExposurePlan, ExposurePolicy, plan_digest, validate_plan
 from apizr.exposure.policy import Interface
 from apizr.graph import Graph

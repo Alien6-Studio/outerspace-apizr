@@ -15,7 +15,6 @@ from apizr.cli.commands.repository import (
     scan_policy,
 )
 from apizr.cli.commands.repository_readiness import load_policy
-from apizr.compiler import prepare_exposure, render_bundle
 from apizr.execution.policy import ExecutionPolicy, PolicyRefused
 from apizr.exposure import (
     ExposurePolicy,
@@ -26,8 +25,9 @@ from apizr.exposure import (
 )
 from apizr.git_source import GitSourceError
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
-from apizr.operator_policy import AuthorizationDenied
 from apizr.repository_interfaces import BundleRefused
+from apizr.workspace.compiler import prepare_exposure, render_bundle
+from apizr.workspace.operator_policy import AuthorizationDenied
 
 
 def add_policy_arguments(command: argparse.ArgumentParser) -> None:
@@ -236,7 +236,7 @@ def main(argv: Sequence[str]) -> int:
 
 def evidence_command(args: argparse.Namespace) -> int:
     from apizr.capabilities.model import Digest
-    from apizr.delivery_results import BuildResult
+    from apizr.contracts.results import BuildResult
     from apizr.interfaces.runtime import IntegrityError
     from apizr.repository.serialization import canonical_bytes
     from apizr.repository_interfaces.evidence import (

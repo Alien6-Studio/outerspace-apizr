@@ -9,14 +9,18 @@ from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from typing import Sequence
 
-from apizr.analysis_session import MAX_SESSION_BYTES, load_scope
 from apizr.extension_runtime import ExtensionError
-from apizr.mcp_session import DeliverySession, McpSession, load_delivery_request
-from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.plugins.local import PluginError
 from apizr.plugins.local.activation import admitted_extension
 from apizr.plugins.local.models import Installation
 from apizr.plugins.local.store import storage_directory
+from apizr.workspace.analysis_session import MAX_SESSION_BYTES, load_scope
+from apizr.workspace.mcp_session import (
+    DeliverySession,
+    McpSession,
+    load_delivery_request,
+)
+from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.workspace.user import plugins_directory
 
 

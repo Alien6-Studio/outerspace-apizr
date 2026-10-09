@@ -5,13 +5,13 @@ import os
 import re
 from pathlib import Path
 
-from apizr.publication_contracts import (
+from apizr.contracts.publication import (
     OrasTool as OrasTool,
 )
-from apizr.publication_contracts import (
+from apizr.contracts.publication import (
     Transport as Transport,
 )
-from apizr.publication_contracts import (
+from apizr.contracts.publication import (
     digest_reference as digest_reference,
 )
 

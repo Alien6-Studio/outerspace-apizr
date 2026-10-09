@@ -25,7 +25,7 @@ def main(argv: Sequence[str]) -> int:
     )
     args = parser.parse_args(argv)
     from apizr.capabilities import canonical_bytes
-    from apizr.inspection import inspect_file, json_bytes, text_report
+    from apizr.capabilities.inspection import inspect_file, json_bytes, text_report
 
     try:
         inspection = inspect_file(

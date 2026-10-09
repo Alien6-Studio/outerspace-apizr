@@ -6,16 +6,8 @@ from typing import Literal
 from pydantic import Field, field_validator, model_validator
 
 from apizr.capabilities.model import Digest
-from apizr.delivery import DeliveryManifest, ProofRequirement, identity
-from apizr.delivery_results import (
-    AdmissionResult,
-    BuildResult,
-    DeliveryResult,
-    PublishResult,
-    PushResult,
-)
-from apizr.operator_policy import repository_name
-from apizr.publication_contracts import (
+from apizr.contracts.delivery import DeliveryManifest, ProofRequirement, identity
+from apizr.contracts.publication import (
     Docker,
     Model,
     PushRequest,
@@ -24,6 +16,14 @@ from apizr.publication_contracts import (
     VerificationInputs,
     digest_reference,
 )
+from apizr.contracts.results import (
+    AdmissionResult,
+    BuildResult,
+    DeliveryResult,
+    PublishResult,
+    PushResult,
+)
+from apizr.workspace.operator_policy import repository_name
 
 MAX_DESTINATIONS = 8
 

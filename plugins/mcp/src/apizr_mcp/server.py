@@ -16,7 +16,6 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from pydantic import ValidationError
 
-from apizr.analysis_session import check_scope
 from apizr.capabilities.model import Digest
 from apizr.delivery_batch import BatchError, BatchResult, deliver_batch, inspect_batch
 from apizr.exposure import ExposurePlan
@@ -27,9 +26,10 @@ from apizr.extension_runtime import (
     invoke_extension,
 )
 from apizr.extension_runtime.errors import SizeLimitExceeded
-from apizr.mcp_session import McpSession, analysis_scope, read_session
-from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.repository_views.model import Page
+from apizr.workspace.analysis_session import check_scope
+from apizr.workspace.mcp_session import McpSession, analysis_scope, read_session
+from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
 
 from .model import (
     AnalysisOutput,

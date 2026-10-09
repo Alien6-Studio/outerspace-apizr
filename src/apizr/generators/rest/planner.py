@@ -2,7 +2,7 @@
 
 from collections.abc import Sequence
 
-from apizr.inspection import Inspection
+from apizr.capabilities.inspection import Inspection
 from apizr.interfaces.planner import GenerationRefused as GenerationRefused
 from apizr.interfaces.planner import plan as interface_plan
 

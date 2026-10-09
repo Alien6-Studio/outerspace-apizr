@@ -4,9 +4,9 @@ from collections.abc import Iterable
 from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 
+from apizr.capabilities.inspection import inspect_source, json_bytes
 from apizr.capabilities.model import Digest
-from apizr.inspection import inspect_source, json_bytes
-from apizr.source_access import RepositoryInput
+from apizr.workspace.source_access import RepositoryInput
 
 from .discovery import Budget, ScanError, ScanLimit, SourceInput, discover
 from .model import (
@@ -22,7 +22,7 @@ from .policy import ScanPolicy, relative_path
 from .serialization import policy_digest
 
 if TYPE_CHECKING:
-    from apizr.operator_policy import OperatorPolicy
+    from apizr.workspace.operator_policy import OperatorPolicy
 
 
 def assemble(

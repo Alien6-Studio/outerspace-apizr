@@ -10,8 +10,8 @@ from typing import Sequence
 
 from apizr.delivery_batch import BatchError, BatchRequest, deliver_batch
 from apizr.extension_runtime import ExtensionError
-from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.plugins.local import PluginError, read_arguments
+from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.workspace.user import plugins_directory
 
 

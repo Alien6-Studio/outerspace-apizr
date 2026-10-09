@@ -106,7 +106,7 @@ MUTATIONS = (
     ),
     Mutation(
         "source-analysis-admission",
-        "src/apizr/source_access.py",
+        "src/apizr/workspace/source_access.py",
         "        decision = decide_analysis(operator_policy, target)",
         "        from apizr.operator_policy import Decision\n        decision = Decision(allowed=True, code='authorized')",
         "tests/source_analysis/test_authorization.py::test_all_public_filesystem_apis_refuse_before_traversal[missing-operator_policy_required-scan]",
@@ -120,7 +120,7 @@ MUTATIONS = (
     ),
     Mutation(
         "git-exact-source",
-        "src/apizr/operator_policy.py",
+        "src/apizr/workspace/operator_policy.py",
         'grants = [g for g in grants if g.target == target]\n    if not grants:\n        return Decision(allowed=False, code="operator_git_source_denied")',
         'grants = [g for g in grants if True]\n    if not grants:\n        return Decision(allowed=False, code="operator_git_source_denied")',
         "tests/git_source/test_operator_policy.py::test_pure_exact_decision[https-prefix]",
@@ -134,7 +134,7 @@ MUTATIONS = (
     ),
     Mutation(
         "build-exact-target",
-        "src/apizr/operator_policy.py",
+        "src/apizr/workspace/operator_policy.py",
         "g.target == building",
         "True",
         "tests/local_plugins/test_build_policy.py::test_build_decision_is_pure[prefix-operator_build_denied]",
@@ -148,7 +148,7 @@ MUTATIONS = (
     ),
     Mutation(
         "signing-timestamp-authority",
-        "src/apizr/operator_policy.py",
+        "src/apizr/workspace/operator_policy.py",
         "tsa_identity(g.tsa_url) == authority",
         "True",
         "tests/local_plugins/test_signing_policy.py::test_signing_decision_is_pure[tsa_prefix-operator_tsa_denied]",
@@ -162,7 +162,7 @@ MUTATIONS = (
     ),
     Mutation(
         "publication-repository-prefix",
-        "src/apizr/operator_policy.py",
+        "src/apizr/workspace/operator_policy.py",
         "g.repository == repository",
         "repository.startswith(g.repository)",
         "tests/local_plugins/test_operator_policy.py::test_exact_grants_without_external_io[prefix-operator_repository_denied-push]",

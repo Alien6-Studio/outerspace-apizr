@@ -6,19 +6,19 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 
-from apizr.analysis_contracts import GitAnalysisTarget
 from apizr.cli.commands.repository import apply_project
+from apizr.contracts.analysis import GitAnalysisTarget
 from apizr.git_source import acquire_snapshot
 from apizr.git_source.contracts import GitTarget, validate_source
 from apizr.git_source.ssh import is_ssh
-from apizr.operator_policy import (
+from apizr.workspace.operator_policy import (
     AuthorizationDenied,
     OperatorPolicy,
     decide_analysis,
     decide_git,
     load_operator_policy,
 )
-from apizr.source_access import RepositoryInput
+from apizr.workspace.source_access import RepositoryInput
 
 
 def add_git_arguments(parser: argparse.ArgumentParser) -> None:

@@ -16,7 +16,7 @@ from apizr_oci.push import (
     secure_daemon,
 )
 
-from apizr.delivery import PLAN_LABEL, PROOF_LABEL, identity
+from apizr.contracts.delivery import PLAN_LABEL, PROOF_LABEL, identity
 
 from .artifacts import fetch_verified
 from .delivery import MAX_FILE, file_bytes, read, results

@@ -4,7 +4,7 @@ import ast
 import math
 from collections.abc import Mapping
 
-from apizr.contract_types import TypeSpec
+from apizr.contracts.types import TypeSpec
 
 from .model import Code
 from .source import SourceFacts

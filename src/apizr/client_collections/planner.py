@@ -4,11 +4,11 @@ from pathlib import Path
 
 from pydantic import JsonValue
 
+from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import CapabilityDocument, Digest
 from apizr.generators.rest.model import Manifest
 from apizr.generators.rest.planner import plan as retained_rest_plan
 from apizr.generators.rest.schema import openapi
-from apizr.inspection import Inspection
 from apizr.interfaces.model import TypeSpec
 from apizr.interfaces.schema import json_schema, request_schema
 from apizr.interfaces.serialization import json_bytes

@@ -12,10 +12,10 @@ from mcp import Client, StdioServerParameters
 from apizr.exposure.scope import required_evidence
 from apizr.graph import analyze_repository
 from apizr.graph.serialization import graph_digest
-from apizr.operator_policy import load_operator_policy
 from apizr.repository.serialization import catalog_digest
 from apizr.repository_readiness import assess_repository
 from apizr.repository_readiness.serialization import report_digest
+from apizr.workspace.operator_policy import load_operator_policy
 
 
 def fixture(root: Path, reverse: bool = False) -> tuple[Path, Path]:

@@ -9,7 +9,6 @@ from apizr.exposure import ExposureRefused, plan_bytes, plan_exposure
 from apizr.extension_runtime.protocol import Request, unique_object
 from apizr.graph import analyze_repository
 from apizr.graph.serialization import graph_bytes
-from apizr.operator_policy import AuthorizationDenied
 from apizr.repository.serialization import catalog_bytes
 from apizr.repository_readiness import assess_repository
 from apizr.repository_readiness.serialization import report_bytes
@@ -20,6 +19,7 @@ from apizr.repository_views.projection import (
     localize,
     readiness_view,
 )
+from apizr.workspace.operator_policy import AuthorizationDenied
 
 from .model import Job, PlanArguments, ViewArguments
 

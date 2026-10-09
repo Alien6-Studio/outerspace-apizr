@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 from pathlib import Path, PurePosixPath
 
 from apizr.capabilities import canonical_bytes as ir_bytes
+from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import Digest
-from apizr.inspection import Inspection
 from apizr.readiness import canonical_bytes as readiness_bytes
 
 from .model import Manifest

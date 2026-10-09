@@ -35,7 +35,7 @@ def main():
         assert not any(name == "src.py" or name.startswith("src/") for name in names)
         assert any(name.endswith(".dist-info/licenses/LICENSE") for name in names)
         assert "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2" in names
-        assert "apizr/i18n/en/messages.json" in names
+        assert "apizr/legacy/i18n/en/messages.json" in names
     notebook = Path(__file__).resolve().parents[1] / "examples/pricing.ipynb"
     with tempfile.TemporaryDirectory(prefix="apizr-wheel-") as directory:
         root = Path(directory).resolve()

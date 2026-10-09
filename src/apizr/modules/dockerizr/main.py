@@ -4,12 +4,16 @@ import sys
 
 import yaml
 
+from apizr.environment.python_target import (
+    DEFAULT_PYTHON,
+    parse_python_target,
+    python_target_argument,
+)
 from apizr.modules.dockerizr.configuration import DockerizrConfiguration
 from apizr.modules.dockerizr.generator.dockerfileGenerator import DockerfileGenerator
 from apizr.modules.dockerizr.generator.gunicornGenerator import GunicornGenerator
 from apizr.modules.dockerizr.generator.requirementsAnalyzr import RequirementsAnalyzr
 from apizr.modules.dockerizr.prompt import ConfigPrompter
-from apizr.runtime import DEFAULT_PYTHON, parse_python_target, python_target_argument
 
 # Configure logging settings
 logger = logging.getLogger(__name__)

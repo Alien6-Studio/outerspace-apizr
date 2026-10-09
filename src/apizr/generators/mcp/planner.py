@@ -4,7 +4,7 @@ import re
 from collections.abc import Sequence
 from hashlib import sha256
 
-from apizr.inspection import Inspection
+from apizr.capabilities.inspection import Inspection
 from apizr.interfaces.planner import plan as interface_plan
 from apizr.interfaces.schema import request_schema
 

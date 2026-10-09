@@ -4,7 +4,7 @@ import sys
 from importlib.metadata import version
 from typing import Sequence
 
-from apizr.optional import MissingExtra, available, require
+from apizr.environment.extras import MissingExtra, available, require
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -136,7 +136,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
                 "  Install outerspace-apizr[legacy] for legacy generation and its full help."
             )
             return 0
-        from apizr.main import main as generate
+        from apizr.legacy.main import main as generate
 
         try:
             generate(arguments)
@@ -147,7 +147,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
     require(
         "legacy", "yaml", "questionary", "jinja2", "packaging", "nbconvert", "black"
     )
-    from apizr.main import main as generate
+    from apizr.legacy.main import main as generate
 
     generate(arguments)
     return 0

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import NoReturn, cast
 
 from apizr.ci import CIError, Operation, execute
-from apizr.operator_policy import AuthorizationDenied
+from apizr.workspace.operator_policy import AuthorizationDenied
 
 
 class Parser(argparse.ArgumentParser):

@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Sequence
 
 from apizr.extension_runtime import ExtensionError, InvocationCancelled, Limits
-from apizr.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.plugins.local import (
     DownloadCancelled,
     PluginError,
@@ -24,6 +23,7 @@ from apizr.plugins.lock import LockError, Result, check_lock, create_lock
 from apizr.plugins.lock.models import Diagnostic
 from apizr.plugins.sync import SyncLimits, SyncResult, sync_plugins
 from apizr.plugins.update import UpdateResult, update_plugin
+from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
 from apizr.workspace.user import plugins_directory
 
 

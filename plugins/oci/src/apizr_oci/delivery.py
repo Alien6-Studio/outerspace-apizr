@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from apizr.application import ApplicationInputs
-from apizr.delivery import (
+from apizr.contracts.application import ApplicationInputs
+from apizr.contracts.delivery import (
     PROVENANCE_FILE,
     BundleProvenance,
     DeliveryPlan,

@@ -8,8 +8,14 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel
 
-from apizr.delivery import identity
-from apizr.delivery_results import (
+from apizr.contracts.delivery import identity
+from apizr.contracts.publication import (
+    AdmitRequest,
+    AttestRequest,
+    ObserveRequest,
+    PublishRequest,
+)
+from apizr.contracts.results import (
     AdmissionResult,
     DeliveryResult,
     ObservationResult,
@@ -22,16 +28,10 @@ from apizr.extension_runtime import (
     InvocationCancelled,
     Limits,
 )
-from apizr.operator_policy import AuthorizationDenied, OperatorPolicy
 from apizr.plugins.local import PluginError, run_extension
 from apizr.plugins.local.control import InstallationCancelled, InstallControl
 from apizr.plugins.local.store import installation_lock, private_directory
-from apizr.publication_contracts import (
-    AdmitRequest,
-    AttestRequest,
-    ObserveRequest,
-    PublishRequest,
-)
+from apizr.workspace.operator_policy import AuthorizationDenied, OperatorPolicy
 
 from . import evidence
 from .models import (
@@ -324,7 +324,7 @@ class Coordinator:
         ):
             if os.path.lexists(proof_path):
                 # Retained proof must be independently verified, never signed again.
-                from apizr.publication_contracts import VerifyRequest
+                from apizr.contracts.publication import VerifyRequest
 
                 verified = self.call(
                     ATTEST,

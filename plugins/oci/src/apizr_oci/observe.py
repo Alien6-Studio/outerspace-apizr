@@ -8,8 +8,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Event
 
-from apizr.delivery_results import ObservationResult, ObservedImage
-from apizr.publication_contracts import ObserveRequest
+from apizr.contracts.publication import ObserveRequest
+from apizr.contracts.results import ObservationResult, ObservedImage
 
 from .model import BuildError, PushRequest
 from .push import (

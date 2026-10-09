@@ -7,13 +7,13 @@ from dataclasses import dataclass
 from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 
-from apizr.source_access import RepositoryInput, open_analysis_root
+from apizr.workspace.source_access import RepositoryInput, open_analysis_root
 
 from .model import Code, Diagnostic
 from .policy import ScanPolicy, relative_path
 
 if TYPE_CHECKING:
-    from apizr.operator_policy import OperatorPolicy
+    from apizr.workspace.operator_policy import OperatorPolicy
 
 
 class ScanError(ValueError):

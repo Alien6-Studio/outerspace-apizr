@@ -5,11 +5,11 @@ import io
 import json
 from pathlib import Path
 
+from apizr.environment.extras import require
+from apizr.interfaces.files import write_new_text
 from apizr.modules.notebook_transformr.configuration import (
     NotebookTransformrConfiguration,
 )
-from apizr.optional import require
-from apizr.output import write_new_text
 
 
 class NotebookTransformr:
