@@ -82,11 +82,15 @@ def test_forged_notebook_runtime_metrics_rejected(tmp_path):
 
 
 @pytest.mark.parametrize("writer", ["path", "builtin", "descriptor"])
-def test_write_guards_have_a_negative_control(tmp_path, monkeypatch, writer):
+@pytest.mark.parametrize("relative", [False, True])
+def test_write_guards_have_a_negative_control(tmp_path, monkeypatch, writer, relative):
     import experiment_inspection_proof as proof
 
     source = write_source(tmp_path, "x = 1")
     target = tmp_path / "forbidden.txt"
+    if relative:
+        monkeypatch.chdir(tmp_path)
+        target = target.relative_to(tmp_path)
 
     def writes(*args, **kwargs):
         if writer == "path":

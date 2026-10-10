@@ -37,11 +37,10 @@ def guarded_inspection(path: Path) -> ExperimentInspection:
         return imported(name, *args, **kwargs)
 
     def file_guard(file, mode="r", *args, **kwargs):
+        assert not any(flag in mode for flag in "wax+")
         if isinstance(file, (str, bytes, os.PathLike)):
             name = os.fsdecode(file)
             assert not name.endswith("fraud.joblib")
-            if Path(name).is_relative_to(path.parent):
-                assert not any(flag in mode for flag in "wa+")
         return open_file(file, mode, *args, **kwargs)
 
     def fd_guard(file, flags, *args, **kwargs):
