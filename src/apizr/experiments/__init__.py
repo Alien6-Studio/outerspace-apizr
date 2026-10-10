@@ -1,5 +1,11 @@
 """Public experiment intent and observed-run evidence contracts."""
 
+from apizr.experiments.environment import (
+    EnvironmentDiagnostic,
+    EnvironmentResult,
+    capture_runtime_environment,
+    discover_environment_specs,
+)
 from apizr.experiments.inputs import (
     FingerprintPolicy,
     InputDeclaration,
@@ -28,6 +34,11 @@ from apizr.experiments.model import (
     RunTiming,
     SourceIdentity,
 )
+from apizr.experiments.randomness import (
+    RandomnessDiagnostic,
+    RandomnessResult,
+    discover_randomness,
+)
 from apizr.experiments.serialization import (
     plan_bytes,
     plan_digest,
@@ -37,6 +48,13 @@ from apizr.experiments.serialization import (
 )
 
 __all__ = [
+    "EnvironmentDiagnostic",
+    "EnvironmentResult",
+    "capture_runtime_environment",
+    "discover_environment_specs",
+    "RandomnessDiagnostic",
+    "RandomnessResult",
+    "discover_randomness",
     "FingerprintPolicy",
     "InputDeclaration",
     "InputDiagnostic",

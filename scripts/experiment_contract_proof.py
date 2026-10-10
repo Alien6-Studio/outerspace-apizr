@@ -1,8 +1,10 @@
 """Prove experiment contracts from an installed candidate outside the checkout."""
 
 import argparse
+import importlib.metadata
 import importlib.util
 import json
+import platform
 import sys
 from hashlib import sha256
 from pathlib import Path
@@ -14,7 +16,10 @@ from apizr.experiments import (
     ExperimentPlan,
     ExperimentRun,
     SourceIdentity,
+    capture_runtime_environment,
+    discover_environment_specs,
     discover_inputs,
+    discover_randomness,
     fingerprint_input,
     parse_input_declaration,
     plan_bytes,
@@ -71,6 +76,102 @@ def input_producer_proof() -> dict[str, object]:
         }
 
 
+def randomness_environment_proof() -> dict[str, object]:
+    source = (
+        "import numpy as np\n"
+        "from sklearn.ensemble import RandomForestClassifier\n"
+        "np.random.default_rng(42)\n"
+        "RandomForestClassifier(random_state=42)\n"
+    )
+    result = discover_randomness(source, source_reference="train.py")
+    assert not result.diagnostics
+    assert len(result.controls) == 2
+    assert result.relevant_distributions == ("numpy", "scikit-learn")
+    subject = SourceIdentity(
+        kind="python",
+        reference="train.py",
+        digest=sha256(source.encode()).hexdigest(),
+        capability_id="python:train:train",
+    )
+    with TemporaryDirectory(prefix="apizr-experiment-environment-") as directory:
+        root = Path(directory)
+        content = b"version = 1\n"
+        (root / "uv.lock").write_bytes(content)
+        static = discover_environment_specs(root)
+        observed = capture_runtime_environment(
+            distributions=result.relevant_distributions, root=root
+        )
+        environment = observed.evidence
+        assert environment.python_implementation is not None
+        assert environment.python_version is not None
+        assert environment.platform is not None
+        assert environment.architecture is not None
+        assert environment.python_implementation.value == sys.implementation.name
+        assert environment.python_version.value == platform.python_version()
+        assert environment.platform.value == sys.platform
+        assert environment.architecture.value == platform.machine()
+        packages = {package.name: package for package in environment.packages}
+        assert set(packages) == {"numpy", "scikit-learn", "outerspace-apizr"}
+        assert packages["outerspace-apizr"].version == importlib.metadata.version(
+            "outerspace-apizr"
+        )
+        assert packages["outerspace-apizr"].origin.value == "runtime"
+        assert all(
+            packages[name].version is None and packages[name].origin.value == "unknown"
+            for name in result.relevant_distributions
+        )
+        assert (
+            static.evidence.artifacts[0].digest
+            == environment.artifacts[0].digest
+            == sha256(content).hexdigest()
+        )
+        assert environment.artifacts[0].size == len(content)
+        assert environment.artifacts[0].origin.value == "runtime"
+        assert environment.artifacts[0].content_origin is not None
+        assert environment.artifacts[0].content_origin.value == "runtime"
+        plan = ExperimentPlan(
+            subject=subject,
+            execution=ExecutionIntent(kind="training"),
+            randomness=result.controls,
+            environment=static.evidence,
+        )
+        run = ExperimentRun(
+            plan_digest=plan_digest(plan),
+            subject=subject,
+            status="success",
+            environment=environment,
+        )
+        validate_run_binding(run, plan)
+        assert sha256(plan_bytes(plan)).hexdigest() == plan_digest(plan)
+        assert sha256(run_bytes(run)).hexdigest() == run_digest(run)
+        assert str(root).encode() not in plan_bytes(plan) + run_bytes(run)
+        assert b"version = 1" not in plan_bytes(plan) + run_bytes(run)
+        seed_b = plan.model_copy(
+            update={
+                "randomness": (
+                    result.controls[0].model_copy(update={"value": 43}),
+                    result.controls[1],
+                )
+            }
+        )
+        assert seed_b.subject == plan.subject and seed_b.inputs == plan.inputs
+        assert plan_digest(seed_b) != plan_digest(plan)
+        (root / "uv.lock").write_bytes(b"version = 2\n")
+        lock_b = plan.model_copy(
+            update={"environment": discover_environment_specs(root).evidence}
+        )
+        assert plan_digest(lock_b) != plan_digest(plan)
+        return {
+            "status": "passed",
+            "environment": environment.model_dump(mode="json"),
+            "plan": plan_digest(plan),
+            "run": run_digest(run),
+            "seed_b": plan_digest(seed_b),
+            "lock_b": plan_digest(lock_b),
+            "source_and_inputs_unchanged": True,
+        }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--fixtures", required=True, type=Path)
@@ -90,6 +191,9 @@ def main() -> None:
             "apizr_oci",
             "apizr_attest",
             "numpy",
+            "sklearn",
+            "torch",
+            "tensorflow",
             "joblib",
             "pyarrow",
             "pandas",
@@ -124,6 +228,7 @@ def main() -> None:
                 "construction_binding_roundtrip": "passed",
                 "goldens": goldens,
                 "input_producer": input_producer_proof(),
+                "randomness_environment_producer": randomness_environment_proof(),
             },
             indent=2,
         )

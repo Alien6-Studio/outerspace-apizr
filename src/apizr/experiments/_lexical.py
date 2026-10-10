@@ -87,7 +87,7 @@ def _scope(
     body: Iterable[ast.AST],
     inherited: dict[str, tuple[str, tuple[int, int]]],
     parameters: ast.arguments | None,
-    modules: frozenset[str],
+    modules: Callable[[str], bool],
     members: Callable[[str], bool],
 ) -> dict[str, tuple[str, tuple[int, int]]]:
     body = tuple(body)
@@ -121,9 +121,12 @@ def _scope(
     for node in body:
         if isinstance(node, ast.Import):
             for alias in node.names:
-                name = alias.asname or alias.name
-                if alias.name in modules and collector.writes[name] == 1:
-                    bindings[name] = (alias.name, (node.lineno, node.col_offset))
+                name = alias.asname or alias.name.split(".")[0]
+                if modules(alias.name) and collector.writes[name] == 1:
+                    bindings[name] = (
+                        alias.name if alias.asname else name,
+                        (node.lineno, node.col_offset),
+                    )
         elif isinstance(node, ast.ImportFrom) and node.level == 0:
             for alias in node.names:
                 name = alias.asname or alias.name
@@ -136,7 +139,9 @@ def _scope(
 class LexicalVisitor(ast.NodeVisitor):
     """Conservative scopes; the consumer supplies its exact import allowlist."""
 
-    def __init__(self, modules: frozenset[str], members: Callable[[str], bool]) -> None:
+    def __init__(
+        self, modules: Callable[[str], bool], members: Callable[[str], bool]
+    ) -> None:
         self.modules = modules
         self.members = members
         self.bindings: dict[str, tuple[str, tuple[int, int]]] = {}
@@ -204,16 +209,46 @@ class LexicalVisitor(ast.NodeVisitor):
     visit_DictComp = visit_ListComp
     visit_GeneratorExp = visit_ListComp
 
-    def resolve_call(self, node: ast.Call) -> str:
-        qualified = ""
-        if isinstance(node.func, ast.Name):
-            binding = self.bindings.get(node.func.id)
+    def resolve_call(self, node: ast.Call, *, max_attributes: int = 1) -> str:
+        expression = node.func
+        attributes: list[str] = []
+        while isinstance(expression, ast.Attribute):
+            attributes.append(expression.attr)
+            expression = expression.value
+        if len(attributes) <= max_attributes and isinstance(expression, ast.Name):
+            binding = self.bindings.get(expression.id)
             if binding is not None and (node.lineno, node.col_offset) > binding[1]:
-                qualified = binding[0]
-        elif isinstance(node.func, ast.Attribute) and isinstance(
-            node.func.value, ast.Name
-        ):
-            binding = self.bindings.get(node.func.value.id)
-            if binding is not None and (node.lineno, node.col_offset) > binding[1]:
-                qualified = f"{binding[0]}.{node.func.attr}"
-        return qualified
+                return ".".join((binding[0], *reversed(attributes)))
+        return ""
+
+
+MAX_SOURCE_BYTES = 1024 * 1024
+MAX_NODES = 100_000
+MAX_DEPTH = 128
+
+
+class SourceLimit(Exception):
+    def __init__(self, *, parsed: bool) -> None:
+        self.parsed = parsed
+
+
+def bounded_tree(
+    source: str | bytes,
+    *,
+    max_bytes: int = MAX_SOURCE_BYTES,
+    max_nodes: int = MAX_NODES,
+    max_depth: int = MAX_DEPTH,
+) -> ast.Module:
+    size = len(source.encode("utf-8")) if isinstance(source, str) else len(source)
+    if size > max_bytes:
+        raise SourceLimit(parsed=False)
+    tree = ast.parse(source)
+    pending: list[tuple[ast.AST, int]] = [(tree, 0)]
+    count = 0
+    while pending:
+        node, depth = pending.pop()
+        count += 1
+        if count > max_nodes or depth > max_depth:
+            raise SourceLimit(parsed=True)
+        pending.extend((child, depth + 1) for child in ast.iter_child_nodes(node))
+    return tree

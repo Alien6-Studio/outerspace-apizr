@@ -17,7 +17,20 @@ from pydantic import (
     model_validator,
 )
 
-from apizr.experiments._lexical import LexicalVisitor
+from apizr.experiments._lexical import (
+    MAX_DEPTH as _MAX_DEPTH,
+)
+from apizr.experiments._lexical import (
+    MAX_NODES as _MAX_NODES,
+)
+from apizr.experiments._lexical import (
+    MAX_SOURCE_BYTES as _MAX_SOURCE_BYTES,
+)
+from apizr.experiments._lexical import (
+    LexicalVisitor,
+    SourceLimit,
+    bounded_tree,
+)
 from apizr.experiments.model import (
     EvidenceOrigin,
     ExperimentValue,
@@ -44,9 +57,6 @@ _SUFFIXES: dict[str, FormatHint] = {
     ".joblib": "joblib",
 }
 _REFERENCE = TypeAdapter[str](Reference)
-_MAX_SOURCE_BYTES = 1024 * 1024
-_MAX_NODES = 100_000
-_MAX_DEPTH = 128
 _CHUNK_BYTES = 1024 * 1024
 
 
@@ -191,7 +201,7 @@ def select_inputs(
 class _Discovery(LexicalVisitor):
     def __init__(self, source: str) -> None:
         super().__init__(
-            frozenset({"pandas", "numpy", "joblib"}), _LOADERS.__contains__
+            frozenset({"pandas", "numpy", "joblib"}).__contains__, _LOADERS.__contains__
         )
         self.source = source
         self.artifacts: dict[str, InputArtifact] = {}
@@ -270,28 +280,23 @@ def discover_inputs(source: str | bytes, *, source_reference: str) -> InputResul
     """Parse supplied Python only. Literal first positional loader arguments only."""
     try:
         _REFERENCE.validate_python(source_reference, strict=True)
-        size = len(source.encode("utf-8")) if isinstance(source, str) else len(source)
-        if size > _MAX_SOURCE_BYTES:
-            return InputResult(
-                diagnostics=(InputDiagnostic(code="input_discovery_limit"),)
+        tree = bounded_tree(
+            source,
+            max_bytes=_MAX_SOURCE_BYTES,
+            max_nodes=_MAX_NODES,
+            max_depth=_MAX_DEPTH,
+        )
+    except SourceLimit as error:
+        return InputResult(
+            diagnostics=(
+                InputDiagnostic(
+                    code="input_discovery_limit",
+                    source=source_reference if error.parsed else None,
+                ),
             )
-        tree = ast.parse(source)
+        )
     except (ValueError, UnicodeError, SyntaxError, RecursionError):
         return InputResult(diagnostics=(InputDiagnostic(code="input_source_invalid"),))
-    pending: list[tuple[ast.AST, int]] = [(tree, 0)]
-    count = 0
-    while pending:
-        node, depth = pending.pop()
-        count += 1
-        if count > _MAX_NODES or depth > _MAX_DEPTH:
-            return InputResult(
-                diagnostics=(
-                    InputDiagnostic(
-                        code="input_discovery_limit", source=source_reference
-                    ),
-                )
-            )
-        pending.extend((child, depth + 1) for child in ast.iter_child_nodes(node))
     discovery = _Discovery(source_reference)
     discovery.visit(tree)
     if len(discovery.artifacts) > 256 or len(discovery.diagnostics) > 512:

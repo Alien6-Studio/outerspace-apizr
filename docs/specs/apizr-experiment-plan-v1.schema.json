@@ -36,6 +36,17 @@
           ],
           "default": null
         },
+        "architecture": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "packages": {
           "default": [],
           "items": {

@@ -216,7 +216,11 @@ bytes, content digests and explicit Run-to-Plan validation. `__init__.py` export
 this public API. `inputs.py` owns source-only input recognition, explicit selection
 and bounded local fingerprinting; it uses the existing `workspace.files` descriptor
 primitive without importing workspace configuration or compilation. There is no
-historical experiment facade.
+historical experiment facade. `randomness.py` owns bounded source-only randomness
+controls and explicit distribution candidates; `environment.py` owns selected
+trusted-runtime facts and static/runtime root-level specification identities.
+Both source producers share the internal `_lexical.py` authority and AST bounds.
+Environment files reuse the input fingerprint reader without a second file algorithm.
 
 An Experiment Plan describes intended experiment inputs and controls. An Experiment Run records observed execution evidence. Neither proves scientific causality or reproducibility.
 

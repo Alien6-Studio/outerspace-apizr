@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add conservative static randomness-control discovery and selected runtime
+  Python/platform/architecture/package evidence with lock/config byte identities,
+  without claiming deterministic execution (#262).
+
 - Add bounded local experiment-input fingerprinting and conservative static
   recognition of common literal data reads, preserving separate reference/content
   provenance without dataset storage or versioning (#261).

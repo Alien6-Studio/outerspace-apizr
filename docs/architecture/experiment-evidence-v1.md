@@ -274,3 +274,41 @@ of verified bytes. Future runtime producers may observe remote bytes independent
 JSON Schema describes structure. No schema alone establishes symlink safety,
 exact-byte fingerprinting, changed-during-read detection or remote no-fetch.
 These are responsibilities of the reviewed producer, with executable safety tests.
+
+
+## Randomness and environment producers (#262)
+
+`discover_randomness(source, source_reference=...)` returns bounded controls,
+producer diagnostics and versionless distribution candidates. Controls use the
+existing `(provider, name)` identity; repeated equal controls collapse, while
+conflicting or dynamic values remain unknown. Import binding authority and bounded
+AST parsing are shared with input discovery. Static presence, including presence
+inside a function, does not establish execution. Torch/TensorFlow seed evidence
+also retains unknown `accelerator_determinism`; no deterministic/reproducible
+flag, score or causal conclusion is produced.
+
+`capture_runtime_environment(distributions=..., root=...)` observes the current
+trusted process's Python implementation/version, platform, machine architecture
+and selected installed distribution versions, always including Apizr. It does not
+import selected packages, enumerate all distributions, execute project source,
+probe accelerators, invoke subprocesses, install packages or contact a network.
+No environment-variable names or values are captured or hashed.
+
+`EnvironmentEvidence.architecture` is an additive optional `EnvironmentValue`,
+omitted when absent. It participates in the existing Plan/Run origin validators.
+The v1 schema identifiers and original canonical golden bytes are unchanged.
+
+`discover_environment_specs(root)` returns static file evidence; runtime capture
+with an explicit root returns runtime observations. Both inspect only root-level
+`uv.lock`, `poetry.lock`, `requirements*.txt`, `requirements*.lock`,
+`environment.yml`, `environment.yaml`, `conda.yml` and `conda.yaml`. Admission is
+bounded to 32 matches and 4096 entries. Each uses the same no-follow regular-file
+fingerprint reader as input capture, with a default 16 MiB file limit. Successful
+content origin matches the enclosing producer, static or runtime; failed content
+remains unknown. Contents, absolute paths and arbitrary host state are not emitted.
+A lock digest proves byte identity, not that packages were installed from it.
+
+The [seeds and environment guide](../guides/experiment-randomness-environment.md)
+defines exact callable/provider identities, accepted literals, import mappings,
+bounds and diagnostics. These are producers for the existing contracts, not
+new experiment execution, history, metrics or comparison orchestration.

@@ -28,6 +28,34 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "experiment-randomness-shadowing",
+        "src/apizr/experiments/_lexical.py",
+        "            if name not in collector.writes",
+        "            if True",
+        "tests/experiments/test_randomness.py::test_untrusted_bindings_do_not_grant_framework_authority",
+    ),
+    Mutation(
+        "experiment-randomness-dynamic",
+        "src/apizr/experiments/randomness.py",
+        '        return None, "dynamic_randomness_control"',
+        "        return 42, None",
+        "tests/experiments/test_randomness.py::test_unknown_values",
+    ),
+    Mutation(
+        "experiment-accelerator-uncertainty",
+        "src/apizr/experiments/randomness.py",
+        '        if provider in {"torch", "tensorflow"}:',
+        "        if False:",
+        "tests/experiments/test_randomness.py::test_fixed_literals",
+    ),
+    Mutation(
+        "experiment-environment-content",
+        "src/apizr/experiments/environment.py",
+        "        result = fingerprint_input(root, selection, policy=policy)",
+        '        result = fingerprint_input(root, selection, policy=policy).model_copy(update={"artifacts": (selection.model_copy(update={"content_origin": EvidenceOrigin.UNKNOWN}),)})',
+        "tests/experiments/test_environment.py::test_spec_exact_identity",
+    ),
+    Mutation(
         "experiment-input-mutation",
         "src/apizr/experiments/inputs.py",
         '            raise _InputFailure("input_changed_during_read")',

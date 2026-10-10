@@ -193,6 +193,9 @@ class EnvironmentEvidence(ExperimentValue):
     python_implementation: EnvironmentValue | None = None
     python_version: EnvironmentValue | None = None
     platform: EnvironmentValue | None = None
+    architecture: EnvironmentValue | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
     packages: Annotated[tuple[PackageEvidence, ...], Field(max_length=4096)] = ()
     artifacts: Annotated[tuple[InputArtifact, ...], Field(max_length=64)] = ()
 
@@ -202,7 +205,12 @@ class EnvironmentEvidence(ExperimentValue):
         return ordered_evidence(items, lambda item: item.name)
 
     def origins(self) -> Iterable[EvidenceOrigin]:
-        for value in (self.python_implementation, self.python_version, self.platform):
+        for value in (
+            self.python_implementation,
+            self.python_version,
+            self.platform,
+            self.architecture,
+        ):
             if value is not None:
                 yield value.origin
         for record in self.packages:
