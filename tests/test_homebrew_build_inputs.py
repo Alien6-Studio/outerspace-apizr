@@ -119,3 +119,71 @@ def test_candidate_must_match_selected_commit_and_preserved_bytes(tmp_path):
     source.write_bytes(b"replacement")
     with pytest.raises(ValueError, match="bytes changed"):
         proof["candidate_source"](tmp_path, "a" * 40)
+
+
+def provider_inventory(version="2.14.0", core="2.99.0"):
+    # Synthetic metadata; the real proof collects exact versions from Homebrew.
+    return {
+        "pydantic": version,
+        "pydantic_core": core,
+        "provider_distributions": [("pydantic", version), ("pydantic_core", core)],
+        "pydantic_requires": [f"pydantic-core=={core}", "typing-extensions>=4.14.1"],
+    }, {"pydantic": {"stable": version, "installed": ["2.13.5", version + "_1"]}}
+
+
+@pytest.mark.parametrize("version, core", [("2.13.5", "2.46.5"), ("2.14.0", "2.99.0")])
+def test_rolling_provider_is_bound_to_its_own_metadata(version, core):
+    inventory, formulas = provider_inventory(version, core)
+    proof["validate_runtime_provider"](inventory, formulas, "pydantic>=2.12,<3")
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "stale-formula",
+        "not-installed",
+        "outside-constraint",
+        "duplicate-metadata",
+        "missing-metadata",
+        "wrong-metadata-version",
+        "wrong-core-pin",
+        "missing-core",
+        "duplicate-core",
+        "core-range",
+        "core-url",
+        "core-marker",
+        "core-extra",
+    ],
+)
+def test_rolling_provider_never_waives_identity_or_dependency_coherence(fault):
+    inventory, formulas = provider_inventory()
+    if fault == "stale-formula":
+        formulas["pydantic"]["stable"] = "2.15.0"
+    elif fault == "not-installed":
+        formulas["pydantic"]["installed"] = ["2.13.5"]
+    elif fault == "outside-constraint":
+        inventory, formulas = provider_inventory("3.0.0")
+    elif fault == "duplicate-metadata":
+        inventory["provider_distributions"].append(("pydantic-core", "2.99.0"))
+    elif fault == "missing-metadata":
+        inventory["provider_distributions"].pop()
+    elif fault == "wrong-metadata-version":
+        inventory["provider_distributions"][1] = ("pydantic_core", "2.98.0")
+    elif fault == "wrong-core-pin":
+        inventory["pydantic_requires"][0] = "pydantic-core==2.98.0"
+    elif fault == "missing-core":
+        inventory["pydantic_requires"] = []
+    elif fault == "duplicate-core":
+        inventory["pydantic_requires"].append("pydantic-core==2.99.0")
+    elif fault == "core-range":
+        inventory["pydantic_requires"][0] = "pydantic-core>=2.99.0"
+    elif fault == "core-url":
+        inventory["pydantic_requires"][0] = (
+            "pydantic-core @ https://example.org/core.whl"
+        )
+    elif fault == "core-marker":
+        inventory["pydantic_requires"][0] = 'pydantic-core==2.99.0; python_version>="3"'
+    else:
+        inventory["pydantic_requires"][0] = "pydantic-core[extra]==2.99.0"
+    with pytest.raises(RuntimeError):
+        proof["validate_runtime_provider"](inventory, formulas, "pydantic>=2.12,<3")

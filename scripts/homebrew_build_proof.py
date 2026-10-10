@@ -52,6 +52,36 @@ def candidate_source(candidate, commit):
     return source, items[0]["sha256"]
 
 
+def validate_runtime_provider(inventory, formulas, constraint):
+    """Check the active rolling provider, not a historical qualification version."""
+    version = inventory["pydantic"]
+    core_version = inventory["pydantic_core"]
+    formula = formulas["pydantic"]
+    if (
+        version != formula["stable"]
+        or not any(v.split("_", 1)[0] == version for v in formula["installed"])
+        or version not in Requirement(constraint).specifier
+    ):
+        raise RuntimeError("Active Homebrew Pydantic violates the runtime contract")
+    for name, expected in (("pydantic", version), ("pydantic-core", core_version)):
+        matches = [
+            value
+            for package, value in inventory["provider_distributions"]
+            if canonicalize_name(package) == name
+        ]
+        if matches != [expected]:
+            raise RuntimeError("Homebrew provider module/metadata identity mismatch")
+    requirements = [Requirement(value) for value in inventory["pydantic_requires"]]
+    core = [r for r in requirements if canonicalize_name(r.name) == "pydantic-core"]
+    if len(core) != 1 or (
+        core[0].url
+        or core[0].marker
+        or core[0].extras
+        or str(core[0].specifier) != "==" + core_version
+    ):
+        raise RuntimeError("Homebrew pydantic-core disagrees with provider metadata")
+
+
 def prove(candidate, commit, inputs, output):
     if platform.system() != "Darwin":
         raise RuntimeError(
@@ -86,10 +116,6 @@ def prove(candidate, commit, inputs, output):
         }
         for f in brew_info["formulae"]
     }
-    # Upgrades may retain older kegs. The import proof below checks the active
-    # provider's exact version and location; unrelated retained kegs are harmless.
-    if "2.13.5" not in formulas["pydantic"]["installed"]:
-        raise RuntimeError("The first qualification requires Homebrew Pydantic 2.13.5")
     policy = json.loads((ROOT / "policy/homebrew-build-inputs.json").read_text())
     if (
         formulas["pydantic"]["stable"]
@@ -286,11 +312,13 @@ def prove(candidate, commit, inputs, output):
 runtime=pathlib.Path(sys.argv[1]).resolve(); provider=pathlib.Path(sys.argv[2]).resolve()
 assert pathlib.Path(apizr.__file__).resolve().is_relative_to(runtime)
 locations={m.__name__:str(pathlib.Path(m.__file__).resolve().relative_to(provider)) for m in (pydantic,pydantic_core)}
-assert pydantic.__version__=='2.13.5' and pydantic_core.__version__=='2.46.5'
+provider_distributions=list(importlib.metadata.distributions(path=[str(provider/'lib/python3.14/site-packages')]))
+pydantic_metadata=[d for d in provider_distributions if d.metadata['Name'].lower().replace('_','-')=='pydantic']
+assert len(pydantic_metadata)==1
 assert all(importlib.util.find_spec(name) is None for name in ('hatchling', 'tomlkit', 'trove_classifiers'))
 local_distributions=sorted((d.metadata['Name'],d.version) for d in importlib.metadata.distributions(path=[str(runtime/'lib/python3.14/site-packages')]))
 assert local_distributions==[('outerspace-apizr','0.4.4')]
-print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Path(apizr.__file__).resolve().relative_to(runtime)),'provider_modules':locations,'pydantic':pydantic.__version__,'pydantic_core':pydantic_core.__version__,'local_distributions':local_distributions,'distributions':sorted(set((d.metadata.get('Name'),d.version) for d in importlib.metadata.distributions()),key=lambda pair:(pair[0] or '',pair[1] or ''))}))
+print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Path(apizr.__file__).resolve().relative_to(runtime)),'provider_modules':locations,'pydantic':pydantic.__version__,'pydantic_core':pydantic_core.__version__,'provider_distributions':sorted((d.metadata['Name'],d.version) for d in provider_distributions),'pydantic_requires':pydantic_metadata[0].requires or [],'local_distributions':local_distributions,'distributions':sorted(set((d.metadata.get('Name'),d.version) for d in importlib.metadata.distributions()),key=lambda pair:(pair[0] or '',pair[1] or ''))}))
 """
     inventory = json.loads(
         run(
@@ -308,6 +336,7 @@ print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Pat
             env=runtime_env,
         )
     )
+    validate_runtime_provider(inventory, formulas, policy["runtime"]["constraint"])
     cli = [*sandbox, runtime / "bin/apizr"]
     version = run([*cli, "--version"], output, env=runtime_env).strip()
     if "0.4.4" not in version:

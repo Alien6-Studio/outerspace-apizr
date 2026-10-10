@@ -10,7 +10,7 @@ are tracked in [#232](https://github.com/Alien6-Studio/outerspace-apizr/issues/2
 ## Runtime provider
 
 The runtime uses Homebrew `python@3.14`, a system-site-packages virtual
-environment and the official `pydantic` formula. The first qualification requires
+environment and the official `pydantic` formula. The first qualification used
 Pydantic **2.13.5** and pydantic-core **2.46.5**. Import locations must resolve into
 that formula's keg. The proof reproduces the dependency `.pth` written by
 Homebrew's `virtualenv_create`, without modifying global Python files.
@@ -21,6 +21,15 @@ Apizr's public `pydantic>=2.12,<3` constraint and record exact tested versions.
 There is no claim of permanent byte parity with `uv.lock`, and no artificial
 versioned Pydantic formula. Python 3.14 is the Homebrew interpreter selection;
 Apizr's supported Python range remains 3.11–3.14.
+
+The ongoing offline-build preflight checks the active provider against the
+formula's current stable/installed identity and that public version constraint.
+Imported Pydantic and pydantic-core must match exactly one distribution each in
+the provider keg, and the loaded core must match Pydantic's exact, unconditional
+metadata requirement. Exact observed versions are retained in the proof.
+The policy's `qualification_version` fields and physical-Mac records remain the
+historical qualification evidence; they do not pin the rolling runtime provider.
+The locked, checksummed build-only wheelhouse and its manifest remain unchanged.
 
 Official references: [Python formula guidance](https://docs.brew.sh/Language-Specific-Formulae),
 [Pydantic formula](https://formulae.brew.sh/formula/pydantic), and
