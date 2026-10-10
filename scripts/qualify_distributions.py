@@ -148,6 +148,19 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
         )
         results["experiment_run"] = "passed"
         run(
+            python,
+            "-I",
+            "-B",
+            ROOT / "scripts/experiment_diff_proof.py",
+            "--fixtures",
+            ROOT / "tests/fixtures/experiments/comparison/v1",
+            "--output",
+            output / "experiment-diff.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_diff"] = "passed"
+        run(
             sys.executable,
             ROOT / "scripts/smoke_experiment_docs.py",
             cli,

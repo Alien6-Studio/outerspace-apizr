@@ -105,6 +105,37 @@ Upcoming 0.4.5 lets you expose an independent function while unrelated experimen
 remain unfinished; see the [research repository example](https://apizr.outerspace.sh/getting-started/user-guide/exposure/#work-with-unfinished-research-code).
 
 
+
+### Inspect → Run → Compare
+
+“My ROC AUC changed. What else changed between these runs?” This core-only
+example records two trusted local runs, then compares their saved evidence.
+
+<!-- experiment-diff:readme -->
+```sh
+cat > compare_train.py <<'PYTHON'
+max_depth = 8
+score = 0.91
+PYTHON
+apizr experiment inspect compare_train.py
+A=$(apizr experiment run compare_train.py --metric roc_auc=score --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
+cat > compare_train.py <<'PYTHON'
+max_depth = 12
+score = 0.92
+PYTHON
+B=$(apizr experiment run compare_train.py --metric roc_auc=score --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
+apizr experiment list
+apizr experiment diff "$A" "$B"
+rm compare_train.py
+apizr experiment diff "$A" "$B" --format json > comparison.json
+```
+
+`A → B` means evidence added in B or removed from A; numeric deltas are `B - A`.
+`show` reads one Run; `diff` compares two Runs from the same validated local store.
+Comparison still works after deleting the source. Unknown observations remain unknown.
+Apizr identifies recorded differences; it does not prove which one caused the metric change.
+Read the [comparison guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-comparison.md) for data, environment and output evidence.
+
 ## Expose the functions you choose
 
 <span id="one-repository-two-public-capabilities"></span>

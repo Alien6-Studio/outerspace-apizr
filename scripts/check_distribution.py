@@ -111,6 +111,8 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
                 "apizr/experiments/worker.py",
                 "apizr/experiments/store.py",
                 "apizr/experiments/history.py",
+                "apizr/experiments/comparison.py",
+                "apizr/experiments/comparison_reporting.py",
                 "apizr/experiments/inspection_model.py",
                 "apizr/experiments/reporting.py",
                 "apizr/cli/commands/experiment.py",

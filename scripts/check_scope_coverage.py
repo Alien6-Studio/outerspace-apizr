@@ -40,6 +40,17 @@ def main() -> None:
             if summary["covered_lines"] != summary["num_statements"]:
                 raise ValueError(f"{name} line coverage is below 100%")
             scopes.append((name, summary))
+    comparison = report["files"]["src/apizr/experiments/comparison.py"]["summary"]
+    if comparison["covered_branches"] < 0.98 * comparison["num_branches"]:
+        raise ValueError("Experiment comparison branch coverage is below 98%")
+    scopes.append(
+        (
+            "Experiment diff CLI",
+            report["files"]["src/apizr/cli/commands/experiment.py"]["functions"][
+                "_diff"
+            ]["summary"],
+        )
+    )
     for scope, summary in scopes:
         for label, covered, total in (
             ("line", "covered_lines", "num_statements"),

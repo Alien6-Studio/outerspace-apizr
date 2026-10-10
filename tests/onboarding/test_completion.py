@@ -40,7 +40,10 @@ def test_completion_covers_actual_parsers_and_dispatch():
 @pytest.mark.parametrize(
     "words,expected",
     [
-        (["experiment", ""], ("inspect", "list", "run", "show")),
+        (["experiment", ""], ("diff", "inspect", "list", "run", "show")),
+        (["experiment", "diff", "a" * 64, "b" * 64, "--format", ""], ("json", "text")),
+        (["experiment", "diff", "--store", ""], (FILES,)),
+        (["experiment", "diff", ""], ()),
         (["experiment", "run", ""], (FILES,)),
         (["experiment", "run", "--store", ""], (FILES,)),
         (["experiment", "list", "--status", ""], ("cancelled", "failed", "success")),
@@ -115,7 +118,8 @@ def test_no_dynamic_access(monkeypatch, capsys):
 
 
 @pytest.mark.parametrize("shell", ["bash", "zsh", "fish"])
-def test_real_shell_syntax_and_candidates(tmp_path, shell):
+@pytest.mark.parametrize("journey", ["clients export", "experiment diff A B"])
+def test_real_shell_syntax_and_candidates(tmp_path, shell, journey):
     executable = shutil.which(shell)
     if executable is None:
         # The dedicated Linux qualification requires all three binaries.
@@ -131,15 +135,28 @@ def test_real_shell_syntax_and_candidates(tmp_path, shell):
         command = 'compdef() { :; }; compadd() { shift; print -l -- "$@"; }; source "$1"; words=(apizr clients export --format ""); CURRENT=5; _apizr'
     else:
         command = 'source $argv[1]; complete -C "apizr clients export --format "'
+    command = command.replace("clients export", journey)
+    if journey.startswith("experiment"):
+        command = command.replace("COMP_CWORD=4", "COMP_CWORD=6").replace(
+            "CURRENT=5", "CURRENT=7"
+        )
     argv = [
         executable,
+        *(
+            {"bash": ["--noprofile", "--norc"], "zsh": ["-f"], "fish": ["--no-config"]}[
+                shell
+            ]
+        ),
         "-c",
         command,
         *([str(path)] if shell == "fish" else ["test", str(path)]),
     ]
     result = subprocess.run(argv, capture_output=True, text=True, check=True)
-    assert {line.split("\t")[0] for line in result.stdout.splitlines()} == {
-        "postman",
-        "bruno",
-        "insomnia",
-    }, result
+    expected = (
+        {"json", "text"}
+        if journey.startswith("experiment")
+        else {"postman", "bruno", "insomnia"}
+    )
+    assert {line.split("\t")[0] for line in result.stdout.splitlines()} == expected, (
+        result
+    )

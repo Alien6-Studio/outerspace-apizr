@@ -242,6 +242,11 @@ framework recognition. `run_protocol.py` owns bounded JSON workload messages.
 `worker.py` executes exact inspected bytes and captures runtime facts in the child.
 `store.py` publishes canonical Plan/Run bytes exclusively and validates local
 history. `history.py` owns list/show queries and their intended/observed views.
+`comparison.py` owns the pure `compare_runs(RunRecord, RunRecord)` authority, typed
+`ExperimentDiff` view and canonical bounded bytes; `comparison_reporting.py` renders
+bounded factual text. Inspection → Plan → Run → Comparison is an evidence lifecycle.
+Comparison revalidates stored identities and never captures or recreates evidence.
+It separates material evidence changes from observed results without causal inference.
 These modules belong to the same evidence lifecycle; neither inspection nor its
 producers import the runner, worker, protocol or history. CLI dispatch is lazy.
 

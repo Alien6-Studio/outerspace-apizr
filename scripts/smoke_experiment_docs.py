@@ -111,6 +111,55 @@ def main() -> None:
                 "blocks": len(blocks),
                 "example_sha256": sha256("\n".join(blocks).encode()).hexdigest(),
             }
+        for index, page in enumerate(
+            (
+                "README.md",
+                "docs/getting-started/quickstart.md",
+                "docs/getting-started/user-guide/experiment-comparison.md",
+            )
+        ):
+            root = Path(directory) / f"diff-{index}"
+            root.mkdir()
+            blocks = re.findall(
+                r"<!-- experiment-diff:[a-z-]+ -->\s*```sh\n(.*?)```",
+                (ROOT / page).read_text(),
+                re.S,
+            )
+            assert len(blocks) == 1, page
+            result = subprocess.run(
+                ["/bin/sh", "-eu", "-c", blocks[0]],
+                cwd=root,
+                env=env,
+                check=True,
+                capture_output=True,
+                timeout=60,
+            )
+            assert b"trusted user code" in result.stderr
+            assert all(
+                text in result.stdout
+                for text in (
+                    b"Material evidence differences",
+                    b"Observed result differences",
+                    b"delta B - A: +0.01",
+                    b"Apizr does not establish",
+                )
+            ), page
+            value = json.loads((root / "comparison.json").read_bytes())
+            assert value["schema_version"] == "apizr.experiment-diff/v1"
+            assert value["metrics"][0]["state"] == "changed"
+            assert (
+                next(p for p in value["parameters"] if p["name"] == "max_depth")[
+                    "planned_state"
+                ]
+                == "changed"
+            )
+            assert not (root / "compare_train.py").exists()
+            assert len(list((root / ".apizr/experiments/v1/runs").glob("*.json"))) == 2
+            results[page + "#diff"] = {
+                "status": "passed",
+                "blocks": len(blocks),
+                "example_sha256": sha256(blocks[0].encode()).hexdigest(),
+            }
     args.output.write_text(json.dumps(results, indent=2) + "\n")
 
 

@@ -28,6 +28,48 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "diff-unknown-is-not-same",
+        "src/apizr/experiments/comparison.py",
+        "if EvidenceOrigin.UNKNOWN in (a.origin, b.origin):\n        return ChangeState.UNKNOWN",
+        "if EvidenceOrigin.UNKNOWN in (a.origin, b.origin):\n        return ChangeState.SAME",
+        "tests/experiments/test_comparison.py::test_parameter_unknown_and_membership",
+    ),
+    Mutation(
+        "diff-membership-direction",
+        "src/apizr/experiments/comparison.py",
+        "return ChangeState.UNKNOWN if b is None else ChangeState.ADDED",
+        "return ChangeState.UNKNOWN if b is None else ChangeState.REMOVED",
+        "tests/experiments/test_comparison.py::test_remote_reference_and_selection_membership",
+    ),
+    Mutation(
+        "diff-delta-direction",
+        "src/apizr/experiments/comparison.py",
+        "difference = y - x",
+        "difference = x - y",
+        "tests/experiments/test_comparison.py::test_metric_rules",
+    ),
+    Mutation(
+        "diff-delta-unit-binding",
+        "src/apizr/experiments/comparison.py",
+        "a is not None and b is not None and a.unit == b.unit",
+        "a is not None and b is not None",
+        "tests/experiments/test_comparison.py::test_metric_rules",
+    ),
+    Mutation(
+        "diff-intent-is-not-observation",
+        "src/apizr/experiments/comparison.py",
+        "content_state=_content(oa, ob)",
+        "content_state=_content(pa, pb)",
+        "tests/experiments/test_comparison.py::test_dataset_only_change_and_missing_observation",
+    ),
+    Mutation(
+        "diff-record-binding",
+        "src/apizr/experiments/comparison.py",
+        "a = RunRecord.model_validate(a)",
+        "a = a  # mutation: skip caller-provided record validation",
+        "tests/experiments/test_comparison.py::test_revalidates_records_and_nested_binding",
+    ),
+    Mutation(
         "experiment-worker-source-recheck",
         "src/apizr/experiments/worker.py",
         "if sha256(current).hexdigest() != request.subject.digest:",

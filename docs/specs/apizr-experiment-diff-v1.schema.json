@@ -1,0 +1,1179 @@
+{
+  "$defs": {
+    "ChangeState": {
+      "enum": [
+        "same",
+        "changed",
+        "added",
+        "removed",
+        "unknown"
+      ],
+      "title": "ChangeState",
+      "type": "string"
+    },
+    "DifferenceCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "changed": {
+          "maximum": 32768,
+          "minimum": 0,
+          "title": "Changed",
+          "type": "integer"
+        },
+        "added": {
+          "maximum": 32768,
+          "minimum": 0,
+          "title": "Added",
+          "type": "integer"
+        },
+        "removed": {
+          "maximum": 32768,
+          "minimum": 0,
+          "title": "Removed",
+          "type": "integer"
+        },
+        "unknown": {
+          "maximum": 32768,
+          "minimum": 0,
+          "title": "Unknown",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "changed",
+        "added",
+        "removed",
+        "unknown"
+      ],
+      "title": "DifferenceCounts",
+      "type": "object"
+    },
+    "EnvironmentArtifactChange": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InputArtifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InputArtifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/ChangeState"
+        }
+      },
+      "required": [
+        "name",
+        "a",
+        "b",
+        "state"
+      ],
+      "title": "EnvironmentArtifactChange",
+      "type": "object"
+    },
+    "EnvironmentChange": {
+      "additionalProperties": false,
+      "properties": {
+        "python_implementation": {
+          "$ref": "#/$defs/EnvironmentScalarChange"
+        },
+        "python_version": {
+          "$ref": "#/$defs/EnvironmentScalarChange"
+        },
+        "platform": {
+          "$ref": "#/$defs/EnvironmentScalarChange"
+        },
+        "architecture": {
+          "$ref": "#/$defs/EnvironmentScalarChange"
+        },
+        "packages": {
+          "items": {
+            "$ref": "#/$defs/PackageChange"
+          },
+          "maxItems": 8192,
+          "title": "Packages",
+          "type": "array"
+        },
+        "artifacts": {
+          "items": {
+            "$ref": "#/$defs/EnvironmentArtifactChange"
+          },
+          "maxItems": 128,
+          "title": "Artifacts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "python_implementation",
+        "python_version",
+        "platform",
+        "architecture",
+        "packages",
+        "artifacts"
+      ],
+      "title": "EnvironmentChange",
+      "type": "object"
+    },
+    "EnvironmentScalarChange": {
+      "additionalProperties": false,
+      "properties": {
+        "a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/ChangeState"
+        }
+      },
+      "required": [
+        "a",
+        "b",
+        "state"
+      ],
+      "title": "EnvironmentScalarChange",
+      "type": "object"
+    },
+    "EnvironmentValue": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "value",
+        "origin"
+      ],
+      "title": "EnvironmentValue",
+      "type": "object"
+    },
+    "EvidenceOrigin": {
+      "enum": [
+        "declared",
+        "static",
+        "runtime",
+        "unknown"
+      ],
+      "title": "EvidenceOrigin",
+      "type": "string"
+    },
+    "FrozenJSON": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "maxLength": 8192,
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/FrozenJSON"
+          },
+          "maxItems": 1024,
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/FrozenJSON"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "maxLength": 256
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "InputArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Digest"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        },
+        "content_origin": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceOrigin"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "format_hint": {
+          "anyOf": [
+            {
+              "enum": [
+                "csv",
+                "parquet",
+                "numpy",
+                "joblib"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format Hint"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        }
+      },
+      "required": [
+        "name",
+        "origin"
+      ],
+      "title": "InputArtifact",
+      "type": "object"
+    },
+    "InputChange": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "planned_a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InputArtifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InputArtifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planned_b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InputArtifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InputArtifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "selection_state": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "reference_state": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "content_state": {
+          "$ref": "#/$defs/ChangeState"
+        }
+      },
+      "required": [
+        "name",
+        "planned_a",
+        "observed_a",
+        "planned_b",
+        "observed_b",
+        "selection_state",
+        "reference_state",
+        "content_state"
+      ],
+      "title": "InputChange",
+      "type": "object"
+    },
+    "Metric": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "origin": {
+          "const": "runtime",
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin"
+      ],
+      "title": "Metric",
+      "type": "object"
+    },
+    "MetricChange": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Metric"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Metric"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "delta": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta"
+        }
+      },
+      "required": [
+        "name",
+        "a",
+        "b",
+        "state"
+      ],
+      "title": "MetricChange",
+      "type": "object"
+    },
+    "OutputArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Type"
+        },
+        "origin": {
+          "const": "runtime",
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "digest",
+        "origin"
+      ],
+      "title": "OutputArtifact",
+      "type": "object"
+    },
+    "OutputChange": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OutputArtifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OutputArtifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "content_state": {
+          "$ref": "#/$defs/ChangeState"
+        }
+      },
+      "required": [
+        "name",
+        "a",
+        "b",
+        "state",
+        "content_state"
+      ],
+      "title": "OutputChange",
+      "type": "object"
+    },
+    "PackageChange": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PackageEvidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PackageEvidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/ChangeState"
+        }
+      },
+      "required": [
+        "name",
+        "a",
+        "b",
+        "state"
+      ],
+      "title": "PackageChange",
+      "type": "object"
+    },
+    "PackageEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Version"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "origin"
+      ],
+      "title": "PackageEvidence",
+      "type": "object"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "ParameterChange": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "planned_a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameter"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameter"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planned_b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameter"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameter"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planned_state": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "observed_state": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "observed_membership": {
+          "$ref": "#/$defs/ChangeState"
+        }
+      },
+      "required": [
+        "name",
+        "planned_a",
+        "observed_a",
+        "planned_b",
+        "observed_b",
+        "planned_state",
+        "observed_state",
+        "observed_membership"
+      ],
+      "title": "ParameterChange",
+      "type": "object"
+    },
+    "RandomnessChange": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "planned_a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RandomnessControl"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RandomnessControl"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planned_b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RandomnessControl"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RandomnessControl"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planned_state": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "observed_state": {
+          "$ref": "#/$defs/ChangeState"
+        }
+      },
+      "required": [
+        "provider",
+        "name",
+        "planned_a",
+        "observed_a",
+        "planned_b",
+        "observed_b",
+        "planned_state",
+        "observed_state"
+      ],
+      "title": "RandomnessChange",
+      "type": "object"
+    },
+    "RandomnessControl": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        },
+        "provider": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin",
+        "provider"
+      ],
+      "title": "RandomnessControl",
+      "type": "object"
+    },
+    "SourceChange": {
+      "additionalProperties": false,
+      "properties": {
+        "a": {
+          "$ref": "#/$defs/SourceIdentity"
+        },
+        "b": {
+          "$ref": "#/$defs/SourceIdentity"
+        },
+        "state": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "kind": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "reference": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "digest": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "executable_digest": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "module": {
+          "$ref": "#/$defs/ChangeState"
+        },
+        "capability_id": {
+          "$ref": "#/$defs/ChangeState"
+        }
+      },
+      "required": [
+        "a",
+        "b",
+        "state",
+        "kind",
+        "reference",
+        "digest",
+        "executable_digest",
+        "module",
+        "capability_id"
+      ],
+      "title": "SourceChange",
+      "type": "object"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "python",
+            "notebook"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "executable_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Executable Digest"
+        },
+        "module": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Module"
+        },
+        "capability_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "^[^\\s/\\\\]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Id"
+        }
+      },
+      "required": [
+        "kind",
+        "reference",
+        "digest"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "StatusChange": {
+      "additionalProperties": false,
+      "properties": {
+        "a": {
+          "enum": [
+            "success",
+            "failed",
+            "cancelled"
+          ],
+          "title": "A",
+          "type": "string"
+        },
+        "b": {
+          "enum": [
+            "success",
+            "failed",
+            "cancelled"
+          ],
+          "title": "B",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/ChangeState"
+        }
+      },
+      "required": [
+        "a",
+        "b",
+        "state"
+      ],
+      "title": "StatusChange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.experiment-diff/v1",
+      "default": "apizr.experiment-diff/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "run_a_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run A Digest",
+      "type": "string"
+    },
+    "run_b_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run B Digest",
+      "type": "string"
+    },
+    "plan_a_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan A Digest",
+      "type": "string"
+    },
+    "plan_b_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan B Digest",
+      "type": "string"
+    },
+    "plan_state": {
+      "$ref": "#/$defs/ChangeState"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceChange"
+    },
+    "serving": {
+      "$ref": "#/$defs/ChangeState"
+    },
+    "data": {
+      "items": {
+        "$ref": "#/$defs/InputChange"
+      },
+      "maxItems": 1024,
+      "title": "Data",
+      "type": "array"
+    },
+    "parameters": {
+      "items": {
+        "$ref": "#/$defs/ParameterChange"
+      },
+      "maxItems": 1024,
+      "title": "Parameters",
+      "type": "array"
+    },
+    "randomness": {
+      "items": {
+        "$ref": "#/$defs/RandomnessChange"
+      },
+      "maxItems": 512,
+      "title": "Randomness",
+      "type": "array"
+    },
+    "planned_environment": {
+      "$ref": "#/$defs/EnvironmentChange"
+    },
+    "observed_environment": {
+      "$ref": "#/$defs/EnvironmentChange"
+    },
+    "status": {
+      "$ref": "#/$defs/StatusChange"
+    },
+    "metrics": {
+      "items": {
+        "$ref": "#/$defs/MetricChange"
+      },
+      "maxItems": 512,
+      "title": "Metrics",
+      "type": "array"
+    },
+    "outputs": {
+      "items": {
+        "$ref": "#/$defs/OutputChange"
+      },
+      "maxItems": 512,
+      "title": "Outputs",
+      "type": "array"
+    },
+    "material_counts": {
+      "$ref": "#/$defs/DifferenceCounts"
+    },
+    "result_counts": {
+      "$ref": "#/$defs/DifferenceCounts"
+    }
+  },
+  "required": [
+    "run_a_digest",
+    "run_b_digest",
+    "plan_a_digest",
+    "plan_b_digest",
+    "plan_state",
+    "source",
+    "serving",
+    "data",
+    "parameters",
+    "randomness",
+    "planned_environment",
+    "observed_environment",
+    "status",
+    "metrics",
+    "outputs",
+    "material_counts",
+    "result_counts"
+  ],
+  "title": "ExperimentDiff",
+  "type": "object"
+}

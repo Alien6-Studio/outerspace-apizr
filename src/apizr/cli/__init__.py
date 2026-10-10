@@ -104,6 +104,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print("  Understand script/notebook evidence without executing code.")
         print("  apizr experiment run SOURCE — execute trusted code with host access.")
         print("  apizr experiment list | apizr experiment show RUN — local history.")
+        print("  apizr experiment diff RUN_A RUN_B — compare recorded evidence.")
         print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
         )

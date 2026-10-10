@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Compare local Experiment Runs deterministically across code, data, parameters,
+  randomness, environment, metrics and outputs, with finite numeric metric deltas
+  and explicit unknown evidence, without causal inference (`experiment diff`, #265).
+
 - Execute trusted Python scripts and supported notebooks in fresh local processes,
   derive exact experiment Plans, record runtime observations and persist immutable
   local history with `experiment run`, `list` and `show` (#264).

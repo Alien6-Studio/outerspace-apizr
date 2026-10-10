@@ -51,6 +51,37 @@ local store contains evidence JSON, not a copy of the model. See
 [running experiments](user-guide/experiment-runs.md) for notebooks, inputs,
 timeouts, failed Runs and the difference between intent and observation.
 
+
+### Inspect → Run → Compare
+
+“My ROC AUC changed. What else changed between these runs?” This core-only
+example records two trusted local runs, then compares their saved evidence.
+
+<!-- experiment-diff:quickstart -->
+```sh
+cat > compare_train.py <<'PYTHON'
+max_depth = 8
+score = 0.91
+PYTHON
+apizr experiment inspect compare_train.py
+A=$(apizr experiment run compare_train.py --metric roc_auc=score --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
+cat > compare_train.py <<'PYTHON'
+max_depth = 12
+score = 0.92
+PYTHON
+B=$(apizr experiment run compare_train.py --metric roc_auc=score --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
+apizr experiment list
+apizr experiment diff "$A" "$B"
+rm compare_train.py
+apizr experiment diff "$A" "$B" --format json > comparison.json
+```
+
+`A → B` means evidence added in B or removed from A; numeric deltas are `B - A`.
+`show` reads one Run; `diff` compares two Runs from the same validated local store.
+Comparison still works after deleting the source. Unknown observations remain unknown.
+Apizr identifies recorded differences; it does not prove which one caused the metric change.
+Read the [comparison guide](user-guide/experiment-comparison.md) for data, environment and output evidence.
+
 ## Make a service from functions
 
 Turn two Python functions into a local service. You will calculate a price

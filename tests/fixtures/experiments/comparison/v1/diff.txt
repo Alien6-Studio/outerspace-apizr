@@ -1,0 +1,107 @@
+Experiment diff — A → B
+Run A: 3720f1e775d41fc8c7b4176eed1bd0ab61823a12de4db24af8de16320cca472c
+Run B: d6d8da9768c6f7a87553c79874cc0aaef532f1be666ac57d6d0a10f770e0efca
+Plan A: 39be47ccee2e8afe7cfc9d8d83e09b19dbe10b9d7ae4566d85493fc1a1161f5c
+Plan B: eed7631eb80d3fb76ed26e1a74bf29e4cb0e5f763fe7337e26885546c8919f25
+Plan identity: CHANGED
+Counts describe comparison facets; planned and observed evidence are counted separately.
+Timing is excluded. Added/removed describe recorded evidence membership.
+
+Material evidence differences (2 changed, 0 added, 0 removed, 5 unknown)
+Code — SAME
+  kind: A notebook; B notebook — SAME
+  reference: A notebooks/fraud_detection.ipynb; B notebooks/fraud_detection.ipynb — SAME
+  digest: A e5fc7f50f8a1dc47070cbf81e9f14a3bbebc6c7b9a22cd94e8e50f87eedcf44f; B e5fc7f50f8a1dc47070cbf81e9f14a3bbebc6c7b9a22cd94e8e50f87eedcf44f — SAME
+  executable_digest: A 8561a8bdccbed4f38de32e72d9de436f20428d25f3932e04690be6b347c4a1af; B 8561a8bdccbed4f38de32e72d9de436f20428d25f3932e04690be6b347c4a1af — SAME
+  module: A fraud_detection; B fraud_detection — SAME
+  capability_id: A unknown; B unknown — UNKNOWN
+Data
+  train planned selection — SAME
+    A {"digest": "4aac42989ab94580ce4f98d7341837494d148f2abcce2df4e5fca1efae7350b9", "name": "train", "origin": "static", "reference": "data/train.csv", "size": 4096}
+    B {"digest": "4aac42989ab94580ce4f98d7341837494d148f2abcce2df4e5fca1efae7350b9", "name": "train", "origin": "static", "reference": "data/train.csv", "size": 4096}
+  train observed content — CHANGED
+    A {"digest": "4aac42989ab94580ce4f98d7341837494d148f2abcce2df4e5fca1efae7350b9", "name": "train", "origin": "runtime", "reference": "data/train.csv", "size": 4096}
+    B {"digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "name": "train", "origin": "runtime", "reference": "data/train.csv", "size": 4096}
+    planned reference: SAME
+  validation planned selection — SAME
+    A {"digest": null, "name": "validation", "origin": "unknown", "reference": "data/validation.csv", "size": null}
+    B {"digest": null, "name": "validation", "origin": "unknown", "reference": "data/validation.csv", "size": null}
+  validation observed content — UNKNOWN
+    A not recorded
+    B not recorded
+    planned reference: SAME
+Parameters
+  learning_rate intended — SAME
+    A {"name": "learning_rate", "origin": "declared", "value": 0.05}
+    B {"name": "learning_rate", "origin": "declared", "value": 0.05}
+  learning_rate observed — SAME
+    A {"name": "learning_rate", "origin": "runtime", "value": 0.05}
+    B {"name": "learning_rate", "origin": "runtime", "value": 0.05}
+    observed evidence membership: SAME
+  max_depth intended — CHANGED
+    A {"name": "max_depth", "origin": "declared", "value": 8}
+    B {"name": "max_depth", "origin": "declared", "value": 12}
+  max_depth observed — SAME
+    A {"name": "max_depth", "origin": "runtime", "value": 8}
+    B {"name": "max_depth", "origin": "runtime", "value": 8}
+    observed evidence membership: SAME
+Randomness
+  sklearn.random_state intended — SAME
+    A {"name": "random_state", "origin": "declared", "provider": "sklearn", "value": 42}
+    B {"name": "random_state", "origin": "declared", "provider": "sklearn", "value": 42}
+  sklearn.random_state observed — SAME
+    A {"name": "random_state", "origin": "runtime", "provider": "sklearn", "value": 42}
+    B {"name": "random_state", "origin": "runtime", "provider": "sklearn", "value": 42}
+Environment
+  Plan evidence
+  python_implementation — SAME
+    A {"origin": "declared", "value": "CPython"}
+    B {"origin": "declared", "value": "CPython"}
+  python_version — SAME
+    A {"origin": "declared", "value": "3.12.13"}
+    B {"origin": "declared", "value": "3.12.13"}
+  platform — UNKNOWN
+    A {"origin": "unknown", "value": null}
+    B {"origin": "unknown", "value": null}
+  architecture — UNKNOWN
+    A not recorded
+    B not recorded
+  package scikit-learn evidence — SAME
+    A {"name": "scikit-learn", "origin": "declared", "version": "1.7.2"}
+    B {"name": "scikit-learn", "origin": "declared", "version": "1.7.2"}
+  artifact lock evidence — SAME
+    A {"digest": "18bef68f5c27b9b240d860ab722a11cb51df96363ebad365ac9da16bcd385732", "name": "lock", "origin": "static", "reference": "requirements.lock", "size": null}
+    B {"digest": "18bef68f5c27b9b240d860ab722a11cb51df96363ebad365ac9da16bcd385732", "name": "lock", "origin": "static", "reference": "requirements.lock", "size": null}
+  Run evidence
+  python_implementation — SAME
+    A {"origin": "runtime", "value": "CPython"}
+    B {"origin": "runtime", "value": "CPython"}
+  python_version — SAME
+    A {"origin": "runtime", "value": "3.12.13"}
+    B {"origin": "runtime", "value": "3.12.13"}
+  platform — SAME
+    A {"origin": "runtime", "value": "linux-x86_64"}
+    B {"origin": "runtime", "value": "linux-x86_64"}
+  architecture — UNKNOWN
+    A not recorded
+    B not recorded
+  package scikit-learn evidence — SAME
+    A {"name": "scikit-learn", "origin": "runtime", "version": "1.7.2"}
+    B {"name": "scikit-learn", "origin": "runtime", "version": "1.7.2"}
+  artifact lock evidence — SAME
+    A {"digest": "18bef68f5c27b9b240d860ab722a11cb51df96363ebad365ac9da16bcd385732", "name": "lock", "origin": "runtime", "reference": "requirements.lock", "size": null}
+    B {"digest": "18bef68f5c27b9b240d860ab722a11cb51df96363ebad365ac9da16bcd385732", "name": "lock", "origin": "runtime", "reference": "requirements.lock", "size": null}
+Serving — UNKNOWN
+Observed result differences (2 changed, 0 added, 0 removed, 0 unknown)
+Status: A success; B success — SAME
+Metrics
+  roc_auc evidence — CHANGED
+    A {"name": "roc_auc", "origin": "runtime", "unit": null, "value": 0.91}
+    B {"name": "roc_auc", "origin": "runtime", "unit": null, "value": 0.948}
+    delta B - A: +0.038
+Outputs
+  fraud-model evidence — CHANGED
+    A {"digest": "c97ed834bd7b9fe29f53be047866aeb774763cf280f07ac60dc7929ae68c6ccb", "media_type": "application/octet-stream", "name": "fraud-model", "origin": "runtime", "size": 1024}
+    B {"digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "media_type": "application/octet-stream", "name": "fraud-model", "origin": "runtime", "size": 1024}
+    content: CHANGED
+These are recorded evidence differences. Apizr does not establish which difference caused an observed result change.

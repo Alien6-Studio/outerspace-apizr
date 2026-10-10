@@ -43,7 +43,7 @@ def _source_arguments(parser: argparse.ArgumentParser) -> None:
 def main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(
         prog="apizr experiment",
-        description="Inspect without executing; run trusted code; list and show local experiment history.",
+        description="Inspect without executing; run trusted code; list, show and compare local experiment history.",
     )
     commands = parser.add_subparsers(dest="command", required=True)
     inspect = commands.add_parser(
@@ -120,7 +120,16 @@ def main(argv: Sequence[str]) -> int:
         metavar="RUN",
         help="Full Run SHA-256 or unique lowercase prefix of at least 12 characters",
     )
-    for history in (listing, show):
+    diff = commands.add_parser(
+        "diff", help="Compare recorded evidence, A to B; no causal inference"
+    )
+    for name in ("run_a", "run_b"):
+        diff.add_argument(
+            name,
+            metavar=name.upper(),
+            help="Full Run SHA-256 or unique lowercase prefix of at least 12 characters",
+        )
+    for history in (listing, show, diff):
         history.add_argument(
             "--store",
             type=Path,
@@ -132,6 +141,8 @@ def main(argv: Sequence[str]) -> int:
         return _inspect(args)
     if args.command == "run":
         return _run(args)
+    if args.command == "diff":
+        return _diff(args)
     return _history(args)
 
 
@@ -226,6 +237,26 @@ def _run(args: argparse.Namespace) -> int:
         return _error("run", error)
     sys.stdout.buffer.write(output)
     return 0 if result.run.status == "success" else 1
+
+
+def _diff(args: argparse.Namespace) -> int:
+    from apizr.experiments.comparison import compare_runs, diff_bytes
+    from apizr.experiments.comparison_reporting import diff_text
+    from apizr.experiments.history import show_run
+    from apizr.experiments.store import DEFAULT_STORE
+
+    try:
+        path = args.store if args.store is not None else DEFAULT_STORE
+        result = compare_runs(show_run(path, args.run_a), show_run(path, args.run_b))
+        output = (
+            diff_bytes(result)
+            if args.format == "json"
+            else diff_text(result).encode("utf-8")
+        )
+    except (OSError, ValueError, UnicodeError, RecursionError) as error:
+        return _error("diff", error)
+    sys.stdout.buffer.write(output)
+    return 0
 
 
 def _history(args: argparse.Namespace) -> int:
