@@ -144,6 +144,7 @@ nav:
       - Experiment evidence: architecture/experiment-evidence-v1.md
       - Experiment inputs: guides/experiment-inputs.md
       - Seeds and environment evidence: guides/experiment-randomness-environment.md
+      - Metrics and output artifacts: guides/experiment-results.md
       - Exposure Plan: architecture/exposure-plan-v1.md
       - Repository Bundle: architecture/repository-bundle-v1.md
       - Governed repository execution: architecture/governed-repository-runtime.md

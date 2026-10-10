@@ -220,7 +220,11 @@ historical experiment facade. `randomness.py` owns bounded source-only randomnes
 controls and explicit distribution candidates; `environment.py` owns selected
 trusted-runtime facts and static/runtime root-level specification identities.
 Both source producers share the internal `_lexical.py` authority and AST bounds.
-Environment files reuse the input fingerprint reader without a second file algorithm.
+`metrics.py` owns explicit metric construction and static sklearn call signals;
+`outputs.py` owns explicit output selections, static joblib candidates and current
+byte observations. `_files.py` owns the one internal regular-file digest primitive
+shared by input, environment and output capture. It returns factual identity or a
+safety failure; callers assign their context-specific evidence provenance.
 
 An Experiment Plan describes intended experiment inputs and controls. An Experiment Run records observed execution evidence. Neither proves scientific causality or reproducibility.
 

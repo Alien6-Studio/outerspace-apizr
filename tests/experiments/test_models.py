@@ -61,9 +61,13 @@ def test_portable_references(reference):
 @pytest.mark.parametrize(
     "value", [float("nan"), float("inf"), -float("inf"), True, "0.9", None, 2**63]
 )
-def test_metric_rejects_non_finite_or_non_numeric(value):
-    with pytest.raises(ValidationError):
-        Metric(name="auc", value=value, origin=Origin.RUNTIME)
+def test_metric_finite_value_domain(value):
+    if value is None or type(value) in (bool, str):
+        metric = Metric(name="auc", value=value, origin=Origin.RUNTIME)
+        assert metric.value == value and type(metric.value) is type(value)
+    else:
+        with pytest.raises(ValidationError):
+            Metric(name="auc", value=value, origin=Origin.RUNTIME)
 
 
 @pytest.mark.parametrize(

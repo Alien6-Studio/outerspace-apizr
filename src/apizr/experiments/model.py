@@ -234,25 +234,24 @@ class ExecutionIntent(ExperimentValue):
 
 class Metric(ExperimentValue):
     name: Name
-    value: (
-        Annotated[int, Field(ge=-(2**63), le=2**63 - 1)]
-        | Annotated[float, Field(allow_inf_nan=False)]
-    )
+    value: FiniteValue
     unit: (
         Annotated[str, Field(min_length=1, max_length=64), AfterValidator(_text)] | None
     ) = None
     origin: Literal[EvidenceOrigin.RUNTIME]
 
-    @field_validator("value", mode="before")
-    @classmethod
-    def bounded_integer(cls, value: object) -> object:
-        if type(value) is int and not -(2**63) <= value < 2**63:
-            raise ValueError("experiment_metric_integer_range")
-        return value
+    @model_validator(mode="after")
+    def scalar_unit(self) -> Self:
+        if self.unit is not None and type(self.value) not in (int, float):
+            raise ValueError("experiment_metric_unit_requires_numeric_scalar")
+        return self
 
 
 class OutputArtifact(ExperimentValue):
     name: Name
+    reference: Reference | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
     digest: Digest
     size: Size | None = None
     media_type: Name | None = None

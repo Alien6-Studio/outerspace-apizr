@@ -17,6 +17,13 @@ from apizr.experiments.inputs import (
     parse_input_declaration,
     select_inputs,
 )
+from apizr.experiments.metrics import (
+    MetricDiagnostic,
+    MetricDiscoveryResult,
+    MetricSignal,
+    capture_metric,
+    discover_metrics,
+)
 from apizr.experiments.model import (
     EnvironmentEvidence,
     EnvironmentValue,
@@ -34,6 +41,17 @@ from apizr.experiments.model import (
     RunTiming,
     SourceIdentity,
 )
+from apizr.experiments.outputs import (
+    OutputCaptureResult,
+    OutputDeclaration,
+    OutputDiagnostic,
+    OutputDiscoveryResult,
+    OutputSignal,
+    discover_outputs,
+    fingerprint_output,
+    fingerprint_outputs,
+    parse_output_declaration,
+)
 from apizr.experiments.randomness import (
     RandomnessDiagnostic,
     RandomnessResult,
@@ -48,6 +66,20 @@ from apizr.experiments.serialization import (
 )
 
 __all__ = [
+    "MetricDiagnostic",
+    "MetricDiscoveryResult",
+    "MetricSignal",
+    "capture_metric",
+    "discover_metrics",
+    "OutputCaptureResult",
+    "OutputDeclaration",
+    "OutputDiagnostic",
+    "OutputDiscoveryResult",
+    "OutputSignal",
+    "discover_outputs",
+    "fingerprint_output",
+    "fingerprint_outputs",
+    "parse_output_declaration",
     "EnvironmentDiagnostic",
     "EnvironmentResult",
     "capture_runtime_environment",

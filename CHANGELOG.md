@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add explicit finite JSON metric capture, static sklearn metric-call signals and
+  safe output artifact fingerprints with joblib output candidates, without
+  experiment execution, tracking or model-registry behavior (#263).
+
 - Add conservative static randomness-control discovery and selected runtime
   Python/platform/architecture/package evidence with lock/config byte identities,
   without claiming deterministic execution (#262).

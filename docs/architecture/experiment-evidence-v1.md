@@ -114,7 +114,7 @@ They are fictional test values, not reported scientific results.
 `EvidenceOrigin` distinguishes `declared`, `static`, `runtime` and `unknown`.
 A Plan permits declared, static and unknown input, parameter, randomness and
 environment evidence. Execution controls are explicitly declared. A Run permits
-runtime and unknown observations; scalar metrics, identified output artifacts,
+runtime and unknown observations; finite JSON metrics, identified output artifacts,
 timing and diagnostic records require runtime origin. No generic inferred-truth
 state exists.
 
@@ -138,7 +138,7 @@ directly from the typed models:
 
 All nested models are frozen and reject unknown fields. Python construction uses
 strict types, tuples and `EvidenceOrigin` members; JSON input uses arrays and
-origin strings via `model_validate_json`. Parameters copy caller containers into
+origin strings via `model_validate_json`. Parameters and metrics copy caller containers into
 immutable mappings and tuples. Producers create new values to add observations;
 they do not mutate a Plan into a Run.
 
@@ -152,8 +152,8 @@ they do not mutate a Plan into a Run.
 | `PackageEvidence` | Canonical package name, version when known and origin |
 | `EnvironmentEvidence` | Optional Python/platform values, explicit package inventory and lock/config `artifacts` |
 | `ExecutionIntent` | Generic explicit kind, optional policy digest, declared controls |
-| `Metric` | Logical name, finite numeric scalar, optional unit, runtime origin |
-| `OutputArtifact` | Logical name, digest, optional known size/media type, runtime origin |
+| `Metric` | Logical name, bounded finite JSON, optional unit for numeric scalars, runtime origin |
+| `OutputArtifact` | Logical name, digest, optional relative reference/known size/media type, runtime origin |
 | `RunDiagnostic` | Bounded stable lowercase code and runtime origin; no traceback |
 | `RunTiming` | Optional observed start/end/duration and runtime origin |
 
@@ -184,7 +184,7 @@ Canonical serialization means the same artifact content produces the same bytes 
 Named collections sort by name; randomness sorts by `(provider, name)`;
 diagnostics sort by code. Package names normalize lowercase and runs of `-`, `_`
 and `.` to `-`. Duplicate identities are rejected after normalization. JSON
-object order is irrelevant, while arrays inside parameter values retain their
+object order is irrelevant, while arrays inside parameter and metric values retain their
 meaningful order. Integer and floating-point values retain their JSON number
 representation; `1` and `1.0` need not have the same artifact identity.
 
@@ -196,7 +196,7 @@ representation; `1` and `1.0` need not have the same artifact identity.
 | Logical names, versions, media types, diagnostic codes | 128 characters |
 | Python/platform evidence values, metric units | 256 / 64 characters |
 | Project-relative references, capability identity | 1024 / 512 characters |
-| One parameter/control JSON value | 64 KiB, depth 16, 4096 value nodes |
+| One parameter/control/metric JSON value | 64 KiB, depth 16, 4096 value nodes |
 | One JSON array/object, string, object key | 1024 entries / 8192 / 256 characters |
 | Integer values, sizes | Signed 64-bit; sizes non-negative |
 
@@ -312,3 +312,49 @@ The [seeds and environment guide](../guides/experiment-randomness-environment.md
 defines exact callable/provider identities, accepted literals, import mappings,
 bounds and diagnostics. These are producers for the existing contracts, not
 new experiment execution, history, metrics or comparison orchestration.
+
+
+## Metric signals and observed results (#263)
+
+`capture_metric(name, value, unit=...)` constructs a canonical runtime `Metric`
+from the caller's explicit observation, without execution or tracking state.
+`Metric.value` now uses the existing bounded, deeply immutable `FiniteValue`
+contract. Numeric, string, boolean, null, array and object values are deliberate;
+non-finite numbers and arbitrary Python objects are rejected without stringifying
+objects. Units are permitted only on integer/float scalars.
+
+`discover_metrics(source, source_reference=...)` returns producer-side
+`MetricSignal` occurrences for six sklearn callables. Semantic metric names are
+independent of source positions. Each occurrence retains its resolved callable,
+source, line, column and static origin, without a fabricated value. Static call
+syntax, including inside a function that may never execute, cannot populate
+`ExperimentRun.metrics`. Future execution correlation belongs to #264.
+
+`discover_outputs` recognizes a bounded joblib literal-filename subset as
+`OutputSignal` values. Each holds an `OutputDeclaration` plus static provenance;
+it has no digest, size or runtime authority. Explicit callers can instead create
+a declaration directly or use the pure `name=relative-reference` parser.
+
+`fingerprint_output` and `fingerprint_outputs` revalidate declarations/policy
+before reading selected regular files through `_files`, the same internal
+no-follow streamed digest primitive used by inputs and environment specifications.
+A successful observation produces the existing generic `OutputArtifact`, including
+runtime origin, exact digest/size and its portable reference. Safety failures
+produce diagnostics and no artifact. The primitive has no input/output/environment
+origin policy: that remains with each producer.
+
+`OutputArtifact.reference` is optional and omitted when absent. `Metric.value`
+expands additively to finite JSON; old numeric JSON is unchanged. The Plan schema
+is unchanged; the Run schema changes only these two properties. Both v1 schema
+identifiers and original Plan/Run golden bytes remain unchanged. Canonical Run
+serialization still revalidates unchecked nested models, orders names, rejects
+duplicates and preserves exact metric/artifact evidence.
+
+Capture proves current bytes, not which statement wrote them or whether a run
+succeeded. #264 will own capture at the reviewed post-success point. There is no
+runner, lifecycle boolean, automatic post-run capture, output deserialization,
+copy, upload, model registry or scientific inference in these producers. Optional
+external consumers can use the resulting canonical values later.
+
+The [metrics and outputs guide](../guides/experiment-results.md) documents exact
+callables, argument forms, limits, diagnostic codes and explicit capture examples.

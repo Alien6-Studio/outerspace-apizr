@@ -258,17 +258,7 @@
           "type": "string"
         },
         "value": {
-          "anyOf": [
-            {
-              "maximum": 9223372036854775807,
-              "minimum": -9223372036854775808,
-              "type": "integer"
-            },
-            {
-              "type": "number"
-            }
-          ],
-          "title": "Value"
+          "$ref": "#/$defs/FrozenJSON"
         },
         "unit": {
           "anyOf": [
@@ -306,6 +296,20 @@
           "minLength": 1,
           "title": "Name",
           "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
         },
         "digest": {
           "pattern": "^[0-9a-f]{64}$",

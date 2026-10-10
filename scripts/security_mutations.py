@@ -28,6 +28,41 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "experiment-static-metric-runtime",
+        "src/apizr/experiments/metrics.py",
+        "    return MetricDiscoveryResult(\n        signals=tuple(discovery.signals),",
+        '    return MetricDiscoveryResult.model_construct(\n        signals=(capture_metric("invented", 0.91),),',
+        "tests/experiments/test_metrics.py::test_six_callables_and_safe_aliases",
+    ),
+    Mutation(
+        "experiment-metric-validation",
+        "src/apizr/experiments/metrics.py",
+        "        return Metric.model_validate(",
+        "        return Metric.model_construct(",
+        "tests/experiments/test_metrics.py::test_rejected_values_are_not_stringified",
+    ),
+    Mutation(
+        "experiment-output-no-follow",
+        "src/apizr/experiments/_files.py",
+        "os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK",
+        "os.O_RDONLY | os.O_NONBLOCK",
+        "tests/experiments/test_outputs_fingerprint.py::test_symlink_swap_after_admission_never_reads",
+    ),
+    Mutation(
+        "experiment-output-mutation",
+        "src/apizr/experiments/_files.py",
+        '            raise FileFailure("changed_during_read")',
+        "            pass",
+        "tests/experiments/test_outputs_fingerprint.py::test_changed_during_read_discards_digest",
+    ),
+    Mutation(
+        "experiment-output-deserialization",
+        "src/apizr/experiments/outputs.py",
+        "        digest, size = fingerprint_file(",
+        '        __import__("pickle").loads((root / selection.reference).read_bytes())\n        digest, size = fingerprint_file(',
+        "tests/experiments/test_results_security.py::test_output_bytes_are_not_deserialized_or_uploaded",
+    ),
+    Mutation(
         "experiment-randomness-shadowing",
         "src/apizr/experiments/_lexical.py",
         "            if name not in collector.writes",

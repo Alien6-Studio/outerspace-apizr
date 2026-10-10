@@ -15,12 +15,17 @@ from apizr.experiments import (
     ExecutionIntent,
     ExperimentPlan,
     ExperimentRun,
+    OutputDeclaration,
     SourceIdentity,
+    capture_metric,
     capture_runtime_environment,
     discover_environment_specs,
     discover_inputs,
+    discover_metrics,
+    discover_outputs,
     discover_randomness,
     fingerprint_input,
+    fingerprint_output,
     parse_input_declaration,
     plan_bytes,
     plan_digest,
@@ -172,6 +177,99 @@ def randomness_environment_proof() -> dict[str, object]:
         }
 
 
+def results_producer_proof(fixtures: Path) -> dict[str, object]:
+    source = (fixtures.parent / "results/train.py").read_bytes()
+    signals = discover_metrics(source, source_reference="train.py")
+    outputs = discover_outputs(source, source_reference="train.py")
+    assert [signal.name for signal in signals.signals] == [
+        "roc_auc",
+        "precision",
+        "recall",
+    ]
+    assert not signals.diagnostics and not outputs.diagnostics
+    assert len(outputs.signals) == 1
+    assert all(signal.origin.value == "static" for signal in signals.signals)
+    assert all("value" not in signal.model_dump() for signal in signals.signals)
+    selection = OutputDeclaration(
+        name="model", reference=outputs.signals[0].declaration.reference
+    )
+    subject = SourceIdentity(
+        kind="python", reference="train.py", digest=sha256(source).hexdigest()
+    )
+    plan = ExperimentPlan(subject=subject, execution=ExecutionIntent(kind="training"))
+    observed = (
+        capture_metric("roc_auc", 0.91),
+        capture_metric("precision", 0.87),
+        capture_metric("recall", 0.82),
+        capture_metric("classification", {"precision": 0.87, "recall": 0.82}),
+    )
+    with TemporaryDirectory(prefix="apizr-experiment-results-") as directory:
+        root = Path(directory)
+        (root / "artifacts").mkdir()
+        target = root / selection.reference
+        content = b"opaque fixture model bytes; not a serialized estimator"
+        target.write_bytes(content)
+        captured = fingerprint_output(root, selection)
+        assert not captured.diagnostics and len(captured.artifacts) == 1
+        artifact = captured.artifacts[0]
+        assert artifact.digest == sha256(content).hexdigest()
+        assert artifact.size == len(content)
+        assert artifact.reference == "artifacts/model.joblib"
+        assert artifact.origin.value == "runtime"
+        run = ExperimentRun(
+            plan_digest=plan_digest(plan),
+            subject=subject,
+            status="success",
+            metrics=observed,
+            outputs=captured.artifacts,
+        )
+        metric_b = run.model_copy(
+            update={"metrics": (capture_metric("roc_auc", 0.92), *observed[1:])}
+        )
+        structured_b = run.model_copy(
+            update={
+                "metrics": (
+                    *observed[:3],
+                    capture_metric(
+                        "classification", {"precision": 0.88, "recall": 0.82}
+                    ),
+                )
+            }
+        )
+        target.write_bytes(b"only output bytes change")
+        output_b = run.model_copy(
+            update={"outputs": fingerprint_output(root, selection).artifacts}
+        )
+        runs = (run, metric_b, structured_b, output_b)
+        assert len({run_digest(item) for item in runs}) == 4
+        for item in runs:
+            validate_run_binding(item, plan)
+            raw = run_bytes(item)
+            assert run_bytes(ExperimentRun.model_validate_json(raw)) == raw
+            assert sha256(raw).hexdigest() == run_digest(item)
+            assert str(root).encode() not in raw and content not in raw
+        assert run.metrics == output_b.metrics
+        assert run.outputs == metric_b.outputs == structured_b.outputs
+        assert run.outputs[0].digest != output_b.outputs[0].digest
+        assert json.loads(run_bytes(run))["metrics"][0]["value"] == {
+            "precision": 0.87,
+            "recall": 0.82,
+        }
+        return {
+            "status": "passed",
+            "plan": plan_digest(plan),
+            "run": run_digest(run),
+            "metric_b": run_digest(metric_b),
+            "structured_b": run_digest(structured_b),
+            "output_b": run_digest(output_b),
+            "plan_unchanged": True,
+            "metric_signals": signals.model_dump(mode="json"),
+            "output": artifact.model_dump(mode="json"),
+            "metrics": [metric.model_dump(mode="json") for metric in run.metrics],
+            "fixture_values_are_explicit_not_sklearn_execution": True,
+        }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--fixtures", required=True, type=Path)
@@ -193,6 +291,8 @@ def main() -> None:
             "numpy",
             "sklearn",
             "torch",
+            "onnx",
+            "safetensors",
             "tensorflow",
             "joblib",
             "pyarrow",
@@ -229,6 +329,7 @@ def main() -> None:
                 "goldens": goldens,
                 "input_producer": input_producer_proof(),
                 "randomness_environment_producer": randomness_environment_proof(),
+                "results_producer": results_producer_proof(args.fixtures),
             },
             indent=2,
         )
