@@ -57,14 +57,14 @@ MUTATIONS = (
     ),
     Mutation(
         "experiment-input-mutation",
-        "src/apizr/experiments/inputs.py",
-        '            raise _InputFailure("input_changed_during_read")',
+        "src/apizr/experiments/_files.py",
+        '            raise FileFailure("changed_during_read")',
         "            pass",
         "tests/experiments/test_inputs_fingerprint.py::test_changed_during_read_discards_digest[st_mtime_ns]",
     ),
     Mutation(
         "experiment-input-no-follow",
-        "src/apizr/experiments/inputs.py",
+        "src/apizr/experiments/_files.py",
         "os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK",
         "os.O_RDONLY | os.O_NONBLOCK",
         "tests/experiments/test_inputs_security.py::test_symlink_swap_after_admission_is_never_read",

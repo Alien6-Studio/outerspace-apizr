@@ -12,10 +12,10 @@ from apizr.experiments import (
     EnvironmentEvidence,
     EnvironmentResult,
     FingerprintPolicy,
+    _files,
     capture_runtime_environment,
     discover_environment_specs,
     environment,
-    inputs,
 )
 from apizr.experiments import EvidenceOrigin as O
 
@@ -245,7 +245,7 @@ def test_root_symlink_and_missing_root_redacted(tmp_path):
 
 def test_mutated_spec_discards_digest(tmp_path, monkeypatch, facts):
     (tmp_path / "uv.lock").write_bytes(b"initial")
-    original = inputs.os.read
+    original = _files.os.read
 
     def changed(fd, count):
         chunk = original(fd, count)
@@ -253,7 +253,7 @@ def test_mutated_spec_discards_digest(tmp_path, monkeypatch, facts):
             (tmp_path / "uv.lock").write_bytes(b"changed contents")
         return chunk
 
-    monkeypatch.setattr(inputs.os, "read", changed)
+    monkeypatch.setattr(_files.os, "read", changed)
     for result in (
         discover_environment_specs(tmp_path),
         capture_runtime_environment(root=tmp_path),

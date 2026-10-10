@@ -2,10 +2,6 @@
 
 import ast
 import errno
-import hashlib
-import os
-import stat
-from contextlib import ExitStack
 from pathlib import Path, PurePosixPath
 from typing import Annotated, Literal, Self
 
@@ -17,6 +13,7 @@ from pydantic import (
     model_validator,
 )
 
+from apizr.experiments._files import FileFailure, FileFailureCode, fingerprint_file
 from apizr.experiments._lexical import (
     MAX_DEPTH as _MAX_DEPTH,
 )
@@ -41,7 +38,6 @@ from apizr.experiments.model import (
     RemoteURI,
     ordered_evidence,
 )
-from apizr.workspace.files import directory_fd
 
 _LOADERS: dict[str, FormatHint] = {
     "pandas.read_csv": "csv",
@@ -57,7 +53,6 @@ _SUFFIXES: dict[str, FormatHint] = {
     ".joblib": "joblib",
 }
 _REFERENCE = TypeAdapter[str](Reference)
-_CHUNK_BYTES = 1024 * 1024
 
 
 class InputDeclaration(ExperimentValue):
@@ -311,64 +306,6 @@ def discover_inputs(source: str | bytes, *, source_reference: str) -> InputResul
     )
 
 
-class _InputFailure(Exception):
-    def __init__(self, code: DiagnosticCode):
-        self.code: DiagnosticCode = code
-
-
-def _snapshot(info: os.stat_result) -> tuple[int, int, int, int, int]:
-    return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
-
-
-def _regular_digest(root: Path, reference: str, limit: int) -> tuple[str, int]:
-    with ExitStack() as stack:
-        parent = stack.enter_context(directory_fd(root))
-        parts = reference.split("/")
-        for index, part in enumerate(parts):
-            info = os.stat(part, dir_fd=parent, follow_symlinks=False)
-            if stat.S_ISLNK(info.st_mode):
-                raise _InputFailure("input_symlink")
-            if index < len(parts) - 1:
-                if not stat.S_ISDIR(info.st_mode):
-                    raise _InputFailure("input_not_regular")
-                child = os.open(
-                    part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent
-                )
-                stack.callback(os.close, child)
-                parent = child
-            elif not stat.S_ISREG(info.st_mode):
-                raise _InputFailure("input_not_regular")
-        descriptor = os.open(
-            parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent
-        )
-        stack.callback(os.close, descriptor)
-        before = os.fstat(descriptor)
-        if not stat.S_ISREG(before.st_mode):
-            raise _InputFailure("input_not_regular")
-        if before.st_size > limit:
-            raise _InputFailure("input_too_large")
-        digest = hashlib.sha256()
-        size = 0
-        while chunk := os.read(descriptor, min(_CHUNK_BYTES, limit - size + 1)):
-            size += len(chunk)
-            if size > limit:
-                raise _InputFailure("input_too_large")
-            digest.update(chunk)
-        after = os.fstat(descriptor)
-        try:
-            current = os.stat(parts[-1], dir_fd=parent, follow_symlinks=False)
-        except OSError:
-            current = None
-        if (
-            _snapshot(before) != _snapshot(after)
-            or current is None
-            or _snapshot(after) != _snapshot(current)
-            or size != before.st_size
-        ):
-            raise _InputFailure("input_changed_during_read")
-        return digest.hexdigest(), size
-
-
 def fingerprint_input(
     root: Path,
     selection: InputDeclaration | InputArtifact,
@@ -399,7 +336,7 @@ def fingerprint_input(
         code = "unsupported_input_reference"
     else:
         try:
-            digest, size = _regular_digest(
+            digest, size = fingerprint_file(
                 root, artifact.reference, policy.max_file_bytes
             )
             return InputResult(
@@ -413,8 +350,14 @@ def fingerprint_input(
                     ),
                 )
             )
-        except _InputFailure as error:
-            code = error.code
+        except FileFailure as error:
+            failures: dict[FileFailureCode, DiagnosticCode] = {
+                "symlink": "input_symlink",
+                "not_regular": "input_not_regular",
+                "too_large": "input_too_large",
+                "changed_during_read": "input_changed_during_read",
+            }
+            code = failures[error.code]
         except OSError as error:
             errors: dict[int | None, DiagnosticCode] = {
                 errno.ENOENT: "input_missing",

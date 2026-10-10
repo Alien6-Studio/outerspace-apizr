@@ -93,6 +93,7 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
                 "apizr/experiments/model.py",
                 "apizr/experiments/inputs.py",
                 "apizr/experiments/_lexical.py",
+                "apizr/experiments/_files.py",
                 "apizr/experiments/randomness.py",
                 "apizr/experiments/environment.py",
                 "apizr/experiments/serialization.py",

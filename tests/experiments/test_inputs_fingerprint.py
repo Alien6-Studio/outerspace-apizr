@@ -22,10 +22,10 @@ from apizr.experiments import (
     InputArtifact,
     InputDeclaration,
     SourceIdentity,
+    _files,
     discover_inputs,
     fingerprint_input,
     fingerprint_inputs,
-    inputs,
     parse_input_declaration,
     plan_bytes,
     plan_digest,
@@ -45,7 +45,7 @@ def code(result):
 def test_exact_bytes_and_declared_vs_observed_origin(tmp_path, monkeypatch):
     data = b"sensitive-row-marker\x00\xff\r\n"
     (tmp_path / "data.csv").write_bytes(data)
-    monkeypatch.setattr(inputs, "_CHUNK_BYTES", 3)
+    monkeypatch.setattr(_files, "_CHUNK_BYTES", 3)
     result = fingerprint_input(tmp_path, declaration())
     (artifact,) = result.artifacts
     assert not result.diagnostics
@@ -132,7 +132,7 @@ def test_oversize_does_not_read(tmp_path, monkeypatch):
     def forbidden(*args):
         pytest.fail("Oversized input read")
 
-    monkeypatch.setattr(inputs.os, "read", forbidden)
+    monkeypatch.setattr(_files.os, "read", forbidden)
     assert (
         code(
             fingerprint_input(
@@ -154,7 +154,7 @@ def test_growing_stream_is_bounded(tmp_path, monkeypatch):
             (tmp_path / "data.csv").write_bytes(b"12345")
         return real_read(fd, size)
 
-    monkeypatch.setattr(inputs.os, "read", grow)
+    monkeypatch.setattr(_files.os, "read", grow)
     assert (
         code(
             fingerprint_input(
@@ -194,7 +194,7 @@ def test_changed_during_read_discards_digest(tmp_path, monkeypatch, attribute):
             return SimpleNamespace(**values)
         return original
 
-    monkeypatch.setattr(inputs.os, "fstat", changed)
+    monkeypatch.setattr(_files.os, "fstat", changed)
     assert (
         code(fingerprint_input(tmp_path, declaration())) == "input_changed_during_read"
     )
@@ -202,7 +202,7 @@ def test_changed_during_read_discards_digest(tmp_path, monkeypatch, attribute):
 
 def test_short_read_discards_digest(tmp_path, monkeypatch):
     (tmp_path / "data.csv").write_bytes(b"1234")
-    monkeypatch.setattr(inputs.os, "read", lambda *args: b"")
+    monkeypatch.setattr(_files.os, "read", lambda *args: b"")
     assert (
         code(fingerprint_input(tmp_path, declaration())) == "input_changed_during_read"
     )
@@ -235,7 +235,7 @@ def test_replaced_path_discards_digest(tmp_path, monkeypatch):
                 return SimpleNamespace(**values)
         return original
 
-    monkeypatch.setattr(inputs.os, "stat", changed)
+    monkeypatch.setattr(_files.os, "stat", changed)
     assert (
         code(fingerprint_input(tmp_path, declaration())) == "input_changed_during_read"
     )
@@ -246,7 +246,7 @@ def test_replaced_special_descriptor_rejected(tmp_path, monkeypatch):
 
     (tmp_path / "data.csv").touch()
     monkeypatch.setattr(
-        inputs.os, "fstat", lambda fd: SimpleNamespace(st_mode=stat.S_IFIFO)
+        _files.os, "fstat", lambda fd: SimpleNamespace(st_mode=stat.S_IFIFO)
     )
     assert code(fingerprint_input(tmp_path, declaration())) == "input_not_regular"
 
@@ -265,7 +265,7 @@ def test_os_errors_are_redacted(tmp_path, monkeypatch, error, expected):
     def fail(*args, **kwargs):
         raise OSError(error, "sensitive error /Users/private/data.csv")
 
-    monkeypatch.setattr(inputs.os, "open", fail)
+    monkeypatch.setattr(_files.os, "open", fail)
     result = fingerprint_input(tmp_path, declaration())
     assert code(result) == expected
     assert "private" not in result.model_dump_json()
@@ -306,7 +306,7 @@ def test_remote_is_never_opened_and_never_trusts_declared_hash(tmp_path, monkeyp
     def forbidden(*args, **kwargs):
         pytest.fail("Remote I/O")
 
-    monkeypatch.setattr(inputs.os, "open", forbidden)
+    monkeypatch.setattr(_files.os, "open", forbidden)
     monkeypatch.setattr(socket, "create_connection", forbidden)
     declared = parse_input_declaration("training=s3://bucket/train.parquet")
     result = fingerprint_input(tmp_path, declared)
@@ -341,7 +341,7 @@ def test_batch_order_multiple_names_and_admission_before_io(tmp_path, monkeypatc
     def forbidden(*args, **kwargs):
         pytest.fail("invalid batch read data")
 
-    monkeypatch.setattr(inputs.os, "open", forbidden)
+    monkeypatch.setattr(_files.os, "open", forbidden)
     for selections in ((declarations[0],) * 2, (declarations[0],) * 257):
         with pytest.raises(ValueError):
             fingerprint_inputs(tmp_path, selections)
@@ -432,7 +432,7 @@ def test_mixed_invalid_batch_rejected_before_io(tmp_path, monkeypatch):
     def forbidden(*args, **kwargs):
         pytest.fail("Partially read an invalid batch")
 
-    monkeypatch.setattr(inputs.os, "open", forbidden)
+    monkeypatch.setattr(_files.os, "open", forbidden)
     with pytest.raises(ValueError, match="explicit_input_invalid"):
         fingerprint_inputs(
             tmp_path, (declaration(), InputArtifact(name="z", origin=O.RUNTIME))
@@ -452,7 +452,7 @@ def test_path_disappears_after_read_is_mutation(tmp_path, monkeypatch):
                 raise FileNotFoundError(errno.ENOENT, "private path")
         return real_stat(path, *args, **kwargs)
 
-    monkeypatch.setattr(inputs.os, "stat", missing)
+    monkeypatch.setattr(_files.os, "stat", missing)
     assert (
         code(fingerprint_input(tmp_path, declaration())) == "input_changed_during_read"
     )
