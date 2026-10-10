@@ -25,7 +25,8 @@ from apizr.experiments import (
     validate_run_binding,
 )
 from apizr.experiments import EvidenceOrigin as O
-from tests.experiments.conftest import example_pair
+
+from .conftest import example_pair
 
 
 def test_seed_ab_keeps_source_data_capability_and_parameters(pair):
