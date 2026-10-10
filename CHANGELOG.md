@@ -5,7 +5,9 @@
 - Bridge a validated successful Experiment Run to existing Repository Readiness
   and Exposure planning with `experiment expose`, explicit capability/interface
   selection, and content-addressed Run resources and dependencies in REST/MCP
-  direct-service bundles (#266).
+  direct-service bundles. Shared Readiness recognizes a conservatively proven
+  main guard, allowing the same source to train during a Run and serve on import
+  (#266).
 
 - Compare local Experiment Runs deterministically across code, data, parameters,
   randomness, environment, metrics and outputs, with finite numeric metric deltas

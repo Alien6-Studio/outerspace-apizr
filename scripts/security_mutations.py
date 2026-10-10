@@ -28,6 +28,34 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "readiness-main-module-context",
+        "src/apizr/readiness/source.py",
+        'module != "__main__"',
+        "True",
+        "tests/readiness/test_main_guard.py::test_main_module_context_is_not_an_import",
+    ),
+    Mutation(
+        "readiness-main-guard-shadowing",
+        "src/apizr/readiness/source.py",
+        'and "__name__" not in self.bindings',
+        "and True",
+        "tests/readiness/test_main_guard.py::test_shadowed_or_mutated_namespace_never_proves_main_guard",
+    ),
+    Mutation(
+        "readiness-main-guard-else",
+        "src/apizr/readiness/source.py",
+        "and not node.orelse",
+        "and True",
+        "tests/readiness/test_main_guard.py::test_only_exact_supported_guard_is_recognized",
+    ),
+    Mutation(
+        "readiness-main-guard-indirect-write",
+        "src/apizr/readiness/source.py",
+        "and not self.indirect_writes",
+        "and True",
+        "tests/readiness/test_main_guard.py::test_shadowed_or_mutated_namespace_never_proves_main_guard",
+    ),
+    Mutation(
         "experiment-exposure-success-required",
         "src/apizr/experiments/exposure.py",
         'if record.run.status != "success":',

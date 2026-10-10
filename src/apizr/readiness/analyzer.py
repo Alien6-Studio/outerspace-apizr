@@ -76,8 +76,10 @@ def _capability(
     for line in facts.namespace_lines:
         binding.extend(_reasons((Code.NAMESPACE,), line))
     for statement in facts.tree.body:
-        if statement.lineno not in stub_lines | safe_classes and initialization_risk(
-            statement
+        if (
+            statement.lineno not in stub_lines | safe_classes
+            and initialization_risk(statement)
+            and not facts.import_only_main_guard(statement, source.module)
         ):
             execution.extend(_reasons((Code.INITIALIZATION,), statement.lineno))
     if capability.execution == "generator":

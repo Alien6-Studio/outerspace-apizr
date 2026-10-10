@@ -29,6 +29,9 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
         project = root / "research"
         shutil.copytree(fixtures / "project", project)
         script = project / "serving.py"
+        for name in ("model.json", "debug.json"):
+            (project / name).unlink()
+            assert not (project / name).exists()
         if notebook:
             source = script.read_text()
             script.unlink()
@@ -102,6 +105,7 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
                 }
             )
         )
+        source = script.read_bytes()
         run = command(
             "run",
             script,
@@ -115,6 +119,9 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
             "json",
         )
         assert run["status"] == "success"
+        assert script.read_bytes() == source
+        assert (project / "model.json").read_bytes() == b'{"multiplier": 3}'
+        assert (project / "debug.json").read_bytes() == b'{"private": true}'
         bindings = {}
         for interface in ("rest", "mcp"):
             result = command(
@@ -220,6 +227,8 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
                 assert not result.is_error and result.structured_content == expected
 
         anyio.run(mcp)
+        assert not (root / "model.json").exists()
+        assert not (root / "debug.json").exists()
         return {
             "status": "passed",
             "installed_outside_checkout": True,
@@ -231,6 +240,7 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
             "mcp": expected,
             "public_capabilities": ["python:serving:predict"],
             "selected_outputs": ["model"],
+            "outputs_created_by_run": True,
             "after_project_and_store_removal": "passed",
         }
 

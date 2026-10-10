@@ -27,7 +27,12 @@ def predict(request: PredictionInput) -> dict[str, list[tuple[int, bool]]]:
     return {"predictions": [(_predict(request["value"]), True)]}
 
 def train() -> str:
+    Path("model.json").write_text('{"multiplier": 3}')
+    Path("debug.json").write_text('{"private": true}')
     return "private training helper"
+
+if __name__ == "__main__":
+    train()
 """
 HELPER = """import json
 from pathlib import Path
@@ -54,7 +59,7 @@ def authority(root):
     )
 
 
-def project(root, *, notebook=False, source=SOURCE):
+def project(root, *, notebook=False, source=SOURCE, resources=True):
     root.mkdir(parents=True, exist_ok=True)
     path = root / ("serving.ipynb" if notebook else "serving.py")
     if notebook:
@@ -82,8 +87,9 @@ def project(root, *, notebook=False, source=SOURCE):
     (root / "helper.py").write_text(HELPER)
     (root / "unrelated.py").write_text("def duplicate(): pass\ndef duplicate(): pass\n")
     (root / "admin.py").write_text("def admin() -> int: return 1\n")
-    (root / "model.json").write_text('{"multiplier": 3}')
-    (root / "debug.json").write_text('{"private": true}')
+    if resources:
+        (root / "model.json").write_text('{"multiplier": 3}')
+        (root / "debug.json").write_text('{"private": true}')
     return path
 
 

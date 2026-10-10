@@ -67,6 +67,12 @@ canonical serialization, JSON Schema, golden fixture or document digests. Tests
 pin their baseline hashes at `b82e5bf969ce27194075eb053412485941e7d0ce`.
 Changes to readiness decisions require an explicit policy-version review.
 
+The reviewed #266 import-guard refinement retains this v1 contract and schema:
+it proves one additional inert import-time statement using existing lexical
+facts, without adding a policy flag or changing report fields. Reports for this
+newly recognized source shape change; historical schema and golden bytes remain
+pinned. Experiment evidence grants no exception to this common rule.
+
 The typed report references the exact IR document digest and source record. Each
 assessment refers to a logical `python:<module>:<symbol>` identity and source span.
 Symbols rejected by IR diagnostics still receive an assessment with `in_ir=false`;
@@ -93,6 +99,15 @@ remain unknown; they do not make every function ineligible. Future execution
 policy must decide whether those unknown effects are acceptable.
 
 ## Binding and initialization policy
+
+For an imported logical module other than `__main__`, the exact top-level
+`if __name__ == "__main__":` guard is inert initialization evidence. Recognition
+requires a single equality comparison, no `else`, no binding of `__name__`, no
+dynamic namespace facts and no module-level indirect attribute/subscript writes.
+Reversed comparisons, other operators and compound predicates remain uncertain.
+The original AST and source bytes are retained. Binding events, imports and
+dynamic-import facts inside the guard are still assessed conservatively; this
+rule does not promote guarded callable declarations or waive other blockers.
 
 Module-level binding events are collected in lexical order without entering
 function/lambda bodies or treating class members as module names. Function

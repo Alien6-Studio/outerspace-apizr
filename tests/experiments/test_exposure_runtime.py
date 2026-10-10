@@ -13,6 +13,7 @@ from mcp import Client, StdioServerParameters
 from apizr.experiments.outputs import parse_output_declaration
 from apizr.experiments.planning import RunOptions
 from apizr.experiments.runner import run_experiment
+from apizr.generators.notebooks import inspect_notebook_bytes
 from apizr.repository_interfaces.output import write_bundle
 
 from .exposure_support import project
@@ -21,7 +22,15 @@ from .test_exposure import compile_case
 
 @pytest.mark.parametrize("notebook", [False, True])
 def test_real_run_rest_mcp_parity_after_project_and_store_removal(tmp_path, notebook):
-    path = project(tmp_path / "research", notebook=notebook)
+    path = project(tmp_path / "research", notebook=notebook, resources=False)
+    source = path.read_bytes()
+    executable = (
+        inspect_notebook_bytes(source, module_name="serving").python_source.encode()
+        if notebook
+        else source
+    )
+    assert not (path.parent / "model.json").exists()
+    assert not (path.parent / "debug.json").exists()
     record = run_experiment(
         path,
         options=RunOptions(
@@ -32,9 +41,13 @@ def test_real_run_rest_mcp_parity_after_project_and_store_removal(tmp_path, note
         ),
     )
     assert record.run.status == "success"
+    assert path.read_bytes() == source
+    assert (path.parent / "model.json").read_bytes() == b'{"multiplier": 3}'
+    assert (path.parent / "debug.json").read_bytes() == b'{"private": true}'
     selected = {}
     for interface in ("rest", "mcp"):
         result = compile_case((path, record), interface=interface)
+        assert result.bundle["source/serving.py"] == executable
         write_bundle(tmp_path / interface, result.bundle)
         selected[interface] = result.result.binding
     assert selected["rest"].outputs == selected["mcp"].outputs
@@ -93,3 +106,6 @@ def test_real_run_rest_mcp_parity_after_project_and_store_removal(tmp_path, note
             ).is_error
 
     anyio.run(check)
+    # The guard is retained verbatim; importing the bundle must not retrain.
+    assert not (tmp_path / "mcp/debug.json").exists()
+    assert not (tmp_path / "rest/debug.json").exists()

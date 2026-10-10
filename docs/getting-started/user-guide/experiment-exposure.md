@@ -16,10 +16,10 @@ bundle. Exactly one capability and one interface are required. There is no
 `--all-ready`, automatic `predict` selection or automatic training exposure.
 Use `--format json` for the strict binding and bundle-manifest SHA-256.
 
-## Small recorded-resource example
+## Small training-to-serving example
 
-This core-only example records an existing coefficient file at the Run boundary.
-The serving module has no training side effects during import. The output name
+This core-only example creates a coefficient file during the Run.
+The standard main guard keeps training out of module import. The output name
 `model` is selected explicitly; the other recorded output stays private.
 
 <!-- experiment-exposure:guide -->
@@ -31,9 +31,14 @@ from pathlib import Path
 def predict(value: int) -> int:
     model = json.loads(Path(__file__).with_name("model.json").read_text())
     return value * model["multiplier"]
+
+def train() -> None:
+    Path("model.json").write_text('{"multiplier":3}')
+    Path("debug.json").write_text('{"debug":true}')
+
+if __name__ == "__main__":
+    train()
 PYTHON
-printf '{"multiplier":3}\n' > model.json
-printf '{"debug":true}\n' > debug.json
 python3 - <<'PYTHON'
 import json
 from pathlib import Path
@@ -99,6 +104,15 @@ requirements are preserved. CONDITIONAL remains refused by default.
 `--allow-conditional` requests the existing explicit conditional semantics; it
 cannot waive incomplete required evidence, initialization blockers or unsupported
 interfaces.
+
+Shared Readiness recognizes the exact top-level `if __name__ == "__main__":`
+guard as inert when importing a module whose logical name is not `__main__`.
+The guard must have no `else`; `__name__` must not be rebound, and namespace
+mutation or indirect attribute/subscript writes prevent this proof. Other guard
+forms stay conservative. Imports, declarations and other required evidence are
+still assessed, including those found inside the guard. The source is retained
+verbatim in the bundle. This is a shared import-time refinement, not permission
+to ignore training initialization or to expose a CONDITIONAL capability.
 
 ## Select resources by recorded name
 

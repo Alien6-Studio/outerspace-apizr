@@ -257,7 +257,9 @@ ApplicationInputs and RepositoryInterface authorities. These two modules have
 explicit dependency exceptions; evidence producers and Plan/Run keep their
 primitive boundary. The repository-interface evidence layer accepts an opaque,
 digest-bound JSON attachment and does not import experiments. No experiment
-transport, resource manifest or readiness rule is introduced.
+transport or resource manifest is introduced. The common `readiness` domain
+recognizes an exact, unshadowed main guard as inert during module import;
+experiments reuse that rule through the ordinary assessment pipeline.
 
 An Experiment Plan describes intended experiment inputs and controls. An Experiment Run records observed execution evidence. Neither proves scientific causality or reproducibility.
 

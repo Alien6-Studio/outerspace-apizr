@@ -21,6 +21,7 @@ def main() -> None:
         scopes.append((name, report["files"][name]["summary"]))
     for name, function in (
         ("src/apizr/readiness/source.py", "SourceFacts.typing_marker"),
+        ("src/apizr/readiness/source.py", "SourceFacts.import_only_main_guard"),
         ("src/apizr/interfaces/runtime.py", "validate_object"),
         ("plugins/mcp/src/apizr_mcp/worker.py", "calculate"),
         ("plugins/mcp/src/apizr_mcp/server.py", "error_result"),
