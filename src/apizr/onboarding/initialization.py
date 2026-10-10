@@ -64,7 +64,7 @@ def plan_initialization(
         )
         return {
             "apizr.toml": config.encode(),
-            ".apizr/.gitignore": b"/operator.json\n",
+            ".apizr/.gitignore": b"/operator.json\n/experiments/\n",
             ".apizr/operator.json": json_bytes(
                 authority.model_dump(mode="json", by_alias=True)
             ),

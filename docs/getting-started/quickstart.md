@@ -26,6 +26,31 @@ unobserved. Undefined names and an absent sklearn installation are fine because
 inspection does not execute the file. See the [experiment guide](user-guide/experiment-inspection.md)
 for data fingerprints, notebooks and all eight sections.
 
+## Run a trusted experiment (0.4.5 development)
+
+`inspect` never executes your code. **`run` executes trusted code in a fresh
+process with host filesystem, network and subprocess access. It is not a security
+sandbox.** Use a complete workload with its dependencies already installed in the
+same environment as Apizr. This separate example needs only the standard library:
+
+<!-- experiment-run:quickstart -->
+```sh
+cat > local_run.py <<'PY'
+from pathlib import Path
+mean = sum([2, 4, 6]) / 3
+Path("model.json").write_text('{"mean": 4.0}\n')
+PY
+apizr experiment inspect local_run.py
+RUN=$(apizr experiment run local_run.py --metric mean=mean --output model=model.json --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
+apizr experiment list
+apizr experiment show "$RUN"
+```
+
+The Run records the actual `mean` binding and the output's byte identity. The
+local store contains evidence JSON, not a copy of the model. See
+[running experiments](user-guide/experiment-runs.md) for notebooks, inputs,
+timeouts, failed Runs and the difference between intent and observation.
+
 ## Make a service from functions
 
 Turn two Python functions into a local service. You will calculate a price

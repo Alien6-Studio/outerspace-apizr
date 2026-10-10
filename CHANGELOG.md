@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Execute trusted Python scripts and supported notebooks in fresh local processes,
+  derive exact experiment Plans, record runtime observations and persist immutable
+  local history with `experiment run`, `list` and `show` (#264).
+
 - Add zero-execution inspection of Python training scripts and notebooks, presenting
   code, data, parameter, randomness, environment, metric, output and serving evidence
   with original cell locations and canonical readiness identities (#259).

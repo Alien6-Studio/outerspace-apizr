@@ -28,6 +28,62 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "experiment-worker-source-recheck",
+        "src/apizr/experiments/worker.py",
+        "if sha256(current).hexdigest() != request.subject.digest:",
+        "if False:",
+        "tests/experiments/test_worker_protocol.py::test_worker_rechecks_source_before_exec[False]",
+    ),
+    Mutation(
+        "experiment-static-randomness-promoted",
+        "src/apizr/experiments/runner.py",
+        "randomness=(),",
+        'randomness=tuple(r.model_copy(update={"origin": EvidenceOrigin.RUNTIME}) for r in plan.randomness),',
+        "tests/experiments/test_runner_process.py::test_real_process_bindings_environment_data_outputs_and_history",
+    ),
+    Mutation(
+        "experiment-stale-failed-output",
+        "src/apizr/experiments/runner.py",
+        'if outcome.status == "success" and not diagnostics:',
+        "if True:",
+        "tests/experiments/test_runner_process.py::test_status_sanitized_and_failed_outputs_never_captured",
+    ),
+    Mutation(
+        "experiment-store-binding-bypass",
+        "src/apizr/experiments/store.py",
+        "validate_run_binding(self.run, self.plan)",
+        "pass  # mutation: accept a Run bound to a different source",
+        "tests/experiments/test_store_history.py::test_corruption_not_hidden_by_filters_or_limits[wrong_binding]",
+    ),
+    Mutation(
+        "experiment-store-digest-bypass",
+        "src/apizr/experiments/store.py",
+        'if sha256(data).hexdigest() + ".json" != name:',
+        "if False:",
+        "tests/experiments/test_store_history.py::test_orphan_plan_digest_refused",
+    ),
+    Mutation(
+        "experiment-store-overwrite",
+        "src/apizr/experiments/store.py",
+        'if _read(directory, name) != payload:\n                raise StoreError("store_corrupt") from None',
+        "if _read(directory, name) != payload:\n                os.unlink(name, dir_fd=directory)\n                os.link(temporary, name, src_dir_fd=directory, dst_dir_fd=directory, follow_symlinks=False)",
+        "tests/experiments/test_store_history.py::test_exclusive_publication_failures_leave_original_and_no_stage[conflict]",
+    ),
+    Mutation(
+        "experiment-unrequested-retry",
+        "src/apizr/experiments/runner.py",
+        "run = execute_plan(inspection, plan, root=root, options=options)",
+        "execute_plan(inspection, plan, root=root, options=options)\n    run = execute_plan(inspection, plan, root=root, options=options)",
+        "tests/experiments/test_runner_process.py::test_status_sanitized_and_failed_outputs_never_captured",
+    ),
+    Mutation(
+        "experiment-timeout-group-survives",
+        "src/apizr/experiments/runner.py",
+        "try:\n            kill_group(process)\n        finally:",
+        "try:\n            pass  # mutation: leave the live group running\n        finally:",
+        "tests/experiments/test_runner_cleanup.py::test_synchronized_descendant_group_cleanup[timeout]",
+    ),
+    Mutation(
         "inspection-static-metric-captured",
         "src/apizr/experiments/inspection_model.py",
         "metrics=SectionState.PARTIAL",

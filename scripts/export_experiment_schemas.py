@@ -4,7 +4,9 @@ import json
 from pathlib import Path
 
 from apizr.experiments import ExperimentPlan, ExperimentRun
+from apizr.experiments.history import HistoryList, RunSummary
 from apizr.experiments.inspection_model import ExperimentInspection
+from apizr.experiments.store import RunRecord
 
 
 def main() -> None:
@@ -13,6 +15,9 @@ def main() -> None:
         ("plan", ExperimentPlan),
         ("run", ExperimentRun),
         ("inspection", ExperimentInspection),
+        ("history", HistoryList),
+        ("record", RunRecord),
+        ("run-result", RunSummary),
     ):
         (root / f"apizr-experiment-{name}-v1.schema.json").write_text(
             json.dumps(model.model_json_schema(), indent=2, ensure_ascii=False) + "\n",

@@ -102,6 +102,8 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print("Delivery of an existing build: apizr delivery {run,resume} --help")
         print("\nData science: apizr experiment inspect SOURCE [--format json]")
         print("  Understand script/notebook evidence without executing code.")
+        print("  apizr experiment run SOURCE — execute trusted code with host access.")
+        print("  apizr experiment list | apizr experiment show RUN — local history.")
         print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
         )

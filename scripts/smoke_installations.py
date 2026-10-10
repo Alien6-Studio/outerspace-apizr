@@ -334,6 +334,22 @@ print("PASS documented compiler API: base wheel, outside checkout, exact CLI par
                         str(python),
                         "-I",
                         "-B",
+                        str(checkout / "scripts/experiment_run_proof.py"),
+                        "--notebook",
+                        "--output",
+                        str(
+                            (args.proof_output or root) / "experiment-run-notebook.json"
+                        ),
+                    ],
+                    cwd=root,
+                    check=True,
+                    timeout=60,
+                )
+                subprocess.run(
+                    [
+                        str(python),
+                        "-I",
+                        "-B",
                         str(checkout / "scripts/experiment_inspection_proof.py"),
                         "--fixtures",
                         str(checkout / "tests/fixtures/experiments/inspection"),

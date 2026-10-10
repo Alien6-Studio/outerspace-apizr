@@ -68,6 +68,26 @@ See code, data, parameters, randomness, environment, metrics, outputs and servin
 candidates. Follow the [experiment inspection example](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-inspection.md)
 for setup, notebooks and JSON. No science-framework installation is needed.
 
+The development checkout can also execute trusted workloads and keep local history.
+**`run` executes your code with host filesystem, network and subprocess access;
+it is not a security sandbox.** This small example uses only the standard library:
+
+<!-- experiment-run:readme -->
+```sh
+cat > local_run.py <<'PY'
+from pathlib import Path
+mean = sum([2, 4, 6]) / 3
+Path("model.json").write_text('{"mean": 4.0}\n')
+PY
+apizr experiment inspect local_run.py
+RUN=$(apizr experiment run local_run.py --metric mean=mean --output model=model.json --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
+apizr experiment list
+apizr experiment show "$RUN"
+```
+
+Read the [local run and history guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-runs.md)
+for environment controls, observed evidence, failure handling and storage limits.
+
 | Your goal | Start here |
 | --- | --- |
 | Understand a training script or notebook (0.4.5 development) | [Inspect an experiment without running it](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-inspection.md) |

@@ -40,7 +40,11 @@ def test_completion_covers_actual_parsers_and_dispatch():
 @pytest.mark.parametrize(
     "words,expected",
     [
-        (["experiment", ""], ("inspect",)),
+        (["experiment", ""], ("inspect", "list", "run", "show")),
+        (["experiment", "run", ""], (FILES,)),
+        (["experiment", "run", "--store", ""], (FILES,)),
+        (["experiment", "list", "--status", ""], ("cancelled", "failed", "success")),
+        (["experiment", "show", "--format", ""], ("json", "text")),
         (["experiment", "inspect", ""], (FILES,)),
         (["experiment", "inspect", "train.py", "--format", ""], ("json", "text")),
         (["experiment", "inspect", "--root", ""], (FILES,)),

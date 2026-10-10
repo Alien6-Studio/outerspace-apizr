@@ -105,6 +105,7 @@ nav:
       - The full journey: getting-started/introduction.md
   - Guides:
       - Inspect an experiment: getting-started/user-guide/experiment-inspection.md
+      - Run and inspect local history: getting-started/user-guide/experiment-runs.md
       - Compilation and interfaces:
           - Inventory a Python project: getting-started/user-guide/scan.md
           - Inspect capability relationships: getting-started/user-guide/graph.md

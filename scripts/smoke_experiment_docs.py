@@ -66,6 +66,51 @@ def main() -> None:
                 "blocks": len(blocks),
                 "example_sha256": sha256("\n".join(blocks).encode()).hexdigest(),
             }
+        for index, page in enumerate(
+            (
+                "README.md",
+                "docs/getting-started/quickstart.md",
+                "docs/getting-started/user-guide/experiment-runs.md",
+            )
+        ):
+            root = Path(directory) / f"runs-{index}"
+            root.mkdir()
+            blocks = re.findall(
+                r"<!-- experiment-run:[a-z-]+ -->\s*```sh\n(.*?)```",
+                (ROOT / page).read_text(),
+                re.S,
+            )
+            assert blocks, page
+            for block in blocks:
+                result = subprocess.run(
+                    ["/bin/sh", "-eu", "-c", block],
+                    cwd=root,
+                    env=env,
+                    check=True,
+                    capture_output=True,
+                    timeout=30,
+                )
+                assert b"trusted user code" in result.stderr
+                assert b"not a security sandbox" in result.stderr
+                assert all(
+                    text in result.stdout
+                    for text in (
+                        b"SUCCESS",
+                        b"Run: ",
+                        b"Plan: ",
+                        b"mean=4.0 (runtime)",
+                        b"model.json:",
+                        b"runtime application not directly observed",
+                    )
+                ), page
+                assert (
+                    len(list((root / ".apizr/experiments/v1/runs").glob("*.json"))) == 1
+                )
+            results[page + "#run"] = {
+                "status": "passed",
+                "blocks": len(blocks),
+                "example_sha256": sha256("\n".join(blocks).encode()).hexdigest(),
+            }
     args.output.write_text(json.dumps(results, indent=2) + "\n")
 
 

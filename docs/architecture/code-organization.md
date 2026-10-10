@@ -234,6 +234,17 @@ exporter's AST. `_locations.py` observes same-domain discovery hooks for provena
 it adds no input/control recognition rules. `reporting.py` presents bounded text
 and deterministic JSON. CLI parsing remains in `cli/commands/experiment.py`.
 
+`planning.py` derives immutable intent from Inspection. `bindings.py` correlates
+existing metric signals with conservative direct global bindings; it does not add
+framework recognition. `run_protocol.py` owns bounded JSON workload messages.
+`runner.py` orchestrates explicit trusted execution, using the unchanged
+`execution.supervisor.kill_group` primitive for group termination and reaping.
+`worker.py` executes exact inspected bytes and captures runtime facts in the child.
+`store.py` publishes canonical Plan/Run bytes exclusively and validates local
+history. `history.py` owns list/show queries and their intended/observed views.
+These modules belong to the same evidence lifecycle; neither inspection nor its
+producers import the runner, worker, protocol or history. CLI dispatch is lazy.
+
 An Experiment Plan describes intended experiment inputs and controls. An Experiment Run records observed execution evidence. Neither proves scientific causality or reproducibility.
 
 The dependency gate permits only experiment siblings, the existing `ValueModel`
@@ -242,11 +253,14 @@ bounded descriptor access in `workspace.files`, standard-library modules and the
 existing Pydantic typing runtime. The inspection orchestrator alone may compose
 canonical capability/readiness and repository evidence plus the existing lazy
 notebook adapter. Its model may reuse the corresponding canonical value contracts.
+The runner alone may import the existing notebook adapter and public process-group
+supervisor primitive. Runner and worker may reuse the bounded frame primitives
+from `execution.protocol`, with separate experiment workload contracts.
 These are explicit per-module dependency exceptions; producers and Plan/Run retain
-the primitive boundary. CLI, execution workers, exposure planning and data-science
-SDKs remain outside it. Repository enrichment calls the existing readiness view,
+the primitive boundary. CLI, exposure planning and data-science SDKs remain outside
+it. Repository enrichment calls the existing readiness view,
 whose selection-scoped evidence semantics remain authoritative.
-No experiment runner or store is part of this domain. See
+The local store is neither a remote tracker nor an artifact repository. See
 [Experiment evidence v1](experiment-evidence-v1.md) for origins, identities and
 producer obligations.
 

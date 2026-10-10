@@ -164,6 +164,13 @@ def main() -> None:
     assert not Path(implementation.__file__).resolve().is_relative_to(checkout)
     assert all(not Path(p).resolve().is_relative_to(checkout) for p in sys.path if p)
     result = prove(args.fixtures, notebook=args.notebook)
+    assert not {
+        "apizr.experiments.runner",
+        "apizr.experiments.worker",
+        "apizr.experiments.run_protocol",
+        "apizr.experiments.store",
+        "apizr.experiments.history",
+    }.intersection(sys.modules)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
 
 

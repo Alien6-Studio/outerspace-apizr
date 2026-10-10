@@ -238,11 +238,12 @@ def test_nested_gitignore(initialized):
             ".apizr/operator.json",
             ".apizr/policies/readiness.json",
             ".apizr/policies/exposure.json",
+            ".apizr/experiments/v1/runs/example.json",
         ],
         capture_output=True,
         text=True,
     )
-    assert p.stdout == ".apizr/operator.json\n"
+    assert p.stdout == ".apizr/operator.json\n.apizr/experiments/v1/runs/example.json\n"
     assert not (initialized / ".gitignore").exists()
 
 

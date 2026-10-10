@@ -169,9 +169,14 @@ def check(source: Path, manifest: Path) -> list[str]:
                     "apizr.contracts.json",
                     "apizr.workspace.files",
                 )
-                # Only the explicit static inspection composition may consume
-                # canonical compiler evidence. Producers and Plan/Run stay primitive.
-                inspection_dependencies = {
+                # Narrow composition exceptions. Producers and Plan/Run stay primitive.
+                composition_dependencies = {
+                    "experiments/runner.py": (
+                        "apizr.execution.supervisor",
+                        "apizr.execution.protocol",
+                        "apizr.generators.notebooks",
+                    ),
+                    "experiments/worker.py": ("apizr.execution.protocol",),
                     "experiments/inspection_model.py": (
                         "apizr.capabilities.model",
                         "apizr.readiness",
@@ -188,7 +193,7 @@ def check(source: Path, manifest: Path) -> list[str]:
                         "apizr.generators.notebooks",
                     ),
                 }
-                primitives += inspection_dependencies.get(path, ())
+                primitives += composition_dependencies.get(path, ())
                 root = imported.split(".")[0]
                 if not any(
                     within(imported, allowed) for allowed in primitives
