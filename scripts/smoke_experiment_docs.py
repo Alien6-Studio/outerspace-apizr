@@ -160,6 +160,35 @@ def main() -> None:
                 "blocks": len(blocks),
                 "example_sha256": sha256(blocks[0].encode()).hexdigest(),
             }
+        page = "docs/getting-started/user-guide/experiment-exposure.md"
+        root = Path(directory) / "exposure"
+        root.mkdir()
+        blocks = re.findall(
+            r"<!-- experiment-exposure:[a-z-]+ -->\s*```sh\n(.*?)```",
+            (ROOT / page).read_text(),
+            re.S,
+        )
+        assert len(blocks) == 1
+        result = subprocess.run(
+            ["/bin/sh", "-eu", "-c", blocks[0]],
+            cwd=root,
+            env=env,
+            check=True,
+            capture_output=True,
+            timeout=60,
+        )
+        assert b"trusted user code" in result.stderr
+        for interface in ("rest", "mcp"):
+            value = json.loads((root / f"{interface}-binding.json").read_bytes())
+            assert value["binding"]["schema_version"] == "apizr.experiment-exposure/v1"
+            assert [item["name"] for item in value["binding"]["outputs"]] == ["model"]
+            assert (root / "dist" / interface / "source/model.json").is_file()
+            assert not (root / "dist" / interface / "source/debug.json").exists()
+        results[page] = {
+            "status": "passed",
+            "blocks": len(blocks),
+            "example_sha256": sha256(blocks[0].encode()).hexdigest(),
+        }
     args.output.write_text(json.dumps(results, indent=2) + "\n")
 
 

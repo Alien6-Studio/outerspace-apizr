@@ -1,0 +1,264 @@
+{
+  "$defs": {
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "OutputArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Type"
+        },
+        "origin": {
+          "const": "runtime",
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "digest",
+        "origin"
+      ],
+      "title": "OutputArtifact",
+      "type": "object"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "python",
+            "notebook"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "executable_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Executable Digest"
+        },
+        "module": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Module"
+        },
+        "capability_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "^[^\\s/\\\\]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Id"
+        }
+      },
+      "required": [
+        "kind",
+        "reference",
+        "digest"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.experiment-exposure/v1",
+      "default": "apizr.experiment-exposure/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "run_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run Digest",
+      "type": "string"
+    },
+    "plan_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Digest",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceIdentity"
+    },
+    "repository_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "catalog_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "graph_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "repository_readiness_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "exposure_plan_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "repository_interface_digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "capability": {
+      "title": "Capability",
+      "type": "string"
+    },
+    "interface": {
+      "enum": [
+        "rest",
+        "mcp"
+      ],
+      "title": "Interface",
+      "type": "string"
+    },
+    "outputs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/OutputArtifact"
+      },
+      "maxItems": 128,
+      "title": "Outputs",
+      "type": "array"
+    },
+    "dependencies": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 128,
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "application_inputs_digest": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Digest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "run_digest",
+    "plan_digest",
+    "source",
+    "repository_digest",
+    "catalog_digest",
+    "graph_digest",
+    "repository_readiness_digest",
+    "exposure_plan_digest",
+    "repository_interface_digest",
+    "capability",
+    "interface"
+  ],
+  "title": "ExperimentExposureBinding",
+  "type": "object"
+}

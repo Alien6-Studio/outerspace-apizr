@@ -82,6 +82,12 @@ Comparison still works after deleting the source. Unknown observations remain un
 Apizr identifies recorded differences; it does not prove which one caused the metric change.
 Read the [comparison guide](user-guide/experiment-comparison.md) for data, environment and output evidence.
 
+After reviewing a successful Run, use `experiment expose RUN --capability ID
+--interface rest|mcp --output-dir DIR` with explicit source authority. Select
+resources with `--artifact NAME` and dependencies with `--dependency DISTRIBUTION`;
+the recorded bytes and versions bind the resulting bundle. Repository Readiness
+still decides eligibility. See [Experiment → serving](user-guide/experiment-exposure.md).
+
 ## Make a service from functions
 
 Turn two Python functions into a local service. You will calculate a price

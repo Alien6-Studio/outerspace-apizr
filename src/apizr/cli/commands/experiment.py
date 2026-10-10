@@ -43,7 +43,7 @@ def _source_arguments(parser: argparse.ArgumentParser) -> None:
 def main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(
         prog="apizr experiment",
-        description="Inspect without executing; run trusted code; list, show and compare local experiment history.",
+        description="Inspect → Run → Compare → Expose: explicit evidence and serving choices.",
     )
     commands = parser.add_subparsers(dest="command", required=True)
     inspect = commands.add_parser(
@@ -136,7 +136,18 @@ def main(argv: Sequence[str]) -> int:
             help="History directory; default: .apizr/experiments/v1 under current directory",
         )
         history.add_argument("--format", choices=("text", "json"), default="text")
+    from apizr.cli.commands.experiment_exposure import add_arguments
+
+    exposure = commands.add_parser(
+        "expose",
+        help="Bridge a reviewed successful Run to an explicit REST/MCP capability",
+    )
+    add_arguments(exposure)
     args = parser.parse_args(argv)
+    if args.command == "expose":
+        from apizr.cli.commands.experiment_exposure import expose
+
+        return expose(args)
     if args.command == "inspect":
         return _inspect(args)
     if args.command == "run":

@@ -8,11 +8,13 @@ remain the responsibility of the existing delivery/proof operations.
 import json
 import os
 import stat
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Literal
+from typing import Literal, cast
 
 from apizr.capabilities.model import Digest
 from apizr.contracts.delivery import BundleProvenance, identity
+from apizr.contracts.json import encode
 from apizr.contracts.results import BuildResult
 from apizr.exposure import ExposurePlan, ExposurePolicy, validate_plan
 from apizr.extension_runtime.protocol import unique_object
@@ -35,6 +37,62 @@ DOCUMENTS = {
     "exposure-policy.json": ExposurePolicy,
     "exposure-plan.json": ExposurePlan,
 }
+
+
+def attach_evidence(
+    bundle: Mapping[str, bytes], *, interface: Interface, name: str, content: bytes
+) -> dict[str, bytes]:
+    """Bind one bounded JSON attachment into an existing direct bundle manifest.
+
+    This adds no manifest field and never replaces an existing artifact. Domain
+    semantics remain the caller's responsibility; startup verifies exact bytes.
+    """
+    if (
+        Path(name).name != name
+        or not name.endswith(".json")
+        or name.startswith(".")
+        or name in bundle
+    ):
+        raise ValueError("Expected a new top-level JSON evidence filename")
+    if len(content) > 1024 * 1024:
+        raise ValueError("Evidence attachment exceeds size limit")
+    value = json.loads(content, object_pairs_hook=unique_object)
+    if (
+        not isinstance(value, dict)
+        or encode(cast(dict[str, object], value), 1024 * 1024) != content
+    ):
+        raise ValueError("Expected canonical JSON object evidence")
+    filename = f"apizr-repository-{interface}.json"
+    model = RestManifest if interface == "rest" else MCPManifest
+    manifest = model.model_validate_json(bundle[filename])
+    if set(bundle) != set(manifest.artifacts) | {filename} or any(
+        Digest.of_bytes(bundle[path]) != digest
+        for path, digest in manifest.artifacts.items()
+    ):
+        raise ValueError("Bundle artifacts disagree with manifest")
+    updated = manifest.model_copy(
+        update={"artifacts": {**manifest.artifacts, name: Digest.of_bytes(content)}}
+    )
+    return dict(
+        sorted({**bundle, name: content, filename: canonical_bytes(updated)}.items())
+    )
+
+
+def _document_names(
+    manifest: RestManifest | MCPManifest, interface: Interface
+) -> set[str]:
+    # Preserve opaque top-level JSON attachments without depending on their domains.
+    # Source-relative JSON resources are business inputs, never evidence exports.
+    names = {
+        name
+        for name in manifest.artifacts
+        if Path(name).name == name and name.endswith(".json")
+    }
+    names.update(DOCUMENTS)
+    names.add("openapi.json" if interface == "rest" else "mcp-tools.json")
+    if manifest.provenance_digest is not None:
+        names.add("apizr-bundle-provenance.json")
+    return names
 
 
 def read_document(root: Path, name: str, limit: int = MAX_BYTES) -> bytes:
@@ -78,11 +136,7 @@ def verify_evidence(
     manifest = model.model_validate_json(raw)
     if canonical_bytes(manifest) != raw:
         raise ValueError("Expected canonical bundle manifest")
-    names = set(DOCUMENTS) | {
-        "openapi.json" if interface == "rest" else "mcp-tools.json"
-    }
-    if manifest.provenance_digest is not None:
-        names.add("apizr-bundle-provenance.json")
+    names = _document_names(manifest, interface)
     files: dict[str, bytes] = {}
     total = len(raw)
     for filename in sorted(names):
@@ -186,11 +240,7 @@ def export_evidence(
     verify_evidence(
         bundle, interface=interface, expected=expected, build_result=build_result
     )
-    names = set(DOCUMENTS) | {
-        "openapi.json" if interface == "rest" else "mcp-tools.json"
-    }
-    if manifest.provenance_digest is not None:
-        names.add("apizr-bundle-provenance.json")
+    names = _document_names(manifest, interface)
     exported = {name: artifacts[name] for name in names}
     exported[f"apizr-repository-{interface}.json"] = canonical_bytes(manifest)
     write_bundle(output, exported)

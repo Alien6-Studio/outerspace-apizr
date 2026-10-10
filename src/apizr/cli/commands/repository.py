@@ -8,14 +8,16 @@ from apizr.repository.policy import ScanPolicy
 
 
 def add_scan_arguments(
-    parser: argparse.ArgumentParser, *, project: bool = False
+    parser: argparse.ArgumentParser, *, project: bool = False, root_option: bool = False
 ) -> None:
     parser.add_argument(
         "--operator-policy",
         type=Path,
         help="Explicit operator authorization for repository analysis and remote acquisition",
     )
-    if project:
+    if root_option:
+        parser.add_argument("--root", type=Path, default=Path("."))
+    elif project:
         parser.add_argument("root", type=Path, nargs="?")
         parser.add_argument(
             "--project", type=Path, help="Explicit apizr.toml project file"

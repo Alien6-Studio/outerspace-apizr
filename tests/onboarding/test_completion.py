@@ -40,7 +40,13 @@ def test_completion_covers_actual_parsers_and_dispatch():
 @pytest.mark.parametrize(
     "words,expected",
     [
-        (["experiment", ""], ("diff", "inspect", "list", "run", "show")),
+        (["experiment", ""], ("diff", "expose", "inspect", "list", "run", "show")),
+        (["experiment", "expose", "RUN", "--interface", ""], ("mcp", "rest")),
+        (["experiment", "expose", "RUN", "--root", ""], (FILES,)),
+        (["experiment", "expose", "RUN", "--output-dir", ""], (FILES,)),
+        (["experiment", "expose", "RUN", "--capability", ""], ()),
+        (["experiment", "expose", "RUN", "--artifact", ""], ()),
+        (["experiment", "expose", "RUN", "--dependency", ""], ()),
         (["experiment", "diff", "a" * 64, "b" * 64, "--format", ""], ("json", "text")),
         (["experiment", "diff", "--store", ""], (FILES,)),
         (["experiment", "diff", ""], ()),
@@ -118,7 +124,9 @@ def test_no_dynamic_access(monkeypatch, capsys):
 
 
 @pytest.mark.parametrize("shell", ["bash", "zsh", "fish"])
-@pytest.mark.parametrize("journey", ["clients export", "experiment diff A B"])
+@pytest.mark.parametrize(
+    "journey", ["clients export", "experiment diff A B", "experiment expose RUN"]
+)
 def test_real_shell_syntax_and_candidates(tmp_path, shell, journey):
     executable = shutil.which(shell)
     if executable is None:
@@ -136,10 +144,12 @@ def test_real_shell_syntax_and_candidates(tmp_path, shell, journey):
     else:
         command = 'source $argv[1]; complete -C "apizr clients export --format "'
     command = command.replace("clients export", journey)
-    if journey.startswith("experiment"):
-        command = command.replace("COMP_CWORD=4", "COMP_CWORD=6").replace(
-            "CURRENT=5", "CURRENT=7"
-        )
+    count = len(journey.split())
+    command = command.replace("COMP_CWORD=4", f"COMP_CWORD={count + 2}").replace(
+        "CURRENT=5", f"CURRENT={count + 3}"
+    )
+    if journey == "experiment expose RUN":
+        command = command.replace("--format", "--interface")
     argv = [
         executable,
         *(
@@ -153,7 +163,9 @@ def test_real_shell_syntax_and_candidates(tmp_path, shell, journey):
     ]
     result = subprocess.run(argv, capture_output=True, text=True, check=True)
     expected = (
-        {"json", "text"}
+        {"mcp", "rest"}
+        if journey == "experiment expose RUN"
+        else {"json", "text"}
         if journey.startswith("experiment")
         else {"postman", "bruno", "insomnia"}
     )

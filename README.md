@@ -106,7 +106,7 @@ remain unfinished; see the [research repository example](https://apizr.outerspac
 
 
 
-### Inspect → Run → Compare
+### Inspect → Run → Compare → Expose
 
 “My ROC AUC changed. What else changed between these runs?” This core-only
 example records two trusted local runs, then compares their saved evidence.
@@ -135,6 +135,19 @@ apizr experiment diff "$A" "$B" --format json > comparison.json
 Comparison still works after deleting the source. Unknown observations remain unknown.
 Apizr identifies recorded differences; it does not prove which one caused the metric change.
 Read the [comparison guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-comparison.md) for data, environment and output evidence.
+
+After reviewing a successful Run, explicitly select its serving capability:
+
+```sh
+apizr experiment expose <RUN> --root . --operator-policy operator.json \
+  --capability python:fraud_detection:predict --interface mcp \
+  --artifact model --output-dir dist/predict
+```
+
+The current source and selected resource bytes must still match the Run.
+Repository Readiness and Exposure decide eligibility. Follow the
+[Experiment → serving guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-exposure.md)
+for source authority, exact dependency pins and current direct-service limits.
 
 ## Expose the functions you choose
 

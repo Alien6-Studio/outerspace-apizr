@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Bridge a validated successful Experiment Run to existing Repository Readiness
+  and Exposure planning with `experiment expose`, explicit capability/interface
+  selection, and content-addressed Run resources and dependencies in REST/MCP
+  direct-service bundles (#266).
+
 - Compare local Experiment Runs deterministically across code, data, parameters,
   randomness, environment, metrics and outputs, with finite numeric metric deltas
   and explicit unknown evidence, without causal inference (`experiment diff`, #265).

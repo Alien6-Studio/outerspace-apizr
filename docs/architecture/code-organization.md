@@ -250,20 +250,30 @@ It separates material evidence changes from observed results without causal infe
 These modules belong to the same evidence lifecycle; neither inspection nor its
 producers import the runner, worker, protocol or history. CLI dispatch is lazy.
 
+`exposure_model.py` owns the derived `apizr.experiment-exposure/v1` contract and
+pure cross-binding verifier. `exposure.py` admits a selected successful Run and
+composes the existing Catalog, Graph, Repository Readiness, ExposurePlan,
+ApplicationInputs and RepositoryInterface authorities. These two modules have
+explicit dependency exceptions; evidence producers and Plan/Run keep their
+primitive boundary. The repository-interface evidence layer accepts an opaque,
+digest-bound JSON attachment and does not import experiments. No experiment
+transport, resource manifest or readiness rule is introduced.
+
 An Experiment Plan describes intended experiment inputs and controls. An Experiment Run records observed execution evidence. Neither proves scientific causality or reproducibility.
 
 The dependency gate permits only experiment siblings, the existing `ValueModel`
 and logical-module primitive, distribution names/digests, canonical JSON,
 bounded descriptor access in `workspace.files`, standard-library modules and the
-existing Pydantic typing runtime. The inspection orchestrator alone may compose
+existing Pydantic typing runtime. The inspection orchestrator may compose
 canonical capability/readiness and repository evidence plus the existing lazy
 notebook adapter. Its model may reuse the corresponding canonical value contracts.
-The runner alone may import the existing notebook adapter and public process-group
-supervisor primitive. Runner and worker may reuse the bounded frame primitives
+The exposure orchestrator and its binding model have the narrow additional
+composition dependencies listed above. The runner may import the existing notebook
+adapter and public process-group supervisor primitive. Runner and worker may reuse the bounded frame primitives
 from `execution.protocol`, with separate experiment workload contracts.
 These are explicit per-module dependency exceptions; producers and Plan/Run retain
-the primitive boundary. CLI, exposure planning and data-science SDKs remain outside
-it. Repository enrichment calls the existing readiness view,
+the primitive boundary and cannot import CLI, exposure planning or data-science
+SDKs. Repository enrichment calls the existing readiness view,
 whose selection-scoped evidence semantics remain authoritative.
 The local store is neither a remote tracker nor an artifact repository. See
 [Experiment evidence v1](experiment-evidence-v1.md) for origins, identities and

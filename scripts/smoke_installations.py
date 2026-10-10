@@ -331,6 +331,25 @@ print("PASS documented compiler API: base wheel, outside checkout, exact CLI par
                 checkout = Path(__file__).resolve().parents[1]
                 subprocess.run(
                     [
+                        sys.executable,
+                        str(checkout / "scripts/experiment_exposure_proof.py"),
+                        "--python",
+                        str(python),
+                        "--fixtures",
+                        str(checkout / "tests/fixtures/experiments/exposure"),
+                        "--notebook",
+                        "--output",
+                        str(
+                            (args.proof_output or root)
+                            / "experiment-exposure-notebook.json"
+                        ),
+                    ],
+                    cwd=root,
+                    check=True,
+                    timeout=90,
+                )
+                subprocess.run(
+                    [
                         str(python),
                         "-I",
                         "-B",

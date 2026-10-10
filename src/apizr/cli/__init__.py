@@ -106,6 +106,12 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print("  apizr experiment list | apizr experiment show RUN — local history.")
         print("  apizr experiment diff RUN_A RUN_B — compare recorded evidence.")
         print(
+            "  apizr experiment expose RUN --capability ID --interface rest|mcp --output-dir DIR"
+        )
+        print(
+            "  Inspect → Run → Compare → Expose; repository Readiness still decides eligibility."
+        )
+        print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
         )
         print(

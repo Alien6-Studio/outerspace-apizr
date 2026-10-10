@@ -43,6 +43,16 @@ def main() -> None:
     comparison = report["files"]["src/apizr/experiments/comparison.py"]["summary"]
     if comparison["covered_branches"] < 0.98 * comparison["num_branches"]:
         raise ValueError("Experiment comparison branch coverage is below 98%")
+    for name in ("exposure.py", "exposure_model.py"):
+        bridge = report["files"]["src/apizr/experiments/" + name]["summary"]
+        if bridge["covered_branches"] < 0.98 * bridge["num_branches"]:
+            raise ValueError("Experiment exposure branch coverage is below 98%")
+    scopes.append(
+        (
+            "Experiment exposure CLI",
+            report["files"]["src/apizr/cli/commands/experiment_exposure.py"]["summary"],
+        )
+    )
     scopes.append(
         (
             "Experiment diff CLI",
