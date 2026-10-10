@@ -40,6 +40,10 @@ def test_completion_covers_actual_parsers_and_dispatch():
 @pytest.mark.parametrize(
     "words,expected",
     [
+        (["experiment", ""], ("inspect",)),
+        (["experiment", "inspect", ""], (FILES,)),
+        (["experiment", "inspect", "train.py", "--format", ""], ("json", "text")),
+        (["experiment", "inspect", "--root", ""], (FILES,)),
         (["clients", "export", "--format", ""], ("bruno", "insomnia", "postman")),
         (["clients", "sync", "--format", "p"], ("postman",)),
         (["clients", "export", "--format=br"], ("--format=bruno",)),

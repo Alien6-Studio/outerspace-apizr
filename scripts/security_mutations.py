@@ -28,6 +28,41 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "inspection-static-metric-captured",
+        "src/apizr/experiments/inspection_model.py",
+        "metrics=SectionState.PARTIAL",
+        "metrics=SectionState.CAPTURED",
+        "tests/experiments/test_inspection.py::test_realistic_python_composes_existing_evidence",
+    ),
+    Mutation(
+        "inspection-dynamic-data-captured",
+        "src/apizr/experiments/inspection_model.py",
+        "if records and not diagnostics and complete",
+        "if records and complete",
+        "tests/experiments/test_inspection.py::test_explicit_inputs_and_bounded_reads",
+    ),
+    Mutation(
+        "inspection-unseeded-captured",
+        "src/apizr/experiments/inspection_model.py",
+        "random_state = SectionState.UNCONTROLLED",
+        "random_state = SectionState.CAPTURED",
+        "tests/experiments/test_inspection.py::test_realistic_python_composes_existing_evidence",
+    ),
+    Mutation(
+        "inspection-source-execution",
+        "src/apizr/experiments/inspection.py",
+        "    notebook = None\n    source: str | bytes = raw",
+        "    exec(raw, {})\n    notebook = None\n    source: str | bytes = raw",
+        "tests/experiments/test_inspection_security.py::test_hostile_python_is_parsed_without_execution",
+    ),
+    Mutation(
+        "inspection-fabricated-capability",
+        "src/apizr/experiments/inspection.py",
+        "id=c.id,",
+        'id=f"experiment:{c.id}",',
+        "tests/experiments/test_inspection.py::test_canonical_identity_is_preserved_for_valid_source",
+    ),
+    Mutation(
         "experiment-static-metric-runtime",
         "src/apizr/experiments/metrics.py",
         "    return MetricDiscoveryResult(\n        signals=tuple(discovery.signals),",

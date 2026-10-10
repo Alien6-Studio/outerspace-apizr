@@ -5,6 +5,29 @@ description: Generate your first REST API or MCP server from Python, run it loca
 
 # Make your first MCP and REST calls
 
+## Inspect a training script first (0.4.5 development)
+
+If you have the development checkout installed, you can start with experiment
+evidence before building a service. This example requires only Apizr's core:
+
+<!-- experiment-inspection:quickstart -->
+```sh
+cat > example.py <<'PY'
+from sklearn.metrics import roc_auc_score
+
+learning_rate = 0.05
+roc_auc_score(labels, predictions)
+PY
+apizr experiment inspect example.py
+```
+
+Parameters shows a static candidate; Metrics shows a recognized call with its value
+unobserved. Undefined names and an absent sklearn installation are fine because
+inspection does not execute the file. See the [experiment guide](user-guide/experiment-inspection.md)
+for data fingerprints, notebooks and all eight sections.
+
+## Make a service from functions
+
 Turn two Python functions into a local service. You will calculate a price
 (`12.5 × 2 = 25.0`) and check stock (`3 ≤ 10` gives `true`).
 Prepare the example once, then choose **[REST](#use-rest-instead)** or

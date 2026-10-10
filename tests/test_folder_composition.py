@@ -24,6 +24,23 @@ def test_repository_satisfies_declared_composition():
 @pytest.mark.parametrize(
     "path,addition,expected",
     [
+        ("experiments/inspection.py", "from apizr.cli import main\n", "non-primitive"),
+        (
+            "experiments/inspection.py",
+            "from apizr.execution import worker\n",
+            "non-primitive",
+        ),
+        ("experiments/inspection.py", "import sklearn\n", "non-primitive"),
+        (
+            "experiments/inspection_model.py",
+            "from apizr.generators.notebooks import inspect_notebook_bytes\n",
+            "non-primitive",
+        ),
+        (
+            "experiments/parameters.py",
+            "from apizr.repository import Catalog\n",
+            "non-primitive",
+        ),
         ("experiments/model.py", "from ..cli import main\n", "non-primitive"),
         (
             "experiments/model.py",

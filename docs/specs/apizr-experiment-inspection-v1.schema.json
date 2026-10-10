@@ -1,0 +1,2188 @@
+{
+  "$defs": {
+    "Assessment": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "in_ir": {
+          "title": "In Ir",
+          "type": "boolean"
+        },
+        "dimensions": {
+          "$ref": "#/$defs/Dimensions"
+        },
+        "effects": {
+          "$ref": "#/$defs/Effects"
+        },
+        "state": {
+          "$ref": "#/$defs/State"
+        },
+        "can_generate_interface": {
+          "title": "Can Generate Interface",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "capability_id",
+        "source",
+        "in_ir",
+        "dimensions",
+        "effects",
+        "state",
+        "can_generate_interface"
+      ],
+      "title": "Assessment",
+      "type": "object"
+    },
+    "CapabilityEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "source_path": {
+          "title": "Source Path",
+          "type": "string"
+        },
+        "source_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "ir_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "readiness_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "readiness": {
+          "$ref": "#/$defs/State"
+        },
+        "can_generate_interface": {
+          "title": "Can Generate Interface",
+          "type": "boolean"
+        },
+        "execution": {
+          "$ref": "#/$defs/ExecutionForm"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "module",
+        "source_path",
+        "source_digest",
+        "ir_digest",
+        "readiness_digest",
+        "readiness",
+        "can_generate_interface",
+        "execution",
+        "span"
+      ],
+      "title": "CapabilityEntry",
+      "type": "object"
+    },
+    "CapabilityFocus": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "capability",
+          "default": "capability",
+          "title": "Kind",
+          "type": "string"
+        },
+        "capability_id": {
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "source_path": {
+          "title": "Source Path",
+          "type": "string"
+        },
+        "capability": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CapabilityEntry"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "local_readiness": {
+          "$ref": "#/$defs/Assessment"
+        },
+        "repository_state": {
+          "$ref": "#/$defs/State"
+        },
+        "selected_state": {
+          "$ref": "#/$defs/State"
+        },
+        "interface_eligible": {
+          "title": "Interface Eligible",
+          "type": "boolean"
+        },
+        "global_evidence_complete": {
+          "title": "Global Evidence Complete",
+          "type": "boolean"
+        },
+        "reasons": {
+          "items": {
+            "$ref": "#/$defs/apizr__repository_readiness__model__Reason"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "capability_id",
+        "module",
+        "source_path",
+        "capability",
+        "local_readiness",
+        "repository_state",
+        "selected_state",
+        "interface_eligible",
+        "global_evidence_complete",
+        "reasons"
+      ],
+      "title": "CapabilityFocus",
+      "type": "object"
+    },
+    "CodeEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "reference": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        },
+        "ir_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "readiness_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "signal_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "maxItems": 4096,
+          "title": "Diagnostics",
+          "type": "array"
+        }
+      },
+      "required": [
+        "reference",
+        "source",
+        "ir_digest",
+        "readiness_digest",
+        "signal_digest"
+      ],
+      "title": "CodeEvidence",
+      "type": "object"
+    },
+    "Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/DiagnosticCode"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "source"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "DiagnosticCode": {
+      "enum": [
+        "APIZR-CAP-001",
+        "APIZR-CAP-002",
+        "APIZR-CAP-003",
+        "APIZR-CAP-004",
+        "APIZR-CAP-005",
+        "APIZR-CAP-006"
+      ],
+      "title": "DiagnosticCode",
+      "type": "string"
+    },
+    "Digest": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256",
+          "default": "sha256",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Digest",
+      "type": "object"
+    },
+    "Dimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/State"
+        },
+        "reasons": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/apizr__readiness__model__Reason"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "Dimension",
+      "type": "object"
+    },
+    "Dimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "binding": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "execution": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "inputs": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "outputs": {
+          "$ref": "#/$defs/Dimension"
+        }
+      },
+      "required": [
+        "binding",
+        "execution",
+        "inputs",
+        "outputs"
+      ],
+      "title": "Dimensions",
+      "type": "object"
+    },
+    "Effect": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "#/$defs/EffectValue",
+          "default": "unknown"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence",
+          "default": "unknown"
+        }
+      },
+      "title": "Effect",
+      "type": "object"
+    },
+    "EffectValue": {
+      "enum": [
+        "true",
+        "false",
+        "unknown"
+      ],
+      "title": "EffectValue",
+      "type": "string"
+    },
+    "Effects": {
+      "additionalProperties": false,
+      "properties": {
+        "filesystem_read": {
+          "$ref": "#/$defs/Effect"
+        },
+        "filesystem_write": {
+          "$ref": "#/$defs/Effect"
+        },
+        "network": {
+          "$ref": "#/$defs/Effect"
+        },
+        "environment": {
+          "$ref": "#/$defs/Effect"
+        },
+        "subprocess": {
+          "$ref": "#/$defs/Effect"
+        },
+        "state_mutation": {
+          "$ref": "#/$defs/Effect"
+        },
+        "secrets": {
+          "$ref": "#/$defs/Effect"
+        },
+        "external_service": {
+          "$ref": "#/$defs/Effect"
+        }
+      },
+      "title": "Effects",
+      "type": "object"
+    },
+    "EnvironmentDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "enum": [
+                "environment_specs_limit",
+                "environment_specs_unreadable",
+                "environment_spec_reference_invalid",
+                "environment_value_unavailable",
+                "environment_package_missing",
+                "environment_package_unreadable"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "dynamic_input_reference",
+                "unsupported_input_reference",
+                "nonportable_input_reference",
+                "input_missing",
+                "input_symlink",
+                "input_not_regular",
+                "input_too_large",
+                "input_changed_during_read",
+                "remote_content_unverified",
+                "explicit_input_invalid",
+                "input_unreadable",
+                "input_format_conflict",
+                "input_name_required",
+                "input_discovery_limit",
+                "input_source_invalid"
+              ],
+              "type": "string"
+            }
+          ],
+          "title": "Code"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "EnvironmentDiagnostic",
+      "type": "object"
+    },
+    "EnvironmentEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "python_implementation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "python_version": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "architecture": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "packages": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PackageEvidence"
+          },
+          "maxItems": 4096,
+          "title": "Packages",
+          "type": "array"
+        },
+        "artifacts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/InputArtifact"
+          },
+          "maxItems": 64,
+          "title": "Artifacts",
+          "type": "array"
+        }
+      },
+      "title": "EnvironmentEvidence",
+      "type": "object"
+    },
+    "EnvironmentResult": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/EnvironmentEvidence"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EnvironmentDiagnostic"
+          },
+          "maxItems": 128,
+          "title": "Diagnostics",
+          "type": "array"
+        }
+      },
+      "required": [
+        "evidence"
+      ],
+      "title": "EnvironmentResult",
+      "type": "object"
+    },
+    "EnvironmentValue": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "value",
+        "origin"
+      ],
+      "title": "EnvironmentValue",
+      "type": "object"
+    },
+    "Evidence": {
+      "enum": [
+        "declared",
+        "observed",
+        "inferred",
+        "unknown"
+      ],
+      "title": "Evidence",
+      "type": "string"
+    },
+    "EvidenceLocation": {
+      "additionalProperties": false,
+      "description": "JSON pointer to retained evidence, with original notebook location if present.",
+      "properties": {
+        "evidence": {
+          "maxLength": 128,
+          "pattern": "^/(code/diagnostics|data/(artifacts|diagnostics)|parameters/(signals|diagnostics)|randomness/(controls|diagnostics)|metrics/signals|outputs/(signals|diagnostics)|serving/readiness/(assessments|structured_types))/[0-9]+$",
+          "title": "Evidence",
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/$defs/SourceLocation"
+        }
+      },
+      "required": [
+        "evidence",
+        "location"
+      ],
+      "title": "EvidenceLocation",
+      "type": "object"
+    },
+    "EvidenceOrigin": {
+      "enum": [
+        "declared",
+        "static",
+        "runtime",
+        "unknown"
+      ],
+      "title": "EvidenceOrigin",
+      "type": "string"
+    },
+    "ExecutionForm": {
+      "enum": [
+        "sync",
+        "async",
+        "generator",
+        "async_generator"
+      ],
+      "title": "ExecutionForm",
+      "type": "string"
+    },
+    "FingerprintPolicy": {
+      "additionalProperties": false,
+      "description": "One GiB per file by default; hard maximum one TiB; at most 256 files.",
+      "properties": {
+        "max_file_bytes": {
+          "default": 1073741824,
+          "maximum": 1099511627776,
+          "minimum": 1,
+          "title": "Max File Bytes",
+          "type": "integer"
+        }
+      },
+      "title": "FingerprintPolicy",
+      "type": "object"
+    },
+    "FrozenJSON": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "maxLength": 8192,
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/FrozenJSON"
+          },
+          "maxItems": 1024,
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/FrozenJSON"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "maxLength": 256
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "InputArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Digest"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        },
+        "content_origin": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceOrigin"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "format_hint": {
+          "anyOf": [
+            {
+              "enum": [
+                "csv",
+                "parquet",
+                "numpy",
+                "joblib"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format Hint"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        }
+      },
+      "required": [
+        "name",
+        "origin"
+      ],
+      "title": "InputArtifact",
+      "type": "object"
+    },
+    "InputDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "dynamic_input_reference",
+            "unsupported_input_reference",
+            "nonportable_input_reference",
+            "input_missing",
+            "input_symlink",
+            "input_not_regular",
+            "input_too_large",
+            "input_changed_during_read",
+            "remote_content_unverified",
+            "explicit_input_invalid",
+            "input_unreadable",
+            "input_format_conflict",
+            "input_name_required",
+            "input_discovery_limit",
+            "input_source_invalid"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "maximum": 1048576,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "maximum": 1048576,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        },
+        "loader": {
+          "anyOf": [
+            {
+              "enum": [
+                "pandas.read_csv",
+                "pandas.read_parquet",
+                "numpy.load",
+                "joblib.load"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Loader"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "InputDiagnostic",
+      "type": "object"
+    },
+    "InputResult": {
+      "additionalProperties": false,
+      "description": "Candidates or selected observations, never an implicit Experiment Plan.",
+      "properties": {
+        "artifacts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/InputArtifact"
+          },
+          "maxItems": 256,
+          "title": "Artifacts",
+          "type": "array"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/InputDiagnostic"
+          },
+          "maxItems": 512,
+          "title": "Diagnostics",
+          "type": "array"
+        }
+      },
+      "title": "InputResult",
+      "type": "object"
+    },
+    "InspectionStates": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/SectionState"
+        },
+        "data": {
+          "$ref": "#/$defs/SectionState"
+        },
+        "parameters": {
+          "$ref": "#/$defs/SectionState"
+        },
+        "randomness": {
+          "$ref": "#/$defs/SectionState"
+        },
+        "environment": {
+          "$ref": "#/$defs/SectionState"
+        },
+        "metrics": {
+          "$ref": "#/$defs/SectionState"
+        },
+        "outputs": {
+          "$ref": "#/$defs/SectionState"
+        },
+        "serving": {
+          "$ref": "#/$defs/SectionState"
+        }
+      },
+      "required": [
+        "code",
+        "data",
+        "parameters",
+        "randomness",
+        "environment",
+        "metrics",
+        "outputs",
+        "serving"
+      ],
+      "title": "InspectionStates",
+      "type": "object"
+    },
+    "MetricDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "metric_source_invalid",
+            "metric_discovery_limit"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "MetricDiagnostic",
+      "type": "object"
+    },
+    "MetricDiscoveryResult": {
+      "additionalProperties": false,
+      "description": "Bounded static occurrences; not an ExperimentRun or runtime metric list.",
+      "properties": {
+        "signals": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MetricSignal"
+          },
+          "maxItems": 256,
+          "title": "Signals",
+          "type": "array"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MetricDiagnostic"
+          },
+          "maxItems": 512,
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "relevant_distributions": {
+          "default": [],
+          "items": {
+            "const": "scikit-learn",
+            "type": "string"
+          },
+          "maxItems": 1,
+          "title": "Relevant Distributions",
+          "type": "array"
+        }
+      },
+      "title": "MetricDiscoveryResult",
+      "type": "object"
+    },
+    "MetricSignal": {
+      "additionalProperties": false,
+      "description": "One lexical occurrence, without a value or proof of execution.",
+      "properties": {
+        "name": {
+          "enum": [
+            "accuracy",
+            "precision",
+            "recall",
+            "f1",
+            "roc_auc",
+            "mean_squared_error"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "callable_name": {
+          "enum": [
+            "sklearn.metrics.accuracy_score",
+            "sklearn.metrics.precision_score",
+            "sklearn.metrics.recall_score",
+            "sklearn.metrics.f1_score",
+            "sklearn.metrics.roc_auc_score",
+            "sklearn.metrics.mean_squared_error"
+          ],
+          "title": "Callable Name",
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "line": {
+          "maximum": 1048576,
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "column": {
+          "maximum": 1048576,
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        },
+        "origin": {
+          "const": "static",
+          "default": "static",
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "callable_name",
+        "source",
+        "line",
+        "column"
+      ],
+      "title": "MetricSignal",
+      "type": "object"
+    },
+    "ObjectField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "type": {
+          "$ref": "#/$defs/TypeSpec"
+        }
+      },
+      "required": [
+        "name",
+        "required",
+        "type"
+      ],
+      "title": "ObjectField",
+      "type": "object"
+    },
+    "OutputDeclaration": {
+      "additionalProperties": false,
+      "description": "Explicit selection or static candidate; never a content observation.",
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Type"
+        }
+      },
+      "required": [
+        "name",
+        "reference"
+      ],
+      "title": "OutputDeclaration",
+      "type": "object"
+    },
+    "OutputDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "dynamic_output_reference",
+            "nonportable_output_reference",
+            "unsupported_output_arguments",
+            "output_name_required",
+            "output_missing",
+            "output_symlink",
+            "output_not_regular",
+            "output_too_large",
+            "output_changed_during_read",
+            "output_unreadable",
+            "output_source_invalid",
+            "output_discovery_limit"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "maximum": 1048576,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "maximum": 1048576,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "OutputDiagnostic",
+      "type": "object"
+    },
+    "OutputDiscoveryResult": {
+      "additionalProperties": false,
+      "description": "Every recognized occurrence is retained separately from runtime artifacts.",
+      "properties": {
+        "signals": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/OutputSignal"
+          },
+          "maxItems": 256,
+          "title": "Signals",
+          "type": "array"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/OutputDiagnostic"
+          },
+          "maxItems": 512,
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "relevant_distributions": {
+          "default": [],
+          "items": {
+            "const": "joblib",
+            "type": "string"
+          },
+          "maxItems": 1,
+          "title": "Relevant Distributions",
+          "type": "array"
+        }
+      },
+      "title": "OutputDiscoveryResult",
+      "type": "object"
+    },
+    "OutputSignal": {
+      "additionalProperties": false,
+      "properties": {
+        "declaration": {
+          "$ref": "#/$defs/OutputDeclaration"
+        },
+        "callable_name": {
+          "const": "joblib.dump",
+          "default": "joblib.dump",
+          "title": "Callable Name",
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "line": {
+          "maximum": 1048576,
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "column": {
+          "maximum": 1048576,
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        },
+        "origin": {
+          "const": "static",
+          "default": "static",
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "declaration",
+        "source",
+        "line",
+        "column"
+      ],
+      "title": "OutputSignal",
+      "type": "object"
+    },
+    "PackageEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Version"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "origin"
+      ],
+      "title": "PackageEvidence",
+      "type": "object"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "ParameterDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "dynamic_parameter_value",
+            "parameter_literal_invalid",
+            "parameter_assignment_unsupported",
+            "parameter_source_invalid",
+            "parameter_discovery_limit"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "maximum": 1048576,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "maximum": 1048576,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "ParameterDiagnostic",
+      "type": "object"
+    },
+    "ParameterDiscoveryResult": {
+      "additionalProperties": false,
+      "properties": {
+        "signals": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ParameterSignal"
+          },
+          "maxItems": 256,
+          "title": "Signals",
+          "type": "array"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ParameterDiagnostic"
+          },
+          "maxItems": 512,
+          "title": "Diagnostics",
+          "type": "array"
+        }
+      },
+      "title": "ParameterDiscoveryResult",
+      "type": "object"
+    },
+    "ParameterSignal": {
+      "additionalProperties": false,
+      "properties": {
+        "parameter": {
+          "$ref": "#/$defs/Parameter"
+        },
+        "source": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "line": {
+          "maximum": 1048576,
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "column": {
+          "maximum": 1048576,
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "parameter",
+        "source",
+        "line",
+        "column"
+      ],
+      "title": "ParameterSignal",
+      "type": "object"
+    },
+    "RandomnessControl": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        },
+        "provider": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin",
+        "provider"
+      ],
+      "title": "RandomnessControl",
+      "type": "object"
+    },
+    "RandomnessDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "dynamic_randomness_control",
+            "uncontrolled_randomness",
+            "unsupported_randomness_literal",
+            "unsupported_randomness_arguments",
+            "randomness_control_conflict",
+            "randomness_control_name_invalid",
+            "randomness_source_invalid",
+            "randomness_discovery_limit",
+            "framework_determinism_unknown"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "maximum": 1048576,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "maximum": 1048576,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "RandomnessDiagnostic",
+      "type": "object"
+    },
+    "RandomnessResult": {
+      "additionalProperties": false,
+      "description": "Static controls, redacted diagnostics, and versionless import candidates.",
+      "properties": {
+        "controls": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/RandomnessControl"
+          },
+          "maxItems": 128,
+          "title": "Controls",
+          "type": "array"
+        },
+        "diagnostics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/RandomnessDiagnostic"
+          },
+          "maxItems": 512,
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "relevant_distributions": {
+          "default": [],
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 6,
+          "title": "Relevant Distributions",
+          "type": "array"
+        }
+      },
+      "title": "RandomnessResult",
+      "type": "object"
+    },
+    "ReadinessIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "repository_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "catalog_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "graph_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "repository_readiness_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "readiness_policy_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "repository_digest",
+        "catalog_digest",
+        "graph_digest",
+        "repository_readiness_digest",
+        "readiness_policy_digest"
+      ],
+      "title": "ReadinessIdentity",
+      "type": "object"
+    },
+    "ReadinessReport": {
+      "additionalProperties": false,
+      "properties": {
+        "policy_version": {
+          "const": "apizr.readiness/v1",
+          "default": "apizr.readiness/v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        },
+        "ir_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "assessments": {
+          "items": {
+            "$ref": "#/$defs/Assessment"
+          },
+          "title": "Assessments",
+          "type": "array"
+        },
+        "structured_types": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StructuredDeclaration"
+          },
+          "title": "Structured Types",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source",
+        "ir_digest",
+        "assessments"
+      ],
+      "title": "ReadinessReport",
+      "type": "object"
+    },
+    "RepositoryServing": {
+      "additionalProperties": false,
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/ReadinessIdentity"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/CapabilityFocus"
+          },
+          "maxItems": 4096,
+          "title": "Candidates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "identity",
+        "candidates"
+      ],
+      "title": "RepositoryServing",
+      "type": "object"
+    },
+    "SectionState": {
+      "enum": [
+        "captured",
+        "partial",
+        "unknown",
+        "uncontrolled",
+        "not_applicable"
+      ],
+      "title": "SectionState",
+      "type": "string"
+    },
+    "ServingEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "readiness": {
+          "$ref": "#/$defs/ReadinessReport"
+        },
+        "capabilities": {
+          "items": {
+            "$ref": "#/$defs/CapabilityEntry"
+          },
+          "maxItems": 4096,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "repository": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RepositoryServing"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "readiness",
+        "capabilities"
+      ],
+      "title": "ServingEvidence",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "info",
+        "warning",
+        "error"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "python",
+            "notebook"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "transformed_digest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "kind",
+        "module",
+        "digest"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "SourceLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "line": {
+          "maximum": 1048576,
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "column": {
+          "maximum": 1048576,
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        },
+        "cell_index": {
+          "anyOf": [
+            {
+              "maximum": 1023,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell Index"
+        },
+        "code_cell_index": {
+          "anyOf": [
+            {
+              "maximum": 1023,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code Cell Index"
+        },
+        "cell_line": {
+          "anyOf": [
+            {
+              "maximum": 1048576,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell Line"
+        }
+      },
+      "required": [
+        "source",
+        "line",
+        "column"
+      ],
+      "title": "SourceLocation",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "symbol": {
+          "title": "Symbol",
+          "type": "string"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "module",
+        "symbol",
+        "line",
+        "end_line"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "State": {
+      "enum": [
+        "ready",
+        "conditional",
+        "unsupported",
+        "ambiguous"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "StructuredDeclaration": {
+      "additionalProperties": false,
+      "description": "Source-bound, statically proven shape or an explicit bounded refusal.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TypeSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "problem": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Problem"
+        }
+      },
+      "required": [
+        "name",
+        "source"
+      ],
+      "title": "StructuredDeclaration",
+      "type": "object"
+    },
+    "TypeSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "any",
+            "int",
+            "str",
+            "float",
+            "bool",
+            "null",
+            "list",
+            "dict",
+            "tuple",
+            "set",
+            "union",
+            "literal",
+            "object"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "items": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TypeSpec"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "values": {
+          "default": [],
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Values",
+          "type": "array"
+        },
+        "variadic": {
+          "default": false,
+          "title": "Variadic",
+          "type": "boolean"
+        },
+        "fields": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ObjectField"
+          },
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "TypeSpec",
+      "type": "object"
+    },
+    "apizr__readiness__model__Code": {
+      "enum": [
+        "APIZR-READY-001",
+        "APIZR-READY-002",
+        "APIZR-READY-003",
+        "APIZR-READY-004",
+        "APIZR-READY-005",
+        "APIZR-READY-006",
+        "APIZR-READY-007",
+        "APIZR-READY-008",
+        "APIZR-READY-009",
+        "APIZR-READY-010",
+        "APIZR-READY-011",
+        "APIZR-READY-012",
+        "APIZR-READY-013",
+        "APIZR-READY-014",
+        "APIZR-READY-015",
+        "APIZR-READY-016",
+        "APIZR-READY-017",
+        "APIZR-READY-018",
+        "APIZR-READY-019"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "apizr__readiness__model__Reason": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/apizr__readiness__model__Code"
+        },
+        "line": {
+          "title": "Line",
+          "type": "integer"
+        },
+        "parameter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parameter"
+        },
+        "evidence": {
+          "const": "inferred",
+          "default": "inferred",
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "line"
+      ],
+      "title": "Reason",
+      "type": "object"
+    },
+    "apizr__repository_readiness__model__Code": {
+      "enum": [
+        "APIZR-REPOREADY-001",
+        "APIZR-REPOREADY-002",
+        "APIZR-REPOREADY-003",
+        "APIZR-REPOREADY-004",
+        "APIZR-REPOREADY-005",
+        "APIZR-REPOREADY-006",
+        "APIZR-REPOREADY-007",
+        "APIZR-REPOREADY-008"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "apizr__repository_readiness__model__Reason": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/apizr__repository_readiness__model__Code"
+        },
+        "effect": {
+          "anyOf": [
+            {
+              "enum": [
+                "filesystem_read",
+                "filesystem_write",
+                "network",
+                "environment",
+                "subprocess",
+                "state_mutation",
+                "secrets",
+                "external_service"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effect"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Reason",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.experiment-inspection/v1",
+      "default": "apizr.experiment-inspection/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "execution": {
+      "const": "not_executed",
+      "default": "not_executed",
+      "title": "Execution",
+      "type": "string"
+    },
+    "fingerprint_policy": {
+      "$ref": "#/$defs/FingerprintPolicy"
+    },
+    "code": {
+      "$ref": "#/$defs/CodeEvidence"
+    },
+    "data": {
+      "$ref": "#/$defs/InputResult"
+    },
+    "parameters": {
+      "$ref": "#/$defs/ParameterDiscoveryResult"
+    },
+    "randomness": {
+      "$ref": "#/$defs/RandomnessResult"
+    },
+    "environment": {
+      "$ref": "#/$defs/EnvironmentResult"
+    },
+    "metrics": {
+      "$ref": "#/$defs/MetricDiscoveryResult"
+    },
+    "outputs": {
+      "$ref": "#/$defs/OutputDiscoveryResult"
+    },
+    "serving": {
+      "$ref": "#/$defs/ServingEvidence"
+    },
+    "locations": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/EvidenceLocation"
+      },
+      "maxItems": 8192,
+      "title": "Locations",
+      "type": "array"
+    },
+    "states": {
+      "$ref": "#/$defs/InspectionStates"
+    }
+  },
+  "required": [
+    "fingerprint_policy",
+    "code",
+    "data",
+    "parameters",
+    "randomness",
+    "environment",
+    "metrics",
+    "outputs",
+    "serving",
+    "states"
+  ],
+  "title": "ExperimentInspection",
+  "type": "object"
+}

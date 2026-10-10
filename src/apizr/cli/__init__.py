@@ -76,6 +76,10 @@ def _main(argv: Sequence[str] | None = None) -> int:
         from apizr.cli.commands.inspect import main as inspect_command
 
         return inspect_command(arguments[1:])
+    if arguments and arguments[0] == "experiment":
+        from apizr.cli.commands.experiment import main as experiment_command
+
+        return experiment_command(arguments[1:])
     if arguments and arguments[0] == "generate":
         from apizr.cli.commands.generate import main as generate_modern
 
@@ -96,6 +100,8 @@ def _main(argv: Sequence[str] | None = None) -> int:
         )
         print("Project plugins: apizr plugins {lock,sync,update,catalog} --help")
         print("Delivery of an existing build: apizr delivery {run,resume} --help")
+        print("\nData science: apizr experiment inspect SOURCE [--format json]")
+        print("  Understand script/notebook evidence without executing code.")
         print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
         )

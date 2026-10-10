@@ -111,6 +111,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wheel", type=Path)
     parser.add_argument("--python", default=sys.executable)
+    parser.add_argument("--proof-output", type=Path)
     args = parser.parse_args()
     wheel = args.wheel.resolve()
     retained_target = target_root()
@@ -293,6 +294,10 @@ print("PASS documented compiler API: base wheel, outside checkout, exact CLI par
                 assert (
                     "[notebook]" in missing.stderr and "Traceback" not in missing.stderr
                 )
+                missing = command("experiment", "inspect", notebook, code=2)
+                assert (
+                    "[notebook]" in missing.stderr and "Traceback" not in missing.stderr
+                )
                 missing = command("--script", source / "sample.py", code=2)
                 assert (
                     "[legacy]" in missing.stderr and "Traceback" not in missing.stderr
@@ -323,6 +328,26 @@ print("PASS documented compiler API: base wheel, outside checkout, exact CLI par
                         root / ("clients-" + format),
                     )
             elif extra == "notebook":
+                checkout = Path(__file__).resolve().parents[1]
+                subprocess.run(
+                    [
+                        str(python),
+                        "-I",
+                        "-B",
+                        str(checkout / "scripts/experiment_inspection_proof.py"),
+                        "--fixtures",
+                        str(checkout / "tests/fixtures/experiments/inspection"),
+                        "--notebook",
+                        "--output",
+                        str(
+                            (args.proof_output or root)
+                            / "experiment-inspection-notebook.json"
+                        ),
+                    ],
+                    cwd=root,
+                    check=True,
+                    timeout=60,
+                )
                 command("inspect", notebook, "--ir")
                 command(
                     "generate", "rest", notebook, "--output-dir", root / "notebook-rest"

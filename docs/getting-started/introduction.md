@@ -10,6 +10,24 @@ description: Choose Python functions, create a service and call them through RES
 
 <span id="introduction"></span>
 
+## Start with an experiment (0.4.5 development)
+
+For a training script or notebook, begin by inspecting the evidence. With the
+development checkout installed, this first example needs no science framework:
+
+<!-- experiment-inspection:start-here -->
+```sh
+printf 'learning_rate = 0.05\n' > example.py
+apizr experiment inspect example.py
+```
+
+The report shows all eight evidence sections. Parameters is captured as a static
+candidate; absent data, randomness and runtime facts remain unknown. Continue with
+the [full experiment example](user-guide/experiment-inspection.md), including
+notebook installation and JSON output. Inspection never means the experiment ran.
+
+## Start with functions to expose
+
 Apizr lets an application or an AI assistant call functions from your Python
 project. You choose the functions. Apizr creates either a REST service, called
 over HTTP, or an MCP server, called by a compatible AI client.

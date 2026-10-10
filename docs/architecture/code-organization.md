@@ -226,13 +226,26 @@ byte observations. `_files.py` owns the one internal regular-file digest primiti
 shared by input, environment and output capture. It returns factual identity or a
 safety failure; callers assign their context-specific evidence provenance.
 
+`parameters.py` adds bounded direct literal candidates using the existing
+`Parameter` value. `inspection.py` composes these producers and canonical compiler
+evidence; `inspection_model.py` binds their identities and derives section states.
+`notebook_source.py` provides a transient cell sidecar verified against the unchanged
+exporter's AST. `_locations.py` observes same-domain discovery hooks for provenance;
+it adds no input/control recognition rules. `reporting.py` presents bounded text
+and deterministic JSON. CLI parsing remains in `cli/commands/experiment.py`.
+
 An Experiment Plan describes intended experiment inputs and controls. An Experiment Run records observed execution evidence. Neither proves scientific causality or reproducibility.
 
 The dependency gate permits only experiment siblings, the existing `ValueModel`
 and logical-module primitive, distribution names/digests, canonical JSON,
 bounded descriptor access in `workspace.files`, standard-library modules and the
-existing Pydantic typing runtime. CLI, execution,
-exposure, optional adapters and data-science SDKs are outside this boundary.
+existing Pydantic typing runtime. The inspection orchestrator alone may compose
+canonical capability/readiness and repository evidence plus the existing lazy
+notebook adapter. Its model may reuse the corresponding canonical value contracts.
+These are explicit per-module dependency exceptions; producers and Plan/Run retain
+the primitive boundary. CLI, execution workers, exposure planning and data-science
+SDKs remain outside it. Repository enrichment calls the existing readiness view,
+whose selection-scoped evidence semantics remain authoritative.
 No experiment runner or store is part of this domain. See
 [Experiment evidence v1](experiment-evidence-v1.md) for origins, identities and
 producer obligations.

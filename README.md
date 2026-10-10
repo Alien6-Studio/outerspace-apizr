@@ -56,8 +56,21 @@ uv tool install outerspace-apizr==0.4.4
 
 ## Choose your path
 
+Have a training script or notebook? The **0.4.5 development checkout** adds a
+zero-execution first step:
+
+<!-- experiment-inspection:readme -->
+```sh
+apizr experiment inspect train.py
+```
+
+See code, data, parameters, randomness, environment, metrics, outputs and serving
+candidates. Follow the [experiment inspection example](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-inspection.md)
+for setup, notebooks and JSON. No science-framework installation is needed.
+
 | Your goal | Start here |
 | --- | --- |
+| Understand a training script or notebook (0.4.5 development) | [Inspect an experiment without running it](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-inspection.md) |
 | Expose Python functions as MCP tools or REST endpoints | [Install](https://apizr.outerspace.sh/getting-started/install/) → [Quickstart](https://apizr.outerspace.sh/getting-started/quickstart/) |
 | Analyze a project from an MCP client | [Install the MCP profile](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile) → [analysis server](https://apizr.outerspace.sh/reference/apizr-mcp-server/) |
 | Build and deliver a service | [Install OCI or delivery](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile) → [OCI](https://apizr.outerspace.sh/reference/oci-service-plugin/) and [Attest](https://apizr.outerspace.sh/reference/attest-delivery-plugin/) |

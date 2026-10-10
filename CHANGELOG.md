@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add zero-execution inspection of Python training scripts and notebooks, presenting
+  code, data, parameter, randomness, environment, metric, output and serving evidence
+  with original cell locations and canonical readiness identities (#259).
+
 - Add explicit finite JSON metric capture, static sklearn metric-call signals and
   safe output artifact fingerprints with joblib output candidates, without
   experiment execution, tracking or model-registry behavior (#263).

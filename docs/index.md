@@ -16,6 +16,12 @@ or an MCP server. Your business logic stays in Python.
 
 MCP (Model Context Protocol) lets AI assistants discover and use tools.
 
+Working on a training script or notebook? The **0.4.5 development branch** also
+provides [experiment inspection](getting-started/user-guide/experiment-inspection.md):
+understand code, data, parameters, randomness, environment, metrics, outputs and
+serving candidates without running the experiment. Recording runs and comparing
+them are later steps; their commands are not available yet.
+
 **[Apizr 0.4.4](releases/0.4.4.md) is available.** Python 3.11–3.14 · Open source,
 GPL-3.0-or-later.
 

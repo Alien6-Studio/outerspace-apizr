@@ -123,6 +123,29 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
             env=env,
         )
         results["experiment_contracts"] = "passed"
+        run(
+            python,
+            "-I",
+            "-B",
+            ROOT / "scripts/experiment_inspection_proof.py",
+            "--fixtures",
+            ROOT / "tests/fixtures/experiments/inspection",
+            "--output",
+            output / "experiment-inspection-python.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_inspection"] = "passed"
+        run(
+            sys.executable,
+            ROOT / "scripts/smoke_experiment_docs.py",
+            cli,
+            "--output",
+            output / "experiment-docs.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_docs"] = "passed"
         results["measurements"]["core"] = {
             "wheel_bytes": size(target / "base"),
             "installed_bytes": size(root / "pip"),
@@ -289,6 +312,8 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
                 sys.executable,
                 str(ROOT / "scripts/smoke_installations.py"),
                 str(core_wheel),
+                "--proof-output",
+                str(output),
             ],
             env=os.environ,
             stdout=log,
