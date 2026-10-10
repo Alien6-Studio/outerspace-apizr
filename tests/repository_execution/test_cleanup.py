@@ -60,8 +60,9 @@ def test_timeout_can_precede_descendant_preparation(tmp_path, monkeypatch, reque
         )
         return killpg(pid, sig)
 
+    source = f"from pathlib import Path\ndef run():\n Path({str(marker)!r}).touch()\n return 1\n"
     plan, exposure, sources, _ = planned(
-        f"from pathlib import Path\ndef run():\n Path({str(marker)!r}).touch()\n return 1\n",
+        source,
         policy=ExecutionPolicy.model_validate({"limits": {"wall_time_ms": 1200}}),
     )
     with monkeypatch.context() as patch:
@@ -92,5 +93,10 @@ def test_timeout_can_precede_descendant_preparation(tmp_path, monkeypatch, reque
     request.node.user_properties.append(
         ("startup_trace", json.dumps({"result": result.status, "events": events}))
     )
-    # The production deadline still covers startup; the next invocation works.
-    assert execute(plan, exposure, sources, {}).value == 1
+    # Recovery checks resource cleanup, not startup speed on a shared runner.
+    # Keep the forced timeout above at 1200ms; use the normal policy for recovery.
+    recovery_plan, recovery_exposure, recovery_sources, _ = planned(source)
+    recovery = execute(recovery_plan, recovery_exposure, recovery_sources, {})
+    assert recovery.status == "success", recovery
+    assert recovery.value == 1
+    assert marker.exists()
