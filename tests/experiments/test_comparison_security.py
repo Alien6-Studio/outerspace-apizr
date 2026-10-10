@@ -46,20 +46,15 @@ def forbid_external(monkeypatch):
     original = builtins.__import__
 
     def guarded(name, *args, **kwargs):
-        assert name.split(".")[0] not in {
-            "docker",
-            "sklearn",
-            "torch",
-            "numpy",
-            "tensorflow",
-            "joblib",
-            "pickle",
-            "mlflow",
-            "wandb",
-            "dvc",
-            "trunx",
-            "openai",
+        allowed = (sys.stdlib_module_names - {"pickle", "_pickle"}) | {
+            "apizr",
+            "pydantic",
+            "pydantic_core",
+            "typing_extensions",
+            "annotated_types",
+            "typing_inspection",
         }
+        assert name.split(".")[0] in allowed
         return original(name, *args, **kwargs)
 
     monkeypatch.setattr(builtins, "__import__", guarded)
