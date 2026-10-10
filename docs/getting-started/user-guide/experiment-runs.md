@@ -197,6 +197,8 @@ already initialized project, add that line yourself if you want Git to ignore lo
 history. Running experiments does not rewrite an existing ignore file. Evidence
 JSON does not become Python source or add capabilities to repository analysis.
 
-This store is local evidence, not Trunx, an artifact repository, a model registry,
-a remote tracker or Attest. There is no upload, signing, synchronization, experiment
-Docker runner, comparison or exposure command in this increment.
+This store holds local evidence. See the existing
+[external governance boundary](../../reference/external-governance.md) for the
+handoff to other systems. Artifact repositories, model registries, remote tracking
+and signing stay outside this store. This increment adds no upload, synchronization,
+experiment Docker runner, comparison or exposure command.
