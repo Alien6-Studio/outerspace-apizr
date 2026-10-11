@@ -18,6 +18,23 @@ from apizr.repository_readiness.model import Reason
 DEFAULT_LIMIT = 50
 MAX_LIMIT = 200
 MAX_BLOCKERS = 10
+REPOSITORY_PIN_DESCRIPTION = (
+    "Optional consistency pin: omit or use null to discover normally without asserting "
+    "a previous identity, or supply a lowercase 64-character hexadecimal SHA-256 value. "
+    "Copy repository_digest.value from a previous full result, or "
+    "identity.repository_digest.value from a bounded view. This plain value is the "
+    "repository evidence identity expected from this call's discovery of the startup "
+    "source scope; it does not select another repository. A mismatch is refused with "
+    "repository_changed. Digest objects, algorithm prefixes and uppercase are invalid."
+)
+READINESS_EXIT_DESCRIPTION = (
+    "Business readiness outcome: 0 denotes a successful readiness result under the "
+    "assessment policy; 1 can be a valid assessment with isError: false. It is not an "
+    "MCP transport or runtime failure. Consult the retained states and reasons: "
+    "CONDITIONAL is not READY, and unknown or ambiguous evidence is not proof of failure."
+)
+# Valid illustrative schema value; runtime clients must use their observed identity.
+PIN_EXAMPLE = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 Action = Literal[
     "inspect_dependency",
     "fix_import",
@@ -36,13 +53,72 @@ class ViewModel(ValueModel):
 
 
 class ViewQuery(ViewModel):
-    view: Literal["full", "summary", "detail"] = "full"
-    capability_id: str | None = Field(default=None, min_length=1, max_length=1024)
-    module: str | None = Field(default=None, min_length=1, max_length=512)
-    offset: int | None = Field(default=None, ge=0, le=2147483647)
-    limit: int | None = Field(default=None, ge=1, le=MAX_LIMIT)
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {},
+                {"view": "summary"},
+                {"expected_repository_digest": PIN_EXAMPLE},
+                {
+                    "view": "detail",
+                    "capability_id": "python:model:predict",
+                    "limit": 50,
+                },
+            ]
+        }
+    )
+
+    view: Literal["full", "summary", "detail"] = Field(
+        default="full",
+        description=(
+            "full returns the complete canonical artifact/report; summary returns bounded "
+            "evidence for compact inspection; detail focuses on exactly one capability or "
+            "module and can paginate ancillary records. Reduced views are not partial "
+            "canonical Catalog, Graph or Readiness artifacts."
+        ),
+    )
+    capability_id: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=1024,
+        description=(
+            "Exact canonical capability ID, for example python:model:predict. Only for "
+            "detail, with module omitted/null. No fuzzy matching, source-path matching or "
+            "implicit capability selection."
+        ),
+    )
+    module: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=512,
+        description=(
+            "One exact logical module name, for example package.model, not a source path. "
+            "Only for detail, with capability_id omitted/null."
+        ),
+    )
+    offset: int | None = Field(
+        default=None,
+        ge=0,
+        le=2147483647,
+        description=(
+            "Zero-based offset into deterministically ordered ancillary detail records "
+            "after filtering; defaults to 0. Only detail accepts pagination. A nonzero "
+            "offset requires expected_repository_digest. Use page.next_offset with the "
+            "same filter; there is no persistent server-side pagination session."
+        ),
+    )
+    limit: int | None = Field(
+        default=None,
+        ge=1,
+        le=MAX_LIMIT,
+        description=(
+            "Maximum ancillary records in a detail page, from 1 to 200; omitted/null "
+            "uses 50. Focus and principal blockers are not paged away. The response byte "
+            "bound still applies and may refuse even one large record."
+        ),
+    )
     expected_repository_digest: str | None = Field(
-        default=None, pattern=r"^[0-9a-f]{64}$"
+        default=None, pattern=r"^[0-9a-f]{64}$", description=REPOSITORY_PIN_DESCRIPTION
     )
 
     @field_validator("capability_id")
@@ -69,23 +145,51 @@ class ViewQuery(ViewModel):
 
 
 class AnalysisIdentity(ViewModel):
-    repository_digest: Digest
-    catalog_digest: Digest
-    graph_digest: Digest
+    repository_digest: Digest = Field(
+        description="Complete repository evidence identity; copy value to expected_repository_digest for consistency pinning."
+    )
+    catalog_digest: Digest = Field(
+        description="Digest of the complete canonical static Catalog, unchanged by filtering or pagination."
+    )
+    graph_digest: Digest = Field(
+        description="Digest of the complete canonical static Graph, unchanged by filtering or pagination."
+    )
 
 
 class ReadinessIdentity(AnalysisIdentity):
-    repository_readiness_digest: Digest
-    readiness_policy_digest: Digest
+    repository_readiness_digest: Digest = Field(
+        description="Digest of the complete canonical repository readiness report, not just the displayed view."
+    )
+    readiness_policy_digest: Digest = Field(
+        description="Digest of the readiness assessment policy used for this evidence."
+    )
 
 
 class Page(ViewModel):
-    offset: int = Field(ge=0)
-    limit: int = Field(ge=1, le=MAX_LIMIT)
-    total: int = Field(ge=0)
-    returned: int = Field(ge=0)
-    next_offset: int | None = Field(default=None, ge=1)
-    complete: bool
+    offset: int = Field(
+        ge=0,
+        description="Zero-based offset in the complete filtered and deterministically ordered record collection.",
+    )
+    limit: int = Field(
+        ge=1,
+        le=MAX_LIMIT,
+        description="Maximum records requested for this page; not a response byte limit.",
+    )
+    total: int = Field(
+        ge=0,
+        description="Total records in the complete filtered collection before pagination.",
+    )
+    returned: int = Field(
+        ge=0, description="Number of records actually included in this page."
+    )
+    next_offset: int | None = Field(
+        default=None,
+        ge=1,
+        description="Offset for the next page, or null when complete; continue with the same filter and repository digest pin.",
+    )
+    complete: bool = Field(
+        description="True when no subsequent page remains; does not assert that static evidence itself is complete."
+    )
 
     @model_validator(mode="after")
     def consistent(self) -> Self:
@@ -144,19 +248,39 @@ class AnalysisCounts(ViewModel):
 
 
 class AnalysisSummary(ViewModel):
-    view: Literal["summary"] = "summary"
-    identity: AnalysisIdentity
-    summary: AnalysisCounts
-    principal_blockers: Blockers
+    view: Literal["summary"] = Field(
+        default="summary",
+        description="Bounded summary variant, not a partial canonical Catalog or Graph.",
+    )
+    identity: AnalysisIdentity = Field(
+        description="Identities of the complete static artifacts underlying this bounded view."
+    )
+    summary: AnalysisCounts = Field(
+        description="Static source, capability, relationship and diagnostic counts; no project execution is implied."
+    )
+    principal_blockers: Blockers = Field(
+        description="Bounded sample of at most ten principal diagnostics with total and has_more; not all evidence."
+    )
 
 
 class ReadinessSummary(ViewModel):
-    view: Literal["summary"] = "summary"
-    identity: ReadinessIdentity
-    exit_code: Literal[0, 1]
-    states: dict[State, int]
-    execution: tuple[ModeCompatibility, ...]
-    principal_blockers: Blockers
+    view: Literal["summary"] = Field(
+        default="summary",
+        description="Bounded readiness summary, not a partial canonical readiness report.",
+    )
+    identity: ReadinessIdentity = Field(
+        description="Complete repository, artifact and readiness-policy identities underlying this view."
+    )
+    exit_code: Literal[0, 1] = Field(description=READINESS_EXIT_DESCRIPTION)
+    states: dict[State, int] = Field(
+        description="Counts by canonical readiness state; conditional and ambiguous evidence remain distinct from ready evidence."
+    )
+    execution: tuple[ModeCompatibility, ...] = Field(
+        description="Static execution-mode compatibility under the readiness policy, not execution authority or proof of successful execution."
+    )
+    principal_blockers: Blockers = Field(
+        description="Bounded sample of at most ten principal diagnostics with total and has_more; not all evidence."
+    )
 
 
 class SourceView(ViewModel):
@@ -245,22 +369,48 @@ Record = Annotated[
 
 
 class AnalysisDetail(ViewModel):
-    view: Literal["detail"] = "detail"
-    identity: AnalysisIdentity
-    focus: Focus
-    principal_blockers: Blockers
-    page: Page
-    records: tuple[Record, ...]
+    view: Literal["detail"] = Field(
+        default="detail",
+        description="Focused static evidence view, not a partial canonical Catalog or Graph.",
+    )
+    identity: AnalysisIdentity = Field(
+        description="Identities of the complete static artifacts; filtering and paging do not change them."
+    )
+    focus: Focus = Field(
+        description="The exactly selected capability or logical module with its static evidence and readiness states; never paged away."
+    )
+    principal_blockers: Blockers = Field(
+        description="Bounded principal diagnostic sample for this focus with complete count and has_more."
+    )
+    page: Page = Field(
+        description="Pagination metadata for ancillary records after deterministic filtering and ordering."
+    )
+    records: tuple[Record, ...] = Field(
+        description="Current page of ancillary static source, dependency, relationship, import or diagnostic evidence; dependencies are not implicitly exposed."
+    )
 
 
 class ReadinessDetail(ViewModel):
-    view: Literal["detail"] = "detail"
-    identity: ReadinessIdentity
-    exit_code: Literal[0, 1]
-    focus: Focus
-    principal_blockers: Blockers
-    page: Page
-    records: tuple[Record, ...]
+    view: Literal["detail"] = Field(
+        default="detail",
+        description="Focused readiness view, not a partial canonical readiness report.",
+    )
+    identity: ReadinessIdentity = Field(
+        description="Complete repository, artifact and readiness-policy identities underlying this view."
+    )
+    exit_code: Literal[0, 1] = Field(description=READINESS_EXIT_DESCRIPTION)
+    focus: Focus = Field(
+        description="Exactly selected capability or module; local, repository and selected readiness evidence remain distinct and are never paged away."
+    )
+    principal_blockers: Blockers = Field(
+        description="Bounded principal diagnostic sample for this focus with complete count and has_more."
+    )
+    page: Page = Field(
+        description="Pagination metadata for ancillary records after deterministic filtering and ordering."
+    )
+    records: tuple[Record, ...] = Field(
+        description="Current page of ancillary evidence supporting readiness; unknown evidence is retained and does not imply successful project execution."
+    )
 
 
 class LocalizedDiagnostic(Diagnostic):

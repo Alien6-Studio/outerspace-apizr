@@ -45,6 +45,9 @@ jobs:
           sudo unshare --net --setgid "$(id -g)" --setuid "$(id -u)" \
             env PYTHONDONTWRITEBYTECODE=1 "$RUNNER_TEMP/mcp-proof/client/bin/python" \
             scripts/mcp_client_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/network-isolated.log" 2>&1
+          sudo unshare --net --setgid "$(id -g)" --setuid "$(id -u)" \
+            env PYTHONDONTWRITEBYTECODE=1 "$RUNNER_TEMP/mcp-proof/client/bin/python" \
+            scripts/mcp_schema_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/schema-network-isolated.log" 2>&1
       - name: Refuse removal during a real installed MCP session, then remove
         run: >-
           "$RUNNER_TEMP/mcp-proof/client/bin/python" -B

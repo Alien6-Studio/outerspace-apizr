@@ -1,0 +1,12 @@
+{
+  "commit": "38e1f8855c94f47cad11eae5dd89deb07a0b611e",
+  "validation_schema_sha256": "c6a89fd00ae58363a3dae547c5ee5dbe93aed53a7ceb4d7ce29c1a344acd9c4b",
+  "repository_digest": "5ebc8c8e19570f398670ea09b2cf85e82ef6e433493a602fcffac737fd737559",
+  "business_results_sha256": {
+    "analysis": "0e81f9497cb15b84dd6a760662c49129e506afc5b188d58c32d4355abf2712db",
+    "pinned-readiness": "2818da9a7d2b4815a9ae224053213612c51d55736f872977dfaffb9f168c6748",
+    "summary": "913b521731edae22f966af2feec7c9a237669ded43c256bcd5dbb2e894d37024",
+    "detail": "a8b1de23af7ad73222283834fb6fe37610663db8bac81d0aa536bd7e27586594",
+    "explicit-plan": "0174a93cb1485a5169777a568e956333f18e49299d1094d17e17ece26ba1e76c"
+  }
+}

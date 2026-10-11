@@ -14,6 +14,9 @@ from apizr.repository_readiness import (
 )
 from apizr.repository_views.model import (
     MAX_LIMIT,
+    PIN_EXAMPLE,
+    READINESS_EXIT_DESCRIPTION,
+    REPOSITORY_PIN_DESCRIPTION,
     AnalysisDetail,
     AnalysisSummary,
     ReadinessDetail,
@@ -30,13 +33,55 @@ class StrictModel(ValueModel):
 class Arguments(StrictModel):
     expected_repository_digest: (
         Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")] | None
-    ) = None
+    ) = Field(default=None, description=REPOSITORY_PIN_DESCRIPTION)
 
 
 class PlanArguments(Arguments):
-    policy: ExposurePolicy | None = None
-    offset: int | None = Field(default=None, ge=0, le=2147483647)
-    limit: int | None = Field(default=None, ge=1, le=MAX_LIMIT)
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {},
+                {"expected_repository_digest": PIN_EXAMPLE},
+                {
+                    "policy": {
+                        "selection": {"include": ["python:model:predict"]},
+                        "interfaces": ["mcp"],
+                        "execution": {"allowed": ["direct"]},
+                    }
+                },
+            ]
+        }
+    )
+
+    policy: ExposurePolicy | None = Field(
+        default=None,
+        description=(
+            "Explicit proposal policy to use for this plan. Omitted/null uses the startup "
+            "exposure policy if present; if neither exists, returns policy_required. "
+            "ExposurePolicy is a planning constraint, not operator authority: it cannot "
+            "enlarge startup permissions or authorize generation, execution or publication."
+        ),
+    )
+    offset: int | None = Field(
+        default=None,
+        ge=0,
+        le=2147483647,
+        description=(
+            "Optional zero-based offset into deterministically ordered refused-plan "
+            "diagnostics; defaults to 0. A nonzero offset requires expected_repository_digest. "
+            "Successful canonical plans are never paginated; there is no server-side session."
+        ),
+    )
+    limit: int | None = Field(
+        default=None,
+        ge=1,
+        le=MAX_LIMIT,
+        description=(
+            "Optional refused-plan diagnostic page size, from 1 to 200; omitted/null uses "
+            "50 when pagination is requested. With offset and limit both omitted/null, "
+            "all refusal diagnostics are returned. Successful plans remain unchanged."
+        ),
+    )
 
     @model_validator(mode="after")
     def continuation(self) -> Self:
@@ -89,15 +134,25 @@ class Job(StrictModel):
 
 
 class AnalysisResult(ValueModel):
-    repository_digest: Digest
-    catalog: Catalog
-    graph: Graph
+    repository_digest: Digest = Field(
+        description="Repository evidence identity observed by this call; copy value to expected_repository_digest to pin a subsequent call."
+    )
+    catalog: Catalog = Field(
+        description="Complete canonical static capability and source evidence; does not imply successful project execution."
+    )
+    graph: Graph = Field(
+        description="Complete canonical static relationship and import graph evidence, including uncertainty; does not imply successful project execution."
+    )
 
 
 class ReadinessResult(ValueModel):
-    repository_digest: Digest
-    report: RepositoryReadinessReport
-    exit_code: Literal[0, 1]
+    repository_digest: Digest = Field(
+        description="Repository evidence identity observed by this call; copy value to expected_repository_digest to pin a subsequent call."
+    )
+    report: RepositoryReadinessReport = Field(
+        description="Complete canonical static readiness assessment under the startup policy. READY, CONDITIONAL, AMBIGUOUS and UNSUPPORTED remain distinct; unknown evidence is retained. This is not proof of successful execution."
+    )
+    exit_code: Literal[0, 1] = Field(description=READINESS_EXIT_DESCRIPTION)
 
 
 class AnalysisOutput(RootModel[AnalysisResult | AnalysisSummary | AnalysisDetail]):

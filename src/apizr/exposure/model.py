@@ -46,16 +46,39 @@ class RelationshipEvidence(ValueModel):
 
 
 class ExposureRecord(ValueModel):
-    capability_id: str
-    module: str
-    source_path: str
-    repository_readiness: Literal[State.READY, State.CONDITIONAL]
-    readiness_reasons: tuple[Reason, ...]
-    requested_interfaces: tuple[Interface, ...] = Field(min_length=1)
-    compatible_interfaces: tuple[Interface, ...] = Field(min_length=1)
-    compatible_execution_modes: tuple[Mode, ...] = Field(min_length=1)
-    effects: Effects
-    relationships: RelationshipEvidence
+    capability_id: str = Field(
+        description="Exact canonical ID of this selected capability proposal; dependencies are not implicitly selected."
+    )
+    module: str = Field(
+        description="Logical Python module owning the selected capability."
+    )
+    source_path: str = Field(
+        description="Repository-relative source path for this static capability evidence, not an authorized filesystem target."
+    )
+    repository_readiness: Literal[State.READY, State.CONDITIONAL] = Field(
+        description="Readiness of the selected capability's required repository evidence. CONDITIONAL requires explicit policy allowance and is not READY or proof of successful execution."
+    )
+    readiness_reasons: tuple[Reason, ...] = Field(
+        description="Retained reasons supporting the selected-scope readiness assessment, including conditional evidence."
+    )
+    requested_interfaces: tuple[Interface, ...] = Field(
+        min_length=1,
+        description="Interfaces explicitly requested by the proposal policy for this capability.",
+    )
+    compatible_interfaces: tuple[Interface, ...] = Field(
+        min_length=1,
+        description="Requested interfaces that pass static compatibility checks; every requested interface must be compatible in a successful plan.",
+    )
+    compatible_execution_modes: tuple[Mode, ...] = Field(
+        min_length=1,
+        description="Modes satisfying both the proposal's allowed modes/required controls and the readiness policy. No ranking, fallback or execution authority is implied.",
+    )
+    effects: Effects = Field(
+        description="Retained static effect evidence, including unknown effects; not observations from executing the capability."
+    )
+    relationships: RelationshipEvidence = Field(
+        description="Retained static relationship and import evidence used by this capability proposal."
+    )
 
     _path = field_validator("source_path")(relative_path)
     _id = field_validator("capability_id")(validate_capability_id)
@@ -82,16 +105,38 @@ class ExposureRecord(ValueModel):
 
 
 class ExposurePlan(ValueModel):
-    schema_version: Literal["apizr.exposure-plan/v1"] = "apizr.exposure-plan/v1"
-    repository_digest: Digest
-    catalog_digest: Digest
-    graph_digest: Digest
-    repository_readiness_digest: Digest
-    exposure_policy_digest: Digest
-    interfaces: tuple[Interface, ...] = Field(min_length=1)
-    capabilities: tuple[ExposureRecord, ...]
-    observed_support_modules: tuple[str, ...]
-    external_modules: tuple[str, ...]
+    schema_version: Literal["apizr.exposure-plan/v1"] = Field(
+        default="apizr.exposure-plan/v1",
+        description="Version of this successful exposure proposal contract. A plan is not generation, execution, publication or authorization.",
+    )
+    repository_digest: Digest = Field(
+        description="Repository evidence identity against which this proposal was assessed; value can pin a subsequent call."
+    )
+    catalog_digest: Digest = Field(
+        description="Identity of the complete canonical static Catalog used for this proposal."
+    )
+    graph_digest: Digest = Field(
+        description="Identity of the complete canonical static relationship/import Graph used for this proposal."
+    )
+    repository_readiness_digest: Digest = Field(
+        description="Identity of the canonical repository readiness assessment used for this proposal."
+    )
+    exposure_policy_digest: Digest = Field(
+        description="Identity of the exposure selection and execution constraints used for planning, not operator authority."
+    )
+    interfaces: tuple[Interface, ...] = Field(
+        min_length=1,
+        description="Requested interfaces validated for all selected capabilities; none has been generated, deployed or run by planning.",
+    )
+    capabilities: tuple[ExposureRecord, ...] = Field(
+        description="Selected capability proposals with their readiness evidence, interface compatibility and compatible execution modes; not an execution or publication grant."
+    )
+    observed_support_modules: tuple[str, ...] = Field(
+        description="Logical support modules observed in the selected static evidence; these are not additional exposed capabilities."
+    )
+    external_modules: tuple[str, ...] = Field(
+        description="Lexically observed external module names; this does not resolve, install or authorize dependencies."
+    )
 
     @field_validator("interfaces")
     @classmethod

@@ -5,6 +5,7 @@
       "properties": {
         "allow_conditional": {
           "default": false,
+          "description": "Allow selected capabilities with CONDITIONAL readiness in their required repository evidence to be proposed, subject to all other planner checks. CONDITIONAL does not become READY; ambiguous or unsupported evidence is not made eligible.",
           "title": "Allow Conditional",
           "type": "boolean"
         }
@@ -16,6 +17,7 @@
       "additionalProperties": false,
       "properties": {
         "allowed": {
+          "description": "Explicit nonempty set of acceptable execution modes. No ranking, implicit default or fallback. Compatibility must also satisfy the startup readiness policy; selecting a mode does not execute or authorize anything.",
           "items": {
             "enum": [
               "direct",
@@ -30,6 +32,7 @@
         },
         "require": {
           "default": [],
+          "description": "Explicit execution controls that every compatible proposed mode must support. These requirements narrow compatibility; they do not grant operator permissions or attest to a live runtime.",
           "items": {
             "enum": [
               "wall_timeout",
@@ -61,6 +64,7 @@
       "properties": {
         "exclude": {
           "default": [],
+          "description": "Exact capability IDs removed after combining include and include_all_ready. Unknown IDs in either include or exclude are refused.",
           "items": {
             "type": "string"
           },
@@ -69,6 +73,7 @@
         },
         "include": {
           "default": [],
+          "description": "Exact canonical capability IDs explicitly proposed for exposure, for example python:model:predict. No fuzzy matching or implicit dependency exposure.",
           "items": {
             "type": "string"
           },
@@ -77,6 +82,7 @@
         },
         "include_all_ready": {
           "default": false,
+          "description": "Add capabilities assessed READY in the repository readiness report to the requested selection before exclusions. All planner eligibility, interface and execution checks still apply; this grants no publication or operator authority.",
           "title": "Include All Ready",
           "type": "boolean"
         }
@@ -88,12 +94,15 @@
   "additionalProperties": false,
   "properties": {
     "eligibility": {
-      "$ref": "#/$defs/Eligibility"
+      "$ref": "#/$defs/Eligibility",
+      "description": "Readiness eligibility constraints for selected capabilities; cannot replace missing or uncertain evidence."
     },
     "execution": {
-      "$ref": "#/$defs/Execution"
+      "$ref": "#/$defs/Execution",
+      "description": "Explicit acceptable execution modes and required controls for compatibility planning, not permission to execute."
     },
     "interfaces": {
+      "description": "Nonempty requested generated interface set: rest and/or mcp. Planning checks compatibility for every interface; it does not generate, deploy or run them.",
       "items": {
         "enum": [
           "rest",
@@ -108,11 +117,13 @@
     "schema_version": {
       "const": "apizr.exposure-policy/v1",
       "default": "apizr.exposure-policy/v1",
+      "description": "Version identifier for this exposure planning constraint contract; not operator authorization.",
       "title": "Schema Version",
       "type": "string"
     },
     "selection": {
-      "$ref": "#/$defs/Selection"
+      "$ref": "#/$defs/Selection",
+      "description": "Explicit capability selection proposal; empty defaults do not select every capability."
     }
   },
   "required": [

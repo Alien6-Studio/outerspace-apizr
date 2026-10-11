@@ -69,10 +69,12 @@
         "algorithm": {
           "const": "sha256",
           "default": "sha256",
+          "description": "Digest algorithm identifier, currently fixed to SHA-256 (sha256).",
           "title": "Algorithm",
           "type": "string"
         },
         "value": {
+          "description": "The 64-character lowercase hexadecimal SHA-256 digest value, without an algorithm prefix.",
           "pattern": "^[0-9a-f]{64}$",
           "title": "Value",
           "type": "string"
@@ -153,10 +155,12 @@
       "additionalProperties": false,
       "properties": {
         "capability_id": {
+          "description": "Exact canonical ID of this selected capability proposal; dependencies are not implicitly selected.",
           "title": "Capability Id",
           "type": "string"
         },
         "compatible_execution_modes": {
+          "description": "Modes satisfying both the proposal's allowed modes/required controls and the readiness policy. No ranking, fallback or execution authority is implied.",
           "items": {
             "enum": [
               "direct",
@@ -170,6 +174,7 @@
           "type": "array"
         },
         "compatible_interfaces": {
+          "description": "Requested interfaces that pass static compatibility checks; every requested interface must be compatible in a successful plan.",
           "items": {
             "enum": [
               "rest",
@@ -182,13 +187,16 @@
           "type": "array"
         },
         "effects": {
-          "$ref": "#/$defs/Effects"
+          "$ref": "#/$defs/Effects",
+          "description": "Retained static effect evidence, including unknown effects; not observations from executing the capability."
         },
         "module": {
+          "description": "Logical Python module owning the selected capability.",
           "title": "Module",
           "type": "string"
         },
         "readiness_reasons": {
+          "description": "Retained reasons supporting the selected-scope readiness assessment, including conditional evidence.",
           "items": {
             "$ref": "#/$defs/Reason"
           },
@@ -196,9 +204,11 @@
           "type": "array"
         },
         "relationships": {
-          "$ref": "#/$defs/RelationshipEvidence"
+          "$ref": "#/$defs/RelationshipEvidence",
+          "description": "Retained static relationship and import evidence used by this capability proposal."
         },
         "repository_readiness": {
+          "description": "Readiness of the selected capability's required repository evidence. CONDITIONAL requires explicit policy allowance and is not READY or proof of successful execution.",
           "enum": [
             "ready",
             "conditional"
@@ -207,6 +217,7 @@
           "type": "string"
         },
         "requested_interfaces": {
+          "description": "Interfaces explicitly requested by the proposal policy for this capability.",
           "items": {
             "enum": [
               "rest",
@@ -219,6 +230,7 @@
           "type": "array"
         },
         "source_path": {
+          "description": "Repository-relative source path for this static capability evidence, not an authorized filesystem target.",
           "title": "Source Path",
           "type": "string"
         }
@@ -609,6 +621,7 @@
   "additionalProperties": false,
   "properties": {
     "capabilities": {
+      "description": "Selected capability proposals with their readiness evidence, interface compatibility and compatible execution modes; not an execution or publication grant.",
       "items": {
         "$ref": "#/$defs/ExposureRecord"
       },
@@ -616,12 +629,15 @@
       "type": "array"
     },
     "catalog_digest": {
-      "$ref": "#/$defs/Digest"
+      "$ref": "#/$defs/Digest",
+      "description": "Identity of the complete canonical static Catalog used for this proposal."
     },
     "exposure_policy_digest": {
-      "$ref": "#/$defs/Digest"
+      "$ref": "#/$defs/Digest",
+      "description": "Identity of the exposure selection and execution constraints used for planning, not operator authority."
     },
     "external_modules": {
+      "description": "Lexically observed external module names; this does not resolve, install or authorize dependencies.",
       "items": {
         "type": "string"
       },
@@ -629,9 +645,11 @@
       "type": "array"
     },
     "graph_digest": {
-      "$ref": "#/$defs/Digest"
+      "$ref": "#/$defs/Digest",
+      "description": "Identity of the complete canonical static relationship/import Graph used for this proposal."
     },
     "interfaces": {
+      "description": "Requested interfaces validated for all selected capabilities; none has been generated, deployed or run by planning.",
       "items": {
         "enum": [
           "rest",
@@ -644,6 +662,7 @@
       "type": "array"
     },
     "observed_support_modules": {
+      "description": "Logical support modules observed in the selected static evidence; these are not additional exposed capabilities.",
       "items": {
         "type": "string"
       },
@@ -651,14 +670,17 @@
       "type": "array"
     },
     "repository_digest": {
-      "$ref": "#/$defs/Digest"
+      "$ref": "#/$defs/Digest",
+      "description": "Repository evidence identity against which this proposal was assessed; value can pin a subsequent call."
     },
     "repository_readiness_digest": {
-      "$ref": "#/$defs/Digest"
+      "$ref": "#/$defs/Digest",
+      "description": "Identity of the canonical repository readiness assessment used for this proposal."
     },
     "schema_version": {
       "const": "apizr.exposure-plan/v1",
       "default": "apizr.exposure-plan/v1",
+      "description": "Version of this successful exposure proposal contract. A plan is not generation, execution, publication or authorization.",
       "title": "Schema Version",
       "type": "string"
     }

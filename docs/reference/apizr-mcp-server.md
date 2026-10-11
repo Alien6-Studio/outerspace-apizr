@@ -150,13 +150,61 @@ Contributors can find publication checks in the
 | `apizr_readiness` | Same view arguments | Default/full: existing canonical `report`, `repository_digest`, and `exit_code`. Summary/detail: states and focused evidence |
 | `apizr_plan_exposure` | Optional `policy` (existing `ExposurePolicy`), `expected_repository_digest`, `offset` and `limit` | Existing canonical `ExposurePlan`; optional pagination applies only to refused-plan diagnostics |
 
-For example, call `apizr_analyze` with `{}`, retain
-`result.structured_content["repository_digest"]["value"]`, then call
-`apizr_readiness` with `{"expected_repository_digest": "<that 64-digit digest>"}`.
-Call `apizr_plan_exposure` with `{}` to use the startup exposure policy, or
-`{"policy": {"selection": {"include": ["python:calculator:add"]},
-"interfaces": ["mcp"], "execution": {"allowed": ["direct"]}}}` to propose a
-plan. The proposal never overwrites files or authorizes execution.
+The advertised JSON Schemas contain fixed descriptions and valid request examples,
+including documentation under reusable `$defs`/`$ref` references. These are
+generated from the canonical Pydantic models, independently of project text.
+
+`expected_repository_digest` is an optional **plain string**: exactly 64 lowercase
+hexadecimal SHA-256 characters, without a prefix or algorithm name. Omission or
+`null` means normal discovery without asserting a previous identity. It does not
+select a repository or change the startup source scope. Obtain the actual value
+from a preceding response, rather than copying the illustrative digest in a
+schema example. With an initialized official SDK client:
+
+```python
+analysis = await client.call_tool("apizr_analyze", {})
+digest = analysis.structured_content["repository_digest"]["value"]
+readiness = await client.call_tool(
+    "apizr_readiness", {"expected_repository_digest": digest}
+)
+```
+
+The response's reusable `Digest` object is
+`{"algorithm": "sha256", "value": "<64 lowercase hexadecimal characters>"}`.
+Its `algorithm` is fixed to SHA-256; only its `value` goes in the input pin.
+Bounded views provide that same value at `identity.repository_digest.value`.
+Pinning compares evidence discovered by the current call with the expected
+identity; it neither caches the old repository nor disables discovery.
+
+For `apizr_plan_exposure`, an explicit `policy` supplies the proposal constraints.
+Omission or `null` uses the captured startup exposure policy; if neither exists,
+the result is `policy_required`. For a discovered capability with compatible
+startup readiness requirements, an explicit proposal has this shape:
+
+```json
+{
+  "policy": {
+    "selection": {"include": ["python:calculator:add"]},
+    "interfaces": ["mcp"],
+    "execution": {"allowed": ["direct"]}
+  }
+}
+```
+
+Use the exact ID returned by analysis. `selection.include_all_ready` adds the
+report's READY capabilities to explicit `include`; `exclude` then removes exact
+IDs. Unknown IDs are refused. `eligibility.allow_conditional` permits proposals
+with CONDITIONAL required evidence, subject to all other checks; it does not
+turn them into READY capabilities. `interfaces` requests `rest` and/or `mcp`.
+`execution.allowed` is a nonempty acceptable mode set, with no ranking, default
+or fallback; `execution.require` names required controls. Compatibility is also
+constrained by the startup readiness policy.
+
+**ExposurePolicy is a planning constraint, not operator authorization.** It
+cannot enlarge the captured startup permissions. A successful `ExposurePlan`
+contains selected capabilities, interfaces, compatible execution modes, static
+readiness/relationship evidence and artifact/policy digests. It is a proposal,
+not generation, execution, publication or an authority grant.
 
 A missing exposure policy yields `policy_required`; it never selects everything.
 A changed digest yields `repository_changed`. Each call scans once; separate
@@ -431,6 +479,19 @@ for publication status.
 schema through real stdio, reads the complete dependency slice and checks source
 changes between pages. Both supported protocols prove that a small response
 bound refuses full reports while allowing an explicitly requested summary.
+
+`scripts/mcp_schema_proof.py`, included in the installed-wheel proof, retains
+`schemas-auto.json` and `schemas-legacy.json` from actual `tools/list` responses,
+plus the corresponding tool results and `schema-proof.json`. It checks property
+descriptions, referenced definitions and schema examples, obtains a real digest
+from analysis, pins readiness to it, and plans an actually discovered capability.
+Its fixture includes uncertain experimental code, so a valid readiness result
+has `exit_code: 1` and `isError: false`. Project prose cannot replace its discovery
+metadata. The proof runs locally without network access after installation and
+does not depend on external directory scoring. `--capture-only` retains prior
+discovery/results for before/after comparison without requiring new descriptions.
+The compact test baseline records the prior validation-schema and business-result
+fingerprints; full discovery JSON stays in qualification artifacts.
 
 Delivery qualification adds official SDK status/run/resume calls for both protocol
 revisions. `scripts/smoke_oci_registry.py --artifacts --output /absolute/new-proof`

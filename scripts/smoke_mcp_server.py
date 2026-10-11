@@ -352,6 +352,7 @@ def main():
     for script in (
         "mcp_client_proof.py",
         "mcp_views_proof.py",
+        "mcp_schema_proof.py",
         "mcp_delivery_local_proof.py",
         "mcp_lifecycle_proof.py",
         "mcp_registry_proof.py",

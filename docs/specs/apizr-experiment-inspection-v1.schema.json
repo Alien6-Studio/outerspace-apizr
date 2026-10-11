@@ -249,10 +249,12 @@
         "algorithm": {
           "const": "sha256",
           "default": "sha256",
+          "description": "Digest algorithm identifier, currently fixed to SHA-256 (sha256).",
           "title": "Algorithm",
           "type": "string"
         },
         "value": {
+          "description": "The 64-character lowercase hexadecimal SHA-256 digest value, without an algorithm prefix.",
           "pattern": "^[0-9a-f]{64}$",
           "title": "Value",
           "type": "string"
@@ -1600,19 +1602,24 @@
       "additionalProperties": false,
       "properties": {
         "repository_digest": {
-          "$ref": "#/$defs/Digest"
+          "$ref": "#/$defs/Digest",
+          "description": "Complete repository evidence identity; copy value to expected_repository_digest for consistency pinning."
         },
         "catalog_digest": {
-          "$ref": "#/$defs/Digest"
+          "$ref": "#/$defs/Digest",
+          "description": "Digest of the complete canonical static Catalog, unchanged by filtering or pagination."
         },
         "graph_digest": {
-          "$ref": "#/$defs/Digest"
+          "$ref": "#/$defs/Digest",
+          "description": "Digest of the complete canonical static Graph, unchanged by filtering or pagination."
         },
         "repository_readiness_digest": {
-          "$ref": "#/$defs/Digest"
+          "$ref": "#/$defs/Digest",
+          "description": "Digest of the complete canonical repository readiness report, not just the displayed view."
         },
         "readiness_policy_digest": {
-          "$ref": "#/$defs/Digest"
+          "$ref": "#/$defs/Digest",
+          "description": "Digest of the readiness assessment policy used for this evidence."
         }
       },
       "required": [
