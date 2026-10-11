@@ -113,7 +113,7 @@ Selecting `facade.calculate` packages its `helper.py` support but does not creat
 a route or Tool for `helper.double`. Required helpers need coherent bindings and
 execution evidence, not their own public JSON input contract. See the
 [user example](../getting-started/user-guide/exposure.md#use-private-helpers-from-the-same-repository).
-The 0.4.5 candidate builder revalidates the Exposure Plan through the single
+The 0.4.5 builder revalidates the Exposure Plan through the single
 [selected-evidence authority](exposure-plan-v1.md#complete-evidence-and-fail-closed-behavior).
 Required calls, references, imports and package initialization must be proven;
 unrelated path diagnostics remain visible in the bundled full audit. The complete
