@@ -32,6 +32,25 @@ jobs:
       SMITHERY_NAME: ${{ inputs.smithery_name }}
       GH_TOKEN: ${{ github.token }}
     steps:
+      - name: Admit protected release source before checkout
+        run: |
+          python3 - <<'PYADMIT'
+          import json, os, re, subprocess
+          repo = 'Alien6-Studio/outerspace-apizr'
+          source, tag = os.environ['RELEASE_SOURCE'], os.environ['RELEASE_TAG']
+          if not re.fullmatch(r'[0-9a-f]{40}', source) or not re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', tag):
+              raise ValueError('Require a full source SHA and final version tag')
+          def gh(path):
+              return json.loads(subprocess.check_output(['gh', 'api', f'repos/{repo}/{path}'], text=True, timeout=30))
+          release, branch = gh(f'releases/tags/{tag}'), gh('branches/master')
+          tagged, comparison = gh(f'commits/{tag}'), gh(f'compare/{source}...master')
+          if release.get('tag_name') != tag or release.get('draft') is not False or release.get('prerelease') is not False or not release.get('published_at'):
+              raise ValueError('Require an already published final GitHub Release')
+          if tagged.get('sha') != source or branch.get('protected') is not True:
+              raise ValueError('Require the exact tag and protected master')
+          if comparison.get('status') not in {'ahead', 'identical'} or comparison.get('merge_base_commit', {}).get('sha') != source:
+              raise ValueError('Refuse source outside protected master history')
+          PYADMIT
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.source_sha }}

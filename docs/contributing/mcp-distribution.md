@@ -199,6 +199,9 @@ directory submission or website/domain work belongs to Phase A.
 
 The manual `Publish MCP Registry` workflow remains restricted to `master` and
 retains GitHub OIDC and the verified publisher binary. Before authentication,
+both manual workflows admit the requested tag/SHA against the published release
+and protected master history in an inline step **before checkout**. This prevents
+an arbitrary candidate from supplying the code that decides its own admission.
 `scripts/verify_mcp_publication.py` requires a clean checkout at the full requested
 SHA, a matching existing release tag, published final GitHub Release, source in
 protected master history, qualification assets, matching release archive digests,
