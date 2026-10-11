@@ -45,8 +45,8 @@ they do not introduce response enforcement or fabricated response examples.
 
 | Format | Output | Official validation used |
 | --- | --- | --- |
-| Postman Collection 3.0.0 | `.resources/definition.yaml` and one `*.request.yaml` per capability | Postman CLI 1.67.0 lint and local execution |
-| Bruno OpenCollection 1.0.0 | `opencollection.yml` and one request `.yml` per capability | `@opencollection/schema` 0.14.0 and Bruno CLI 4.2.0 |
+| Postman Collection 3.0.0 | `.resources/definition.yaml` and one `*.request.yaml` per capability | Postman CLI 1.73.0 lint and local execution |
+| Bruno OpenCollection 1.0.0 | `opencollection.yml` and one request `.yml` per capability | `@opencollection/schema` 0.14.0 and Bruno CLI 4.2.1 |
 | Insomnia v5, schema 5.1 | `collection.yaml`, type `collection.insomnia.rest/5.0` | Official JSON Schema and Inso CLI 13.3.0 local execution |
 
 These are the current native formats documented by

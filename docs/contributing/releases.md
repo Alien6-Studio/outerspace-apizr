@@ -3,10 +3,45 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
-## Future 0.4.5 MCP distribution {#mcp-distribution-045}
+## Authorized 0.4.5 finalization
 
-This sequence is prepared, **not authorized or executed** by the development
-qualification. [MCP distribution qualification](mcp-distribution.md) records the
+The maintainer has authorized **0.4.5 only**, conditional on every mandatory
+security/release gate. Development work stays on `0.4.5`; integration uses the
+normal protected PR into `master`. The exact resulting master commit must have
+successful push CI, Security and Documentation. The verifier requires all six
+release targets, distributions, release-delivery, provenance and release-assets,
+plus the actual Node audit step in the required Security dependencies job.
+Historical version policies remain unchanged; 0.4.6 remains refused.
+
+[Security blocker #280](https://github.com/Alien6-Studio/outerspace-apizr/issues/280)
+must be closed with a committed safe lock, zero critical/high/moderate findings,
+and Linux/macOS functional collection evidence before publication. Install the
+exact Node lock with lifecycle scripts disabled and retain the unfiltered audit
+JSON with the release security evidence. A stale default-branch alert does not
+prove a corrected development lock is vulnerable; compare the actual versions
+and retain both states. Never dismiss an applicable alert to release.
+
+Freeze the original four wheels/four sdists from protected master CI, their
+checksums, candidate manifest, six target exports, delivery evidence, signed
+provenance and release-assets. Create immutable `v0.4.5` only after all gates pass.
+Publish the reviewed GitHub Release, then dispatch `publish-pypi.yml` on that tag
+with `release_tag=v0.4.5`, the exact `ci_run_id`, and `package=all`. Preserve
+environment approvals, OIDC, exact-byte staging and public-byte comparison.
+Rebuilds never replace the frozen archives. Verify fresh public installations
+and the documented notebook → Run → REST/MCP journey before completion.
+
+The existing Alien6 Homebrew tap follows the immutable final core sdist and
+verified master provenance, with reviewed formula changes and a real Apple
+Silicon install. No new OCI product image or distribution channel is authorized.
+After external verification, record publication in a separate documentation PR
+to master and let the normal workflow deploy; never move the tag or push Pages
+directly. Close #279 only after all mandatory public provider evidence exists.
+
+## 0.4.5 MCP distribution {#mcp-distribution-045}
+
+Phase A prepared this sequence without publication. Its execution is now
+authorized conditionally by the maintainer; authorization is not evidence that
+any publication or external verification has succeeded. [MCP distribution qualification](mcp-distribution.md) records the
 current contracts and external limitations. Ordinary CI does not wait for indexes.
 
 1. Qualify the exact final source SHA and retain all release artifacts/evidence.
@@ -119,7 +154,8 @@ and Documentation runs on that same branch and commit. The signer recorded
 that protected ref in the retained evidence. The old branch can be retired
 without changing that evidence identity.
 
-The publication verifier adds only `0.4.4` from protected `master`; the historical
+The publication verifier explicitly permits `0.4.4` and `0.4.5` from protected
+`master`; the historical
 `0.4.3` / `release/0.4.3` policy remains unchanged and must not be replayed.
 Unintended versions and refs are refused. Development builds alone do not
 authorize publication. Releases through 0.4.0rc1 retain `master` provenance; published

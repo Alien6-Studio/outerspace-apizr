@@ -44,6 +44,8 @@ jobs:
           --junitxml=clients-tests.xml
       - name: Exact vendor tools and dependency integrity, without installation scripts
         run: npm ci --prefix scripts/client_collection_tools --ignore-scripts --no-audit --no-fund
+      - name: Reviewed vendor dependency compatibility
+        run: node scripts/client_collection_tools/check-compatibility.cjs > client-tools-compatibility.json
       - name: Checksum-pinned Inso CLI
         run: uv run --locked python scripts/prepare_client_tools.py "$RUNNER_TEMP/inso"
       - name: Installed wheel, official native validation and real source-free execution
@@ -62,6 +64,7 @@ jobs:
           path: |
             clients-tests.xml
             clients-coverage.json
+            client-tools-compatibility.json
             ${{ runner.temp }}/client-collections-proof/*.json
             ${{ runner.temp }}/client-collections-proof/*.log
             ${{ runner.temp }}/client-collections-proof/postman/
