@@ -38,9 +38,7 @@ VERSIONED_SURFACES = {
 
 def test_release_state_is_coherent():
     assert STATE["status"] in {"stable", "release-candidate"}
-    version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"][
-        "version"
-    ]
+    version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
     assert TARGET == version
     if STATE["status"] == "stable":
         assert STABLE == TARGET
