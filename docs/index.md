@@ -16,13 +16,12 @@ or an MCP server. Your business logic stays in Python.
 
 MCP (Model Context Protocol) lets AI assistants discover and use tools.
 
-Working on a training script or notebook? The **0.4.5 release candidate (not yet
-published)** lets you inspect, run and compare experiments, then expose an
+Working on a training script or notebook? **Apizr 0.4.5** lets you inspect, run and compare experiments, then expose an
 explicitly selected prediction function. Know which data, code, parameters and
 environment produced your result. Start with the
 [Data Scientist quickstart](getting-started/data-science.md).
 
-**[Apizr 0.4.4](releases/0.4.4.md) is available.** Python 3.11–3.14 · Open source,
+**[Apizr 0.4.5](releases/0.4.5.md) is available.** Python 3.11–3.14 · Open source,
 GPL-3.0-or-later.
 
 <div class="apizr-home-actions" markdown="1">

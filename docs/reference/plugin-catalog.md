@@ -38,7 +38,7 @@ plan. These commands use the Apizr executable installed with the core:
 
 ```sh
 apizr plugins catalog list --catalog "$CATALOG" --json
-apizr plugins catalog show outerspace-apizr-mcp --version 0.4.4 \
+apizr plugins catalog show outerspace-apizr-mcp --version 0.4.5 \
   --catalog "$CATALOG" --json
 apizr plugins catalog resolve --profile mcp \
   --catalog "$CATALOG" --wheelhouse "$WHEELHOUSE" \
@@ -77,7 +77,7 @@ apizr plugins sync --project plugin-plan/apizr.toml \
   --lock plugin-plan/apizr.plugins.lock.json --wheelhouse "$WHEELHOUSE" \
   --plugins-dir ./trusted-plugins --json
 apizr plugins list --active --plugins-dir ./trusted-plugins --json
-apizr plugins enable outerspace-apizr-mcp --version 0.4.4 --plugins-dir ./trusted-plugins
+apizr plugins enable outerspace-apizr-mcp --version 0.4.5 --plugins-dir ./trusted-plugins
 ```
 
 `sync` uses installed uv offline, validates constraints and installs into separate
@@ -123,7 +123,7 @@ from pathlib import Path
 from apizr.plugin_catalog import load_catalog, resolve_profile, select_entry
 
 catalog = load_catalog(Path(os.environ["CATALOG"]))
-entry = select_entry(catalog, "outerspace-apizr-mcp", "0.4.4")
+entry = select_entry(catalog, "outerspace-apizr-mcp", "0.4.5")
 result = resolve_profile(
     catalog, "mcp", Path(os.environ["WHEELHOUSE"]), Path("plugin-plan")
 )
@@ -166,7 +166,7 @@ for your exact Python/platform target and the source commit you intend to use.
 For normal installation, use the durable release assets described in
 [Install Apizr](../getting-started/install.md).
 The commands below build local previews.
-The core and three official plugins declare `0.4.4`; use the source commit and
+The core and three official plugins declare `0.4.5`; use the source commit and
 SHA-256 values to distinguish builds. A matching version string alone does
 **not** establish artifact identity or qualification.
 

@@ -19,9 +19,9 @@ CRITICAL = {
     "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
     "reference/project-plugin-locks/index.html": "Project plugin declarations and locks",
     "reference/apizr-mcp-server/index.html": "Apizr as a local MCP server",
-    "index.html": "Apizr 0.4.4",
+    "index.html": "Apizr 0.4.5",
     "getting-started/data-science/index.html": "From a notebook to a prediction service",
-    "releases/0.4.5/index.html": "Not yet published.",
+    "releases/0.4.5/index.html": "GitHub and PyPI publication is verified.",
     "releases/0.4.4/index.html": "0.4.4 is published and verified.",
     "releases/0.4.3/index.html": "0.4.3 is published and verified.",
     "releases/0.4.2/index.html": "0.4.2 is published and verified.",
@@ -56,9 +56,9 @@ def on_config(config):
         "schema": "apizr.docs-build/v1",
         "source_commit": commit,
         "source_dirty": dirty,
-        "status": "release-candidate",
+        "status": "stable",
         "target_version": "0.4.5",
-        "stable_release": "0.4.4",
+        "stable_release": "0.4.5",
     }
     return config
 

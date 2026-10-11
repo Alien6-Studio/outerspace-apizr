@@ -3,7 +3,7 @@ title: Inspect an experiment
 description: Understand Python training scripts and notebooks without running them.
 ---
 
-# Inspect an experiment (0.4.5 development)
+# Inspect an experiment (0.4.5)
 
 Have a training script or notebook? `apizr experiment inspect` shows **Code, Data,
 Parameters, Randomness, Environment, Metrics, Outputs and Serving** without
@@ -11,10 +11,10 @@ executing it. It reads the selected source, recognized local input files and
 root-level environment specifications. It never imports your project or its
 science frameworks, downloads data, installs packages or starts a worker.
 
-This command is available from the `0.4.5` development checkout, not the published
-0.4.4 package. Install that checkout into an isolated environment with
-`python -m pip install .`. Python inspection needs only the core. For notebooks,
-use `python -m pip install '.[notebook]'` in the same checkout. The existing
+This command is available in public `0.4.5`. Install it into an isolated
+environment with `python -m pip install outerspace-apizr==0.4.5`.
+Python inspection needs only the core. For notebooks, use
+`python -m pip install 'outerspace-apizr[notebook]==0.4.5'`. The existing
 `outerspace-apizr[notebook]` extra provides notebook conversion; pandas, NumPy and
 scikit-learn are not required for lexical recognition.
 

@@ -168,9 +168,9 @@ The package job tests the base wheel and each extra in separate environments on
 Python 3.11 and 3.14. Security audits cover the base, each extra, and validation
 groups; archived SBOMs distinguish the base and combined optional runtime.
 
-The published 0.4.4 release comes from protected `master`. New product
-changes and documentation branches target `master`; the completed 0.4.2 and
-0.4.3 release branches are retired. See
+The published 0.4.5 packages come from protected `master`. Postpublication
+documentation branches target `master`; the `0.4.5` development branch is retained
+as historical evidence. No future release work is authorized by this guide. See
 [release governance](../../contributing/release-branches.md) for the active rules.
-All four packages are 0.4.4. Integration and contributor builds do not replace
+All four packages are 0.4.5. Integration and contributor builds do not replace
 the immutable published archives.

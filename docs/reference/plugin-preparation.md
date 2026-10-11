@@ -7,13 +7,11 @@ description: Select compatible prebuilt wheels, verify resolver-admitted hashes 
 
 `apizr plugins prepare` prepares wheels and a strict installer lock for an
 explicit interpreter. It installs nothing and leaves activation to `plugins enable`.
-This command is available in the **0.4.5 development line**; published 0.4.4 does
-not contain it.
+This command is available in **Apizr 0.4.5**.
 
-Use a build containing this command with the **`[preparation]` extra**, which
-provides PyPA's wheel compatibility rules. For example, install the verified core
-candidate into your existing tool environment with
-`uv tool install '/absolute/path/outerspace_apizr-0.4.4-py3-none-any.whl[preparation]'`.
+Install the **`[preparation]` extra**, which
+provides PyPA's wheel compatibility rules:
+`uv tool install 'outerspace-apizr[preparation]==0.4.5'`.
 The minimal core still requires only Pydantic. Preparation also requires **uv
 0.12.x**; `--uv /absolute/path/to/uv` selects a specific executable, whose version
 is recorded in the result. Qualification uses uv 0.12.0.
@@ -31,17 +29,17 @@ authority=/absolute/operator.json
 tmp=$(mktemp -d)
 tmp=$(cd "$tmp" && pwd -P)
 
-apizr plugins prepare outerspace-apizr-mcp --version 0.4.4 \
+apizr plugins prepare outerspace-apizr-mcp --version 0.4.5 \
   --python "$python" --platform native \
   --index-url https://pypi.org/simple --output-dir "$tmp/prepared" --json
 
-plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.4" {sub("--hash=sha256:", "", $2); print $2}' \
+plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.5" {sub("--hash=sha256:", "", $2); print $2}' \
   "$tmp/prepared/requirements.lock")
-apizr plugins install "$tmp/prepared/wheelhouse/outerspace_apizr_mcp-0.4.4-py3-none-any.whl" \
+apizr plugins install "$tmp/prepared/wheelhouse/outerspace_apizr_mcp-0.4.5-py3-none-any.whl" \
   --sha256 "$plugin_sha" --python "$python" \
   --requirements "$tmp/prepared/requirements.lock" \
   --wheelhouse "$tmp/prepared/wheelhouse" --plugins-dir "$tmp/prepared/profile"
-apizr plugins enable outerspace-apizr-mcp --version 0.4.4 \
+apizr plugins enable outerspace-apizr-mcp --version 0.4.5 \
   --plugins-dir "$tmp/prepared/profile"
 apizr mcp serve --project "$project" --operator-policy "$authority" \
   --plugins-dir "$tmp/prepared/profile"
