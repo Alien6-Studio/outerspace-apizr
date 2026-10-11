@@ -91,7 +91,7 @@ steps:
       operation: check
       project: apizr.toml
       authorize-analysis: "true"
-      apizr-version: "0.4.4"
+      apizr-version: "0.4.5"
       python-version: "3.14"
       output-dir: .apizr-ci
 ```
@@ -151,7 +151,7 @@ include:
       operation: check
       project: apizr.toml
       authorize-analysis: true
-      apizr-version: "0.4.4"
+      apizr-version: "0.4.5"
       output-dir: .apizr-ci
 ```
 

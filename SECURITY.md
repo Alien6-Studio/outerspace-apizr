@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes target the current 0.2.x line. Apizr and generated targets support
+Security fixes target the current 0.4.x line. Apizr and generated targets support
 **Python 3.11–3.14**. Use a supported interpreter and keep dependencies updated.
 See the [compatibility notes](docs/getting-started/developer-guide/releases.md).
 
