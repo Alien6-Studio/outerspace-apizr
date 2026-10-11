@@ -105,7 +105,7 @@ configuration. Runtime binding belongs to the bundle/runtime stage.
 ## Complete evidence and fail-closed behavior
 
 Published 0.4.4 requires `graph_complete = true` and `catalog_exit_code = 0`.
-In the 0.4.5 candidate, `exposure.scope.required_evidence` owns the
+In Apizr 0.4.5, `exposure.scope.required_evidence` owns the
 selected execution proof. It consumes validated, bound Catalog, Graph and
 Repository Readiness without source parsing, host lookup or execution.
 

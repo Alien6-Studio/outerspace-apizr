@@ -6,6 +6,16 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+# Single declared release state for every public surface. Flip status to
+# "stable" (and stable_release to target_version) in the same change that
+# rewrites candidate wording; tests/ci/test_release_consistency.py holds the
+# README, plugin READMEs, forge defaults, navigation, SECURITY.md and the
+# install recording to this declaration.
+RELEASE_STATE = {
+    "status": "stable",
+    "target_version": "0.4.5",
+    "stable_release": "0.4.5",
+}
 CRITICAL = {
     "getting-started/install/index.html": "Install Apizr",
     "getting-started/quickstart-0.4/index.html": "The walkthrough is now at",
@@ -56,9 +66,7 @@ def on_config(config):
         "schema": "apizr.docs-build/v1",
         "source_commit": commit,
         "source_dirty": dirty,
-        "status": "stable",
-        "target_version": "0.4.5",
-        "stable_release": "0.4.5",
+        **RELEASE_STATE,
     }
     return config
 
