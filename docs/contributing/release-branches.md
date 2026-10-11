@@ -2,8 +2,8 @@
 
 The current public packages are **0.4.5**, released from protected `master` at
 `da74e6de5800eab9c275e42c5d4c24a59ac4fcbe` and retained by signed immutable tag
-`v0.4.5`. The [release record](../releases/0.4.5.md) distinguishes verified GitHub,
-PyPI and Official Registry publication from incomplete third-party indexing.
+`v0.4.5`. The [release record](../releases/0.4.5.md) records verified GitHub,
+PyPI and Official Registry publication. Automatic third-party indexing is informational.
 The `0.4.5` branch remains historical development evidence. Postpublication
 changes use protected PRs into `master`; they cannot move the release tag.
 No future release development is authorized by this record.

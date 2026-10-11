@@ -115,8 +115,8 @@ merging the tap update.
 
 The current public package version is **0.4.5** for the core and all three plugins,
 source `da74e6de5800eab9c275e42c5d4c24a59ac4fcbe`. GitHub, PyPI and Official
-Registry publication are verified; third-party directory qualification remains
-incomplete. The original archives from protected master CI `38137540311` were
+Registry publication are verified. Third-party indexing is outside release
+acceptance criteria. The original archives from protected master CI `38137540311` were
 published by workflow `38140159100`; all eight public files match the qualified
 bytes. See the [release record](../releases/0.4.5.md). Master integration and documentation
 commits preserve the released product but never replace its immutable source.

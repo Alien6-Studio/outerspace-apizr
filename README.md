@@ -19,7 +19,7 @@ The journey is Python code → discover/select capabilities → expose as REST/M
 
 **Apizr 0.4.5 is available on PyPI.** The core and optional MCP, OCI and Attest
 plugins share the same version. See the [release record](https://apizr.outerspace.sh/releases/0.4.5/)
-for functionality, verified public artifacts and external directory status.
+for functionality, verified public artifacts and installation evidence.
 
 Python **3.11–3.14** · GPL-3.0-or-later.
 

@@ -12,7 +12,7 @@ application inputs, delivery identities, proof/admission and resumable delivery
 introduced in 0.4.1. The [0.4.3 notes](../../releases/0.4.3.md) add the MCP client
 launcher and directory metadata. The [0.4.4 notes](../../releases/0.4.4.md) add
 JSON-only evidence export and generic first-publication confirmation.
-**0.4.5 is the current public package version.** See the [0.4.5 record](../../releases/0.4.5.md) for package verification and remaining directory checks.
+**0.4.5 is the current public package version.** See the [0.4.5 record](../../releases/0.4.5.md) for package verification and installation evidence.
 
 The historical 0.4.4 record retains its evidence. Its release source and
 archives remain immutable when integrated into master. The

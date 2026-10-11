@@ -38,8 +38,8 @@ plugin interpreter. No hosted endpoint is provided.
 
 The repository's `server.json` describes the published Official MCP Registry
 0.4.5 entry. The MCPB wrapper is attached to the immutable GitHub Release and
-uses the same explicit inputs and admission checks. Smithery distribution and
-Glama indexing remain unverified; see #279 and the release record.
+uses the same explicit inputs and admission checks. Automatic Smithery/Glama indexing is separate from release validation;
+see the release record for the verified public distribution.
 Use matching 0.4.5 core/plugin versions.
 
 See the [plugin guide](https://apizr.outerspace.sh/reference/apizr-mcp-server/).
