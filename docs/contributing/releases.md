@@ -32,11 +32,17 @@ and retain both states. Never dismiss an applicable alert to release.
 Freeze the original four wheels/four sdists from protected master CI, their
 checksums, candidate manifest, six target exports, delivery evidence, signed
 provenance and release-assets. Create immutable `v0.4.5` only after all gates pass.
-Publish the reviewed GitHub Release, then dispatch `publish-pypi.yml` on that tag
-with `release_tag=v0.4.5`, the exact `ci_run_id`, and `package=all`. Preserve
-environment approvals, OIDC, exact-byte staging and public-byte comparison.
-Rebuilds never replace the frozen archives. Verify fresh public installations
-and the documented notebook → Run → REST/MCP journey before completion.
+Create the reviewed GitHub Release as a **draft**, attach the frozen archives,
+then dispatch `publish-pypi.yml` on that tag with `release_tag=v0.4.5`, the exact
+`ci_run_id`, and `package=all`. Preserve environment approvals, OIDC, exact-byte
+staging and public-byte comparison. Keep the draft until the workflow has attached
+the PyPI comparison and Attest evidence and fresh public installations plus the
+documented notebook → Run → REST/MCP journey have passed. Then publish the final,
+non-prerelease GitHub Release before MCP Registry/Homebrew publication.
+[GitHub immutable releases](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases)
+require all assets to be attached before publication; the existing 0.4.4 release
+used this order. Never disable immutability to add evidence afterwards. Rebuilds
+never replace the frozen archives.
 
 The existing Alien6 Homebrew tap follows the immutable final core sdist and
 verified master provenance, with reviewed formula changes and a real Apple
