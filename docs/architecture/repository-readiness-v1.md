@@ -149,7 +149,7 @@ proofs. There is no transitive effect or state propagation in v1.
 
 ## Resolved local import refinement
 
-The upcoming 0.4.5 selected exposure proof consumes this complete audit; it does
+The 0.4.5 candidate selected exposure proof consumes this complete audit; it does
 not filter or rewrite its assessments, diagnostics or aggregate completeness.
 It reuses the exact local-import predicate and shared module-initialization facts
 with validated execution support from the required closure. Source-local Readiness
@@ -308,3 +308,35 @@ artifacts with repo-first bytes, and check ordering/location/hash-seed invarianc
 An isolated audit-hook test forbids source execution, source writes, subprocesses,
 network access, Git/package-install commands and Docker/transport imports; hostile
 top-level statements, decorators and defaults remain inert.
+
+
+## Explicit external import providers (0.4.5 candidate)
+
+The ordinary scikit-learn journey in #267 exposed a missing boundary: a Run's
+observed distribution version does not identify its import namespace. The
+additive `dependency_wheels` policy evidence records exact distribution pins,
+wheel filenames, SHA-256 identities and module names derived from admitted wheel
+members. It does not infer `scikit-learn → sklearn` from names or import packages.
+Empty evidence is omitted, preserving existing canonical policy/report bytes.
+The two Readiness schemas include the additional optional evidence; experiment
+Plan, Run, comparison and exposure schemas are unchanged.
+
+Selected scope consumes only unconditional, location-matched external import
+edges whose exact module is provided. Local missing, ambiguous, rebound, star or
+dynamic dependencies retain their existing refusals. Provider/module collisions
+are refused. A provider-backed selection remains `CONDITIONAL`, requiring explicit
+`--allow-conditional`; the interface's JSON types must still be supported.
+
+Before rendering, the ordinary repository builder recomputes each provider from
+its retained wheel bytes and checks the exact policy evidence and application
+pins. Missing bytes, a changed digest or fabricated module inventory cannot
+produce a bundle. Wheels are qualification/deployment inputs, not vendored SDKs
+inside Apizr or generated source bundles. Their identities remain in the bound
+Readiness report and bundle manifest.
+
+This evidence proves wheel membership and correspondence to selected versions.
+It does not establish external initialization safety, symbol/API compatibility,
+native-library behavior or a successful future invocation. A Run's package
+version alone does not attest the bytes installed during that Run; the #267
+qualification additionally installs and replays from the retained wheelhouses.
+No network lookup, environment import or framework allowlist grants eligibility.

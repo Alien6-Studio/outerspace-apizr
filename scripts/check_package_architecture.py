@@ -188,6 +188,7 @@ def check(source: Path, manifest: Path) -> list[str]:
                         "apizr.repository_readiness",
                         "apizr.repository_interfaces",
                         "apizr.workspace.application_resources",
+                        "apizr.workspace.application_dependencies",
                         "apizr.workspace.compiler",
                         "apizr.workspace.operator_policy",
                         "apizr.workspace.source_access",

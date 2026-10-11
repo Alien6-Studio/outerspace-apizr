@@ -177,3 +177,21 @@ performs no network request, artifact upload, signature or Attest invocation.
 Apizr binds the Run to the compiled serving bundle. Organizational promotion and
 approval remain external. This command does not create a registry entry, owner,
 stage, approval or external governance identity.
+
+
+## External imports from retained wheels
+
+For a selected capability that imports third-party modules, supply
+`--dependency-wheelhouse` with the prepared directory containing exactly one wheel
+for each selected Run pin. The bridge reads bounded wheel metadata and members,
+retains their SHA-256 identities and verifies the same snapshots again during
+ordinary repository generation. It does not import SDKs or download packages.
+A manually declared provider list in `--readiness-policy` cannot replace these
+wheel inputs.
+
+Use `--allow-conditional` explicitly: identified providers remain opaque external
+code. This acknowledges that uncertainty without accepting unsupported JSON
+contracts or missing/ambiguous local dependencies. The generated
+`application-requirements.txt` contains only the explicitly selected Run pins.
+Install it with the generated transport requirements from the retained wheelhouse.
+See the [ordinary notebook walkthrough](../data-science.md) for complete commands.

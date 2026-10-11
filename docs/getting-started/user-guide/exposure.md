@@ -208,7 +208,7 @@ or OCI container per invocation, as described below.
 
 ## Use private helpers from the same repository
 
-In the upcoming 0.4.5 release, you can organize your Python code into modules
+In the 0.4.5 candidate, you can organize your Python code into modules
 and expose the function you choose when its local dependencies can be resolved
 statically. Helpers are packaged as implementation support and stay private
 unless you select them too. Published 0.4.4 retains the earlier import restriction.
@@ -272,14 +272,14 @@ their own public JSON input contract. Their effects are not inferred or propagat
 
 Single-file generation remains conservative because it has no repository evidence.
 `--allow-conditional` does not waive unresolved interface contracts. Repository
-bundles still copy the complete inspected source universe. The upcoming 0.4.5
+bundles still copy the complete inspected source universe. The 0.4.5 candidate
 release checks the selected function's required helpers and imports as described below.
 See [Repository Readiness](../../architecture/repository-readiness-v1.md#resolved-local-import-refinement)
 for the retained import evidence and its limits.
 
 ## Work with unfinished research code
 
-In the upcoming 0.4.5 release, you can expose a serving function without first
+In the 0.4.5 candidate, you can expose a serving function without first
 cleaning up every old experiment or notebook in your research repository.
 Apizr checks the function you select and the code it needs. A problem in a
 required feature helper or import still blocks generation.

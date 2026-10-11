@@ -5,6 +5,10 @@ description: Generate your first REST API or MCP server from Python, run it loca
 
 # Make your first MCP and REST calls
 
+Working with a training notebook? Follow the [Data Scientist quickstart](data-science.md)
+for the 0.4.5 candidate: inspect, record two Runs, compare and serve a prediction.
+
+
 ## Inspect a training script first (0.4.5 development)
 
 If you have the development checkout installed, you can start with experiment
@@ -343,6 +347,6 @@ ones to expose. Review its source and dependencies before running the generated
 service. Follow [The full journey](introduction.md) to understand each stage,
 or the [exposure guide](user-guide/exposure.md) for repository configuration.
 
-For the upcoming 0.4.5 release, your selected function can use statically resolvable
+For the 0.4.5 candidate, your selected function can use statically resolvable
 [private helpers in other modules](user-guide/exposure.md#use-private-helpers-from-the-same-repository)
 without exposing those helpers.

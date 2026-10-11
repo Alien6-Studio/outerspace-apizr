@@ -37,6 +37,7 @@ from apizr.repository.serialization import canonical_bytes
 from apizr.repository_interfaces.evidence import attach_evidence
 from apizr.repository_interfaces.model import RepositoryInterface
 from apizr.repository_readiness import RepositoryReadinessPolicy, assess_repository
+from apizr.workspace.application_dependencies import capture_dependency_wheels
 from apizr.workspace.application_resources import capture_resources
 from apizr.workspace.compiler import PreparedExposure, render_bundle
 from apizr.workspace.files import absolute_path, read_regular
@@ -144,9 +145,14 @@ def _notebook_evidence(
         for source in manifest
         if source.path in paths and source.content is not None
     }
-    return RepositoryEvidence(
-        catalog, build_graph(catalog, sources, policy=graph), MappingProxyType(sources)
-    ), path
+    return (
+        RepositoryEvidence(
+            catalog,
+            build_graph(catalog, sources, policy=graph),
+            MappingProxyType(sources),
+        ),
+        path,
+    )
 
 
 def expose_run(
@@ -162,6 +168,7 @@ def expose_run(
     scan_policy: ScanPolicy | None = None,
     graph_policy: GraphPolicy | None = None,
     readiness_policy: RepositoryReadinessPolicy | None = None,
+    dependency_wheelhouse: Path | None = None,
 ) -> ExperimentExposure:
     """Compile in memory; no publication, execution, dependency resolution or upload."""
     record = RunRecord.model_validate(record)
@@ -206,6 +213,24 @@ def expose_run(
         raise ExperimentExposureRefused("capability_not_in_run_source")
     outputs = _outputs(record, artifacts)
     pins = selected_dependencies(record, dependencies)
+    dependency_archives: dict[str, bytes] = {}
+    selected_readiness = readiness_policy or RepositoryReadinessPolicy.model_validate(
+        {"execution": {"modes": ("direct",)}}
+    )
+    if selected_readiness.dependency_wheels:
+        raise ExperimentExposureRefused("dependency_evidence_requires_wheels")
+    if dependency_wheelhouse is not None:
+        try:
+            wheels = capture_dependency_wheels(
+                dependency_wheelhouse, pins, snapshots=dependency_archives
+            )
+            selected_readiness = RepositoryReadinessPolicy.model_validate(
+                {**selected_readiness.model_dump(), "dependency_wheels": wheels}
+            )
+        except (OSError, ValueError):
+            raise ExperimentExposureRefused(
+                "dependency_wheel_evidence_invalid"
+            ) from None
     config = ApplicationConfig(
         dependencies=pins,
         resources=tuple(
@@ -239,10 +264,7 @@ def expose_run(
     readiness = assess_repository(
         evidence.catalog,
         evidence.graph,
-        policy=readiness_policy
-        or RepositoryReadinessPolicy.model_validate(
-            {"execution": {"modes": ("direct",)}}
-        ),
+        policy=selected_readiness,
     )
     plan = plan_exposure(evidence.catalog, evidence.graph, readiness, policy=policy)
     application = (
@@ -267,6 +289,7 @@ def expose_run(
         application,
         MappingProxyType(resources),
         LocalSource(repository_digest=evidence.catalog.repository_digest),
+        MappingProxyType(dependency_archives),
     )
     bundle = render_bundle(prepared, interface=interface)
     contract = RepositoryInterface.model_validate_json(
@@ -288,9 +311,9 @@ def expose_run(
         interface=interface,
         outputs=outputs,
         dependencies=pins,
-        application_inputs_digest=Digest.of_bytes(canonical_bytes(application))
-        if application
-        else None,
+        application_inputs_digest=(
+            Digest.of_bytes(canonical_bytes(application)) if application else None
+        ),
     )
     validate_exposure_binding(binding, record, contract, plan, application)
     bundle = attach_evidence(

@@ -28,6 +28,20 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "application-import-exact-provider",
+        "src/apizr/repository_readiness/eligibility.py",
+        "if declaration.relative_level or module not in external_modules:",
+        "if declaration.relative_level:",
+        "tests/test_application_dependencies.py::test_wheels_do_not_hide_required_dependency_defects",
+    ),
+    Mutation(
+        "application-wheel-snapshot-binding",
+        "src/apizr/repository_interfaces/planner.py",
+        "if inspect_application_wheel(filename, raw) != declared[filename]:",
+        "if False:",
+        "tests/test_application_dependencies.py::test_render_revalidates_provider_evidence_from_exact_retained_wheels",
+    ),
+    Mutation(
         "readiness-main-module-context",
         "src/apizr/readiness/source.py",
         'module != "__main__"',

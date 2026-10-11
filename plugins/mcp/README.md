@@ -1,6 +1,6 @@
 # outerspace-apizr-mcp
 
-This checkout prepares the coordinated **0.4.4 candidate**, not a published release.
+This checkout prepares the coordinated **0.4.5 candidate**, not a published release.
 The current public stable baseline described below remains 0.4.3.
 
 <!-- mcp-name: io.github.Alien6-Studio/outerspace-apizr -->

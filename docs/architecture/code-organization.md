@@ -257,7 +257,13 @@ ApplicationInputs and RepositoryInterface authorities. These two modules have
 explicit dependency exceptions; evidence producers and Plan/Run keep their
 primitive boundary. The repository-interface evidence layer accepts an opaque,
 digest-bound JSON attachment and does not import experiments. No experiment
-transport or resource manifest is introduced. The common `readiness` domain
+transport or resource manifest is introduced. `workspace.application_dependencies`
+reuses shared bounded wheel admission to capture explicit application import
+providers. `contracts.dependencies` owns the wheel identity/module value, retained
+in repository Readiness policy evidence. #267's real scientific journey required
+this narrow addition: provider membership remains conditional execution evidence,
+never a package-name guess, SDK adapter or readiness bypass. The experiment bridge
+may compose this producer alongside resource capture. The common `readiness` domain
 recognizes an exact, unshadowed main guard as inert during module import;
 experiments reuse that rule through the ordinary assessment pipeline.
 

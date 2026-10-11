@@ -5,6 +5,7 @@ from typing import Literal
 from pydantic import Field, StrictBool, field_validator
 
 from apizr.capabilities.types import ValueModel
+from apizr.contracts.dependencies import DependencyWheel
 from apizr.execution.policy import EffectName
 
 # Readiness requirements are transport-neutral and independent of runtime policy
@@ -68,3 +69,17 @@ class RepositoryReadinessPolicy(ValueModel):
     # Repository eligibility retains local blockers except proven local imports.
     # This additionally makes remaining interface uncertainty unsupported.
     require_interface: StrictBool = False
+    dependency_wheels: tuple[DependencyWheel, ...] = Field(
+        default=(), max_length=128, exclude_if=lambda value: not value
+    )
+
+    @field_validator("dependency_wheels")
+    @classmethod
+    def unique_providers(
+        cls, values: tuple[DependencyWheel, ...]
+    ) -> tuple[DependencyWheel, ...]:
+        names = [wheel.pin.split("==")[0] for wheel in values]
+        modules = [module for wheel in values for module in wheel.modules]
+        if len(set(names)) != len(names) or len(set(modules)) != len(modules):
+            raise ValueError("Dependency wheel providers must be unambiguous")
+        return tuple(sorted(values, key=lambda wheel: wheel.pin))

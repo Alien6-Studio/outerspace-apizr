@@ -38,7 +38,7 @@ price and check stock. The helper functions stay private.
 For the shortest path to a working server, follow the [Quickstart](quickstart.md).
 For a research project with unfinished experiments, see
 [exposing an independent serving function](user-guide/exposure.md#work-with-unfinished-research-code)
-in the upcoming 0.4.5 release.
+in the 0.4.5 candidate.
 
 ## Install
 
@@ -158,7 +158,7 @@ Apizr checks your code before generating a server. A function marked `READY`
 can still stay private: your selection determines what clients can call.
 
 You may see `_price` marked `CONDITIONAL` when scanning this example because it
-imports code from another file. In the upcoming 0.4.5 release, the next readiness
+imports code from another file. In the 0.4.5 candidate, the next readiness
 step recognizes that local helper and succeeds. Published 0.4.4 still reports it
 as conditional. The two selected public functions can be built in both versions.
 See [Repository readiness](user-guide/repository-readiness.md) for diagnostic details.

@@ -65,7 +65,7 @@ assert all(name not in sys.modules for name in ('fastapi','mcp','yaml','nbconver
         capture_output=True,
         text=True,
     )
-    assert result.stdout.strip() == "outerspace-apizr 0.4.4"
+    assert result.stdout.strip() == "outerspace-apizr 0.4.5"
     assert not result.stderr
 
 

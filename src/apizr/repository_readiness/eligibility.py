@@ -15,18 +15,19 @@ def proven_import(
     *,
     execution_ready: frozenset[str] = frozenset(),
     initialized_modules: frozenset[str] = frozenset(),
+    external_modules: frozenset[str] = frozenset(),
 ) -> bool:
     if declaration.availability != "unconditional" or not declaration.names:
         return False
     edges = (*facts.direct, *facts.module_imports)
     for name in declaration.names:
-        if name.resolution not in {"module", "capability"}:
+        if name.resolution not in {"module", "capability", "external"}:
             return False
-        kind = (
-            RelationshipKind.MODULE
-            if name.resolution == "module"
-            else RelationshipKind.CAPABILITY
-        )
+        kind = {
+            "module": RelationshipKind.MODULE,
+            "capability": RelationshipKind.CAPABILITY,
+            "external": RelationshipKind.EXTERNAL,
+        }[name.resolution]
         if not any(
             edge.source == declaration.source
             and edge.target == name.target
@@ -40,6 +41,15 @@ def proven_import(
             for edge in edges
         ):
             return False
+        if name.resolution == "external":
+            module = (
+                name.name
+                if declaration.syntax == "import"
+                else declaration.declared_module
+            )
+            if declaration.relative_level or module not in external_modules:
+                return False
+            continue
         # A private dependency needs a stable binding and execution evidence,
         # not an independently exposable input/output contract.
         dependencies = [
@@ -74,6 +84,7 @@ def interface_state(
     execution_ready: frozenset[str] = frozenset(),
     initialized_modules: frozenset[str] = frozenset(),
     scope_complete: bool = False,
+    external_modules: frozenset[str] = frozenset(),
 ) -> State:
     """Keep local evidence immutable; discharge an exact import line only.
 
@@ -99,6 +110,7 @@ def interface_state(
                     facts,
                     execution_ready=execution_ready,
                     initialized_modules=initialized_modules,
+                    external_modules=external_modules,
                 )
                 for declaration in imports
             )

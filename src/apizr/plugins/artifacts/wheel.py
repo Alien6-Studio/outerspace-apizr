@@ -53,6 +53,27 @@ def inspect_dependency(path: Path, sha256: str) -> tuple[bytes, LockedDistributi
     return data, metadata
 
 
+def inspect_dependency_bytes(data: bytes, filename: str) -> LockedDistribution:
+    """Apply the same admission rules to an already retained immutable snapshot."""
+    if len(data) > MAX_WHEEL_BYTES or not filename.endswith(".whl"):
+        raise PluginError("invalid_wheel")
+    try:
+        metadata = _manifest(
+            data, filename, hashlib.sha256(data).hexdigest(), False, True
+        )
+    except (
+        ValueError,
+        KeyError,
+        zipfile.BadZipFile,
+        RuntimeError,
+        EOFError,
+        zlib.error,
+    ):
+        raise PluginError("invalid_wheel") from None
+    assert isinstance(metadata, LockedDistribution)
+    return metadata
+
+
 def _inspect(
     path: Path, sha256: str, *, plugin: bool, allow_dependencies: bool
 ) -> tuple[bytes, Manifest | LockedDistribution]:

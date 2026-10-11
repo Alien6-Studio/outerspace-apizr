@@ -48,8 +48,11 @@ def action_values(**updates):
 def test_platform_contracts_and_immutable_supply_chain():
     assert ACTION["name"] and ACTION["description"]
     version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
-    assert ACTION["inputs"]["apizr-version"]["default"] == version
-    assert INPUTS["apizr-version"]["default"] == version
+    # Public defaults remain on the published release; candidate CI supplies
+    # the exact unreleased wheel and version explicitly.
+    assert version == "0.4.5"
+    assert ACTION["inputs"]["apizr-version"]["default"] == "0.4.4"
+    assert INPUTS["apizr-version"]["default"] == "0.4.4"
     assert ACTION["runs"]["using"] == "composite"
     assert set(ACTION["inputs"]) == {
         "operation",
@@ -272,7 +275,7 @@ def test_original_wheel_identity_and_hash(tmp_path):
         ADAPTER["wheel_bytes"]("https://example.invalid/file.whl", digest, "0.4.4")
 
 
-@pytest.mark.parametrize("version", ["0.4.2", "0.4.5", "0.4.4rc1"])
+@pytest.mark.parametrize("version", ["0.4.2", "0.4.6", "0.4.4rc1"])
 def test_original_wheel_refuses_other_qualification_versions(tmp_path, version):
     path, digest = wheel(tmp_path, version=version)
     with pytest.raises(ValueError, match="development_version_required"):
@@ -383,7 +386,7 @@ def test_real_workflow_requires_original_candidate_and_read_only_permissions():
     }
     assert any(s.get("continue-on-error") == "true" for s in steps)
     for step in steps:
-        assert step["with"]["apizr-version"] == "0.4.4"
+        assert step["with"]["apizr-version"] == "0.4.5"
         assert step["with"]["wheel-path"] == "${{ steps.wheel.outputs.path }}"
         assert step["with"]["wheel-sha256"] == "${{ steps.wheel.outputs.sha256 }}"
     assert (

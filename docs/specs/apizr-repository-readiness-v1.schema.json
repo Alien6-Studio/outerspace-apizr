@@ -110,6 +110,41 @@
       "title": "Dependency",
       "type": "object"
     },
+    "DependencyWheel": {
+      "additionalProperties": false,
+      "description": "Retained wheel identity and statically observed importable modules.\n\nThis establishes a provider for imports, not API compatibility, safe module\ninitialization or a successful future invocation. Consumers retain that\nuncertainty and require explicit conditional exposure.",
+      "properties": {
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "filename": {
+          "maxLength": 255,
+          "title": "Filename",
+          "type": "string"
+        },
+        "modules": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Modules",
+          "type": "array"
+        },
+        "pin": {
+          "title": "Pin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pin",
+        "filename",
+        "digest",
+        "modules"
+      ],
+      "title": "DependencyWheel",
+      "type": "object"
+    },
     "Digest": {
       "additionalProperties": false,
       "properties": {
@@ -735,6 +770,15 @@
     "RepositoryReadinessPolicy": {
       "additionalProperties": false,
       "properties": {
+        "dependency_wheels": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/DependencyWheel"
+          },
+          "maxItems": 128,
+          "title": "Dependency Wheels",
+          "type": "array"
+        },
         "effects": {
           "$ref": "#/$defs/EffectRequirements"
         },

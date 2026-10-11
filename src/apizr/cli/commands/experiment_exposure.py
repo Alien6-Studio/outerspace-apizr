@@ -43,6 +43,11 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
         help="Distribution name; version comes only from the Run",
     )
     parser.add_argument("--readiness-policy", type=Path)
+    parser.add_argument(
+        "--dependency-wheelhouse",
+        type=Path,
+        help="Retained wheels for the exact selected Run pins; prove external import providers without importing them",
+    )
     parser.add_argument("--allow-conditional", action="store_true")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--format", choices=("text", "json"), default="text")
@@ -73,15 +78,18 @@ def expose(args: argparse.Namespace) -> int:
             interface=args.interface[0],
             artifacts=tuple(args.artifact),
             dependencies=tuple(args.dependency),
+            dependency_wheelhouse=args.dependency_wheelhouse,
             allow_conditional=args.allow_conditional,
-            operator_policy=load_operator_policy(args.operator_policy)
-            if args.operator_policy
-            else None,
+            operator_policy=(
+                load_operator_policy(args.operator_policy)
+                if args.operator_policy
+                else None
+            ),
             scan_policy=scan_policy(args),
             graph_policy=graph_policy(args),
-            readiness_policy=load_policy(args.readiness_policy)
-            if args.readiness_policy
-            else None,
+            readiness_policy=(
+                load_policy(args.readiness_policy) if args.readiness_policy else None
+            ),
         )
         write_bundle(args.output_dir, result.bundle)
     except (ExperimentExposureRefused, StoreError) as error:

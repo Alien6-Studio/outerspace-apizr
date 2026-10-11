@@ -1,6 +1,18 @@
 # Changelog
 
-## Unreleased
+## 0.4.5 — release candidate, not yet published
+
+Inspect ordinary notebooks, record and compare trusted Runs, then explicitly
+select a prediction capability for REST/MCP. Python developers also gain private
+helper support, selection within unfinished repositories, structured inputs and
+consistent results across transports. The changes below remain individually
+traceable; final qualification is tracked by #267.
+
+- Add a synthetic scikit-learn notebook example with identical source across two
+  dataset variants, automatic main-guard metric capture and explicit wheel-bound
+  external import evidence. Scientific packages remain workload dependencies.
+- Coordinate core, MCP, OCI and Attest candidate metadata and internal pins at
+  0.4.5, with a first-class Data Scientist guide; publication remains separate.
 
 - Bridge a validated successful Experiment Run to existing Repository Readiness
   and Exposure planning with `experiment expose`, explicit capability/interface

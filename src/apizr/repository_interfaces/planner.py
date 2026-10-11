@@ -11,6 +11,7 @@ from apizr.graph.builder import validated_inputs
 from apizr.interfaces.planner import invocation_contract
 from apizr.repository import Catalog
 from apizr.repository_readiness import RepositoryReadinessReport
+from apizr.workspace.application_dependencies import inspect_application_wheel
 
 from .errors import BundleRefused
 from .model import BundledSource, Capability, RepositoryInterface
@@ -26,6 +27,7 @@ def plan_repository_interface(
     *,
     interface: Interface,
     application: ApplicationInputs | None = None,
+    dependency_archives: Mapping[str, bytes] | None = None,
     execution_mode: Literal["direct", "local-process", "oci-container"] = "direct",
 ) -> RepositoryInterface:
     if application is not None:
@@ -37,6 +39,27 @@ def plan_repository_interface(
     sources = dict(sources)
     catalog = validated_inputs(catalog, sources)
     validate_plan(exposure, catalog, graph, readiness, policy=policy)
+    archives = dict(dependency_archives or {})
+    declared = {wheel.filename: wheel for wheel in readiness.policy.dependency_wheels}
+    if (
+        set(archives) != set(declared)
+        or sum(map(len, archives.values())) > 256 * 1024 * 1024
+    ):
+        raise BundleRefused("Dependency wheel snapshots are missing or excessive")
+    for filename, raw in archives.items():
+        if inspect_application_wheel(filename, raw) != declared[filename]:
+            raise BundleRefused(
+                "Dependency wheel snapshot disagrees with readiness evidence"
+            )
+    if readiness.policy.dependency_wheels and (
+        execution_mode != "direct"
+        or application is None
+        or not {wheel.pin for wheel in readiness.policy.dependency_wheels}
+        <= set(application.dependencies)
+    ):
+        raise BundleRefused(
+            "Dependency wheel evidence requires matching direct-service pins"
+        )
     if interface not in exposure.interfaces:
         raise BundleRefused("APIZR-BUNDLE-001: target interface is not planned")
     if not exposure.capabilities:
@@ -67,12 +90,14 @@ def plan_repository_interface(
             BundledSource(
                 module=module,
                 source_path=unit.path,
-                bundle_path=("source/" + unit.path)
-                if application is not None
-                else (
-                    "source/"
-                    + module.replace(".", "/")
-                    + ("/__init__.py" if unit.is_package else ".py")
+                bundle_path=(
+                    ("source/" + unit.path)
+                    if application is not None
+                    else (
+                        "source/"
+                        + module.replace(".", "/")
+                        + ("/__init__.py" if unit.is_package else ".py")
+                    )
                 ),
                 source_digest=unit.source_digest,
                 size=unit.size,

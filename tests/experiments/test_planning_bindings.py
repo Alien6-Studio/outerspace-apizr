@@ -161,3 +161,35 @@ def test_non_direct_binding_is_not_automatic(fragment):
         binding("from sklearn.metrics import roc_auc_score as metric\n" + fragment)
         == ()
     )
+
+
+def test_main_guard_metrics_are_global_candidates():
+    source = (
+        "from sklearn.metrics import roc_auc_score as metric\n"
+        'if __name__ == "__main__":\n'
+        "    result = metric(y, p)\n"
+    )
+    assert binding(source) == (parse_metric_binding("roc_auc=result"),)
+
+
+@pytest.mark.parametrize(
+    "prefix,guard,suffix",
+    [
+        ('__name__ = "other"\n', '__name__ == "__main__"', ""),
+        ("from other import *\n", '__name__ == "__main__"', ""),
+        ("", '__name__ != "__main__"', ""),
+        ("", '__name__ == "__main__" == flag', ""),
+        ("", '__name__ == "__main__"', "else:\n    pass\n"),
+        ("", '__name__ == "__main__"', "result = 1\n"),
+        ("", '__name__ == "__main__"', "consume(result)\n"),
+        ("", '__name__ == "__main__"', "globals()\n"),
+    ],
+)
+def test_main_guard_does_not_relax_ambiguous_metric_bindings(prefix, guard, suffix):
+    source = (
+        "from sklearn.metrics import roc_auc_score as metric\n"
+        + prefix
+        + f"if {guard}:\n    result = metric(y, p)\n"
+        + suffix
+    )
+    assert binding(source) == ()

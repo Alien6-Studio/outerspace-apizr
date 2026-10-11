@@ -105,12 +105,24 @@ class _Index:
             unit.module: unit for unit in catalog.sources if unit.module is not None
         }
         self.assessments = {item.capability_id: item for item in report.assessments}
+        self.external_modules = frozenset(
+            module
+            for wheel in report.policy.dependency_wheels
+            for module in wheel.modules
+        )
         self.edges: dict[str, list[Relationship]] = defaultdict(list)
         self.imports: dict[str, list[ImportDeclaration]] = defaultdict(list)
         self.diagnostics: dict[str, list[GraphDiagnostic]] = defaultdict(list)
         self.catalog_errors: dict[str, list[CatalogCode]] = defaultdict(list)
         self.spans: dict[str, list[DeclarationAssessment]] = defaultdict(list)
         self.global_issues: list[ScopeIssue] = []
+        if any(
+            module.split(".")[0] in {name.split(".")[0] for name in self.modules}
+            for module in self.external_modules
+        ):
+            self.global_issues.append(
+                self.issue(None, (), None, GraphCode.COLLISION, "global")
+            )
         # Full inspected-source copying is unchanged. A contradictory import
         # tree invalidates that entire manifest in the reviewed loader, even
         # if the selected root does not import the colliding namespace.
@@ -551,6 +563,7 @@ class _Index:
                 execution_ready=execution_ready,
                 initialized_modules=initialized_modules,
                 scope_complete=not issues,
+                external_modules=self.external_modules,
             )
             refined[node] = state
             local = assessment.local_readiness
@@ -574,6 +587,7 @@ class _Index:
                             assessment.relationships,
                             execution_ready=execution_ready,
                             initialized_modules=initialized_modules,
+                            external_modules=self.external_modules,
                         )
                         for d in declarations
                     ):
@@ -589,6 +603,20 @@ class _Index:
                         )
         assessment = self.assessments[identity]
         state = refined.get(identity, assessment.state)
+        # Wheel membership resolves provider identity only. External code is
+        # still opaque and needs explicit conditional exposure; no READY claim.
+        conditional_provider = bool(self.external_modules) and any(
+            reason.code == LocalCode.DEPENDENCY
+            and any(
+                declaration.line == reason.line
+                and any(name.resolution == "external" for name in declaration.names)
+                for declaration in self.assessments[node].relationships.imports
+            )
+            for node in execution_ready
+            for reason in self.assessments[
+                node
+            ].local_readiness.dimensions.execution.reasons
+        )
         reasons = tuple(
             reason
             for reason in assessment.reasons
@@ -599,6 +627,8 @@ class _Index:
             )
         )
         state = combine((state, *(REASONS[reason.code][0] for reason in reasons)))
+        if conditional_provider:
+            state = combine((state, State.CONDITIONAL))
         issues = sorted(
             set(issues),
             key=lambda issue: (

@@ -13,7 +13,8 @@ def automatic_metrics(
 ) -> tuple[MetricBinding, ...]:
     """Reuse signal authority; no second framework resolver or expression evaluator.
 
-    Only direct single-name assignments qualify. Any other syntactic binding of
+    Only direct single-name module assignments qualify, including the body of
+    an exact main guard. Any other syntactic binding of
     that name (even in a nested scope) refuses automatic attribution. Dynamic
     namespace mutation and later uses of the result are conservatively excluded.
     Explicit selectors remain available for these cases.
@@ -45,7 +46,26 @@ def automatic_metrics(
     counts = Counter(signal.name for signal in discovered.signals)
     signals = {(s.line, s.column): s for s in discovered.signals}
     bindings: list[MetricBinding] = []
-    for statement in tree.body:
+    statements = list(tree.body)
+    for node in tree.body:
+        # Run executes the module as __main__. This only selects candidate
+        # global bindings: the worker must still observe a finite final value.
+        # It does not assess import readiness or evaluate arbitrary conditions.
+        if (
+            not writes["__name__"]
+            and not writes["*"]
+            and isinstance(node, ast.If)
+            and not node.orelse
+            and isinstance(node.test, ast.Compare)
+            and isinstance(node.test.left, ast.Name)
+            and node.test.left.id == "__name__"
+            and len(node.test.ops) == 1
+            and isinstance(node.test.ops[0], ast.Eq)
+            and isinstance(node.test.comparators[0], ast.Constant)
+            and node.test.comparators[0].value == "__main__"
+        ):
+            statements.extend(node.body)
+    for statement in statements:
         if isinstance(statement, ast.Assign) and len(statement.targets) == 1:
             target, value = statement.targets[0], statement.value
         elif isinstance(statement, ast.AnnAssign):

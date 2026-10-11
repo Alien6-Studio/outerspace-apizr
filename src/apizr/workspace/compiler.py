@@ -55,6 +55,9 @@ class PreparedExposure:
     application: ApplicationInputs | None = None
     resources: Mapping[str, bytes] = field(default_factory=lambda: dict[str, bytes]())
     source: SourceIdentity | None = None
+    dependency_archives: Mapping[str, bytes] = field(
+        default_factory=lambda: dict[str, bytes]()
+    )
 
 
 def assess_readiness(
@@ -179,6 +182,7 @@ def render_bundle(
         application=prepared.application,
         source_identity=prepared.source,
         resources=prepared.resources,
+        dependency_archives=prepared.dependency_archives,
         execution_policy=execution_policy,
         runtime_image=runtime_image,
     )

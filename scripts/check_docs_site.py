@@ -24,8 +24,8 @@ def marker_at(site: Path) -> dict:
     if (
         marker.get("schema") != "apizr.docs-build/v1"
         or not re.fullmatch(r"[0-9a-f]{40}", marker.get("source_commit", ""))
-        or marker.get("status") != "stable"
-        or marker.get("target_version") != "0.4.4"
+        or (marker.get("status"), marker.get("target_version"))
+        not in {("stable", "0.4.4"), ("release-candidate", "0.4.5")}
         or marker.get("stable_release") != "0.4.4"
         or not isinstance(marker.get("source_dirty"), bool)
         or not isinstance(marker.get("files"), dict)
@@ -45,6 +45,8 @@ def marker_at(site: Path) -> dict:
 
 def publication_marker(site: Path, source_commit: str | None = None) -> dict:
     marker = marker_at(site)
+    if marker["status"] != "stable":
+        raise ValueError("Candidate documentation is not authorized for deployment")
     if marker["source_dirty"]:
         raise ValueError("Refusing to confirm a deployment built from a dirty checkout")
     if source_commit is not None and marker["source_commit"] != source_commit:

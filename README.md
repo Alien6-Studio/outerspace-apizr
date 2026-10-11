@@ -1,12 +1,13 @@
 # OuterSpace Apizr
 
-Connect selected Python functions to AI agents through MCP,
-or expose them as REST APIs.
+Understand and compare data-science experiments. Connect selected Python
+functions to AI agents through MCP, or expose them as REST APIs.
 
 Apizr is an **open-source capability compiler**: analyze existing Python code,
 choose which functions are public, generate their interfaces, and define how
 they execute. Your business logic stays in Python.
 
+**[Data Scientist quickstart: notebook → runs → prediction](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/data-science.md)** ·
 **[Quickstart: make your first MCP and REST calls](https://apizr.outerspace.sh/getting-started/quickstart/)** ·
 [The full journey](https://apizr.outerspace.sh/getting-started/introduction/)
 
@@ -25,7 +26,12 @@ the [release history](https://github.com/Alien6-Studio/outerspace-apizr/releases
 
 Python **3.11–3.14** · GPL-3.0-or-later.
 
-The `0.4.5` development branch recognizes supported Python `TypedDict` model
+The **0.4.5 release candidate (not yet published)** lets you record and compare
+experiments, then explicitly select a prediction function for REST or MCP.
+Know which data, code, parameters and environment produced your result.
+[Try the ordinary scikit-learn notebook](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.5/examples/data-science/fraud-detection).
+
+The `0.4.5` candidate also recognizes supported Python `TypedDict` model
 payloads as shared, nested JSON inputs for REST and MCP. See the
 [source inspection guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/inspect.md#structured-model-inputs-with-typeddict)
 for an executable example and the current declaration limits.
@@ -101,7 +107,7 @@ The core handles supported static analysis and generation. Generated servers hav
 their own runtime dependencies. Optional plugins live in separate environments;
 installation, activation and operator authorization are independent decisions.
 
-Upcoming 0.4.5 lets you expose an independent function while unrelated experiments
+The 0.4.5 candidate lets you expose an independent function while unrelated experiments
 remain unfinished; see the [research repository example](https://apizr.outerspace.sh/getting-started/user-guide/exposure/#work-with-unfinished-research-code).
 
 
