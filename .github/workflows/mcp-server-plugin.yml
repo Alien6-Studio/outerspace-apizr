@@ -64,6 +64,7 @@ jobs:
             mcp-coverage.json
             ${{ runner.temp }}/mcp-proof/*.log
             ${{ runner.temp }}/mcp-proof/*.json
+            ${{ runner.temp }}/mcp-proof/*.mcpb
             ${{ runner.temp }}/mcp-proof/*.lock
             ${{ runner.temp }}/mcp-proof/catalog/
             ${{ runner.temp }}/mcp-proof/wheels/

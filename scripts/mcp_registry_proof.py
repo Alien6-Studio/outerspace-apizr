@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -10,14 +11,68 @@ from email.parser import BytesParser
 from pathlib import Path
 
 import anyio
+from build_mcp_bundle import build
 from mcp import Client, StdioServerParameters
+from mcp_distribution.metadata import validate_metadata
+from mcp_schema_proof import (
+    discovery,
+    verify_discovery_contract,
+    verify_guidance,
+    write,
+)
+from mcp_tool_metadata import review, validate_result
 
 REPO = Path(__file__).resolve().parents[1]
 
 
+def documented_inputs(root: Path, store: str) -> dict:
+    """A new user's project/grant comes only from the websiteUrl documentation."""
+    guide = (REPO / "docs/reference/apizr-mcp-server.md").read_text()
+    examples = dict(
+        re.findall(
+            r"<!-- registry-fixture:([^ ]+) -->\n```\w+\n(.*?)\n```", guide, re.DOTALL
+        )
+    )
+    expected = {
+        "apizr.toml",
+        "src/calculator.py",
+        "policies/readiness.json",
+        "policies/exposure.json",
+        "operator.json",
+    }
+    assert set(examples) == expected
+    project = root / "registry-new-user"
+    for name, contents in examples.items():
+        target = project / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            contents.replace("<ABSOLUTE_PROJECT_ROOT>", str(project.resolve())) + "\n"
+        )
+    return {
+        "--project": str(project / "apizr.toml"),
+        "--operator-policy": str(project / "operator.json"),
+        "--plugins-dir": store,
+    }
+
+
+async def inspect_client(client, root: Path, label: str):
+    tools = [
+        tool.model_dump(mode="json", by_alias=True)
+        for tool in (await client.list_tools()).tools
+    ]
+    metadata = discovery(client, tools)
+    verify_guidance(metadata)
+    verify_discovery_contract(metadata)
+    write(root / f"registry-discovery-{label}.json", metadata)
+    write(root / f"registry-tool-review-{label}.json", review(metadata))
+    for tool in tools:
+        result = await client.call_tool(tool["name"], {})
+        validate_result(tool, result)
+
+
 async def main(root: Path):
     config = json.loads((root / "installed.json").read_text())
-    descriptor = json.loads((REPO / "server.json").read_text())
+    descriptor = validate_metadata()
     package = descriptor["packages"][0]
     assert package["runtimeHint"] == "uvx"
     assert package["transport"] == {"type": "stdio"}
@@ -45,11 +100,7 @@ async def main(root: Path):
         str(wheel),
         package["identifier"],
     ]
-    values = {
-        "--project": config["project"],
-        "--operator-policy": config["operator_policy"],
-        "--plugins-dir": config["store"],
-    }
+    values = documented_inputs(root, config["store"])
     arguments = []
     for argument in package["packageArguments"]:
         assert argument["type"] == "named" and argument["isRequired"]
@@ -61,24 +112,14 @@ async def main(root: Path):
             mode=mode,
             read_timeout_seconds=30,
         ) as client:
-            tools = (await client.list_tools()).tools
-            assert {tool.name for tool in tools} == {
-                "apizr_analyze",
-                "apizr_readiness",
-                "apizr_plan_exposure",
-            }
-            assert all(
-                tool.annotations is not None
-                and tool.annotations.read_only_hint
-                and tool.input_schema
-                and tool.output_schema
-                for tool in tools
-            )
-            for tool in tools:
-                result = await client.call_tool(tool.name, {})
-                assert not result.is_error and result.structured_content, result
+            await inspect_client(client, root, "uvx-" + mode)
+    invalid_policy = root / "registry-invalid-policy.json"
+    invalid_policy.write_text("{invalid JSON}")
     for flag, replacement, expected in (
+        ("--project", None, "--project"),
+        ("--project", "relative/apizr.toml", "absolute_project_required"),
         ("--operator-policy", None, "operator_policy_required"),
+        ("--operator-policy", str(invalid_policy), "operator_policy_invalid"),
         ("--plugins-dir", str(root / "registry-absent-store"), "plugin_not_installed"),
     ):
         denied = arguments.copy()
@@ -97,12 +138,94 @@ async def main(root: Path):
         assert result.returncode == 2 and not result.stdout, result
         assert expected.encode() in result.stderr, result.stderr
     assert not (root / "registry-absent-store").exists()
+    bundle = root / "outerspace-apizr-0.4.5.mcpb"
+    bundle_report = build(bundle)
+    extracted = root / "registry-bundle"
+    extracted.mkdir(exist_ok=True)
+    with zipfile.ZipFile(bundle) as archive:
+        assert set(archive.namelist()) == set(bundle_report["files"])
+        for name in ("manifest.json", "pyproject.toml", "src/server.py", "LICENSE"):
+            target = extracted / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(archive.read(name))
+    manifest = json.loads((extracted / "manifest.json").read_text())
+    substitutions = {"${__dirname}": str(extracted)}
+    substitutions.update(
+        {
+            "${user_config." + key[2:].replace("-", "_") + "}": value
+            for key, value in values.items()
+        }
+    )
+    bundle_args = []
+    for arg in manifest["server"]["mcp_config"]["args"]:
+        value = substitutions.get(arg, arg)
+        assert isinstance(value, str)
+        bundle_args.append(value)
+    assert not any("${" in arg for arg in bundle_args)
+    bundle_env = {
+        "PATH": os.environ.get("PATH", ""),
+        "UV_OFFLINE": "1",
+        "UV_NO_INDEX": "1",
+        "UV_FIND_LINKS": str(root / "wheels"),
+        "UV_PYTHON": str(root / "client/bin/python"),
+        "UV_PYTHON_DOWNLOADS": "never",
+        "UV_CACHE_DIR": str(root / "registry-uv-cache"),
+        "PYTHONDONTWRITEBYTECODE": "1",
+    }
+    uv = shutil.which(manifest["server"]["mcp_config"]["command"])
+    assert uv is not None
+    # The retained wheelhouse contains this exact native target, not every
+    # Python/platform needed by uv's universal project lock. Prepare the bundle's
+    # runtime offline from its unchanged dependency declaration, then launch it
+    # without re-resolving public packages that do not exist before release.
+    subprocess.run(
+        [
+            uv,
+            "venv",
+            "--python",
+            str(root / "client/bin/python"),
+            str(extracted / ".venv"),
+        ],
+        env=bundle_env,
+        check=True,
+        timeout=60,
+    )
+    subprocess.run(
+        [
+            uv,
+            "pip",
+            "install",
+            "--python",
+            str(extracted / ".venv/bin/python"),
+            "--only-binary",
+            ":all:",
+            "-r",
+            str(extracted / "pyproject.toml"),
+        ],
+        env=bundle_env,
+        check=True,
+        timeout=60,
+    )
+    bundle_env["UV_NO_SYNC"] = "1"
+    for mode in ("auto", "legacy"):
+        async with Client(
+            StdioServerParameters(
+                command=uv, args=bundle_args, env=bundle_env, cwd=root
+            ),
+            mode=mode,
+            read_timeout_seconds=60,
+        ) as client:
+            await inspect_client(client, root, "mcpb-" + mode)
+    write(root / "mcpb-proof.json", bundle_report)
     report = {
         "success": True,
-        "source": "local development wheels, not public 0.4.3",
+        "source": "local 0.4.5 candidate wheels; no public package or directory mutation",
         "protocol_modes": ["auto", "legacy"],
         "read_only_tools": 3,
         "policy_and_installation_refusals": True,
+        "documented_new_user_inputs": True,
+        "titles_schemas_annotations": True,
+        "mcpb_offline_launch": True,
     }
     (root / "registry-launch.json").write_text(json.dumps(report, indent=2) + "\n")
     print("PASS registry uvx launcher, three read-only tools, policy/store refusals")

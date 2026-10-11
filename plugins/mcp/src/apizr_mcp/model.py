@@ -99,7 +99,14 @@ class DeliveryStatusArguments(StrictModel):
 
 
 class DeliveryArguments(StrictModel):
-    expected_delivery_manifest_digest: Digest
+    expected_delivery_manifest_digest: Digest = Field(
+        description=(
+            "Exact delivery manifest identity of the operator-selected existing build. "
+            "Copy the complete algorithm/value object from apizr_delivery_status after "
+            "reviewing its evidence. A mismatch refuses delivery; this pin neither "
+            "selects another build nor grants authority or permits a blind retry."
+        )
+    )
 
 
 class ServerLimits(StrictModel):

@@ -41,6 +41,7 @@ wheelhouse containing core and plugin wheels from the same recorded commit.
 
 Create `project/` with this complete `apizr.toml`:
 
+<!-- registry-fixture:apizr.toml -->
 ```toml
 schema_version = "apizr.project/v1"
 root = "."
@@ -58,6 +59,7 @@ max_ast_nodes = 10000
 
 `src/calculator.py`:
 
+<!-- registry-fixture:src/calculator.py -->
 ```python
 def add(a: int, b: int = 1) -> int:
     return a + b
@@ -65,12 +67,14 @@ def add(a: int, b: int = 1) -> int:
 
 `policies/readiness.json`:
 
+<!-- registry-fixture:policies/readiness.json -->
 ```json
 {"execution": {"modes": ["direct"]}}
 ```
 
 `policies/exposure.json`:
 
+<!-- registry-fixture:policies/exposure.json -->
 ```json
 {
   "selection": {"include": ["python:calculator:add"]},
@@ -118,29 +122,116 @@ as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
 
 <span id="directory-integration-043"></span>
 
-## Use the directory launcher {#directory-integration-044}
+<span id="directory-integration-044"></span>
+
+## Registry installation {#registry-installation}
+
+This is the canonical installation path linked by `server.json`. **0.4.5 is a
+qualified development candidate, not a public release.** The command below is
+for use after its separately authorized publication. Existing public installations
+remain on 0.4.4 with matching core and plugin versions. Contributors qualify the
+same launcher using candidate wheels outside the checkout, without contacting PyPI.
 
 The [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Alien6-Studio%2Fouterspace-apizr)
 lists Apizr as `io.github.Alien6-Studio/outerspace-apizr`.
 [Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr) also lists its
 three analysis tools and their inputs.
 
-After [installing and activating the MCP profile](../getting-started/install.md#choose-a-plugin-profile),
-you can start it with:
+1. After 0.4.5 is public, install its core and prepare an explicit MCP profile
+   with the commands below. Use an absolute path to your installed CPython
+   3.11–3.14 interpreter and uv 0.12.x. Run each command in order, stopping on
+   any failure. Keep this temporary directory while using the server.
 
 ```sh
-uvx outerspace-apizr-mcp@0.4.4 \
-  --project /absolute/project/apizr.toml \
-  --operator-policy /absolute/operator.json \
-  --plugins-dir /absolute/plugins
+python=/absolute/path/to/python3.14
+setup=$(mktemp -d)
+setup=$(cd "$setup" && pwd -P)
+uv venv --python "$python" "$setup/core"
+uv pip install --python "$setup/core/bin/python" 'outerspace-apizr[preparation]==0.4.5'
+apizr="$setup/core/bin/apizr"
+"$apizr" plugins prepare outerspace-apizr-mcp --version 0.4.5 \
+  --python "$python" --platform native \
+  --index-url https://pypi.org/simple --output-dir "$setup/prepared" --json
+plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.5" {sub("--hash=sha256:", "", $2); print $2}' \
+  "$setup/prepared/requirements.lock")
+"$apizr" plugins install "$setup/prepared/wheelhouse/outerspace_apizr_mcp-0.4.5-py3-none-any.whl" \
+  --sha256 "$plugin_sha" --python "$python" \
+  --requirements "$setup/prepared/requirements.lock" \
+  --wheelhouse "$setup/prepared/wheelhouse" --plugins-dir "$setup/profile"
+"$apizr" plugins enable outerspace-apizr-mcp --version 0.4.5 \
+  --plugins-dir "$setup/profile"
 ```
 
-Replace the three paths with your project, permissions file and plugin directory.
-This starts a local server; it does not install or activate the managed plugin.
-For version 0.4.2, use `apizr mcp serve` instead.
+   Your managed plugin directory is the absolute `$setup/profile` path.
+   Preparation verifies compatible wheel bytes; review the selected dependencies
+   before installation and activation. Those remain separate explicit steps.
+   The [preparation guide](plugin-preparation.md#targets-and-integrity) explains
+   supported platforms, including the reviewed dependency's macOS Intel refusal.
+   For unpublished contributor candidates, use the qualified local wheelhouse
+   without `--index-url`; do not mix public 0.4.4 artifacts with this profile.
+2. Create the four project files in [Choose one local project](#choose-one-local-project),
+   or select your existing `apizr.toml`. It selects a source root and analysis
+   policies; it does not grant access to that root.
+3. Create and review the following `operator.json`. Replace
+   `<ABSOLUTE_PROJECT_ROOT>` with the absolute root selected by your project file.
+   Approving this grant is an operator decision, not an installation side effect.
 
-Contributors can find publication checks in the
-[release record](../contributing/verification.md#044-publication-record).
+<!-- registry-fixture:operator.json -->
+```json
+{
+  "schema": "apizr.operator-policy/v1",
+  "grants": [{
+    "adapter": "repository",
+    "operation": "analyze",
+    "target": {"kind": "local", "root": "<ABSOLUTE_PROJECT_ROOT>"},
+    "permissions": ["source.analyze"]
+  }]
+}
+```
+
+4. Configure your MCP client's stdio connection with the following command.
+   Replace each angle-bracket placeholder with an absolute path you selected:
+
+```sh
+uvx outerspace-apizr-mcp@0.4.5 \
+  --project "<ABSOLUTE_APIZR_TOML>" \
+  --operator-policy "<ABSOLUTE_OPERATOR_JSON>" \
+  --plugins-dir "<ABSOLUTE_MANAGED_PLUGIN_DIRECTORY>"
+```
+
+5. Connect. Initialization identifies `apizr`, titled **OuterSpace Apizr**, at the
+   matching version. `tools/list` shows **Analyze Python Project**, **Assess
+   Repository Readiness**, and **Plan Capability Exposure**. Ask the first tool
+   for a summary. A response containing repository evidence confirms the connection;
+   a readiness `exit_code: 1` can be valid business evidence. Stdio stdout is MCP
+   traffic, so running the command alone does not print a human-readable welcome.
+
+| Registry argument | Required format | Why no default; where to obtain it |
+| --- | --- | --- |
+| `--project` | Absolute filepath | Source selection is your decision. Create/select `apizr.toml` in step 2. |
+| `--operator-policy` | Absolute filepath | Installation cannot authorize source access. Create and review the JSON grant in step 3. |
+| `--plugins-dir` | Absolute directory path (`filepath` in the registry schema) | The governed store must be deterministic. Use the directory where step 1 explicitly installed and activated the matching plugin. |
+
+The launcher delegates to `apizr mcp serve`; installing it with `uvx` does not
+activate a plugin, authorize a project, or enable delivery. All three registry
+arguments intentionally remain required even where the generic CLI offers
+fallbacks. Missing authorization and absent/inactive plugins fail closed.
+
+The directory UI intentionally excludes `--user-config` (an alternative generic
+CLI configuration source, redundant with this explicit store), `--timeout-ms`,
+`--max-request-bytes` and `--max-response-bytes` (advanced operational tuning), and
+`--delivery-request` (explicit effectful mode). Configure those through the
+operator-run CLI when needed; the registry's normal installation remains
+analysis-only. No credentials or other environment variables are requested.
+
+For Smithery, the prepared MCPB 0.4 bundle presents the same three required
+file/directory inputs and delegates to this same launcher. It targets the
+qualified macOS/Linux platforms and needs an MCPB host supporting the `uv` runtime.
+It neither contains nor provisions your policy or governed plugin store.
+Its submission and actual Smithery listing remain a post-release operation.
+
+See the [distribution qualification matrix](../contributing/mcp-distribution.md)
+for schema checks, supported directory mechanisms and remaining external evidence.
 
 ## Choose a tool: discover → assess → propose
 

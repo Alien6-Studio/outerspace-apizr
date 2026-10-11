@@ -34,31 +34,15 @@ jobs:
         with:
           ref: ${{ inputs.source_sha }}
           persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: '0.12.0'
+          python-version: '3.11'
       - name: Verify published release identity
         run: |
-          python3 - <<'PY'
-          import json, os, re, subprocess
-          from pathlib import Path
-          tag, source = os.environ['RELEASE_TAG'], os.environ['RELEASE_SOURCE']
-          assert re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', tag)
-          assert re.fullmatch(r'[0-9a-f]{40}', source)
-          def gh(*args):
-              return json.loads(subprocess.check_output(['gh', *args]))
-          repo = 'Alien6-Studio/outerspace-apizr'
-          release = gh('api', f'repos/{repo}/releases/tags/{tag}')
-          assert not release['draft'] and not release['prerelease']
-          assert gh('api', f'repos/{repo}/commits/{tag}')['sha'] == source
-          assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip() == source
-          descriptor = json.loads(Path('server.json').read_text())
-          assert descriptor['name'] == 'io.github.Alien6-Studio/outerspace-apizr'
-          assert descriptor['version'] == tag[1:]
-          package, = descriptor['packages']
-          assert package['identifier'] == 'outerspace-apizr-mcp'
-          assert package['version'] == tag[1:] and package['registryType'] == 'pypi'
-          names = {asset['name'] for asset in release['assets']}
-          assert {'public-comparison.json', 'attest-verification.json', 'release-assets.json'} <= names
-          print(f'Publishing exact descriptor from {tag} ({source})')
-          PY
+          uv run --locked python scripts/verify_mcp_publication.py \
+            --release-tag "$RELEASE_TAG" --source-sha "$RELEASE_SOURCE" \
+            --report "$RUNNER_TEMP/mcp-publication-preflight.json"
       - name: Install verified official publisher
         run: |
           curl --fail --silent --show-error --location \

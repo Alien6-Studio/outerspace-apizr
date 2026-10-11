@@ -1,0 +1,17 @@
+{
+  "registry-schema.json": {
+    "source": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "inspected": "2026-10-11",
+    "sha256": "3fba09590c99f61735d234822279f4223fab9e300c0a81e81c91ab62a4114de0"
+  },
+  "glama-schema.json": {
+    "source": "https://glama.ai/mcp/schemas/server.json",
+    "inspected": "2026-10-11",
+    "sha256": "7f652273293b658bcf9156646745c3aa9c42edcbd179ee126361e462814f1508"
+  },
+  "mcpb-schema.json": {
+    "source": "https://raw.githubusercontent.com/modelcontextprotocol/mcpb/70fe3b34cd6dff1b3bba046638edc72a6467a4fb/schemas/mcpb-manifest-v0.4.schema.json",
+    "inspected": "2026-10-11",
+    "sha256": "068557824c651d6d49b86ad132adeafe62ca788d918b3e1e2b224bf0f91320fd"
+  }
+}

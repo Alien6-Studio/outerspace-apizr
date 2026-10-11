@@ -112,6 +112,15 @@ DELIVERY_TOOLS = (
     ),
 )
 
+TOOL_TITLES = {
+    "apizr_analyze": "Analyze Python Project",
+    "apizr_readiness": "Assess Repository Readiness",
+    "apizr_plan_exposure": "Plan Capability Exposure",
+    "apizr_delivery_status": "Inspect Delivery Status",
+    "apizr_delivery_run": "Run Approved Delivery",
+    "apizr_delivery_resume": "Resume Approved Delivery",
+}
+
 
 ANALYSIS_GUIDANCE = (
     "Typical journey: apizr_analyze to find exact capability IDs and a repository digest; "
@@ -285,6 +294,7 @@ def create_server(calculations: Calculations) -> Server:
     tools = [
         types.Tool(
             name=name,
+            title=TOOL_TITLES[name],
             description=description,
             input_schema=inputs.model_json_schema(),
             output_schema=outputs.model_json_schema(),
@@ -383,6 +393,7 @@ def create_server(calculations: Calculations) -> Server:
 
     return Server(
         "apizr",
+        title="OuterSpace Apizr",
         version=version("outerspace-apizr-mcp"),
         on_list_tools=list_tools,
         on_call_tool=call_tool,

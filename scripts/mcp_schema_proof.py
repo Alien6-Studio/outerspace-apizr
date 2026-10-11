@@ -9,6 +9,11 @@ from pathlib import Path
 import anyio
 from jsonschema import Draft202012Validator
 from mcp import Client, StdioServerParameters
+from mcp_tool_metadata import (
+    before_distribution_metadata,
+    before_distribution_responses,
+    review,
+)
 from operator_policy_proof import write_analysis_policy
 
 
@@ -65,7 +70,8 @@ def discovery(client: Client, tools: list[dict]) -> dict:
 
 
 def discovery_contract(metadata: dict) -> dict:
-    """Exclude only #269's four prose surfaces; preserve complete #268 schemas."""
+    """Preserve #268/#269, allowing only the reviewed #279 metadata additions."""
+    metadata = before_distribution_metadata(metadata)
     return {
         **{key: value for key, value in metadata.items() if key != "instructions"},
         "tools": [
@@ -95,6 +101,7 @@ def verify_discovery_contract(metadata: dict, *, delivery: bool = False) -> None
 
 def verify_guidance(metadata: dict, *, delivery: bool = False) -> None:
     """Check selection/recovery concepts, not exact prose or an external score."""
+    review(metadata, delivery=delivery)
     tools = {tool["name"]: tool for tool in metadata["tools"]}
     concepts = {
         "apizr_analyze": (
@@ -433,7 +440,9 @@ async def prove(root: Path, config: dict, *, capture_only: bool = False) -> dict
                 ),
                 "validation_schema_sha256": fingerprint(without_documentation(tools)),
                 "discovery_contract_sha256": fingerprint(discovery_contract(metadata)),
-                "recovery_sha256": fingerprint(responses),
+                "recovery_sha256": fingerprint(
+                    before_distribution_responses(responses)
+                ),
             }
             if not capture_only:
                 baseline = guidance_baseline(revision)

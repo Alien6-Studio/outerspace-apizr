@@ -205,6 +205,7 @@ nav:
       - Code organization: architecture/code-organization.md
       - Release branch governance: contributing/release-branches.md
       - Publish a release: contributing/releases.md
+      - MCP distribution qualification: contributing/mcp-distribution.md
       - Verify builds and releases: contributing/verification.md
       - Managed Attest identity: contributing/attest.md
       - Dependency maintenance: contributing/dependencies.md

@@ -14,6 +14,7 @@ from mcp_schema_proof import (
     verify_guidance,
     write,
 )
+from mcp_tool_metadata import validate_result
 
 from apizr.delivery_batch import BatchResult
 
@@ -83,6 +84,9 @@ async def exercise(root: Path, capture_only: bool = False):
                 verify_discovery_contract(metadata, delivery=True)
             initial = await client.call_tool("apizr_delivery_status", {})
             assert not initial.is_error
+            validate_result(
+                next(t for t in tools if t["name"] == "apizr_delivery_status"), initial
+            )
             value = BatchResult.model_validate_json(
                 json.dumps(initial.structured_content)
             )
@@ -99,6 +103,14 @@ async def exercise(root: Path, capture_only: bool = False):
                 for operation in ("run", "resume"):
                     reply = await client.call_tool("apizr_delivery_" + operation, args)
                     assert not reply.is_error
+                    validate_result(
+                        next(
+                            t
+                            for t in tools
+                            if t["name"] == "apizr_delivery_" + operation
+                        ),
+                        reply,
+                    )
                     failed = BatchResult.model_validate_json(
                         json.dumps(reply.structured_content)
                     )

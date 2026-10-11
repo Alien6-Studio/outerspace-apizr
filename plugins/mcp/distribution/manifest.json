@@ -1,0 +1,25 @@
+{
+  "manifest_version": "0.4",
+  "name": "outerspace-apizr",
+  "display_name": "OuterSpace Apizr",
+  "version": "0.4.5",
+  "description": "Read-only Python analysis and exposure planning with explicit project authorization and a separately activated MCP plugin.",
+  "author": {"name": "Alien6 Studio", "url": "https://github.com/Alien6-Studio"},
+  "homepage": "https://apizr.outerspace.sh/reference/apizr-mcp-server/",
+  "repository": {"type": "git", "url": "https://github.com/Alien6-Studio/outerspace-apizr"},
+  "license": "GPL-3.0-or-later",
+  "server": {
+    "type": "uv",
+    "entry_point": "src/server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--directory", "${__dirname}", "src/server.py", "--project", "${user_config.project}", "--operator-policy", "${user_config.operator_policy}", "--plugins-dir", "${user_config.plugins_dir}"]
+    }
+  },
+  "compatibility": {"platforms": ["darwin", "linux"], "runtimes": {"python": ">=3.11,<3.15"}},
+  "user_config": {
+    "project": {"type": "file", "title": "Project file", "description": "Select the absolute path to your apizr.toml, created using the Registry installation guide. This selects the Python source root; no project is chosen automatically.", "required": true},
+    "operator_policy": {"type": "file", "title": "Reviewed analysis policy", "description": "Select the absolute path to the reviewed operator JSON policy granting source.analyze for this project. Create and review it using the Registry installation guide; installation grants no authority.", "required": true},
+    "plugins_dir": {"type": "directory", "title": "Managed plugin directory", "description": "Select the absolute directory where you explicitly prepared, installed and activated the matching MCP profile, following the Registry installation guide. Launching does not activate it.", "required": true}
+  }
+}

@@ -3,6 +3,32 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
+## Future 0.4.5 MCP distribution {#mcp-distribution-045}
+
+This sequence is prepared, **not authorized or executed** by the development
+qualification. [MCP distribution qualification](mcp-distribution.md) records the
+current contracts and external limitations. Ordinary CI does not wait for indexes.
+
+1. Qualify the exact final source SHA and retain all release artifacts/evidence.
+2. Merge, tag and create the release only under separate explicit authorization.
+3. Publish the qualified public Python artifacts through the protected procedure.
+4. Verify the core and MCP PyPI archive identities against the retained candidate.
+5. Dispatch `Publish MCP Registry` separately with that immutable release tag and
+   full source SHA. Its preflight binds clean source, protected master ancestry,
+   GitHub Release assets, public PyPI hashes, ownership marker and descriptor.
+6. Verify Official Registry 0.4.5 and the exact configuration contract.
+7. Wait for Glama indexing, or use its permitted re-index/claim path only if authorized.
+8. Verify Glama's actual metadata/tool surface, recording API limitations and manual
+   schema-page evidence rather than silently accepting stale metadata.
+9. Complete the supported Smithery MCPB listing/submission and configuration flow.
+10. Verify its package/repository/version, tools, bundle and actual client installation.
+11. Verify MCPfinder sees the release across the expected primary sources.
+12. Retain dated external reports and unresolved propagation in the release record.
+
+Official Registry is the canonical registry source. Glama and Smithery add
+discovery/client presentation; they do not establish package artifact identity.
+Do not close #279 merely because Phase A or Python publication has completed.
+
 <span id="finalizing-044"></span>
 
 ## Completed 0.4.4 finalization
