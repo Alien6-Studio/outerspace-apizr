@@ -51,8 +51,8 @@ def test_platform_contracts_and_immutable_supply_chain():
     # Public defaults remain on the published release; candidate CI supplies
     # the exact unreleased wheel and version explicitly.
     assert version == "0.4.5"
-    assert ACTION["inputs"]["apizr-version"]["default"] == "0.4.4"
-    assert INPUTS["apizr-version"]["default"] == "0.4.4"
+    assert ACTION["inputs"]["apizr-version"]["default"] == "0.4.5"
+    assert INPUTS["apizr-version"]["default"] == "0.4.5"
     assert ACTION["runs"]["using"] == "composite"
     assert set(ACTION["inputs"]) == {
         "operation",
@@ -341,7 +341,7 @@ def test_action_install_is_exact_core_only_and_child_has_no_tokens(
         ADAPTER["main"].__globals__["subprocess"],
         "run",
         lambda *a, **kw: types.SimpleNamespace(
-            returncode=0, stdout=b"outerspace-apizr 0.4.4\n"
+            returncode=0, stdout=b"outerspace-apizr 0.4.5\n"
         ),
     )
     assert ADAPTER["main"]() == 0
@@ -354,12 +354,12 @@ def test_action_install_is_exact_core_only_and_child_has_no_tokens(
         "--no-input",
         "--index-url",
         "https://pypi.org/simple",
-        "outerspace-apizr==0.4.4",
+        "outerspace-apizr==0.4.5",
     ]
     assert calls[1][1:] == ADAPTER["invocation"](values)
     assert (
         (tmp_path / "outputs").read_text()
-        == "result=.apizr-ci/result.json\nartifacts=.apizr-ci\napizr-version=0.4.4\nstate=success\n"
+        == "result=.apizr-ci/result.json\nartifacts=.apizr-ci\napizr-version=0.4.5\nstate=success\n"
     )
 
 
