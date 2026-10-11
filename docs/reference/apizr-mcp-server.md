@@ -142,6 +142,33 @@ For version 0.4.2, use `apizr mcp serve` instead.
 Contributors can find publication checks in the
 [release record](../contributing/verification.md#044-publication-record).
 
+## Choose a tool: discover → assess → propose
+
+The server's initialization instructions and tool descriptions explain this
+journey directly to a connected assistant:
+
+| Need | Choose | Next step |
+| --- | --- | --- |
+| Find what the project contains and obtain exact capability IDs | `apizr_analyze` for static source and relationship evidence | Review a capability and retain its repository digest if subsequent calls should use the same evidence |
+| Understand whether a capability is usable and under which conditions | `apizr_readiness` for limitations, uncertainty and execution/control compatibility under the startup readiness policy | Inspect the relevant full, summary or exact detail result before choosing proposal constraints |
+| Test a selection you already intend to expose | `apizr_plan_exposure` with an explicit policy or the captured startup exposure policy | Review the proposed capability/interface/execution combinations or the refusal diagnostics |
+
+This is guidance, not a required sequence. Readiness and planning can be called
+independently, including as the first call. Each tool assesses current evidence
+within the startup source scope; earlier reports are not cached or supplied to
+later calculations. Digest pinning checks consistency between independent calls.
+
+These three tools do not execute project code, generate a server, change project
+configuration or publish anything. A readiness report assesses evidence; a plan
+is a proposal. Neither grants operator authority. Repository/root, operator
+permissions and server bounds are chosen at startup. Tool arguments cannot
+expand source scope, activate plugins, select infrastructure or enable delivery.
+
+When delivery is explicitly enabled, initialization instead identifies the
+additional effects: status inspects local evidence, while run/resume may mutate
+remote state using captured authority. Analysis/readiness/planning remain
+non-mutating in that mode. See [Explicit delivery mode](#explicit-delivery-mode-042).
+
 ## Tools and results
 
 | Tool | Arguments | Structured result |
@@ -219,6 +246,27 @@ schemas reject client-supplied roots, policy paths, executables or startup limit
 The three analysis tool descriptions and read-only annotations are fixed; repository text remains
 data and cannot create tools or replace server instructions. Annotations alone
 are not an authorization boundary.
+
+## Recover from a refusal
+
+The same recovery guidance is available through initialization metadata.
+Inspect `isError` and structured evidence, not just display text:
+
+| Result | Existing recovery |
+| --- | --- |
+| `repository_changed` | Analyze current source evidence again, review what changed and its new identity, then decide whether to continue with the new digest. Never replace a pin blindly. |
+| `policy_required` | Supply an explicit valid ExposurePolicy when no startup exposure policy was captured. This does not edit configuration or confer authority. |
+| `exposure_refused` | Inspect `error.diagnostics` and supported `action` values; correct the proposal or evidence before another attempt. A refusal is not a successful plan. |
+| Scope or authorization refusal | Operator/startup action is required. Alternative tool arguments cannot bypass captured scope or grants. |
+| `server_busy` | The call was refused while another calculation was active. Wait for that call to finish before retrying an analysis tool. This is not a successful assessment or an automatic delivery retry. |
+| `response_too_large` | For analysis/readiness, request summary, exact detail or smaller detail pages. For refused planning diagnostics, use their existing `offset`/`limit` pagination. Successful plans are not paginated; large individual records can still exceed the bound. No response is automatically truncated. |
+| `arguments_too_large` / `invalid_arguments` | Correct or reduce the request within its advertised schema and startup bounds. These tools cannot raise server limits. |
+| Transport, runtime, cleanup or operation failure | Preserve the failure and seek operator diagnosis where necessary. It is not a successful business assessment. Unconfirmed cleanup terminates the session. |
+
+Tool refusals use `isError: true`; transport failures can instead prevent a tool
+response. In contrast, readiness `exit_code: 1` with `isError: false` is a valid
+assessment of limitations or uncertainty. Delivery business outcomes retain
+their separate [existing semantics](#explicit-delivery-mode-042).
 
 ## Start with a small view (0.4.5 development)
 
@@ -492,6 +540,36 @@ does not depend on external directory scoring. `--capture-only` retains prior
 discovery/results for before/after comparison without requiring new descriptions.
 The compact test baseline records the prior validation-schema and business-result
 fingerprints; full discovery JSON stays in qualification artifacts.
+
+The same proof retains `discovery-{auto,legacy}.json` with initialization
+instructions and complete tool metadata, and `recovery-{auto,legacy}.json` with
+SDK responses including error status. Real changed-source, missing-policy and
+refused-selection calls accompany the normal journey. `guidance_baseline.json`
+binds the prior installed wheels and fingerprints every unchanged discovery
+contract and response, including #268's schema descriptions/examples. Only the
+three analysis tool descriptions and initialization instructions are excluded
+from discovery comparison. Delivery discovery retains all six tools and verifies
+their effect annotations separately in `mcp_delivery_local_proof.py`.
+
+### Local TDQS review
+
+This assessment covers the six Tool Definition Quality Score dimensions without
+claiming an external score. `verify_guidance` checks essential selection/recovery
+concepts and a conciseness budget against actual SDK discovery; it does not
+attempt to measure agent intelligence or directory ranking.
+
+| Dimension | Assessment and check |
+| --- | --- |
+| Purpose Clarity | Analyze discovers identities, readiness assesses usability, planning tests a chosen proposal. Each description names its distinct result. |
+| Usage Guidelines | Each tool states when to choose it and a next step; initialization presents discover → assess → propose as optional guidance. Fresh-session readiness/planning tests preserve independent use. |
+| Behavioral Transparency | No project execution or authority grant; fresh evidence, readiness business results, structured refusals, recovery and delivery effects are explicit and exercised. |
+| Parameter Semantics | #268's complete schemas, referenced definitions and valid examples remain unchanged, verified against installed discovery fingerprints. Descriptions refer to those schemas. |
+| Conciseness | Each analysis description is capped at 115 whitespace-delimited words; initialization at 350 in either mode. Shared workflow/recovery guidance lives in initialization rather than being repeated per tool. |
+| Contextual Completeness | Capability IDs, actual digest pinning, policy fallback, startup scope, principal recoveries and mode-specific effects are available without external documentation. |
+
+External Glama evaluations, when available, are dated observations about the
+version indexed there. They are not an offline qualification gate or evidence
+that an unpublished development commit has been evaluated.
 
 Delivery qualification adds official SDK status/run/resume calls for both protocol
 revisions. `scripts/smoke_oci_registry.py --artifacts --output /absolute/new-proof`

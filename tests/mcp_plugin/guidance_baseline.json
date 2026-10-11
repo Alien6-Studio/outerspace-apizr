@@ -1,0 +1,27 @@
+{
+  "source_commit": "4dfe153f15571dcaefdb693520dab3cef7f3c986",
+  "wheels": [
+    {
+      "name": "outerspace_apizr-0.4.5-py3-none-any.whl",
+      "sha256": "1c8694c6cb6eb394097cf42610946052b3b2a7296ab0c83e0ce65473ebca77ba"
+    },
+    {
+      "name": "outerspace_apizr_mcp-0.4.5-py3-none-any.whl",
+      "sha256": "12d08f878c0bff65b742186ce1b25b375188e46d967e0c0bb28c005e30beb2ff"
+    }
+  ],
+  "protocols": {
+    "2026-07-28": {
+      "analysis_contract_sha256": "4232251e6f46c21dfeaaafc79311ea6c22287ceefa6c9046d306768ec9f7dafc",
+      "delivery_contract_sha256": "0a6a409faba3a7cb504e647ccaae2215d773c44cbf1f8e52f0a6bb4ae467a79e",
+      "results_sha256": "8b4108a5cecd81b3e646a7a89ffb790fc27ed77081f9ac7b39bad2a80a399d07",
+      "recovery_sha256": "b41cbfe8793093e2913f1ed6a865a54b1aafbc3c70ac145a99c606c87f368fb9"
+    },
+    "2025-11-25": {
+      "analysis_contract_sha256": "f9898d14dbf47577f6e8214c56e50a40a2d7fb4a9f46bfac3968cf02a3eb69c3",
+      "delivery_contract_sha256": "7b2dc62a3ea557f27ed14f6edfe03f93df1f2eaa9b3e24bc6491db56968a1d68",
+      "results_sha256": "8b4108a5cecd81b3e646a7a89ffb790fc27ed77081f9ac7b39bad2a80a399d07",
+      "recovery_sha256": "1553a4a29a763fdea11ee50f0f6731f068186a510d0423c9abb04a18e13306aa"
+    }
+  }
+}

@@ -1,13 +1,19 @@
 """Installed stdio delivery refusal/status proof; no registry or native tool exists."""
 
+import argparse
 import json
 import runpy
 import subprocess
-import sys
 from pathlib import Path
 
 import anyio
 from mcp import Client, StdioServerParameters
+from mcp_schema_proof import (
+    discovery,
+    verify_discovery_contract,
+    verify_guidance,
+    write,
+)
 
 from apizr.delivery_batch import BatchResult
 
@@ -17,7 +23,7 @@ request = runpy.run_path(
 )["request"]
 
 
-async def exercise(root: Path):
+async def exercise(root: Path, capture_only: bool = False):
     config = json.loads((root / "installed.json").read_text())
     installed_version = subprocess.check_output(
         [
@@ -65,7 +71,16 @@ async def exercise(root: Path):
             assert client.protocol_version == (
                 "2025-11-25" if mode == "legacy" else "2026-07-28"
             )
-            assert len((await client.list_tools()).tools) == 6
+            tools = [
+                tool.model_dump(mode="json", by_alias=True)
+                for tool in (await client.list_tools()).tools
+            ]
+            assert len(tools) == 6
+            metadata = discovery(client, tools)
+            write(root / f"delivery-discovery-{mode}.json", metadata)
+            if not capture_only:
+                verify_guidance(metadata, delivery=True)
+                verify_discovery_contract(metadata, delivery=True)
             initial = await client.call_tool("apizr_delivery_status", {})
             assert not initial.is_error
             value = BatchResult.model_validate_json(
@@ -131,4 +146,8 @@ async def exercise(root: Path):
 
 
 if __name__ == "__main__":
-    anyio.run(exercise, Path(sys.argv[1]).resolve())
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("root", type=Path)
+    parser.add_argument("--capture-only", action="store_true")
+    args = parser.parse_args()
+    anyio.run(exercise, args.root.resolve(), args.capture_only)

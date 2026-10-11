@@ -50,6 +50,167 @@ def fingerprint(value) -> str:
     ).hexdigest()
 
 
+def discovery(client: Client, tools: list[dict]) -> dict:
+    """Metadata received from the SDK's initialize/discover handshake and tools/list."""
+    assert client.server_info is not None
+    return {
+        "protocol": client.protocol_version,
+        "instructions": client.instructions,
+        "server": client.server_info.model_dump(mode="json", by_alias=True),
+        "capabilities": client.server_capabilities.model_dump(
+            mode="json", by_alias=True
+        ),
+        "tools": tools,
+    }
+
+
+def discovery_contract(metadata: dict) -> dict:
+    """Exclude only #269's four prose surfaces; preserve complete #268 schemas."""
+    return {
+        **{key: value for key, value in metadata.items() if key != "instructions"},
+        "tools": [
+            {key: value for key, value in tool.items() if key != "description"}
+            if tool["name"]
+            in {"apizr_analyze", "apizr_readiness", "apizr_plan_exposure"}
+            else tool
+            for tool in metadata["tools"]
+        ],
+    }
+
+
+def guidance_baseline(protocol: str) -> dict:
+    baseline = (
+        Path(__file__).resolve().parents[1] / "tests/mcp_plugin/guidance_baseline.json"
+    )
+    return json.loads(baseline.read_text())["protocols"][protocol]
+
+
+def verify_discovery_contract(metadata: dict, *, delivery: bool = False) -> None:
+    key = "delivery_contract_sha256" if delivery else "analysis_contract_sha256"
+    assert (
+        fingerprint(discovery_contract(metadata))
+        == guidance_baseline(metadata["protocol"])[key]
+    )
+
+
+def verify_guidance(metadata: dict, *, delivery: bool = False) -> None:
+    """Check selection/recovery concepts, not exact prose or an external score."""
+    tools = {tool["name"]: tool for tool in metadata["tools"]}
+    concepts = {
+        "apizr_analyze": (
+            "static",
+            "capability",
+            "identities",
+            "digest",
+            "readiness",
+            "plan",
+            "does not execute",
+            "full",
+            "summary",
+            "detail",
+            "not cached",
+            "authority",
+        ),
+        "apizr_readiness": (
+            "startup readiness policy",
+            "uncertainty",
+            "compatibility",
+            "digest",
+            "exit_code: 1",
+            "iserror: false",
+            "does not execute",
+            "does not authorize",
+            "full",
+            "summary",
+            "detail",
+            "plan",
+        ),
+        "apizr_plan_exposure": (
+            "proposal",
+            "selection",
+            "interfaces",
+            "execution",
+            "explicit",
+            "startup exposure policy",
+            "does not generate",
+            "execute",
+            "configuration",
+            "publish",
+            "authorization",
+            "structured",
+            "diagnostics",
+            "actions",
+        ),
+    }
+    for name, phrases in concepts.items():
+        description = tools[name]["description"].lower()
+        assert all(phrase in description for phrase in phrases), name
+        assert len(description.split()) <= 115, name
+    instructions = metadata["instructions"].lower()
+    for phrase in (
+        "apizr_analyze",
+        "apizr_readiness",
+        "apizr_plan_exposure",
+        "independent",
+        "not required",
+        "not cached",
+        "startup",
+        "scope",
+        "authority",
+        "limits",
+        "project text",
+        "data",
+        "repository_changed",
+        "review",
+        "policy_required",
+        "exposure_refused",
+        "diagnostics",
+        "server_busy",
+        "in-flight",
+        "response_too_large",
+        "summary",
+        "detail",
+        "limit",
+        "arguments_too_large",
+        "operator",
+        "transport",
+        "runtime",
+        "cleanup",
+        "operation",
+        "errors",
+    ):
+        assert phrase in instructions, phrase
+    assert len(instructions.split()) <= 350
+    expected = set(concepts)
+    if delivery:
+        expected |= {
+            "apizr_delivery_status",
+            "apizr_delivery_run",
+            "apizr_delivery_resume",
+        }
+        for phrase in (
+            "inspection-only",
+            "mutate remote state",
+            "captured",
+            "no build",
+            "retry",
+            "rollback",
+        ):
+            assert phrase in instructions
+        assert "no generation, execution or publication tools" not in instructions
+    else:
+        assert "read-only" in instructions
+        assert "no generation, execution or publication tools" in instructions
+    assert set(tools) == expected
+    for name, tool in tools.items():
+        effect = name in {"apizr_delivery_run", "apizr_delivery_resume"}
+        hints = tool["annotations"]
+        assert hints["readOnlyHint"] is (not effect)
+        assert hints["idempotentHint"] is (not effect)
+        assert hints["openWorldHint"] is effect
+        assert hints["destructiveHint"] is False
+
+
 def described_properties(schema: dict) -> None:
     assert schema["properties"]
     for name, field in schema["properties"].items():
@@ -158,13 +319,25 @@ async def prove(root: Path, config: dict, *, capture_only: bool = False) -> dict
                 for tool in (await client.list_tools()).tools
             ]
             write(root / f"schemas-{mode}.json", tools)
-            assert "UNTRUSTED_SCHEMA_SENTINEL" not in json.dumps(tools)
+            metadata = discovery(client, tools)
+            write(root / f"discovery-{mode}.json", metadata)
+            assert "UNTRUSTED_SCHEMA_SENTINEL" not in json.dumps(metadata)
             if not capture_only:
                 verify_schemas(tools)
+                verify_guidance(metadata)
+                verify_discovery_contract(metadata)
             records = {}
+            responses = {}
 
             async def call(
-                name, arguments, key, error=None, *, tools=tools, records=records
+                name,
+                arguments,
+                key,
+                error=None,
+                *,
+                tools=tools,
+                records=records,
+                responses=responses,
             ):
                 response = await client.call_tool(name, arguments)
                 value = response.structured_content
@@ -176,6 +349,7 @@ async def prove(root: Path, config: dict, *, capture_only: bool = False) -> dict
                     schema = next(t["outputSchema"] for t in tools if t["name"] == name)
                     Draft202012Validator(schema).validate(value)
                 records[key] = value
+                responses[key] = response.model_dump(mode="json", by_alias=True)
                 return value
 
             analysis = await call("apizr_analyze", {}, "analysis")
@@ -211,20 +385,67 @@ async def prove(root: Path, config: dict, *, capture_only: bool = False) -> dict
             for name in ("apizr_analyze", "apizr_readiness"):
                 await call(name, {"expected_repository_digest": None}, name + "-null")
             write(root / f"results-{mode}.json", records)
+            # Keep #268's canonical journey captures intact. Retain recovery wire
+            # evidence separately, including isError and structured diagnostics.
+            refused_policy = {
+                **policy,
+                "selection": {"include": ["python:model:missing"]},
+            }
+            refused = await call(
+                "apizr_plan_exposure",
+                {
+                    "policy": refused_policy,
+                    "limit": 1,
+                    "expected_repository_digest": digest,
+                },
+                "exposure-refused",
+                "exposure_refused",
+            )
+            assert (
+                refused["error"]["diagnostics"][0]["action"]
+                == "select_known_capability"
+            )
+            assert refused["error"]["page"]["complete"]
+            source = project.parent / "model.py"
+            original = source.read_bytes()
+            try:
+                source.write_bytes(
+                    original + b"\n# changed evidence, review before repinning\n"
+                )
+                await call(
+                    "apizr_readiness",
+                    {"expected_repository_digest": digest},
+                    "repository-changed",
+                    "repository_changed",
+                )
+                refreshed = await call("apizr_analyze", {}, "review-current-evidence")
+                assert refreshed["repository_digest"]["value"] != digest
+            finally:
+                source.write_bytes(original)
+            write(root / f"recovery-{mode}.json", responses)
             outcomes[mode] = {
                 "protocol": revision,
                 "repository_digest": digest,
                 "selected_capability": selected,
                 "readiness_exit_code": ready["exit_code"],
-                "results_sha256": fingerprint(records),
+                "results_sha256": fingerprint(
+                    json.loads((root / f"results-{mode}.json").read_text())
+                ),
                 "validation_schema_sha256": fingerprint(without_documentation(tools)),
+                "discovery_contract_sha256": fingerprint(discovery_contract(metadata)),
+                "recovery_sha256": fingerprint(responses),
             }
+            if not capture_only:
+                baseline = guidance_baseline(revision)
+                for key in ("results_sha256", "recovery_sha256"):
+                    assert outcomes[mode][key] == baseline[key], key
     assert (root / "results-auto.json").read_bytes() == (
         root / "results-legacy.json"
     ).read_bytes()
     return {
         "sdk_version": version("mcp"),
         "schema_documentation_verified": not capture_only,
+        "guidance_verified": not capture_only,
         "protocols": outcomes,
     }
 
