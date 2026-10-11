@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs.">
+        <meta name="description" content="Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP.">
       
       
         <meta name="author" content="Ludovic FERNANDEZ, Alien6">
@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://apizr.outerspace.sh/architecture/exposure-plan-v1/">
       
       
-        <link rel="prev" href="../repository-readiness-v1/">
+        <link rel="prev" href="../../guides/experiment-results/">
       
       
         <link rel="next" href="../repository-bundle-v1/">
@@ -72,10 +72,10 @@ function __md_analytics() {
   gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
   gtag('js', new Date());
   gtag('consent', 'update', {analytics_storage: 'granted'});
-  gtag('config', 'G-P3BHZB2FVP', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
+  gtag('config', 'G-MX4P2Y5EG4', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
   var script = document.createElement('script');
   script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P3BHZB2FVP';
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-MX4P2Y5EG4';
   document.head.appendChild(script);
 }
 </script>
@@ -87,7 +87,7 @@ function __md_analytics() {
     
   
   <link rel="describedby" type="application/json" href="../../build-info.json" />
-  <meta name="apizr-source-commit" content="a5c5512a0204d83fc4157ae956cd4aba0a9881f4" />
+  <meta name="apizr-source-commit" content="2d3108f85ac903230827082a73698473759a861c" />
   <meta name="apizr-docs-status" content="stable" />
   
   
@@ -98,7 +98,7 @@ function __md_analytics() {
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="OuterSpace Apizr" />
   <meta property="og:title" content="Exposure Plan · OuterSpace Apizr" />
-  <meta property="og:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta property="og:description" content="Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP." />
   <meta property="og:url" content="https://apizr.outerspace.sh/architecture/exposure-plan-v1/" />
   <meta property="og:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
   <meta property="og:image:type" content="image/png" />
@@ -107,7 +107,7 @@ function __md_analytics() {
   <meta property="og:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Exposure Plan · OuterSpace Apizr" />
-  <meta name="twitter:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta name="twitter:description" content="Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP." />
   <meta name="twitter:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
   <meta name="twitter:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
   
@@ -323,15 +323,8 @@ function __md_analytics() {
   
     
     
-      
-  
-  
-  
-  
-    
-    
       <li class="md-tabs__item">
-        <a href="../../getting-started/user-guide/scan/" class="md-tabs__link">
+        <a href="../../getting-started/user-guide/experiment-inspection/" class="md-tabs__link">
           
   
   
@@ -341,9 +334,6 @@ function __md_analytics() {
 
         </a>
       </li>
-    
-  
-
     
   
 
@@ -424,7 +414,7 @@ function __md_analytics() {
     
     
       <li class="md-tabs__item">
-        <a href="../../releases/0.4.4/" class="md-tabs__link">
+        <a href="../../releases/0.4.5/" class="md-tabs__link">
           
   
   
@@ -538,6 +528,8 @@ function __md_analytics() {
   
     
     
+      
+        
       
         
       
@@ -681,6 +673,34 @@ function __md_analytics() {
   
   
     <li class="md-nav__item">
+      <a href="../../getting-started/data-science/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Scientist quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../getting-started/introduction/" class="md-nav__link">
         
   
@@ -717,6 +737,14 @@ function __md_analytics() {
   
     
     
+      
+        
+      
+        
+      
+        
+      
+        
       
         
       
@@ -773,6 +801,118 @@ function __md_analytics() {
   
   
   
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-inspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inspect an experiment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-runs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run and inspect local history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compare experiment runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-exposure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment → serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -811,10 +951,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
         
           
-          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
             
   
   
@@ -832,8 +972,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1211,10 +1351,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
         
           
-          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
             
   
   
@@ -1232,8 +1372,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1334,6 +1474,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -1345,10 +1487,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
             
   
   
@@ -1366,8 +1508,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1376,6 +1518,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/plugin-preparation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prepare a temporary plugin profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1885,6 +2055,14 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -2002,6 +2180,118 @@ function __md_analytics() {
     
   
     Repository Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiment-evidence-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-inputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment inputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-randomness-environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seeds and environment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics and output artifacts
   
 
     
@@ -3314,6 +3604,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -3356,6 +3648,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.5 candidate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3625,6 +3945,10 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3843,6 +4167,34 @@ function __md_analytics() {
   
   
     <li class="md-nav__item">
+      <a href="../code-organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code organization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../contributing/release-branches/" class="md-nav__link">
         
   
@@ -3879,6 +4231,34 @@ function __md_analytics() {
     
   
     Publish a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/mcp-distribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP distribution qualification
   
 
     
@@ -4247,9 +4627,10 @@ empty: an empty plan is valid and the human report warns that nothing is planned
   <code>CONDITIONAL</code> records require <code>true</code>. <code>AMBIGUOUS</code> and <code>UNSUPPORTED</code> never pass.</li>
 </ul>
 <p>REST and MCP compatibility is represented separately. Both v1 adapters consume
-<code>local_readiness.can_generate_interface</code>, the authoritative shared Interface
-Contract eligibility fact. Exposure never lowers or reinterprets Python types.
-A conditional repository assessment can pass only if local interface eligibility
+the shared repository-aware eligibility decision over the validated assessment.
+It retains local interface blockers except exactly proven local import reasons;
+see <a href="../repository-readiness-v1/#resolved-local-import-refinement">Repository Readiness</a>. Exposure never lowers or reinterprets Python types.
+A conditional repository assessment can pass only if repository interface eligibility
 still holds (for example, unknown required effect evidence). The opt-in cannot
 bypass an unresolved local callable/type contract. All requested targets must
 pass; there is no partial interface selection.</p>
@@ -4275,11 +4656,37 @@ An empty selection has no affected capability and remains valid.</p>
 image, environment values, secrets, user identities, permissions or runtime
 configuration. Runtime binding belongs to the bundle/runtime stage.</p>
 <h2 id="complete-evidence-and-fail-closed-behavior">Complete evidence and fail-closed behavior</h2>
-<p>Readiness v1 expresses completeness through <code>graph_complete</code> and
-<code>catalog_exit_code</code>, rather than a new <code>complete</code> field. Exposure requires
-<code>graph_complete = true</code> and <code>catalog_exit_code = 0</code>, even for empty selections.
-It does not require the report's aggregate exit code to be zero: unrelated
-conditional/unsupported capabilities need not be selected.</p>
+<p>Published 0.4.4 requires <code>graph_complete = true</code> and <code>catalog_exit_code = 0</code>.
+In the 0.4.5 candidate, <code>exposure.scope.required_evidence</code> owns the
+selected execution proof. It consumes validated, bound Catalog, Graph and
+Repository Readiness without source parsing, host lookup or execution.</p>
+<p>Roots are the exact IDs left after include/include-all-ready/exclude resolution.
+A bounded, iterative closure follows <code>calls_capability</code>, <code>references_capability</code>,
+<code>imports_capability</code> and <code>imports_module</code>. References remain conservative because
+the callable can be invoked indirectly. Imports are distinct from calls and require
+module initialization. Each capability requires its owning module and every
+present package ancestor. Missing package parents use the loader's existing
+synthetic namespace contract. <code>contains</code> does not select every function in a module.
+Private dependencies need stable bindings and execution evidence, not public JSON
+input/output contracts. They never become public roots. No effects are propagated.</p>
+<p>Graph diagnostics join canonical source identities and retained declaration spans:
+an exact unique span owns a function-body diagnostic; other locations belong to
+module initialization. Known-path Catalog parse/encoding/analysis/size/read errors
+can be unrelated. Input, aggregate-limit, collision, unknown-path, invalid module
+identity and unexplained incompleteness are global. Contradictory import trees
+also block the entire copied source manifest. Digest/manifest inconsistencies
+fail canonical validation. Required diagnostics block even with conditional opt-in.
+Unrelated diagnostics stay in the full audit and all full-repository digests.</p>
+<p>Shared #252 initialization facts are required for modules and package ancestors.
+A nonempty module without callable Readiness evidence remains unproven. Exact
+retained import locations must match Graph edges; external imports never discharge
+local <code>APIZR-READY-015</code>. Valid module-handle/function cycles terminate. A cyclic
+module-scope callable import blocks when the target definition has not yet been
+reached in retained lexical initialization order. No runtime behavior is guessed.</p>
+<p>An empty selection tolerates unrelated path diagnostics, but global corruption
+still blocks it. Multiple roots remain atomic. Breadth-first paths use capability
+neighbors before module neighbors, then canonical IDs, yielding deterministic
+shortest dependency paths with relative source location and typed evidence code.</p>
 <p><code>ExposureRefused.diagnostics</code> contains deterministic typed reasons for incomplete
 evidence, unknown IDs, ineligible state, incompatible interface or execution.
 The API returns no plan if any blocking diagnostic exists. Invalid models or
@@ -4288,11 +4695,15 @@ mismatched evidence raise <code>ValueError</code>. No partial planning policy ex
 all snapshots; structural schema validation alone is not evidence verification.</p>
 <h2 id="snapshot-and-dependency-boundary">Snapshot and dependency boundary</h2>
 <p>Each record retains its capability ID, module, repository-relative POSIX source
-path, readiness state/reasons, requested and compatible interfaces, compatible
+path, selected-scope readiness state/reasons, requested and compatible interfaces, compatible
 execution modes, effect snapshot and relationship evidence. Graph diagnostics,
 import declarations, module import context and direct relationships retain
 uncertainty without repair or effect propagation. Full input documents and
-callee readiness/effect documents are not embedded.</p>
+callee readiness/effect documents are not embedded. In 0.4.5, the plan's readiness
+projection may discharge interface/relationship reasons proven by the required
+closure; the separately bound full Repository Readiness report is unchanged.
+Effect, execution-policy and identity reasons retain their existing precedence.
+The successful v1 schema and full-repository identity semantics are unchanged.</p>
 <p><code>calls_capability</code>, <code>references_capability</code> and <code>imports_capability</code> are evidence
 only: selecting A that calls B does not expose B. <code>observed_support_modules</code>
 contains the selected source modules and known direct target modules. It is not
@@ -4377,7 +4788,7 @@ by <a href="https://github.com/Alien6-Studio/outerspace-apizr/issues/90">#90</a>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../repository-readiness-v1/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Repository Readiness">
+          <a href="../../guides/experiment-results/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Metrics and output artifacts">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -4387,7 +4798,7 @@ by <a href="https://github.com/Alien6-Studio/outerspace-apizr/issues/90">#90</a>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Repository Readiness
+                Metrics and output artifacts
               </div>
             </div>
           </a>

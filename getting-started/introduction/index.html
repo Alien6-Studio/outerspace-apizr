@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Discover, understand, assess, select, expose and execute a Python repository through REST or MCP.">
+        <meta name="description" content="Choose Python functions, create a service and call them through REST or an AI assistant.">
       
       
         <meta name="author" content="Ludovic FERNANDEZ, Alien6">
@@ -15,10 +15,10 @@
         <link rel="canonical" href="https://apizr.outerspace.sh/getting-started/introduction/">
       
       
-        <link rel="prev" href="../quickstart/">
+        <link rel="prev" href="../data-science/">
       
       
-        <link rel="next" href="../user-guide/scan/">
+        <link rel="next" href="../user-guide/experiment-inspection/">
       
       
         
@@ -72,10 +72,10 @@ function __md_analytics() {
   gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
   gtag('js', new Date());
   gtag('consent', 'update', {analytics_storage: 'granted'});
-  gtag('config', 'G-P3BHZB2FVP', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
+  gtag('config', 'G-MX4P2Y5EG4', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
   var script = document.createElement('script');
   script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P3BHZB2FVP';
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-MX4P2Y5EG4';
   document.head.appendChild(script);
 }
 </script>
@@ -87,7 +87,7 @@ function __md_analytics() {
     
   
   <link rel="describedby" type="application/json" href="../../build-info.json" />
-  <meta name="apizr-source-commit" content="a5c5512a0204d83fc4157ae956cd4aba0a9881f4" />
+  <meta name="apizr-source-commit" content="2d3108f85ac903230827082a73698473759a861c" />
   <meta name="apizr-docs-status" content="stable" />
   
   
@@ -98,7 +98,7 @@ function __md_analytics() {
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="OuterSpace Apizr" />
   <meta property="og:title" content="The full journey · OuterSpace Apizr" />
-  <meta property="og:description" content="Discover, understand, assess, select, expose and execute a Python repository through REST or MCP." />
+  <meta property="og:description" content="Choose Python functions, create a service and call them through REST or an AI assistant." />
   <meta property="og:url" content="https://apizr.outerspace.sh/getting-started/introduction/" />
   <meta property="og:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
   <meta property="og:image:type" content="image/png" />
@@ -107,7 +107,7 @@ function __md_analytics() {
   <meta property="og:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="The full journey · OuterSpace Apizr" />
-  <meta name="twitter:description" content="Discover, understand, assess, select, expose and execute a Python repository through REST or MCP." />
+  <meta name="twitter:description" content="Choose Python functions, create a service and call them through REST or an AI assistant." />
   <meta name="twitter:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
   <meta name="twitter:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
   
@@ -325,15 +325,8 @@ function __md_analytics() {
   
     
     
-      
-  
-  
-  
-  
-    
-    
       <li class="md-tabs__item">
-        <a href="../user-guide/scan/" class="md-tabs__link">
+        <a href="../user-guide/experiment-inspection/" class="md-tabs__link">
           
   
   
@@ -343,9 +336,6 @@ function __md_analytics() {
 
         </a>
       </li>
-    
-  
-
     
   
 
@@ -424,7 +414,7 @@ function __md_analytics() {
     
     
       <li class="md-tabs__item">
-        <a href="../../releases/0.4.4/" class="md-tabs__link">
+        <a href="../../releases/0.4.5/" class="md-tabs__link">
           
   
   
@@ -540,6 +530,8 @@ function __md_analytics() {
   
     
     
+      
+        
       
         
       
@@ -683,6 +675,34 @@ function __md_analytics() {
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../data-science/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Scientist quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -744,6 +764,28 @@ function __md_analytics() {
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#start-with-an-experiment-045" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start with an experiment (0.4.5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-with-functions-to-expose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start with functions to expose
+      
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#install" class="md-nav__link">
@@ -831,6 +873,14 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -880,6 +930,118 @@ function __md_analytics() {
   
   
   
+    <li class="md-nav__item">
+      <a href="../user-guide/experiment-inspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inspect an experiment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/experiment-runs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run and inspect local history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/experiment-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compare experiment runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/experiment-exposure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment → serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -918,10 +1080,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
         
           
-          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
             
   
   
@@ -939,8 +1101,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1318,10 +1480,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
         
           
-          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
             
   
   
@@ -1339,8 +1501,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1441,6 +1603,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -1452,10 +1616,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
             
   
   
@@ -1473,8 +1637,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1483,6 +1647,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/plugin-preparation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prepare a temporary plugin profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1990,6 +2182,14 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -2104,6 +2304,118 @@ function __md_analytics() {
     
   
     Repository Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/experiment-evidence-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-inputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment inputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-randomness-environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seeds and environment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics and output artifacts
   
 
     
@@ -3292,6 +3604,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -3334,6 +3648,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.5 candidate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3603,6 +3945,10 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3821,6 +4167,34 @@ function __md_analytics() {
   
   
     <li class="md-nav__item">
+      <a href="../../architecture/code-organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code organization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../contributing/release-branches/" class="md-nav__link">
         
   
@@ -3857,6 +4231,34 @@ function __md_analytics() {
     
   
     Publish a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/mcp-distribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP distribution qualification
   
 
     
@@ -4072,6 +4474,28 @@ function __md_analytics() {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#start-with-an-experiment-045" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start with an experiment (0.4.5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-with-functions-to-expose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start with functions to expose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4149,21 +4573,35 @@ function __md_analytics() {
 <h1 id="the-full-journey">The full journey</h1>
 <p><span id="start-here"></span></p>
 <p><span id="introduction"></span></p>
-<p>Use this guide to understand how Apizr turns a Python project into a service:
-find its functions, choose which ones to expose, generate an interface and run it.</p>
-<p>For a first working server and verified calls, start with the <a href="../quickstart/">Quickstart</a>.
-This page explains the separate stages and their diagnostic outputs.</p>
+<h2 id="start-with-an-experiment-045">Start with an experiment (0.4.5)</h2>
+<p>For a training script or notebook, begin by inspecting the evidence. With the
+published package installed, this first example needs no science framework:</p>
+<!-- experiment-inspection:start-here -->
+<div class="highlight"><pre><span></span><code><span class="nb">printf</span><span class="w"> </span><span class="s1">'learning_rate = 0.05\n'</span><span class="w"> </span>&gt;<span class="w"> </span>example.py
+apizr<span class="w"> </span>experiment<span class="w"> </span>inspect<span class="w"> </span>example.py
+</code></pre></div>
+<p>The report shows all eight evidence sections. Parameters is captured as a static
+candidate; absent data, randomness and runtime facts remain unknown. Continue with
+the <a href="../user-guide/experiment-inspection/">full experiment example</a>, including
+notebook installation and JSON output. Inspection never means the experiment ran.</p>
+<h2 id="start-with-functions-to-expose">Start with functions to expose</h2>
+<p>Apizr lets an application or an AI assistant call functions from your Python
+project. You choose the functions. Apizr creates either a REST service, called
+over HTTP, or an MCP server, called by a compatible AI client.</p>
+<p>The example below creates a small shop service with two operations: calculate a
+price and check stock. The helper functions stay private.</p>
+<p>For the shortest path to a working server, follow the <a href="../quickstart/">Quickstart</a>.
+For a research project with unfinished experiments, see
+<a href="../user-guide/exposure/#work-with-unfinished-research-code">exposing an independent serving function</a>
+in Apizr 0.4.5.</p>
 <h2 id="install">Install</h2>
-<p>Follow <a href="../install/">Install Apizr</a>, then activate the core environment and check
-<code>apizr --version</code>. These guides use Apizr 0.4 and Python 3.11–3.14.</p>
-<p>The minimal core handles static Python analysis and generation. Generated servers
-have their own requirements; the <a href="../quickstart/">Quickstart</a> installs them in a
-separate runtime environment. Optional analysis and delivery plugins are installed
-through <a href="../install/#choose-a-plugin-profile">plugin profiles</a>.
-For notebook or historical pipeline dependencies, see <a href="../developer-guide/setup/">development setup</a>.</p>
+<p>Follow <a href="../install/">Install Apizr</a>, then check <code>apizr --version</code> in that environment.
+The current published version is 0.4.5. You will install the generated server's
+dependencies when you are ready to run it.</p>
 <h2 id="walk-through-a-small-repository">Walk through a small repository</h2>
-<p>Create these three files in an empty directory (also available in the repository's
-<code>examples/repository-shop</code>):</p>
+<p>Create these three files in an empty directory. <code>pricing.py</code> calculates a price,
+<code>inventory.py</code> checks stock, and <code>api.py</code> provides the price operation you will
+make public. You can also find them in <code>examples/repository-shop</code>.</p>
 <p><strong>pricing.py</strong></p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">total</span><span class="p">(</span><span class="n">unit_price</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">unit_price</span> <span class="o">*</span> <span class="n">quantity</span>
@@ -4182,17 +4620,16 @@ For notebook or historical pipeline dependencies, see <a href="../developer-guid
 
     <span class="k">return</span> <span class="n">total</span><span class="p">(</span><span class="n">unit_price</span><span class="p">,</span> <span class="n">quantity</span><span class="p">)</span>
 </code></pre></div>
-<p>Save <code>readiness-direct.json</code>:</p>
+<p>Create two small configuration files. The first tells Apizr that this example
+will run in the server's Python process. Save it as <code>readiness-direct.json</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"execution"</span><span class="p">:{</span><span class="nt">"modes"</span><span class="p">:[</span><span class="s2">"direct"</span><span class="p">]}}</span>
 </code></pre></div>
-<p>Save <code>exposure-direct.json</code>:</p>
+<p>The second chooses the two public functions and requests REST and MCP.
+Save it as <code>exposure-direct.json</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"selection"</span><span class="p">:{</span><span class="nt">"include"</span><span class="p">:[</span><span class="s2">"python:api:quote"</span><span class="p">,</span><span class="s2">"python:inventory:available"</span><span class="p">]},</span><span class="nt">"interfaces"</span><span class="p">:[</span><span class="s2">"rest"</span><span class="p">,</span><span class="s2">"mcp"</span><span class="p">],</span><span class="nt">"execution"</span><span class="p">:{</span><span class="nt">"allowed"</span><span class="p">:[</span><span class="s2">"direct"</span><span class="p">]}}</span>
 </code></pre></div>
-<p><strong>Readiness</strong> assesses whether code evidence supports an interface. The
-<strong>exposure policy</strong> selects the public functions and allowed modes. A <strong>bundle</strong>
-is the generated server, its contracts and the supporting source.</p>
-<p>Save an <strong>operator policy</strong> for this directory before reading its source. This
-allows analysis only; readiness, exposure and execution policies stay independent.</p>
+<p>Apizr also needs permission to read your project. Run this command in the same
+directory to create <code>operator.json</code> for that directory:</p>
 <!-- journey:authorization -->
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'PYTHON'</span>
 <span class="s">import json</span>
@@ -4206,21 +4643,24 @@ allows analysis only; readiness, exposure and execution policies stay independen
 <span class="s">}))</span>
 <span class="s">PYTHON</span>
 </code></pre></div>
-<p><code>expose build</code> performs the analysis and generates your service in one command.
-The first four commands below let you inspect the intermediate results when
-you need to understand a selection or diagnose a refusal:</p>
+<p>You can now create the service. If you want to see what Apizr finds first,
+the following checks are optional:</p>
+<details>
+<summary>Inspect the project before generating the service</summary>
 <div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>scan<span class="w"> </span>.<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--exclude-dir<span class="w"> </span>.output
 apizr<span class="w"> </span>graph<span class="w"> </span>.<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--exclude-dir<span class="w"> </span>.output
 apizr<span class="w"> </span>readiness<span class="w"> </span>.<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--exclude-dir<span class="w"> </span>.output<span class="w"> </span>--policy<span class="w"> </span>readiness-direct.json
 apizr<span class="w"> </span>expose<span class="w"> </span>plan<span class="w"> </span>.<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--exclude-dir<span class="w"> </span>.output<span class="w"> </span>--readiness-policy<span class="w"> </span>readiness-direct.json<span class="w"> </span>--policy<span class="w"> </span>exposure-direct.json
-apizr<span class="w"> </span>expose<span class="w"> </span>build<span class="w"> </span>rest<span class="w"> </span>.<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--exclude-dir<span class="w"> </span>.output<span class="w"> </span>--readiness-policy<span class="w"> </span>readiness-direct.json<span class="w"> </span>--policy<span class="w"> </span>exposure-direct.json<span class="w"> </span>--output-dir<span class="w"> </span>.output/rest
+</code></pre></div>
+</details>
+<p>Create the REST and MCP servers:</p>
+<div class="highlight"><pre><span></span><code>apizr<span class="w"> </span>expose<span class="w"> </span>build<span class="w"> </span>rest<span class="w"> </span>.<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--exclude-dir<span class="w"> </span>.output<span class="w"> </span>--readiness-policy<span class="w"> </span>readiness-direct.json<span class="w"> </span>--policy<span class="w"> </span>exposure-direct.json<span class="w"> </span>--output-dir<span class="w"> </span>.output/rest
 apizr<span class="w"> </span>expose<span class="w"> </span>build<span class="w"> </span>mcp<span class="w"> </span>.<span class="w"> </span>--operator-policy<span class="w"> </span>operator.json<span class="w"> </span>--exclude-dir<span class="w"> </span>.output<span class="w"> </span>--readiness-policy<span class="w"> </span>readiness-direct.json<span class="w"> </span>--policy<span class="w"> </span>exposure-direct.json<span class="w"> </span>--output-dir<span class="w"> </span>.output/mcp
 </code></pre></div>
-<p>The explicit <code>.output</code> exclusion keeps generated files outside the scan universe.
-Readiness reports three ready functions and one conditional support helper, so its
-exit code is 1. The two explicitly selected public functions are eligible; planning
-and building succeed. <strong>READY does not mean exposed.</strong> <code>pricing.total</code> is packaged
-and called through <code>api._price</code>, but neither helper is public.</p>
+<p><code>--exclude-dir .output</code> keeps generated files out of your project's analysis.
+Only <code>api.quote</code> and <code>inventory.available</code> are public. The generated service
+includes the pricing helper so it can calculate the result, but clients cannot
+call that helper directly.</p>
 <p>Serve the direct REST bundle:</p>
 <div class="highlight"><pre><span></span><code>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.output/runtime
 .output/runtime/bin/python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>.output/rest/requirements.txt
@@ -4228,37 +4668,21 @@ and called through <code>api._price</code>, but neither helper is public.</p>
 </code></pre></div>
 <p>POST <code>{"unit_price":12.5,"quantity":2}</code> to <code>/capabilities/api.quote</code> → <code>25.0</code>.
 POST <code>{"stock":10,"requested":3}</code> to <code>/capabilities/inventory.available</code> → <code>true</code>.
-The separate runtime environment keeps server dependencies out of Apizr's core.
-The MCP bundle exposes the same two names; follow the
+For MCP, the generated server offers the same two operations. Follow the
 <a href="../quickstart/#connect-a-client-and-make-two-calls">MCP client steps</a> with
-<code>.output/mcp</code> as your bundle directory. These servers execute trusted code.
-Use a fresh output directory when regenerating.</p>
+<code>.output/mcp</code> as your server directory.</p>
 <h2 id="understand-the-decisions">Understand the decisions</h2>
-<table>
-<thead>
-<tr>
-<th>Layer</th>
-<th>Responsibility</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Repository Readiness policy</td>
-<td>Assess evidence and compatible execution contracts</td>
-</tr>
-<tr>
-<td>Exposure policy</td>
-<td>Explicitly select public capability IDs, interfaces and allowed modes</td>
-</tr>
-<tr>
-<td>Execution policy</td>
-<td>Configure the one actual worker backend and its required controls</td>
-</tr>
-</tbody>
-</table>
-<p><strong>READY does not mean exposed.</strong> The graph describes relationships; it does not
-publish their targets. Here <code>api.quote</code> calls private support code in <code>pricing.py</code>.
-Only <code>api.quote</code> and <code>inventory.available</code> appear in REST/MCP.</p>
+<p>Apizr checks your code before generating a server. A function marked <code>READY</code>
+can still stay private: your selection determines what clients can call.</p>
+<p>You may see <code>_price</code> marked <code>CONDITIONAL</code> when scanning this example because it
+imports code from another file. In Apizr 0.4.5, the next readiness
+step recognizes that local helper and succeeds. Earlier 0.4.4 reports it
+as conditional. The two selected public functions can be built in both versions.
+See <a href="../user-guide/repository-readiness/">Repository readiness</a> for diagnostic details.</p>
+<p>Running the generated server executes your Python code with your user permissions.
+Use code you trust. This example runs calls in the server process; if you need a
+fresh process or container for each call, see
+<a href="../../architecture/governed-repository-runtime/">execution options</a>.</p>
 <h2 id="choose-your-next-step">Choose your next step</h2>
 <table>
 <thead>
@@ -4269,62 +4693,32 @@ Only <code>api.quote</code> and <code>inventory.available</code> appear in REST/
 </thead>
 <tbody>
 <tr>
-<td>Inventory a repository</td>
-<td><a href="../user-guide/scan/">Scanner and catalog</a></td>
+<td>Try a working service</td>
+<td><a href="../quickstart/">Quickstart</a></td>
 </tr>
 <tr>
-<td>Understand relationships</td>
-<td><a href="../user-guide/graph/">Capability graph</a></td>
+<td>Choose functions from your own project</td>
+<td><a href="../user-guide/exposure/">Selection and private helpers</a></td>
 </tr>
 <tr>
-<td>Inspect one script or notebook</td>
-<td><a href="../user-guide/inspect/">Static inspection</a></td>
-</tr>
-<tr>
-<td>Assess eligibility</td>
-<td><a href="../user-guide/repository-readiness/">Repository readiness</a></td>
-</tr>
-<tr>
-<td>Select and expose a repository</td>
-<td><a href="../user-guide/exposure/">Exposure and policy examples</a></td>
-</tr>
-<tr>
-<td>Use fresh local/OCI workers</td>
-<td><a href="../../architecture/governed-repository-runtime/">Governed repository execution</a></td>
-</tr>
-<tr>
-<td>Keep single-source workflows</td>
+<td>Work with one Python file</td>
 <td><a href="../user-guide/rest/">REST</a> / <a href="../user-guide/mcp/">MCP</a></td>
 </tr>
 <tr>
-<td>Use the historical notebook/script pipeline</td>
-<td><a href="../user-guide/apizr/">Legacy guide</a></td>
+<td>Understand a refused function</td>
+<td><a href="../user-guide/repository-readiness/">Repository readiness</a></td>
+</tr>
+<tr>
+<td>Work with notebooks</td>
+<td><a href="../../modules/notebook-transformr/">Notebook guide</a></td>
 </tr>
 </tbody>
 </table>
-<p>Direct state persists in the transport interpreter. Governed local state resets in
-a fresh process per call; governed OCI state resets in a fresh container per call.
-Local execution provides bounds/environment/cleanup, not filesystem or network
-isolation. OCI uses reviewed container controls and offers an optional
-<a href="../../architecture/subprocess-deny/">strict subprocess-deny profile</a>; it is not a VM. Both require trusted source and dependencies; neither is an automatic
-untrusted-code guarantee. <a href="../../architecture/overview/">Architecture and boundaries</a>.</p>
 <h2 id="compatibility-and-limits">Compatibility and limits</h2>
-<p>Modern single-source <code>inspect</code>, <code>generate rest/mcp</code> and <code>execute</code> commands remain
-supported alongside repository workflows. They are not the legacy pipeline.
-The historical <code>apizr --script</code> / <code>--notebook</code> pipeline is a separate path; there
-is no automatic migration or publication.</p>
-<p>Public capabilities remain top-level functions. Class/method exposure and an
-enterprise control plane are not supported. Repository bundles do not infer
-or install application dependencies or package arbitrary repository data files.
-The <a href="../user-guide/apizr/">legacy pipeline</a> supports explicit requirements and
-resources, configured notebook cell selection, explicit image builds and installed
-pipeline plugins. It inventories classes and methods separately and refuses
-ambiguous selected definitions/overloads. See the
-<a href="../../modules/notebook-transformr/">notebook configuration guide</a>.</p>
-<p>Static readiness/exposure v1 adapters keep their original control vocabulary;
-the strict OCI profile is selected through an <strong>execution policy</strong>, which chooses
-the actual worker backend and its required controls. See
-<a href="../developer-guide/releases/">compatibility notes</a>.</p>
+<p>This workflow exposes top-level Python functions. If your application needs
+extra libraries or data files, prepare those in the server environment yourself.
+Apizr does not deploy the service for you. Use a fresh output directory when
+generating it again.</p>
 
 
 
@@ -4365,7 +4759,7 @@ the actual worker backend and its required controls. See
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../quickstart/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Quickstart">
+          <a href="../data-science/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Data Scientist quickstart">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -4375,20 +4769,20 @@ the actual worker backend and its required controls. See
                 Previous
               </span>
               <div class="md-ellipsis">
-                Quickstart
+                Data Scientist quickstart
               </div>
             </div>
           </a>
         
         
           
-          <a href="../user-guide/scan/" class="md-footer__link md-footer__link--next" aria-label="Next: Inventory a Python project">
+          <a href="../user-guide/experiment-inspection/" class="md-footer__link md-footer__link--next" aria-label="Next: Inspect an experiment">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Inventory a Python project
+                Inspect an experiment
               </div>
             </div>
             <div class="md-footer__button md-icon">

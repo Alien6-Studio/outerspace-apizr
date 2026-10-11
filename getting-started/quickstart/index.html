@@ -18,7 +18,7 @@
         <link rel="prev" href="../onboarding/">
       
       
-        <link rel="next" href="../introduction/">
+        <link rel="next" href="../data-science/">
       
       
         
@@ -72,10 +72,10 @@ function __md_analytics() {
   gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
   gtag('js', new Date());
   gtag('consent', 'update', {analytics_storage: 'granted'});
-  gtag('config', 'G-P3BHZB2FVP', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
+  gtag('config', 'G-MX4P2Y5EG4', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
   var script = document.createElement('script');
   script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P3BHZB2FVP';
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-MX4P2Y5EG4';
   document.head.appendChild(script);
 }
 </script>
@@ -87,7 +87,7 @@ function __md_analytics() {
     
   
   <link rel="describedby" type="application/json" href="../../build-info.json" />
-  <meta name="apizr-source-commit" content="a5c5512a0204d83fc4157ae956cd4aba0a9881f4" />
+  <meta name="apizr-source-commit" content="2d3108f85ac903230827082a73698473759a861c" />
   <meta name="apizr-docs-status" content="stable" />
   
   
@@ -325,15 +325,8 @@ function __md_analytics() {
   
     
     
-      
-  
-  
-  
-  
-    
-    
       <li class="md-tabs__item">
-        <a href="../user-guide/scan/" class="md-tabs__link">
+        <a href="../user-guide/experiment-inspection/" class="md-tabs__link">
           
   
   
@@ -343,9 +336,6 @@ function __md_analytics() {
 
         </a>
       </li>
-    
-  
-
     
   
 
@@ -424,7 +414,7 @@ function __md_analytics() {
     
     
       <li class="md-tabs__item">
-        <a href="../../releases/0.4.4/" class="md-tabs__link">
+        <a href="../../releases/0.4.5/" class="md-tabs__link">
           
   
   
@@ -540,6 +530,8 @@ function __md_analytics() {
   
     
     
+      
+        
       
         
       
@@ -718,6 +710,56 @@ function __md_analytics() {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#inspect-a-training-script-first-045" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect a training script first (0.4.5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-a-trusted-experiment-045" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run a trusted experiment (0.4.5)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Run a trusted experiment (0.4.5)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inspect-run-compare" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect → Run → Compare
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-a-service-from-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Make a service from functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#prepare-an-isolated-workspace" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -827,6 +869,34 @@ function __md_analytics() {
   
   
     <li class="md-nav__item">
+      <a href="../data-science/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Scientist quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../introduction/" class="md-nav__link">
         
   
@@ -863,6 +933,14 @@ function __md_analytics() {
   
     
     
+      
+        
+      
+        
+      
+        
+      
+        
       
         
       
@@ -919,6 +997,118 @@ function __md_analytics() {
   
   
   
+    <li class="md-nav__item">
+      <a href="../user-guide/experiment-inspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inspect an experiment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/experiment-runs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run and inspect local history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/experiment-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compare experiment runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/experiment-exposure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment → serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -957,10 +1147,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
         
           
-          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
             
   
   
@@ -978,8 +1168,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1357,10 +1547,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
         
           
-          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
             
   
   
@@ -1378,8 +1568,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1480,6 +1670,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -1491,10 +1683,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
             
   
   
@@ -1512,8 +1704,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1522,6 +1714,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/plugin-preparation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prepare a temporary plugin profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2029,6 +2249,14 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -2143,6 +2371,118 @@ function __md_analytics() {
     
   
     Repository Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/experiment-evidence-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-inputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment inputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-randomness-environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seeds and environment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics and output artifacts
   
 
     
@@ -3331,6 +3671,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -3373,6 +3715,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.5 candidate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3642,6 +4012,10 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3860,6 +4234,34 @@ function __md_analytics() {
   
   
     <li class="md-nav__item">
+      <a href="../../architecture/code-organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code organization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../contributing/release-branches/" class="md-nav__link">
         
   
@@ -3896,6 +4298,34 @@ function __md_analytics() {
     
   
     Publish a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/mcp-distribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP distribution qualification
   
 
     
@@ -4111,6 +4541,56 @@ function __md_analytics() {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#inspect-a-training-script-first-045" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect a training script first (0.4.5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-a-trusted-experiment-045" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run a trusted experiment (0.4.5)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Run a trusted experiment (0.4.5)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inspect-run-compare" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect → Run → Compare
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-a-service-from-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Make a service from functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#prepare-an-isolated-workspace" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4225,6 +4705,75 @@ function __md_analytics() {
 
 
 <h1 id="make-your-first-mcp-and-rest-calls">Make your first MCP and REST calls</h1>
+<p>Working with a training notebook? Follow the <a href="../data-science/">Data Scientist quickstart</a>
+for Apizr 0.4.5: inspect, record two Runs, compare and serve a prediction.</p>
+<h2 id="inspect-a-training-script-first-045">Inspect a training script first (0.4.5)</h2>
+<p>With Apizr 0.4.5 installed, you can start with experiment
+evidence before building a service. This example requires only Apizr's core:</p>
+<!-- experiment-inspection:quickstart -->
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>example.py<span class="w"> </span><span class="s">&lt;&lt;'PY'</span>
+<span class="s">from sklearn.metrics import roc_auc_score</span>
+
+<span class="s">learning_rate = 0.05</span>
+<span class="s">roc_auc_score(labels, predictions)</span>
+<span class="s">PY</span>
+apizr<span class="w"> </span>experiment<span class="w"> </span>inspect<span class="w"> </span>example.py
+</code></pre></div>
+<p>Parameters shows a static candidate; Metrics shows a recognized call with its value
+unobserved. Undefined names and an absent sklearn installation are fine because
+inspection does not execute the file. See the <a href="../user-guide/experiment-inspection/">experiment guide</a>
+for data fingerprints, notebooks and all eight sections.</p>
+<h2 id="run-a-trusted-experiment-045">Run a trusted experiment (0.4.5)</h2>
+<p><code>inspect</code> never executes your code. <strong><code>run</code> executes trusted code in a fresh
+process with host filesystem, network and subprocess access. It is not a security
+sandbox.</strong> Use a complete workload with its dependencies already installed in the
+same environment as Apizr. This separate example needs only the standard library:</p>
+<!-- experiment-run:quickstart -->
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>local_run.py<span class="w"> </span><span class="s">&lt;&lt;'PY'</span>
+<span class="s">from pathlib import Path</span>
+<span class="s">mean = sum([2, 4, 6]) / 3</span>
+<span class="s">Path("model.json").write_text('{"mean": 4.0}\n')</span>
+<span class="s">PY</span>
+apizr<span class="w"> </span>experiment<span class="w"> </span>inspect<span class="w"> </span>local_run.py
+<span class="nv">RUN</span><span class="o">=</span><span class="k">$(</span>apizr<span class="w"> </span>experiment<span class="w"> </span>run<span class="w"> </span>local_run.py<span class="w"> </span>--metric<span class="w"> </span><span class="nv">mean</span><span class="o">=</span>mean<span class="w"> </span>--output<span class="w"> </span><span class="nv">model</span><span class="o">=</span>model.json<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import json,sys; print(json.load(sys.stdin)["run_digest"])'</span><span class="k">)</span>
+apizr<span class="w"> </span>experiment<span class="w"> </span>list
+apizr<span class="w"> </span>experiment<span class="w"> </span>show<span class="w"> </span><span class="s2">"</span><span class="nv">$RUN</span><span class="s2">"</span>
+</code></pre></div>
+<p>The Run records the actual <code>mean</code> binding and the output's byte identity. The
+local store contains evidence JSON, not a copy of the model. See
+<a href="../user-guide/experiment-runs/">running experiments</a> for notebooks, inputs,
+timeouts, failed Runs and the difference between intent and observation.</p>
+<h3 id="inspect-run-compare">Inspect → Run → Compare</h3>
+<p>“My ROC AUC changed. What else changed between these runs?” This core-only
+example records two trusted local runs, then compares their saved evidence.</p>
+<!-- experiment-diff:quickstart -->
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>compare_train.py<span class="w"> </span><span class="s">&lt;&lt;'PYTHON'</span>
+<span class="s">max_depth = 8</span>
+<span class="s">score = 0.91</span>
+<span class="s">PYTHON</span>
+apizr<span class="w"> </span>experiment<span class="w"> </span>inspect<span class="w"> </span>compare_train.py
+<span class="nv">A</span><span class="o">=</span><span class="k">$(</span>apizr<span class="w"> </span>experiment<span class="w"> </span>run<span class="w"> </span>compare_train.py<span class="w"> </span>--metric<span class="w"> </span><span class="nv">roc_auc</span><span class="o">=</span>score<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import json,sys; print(json.load(sys.stdin)["run_digest"])'</span><span class="k">)</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>compare_train.py<span class="w"> </span><span class="s">&lt;&lt;'PYTHON'</span>
+<span class="s">max_depth = 12</span>
+<span class="s">score = 0.92</span>
+<span class="s">PYTHON</span>
+<span class="nv">B</span><span class="o">=</span><span class="k">$(</span>apizr<span class="w"> </span>experiment<span class="w"> </span>run<span class="w"> </span>compare_train.py<span class="w"> </span>--metric<span class="w"> </span><span class="nv">roc_auc</span><span class="o">=</span>score<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import json,sys; print(json.load(sys.stdin)["run_digest"])'</span><span class="k">)</span>
+apizr<span class="w"> </span>experiment<span class="w"> </span>list
+apizr<span class="w"> </span>experiment<span class="w"> </span>diff<span class="w"> </span><span class="s2">"</span><span class="nv">$A</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span>
+rm<span class="w"> </span>compare_train.py
+apizr<span class="w"> </span>experiment<span class="w"> </span>diff<span class="w"> </span><span class="s2">"</span><span class="nv">$A</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>&gt;<span class="w"> </span>comparison.json
+</code></pre></div>
+<p><code>A → B</code> means evidence added in B or removed from A; numeric deltas are <code>B - A</code>.
+<code>show</code> reads one Run; <code>diff</code> compares two Runs from the same validated local store.
+Comparison still works after deleting the source. Unknown observations remain unknown.
+Apizr identifies recorded differences; it does not prove which one caused the metric change.
+Read the <a href="../user-guide/experiment-comparison/">comparison guide</a> for data, environment and output evidence.</p>
+<p>After reviewing a successful Run, use <code>experiment expose RUN --capability ID
+--interface rest|mcp --output-dir DIR</code> with explicit source authority. Select
+resources with <code>--artifact NAME</code> and dependencies with <code>--dependency DISTRIBUTION</code>;
+the recorded bytes and versions bind the resulting bundle. Repository Readiness
+still decides eligibility. See <a href="../user-guide/experiment-exposure/">Experiment → serving</a>.</p>
+<h2 id="make-a-service-from-functions">Make a service from functions</h2>
 <p>Turn two Python functions into a local service. You will calculate a price
 (<code>12.5 × 2 = 25.0</code>) and check stock (<code>3 ≤ 10</code> gives <code>true</code>).
 Prepare the example once, then choose <strong><a href="#use-rest-instead">REST</a></strong> or
@@ -4240,7 +4789,7 @@ for the example and server dependencies. In the same terminal:</p>
 apizr<span class="w"> </span>--version
 python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>runtime
 </code></pre></div>
-<p><code>apizr --version</code> should report <code>outerspace-apizr 0.4.4</code>. The new <code>runtime/</code>
+<p><code>apizr --version</code> should report <code>outerspace-apizr 0.4.5</code>. The new <code>runtime/</code>
 environment will hold the generated server's dependencies separately from Apizr.</p>
 <h2 id="get-the-example-and-choose-its-public-functions">Get the example and choose its public functions</h2>
 <p>Download the three files from the
@@ -4417,6 +4966,9 @@ calls and error handling with the Python client.</p>
 ones to expose. Review its source and dependencies before running the generated
 service. Follow <a href="../introduction/">The full journey</a> to understand each stage,
 or the <a href="../user-guide/exposure/">exposure guide</a> for repository configuration.</p>
+<p>For Apizr 0.4.5, your selected function can use statically resolvable
+<a href="../user-guide/exposure/#use-private-helpers-from-the-same-repository">private helpers in other modules</a>
+without exposing those helpers.</p>
 
 
 
@@ -4474,13 +5026,13 @@ or the <a href="../user-guide/exposure/">exposure guide</a> for repository confi
         
         
           
-          <a href="../introduction/" class="md-footer__link md-footer__link--next" aria-label="Next: The full journey">
+          <a href="../data-science/" class="md-footer__link md-footer__link--next" aria-label="Next: Data Scientist quickstart">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                The full journey
+                Data Scientist quickstart
               </div>
             </div>
             <div class="md-footer__button md-icon">

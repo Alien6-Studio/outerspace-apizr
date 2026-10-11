@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs.">
+        <meta name="description" content="Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP.">
       
       
         <meta name="author" content="Ludovic FERNANDEZ, Alien6">
@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://apizr.outerspace.sh/contributing/release-branches/">
       
       
-        <link rel="prev" href="../../architecture/extension-packaging-v04/">
+        <link rel="prev" href="../../architecture/code-organization/">
       
       
         <link rel="next" href="../releases/">
@@ -72,10 +72,10 @@ function __md_analytics() {
   gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
   gtag('js', new Date());
   gtag('consent', 'update', {analytics_storage: 'granted'});
-  gtag('config', 'G-P3BHZB2FVP', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
+  gtag('config', 'G-MX4P2Y5EG4', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
   var script = document.createElement('script');
   script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P3BHZB2FVP';
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-MX4P2Y5EG4';
   document.head.appendChild(script);
 }
 </script>
@@ -87,7 +87,7 @@ function __md_analytics() {
     
   
   <link rel="describedby" type="application/json" href="../../build-info.json" />
-  <meta name="apizr-source-commit" content="a5c5512a0204d83fc4157ae956cd4aba0a9881f4" />
+  <meta name="apizr-source-commit" content="2d3108f85ac903230827082a73698473759a861c" />
   <meta name="apizr-docs-status" content="stable" />
   
   
@@ -98,7 +98,7 @@ function __md_analytics() {
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="OuterSpace Apizr" />
   <meta property="og:title" content="Release branch governance · OuterSpace Apizr" />
-  <meta property="og:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta property="og:description" content="Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP." />
   <meta property="og:url" content="https://apizr.outerspace.sh/contributing/release-branches/" />
   <meta property="og:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
   <meta property="og:image:type" content="image/png" />
@@ -107,7 +107,7 @@ function __md_analytics() {
   <meta property="og:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Release branch governance · OuterSpace Apizr" />
-  <meta name="twitter:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta name="twitter:description" content="Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP." />
   <meta name="twitter:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
   <meta name="twitter:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
   
@@ -323,15 +323,8 @@ function __md_analytics() {
   
     
     
-      
-  
-  
-  
-  
-    
-    
       <li class="md-tabs__item">
-        <a href="../../getting-started/user-guide/scan/" class="md-tabs__link">
+        <a href="../../getting-started/user-guide/experiment-inspection/" class="md-tabs__link">
           
   
   
@@ -341,9 +334,6 @@ function __md_analytics() {
 
         </a>
       </li>
-    
-  
-
     
   
 
@@ -422,7 +412,7 @@ function __md_analytics() {
     
     
       <li class="md-tabs__item">
-        <a href="../../releases/0.4.4/" class="md-tabs__link">
+        <a href="../../releases/0.4.5/" class="md-tabs__link">
           
   
   
@@ -538,6 +528,8 @@ function __md_analytics() {
   
     
     
+      
+        
       
         
       
@@ -681,6 +673,34 @@ function __md_analytics() {
   
   
     <li class="md-nav__item">
+      <a href="../../getting-started/data-science/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Scientist quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../getting-started/introduction/" class="md-nav__link">
         
   
@@ -717,6 +737,14 @@ function __md_analytics() {
   
     
     
+      
+        
+      
+        
+      
+        
+      
+        
       
         
       
@@ -773,6 +801,118 @@ function __md_analytics() {
   
   
   
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-inspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inspect an experiment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-runs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run and inspect local history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compare experiment runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-exposure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment → serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -811,10 +951,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
         
           
-          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
             
   
   
@@ -832,8 +972,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1211,10 +1351,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
         
           
-          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
             
   
   
@@ -1232,8 +1372,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1334,6 +1474,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -1345,10 +1487,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
             
   
   
@@ -1366,8 +1508,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1376,6 +1518,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/plugin-preparation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prepare a temporary plugin profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1883,6 +2053,14 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1997,6 +2175,118 @@ function __md_analytics() {
     
   
     Repository Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/experiment-evidence-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-inputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment inputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-randomness-environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seeds and environment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics and output artifacts
   
 
     
@@ -3185,6 +3475,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -3227,6 +3519,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.5 candidate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3498,6 +3818,10 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3716,6 +4040,34 @@ function __md_analytics() {
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/code-organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code organization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -3857,6 +4209,34 @@ function __md_analytics() {
     
   
     Publish a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-distribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP distribution qualification
   
 
     
@@ -4147,34 +4527,18 @@ function __md_analytics() {
 
 
 <h1 id="release-branches-and-qualification">Release branches and qualification</h1>
-<p>The current stable product is <strong>0.4.3</strong>, released from
-<code>cfaa5108c37ab9324297bbe5b38d90d537ea57ad</code> and retained by immutable tag <code>v0.4.3</code>.
-<a href="../../releases/0.4.3/#validation">Publication and verification</a> are complete. Post-release integration targets
-<code>master</code>; its integration commit is distinct from the immutable release source.
-All new product changes and documentation branches target protected <code>master</code>.
-The completed <code>release/0.4.2</code> and <code>release/0.4.3</code> branches are retired after their
-published state and the post-release Attest receipt fix from PR #241 are
-integrated into <code>master</code>. Only their branch references and dedicated rulesets
-24138072 and 24380834 are removed. The <code>master</code> and release-tag protections,
-required checks, squash-only merging and deployment restrictions stay in place.
-<code>gh-pages</code> remains the documentation deployment branch.</p>
-<p>The checked-in release ruleset payloads are historical audit records, not active
-configuration. Published tags, original source commits, archives and signed
-provenance retain their existing identities. Verification of published evidence
-must use its original source ref, even after that branch is retired.</p>
-<p>CI, Security and Documentation validate <code>master</code> pushes and all pull requests.
-Allowlisted web-only changes use the <a href="../releases/#web-only-changes">lighter documentation path</a>
-while preserving required check names and PR protections. They produce no product
-build or provenance; mixed changes and uncertain comparisons retain full qualification.
-Only protected <code>master</code> pushes can sign new build provenance. For <strong>0.4.4</strong>,
-the reviewed <a href="../releases/#finalizing-044">publication policy</a> selects the exact
-final PR #247 squash-merge SHA and a successful full push qualification on that
-source. Its verified assets are distinct from the frozen candidate; PRs and
-other versions remain previews. This changes no branch/tag protection and
-creates no release branch. Historical source/ref policies and published 0.4.3
-artifacts retain their identities; completed publications must not be replayed.
-The MCP descriptor prepares 0.4.4; its separate publication requires the matching
-public packages and verified GitHub release, plus explicit tag/source inputs.</p>
+<p>The current public packages are <strong>0.4.5</strong>, released from protected <code>master</code> at
+<code>da74e6de5800eab9c275e42c5d4c24a59ac4fcbe</code> and retained by signed immutable tag
+<code>v0.4.5</code>. The <a href="../../releases/0.4.5/">release record</a> records verified GitHub,
+PyPI and Official Registry publication. Automatic third-party indexing is informational.
+The <code>0.4.5</code> branch remains historical development evidence. Postpublication
+changes use protected PRs into <code>master</code>; they cannot move the release tag.
+No future release development is authorized by this record.</p>
+<p>CI, Security and Documentation validate master pushes and pull requests. The
+explicit release policy admits 0.4.5 only from protected master with complete
+coordinated push qualification, signed provenance and original assets. Later
+builds do not replace those archives. Documentation deploys to <code>gh-pages</code> only
+through the normal workflow, without force updates or direct source pushes.</p>
 <h2 id="historical-release-line-governance">Historical release-line governance</h2>
 <p>The remaining sections record earlier release-line settings and decisions.
 They are historical, not instructions for current development or authorization
@@ -4391,7 +4755,7 @@ release tag or publication is authorized by this document.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../architecture/extension-packaging-v04/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Extension packaging ADR">
+          <a href="../../architecture/code-organization/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Code organization">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -4401,7 +4765,7 @@ release tag or publication is authorized by this document.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Extension packaging ADR
+                Code organization
               </div>
             </div>
           </a>

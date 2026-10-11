@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs.">
+        <meta name="description" content="Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP.">
       
       
         <meta name="author" content="Ludovic FERNANDEZ, Alien6">
@@ -18,7 +18,7 @@
         <link rel="prev" href="../repository-scanner-v1/">
       
       
-        <link rel="next" href="../exposure-plan-v1/">
+        <link rel="next" href="../experiment-evidence-v1/">
       
       
         
@@ -72,10 +72,10 @@ function __md_analytics() {
   gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
   gtag('js', new Date());
   gtag('consent', 'update', {analytics_storage: 'granted'});
-  gtag('config', 'G-P3BHZB2FVP', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
+  gtag('config', 'G-MX4P2Y5EG4', {allow_google_signals: false, allow_ad_personalization_signals: false, page_location: location.origin + location.pathname});
   var script = document.createElement('script');
   script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P3BHZB2FVP';
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-MX4P2Y5EG4';
   document.head.appendChild(script);
 }
 </script>
@@ -87,7 +87,7 @@ function __md_analytics() {
     
   
   <link rel="describedby" type="application/json" href="../../build-info.json" />
-  <meta name="apizr-source-commit" content="a5c5512a0204d83fc4157ae956cd4aba0a9881f4" />
+  <meta name="apizr-source-commit" content="2d3108f85ac903230827082a73698473759a861c" />
   <meta name="apizr-docs-status" content="stable" />
   
   
@@ -98,7 +98,7 @@ function __md_analytics() {
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="OuterSpace Apizr" />
   <meta property="og:title" content="Repository Readiness · OuterSpace Apizr" />
-  <meta property="og:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta property="og:description" content="Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP." />
   <meta property="og:url" content="https://apizr.outerspace.sh/architecture/repository-readiness-v1/" />
   <meta property="og:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
   <meta property="og:image:type" content="image/png" />
@@ -107,7 +107,7 @@ function __md_analytics() {
   <meta property="og:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Repository Readiness · OuterSpace Apizr" />
-  <meta name="twitter:description" content="Connect selected Python functions to AI agents through MCP or expose them as REST APIs." />
+  <meta name="twitter:description" content="Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP." />
   <meta name="twitter:image" content="https://apizr.outerspace.sh/assets/images/social-card.png" />
   <meta name="twitter:image:alt" content="OuterSpace Apizr — Python code to REST and MCP. Open-source capability compiler." />
   
@@ -323,15 +323,8 @@ function __md_analytics() {
   
     
     
-      
-  
-  
-  
-  
-    
-    
       <li class="md-tabs__item">
-        <a href="../../getting-started/user-guide/scan/" class="md-tabs__link">
+        <a href="../../getting-started/user-guide/experiment-inspection/" class="md-tabs__link">
           
   
   
@@ -341,9 +334,6 @@ function __md_analytics() {
 
         </a>
       </li>
-    
-  
-
     
   
 
@@ -424,7 +414,7 @@ function __md_analytics() {
     
     
       <li class="md-tabs__item">
-        <a href="../../releases/0.4.4/" class="md-tabs__link">
+        <a href="../../releases/0.4.5/" class="md-tabs__link">
           
   
   
@@ -538,6 +528,8 @@ function __md_analytics() {
   
     
     
+      
+        
       
         
       
@@ -681,6 +673,34 @@ function __md_analytics() {
   
   
     <li class="md-nav__item">
+      <a href="../../getting-started/data-science/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Scientist quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../getting-started/introduction/" class="md-nav__link">
         
   
@@ -717,6 +737,14 @@ function __md_analytics() {
   
     
     
+      
+        
+      
+        
+      
+        
+      
+        
       
         
       
@@ -773,6 +801,118 @@ function __md_analytics() {
   
   
   
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-inspection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inspect an experiment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-runs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run and inspect local history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compare experiment runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/user-guide/experiment-exposure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment → serving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -811,10 +951,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
         
           
-          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
             
   
   
@@ -832,8 +972,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1211,10 +1351,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
         
           
-          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
             
   
   
@@ -1232,8 +1372,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1334,6 +1474,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -1345,10 +1487,10 @@ function __md_analytics() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
             
   
   
@@ -1366,8 +1508,8 @@ function __md_analytics() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1376,6 +1518,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/plugin-preparation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prepare a temporary plugin profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1885,6 +2055,14 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -2087,6 +2265,17 @@ function __md_analytics() {
 </li>
       
         <li class="md-nav__item">
+  <a href="#resolved-local-import-refinement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolved local import refinement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#execution-compatibility-additive-v1-completion" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2136,10 +2325,133 @@ function __md_analytics() {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#explicit-external-import-providers-045-candidate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicit external import providers (0.4.5 candidate)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiment-evidence-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-inputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiment inputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-randomness-environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seeds and environment evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/experiment-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics and output artifacts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -3320,6 +3632,8 @@ function __md_analytics() {
       
         
       
+        
+      
     
     
     
@@ -3362,6 +3676,34 @@ function __md_analytics() {
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/0.4.5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.4.5 candidate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3631,6 +3973,10 @@ function __md_analytics() {
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3849,6 +4195,34 @@ function __md_analytics() {
   
   
     <li class="md-nav__item">
+      <a href="../code-organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code organization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../contributing/release-branches/" class="md-nav__link">
         
   
@@ -3885,6 +4259,34 @@ function __md_analytics() {
     
   
     Publish a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/mcp-distribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP distribution qualification
   
 
     
@@ -4133,6 +4535,17 @@ function __md_analytics() {
 </li>
       
         <li class="md-nav__item">
+  <a href="#resolved-local-import-refinement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolved local import refinement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#execution-compatibility-additive-v1-completion" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4176,6 +4589,17 @@ function __md_analytics() {
     <span class="md-ellipsis">
       
         Repository-first orchestration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explicit-external-import-providers-045-candidate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicit external import providers (0.4.5 candidate)
       
     </span>
   </a>
@@ -4254,11 +4678,11 @@ assess: their Catalog diagnostics remain in the report.</p>
 <tbody>
 <tr>
 <td><code>ready</code></td>
-<td>Locally interface-eligible; every supplied requirement is satisfied by static evidence and at least one declared mode supports all required controls.</td>
+<td>Repository interface-eligible, including narrowly proven local imports; every supplied requirement is satisfied by static evidence and at least one declared mode supports all required controls.</td>
 </tr>
 <tr>
 <td><code>conditional</code></td>
-<td>Required evidence is incomplete, or local Readiness is conditional. Unknown information is not a hard failure.</td>
+<td>Required evidence is incomplete, or an unresolved local blocker remains. Unknown information is not a hard failure.</td>
 </tr>
 <tr>
 <td><code>unsupported</code></td>
@@ -4287,11 +4711,11 @@ Graph diagnostics/completeness remain separately visible, even for empty reports
 <span class="w">  </span><span class="nt">"require_interface"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>Local interface eligibility <strong>always</strong> gates <code>ready</code>. <code>require_interface: true</code>
-additionally makes present ineligibility a hard policy failure, so an upstream
-conditional interface yields repository <code>unsupported</code>. Its default is false to
-preserve the distinction between incomplete evidence and proven local lack of
-support. Unknown options, effect/control names and coercible boolean strings are
+<p>Repository interface eligibility gates <code>ready</code>. <code>require_interface: true</code>
+additionally makes remaining ineligibility a hard policy failure. A proven local
+import can satisfy that requirement while its retained local report remains
+conditional. The default is false to preserve the distinction between incomplete
+evidence and proven lack of support. Unknown options, effect/control names and coercible boolean strings are
 rejected; set-like policy lists are deduplicated and sorted.</p>
 <p>Effects come only from Capability IR embedded in source Inspections. Every effect
 retains its <code>value</code> and <code>evidence</code>: <code>filesystem_read</code>, <code>filesystem_write</code>, <code>network</code>,
@@ -4360,10 +4784,47 @@ external module imports. <code>module_imports</code> separately preserves module
 as context; these are not rewritten as capability edges. <code>imports</code> retains relevant
 Graph import declarations. <code>dependencies</code> snapshots the IDs, local Readiness and IR
 effects of the direct capability targets in those two groups.</p>
-<p>These snapshots are context only. A call from A to B does not cause A to inherit
-B's effects or readiness. A call from B to C does not add C to A's canonical direct
+<p>A call from A to B does not cause A to inherit B's effects or overall readiness.
+For a local import refinement, the dependency snapshots also establish its binding
+and execution evidence; its private input/output eligibility is not propagated. A call from B to C does not add C to A's canonical direct
 relationships. Graph v1 edges describe possible direct static calls, not execution
 proofs. There is no transitive effect or state propagation in v1.</p>
+<h2 id="resolved-local-import-refinement">Resolved local import refinement</h2>
+<p>The 0.4.5 candidate selected exposure proof consumes this complete audit; it does
+not filter or rewrite its assessments, diagnostics or aggregate completeness.
+It reuses the exact local-import predicate and shared module-initialization facts
+with validated execution support from the required closure. Source-local Readiness
+remains conservative. See <a href="../exposure-plan-v1/#complete-evidence-and-fail-closed-behavior">selected evidence</a>
+for the separate eligibility decision and unchanged full-repository identity.</p>
+<p>Local Readiness remains source-only and retains <code>APIZR-READY-015</code>, its original
+conditional state and <code>can_generate_interface: false</code>. Repository Readiness may
+nevertheless become <code>ready</code> when every blocking local reason is discharged by
+bound evidence. Only execution-dimension <code>APIZR-READY-015</code> reasons can be discharged.</p>
+<p>The shared <code>repository_readiness.eligibility</code> decision matches source path, import
+line, source module/capability identity, unconditional declaration, each imported
+name, target and exact relationship location. Every name on that import line must
+have a unique local module/capability target and its matching import relationship.
+Relevant Graph diagnostics or unresolved/star/ambiguous names prevent refinement.
+A complete Graph alone is insufficient; external targets never satisfy this rule.</p>
+<p>Required private capabilities must have stable IR bindings and ready execution
+evidence. Their public input/output eligibility is irrelevant. Imported modules
+and present package initializers must have sufficient retained initialization
+facts: module-initialization, dynamic-import and dependency reasons remain blockers.
+An empty initializer has exact size/digest-bound evidence. Nonempty modules without
+callable assessments lack initialization evidence in Readiness v1 and keep the
+relationship dimension <code>partial</code>; no source is reparsed to fill the gap. Imports
+without a retained capability dependency likewise remain conditional.</p>
+<p>The report shape and all v1 schemas are unchanged. Assessment state is derived
+from the remaining local reasons plus repository policy reasons; the original
+local document is neither copied with altered fields nor rewritten. <code>validate_report</code>
+recomputes this conclusion against the bound Catalog/Graph. Affected canonical
+reports and downstream digests can change, including for unselected declarations
+in the same report. Unaffected reports and source-local evidence stay identical.</p>
+<p>This does not resolve decorators, rebinding, namespace uncertainty, dynamic imports,
+input types or unrelated execution blockers. No effects or transitive readiness
+states are propagated, and no dependency closure is computed. Import is distinct
+from call, static resolution from runtime availability, dependency from exposure,
+and <code>ready</code> from safe execution.</p>
 <h2 id="execution-compatibility-additive-v1-completion">Execution compatibility: additive v1 completion</h2>
 <p>Readiness defines its own transport-neutral <code>Control</code> vocabulary; it does not
 extend the control enum or alter any execution policy, plan, backend, or generated
@@ -4561,6 +5022,32 @@ artifacts with repo-first bytes, and check ordering/location/hash-seed invarianc
 An isolated audit-hook test forbids source execution, source writes, subprocesses,
 network access, Git/package-install commands and Docker/transport imports; hostile
 top-level statements, decorators and defaults remain inert.</p>
+<h2 id="explicit-external-import-providers-045-candidate">Explicit external import providers (0.4.5 candidate)</h2>
+<p>The ordinary scikit-learn journey in #267 exposed a missing boundary: a Run's
+observed distribution version does not identify its import namespace. The
+additive <code>dependency_wheels</code> policy evidence records exact distribution pins,
+wheel filenames, SHA-256 identities and module names derived from admitted wheel
+members. It does not infer <code>scikit-learn → sklearn</code> from names or import packages.
+Empty evidence is omitted, preserving existing canonical policy/report bytes.
+The two Readiness schemas include the additional optional evidence; experiment
+Plan, Run, comparison and exposure schemas are unchanged.</p>
+<p>Selected scope consumes only unconditional, location-matched external import
+edges whose exact module is provided. Local missing, ambiguous, rebound, star or
+dynamic dependencies retain their existing refusals. Provider/module collisions
+are refused. A provider-backed selection remains <code>CONDITIONAL</code>, requiring explicit
+<code>--allow-conditional</code>; the interface's JSON types must still be supported.</p>
+<p>Before rendering, the ordinary repository builder recomputes each provider from
+its retained wheel bytes and checks the exact policy evidence and application
+pins. Missing bytes, a changed digest or fabricated module inventory cannot
+produce a bundle. Wheels are qualification/deployment inputs, not vendored SDKs
+inside Apizr or generated source bundles. Their identities remain in the bound
+Readiness report and bundle manifest.</p>
+<p>This evidence proves wheel membership and correspondence to selected versions.
+It does not establish external initialization safety, symbol/API compatibility,
+native-library behavior or a successful future invocation. A Run's package
+version alone does not attest the bytes installed during that Run; the #267
+qualification additionally installs and replays from the retained wheelhouses.
+No network lookup, environment import or framework allowlist grants eligibility.</p>
 
 
 
@@ -4615,13 +5102,13 @@ top-level statements, decorators and defaults remain inert.</p>
         
         
           
-          <a href="../exposure-plan-v1/" class="md-footer__link md-footer__link--next" aria-label="Next: Exposure Plan">
+          <a href="../experiment-evidence-v1/" class="md-footer__link md-footer__link--next" aria-label="Next: Experiment evidence">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Exposure Plan
+                Experiment evidence
               </div>
             </div>
             <div class="md-footer__button md-icon">
