@@ -10,8 +10,14 @@ from .types import DeclaredType, Evidence, Expression, ValueModel, logical_modul
 
 
 class Digest(ValueModel):
-    algorithm: Literal["sha256"] = "sha256"
-    value: str = Field(pattern=r"^[0-9a-f]{64}$")
+    algorithm: Literal["sha256"] = Field(
+        default="sha256",
+        description="Digest algorithm identifier, currently fixed to SHA-256 (sha256).",
+    )
+    value: str = Field(
+        pattern=r"^[0-9a-f]{64}$",
+        description="The 64-character lowercase hexadecimal SHA-256 digest value, without an algorithm prefix.",
+    )
 
     @classmethod
     def of_bytes(cls, content: bytes) -> Self:

@@ -15,8 +15,6 @@ from batch_inputs import request as batch_request
 from apizr.analysis_contracts import LocalTarget
 from apizr.cli import main
 from apizr.exposure.policy import ExposurePolicy
-from apizr.local_plugins import activation, store
-from apizr.local_plugins.models import Installation, Inventory
 from apizr.onboarding import (
     InitError,
     diagnostics,
@@ -26,8 +24,10 @@ from apizr.onboarding import (
     plan_initialization,
 )
 from apizr.operator_policy import OperatorPolicy, PluginIdentity, decide_analysis
-from apizr.project import load_project
+from apizr.plugins.local import activation, store
+from apizr.plugins.local.models import Installation, Inventory
 from apizr.repository_readiness.policy import RepositoryReadinessPolicy
+from apizr.workspace.project import load_project
 
 
 def snapshot(root):
@@ -238,11 +238,12 @@ def test_nested_gitignore(initialized):
             ".apizr/operator.json",
             ".apizr/policies/readiness.json",
             ".apizr/policies/exposure.json",
+            ".apizr/experiments/v1/runs/example.json",
         ],
         capture_output=True,
         text=True,
     )
-    assert p.stdout == ".apizr/operator.json\n"
+    assert p.stdout == ".apizr/operator.json\n.apizr/experiments/v1/runs/example.json\n"
     assert not (initialized / ".gitignore").exists()
 
 

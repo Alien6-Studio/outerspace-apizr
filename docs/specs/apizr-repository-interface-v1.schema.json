@@ -130,10 +130,12 @@
         "algorithm": {
           "const": "sha256",
           "default": "sha256",
+          "description": "Digest algorithm identifier, currently fixed to SHA-256 (sha256).",
           "title": "Algorithm",
           "type": "string"
         },
         "value": {
+          "description": "The 64-character lowercase hexadecimal SHA-256 digest value, without an algorithm prefix.",
           "pattern": "^[0-9a-f]{64}$",
           "title": "Value",
           "type": "string"
@@ -249,7 +251,8 @@
             "tuple",
             "set",
             "union",
-            "literal"
+            "literal",
+            "object"
           ],
           "title": "Kind",
           "type": "string"
@@ -290,12 +293,43 @@
           "default": false,
           "title": "Variadic",
           "type": "boolean"
+        },
+        "fields": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ObjectField"
+          },
+          "title": "Fields",
+          "type": "array"
         }
       },
       "required": [
         "kind"
       ],
       "title": "TypeSpec",
+      "type": "object"
+    },
+    "ObjectField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "type": {
+          "$ref": "#/$defs/TypeSpec"
+        }
+      },
+      "required": [
+        "name",
+        "required",
+        "type"
+      ],
+      "title": "ObjectField",
       "type": "object"
     }
   },

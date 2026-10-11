@@ -14,10 +14,10 @@ from delivery_batch.test_batch import Managed
 from mcp import Client
 
 from apizr.delivery_batch import BatchResult, operations
-from apizr.local_plugins import PluginError, activation
-from apizr.local_plugins.models import Installation
 from apizr.mcp_session import DeliverySession, McpSession
 from apizr.operator_policy import OperatorPolicy, PluginIdentity
+from apizr.plugins.local import PluginError, activation
+from apizr.plugins.local.models import Installation
 
 
 @pytest.mark.parametrize(

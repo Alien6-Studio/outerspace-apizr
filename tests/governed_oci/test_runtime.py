@@ -258,7 +258,7 @@ def test_semantically_resealed_invalid_bundle_refused(no_docker, tmp_path, fault
 def test_notebook_plan_cache_and_mcp_cli(no_docker, tmp_path, monkeypatch):
     import sys
 
-    from apizr.generate_cli import main
+    from apizr.cli.commands.generate import main
 
     from .helpers import IMAGE
 

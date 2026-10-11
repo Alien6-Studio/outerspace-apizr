@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from apizr.execute_cli import main
+from apizr.cli.commands.execute import main
 from apizr.oci import entrypoint
 from apizr.oci.model import ContainerResult
 

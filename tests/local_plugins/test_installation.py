@@ -12,7 +12,7 @@ import pytest
 
 from apizr.cli import main
 from apizr.extension_runtime import Limits, invoke_extension
-from apizr.local_plugins import (
+from apizr.plugins.local import (
     PluginError,
     backend,
     install_extension,
@@ -366,7 +366,7 @@ def test_cli_failures_and_interruption(wheel_factory, tmp_path, capsys, monkeypa
         "--plugins-dir",
         str(tmp_path / "plugins"),
     ]
-    import apizr.plugins_cli as cli
+    import apizr.cli.commands.plugins as cli
 
     monkeypatch.setattr(
         cli,

@@ -5,36 +5,36 @@ from typing import Literal
 from apizr_oci.model import Docker, Model
 from pydantic import Field, field_validator
 
-from apizr.delivery_results import (
-    AdmissionResult as AdmissionResult,
-)
-from apizr.delivery_results import (
-    DeliveryResult as DeliveryResult,
-)
-from apizr.delivery_results import (
-    PublishResult as PublishResult,
-)
-from apizr.delivery_results import (
-    VerifiedAttestTool as VerifiedAttestTool,
-)
-from apizr.publication_contracts import (
+from apizr.contracts.publication import (
     AdmitRequest as AdmitRequest,
 )
-from apizr.publication_contracts import (
+from apizr.contracts.publication import (
     AttestRequest as AttestRequest,
 )
-from apizr.publication_contracts import (
+from apizr.contracts.publication import (
     Common as Common,
 )
-from apizr.publication_contracts import (
+from apizr.contracts.publication import (
     PublishRequest as PublishRequest,
 )
-from apizr.publication_contracts import (
+from apizr.contracts.publication import (
     Tool as Tool,
 )
-from apizr.publication_contracts import Transport, digest_reference
-from apizr.publication_contracts import (
+from apizr.contracts.publication import Transport, digest_reference
+from apizr.contracts.publication import (
     VerifyRequest as VerifyRequest,
+)
+from apizr.contracts.results import (
+    AdmissionResult as AdmissionResult,
+)
+from apizr.contracts.results import (
+    DeliveryResult as DeliveryResult,
+)
+from apizr.contracts.results import (
+    PublishResult as PublishResult,
+)
+from apizr.contracts.results import (
+    VerifiedAttestTool as VerifiedAttestTool,
 )
 
 

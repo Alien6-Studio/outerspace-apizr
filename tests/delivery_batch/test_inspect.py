@@ -161,7 +161,7 @@ def test_cancellation_waiting_for_batch_lock_preserves_confirmed_evidence(
 ):
     from concurrent.futures import ThreadPoolExecutor
 
-    from apizr.local_plugins.store import installation_lock
+    from apizr.plugins.local.store import installation_lock
 
     batch = request(tmp_path)
     monkeypatch.setattr(operations, "run_extension", Managed())

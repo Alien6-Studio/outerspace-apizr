@@ -2,7 +2,7 @@ site_name: OuterSpace Apizr
 site_url: https://apizr.outerspace.sh
 site_author: Ludovic FERNANDEZ, Alien6
 site_description: >-
-  Connect selected Python functions to AI agents through MCP or expose them as REST APIs.
+  Understand and compare Python experiments, then expose selected capabilities through REST APIs or MCP.
 
 hooks:
   - scripts/docs_build.py
@@ -66,7 +66,7 @@ extra:
   generator: false
   analytics:
     provider: google
-    property: G-P3BHZB2FVP
+    property: G-MX4P2Y5EG4
   consent:
     title: Cookie consent
     description: >-
@@ -102,8 +102,13 @@ nav:
       - Install Apizr: getting-started/install.md
       - Initialize and diagnose: getting-started/onboarding.md
       - Quickstart: getting-started/quickstart.md
+      - Data Scientist quickstart: getting-started/data-science.md
       - The full journey: getting-started/introduction.md
   - Guides:
+      - Inspect an experiment: getting-started/user-guide/experiment-inspection.md
+      - Run and inspect local history: getting-started/user-guide/experiment-runs.md
+      - Compare experiment runs: getting-started/user-guide/experiment-comparison.md
+      - Experiment → serving: getting-started/user-guide/experiment-exposure.md
       - Compilation and interfaces:
           - Inventory a Python project: getting-started/user-guide/scan.md
           - Inspect capability relationships: getting-started/user-guide/graph.md
@@ -121,6 +126,7 @@ nav:
           - Configure a project: getting-started/user-guide/project.md
           - Declarations and plugin locks: reference/project-plugin-locks.md
       - Plugins:
+          - Prepare a temporary plugin profile: reference/plugin-preparation.md
           - Choose a catalog profile: reference/plugin-catalog.md
           - Install, run, update and uninstall: reference/local-extensions.md
           - Apizr analysis MCP server: reference/apizr-mcp-server.md
@@ -140,6 +146,10 @@ nav:
       - Capability Compiler overview: architecture/overview.md
       - Repository Scanner and Catalog: architecture/repository-scanner-v1.md
       - Repository Readiness: architecture/repository-readiness-v1.md
+      - Experiment evidence: architecture/experiment-evidence-v1.md
+      - Experiment inputs: guides/experiment-inputs.md
+      - Seeds and environment evidence: guides/experiment-randomness-environment.md
+      - Metrics and output artifacts: guides/experiment-results.md
       - Exposure Plan: architecture/exposure-plan-v1.md
       - Repository Bundle: architecture/repository-bundle-v1.md
       - Governed repository execution: architecture/governed-repository-runtime.md
@@ -176,6 +186,7 @@ nav:
       - Pipeline plugins: getting-started/developer-guide/plugins.md
       - Behavior contract: architecture/legacy-behavior-contract.md
   - Releases:
+      - 0.4.5 candidate: releases/0.4.5.md
       - 0.4.4: releases/0.4.4.md
       - 0.4.3: releases/0.4.3.md
       - 0.4.2: releases/0.4.2.md
@@ -191,8 +202,10 @@ nav:
       - Package an extension: reference/plugin-authors.md
       - Publication and documentation cutover: contributing/publish-0.4.md
       - Extension packaging ADR: architecture/extension-packaging-v04.md
+      - Code organization: architecture/code-organization.md
       - Release branch governance: contributing/release-branches.md
       - Publish a release: contributing/releases.md
+      - MCP distribution qualification: contributing/mcp-distribution.md
       - Verify builds and releases: contributing/verification.md
       - Managed Attest identity: contributing/attest.md
       - Dependency maintenance: contributing/dependencies.md

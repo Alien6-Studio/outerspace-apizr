@@ -17,7 +17,7 @@ from urllib.parse import urlsplit
 import pytest
 
 from apizr.cli import main
-from apizr.local_plugins import (
+from apizr.plugins.local import (
     DownloadCancelled,
     DownloadLimits,
     PluginError,
@@ -30,7 +30,7 @@ from apizr.local_plugins import (
     list_extensions,
     run_extension,
 )
-from apizr.local_plugins import wheel as wheel_module
+from apizr.plugins.local import wheel as wheel_module
 
 SPEC = importlib.util.spec_from_file_location(
     "https_fixture", Path(__file__).resolve().parents[2] / "scripts/https_fixture.py"
@@ -489,7 +489,7 @@ def test_worker_transfer_contract(
     """Exercise the actual stdlib worker contract separately from its supervisor."""
     import json
 
-    from apizr.local_plugins import _download_worker
+    from apizr.plugins.local import _download_worker
 
     url, wheel, digest, _, _, _ = endpoint
     destination = tmp_path / "transfer.whl"
@@ -519,7 +519,7 @@ def test_worker_transfer_contract(
 def test_worker_rejects_untrusted_tls(endpoint, tmp_path, monkeypatch):
     import json
 
-    from apizr.local_plugins import _download_worker
+    from apizr.plugins.local import _download_worker
 
     url, wheel, digest, _, _, _ = endpoint
     control = tmp_path / "control.json"
@@ -623,7 +623,7 @@ def test_tls_handshake_has_connect_deadline(tls, scratch, tmp_path):
 def test_total_deadline_bounds_blocked_name_resolution(
     endpoint, tls, scratch, tmp_path, monkeypatch
 ):
-    from apizr.local_plugins import _download_worker
+    from apizr.plugins.local import _download_worker
 
     url, wheel, digest, requests, _, _ = endpoint
     wrapper = tmp_path / "blocked_dns.py"

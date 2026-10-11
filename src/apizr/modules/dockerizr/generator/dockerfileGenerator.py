@@ -6,7 +6,7 @@ from jinja2 import Environment, StrictUndefined
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
-from apizr.output import write_new_text
+from apizr.interfaces.files import write_new_text
 
 
 class DockerfileGenerator:

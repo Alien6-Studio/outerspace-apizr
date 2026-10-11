@@ -3,8 +3,8 @@ from os import path
 
 from jinja2 import Template
 
+from apizr.interfaces.files import output_path, write_new_text
 from apizr.modules.dockerizr.configuration import DockerizrConfiguration
-from apizr.output import output_path, write_new_text
 
 from .errorLogger import LogError
 

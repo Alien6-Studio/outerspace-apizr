@@ -15,13 +15,24 @@ from apizr.readiness.model import Code, Dimension, Reason, State
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_ir_schema_golden_and_canonical_digest_are_pinned_to_merged_v1():
+def test_ir_schema_documentation_and_canonical_digest_are_pinned_to_v1():
     expected = {
-        "docs/specs/apizr-capability-v1.schema.json": "ac531780dba1a63a187d62cd7e65fd809dfdc2e43bdfa1b6161b80f73d1839e7",
+        "docs/specs/apizr-capability-v1.schema.json": "2f0be4b7dd3183e40cc6e53967c711e25d354fa49cd35ebdc363bfde4e17f0b0",
         "tests/fixtures/capability_ir/v1/basic.json": "f16af83a24e631823c364beeea15500672355f5b1ddfdd89ec0536bb4facb28c",
     }
     for path, digest in expected.items():
         assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == digest
+    schema = json.loads(
+        (ROOT / "docs/specs/apizr-capability-v1.schema.json").read_bytes()
+    )
+    for field in ("algorithm", "value"):
+        assert schema["$defs"]["Digest"]["properties"][field].pop("description")
+    # #268 adds only these two annotations to the original v1 schema. Keep its
+    # prior complete shape pinned too, independently of the reviewed new bytes.
+    prior = (json.dumps(schema, indent=2, sort_keys=True) + "\n").encode()
+    assert hashlib.sha256(prior).hexdigest() == (
+        "ac531780dba1a63a187d62cd7e65fd809dfdc2e43bdfa1b6161b80f73d1839e7"
+    )
     source = (ROOT / "tests/fixtures/capability_ir/v1/basic.py").read_bytes()
     ir = inspect_source(source, module_name="pricing").capability_ir
     golden = CapabilityDocument.model_validate_json(

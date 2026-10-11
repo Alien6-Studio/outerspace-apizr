@@ -7,8 +7,8 @@ from pathlib import Path
 
 from packaging.requirements import Requirement
 
-from apizr.output import write_new_text
-from apizr.runtime import DEFAULT_PYTHON
+from apizr.environment.python_target import DEFAULT_PYTHON
+from apizr.interfaces.files import write_new_text
 
 ALIASES = {
     "sklearn": "scikit-learn",

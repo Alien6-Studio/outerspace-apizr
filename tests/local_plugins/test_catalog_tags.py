@@ -2,8 +2,8 @@
 
 import pytest
 
-from apizr.plugin_lock.models import Target
-from apizr.plugin_lock.tags import platform_matches, wheel_matches
+from apizr.plugins.lock.models import Target
+from apizr.plugins.lock.tags import platform_matches, wheel_matches
 
 MAC = Target(
     implementation="cpython",
@@ -72,7 +72,7 @@ def test_unknown_libc(monkeypatch):
 @pytest.mark.parametrize("build", ["macosx-10.9-universal2", "macosx-11.0-arm64"])
 @pytest.mark.parametrize("release", ["26.0.0", "11.0.0"])
 def test_macos_running_os_and_active_universal_slice(monkeypatch, build, release):
-    from apizr.plugin_lock import tags
+    from apizr.plugins.lock import tags
 
     target = MAC.model_copy(
         update={"python": "3.11.9", "platform": build, "abi": "cpython-311-darwin"}
@@ -87,7 +87,7 @@ def test_macos_running_os_and_active_universal_slice(monkeypatch, build, release
 
 
 def test_macos_unknown_runtime_stays_conservative(monkeypatch):
-    from apizr.plugin_lock import tags
+    from apizr.plugins.lock import tags
 
     target = MAC.model_copy(update={"platform": "macosx-10.9-universal2"})
     monkeypatch.setattr(tags, "current_target", lambda: target)

@@ -3,40 +3,46 @@
   "name": "io.github.Alien6-Studio/outerspace-apizr",
   "title": "OuterSpace Apizr",
   "description": "Python capability compiler: local read-only analysis and explicit MCP/REST exposure planning.",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "repository": {
     "url": "https://github.com/Alien6-Studio/outerspace-apizr",
     "source": "github",
     "subfolder": "plugins/mcp"
   },
   "websiteUrl": "https://apizr.outerspace.sh/reference/apizr-mcp-server/",
+  "icons": [
+    {
+      "src": "https://apizr.outerspace.sh/assets/images/logo.png",
+      "mimeType": "image/png"
+    }
+  ],
   "packages": [
     {
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "outerspace-apizr-mcp",
-      "version": "0.4.4",
+      "version": "0.4.5",
       "runtimeHint": "uvx",
       "transport": {"type": "stdio"},
       "packageArguments": [
         {
           "type": "named",
           "name": "--project",
-          "description": "Absolute path to the operator-selected apizr.toml project file.",
+          "description": "Absolute path to your apizr.toml file selecting the Python source root. Create it using the Registry installation guide linked by websiteUrl; no project is selected automatically.",
           "isRequired": true,
           "format": "filepath"
         },
         {
           "type": "named",
           "name": "--operator-policy",
-          "description": "Absolute path to the reviewed policy granting source.analyze for this project.",
+          "description": "Absolute path to the operator-reviewed JSON policy granting source.analyze for that root. Create and review the analysis grant in the Registry installation guide; installation grants no permission.",
           "isRequired": true,
           "format": "filepath"
         },
         {
           "type": "named",
           "name": "--plugins-dir",
-          "description": "Absolute path to the separate store with the matching MCP plugin explicitly installed and activated.",
+          "description": "Absolute path to your managed plugin directory. Prepare, install and explicitly activate the matching MCP profile there using the Registry installation guide before connecting; the launcher does not activate plugins.",
           "isRequired": true,
           "format": "filepath"
         }

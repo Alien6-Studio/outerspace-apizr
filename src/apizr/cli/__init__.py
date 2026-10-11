@@ -1,51 +1,10 @@
 """Static and runtime commands, separate from the historical generation parser."""
 
-import argparse
 import sys
 from importlib.metadata import version
-from pathlib import Path
 from typing import Sequence
 
-from apizr.optional import MissingExtra, available, require
-
-
-def _inspect(argv: Sequence[str]) -> int:
-    parser = argparse.ArgumentParser(
-        prog="apizr inspect",
-        description="Inspect one Python source or notebook without executing it.",
-    )
-    parser.add_argument("source", type=Path)
-    parser.add_argument(
-        "--module-name",
-        help="Logical dotted module identity; defaults to the filename stem",
-    )
-    output = parser.add_mutually_exclusive_group()
-    output.add_argument("--format", choices=("text", "json"), default="text")
-    output.add_argument(
-        "--ir",
-        action="store_true",
-        help="Emit only canonical Capability IR bytes (same inspection exit policy)",
-    )
-    args = parser.parse_args(argv)
-    from apizr.capabilities import canonical_bytes
-    from apizr.inspection import inspect_file, json_bytes, text_report
-
-    try:
-        inspection = inspect_file(
-            args.source, module_name=args.module_name or args.source.stem
-        )
-    except (OSError, ValueError, SyntaxError, UnicodeError, RecursionError) as exc:
-        # SyntaxError's repr can contain input fragments; only expose its parser message.
-        message = exc.msg if isinstance(exc, SyntaxError) else str(exc)
-        print(f"apizr inspect: {message}", file=sys.stderr)
-        return 2
-    if args.ir:
-        sys.stdout.buffer.write(canonical_bytes(inspection.capability_ir))
-    elif args.format == "json":
-        sys.stdout.buffer.write(json_bytes(inspection))
-    else:
-        print(text_report(inspection), end="")
-    return inspection.exit_code
+from apizr.environment.extras import MissingExtra, available, require
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -62,61 +21,67 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
         return 0
     if arguments and arguments[0] == "ci":
-        from apizr.ci_cli import main as ci_command
+        from apizr.cli.commands.ci import main as ci_command
 
         return ci_command(arguments[1:])
     if arguments and arguments[0] in ("completion", "__complete"):
-        from apizr.completion import main as completion_command
+        from apizr.cli.completion import main as completion_command
 
         return completion_command(arguments[1:], backend=arguments[0] == "__complete")
     if arguments and arguments[0] in ("init", "doctor"):
-        from apizr.onboarding_cli import diagnose, init
+        from apizr.cli.commands.onboarding import diagnose, init
 
         return (init if arguments[0] == "init" else diagnose)(arguments[1:])
     if arguments and arguments[0] == "clients":
-        from apizr.clients_cli import main as clients_command
+        from apizr.cli.commands.clients import main as clients_command
 
         return clients_command(arguments[1:])
     if arguments and arguments[0] == "delivery":
-        from apizr.delivery_cli import main as delivery_command
+        from apizr.cli.commands.delivery import main as delivery_command
 
         return delivery_command(arguments[1:])
     if arguments and arguments[0] == "mcp":
-        from apizr.mcp_cli import main as mcp_command
+        from apizr.cli.commands.mcp import main as mcp_command
 
         return mcp_command(arguments[1:])
     if arguments and arguments[0] == "plugins":
-        from apizr.plugins_cli import main as plugins_command
+        from apizr.cli.commands.plugins import main as plugins_command
 
         return plugins_command(arguments[1:])
     if arguments and arguments[0] == "expose":
-        from apizr.exposure_cli import main as exposure_command
+        from apizr.cli.commands.exposure import main as exposure_command
 
         return exposure_command(arguments[1:])
     if arguments and arguments[0] == "readiness":
-        from apizr.readiness_cli import main as readiness_repo_command
+        from apizr.cli.commands.readiness import main as readiness_repo_command
 
         return readiness_repo_command(arguments[1:])
     if arguments and arguments[0] == "repository-readiness":
-        from apizr.repository_readiness_cli import main as readiness_command
+        from apizr.cli.commands.repository_readiness import main as readiness_command
 
         return readiness_command(arguments[1:])
     if arguments and arguments[0] == "graph":
-        from apizr.graph_cli import main as graph_command
+        from apizr.cli.commands.graph import main as graph_command
 
         return graph_command(arguments[1:])
     if arguments and arguments[0] == "scan":
-        from apizr.scan_cli import main as scan_command
+        from apizr.cli.commands.scan import main as scan_command
 
         return scan_command(arguments[1:])
     if arguments and arguments[0] == "execute":
-        from apizr.execute_cli import main as execute_command
+        from apizr.cli.commands.execute import main as execute_command
 
         return execute_command(arguments[1:])
     if arguments and arguments[0] == "inspect":
-        return _inspect(arguments[1:])
+        from apizr.cli.commands.inspect import main as inspect_command
+
+        return inspect_command(arguments[1:])
+    if arguments and arguments[0] == "experiment":
+        from apizr.cli.commands.experiment import main as experiment_command
+
+        return experiment_command(arguments[1:])
     if arguments and arguments[0] == "generate":
-        from apizr.generate_cli import main as generate_modern
+        from apizr.cli.commands.generate import main as generate_modern
 
         return generate_modern(arguments[1:])
     if arguments in (["--help"], ["-h"]):
@@ -135,6 +100,17 @@ def _main(argv: Sequence[str] | None = None) -> int:
         )
         print("Project plugins: apizr plugins {lock,sync,update,catalog} --help")
         print("Delivery of an existing build: apizr delivery {run,resume} --help")
+        print("\nData science: apizr experiment inspect SOURCE [--format json]")
+        print("  Understand script/notebook evidence without executing code.")
+        print("  apizr experiment run SOURCE — execute trusted code with host access.")
+        print("  apizr experiment list | apizr experiment show RUN — local history.")
+        print("  apizr experiment diff RUN_A RUN_B — compare recorded evidence.")
+        print(
+            "  apizr experiment expose RUN --capability ID --interface rest|mcp --output-dir DIR"
+        )
+        print(
+            "  Inspect → Run → Compare → Expose; repository Readiness still decides eligibility."
+        )
         print(
             "\nRepository workflow: Discover → Understand → Assess → Select → Expose → Execute"
         )
@@ -175,7 +151,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
                 "  Install outerspace-apizr[legacy] for legacy generation and its full help."
             )
             return 0
-        from apizr.main import main as generate
+        from apizr.legacy.main import main as generate
 
         try:
             generate(arguments)
@@ -186,7 +162,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
     require(
         "legacy", "yaml", "questionary", "jinja2", "packaging", "nbconvert", "black"
     )
-    from apizr.main import main as generate
+    from apizr.legacy.main import main as generate
 
     generate(arguments)
     return 0

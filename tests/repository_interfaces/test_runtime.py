@@ -306,7 +306,9 @@ def test_validated_cross_module_support_without_exposing_helper(
         "pkg/admin.py": b"raise RuntimeError('UNRELATED')\n",
     }
     if package:
-        sources["pkg/__init__.py"] = b"from . import pricing\nINITIALIZED = True\n"
+        sources["pkg/__init__.py"] = (
+            b"from . import pricing\nINITIALIZED = True\ndef package_name(): return 'pkg'\n"
+        )
     inputs = evidence(sources, selected=("python:pkg.api:public",))
     artifacts = bundle(tmp_path, inputs, interface)
     # This is real upstream eligibility, not a model_copy readiness override.

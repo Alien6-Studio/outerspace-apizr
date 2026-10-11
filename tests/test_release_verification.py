@@ -248,6 +248,7 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
         "0.4.2",
         "0.4.3",
         "0.4.4",
+        "0.4.5",
     ],
 )
 @pytest.mark.parametrize("resume", [False, True])
@@ -288,7 +289,7 @@ def test_coordinated_release_requires_every_exact_target(
         ]
         for python in versions
     ]
-    if release_version == "0.4.4":
+    if release_version in {"0.4.4", "0.4.5"}:
         names.extend(["provenance", "release-assets"])
     jobs = [{"name": name, "conclusion": "success"} for name in names]
     if fault == "missing":
@@ -305,6 +306,21 @@ def test_coordinated_release_requires_every_exact_target(
             return {"protected": True}
         if path == f"git/ref/tags/v{release_version}":
             return {"object": {"type": "commit", "sha": "abc"}}
+        if path == "actions/runs/10/jobs?per_page=100":
+            return {
+                "jobs": [
+                    {
+                        "name": "dependencies",
+                        "conclusion": "success",
+                        "steps": [
+                            {
+                                "name": "Audit all client-collection dependencies",
+                                "conclusion": "success",
+                            }
+                        ],
+                    }
+                ]
+            }
         if "/jobs?" in path:
             return {"jobs": jobs}
         if path == "actions/runs/123":
@@ -517,7 +533,16 @@ def test_closed_04_publications_fail_before_network(tmp_path, monkeypatch, versi
 
 @pytest.mark.parametrize(
     "version",
-    ["0.4.2rc3", "0.4.3rc1", "0.4.4rc1", "0.4.5", "0.5.0", "0.4.1.dev0", "0.4.1rc0"],
+    [
+        "0.4.2rc3",
+        "0.4.3rc1",
+        "0.4.4rc1",
+        "0.4.5rc1",
+        "0.4.6",
+        "0.5.0",
+        "0.4.1.dev0",
+        "0.4.1rc0",
+    ],
 )
 def test_future_lines_require_explicit_policy(version):
     with pytest.raises(ValueError, match="No authorized qualification branch"):
@@ -733,13 +758,14 @@ def test_043_preflight_binds_all_gates_to_protected_release_line(
         "fork",
     ],
 )
-def test_044_preflight_requires_exact_protected_master_source(
-    tmp_path, monkeypatch, fault
+@pytest.mark.parametrize("version", ["0.4.4", "0.4.5"])
+def test_final_preflight_requires_exact_protected_master_source(
+    tmp_path, monkeypatch, fault, version
 ):
     import sys
 
     (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname="outerspace-apizr"\nversion="0.4.4"\n'
+        f'[project]\nname="outerspace-apizr"\nversion="{version}"\n'
     )
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(
@@ -749,6 +775,21 @@ def test_044_preflight_requires_exact_protected_master_source(
 
     def github(path):
         run = valid_run("master")
+        if path == "actions/runs/10/jobs?per_page=100":
+            return {
+                "jobs": [
+                    {
+                        "name": "dependencies",
+                        "conclusion": "success",
+                        "steps": [
+                            {
+                                "name": "Audit all client-collection dependencies",
+                                "conclusion": "success",
+                            }
+                        ],
+                    }
+                ]
+            }
         if path.startswith("branches/"):
             assert path == "branches/master"
             return {"protected": fault != "unprotected"}
@@ -796,7 +837,7 @@ def test_workflows_separate_release_validation_from_external_publication():
     docs = workflows["mkdocs.yaml"]["jobs"]
     assert (
         docs["deploy"]["if"]
-        == "github.event_name == 'push' && github.ref == 'refs/heads/master'"
+        == "github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build.outputs.publishable == 'true'"
     )
     assert set(workflows["publish-pypi.yml"]["on"]) == {"workflow_dispatch"}
     for name in (
@@ -847,3 +888,138 @@ def test_current_tracked_tree_keeps_oss_product_scope():
         and excluded in (root / name.decode()).read_bytes().lower()
     ]
     assert not matches, f"Out-of-scope product references in tracked files: {matches}"
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        None,
+        "provenance",
+        "release-assets",
+        "security_failed",
+        "docs_failed",
+        "node_job_missing",
+        "node_job_skipped",
+        "node_audit_missing",
+        "node_audit_failed",
+        "node_audit_skipped",
+        "node_audit_duplicate",
+    ],
+)
+def test_045_release_requires_provenance_assets_and_actual_node_audit(
+    tmp_path, monkeypatch, fault
+):
+    import sys
+
+    for folder in [
+        tmp_path,
+        *(tmp_path / "plugins" / p for p in ("oci", "mcp", "attest")),
+    ]:
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / "pyproject.toml").write_text(
+            '[project]\nname="outerspace-apizr"\nversion="0.4.5"\n'
+        )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["verify", "--run-id", "123", "--coordinated", "--preflight", "--source-only"],
+    )
+    monkeypatch.setattr(release.subprocess, "check_output", lambda *a, **kw: "abc\n")
+
+    def github(path):
+        if path == "branches/master":
+            return {"protected": True}
+        if path == "actions/runs/123":
+            return valid_run()
+        if path == "actions/runs/123/jobs?per_page=100":
+            names = [
+                "distributions",
+                "release-delivery",
+                "provenance",
+                "release-assets",
+            ]
+            names += [
+                f"release-target ({os}, {py})"
+                for os, versions in [
+                    ("ubuntu-latest", ["3.11", "3.12", "3.13", "3.14"]),
+                    ("macos-latest", ["3.11", "3.14"]),
+                ]
+                for py in versions
+            ]
+            return {
+                "jobs": [
+                    {"name": name, "conclusion": "success"}
+                    for name in names
+                    if name != fault
+                ]
+            }
+        if path == "actions/runs/10/jobs?per_page=100":
+            step = {
+                "name": "Audit all client-collection dependencies",
+                "conclusion": "success",
+            }
+            if fault == "node_audit_failed":
+                step["conclusion"] = "failure"
+            if fault == "node_audit_skipped":
+                step["conclusion"] = "skipped"
+            steps = [] if fault == "node_audit_missing" else [step]
+            if fault == "node_audit_duplicate":
+                steps.append(step)
+            job = {
+                "name": "dependencies",
+                "conclusion": "skipped" if fault == "node_job_skipped" else "success",
+                "steps": steps,
+            }
+            return {"jobs": [] if fault == "node_job_missing" else [job]}
+        workflow = path.split("/")[2]
+        run = {**valid_run(), "id": 10, "path": ".github/workflows/" + workflow}
+        if (fault, workflow) in {
+            ("security_failed", "security.yml"),
+            ("docs_failed", "mkdocs.yaml"),
+        }:
+            run["conclusion"] = "failure"
+        return {"workflow_runs": [run]}
+
+    monkeypatch.setattr(release, "github", github)
+    if fault:
+        with pytest.raises(ValueError):
+            release.main()
+    else:
+        release.main()
+
+
+def test_required_security_job_installs_and_audits_the_complete_node_lock():
+    import yaml
+
+    root = Path(__file__).resolve().parents[1]
+    workflow = yaml.load(
+        (root / ".github/workflows/security.yml").read_text(), Loader=yaml.BaseLoader
+    )
+    steps = workflow["jobs"]["dependencies"]["steps"]
+    install = next(
+        s
+        for s in steps
+        if s.get("name")
+        == "Install exact client-collection lock without lifecycle scripts"
+    )
+    assert (
+        "npm ci --prefix scripts/client_collection_tools --ignore-scripts"
+        in install["run"]
+    )
+    audit = next(
+        s for s in steps if s.get("name") == "Audit all client-collection dependencies"
+    )
+    assert "npm audit --prefix scripts/client_collection_tools --json" in audit["run"]
+    assert "--audit-level=moderate" in audit["run"]
+    assert all(
+        f"--include={kind}" in audit["run"]
+        for kind in ("prod", "dev", "optional", "peer")
+    )
+    assert "||" not in audit["run"] and "--omit" not in audit["run"]
+    assert "continue-on-error" not in audit
+    upload = next(
+        s for s in steps if s.get("uses", "").startswith("actions/upload-artifact@")
+    )
+    assert upload["if"] == "always()"
+    assert "node-dependency-audit.json" in upload["with"]["path"]

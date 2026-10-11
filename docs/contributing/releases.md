@@ -3,6 +3,81 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
+## Authorized 0.4.5 finalization
+
+The maintainer has authorized **0.4.5 only**, conditional on every mandatory
+security/release gate. Development work stays on `0.4.5`; integration uses the
+normal protected PR into `master`. The exact resulting master commit must have
+successful push CI, Security and Documentation. The verifier requires all six
+release targets, distributions, release-delivery, provenance and release-assets,
+plus the actual Node audit step in the required Security dependencies job.
+The master push stages final provenance-bound assets for exactly 0.4.4/0.4.5;
+PR/manual builds and future versions remain previews. The Homebrew publication
+renderer now authorizes only 0.4.5; existing published Formulae stay immutable.
+
+Documentation qualifies the exact clean candidate source but skips deployment
+until the separate post-release documentation commit declares a verified stable
+release. Its later deployment still requires the exact retained stable marker
+and uses a normal fast-forward Pages push, preserving history without force.
+Historical version policies remain unchanged; 0.4.6 remains refused.
+
+[Security blocker #280](https://github.com/Alien6-Studio/outerspace-apizr/issues/280)
+must be closed with a committed safe lock, zero critical/high/moderate findings,
+and Linux/macOS functional collection evidence before publication. Install the
+exact Node lock with lifecycle scripts disabled and retain the unfiltered audit
+JSON with the release security evidence. A stale default-branch alert does not
+prove a corrected development lock is vulnerable; compare the actual versions
+and retain both states. Never dismiss an applicable alert to release.
+
+Freeze the original four wheels/four sdists from protected master CI, their
+checksums, candidate manifest, six target exports, delivery evidence, signed
+provenance and release-assets. Create immutable `v0.4.5` only after all gates pass.
+Create the reviewed GitHub Release as a **draft**, attach the frozen archives,
+then dispatch `publish-pypi.yml` on that tag with `release_tag=v0.4.5`, the exact
+`ci_run_id`, and `package=all`. Preserve environment approvals, OIDC, exact-byte
+staging and public-byte comparison. Keep the draft until the workflow has attached
+the PyPI comparison and Attest evidence and fresh public installations plus the
+documented notebook → Run → REST/MCP journey have passed. Then publish the final,
+non-prerelease GitHub Release before MCP Registry/Homebrew publication.
+[GitHub immutable releases](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases)
+require all assets to be attached before publication; the existing 0.4.4 release
+used this order. Never disable immutability to add evidence afterwards. Rebuilds
+never replace the frozen archives.
+
+The existing Alien6 Homebrew tap follows the immutable final core sdist and
+verified master provenance, with reviewed formula changes and a real Apple
+Silicon install. No new OCI product image or distribution channel is authorized.
+After external verification, record publication in a separate documentation PR
+to master and let the normal workflow deploy; never move the tag or push Pages
+directly. Close #279 only after all mandatory public provider evidence exists.
+
+## 0.4.5 MCP distribution {#mcp-distribution-045}
+
+Phase A prepared this sequence without publication. Its execution is now
+authorized conditionally by the maintainer; authorization is not evidence that
+any publication or external verification has succeeded. [MCP distribution qualification](mcp-distribution.md) records the
+current contracts and external limitations. Ordinary CI does not wait for indexes.
+
+1. Qualify the exact final source SHA and retain all release artifacts/evidence.
+2. Merge, tag and create the release only under separate explicit authorization.
+3. Publish the qualified public Python artifacts through the protected procedure.
+4. Verify the core and MCP PyPI archive identities against the retained candidate.
+5. Dispatch `Publish MCP Registry` separately with that immutable release tag and
+   full source SHA. Its preflight binds clean source, protected master ancestry,
+   GitHub Release assets, public PyPI hashes, ownership marker and descriptor.
+6. Verify Official Registry 0.4.5 and the exact configuration contract.
+7. Wait for Glama indexing, or use its permitted re-index/claim path only if authorized.
+8. Verify Glama's actual metadata/tool surface, recording API limitations and manual
+   schema-page evidence rather than silently accepting stale metadata.
+9. Complete the supported Smithery MCPB listing/submission and configuration flow.
+10. Verify its package/repository/version, tools, bundle and actual client installation.
+11. Verify MCPfinder sees the release across the expected primary sources.
+12. Retain dated external reports and unresolved propagation in the release record.
+
+Official Registry is the canonical registry source. Glama and Smithery add
+discovery/client presentation; they do not establish package artifact identity.
+Do not close #279 merely because Phase A or Python publication has completed.
+
 <span id="finalizing-044"></span>
 
 ## Completed 0.4.4 finalization
@@ -93,7 +168,8 @@ and Documentation runs on that same branch and commit. The signer recorded
 that protected ref in the retained evidence. The old branch can be retired
 without changing that evidence identity.
 
-The publication verifier adds only `0.4.4` from protected `master`; the historical
+The publication verifier explicitly permits `0.4.4` and `0.4.5` from protected
+`master`; the historical
 `0.4.3` / `release/0.4.3` policy remains unchanged and must not be replayed.
 Unintended versions and refs are refused. Development builds alone do not
 authorize publication. Releases through 0.4.0rc1 retain `master` provenance; published

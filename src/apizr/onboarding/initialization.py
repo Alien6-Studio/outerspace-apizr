@@ -5,17 +5,17 @@ import os
 import stat
 from pathlib import Path
 
-from apizr.analysis_contracts import LocalTarget
-from apizr.config_files import absolute_path, directory_fd
+from apizr.contracts.analysis import LocalTarget
 from apizr.exposure.policy import Execution, ExposurePolicy
 from apizr.interfaces.serialization import json_bytes
-from apizr.operator_policy import AnalysisGrant, OperatorPolicy
-from apizr.project import ProjectConfig
 from apizr.repository.policy import ScanPolicy
 from apizr.repository_readiness.policy import (
     ExecutionRequirements,
     RepositoryReadinessPolicy,
 )
+from apizr.workspace.files import absolute_path, directory_fd
+from apizr.workspace.operator_policy import AnalysisGrant, OperatorPolicy
+from apizr.workspace.project import ProjectConfig
 
 from .models import InitError, InitResult
 
@@ -64,7 +64,7 @@ def plan_initialization(
         )
         return {
             "apizr.toml": config.encode(),
-            ".apizr/.gitignore": b"/operator.json\n",
+            ".apizr/.gitignore": b"/operator.json\n/experiments/\n",
             ".apizr/operator.json": json_bytes(
                 authority.model_dump(mode="json", by_alias=True)
             ),

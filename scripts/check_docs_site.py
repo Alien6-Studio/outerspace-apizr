@@ -24,8 +24,8 @@ def marker_at(site: Path) -> dict:
     if (
         marker.get("schema") != "apizr.docs-build/v1"
         or not re.fullmatch(r"[0-9a-f]{40}", marker.get("source_commit", ""))
-        or marker.get("status") != "stable"
-        or marker.get("target_version") != "0.4.4"
+        or (marker.get("status"), marker.get("target_version"))
+        not in {("stable", "0.4.4"), ("release-candidate", "0.4.5")}
         or marker.get("stable_release") != "0.4.4"
         or not isinstance(marker.get("source_dirty"), bool)
         or not isinstance(marker.get("files"), dict)
@@ -43,12 +43,20 @@ def marker_at(site: Path) -> dict:
     return marker
 
 
-def publication_marker(site: Path, source_commit: str | None = None) -> dict:
+def source_marker(site: Path, source_commit: str | None = None) -> dict:
+    """Check retained build identity without authorizing candidate deployment."""
     marker = marker_at(site)
     if marker["source_dirty"]:
         raise ValueError("Refusing to confirm a deployment built from a dirty checkout")
     if source_commit is not None and marker["source_commit"] != source_commit:
         raise ValueError("Retained site does not match the expected source commit")
+    return marker
+
+
+def publication_marker(site: Path, source_commit: str | None = None) -> dict:
+    marker = source_marker(site, source_commit)
+    if marker["status"] != "stable":
+        raise ValueError("Candidate documentation is not authorized for deployment")
     return marker
 
 
@@ -181,12 +189,33 @@ def main() -> None:
         action="store_true",
         help="Validate publication inputs without network or deployment",
     )
+    parser.add_argument(
+        "--check-build",
+        action="store_true",
+        help="Check exact retained source, including candidates; never deploy",
+    )
+    parser.add_argument("--github-output", type=Path)
     parser.add_argument("--probe", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if not 1 <= args.timeout <= 900:
         parser.error("timeout must be between 1 and 900 seconds")
+    if args.github_output and not args.check_build:
+        parser.error("--github-output requires --check-build")
+    if args.check_build and (args.check_local or args.probe):
+        parser.error("--check-build is a separate non-publication mode")
     try:
-        if args.check_local:
+        if args.check_build:
+            if not args.source_commit:
+                raise ValueError("Build qualification requires the exact source commit")
+            marker = source_marker(args.site, args.source_commit)
+            if args.github_output:
+                with args.github_output.open("a") as output:
+                    output.write(
+                        "publishable="
+                        + str(marker["status"] == "stable").lower()
+                        + "\n"
+                    )
+        elif args.check_local:
             publication_marker(args.site, args.source_commit)
         elif args.probe:
             probe(args.site, args.url, args.ca_file)

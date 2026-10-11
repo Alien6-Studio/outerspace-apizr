@@ -438,9 +438,9 @@ def test_managed_authorization_is_independent_at_every_destination_stage(
 ):
     from contextlib import contextmanager
 
-    from apizr.local_plugins import activation
-    from apizr.local_plugins.models import Installation
     from apizr.operator_policy import OperatorPolicy, PluginIdentity
+    from apizr.plugins.local import activation
+    from apizr.plugins.local.models import Installation
 
     batch = request(tmp_path)
     bindings = {}

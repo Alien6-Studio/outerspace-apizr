@@ -1,0 +1,114 @@
+name: Verify MCP distribution after release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Already published final release tag
+        required: true
+      source_sha:
+        description: Exact qualified release source SHA
+        required: true
+      mcp_run_id:
+        description: Successful MCP server plugin workflow run at that exact SHA
+        required: true
+      smithery_name:
+        description: Stable namespace/server from the separately authorized Smithery submission
+        required: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag }}
+      RELEASE_SOURCE: ${{ inputs.source_sha }}
+      MCP_RUN_ID: ${{ inputs.mcp_run_id }}
+      SMITHERY_NAME: ${{ inputs.smithery_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Admit protected release source before checkout
+        run: |
+          python3 - <<'PYADMIT'
+          import json, os, re, subprocess
+          repo = 'Alien6-Studio/outerspace-apizr'
+          source, tag = os.environ['RELEASE_SOURCE'], os.environ['RELEASE_TAG']
+          if not re.fullmatch(r'[0-9a-f]{40}', source) or not re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', tag):
+              raise ValueError('Require a full source SHA and final version tag')
+          def gh(path):
+              return json.loads(subprocess.check_output(['gh', 'api', f'repos/{repo}/{path}'], text=True, timeout=30))
+          release, branch = gh(f'releases/tags/{tag}'), gh('branches/master')
+          tagged, comparison = gh(f'commits/{tag}'), gh(f'compare/{source}...master')
+          if release.get('tag_name') != tag or release.get('draft') is not False or release.get('prerelease') is not False or not release.get('published_at'):
+              raise ValueError('Require an already published final GitHub Release')
+          if tagged.get('sha') != source or branch.get('protected') is not True:
+              raise ValueError('Require the exact tag and protected master')
+          if comparison.get('status') not in {'ahead', 'identical'} or comparison.get('merge_base_commit', {}).get('sha') != source:
+              raise ValueError('Refuse source outside protected master history')
+          PYADMIT
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: '0.12.0'
+          python-version: '3.11'
+      - name: Verify public release and retained discovery identity
+        run: |
+          uv run --locked python scripts/verify_mcp_publication.py \
+            --release-tag "$RELEASE_TAG" --source-sha "$RELEASE_SOURCE" \
+            --report "$RUNNER_TEMP/public-release.json"
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          run_id = os.environ['MCP_RUN_ID']
+          assert re.fullmatch(r'[0-9]+', run_id)
+          repo = 'Alien6-Studio/outerspace-apizr'
+          run = json.loads(subprocess.check_output(['gh', 'api', f'repos/{repo}/actions/runs/{run_id}']))
+          assert run['repository']['full_name'] == repo
+          assert run['head_sha'] == os.environ['RELEASE_SOURCE']
+          assert run['path'] == '.github/workflows/mcp-server-plugin.yml'
+          assert run['status'] == 'completed' and run['conclusion'] == 'success'
+          PY
+          gh release download "$RELEASE_TAG" --repo Alien6-Studio/outerspace-apizr \
+            --pattern candidate.json --dir "$RUNNER_TEMP/released-candidate"
+          gh run download "$MCP_RUN_ID" --repo Alien6-Studio/outerspace-apizr \
+            --name mcp-stdio-ubuntu-latest-python-3.11 --dir "$RUNNER_TEMP/mcp-discovery"
+      - name: Prepare reproducible wrapper and discover retained metadata
+        run: |
+          uv run --locked python scripts/build_mcp_bundle.py \
+            --output "$RUNNER_TEMP/expected.mcpb"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          paths = list((Path(os.environ['RUNNER_TEMP']) / 'mcp-discovery').rglob('discovery-auto.json'))
+          assert len(paths) == 1
+          with open(os.environ['GITHUB_ENV'], 'a') as output:
+              output.write('DISCOVERY_PATH=' + str(paths[0].resolve()) + '\n')
+          PY
+      - name: Read external distribution state without publishing
+        env:
+          GLAMA_API_KEY: ${{ secrets.GLAMA_API_KEY }}
+          SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}
+        run: |
+          uv run --locked python scripts/verify_mcp_distribution.py \
+            --source-sha "$RELEASE_SOURCE" \
+            --candidate "$RUNNER_TEMP/released-candidate/candidate.json" \
+            --discovery "$DISCOVERY_PATH" --smithery-name "$SMITHERY_NAME" \
+            --smithery-bundle "$RUNNER_TEMP/expected.mcpb" \
+            --live --include-mcpfinder --require-complete \
+            --output "$RUNNER_TEMP/mcp-distribution.json"
+      - name: Retain verification evidence, including incomplete propagation
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: mcp-external-distribution
+          path: |
+            ${{ runner.temp }}/public-release.json
+            ${{ runner.temp }}/mcp-distribution.json
+          if-no-files-found: ignore

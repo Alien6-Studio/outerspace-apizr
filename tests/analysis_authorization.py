@@ -42,7 +42,7 @@ def analysis_policy(source):
 
 def authorized_main(argv):
     from apizr.cli import main
-    from apizr.project import load_project
+    from apizr.workspace.project import load_project
 
     args = list(argv)
     if (

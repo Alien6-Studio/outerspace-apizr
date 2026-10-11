@@ -18,7 +18,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Event
 
-from apizr.delivery import PLAN_LABEL, PROOF_LABEL, identity
+from apizr.contracts.delivery import PLAN_LABEL, PROOF_LABEL, identity
 from apizr.extension_runtime.protocol import unique_object
 
 from .model import Authentication, BuildError, PushRequest, PushResult

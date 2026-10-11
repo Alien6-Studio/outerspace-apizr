@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 from apizr.capabilities.model import Digest
-from apizr.delivery import identity
+from apizr.contracts.delivery import identity
 from apizr.exposure import ExposurePolicy, plan_exposure
 from apizr.graph import build_graph
 from apizr.repository import scan_sources

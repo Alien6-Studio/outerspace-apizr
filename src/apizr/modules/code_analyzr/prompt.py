@@ -4,8 +4,12 @@ import os
 
 from questionary import prompt
 
+from apizr.environment.python_target import (
+    DEFAULT_PYTHON,
+    parse_python_target,
+    validate_python_target,
+)
 from apizr.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
-from apizr.runtime import DEFAULT_PYTHON, parse_python_target, validate_python_target
 
 
 class ConfigPrompter:

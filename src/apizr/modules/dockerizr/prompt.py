@@ -4,11 +4,15 @@ from typing import Literal, Optional, Tuple
 
 from questionary import prompt
 
+from apizr.environment.python_target import (
+    DEFAULT_PYTHON,
+    parse_python_target,
+    validate_python_target,
+)
 from apizr.modules.dockerizr.configuration import (
     DockerizrConfiguration,
     GunicornConfiguration,
 )
-from apizr.runtime import DEFAULT_PYTHON, parse_python_target, validate_python_target
 
 HOSTNAME = "0.0.0.0"  # nosec B104
 

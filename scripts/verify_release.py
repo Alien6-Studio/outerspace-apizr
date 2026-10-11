@@ -34,7 +34,7 @@ def qualification_branch(version: str) -> str:
         return "release/0.4.2"
     if version == "0.4.3":
         return "release/0.4.3"
-    if version == "0.4.4":
+    if version in {"0.4.4", "0.4.5"}:
         return "master"
     raise ValueError("No authorized qualification branch for this version")
 
@@ -112,7 +112,7 @@ def main() -> None:
         )
     branch = qualification_branch(version)
     validate_run(github(f"actions/runs/{args.run_id}"), sha, "ci.yml", branch)
-    if branch != "master" or version == "0.4.4":
+    if branch != "master" or version in {"0.4.4", "0.4.5"}:
         source = github("branches/" + urllib.parse.quote(branch, safe=""))
         if source.get("protected") is not True:
             raise ValueError("Release qualification branch must be protected")
@@ -133,7 +133,7 @@ def main() -> None:
                 )
             ),
         }
-        if version == "0.4.4":
+        if version in {"0.4.4", "0.4.5"}:
             expected_jobs.update({"provenance", "release-assets"})
         for name in expected_jobs:
             selected_jobs = [job for job in jobs if job["name"] == name]
@@ -156,6 +156,18 @@ def main() -> None:
         selected = max(runs, key=lambda run: run["id"])
         validate_run(selected, sha, workflow, branch)
         verified_runs[workflow] = int(selected["id"])
+        if version == "0.4.5" and workflow == "security.yml":
+            jobs = github(f"actions/runs/{selected['id']}/jobs?per_page=100")["jobs"]
+            dependencies = [job for job in jobs if job["name"] == "dependencies"]
+            if len(dependencies) != 1 or dependencies[0]["conclusion"] != "success":
+                raise ValueError("Missing successful Node dependency security gate")
+            audits = [
+                step
+                for step in dependencies[0].get("steps", [])
+                if step["name"] == "Audit all client-collection dependencies"
+            ]
+            if len(audits) != 1 or audits[0]["conclusion"] != "success":
+                raise ValueError("Missing successful Node dependency audit")
     if not args.source_only:
         try:
             urllib.request.urlopen(

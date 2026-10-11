@@ -6,9 +6,9 @@ from typing import Literal, Self
 
 from pydantic import Field, field_validator, model_validator
 
+from apizr.capabilities.inspection import Inspection, json_bytes
 from apizr.capabilities.model import Digest, ExecutionForm, Severity, SourceSpan
 from apizr.capabilities.types import ValueModel
-from apizr.inspection import Inspection, json_bytes
 from apizr.readiness import State
 
 from .modules import module_name, source_root

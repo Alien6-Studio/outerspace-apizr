@@ -191,7 +191,7 @@ def prepare_target(candidate: Path, output: Path) -> None:
         )
         for name, extras in (
             ("base", []),
-            ("mcp", ["--extra", "mcp"]),
+            ("mcp", ["--extra", "mcp", "--extra", "preparation"]),
             ("extras", ["--all-extras"]),
         ):
             lock = output / (name + "-resolved.txt")

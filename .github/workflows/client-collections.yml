@@ -32,18 +32,20 @@ jobs:
         with:
           version: '0.12.0'
           python-version: ${{ matrix.python }}
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '22.22.2'
       - run: uv sync --locked
       - name: Collection contracts, safe sync and branch coverage
         run: >-
           uv run --locked pytest tests/client_collections
-          --cov=apizr.client_collections --cov=apizr.clients_cli
+          --cov=apizr.client_collections --cov=apizr.cli.commands.clients
           --cov-report=term-missing --cov-report=json:clients-coverage.json
           --junitxml=clients-tests.xml
       - name: Exact vendor tools and dependency integrity, without installation scripts
         run: npm ci --prefix scripts/client_collection_tools --ignore-scripts --no-audit --no-fund
+      - name: Reviewed vendor dependency compatibility
+        run: node scripts/client_collection_tools/check-compatibility.cjs > client-tools-compatibility.json
       - name: Checksum-pinned Inso CLI
         run: uv run --locked python scripts/prepare_client_tools.py "$RUNNER_TEMP/inso"
       - name: Installed wheel, official native validation and real source-free execution
@@ -62,6 +64,7 @@ jobs:
           path: |
             clients-tests.xml
             clients-coverage.json
+            client-tools-compatibility.json
             ${{ runner.temp }}/client-collections-proof/*.json
             ${{ runner.temp }}/client-collections-proof/*.log
             ${{ runner.temp }}/client-collections-proof/postman/

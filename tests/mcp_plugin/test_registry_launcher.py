@@ -8,7 +8,7 @@ from analysis_authorization import analysis_policy
 from apizr_mcp import launcher
 
 from apizr import mcp_cli
-from apizr.local_plugins import PluginError
+from apizr.plugins.local import PluginError
 
 
 @pytest.fixture
@@ -76,7 +76,7 @@ def test_registry_identity_and_read_only_launch_contract():
         "project"
     ]
     assert project["scripts"][package["identifier"]] == "apizr_mcp.launcher:main"
-    assert package["version"] == descriptor["version"] == project["version"] == "0.4.4"
+    assert package["version"] == descriptor["version"] == project["version"] == "0.4.5"
     assert package["transport"] == {"type": "stdio"}
     assert "remotes" not in descriptor
     assert {argument["name"] for argument in package["packageArguments"]} == {

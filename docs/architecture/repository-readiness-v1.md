@@ -54,8 +54,8 @@ State precedence is `ambiguous > unsupported > conditional > ready`.
 
 | State | Repository meaning |
 | --- | --- |
-| `ready` | Locally interface-eligible; every supplied requirement is satisfied by static evidence and at least one declared mode supports all required controls. |
-| `conditional` | Required evidence is incomplete, or local Readiness is conditional. Unknown information is not a hard failure. |
+| `ready` | Repository interface-eligible, including narrowly proven local imports; every supplied requirement is satisfied by static evidence and at least one declared mode supports all required controls. |
+| `conditional` | Required evidence is incomplete, or an unresolved local blocker remains. Unknown information is not a hard failure. |
 | `unsupported` | Local Readiness is unsupported, an effect required false is evidenced true, a hard interface requirement is unmet, or no declared mode supports all controls. |
 | `ambiguous` | Upstream Readiness is ambiguous, or relevant Graph identity/import evidence cannot select a stable unique binding. This is never downgraded. |
 
@@ -81,11 +81,11 @@ Default policy, shown as JSON (the CLI accepts JSON):
 }
 ```
 
-Local interface eligibility **always** gates `ready`. `require_interface: true`
-additionally makes present ineligibility a hard policy failure, so an upstream
-conditional interface yields repository `unsupported`. Its default is false to
-preserve the distinction between incomplete evidence and proven local lack of
-support. Unknown options, effect/control names and coercible boolean strings are
+Repository interface eligibility gates `ready`. `require_interface: true`
+additionally makes remaining ineligibility a hard policy failure. A proven local
+import can satisfy that requirement while its retained local report remains
+conditional. The default is false to preserve the distinction between incomplete
+evidence and proven lack of support. Unknown options, effect/control names and coercible boolean strings are
 rejected; set-like policy lists are deduplicated and sorted.
 
 Effects come only from Capability IR embedded in source Inspections. Every effect
@@ -141,10 +141,54 @@ as context; these are not rewritten as capability edges. `imports` retains relev
 Graph import declarations. `dependencies` snapshots the IDs, local Readiness and IR
 effects of the direct capability targets in those two groups.
 
-These snapshots are context only. A call from A to B does not cause A to inherit
-B's effects or readiness. A call from B to C does not add C to A's canonical direct
+A call from A to B does not cause A to inherit B's effects or overall readiness.
+For a local import refinement, the dependency snapshots also establish its binding
+and execution evidence; its private input/output eligibility is not propagated. A call from B to C does not add C to A's canonical direct
 relationships. Graph v1 edges describe possible direct static calls, not execution
 proofs. There is no transitive effect or state propagation in v1.
+
+## Resolved local import refinement
+
+The 0.4.5 candidate selected exposure proof consumes this complete audit; it does
+not filter or rewrite its assessments, diagnostics or aggregate completeness.
+It reuses the exact local-import predicate and shared module-initialization facts
+with validated execution support from the required closure. Source-local Readiness
+remains conservative. See [selected evidence](exposure-plan-v1.md#complete-evidence-and-fail-closed-behavior)
+for the separate eligibility decision and unchanged full-repository identity.
+
+Local Readiness remains source-only and retains `APIZR-READY-015`, its original
+conditional state and `can_generate_interface: false`. Repository Readiness may
+nevertheless become `ready` when every blocking local reason is discharged by
+bound evidence. Only execution-dimension `APIZR-READY-015` reasons can be discharged.
+
+The shared `repository_readiness.eligibility` decision matches source path, import
+line, source module/capability identity, unconditional declaration, each imported
+name, target and exact relationship location. Every name on that import line must
+have a unique local module/capability target and its matching import relationship.
+Relevant Graph diagnostics or unresolved/star/ambiguous names prevent refinement.
+A complete Graph alone is insufficient; external targets never satisfy this rule.
+
+Required private capabilities must have stable IR bindings and ready execution
+evidence. Their public input/output eligibility is irrelevant. Imported modules
+and present package initializers must have sufficient retained initialization
+facts: module-initialization, dynamic-import and dependency reasons remain blockers.
+An empty initializer has exact size/digest-bound evidence. Nonempty modules without
+callable assessments lack initialization evidence in Readiness v1 and keep the
+relationship dimension `partial`; no source is reparsed to fill the gap. Imports
+without a retained capability dependency likewise remain conditional.
+
+The report shape and all v1 schemas are unchanged. Assessment state is derived
+from the remaining local reasons plus repository policy reasons; the original
+local document is neither copied with altered fields nor rewritten. `validate_report`
+recomputes this conclusion against the bound Catalog/Graph. Affected canonical
+reports and downstream digests can change, including for unselected declarations
+in the same report. Unaffected reports and source-local evidence stay identical.
+
+This does not resolve decorators, rebinding, namespace uncertainty, dynamic imports,
+input types or unrelated execution blockers. No effects or transitive readiness
+states are propagated, and no dependency closure is computed. Import is distinct
+from call, static resolution from runtime availability, dependency from exposure,
+and `ready` from safe execution.
 
 ## Execution compatibility: additive v1 completion
 
@@ -264,3 +308,35 @@ artifacts with repo-first bytes, and check ordering/location/hash-seed invarianc
 An isolated audit-hook test forbids source execution, source writes, subprocesses,
 network access, Git/package-install commands and Docker/transport imports; hostile
 top-level statements, decorators and defaults remain inert.
+
+
+## Explicit external import providers (0.4.5 candidate)
+
+The ordinary scikit-learn journey in #267 exposed a missing boundary: a Run's
+observed distribution version does not identify its import namespace. The
+additive `dependency_wheels` policy evidence records exact distribution pins,
+wheel filenames, SHA-256 identities and module names derived from admitted wheel
+members. It does not infer `scikit-learn → sklearn` from names or import packages.
+Empty evidence is omitted, preserving existing canonical policy/report bytes.
+The two Readiness schemas include the additional optional evidence; experiment
+Plan, Run, comparison and exposure schemas are unchanged.
+
+Selected scope consumes only unconditional, location-matched external import
+edges whose exact module is provided. Local missing, ambiguous, rebound, star or
+dynamic dependencies retain their existing refusals. Provider/module collisions
+are refused. A provider-backed selection remains `CONDITIONAL`, requiring explicit
+`--allow-conditional`; the interface's JSON types must still be supported.
+
+Before rendering, the ordinary repository builder recomputes each provider from
+its retained wheel bytes and checks the exact policy evidence and application
+pins. Missing bytes, a changed digest or fabricated module inventory cannot
+produce a bundle. Wheels are qualification/deployment inputs, not vendored SDKs
+inside Apizr or generated source bundles. Their identities remain in the bound
+Readiness report and bundle manifest.
+
+This evidence proves wheel membership and correspondence to selected versions.
+It does not establish external initialization safety, symbol/API compatibility,
+native-library behavior or a successful future invocation. A Run's package
+version alone does not attest the bytes installed during that Run; the #267
+qualification additionally installs and replays from the retained wheelhouses.
+No network lookup, environment import or framework allowlist grants eligibility.

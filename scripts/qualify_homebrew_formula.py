@@ -133,9 +133,9 @@ import apizr, pydantic, pydantic_core
 core = pathlib.Path(sys.argv[1]); provider = pathlib.Path(sys.argv[2])
 assert pathlib.Path(apizr.__file__).resolve().is_relative_to(core / 'libexec')
 assert all(pathlib.Path(m.__file__).resolve().is_relative_to(provider) for m in (pydantic, pydantic_core))
-assert not importlib.util.find_spec('hatchling') and not importlib.util.find_spec('trove_classifiers')
+assert all(importlib.util.find_spec(name) is None for name in ('hatchling', 'tomlkit', 'trove_classifiers'))
 local = sorted((d.metadata['Name'], d.version) for d in md.distributions(path=[str(core / 'libexec/lib/python3.14/site-packages')]))
-assert local == [('outerspace-apizr', '0.4.4')]
+assert local == [('outerspace-apizr', sys.argv[3])]
 parts = tuple(map(int, pydantic.__version__.split('.')[:2]))
 assert (2, 12) <= parts < (3, 0)
 print(json.dumps({'python': sys.version.split()[0], 'pydantic': pydantic.__version__,
@@ -145,6 +145,7 @@ print(json.dumps({'python': sys.version.split()[0], 'pydantic': pydantic.__versi
 """,
                     prefix,
                     provider,
+                    candidate_version,
                 ],
             )
         )

@@ -4,10 +4,10 @@ import sys
 
 import yaml
 
+from apizr.environment.python_target import parse_python_target, python_target_argument
 from apizr.modules.code_analyzr.analyzr import AstAnalyzr
 from apizr.modules.code_analyzr.configuration import CodeAnalyzrConfiguration
 from apizr.modules.code_analyzr.prompt import ConfigPrompter
-from apizr.runtime import parse_python_target, python_target_argument
 
 # Configure logging settings
 

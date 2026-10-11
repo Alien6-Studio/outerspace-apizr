@@ -2,7 +2,7 @@ import io
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 
-from apizr.http import read_upload
+from apizr.legacy.http import read_upload
 
 from .transformr import NotebookTransformr
 

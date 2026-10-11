@@ -11,8 +11,8 @@ from pathlib import Path
 import pytest
 
 from apizr import cli
-from apizr.completion import FILES, candidates, main, script
-from apizr.completion_spec import COMMANDS
+from apizr.cli.completion import FILES, candidates, main, script
+from apizr.cli.completion_spec import COMMANDS
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -40,6 +40,23 @@ def test_completion_covers_actual_parsers_and_dispatch():
 @pytest.mark.parametrize(
     "words,expected",
     [
+        (["experiment", ""], ("diff", "expose", "inspect", "list", "run", "show")),
+        (["experiment", "expose", "RUN", "--interface", ""], ("mcp", "rest")),
+        (["experiment", "expose", "RUN", "--root", ""], (FILES,)),
+        (["experiment", "expose", "RUN", "--output-dir", ""], (FILES,)),
+        (["experiment", "expose", "RUN", "--capability", ""], ()),
+        (["experiment", "expose", "RUN", "--artifact", ""], ()),
+        (["experiment", "expose", "RUN", "--dependency", ""], ()),
+        (["experiment", "diff", "a" * 64, "b" * 64, "--format", ""], ("json", "text")),
+        (["experiment", "diff", "--store", ""], (FILES,)),
+        (["experiment", "diff", ""], ()),
+        (["experiment", "run", ""], (FILES,)),
+        (["experiment", "run", "--store", ""], (FILES,)),
+        (["experiment", "list", "--status", ""], ("cancelled", "failed", "success")),
+        (["experiment", "show", "--format", ""], ("json", "text")),
+        (["experiment", "inspect", ""], (FILES,)),
+        (["experiment", "inspect", "train.py", "--format", ""], ("json", "text")),
+        (["experiment", "inspect", "--root", ""], (FILES,)),
         (["clients", "export", "--format", ""], ("bruno", "insomnia", "postman")),
         (["clients", "sync", "--format", "p"], ("postman",)),
         (["clients", "export", "--format=br"], ("--format=bruno",)),
@@ -107,7 +124,10 @@ def test_no_dynamic_access(monkeypatch, capsys):
 
 
 @pytest.mark.parametrize("shell", ["bash", "zsh", "fish"])
-def test_real_shell_syntax_and_candidates(tmp_path, shell):
+@pytest.mark.parametrize(
+    "journey", ["clients export", "experiment diff A B", "experiment expose RUN"]
+)
+def test_real_shell_syntax_and_candidates(tmp_path, shell, journey):
     executable = shutil.which(shell)
     if executable is None:
         # The dedicated Linux qualification requires all three binaries.
@@ -123,15 +143,32 @@ def test_real_shell_syntax_and_candidates(tmp_path, shell):
         command = 'compdef() { :; }; compadd() { shift; print -l -- "$@"; }; source "$1"; words=(apizr clients export --format ""); CURRENT=5; _apizr'
     else:
         command = 'source $argv[1]; complete -C "apizr clients export --format "'
+    command = command.replace("clients export", journey)
+    count = len(journey.split())
+    command = command.replace("COMP_CWORD=4", f"COMP_CWORD={count + 2}").replace(
+        "CURRENT=5", f"CURRENT={count + 3}"
+    )
+    if journey == "experiment expose RUN":
+        command = command.replace("--format", "--interface")
     argv = [
         executable,
+        *(
+            {"bash": ["--noprofile", "--norc"], "zsh": ["-f"], "fish": ["--no-config"]}[
+                shell
+            ]
+        ),
         "-c",
         command,
         *([str(path)] if shell == "fish" else ["test", str(path)]),
     ]
     result = subprocess.run(argv, capture_output=True, text=True, check=True)
-    assert {line.split("\t")[0] for line in result.stdout.splitlines()} == {
-        "postman",
-        "bruno",
-        "insomnia",
-    }, result
+    expected = (
+        {"mcp", "rest"}
+        if journey == "experiment expose RUN"
+        else {"json", "text"}
+        if journey.startswith("experiment")
+        else {"postman", "bruno", "insomnia"}
+    )
+    assert {line.split("\t")[0] for line in result.stdout.splitlines()} == expected, (
+        result
+    )

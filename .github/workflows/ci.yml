@@ -95,11 +95,16 @@ jobs:
           uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-candidate"
           uv run --locked python scripts/run_catalog_offline_proof.py "$RUNNER_TEMP/mcp-candidate"
           "$RUNNER_TEMP/mcp-candidate/client/bin/python" -B scripts/mcp_uninstall_proof.py "$RUNNER_TEMP/mcp-candidate"
+      - name: Ordinary scikit-learn notebook, real REST/MCP and retained-wheel replay
+        run: uv run --locked python scripts/qualify_data_science_journey.py --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/data-science"
       - name: Archive installable export without installed environments
         if: always()
         run: |
           if test -d "$APIZR_RELEASE_TARGET"; then
             tar -czf "$RUNNER_TEMP/target-export.tar.gz" -C "$APIZR_RELEASE_TARGET" .
+          fi
+          if test -d "$RUNNER_TEMP/data-science/science-wheels"; then
+            tar -czf "$RUNNER_TEMP/science-wheels.tar.gz" -C "$RUNNER_TEMP/data-science" science-wheels
           fi
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
@@ -112,6 +117,11 @@ jobs:
             ${{ runner.temp }}/qualification/
             ${{ runner.temp }}/mcp-candidate/*.json
             ${{ runner.temp }}/mcp-candidate/*.log
+            ${{ runner.temp }}/science-wheels.tar.gz
+            ${{ runner.temp }}/data-science/*.json
+            ${{ runner.temp }}/data-science/*.log
+            ${{ runner.temp }}/data-science/science-audit-requirements.txt
+            ${{ runner.temp }}/data-science/bundles/
 
   release-delivery:
     needs: distributions
@@ -181,6 +191,8 @@ jobs:
         run: uv run --locked ruff format --check .
       - if: needs.scope.outputs.product != 'false'
         run: uv run --locked pyright
+      - name: Enforce package composition and dependency boundaries
+        run: uv run --locked python scripts/check_package_architecture.py
       - run: uv run --locked pre-commit run --all-files
       - uses: ./.github/actions/install-attest
         if: needs.scope.outputs.product != 'false'
@@ -224,6 +236,9 @@ jobs:
       - name: Protect the measured legacy coverage separately
         if: needs.scope.outputs.product != 'false'
         run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
+      - name: Protect selected evidence line and branch coverage separately
+        if: needs.scope.outputs.product != 'false'
+        run: uv run --locked python scripts/check_scope_coverage.py coverage.json
       - run: uv run --locked coverage report --include='src/apizr/capabilities/*' --fail-under=90
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/readiness/*' --fail-under=90
@@ -238,9 +253,9 @@ jobs:
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/extension_runtime/*' --fail-under=90
         if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked coverage report --include='src/apizr/git_source/*,src/apizr/git_source_cli.py' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/git_source/*,src/apizr/cli/commands/git_source.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked coverage report --include='src/apizr/local_plugins/*,src/apizr/plugins_cli.py' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/plugins/local/*,src/apizr/plugins/artifacts/*,src/apizr/cli/commands/plugins.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/governed/*' --fail-under=90
         if: needs.scope.outputs.product != 'false'
@@ -258,9 +273,9 @@ jobs:
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/exposure/*' --fail-under=90
         if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked coverage report --include='src/apizr/exposure_cli.py' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/cli/commands/exposure.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked coverage report --include='src/apizr/readiness_cli.py,src/apizr/repository_readiness_cli.py,src/apizr/repository_cli.py' --fail-under=90
+      - run: uv run --locked coverage report --include='src/apizr/cli/commands/readiness.py,src/apizr/cli/commands/repository_readiness.py,src/apizr/cli/commands/repository.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
         if: needs.scope.outputs.product != 'false'
@@ -302,6 +317,9 @@ jobs:
         if: needs.scope.outputs.product != 'false'
       - run: uv run --locked pytest --cov --cov-report=term-missing --cov-report=json:coverage.json --junitxml=tests.xml
         if: needs.scope.outputs.product != 'false'
+      - name: Protect selected evidence line and branch coverage separately
+        if: needs.scope.outputs.product != 'false'
+        run: uv run --locked python scripts/check_scope_coverage.py coverage.json
       - run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
         if: needs.scope.outputs.product != 'false'
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -561,7 +579,7 @@ jobs:
         run: |
           version=$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
           options=(--preview)
-          if [ "$EVENT_NAME" = push ] && [ "$GITHUB_REF" = refs/heads/master ] && [ "$version" = 0.4.4 ]; then
+          if [ "$EVENT_NAME" = push ] && [ "$GITHUB_REF" = refs/heads/master ] && { [ "$version" = 0.4.4 ] || [ "$version" = 0.4.5 ]; }; then
             options=()
           fi
           python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${options[@]}"

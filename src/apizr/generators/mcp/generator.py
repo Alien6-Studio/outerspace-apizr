@@ -12,8 +12,8 @@ from pathlib import Path, PurePosixPath
 from pydantic import JsonValue
 
 from apizr.capabilities import canonical_bytes as ir_bytes
+from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import Digest
-from apizr.inspection import Inspection
 from apizr.interfaces.output import write_bundle
 from apizr.interfaces.serialization import json_bytes
 from apizr.readiness import canonical_bytes as readiness_bytes

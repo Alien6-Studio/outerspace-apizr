@@ -18,6 +18,9 @@ TYPING_NAMES = {
     "Literal",
     "Annotated",
     "Callable",
+    "TypedDict",
+    "Required",
+    "NotRequired",
 }
 
 
@@ -100,6 +103,7 @@ class SourceFacts(ast.NodeVisitor):
         self.calls: list[ast.Call] = []
         self.import_module_aliases: set[str] = {"import_module", "__import__"}
         self.mutated_roots: set[str] = set()
+        self.indirect_writes = False
         self.order = 0
         self.visit(tree)
 
@@ -113,6 +117,7 @@ class SourceFacts(ast.NodeVisitor):
 
     def visit_Attribute(self, node: ast.Attribute | ast.Subscript) -> None:
         if isinstance(node.ctx, (ast.Store, ast.Del)):
+            self.indirect_writes = True
             root = node.value
             while isinstance(root, (ast.Attribute, ast.Subscript)):
                 root = root.value
@@ -121,6 +126,28 @@ class SourceFacts(ast.NodeVisitor):
         self.generic_visit(node)
 
     visit_Subscript = visit_Attribute
+
+    def import_only_main_guard(self, node: ast.stmt, module: str) -> bool:
+        """Recognize one inert import-time guard, retaining all other source facts.
+
+        This is lexical evidence, not evaluation or a general dead-code rule.
+        Ambiguous namespace writes and even harmless else branches stay refused.
+        """
+        return (
+            module != "__main__"
+            and "__name__" not in self.bindings
+            and not self.namespace_lines
+            and not self.indirect_writes
+            and isinstance(node, ast.If)
+            and not node.orelse
+            and isinstance(node.test, ast.Compare)
+            and isinstance(node.test.left, ast.Name)
+            and node.test.left.id == "__name__"
+            and len(node.test.ops) == 1
+            and isinstance(node.test.ops[0], ast.Eq)
+            and isinstance(node.test.comparators[0], ast.Constant)
+            and node.test.comparators[0].value == "__main__"
+        )
 
     def visit_FunctionDef(self, node: Function) -> None:
         for expression in declaration_expressions(node):
@@ -245,6 +272,40 @@ class SourceFacts(ast.NodeVisitor):
                     for a in imported.names
                 ):
                     return node.attr
+        return None
+
+    def typing_marker(self, node: ast.expr, names: set[str]) -> str | None:
+        """Require one earlier, unconditional stdlib import, never just spelling."""
+        root = (
+            node.id
+            if isinstance(node, ast.Name)
+            else (
+                node.value.id
+                if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)
+                else None
+            )
+        )
+        if root is None or root in self.mutated_roots or self.namespace_lines:
+            return None
+        bindings = self.bindings.get(root, [])
+        if len(bindings) != 1:
+            return None
+        imported = bindings[0].node
+        if not isinstance(imported, (ast.Import, ast.ImportFrom)):
+            return None
+        if imported not in self.tree.body or imported.lineno >= node.lineno:
+            return None
+        if isinstance(node, ast.Name) and isinstance(imported, ast.ImportFrom):
+            if imported.module == "typing" and imported.level == 0:
+                for alias in imported.names:
+                    if (alias.asname or alias.name) == root and alias.name in names:
+                        return alias.name
+        if isinstance(node, ast.Attribute) and isinstance(imported, ast.Import):
+            if node.attr in names and any(
+                alias.name == "typing" and (alias.asname or alias.name) == root
+                for alias in imported.names
+            ):
+                return node.attr
         return None
 
     def dynamic_import_lines(self, nodes: tuple[ast.AST, ...]) -> tuple[int, ...]:

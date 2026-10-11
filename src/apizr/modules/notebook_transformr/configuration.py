@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, StrictStr, field_validator
 
-from apizr.runtime import DEFAULT_PYTHON, PythonTarget
+from apizr.environment.python_target import DEFAULT_PYTHON, PythonTarget
 
 
 class NotebookTransformrConfiguration(BaseModel):

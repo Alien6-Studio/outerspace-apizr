@@ -13,7 +13,7 @@ def evidence(
 ):
     if sources is None:
         sources = {
-            "shop/__init__.py": b'"""A real package initializer."""\n',
+            "shop/__init__.py": b'"""A real package initializer."""\ndef package_name() -> str:\n    return "shop"\n',
             "shop/api.py": b"def run(x: int = 2, /, *, y: int = 3) -> int:\n    return helper(x) + y\n\ndef helper(x: int) -> int:\n    return x * 2\n",
             "shop/pricing.py": b"async def run(x: int) -> int:\n    return x + 1\n",
             "shop/inventory.py": b"def available() -> bool:\n    return True\n",

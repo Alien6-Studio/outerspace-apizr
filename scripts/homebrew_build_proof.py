@@ -38,7 +38,7 @@ def candidate_source(candidate, commit):
         evidence["schema"] != "apizr.release-candidate/v1"
         or evidence["repository"] != "Alien6-Studio/outerspace-apizr"
         or evidence["commit"] != commit
-        or evidence["version"] not in {"0.4.3", "0.4.4"}
+        or evidence["version"] not in {"0.4.3", "0.4.4", "0.4.5"}
     ):
         raise ValueError("Unexpected coordinated candidate identity")
     filename = f"outerspace_apizr-{evidence['version']}.tar.gz"
@@ -52,6 +52,36 @@ def candidate_source(candidate, commit):
     return source, items[0]["sha256"]
 
 
+def validate_runtime_provider(inventory, formulas, constraint):
+    """Check the active rolling provider, not a historical qualification version."""
+    version = inventory["pydantic"]
+    core_version = inventory["pydantic_core"]
+    formula = formulas["pydantic"]
+    if (
+        version != formula["stable"]
+        or not any(v.split("_", 1)[0] == version for v in formula["installed"])
+        or version not in Requirement(constraint).specifier
+    ):
+        raise RuntimeError("Active Homebrew Pydantic violates the runtime contract")
+    for name, expected in (("pydantic", version), ("pydantic-core", core_version)):
+        matches = [
+            value
+            for package, value in inventory["provider_distributions"]
+            if canonicalize_name(package) == name
+        ]
+        if matches != [expected]:
+            raise RuntimeError("Homebrew provider module/metadata identity mismatch")
+    requirements = [Requirement(value) for value in inventory["pydantic_requires"]]
+    core = [r for r in requirements if canonicalize_name(r.name) == "pydantic-core"]
+    if len(core) != 1 or (
+        core[0].url
+        or core[0].marker
+        or core[0].extras
+        or str(core[0].specifier) != "==" + core_version
+    ):
+        raise RuntimeError("Homebrew pydantic-core disagrees with provider metadata")
+
+
 def prove(candidate, commit, inputs, output):
     if platform.system() != "Darwin":
         raise RuntimeError(
@@ -61,6 +91,9 @@ def prove(candidate, commit, inputs, output):
     if output.is_relative_to(ROOT):
         raise ValueError("Use a fresh proof directory outside the checkout")
     source, source_hash = candidate_source(candidate.resolve(), commit)
+    candidate_version = json.loads((candidate / "candidate.json").read_text())[
+        "version"
+    ]
     expected = manifest(ROOT / "uv.lock", ROOT / "policy/homebrew-build-inputs.json")
     if json.loads((inputs / "build-inputs.json").read_text()) != expected:
         raise ValueError("Wheelhouse does not match the reviewed build inputs")
@@ -86,10 +119,6 @@ def prove(candidate, commit, inputs, output):
         }
         for f in brew_info["formulae"]
     }
-    # Upgrades may retain older kegs. The import proof below checks the active
-    # provider's exact version and location; unrelated retained kegs are harmless.
-    if "2.13.5" not in formulas["pydantic"]["installed"]:
-        raise RuntimeError("The first qualification requires Homebrew Pydantic 2.13.5")
     policy = json.loads((ROOT / "policy/homebrew-build-inputs.json").read_text())
     if (
         formulas["pydantic"]["stable"]
@@ -217,24 +246,29 @@ def prove(candidate, commit, inputs, output):
     if build.exists():
         raise RuntimeError("Temporary build environment survived")
     built = list(wheels.glob("*.whl"))
-    if len(built) != 1 or built[0].name != "outerspace_apizr-0.4.4-py3-none-any.whl":
+    if (
+        len(built) != 1
+        or built[0].name != f"outerspace_apizr-{candidate_version}-py3-none-any.whl"
+    ):
         raise RuntimeError("Unexpected built wheel")
     wheel = built[0]
     with zipfile.ZipFile(wheel) as archive:
         metadata = BytesParser().parsebytes(
-            archive.read("outerspace_apizr-0.4.4.dist-info/METADATA")
+            archive.read(f"outerspace_apizr-{candidate_version}.dist-info/METADATA")
         )
         runtime_requirements = [
             r for r in metadata.get_all("Requires-Dist", []) if "extra ==" not in r
         ]
         if (
             metadata["Name"] != "outerspace-apizr"
-            or metadata["Version"] != "0.4.4"
+            or metadata["Version"] != candidate_version
             or runtime_requirements != ["pydantic<3,>=2.12"]
         ):
             raise RuntimeError("Built runtime metadata changed")
         if any(
-            n.startswith(("hatchling/", "trove_classifiers/", "build-wheelhouse/"))
+            n.startswith(
+                ("hatchling/", "tomlkit/", "trove_classifiers/", "build-wheelhouse/")
+            )
             for n in archive.namelist()
         ):
             raise RuntimeError("Build tooling embedded in Apizr wheel")
@@ -284,11 +318,13 @@ def prove(candidate, commit, inputs, output):
 runtime=pathlib.Path(sys.argv[1]).resolve(); provider=pathlib.Path(sys.argv[2]).resolve()
 assert pathlib.Path(apizr.__file__).resolve().is_relative_to(runtime)
 locations={m.__name__:str(pathlib.Path(m.__file__).resolve().relative_to(provider)) for m in (pydantic,pydantic_core)}
-assert pydantic.__version__=='2.13.5' and pydantic_core.__version__=='2.46.5'
-assert importlib.util.find_spec('hatchling') is None and importlib.util.find_spec('trove_classifiers') is None
+provider_distributions=list(importlib.metadata.distributions(path=[str(provider/'lib/python3.14/site-packages')]))
+pydantic_metadata=[d for d in provider_distributions if d.metadata['Name'].lower().replace('_','-')=='pydantic']
+assert len(pydantic_metadata)==1
+assert all(importlib.util.find_spec(name) is None for name in ('hatchling', 'tomlkit', 'trove_classifiers'))
 local_distributions=sorted((d.metadata['Name'],d.version) for d in importlib.metadata.distributions(path=[str(runtime/'lib/python3.14/site-packages')]))
-assert local_distributions==[('outerspace-apizr','0.4.4')]
-print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Path(apizr.__file__).resolve().relative_to(runtime)),'provider_modules':locations,'pydantic':pydantic.__version__,'pydantic_core':pydantic_core.__version__,'local_distributions':local_distributions,'distributions':sorted(set((d.metadata.get('Name'),d.version) for d in importlib.metadata.distributions()),key=lambda pair:(pair[0] or '',pair[1] or ''))}))
+assert local_distributions==[('outerspace-apizr',sys.argv[3])]
+print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Path(apizr.__file__).resolve().relative_to(runtime)),'provider_modules':locations,'pydantic':pydantic.__version__,'pydantic_core':pydantic_core.__version__,'provider_distributions':sorted((d.metadata['Name'],d.version) for d in provider_distributions),'pydantic_requires':pydantic_metadata[0].requires or [],'local_distributions':local_distributions,'distributions':sorted(set((d.metadata.get('Name'),d.version) for d in importlib.metadata.distributions()),key=lambda pair:(pair[0] or '',pair[1] or ''))}))
 """
     inventory = json.loads(
         run(
@@ -301,14 +337,16 @@ print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Pat
                 inventory_code,
                 runtime,
                 pydantic_prefix,
+                candidate_version,
             ],
             output,
             env=runtime_env,
         )
     )
+    validate_runtime_provider(inventory, formulas, policy["runtime"]["constraint"])
     cli = [*sandbox, runtime / "bin/apizr"]
     version = run([*cli, "--version"], output, env=runtime_env).strip()
-    if "0.4.4" not in version:
+    if version != f"outerspace-apizr {candidate_version}":
         raise RuntimeError("Installed CLI version mismatch")
     project = output / "project"
     project.mkdir()

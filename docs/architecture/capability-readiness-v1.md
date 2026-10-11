@@ -2,6 +2,51 @@
 
 # Static capability readiness
 
+## Retained structured declarations
+
+`readiness/structured.py` is the authoritative static resolver for supported
+stdlib class-form `TypedDict` declarations. It consumes AST `SourceFacts` and
+retains `StructuredDeclaration` records in `ReadinessReport.structured_types`.
+Each record identifies the module, symbol and source span; the report's source
+and IR digests bind it to the inspected bytes. A record carries either a proven
+object `TypeSpec` or a precise refusal. This is observable evidence, including
+in serialized Catalog inspections, rather than a resolver cache or side channel.
+
+The resolver proves one earlier unconditional stdlib typing import, an unchanged
+binding, literal requiredness and a safe class body. Only a successfully proven
+class span is exempt from `APIZR-READY-004`; every other class remains subject to
+the existing initialization policy. Unsupported structured inputs receive
+`APIZR-READY-019`. [Supported forms and limits](../getting-started/user-guide/inspect.md#structured-model-inputs-with-typeddict)
+include the explicit inheritance, functional, forward-reference and recursion
+refusals. Expanded shapes are bounded to 32 levels and 4096 type nodes.
+
+The neutral `contract_types.py` model adds `kind="object"` and canonical,
+name-sorted `ObjectField(name, required, type)` records. It rejects duplicate or
+invalid names, invalid field contracts and inconsistent object/non-object
+details, including on serialization/revalidation of constructed or copied
+models. `contract_lowering.py` lowers retained annotation expressions using
+these bound shapes. Interface planners consume this evidence; they never parse
+project source to rediscover a declaration. REST, MCP, client examples and
+serialized execution plans therefore share the same object contract.
+
+`interfaces/runtime.py` mirrors the shape in its lightweight `RuntimeType` and
+validates required and extra fields recursively into plain dictionaries. It
+never reads runtime type annotations or instantiates a TypedDict class. The
+same reviewed runtime is copied verbatim into standalone adapters and governed
+workers, with updated integrity hashes. Existing scalar coercion rules remain
+unchanged. Return types remain descriptive (`enforcement="none"`) and MCP tools
+have no `outputSchema`.
+
+This is an additive v1 vocabulary extension. Historical non-object TypeSpecs
+omit `fields`, and reports without structured evidence omit `structured_types`;
+their canonical bytes remain unchanged. Current readers accept historical v1
+artifacts. Older readers need an upgrade to consume the new object vocabulary.
+Published Catalog, Readiness, repository interface and runtime schemas include
+the additive definitions. Existing non-TypedDict golden contracts keep their
+semantics; adapter, embedded model and provenance hashes change when their
+implementation bytes change. No project/package version or publication changes
+are implied by this development feature.
+
 Capability IR records source declarations. Readiness applies a separate, bounded
 policy to those declarations and matching static source evidence. Neither model
 executes source, imports user modules, resolves a repository or guarantees runtime
@@ -21,6 +66,12 @@ The policy identifier is `apizr.readiness/v1`, independent of
 canonical serialization, JSON Schema, golden fixture or document digests. Tests
 pin their baseline hashes at `b82e5bf969ce27194075eb053412485941e7d0ce`.
 Changes to readiness decisions require an explicit policy-version review.
+
+The reviewed #266 import-guard refinement retains this v1 contract and schema:
+it proves one additional inert import-time statement using existing lexical
+facts, without adding a policy flag or changing report fields. Reports for this
+newly recognized source shape change; historical schema and golden bytes remain
+pinned. Experiment evidence grants no exception to this common rule.
 
 The typed report references the exact IR document digest and source record. Each
 assessment refers to a logical `python:<module>:<symbol>` identity and source span.
@@ -48,6 +99,15 @@ remain unknown; they do not make every function ineligible. Future execution
 policy must decide whether those unknown effects are acceptable.
 
 ## Binding and initialization policy
+
+For an imported logical module other than `__main__`, the exact top-level
+`if __name__ == "__main__":` guard is inert initialization evidence. Recognition
+requires a single equality comparison, no `else`, no binding of `__name__`, no
+dynamic namespace facts and no module-level indirect attribute/subscript writes.
+Reversed comparisons, other operators and compound predicates remain uncertain.
+The original AST and source bytes are retained. Binding events, imports and
+dynamic-import facts inside the guard are still assessed conservatively; this
+rule does not promote guarded callable declarations or waive other blockers.
 
 Module-level binding events are collected in lexical order without entering
 function/lambda bodies or treating class members as module names. Function
@@ -83,7 +143,10 @@ Visible `globals`/`locals`/`vars` access, `exec`/`eval` or star imports make nam
 binding uncertain. Dynamic imports (`__import__`, `import_module`, including
 visible imported aliases/attribute calls) create dependency uncertainty. Static
 relative or non-stdlib imports create unresolved local/namespace/external dependency
-reasons; no files or distributions are searched. Imports within a candidate's body
+reasons; no files or distributions are searched. A separately validated
+[repository assessment](repository-readiness-v1.md#resolved-local-import-refinement)
+can discharge a precisely proven local dependency for repository generation while
+retaining this entire source-local report unchanged. Imports within a candidate's body
 are inspected syntactically for dependency uncertainty, including nested scopes,
 without claiming a call graph. Ordinary stdlib imports are a bounded allowance,
 not a promise that their initialization succeeds. The allowed roots are frozen in

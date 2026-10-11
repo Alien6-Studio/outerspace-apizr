@@ -6,11 +6,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-from apizr.local_plugins import list_extensions
-from apizr.plugin_catalog import load_catalog, resolve_profile
-from apizr.plugin_lock import check_lock
-from apizr.plugin_sync import sync_plugins
-from apizr.plugins_cli import main
+from apizr.cli.commands.plugins import main
+from apizr.plugins.catalog import load_catalog, resolve_profile
+from apizr.plugins.local import list_extensions
+from apizr.plugins.lock import check_lock
+from apizr.plugins.sync import sync_plugins
 
 
 def snapshot(root):
@@ -27,7 +27,10 @@ def main_script():
     root = Path(sys.argv[1])
     core = root / "core"
     before = snapshot(core)
-    active = (root / "plugins/activations.json").read_bytes()
+    active = (
+        Path(json.loads((root / "installed.json").read_text())["store"])
+        / "activations.json"
+    ).read_bytes()
     house = root / "wheels"
     path = root / "catalog/catalogue.json"
     catalog = load_catalog(path)
@@ -87,7 +90,11 @@ def main_script():
     )
     assert (
         snapshot(core) == before
-        and (root / "plugins/activations.json").read_bytes() == active
+        and (
+            Path(json.loads((root / "installed.json").read_text())["store"])
+            / "activations.json"
+        ).read_bytes()
+        == active
     )
     # This file is evidence only. Installation does not qualify business operations;
     # the existing real MCP and Docker/Attest proofs exercise those separately.

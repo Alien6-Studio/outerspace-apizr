@@ -2,7 +2,7 @@ from typing import List, Literal
 
 from pydantic import BaseModel, Field
 
-from apizr.runtime import DEFAULT_PYTHON, PythonTarget
+from apizr.environment.python_target import DEFAULT_PYTHON, PythonTarget
 
 HOSTNAME = "0.0.0.0"
 

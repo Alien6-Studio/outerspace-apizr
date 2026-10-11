@@ -194,6 +194,13 @@ def test_real_generated_transports_and_tamper(
 
 
 def test_repository_initializer_runs_after_filter(worker_image):
+    from apizr.capabilities.model import Digest
+    from apizr.exposure import ExposureRefused, plan_bytes, plan_exposure, validate_plan
+    from apizr.graph import build_graph
+    from apizr.repository import scan_sources
+    from apizr.repository_execution.planner import container_plan
+    from apizr.repository_readiness import assess_repository, report_digest
+
     files = {
         "sample/__init__.py": b"""import os
 try:
@@ -207,9 +214,53 @@ else:
 """,
         "sample/api.py": b"def run(): return 42\n",
     }
-    runtime, exposure, sources, _ = repository_planned(
-        files=files, policy=ExecutionPolicyV2(), image=worker_image
+    safe = {**files, "sample/__init__.py": b""}
+    runtime, _, _, values = repository_planned(
+        files=safe, policy=ExecutionPolicyV2(), image=worker_image
     )
+    catalog = scan_sources(files.items())
+    graph = build_graph(catalog, files)
+    readiness = assess_repository(catalog, graph, policy=values[2].policy)
+    with pytest.raises(ExposureRefused):
+        plan_exposure(catalog, graph, readiness, policy=values[3])
+
+    # This independent kernel test uses an explicitly constructed trusted
+    # invocation fixture. It is not an eligible Exposure/bundle: prove that
+    # canonical revalidation refuses the unsafe initializer before launch.
+    from apizr.graph.serialization import graph_digest
+    from apizr.repository.serialization import catalog_digest
+
+    bindings = {
+        "repository_digest": catalog.repository_digest,
+        "catalog_digest": catalog_digest(catalog),
+        "graph_digest": graph_digest(graph),
+        "repository_readiness_digest": report_digest(readiness),
+    }
+    snapshot = values[4].model_copy(update=bindings)
+    with pytest.raises(ExposureRefused):
+        validate_plan(snapshot, catalog, graph, readiness, policy=values[3])
+    exposure = plan_bytes(snapshot)
+    contract = runtime.worker.repository_interface.model_copy(
+        update={
+            **bindings,
+            "exposure_plan_digest": Digest.of_bytes(exposure),
+            "sources": tuple(
+                source.model_copy(
+                    update={
+                        "size": len(files[source.source_path]),
+                        "source_digest": Digest.of_bytes(files[source.source_path]),
+                    }
+                )
+                for source in runtime.worker.repository_interface.sources
+            ),
+        }
+    )
+    runtime = container_plan(
+        contract, exposure, "python:sample.api:run", runtime.policy, worker_image
+    )
+    sources = {
+        source.bundle_path: files[source.source_path] for source in contract.sources
+    }
     result = repository_execute(strict(runtime), exposure, sources, {})
     assert result.status == "success" and result.value == 42
     from apizr.repository_execution.supervisor import execute as allow_repository

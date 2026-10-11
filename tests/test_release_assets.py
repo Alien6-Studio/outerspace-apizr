@@ -103,7 +103,17 @@ def inputs(root, assets, version="0.4.0"):
 
 @pytest.mark.parametrize(
     "version",
-    ["0.4.0", "0.4.0rc1", "0.4.1rc1", "0.4.1", "0.4.2rc1", "0.4.2", "0.4.3", "0.4.4"],
+    [
+        "0.4.0",
+        "0.4.0rc1",
+        "0.4.1rc1",
+        "0.4.1",
+        "0.4.2rc1",
+        "0.4.2",
+        "0.4.3",
+        "0.4.4",
+        "0.4.5",
+    ],
 )
 def test_stage_preserves_bytes_and_uses_recorded_unique_names(
     assets, tmp_path, monkeypatch, version
@@ -146,7 +156,11 @@ def test_stage_preserves_bytes_and_uses_recorded_unique_names(
         ("pull_request", "refs/pull/205/merge", "0.4.4", True),
         ("push", "refs/heads/master", "0.4.3", True),
         ("push", "refs/heads/master", "0.4.4", False),
-        ("push", "refs/heads/master", "0.4.5", True),
+        ("push", "refs/heads/master", "0.4.5", False),
+        ("push", "refs/heads/master", "0.4.6", True),
+        ("workflow_dispatch", "refs/heads/master", "0.4.5", True),
+        ("pull_request", "refs/pull/281/merge", "0.4.5", True),
+        ("push", "refs/heads/0.4.5", "0.4.5", True),
         ("push", "refs/heads/release/0.4.2", "0.4.2", True),
         ("push", "refs/heads/release/0.4.3", "0.4.3", True),
         ("push", "refs/heads/release/0.4.1", "0.4.1", True),

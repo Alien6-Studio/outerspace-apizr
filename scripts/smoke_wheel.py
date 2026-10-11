@@ -35,7 +35,7 @@ def main():
         assert not any(name == "src.py" or name.startswith("src/") for name in names)
         assert any(name.endswith(".dist-info/licenses/LICENSE") for name in names)
         assert "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2" in names
-        assert "apizr/i18n/en/messages.json" in names
+        assert "apizr/legacy/i18n/en/messages.json" in names
     notebook = Path(__file__).resolve().parents[1] / "examples/pricing.ipynb"
     with tempfile.TemporaryDirectory(prefix="apizr-wheel-") as directory:
         root = Path(directory).resolve()
@@ -97,6 +97,7 @@ print(apizr.__file__)
                 str(Path(__file__).with_name("smoke_readme.py").resolve()),
                 str(cli),
                 "--development",
+                "--repository-refinement",
             ],
             cwd=root,
             check=True,
@@ -311,11 +312,37 @@ print(apizr.__file__)
                 capture_output=True,
                 timeout=20,
             )
-            # Checkout's local dependency remains conditional under these policies.
-            assert repo_report.returncode == artifact_report.returncode == 1
+            # The local import is proven at repository level. Unsupported
+            # execution controls still refuse readiness independently.
+            unsupported_control = controls == ["subprocess_deny"]
+            expected_exit = 1 if unsupported_control else 0
+            assert repo_report.returncode == artifact_report.returncode == expected_exit
             assert repo_report.stdout == artifact_report.stdout
             readiness = json.loads(repo_report.stdout)
             assert readiness["schema_version"] == "apizr.repository-readiness/v1"
+            assert {a["state"] for a in readiness["assessments"]} == {
+                "unsupported" if unsupported_control else "ready"
+            }
+            checkout = next(
+                a
+                for a in readiness["assessments"]
+                if a["capability_id"] == "python:checkout:checkout"
+            )
+            retained = next(
+                source
+                for source in json.loads(scanned_after_graph.stdout)["sources"]
+                if source["module"] == "checkout"
+            )["inspection"]["readiness"]["assessments"][0]
+            assert checkout["local_readiness"] == retained
+            assert retained["state"] == "conditional"
+            assert retained["can_generate_interface"] is False
+            assert {
+                reason["code"]
+                for reason in retained["dimensions"]["execution"]["reasons"]
+            } == {"APIZR-READY-015"}
+            assert {reason["code"] for reason in checkout["reasons"]} == (
+                {"APIZR-REPOREADY-006"} if unsupported_control else set()
+            )
             assert all(
                 mode["runtime_availability"] == "not_assessed"
                 for mode in readiness["execution"]

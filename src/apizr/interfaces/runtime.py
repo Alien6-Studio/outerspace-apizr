@@ -8,7 +8,7 @@ import sys
 import types
 from hashlib import sha256
 from pathlib import Path
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, NotRequired, TypeAlias, TypedDict
 
 JSON: TypeAlias = None | bool | int | float | str | list["JSON"] | dict[str, "JSON"]
 
@@ -18,6 +18,13 @@ class RuntimeType(TypedDict):
     items: list["RuntimeType"]
     values: list[str | int | float | bool | None]
     variadic: bool
+    fields: NotRequired[list["RuntimeField"]]
+
+
+class RuntimeField(TypedDict):
+    name: str
+    required: bool
+    type: RuntimeType
 
 
 class RuntimeParameter(TypedDict):
@@ -201,6 +208,8 @@ def validate(value: JSON, spec: RuntimeType) -> object:
                 pass
     if kind == "dict" and isinstance(value, dict):
         return {key: validate(item, items[0]) for key, item in value.items()}
+    if kind == "object" and isinstance(value, dict):
+        return validate_object(value, spec)
     if kind in ("list", "tuple", "set") and isinstance(value, list):
         if kind == "tuple" and not spec["variadic"]:
             if len(value) != len(items):
@@ -222,6 +231,22 @@ def validate(value: JSON, spec: RuntimeType) -> object:
             return result
         return converted
     raise ValueError("Value does not match the declared input type")
+
+
+def validate_object(value: dict[str, JSON], spec: RuntimeType) -> dict[str, object]:
+    fields = spec.get("fields")
+    if fields is None:
+        raise ValueError("Object contract fields are missing")
+    if set(value) - {field["name"] for field in fields}:
+        raise ValueError("Unexpected object field")
+    result_object: dict[str, object] = {}
+    for field in fields:
+        name = field["name"]
+        if name in value:
+            result_object[name] = validate(value[name], field["type"])
+        elif field["required"]:
+            raise ValueError("Missing required object field: " + name)
+    return result_object
 
 
 def arguments(

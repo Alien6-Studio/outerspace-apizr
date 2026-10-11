@@ -53,6 +53,14 @@ unsupported hosts fail before writing.
 
 ## Start the application
 
+For a nested model payload, use the [TypedDict example](inspect.md#structured-model-inputs-with-typeddict).
+Its `payload` becomes a closed object in OpenAPI: each field retains its type and
+requiredness, including nested objects. The same source generates MCP tools.
+After starting that generated REST server, call `/capabilities/predict` with
+`{"payload":{"customer_id":"c","features":{"age":2,"score":3}}}` to get
+`6.0`. Missing, extra or invalid nested fields produce HTTP 422. Use the ordinary
+server setup below with `.output/typed-rest` as the application directory.
+
 **Direct-mode startup imports and executes the bundled source; governed mode imports it only inside the worker on a call. Run only trusted code.** A
 `ready` result concerns the static interface contract, not runtime safety.
 

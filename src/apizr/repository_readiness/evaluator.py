@@ -9,6 +9,7 @@ from apizr.readiness.model import combine
 from apizr.repository.model import Catalog
 from apizr.repository.serialization import catalog_digest
 
+from .eligibility import interface_state
 from .evidence import relationship_evidence, validate_linkage
 from .execution import execution_compatibility
 from .model import (
@@ -59,10 +60,13 @@ def assess_repository(
             in_catalog = identity in effects
             observed = effects.get(identity, Effects())
             relationships = relationship_evidence(
-                upstream, source.path, in_catalog, graph, local, effects
+                upstream, source.path, in_catalog, graph, local, effects, catalog
             )
+            refined = interface_state(upstream, source.path, relationships)
             reasons: list[Reason] = []
-            if selected.require_interface and not upstream.can_generate_interface:
+            if selected.require_interface and (
+                not in_catalog or refined.value != "ready"
+            ):
                 reasons.append(Reason(code=Code.INTERFACE))
             if not in_catalog:
                 reasons.append(Reason(code=Code.CATALOG))
@@ -109,9 +113,7 @@ def assess_repository(
                     effects=observed,
                     relationships=relationships,
                     reasons=tuple(reasons),
-                    state=combine(
-                        (upstream.state, *(REASONS[r.code][0] for r in reasons))
-                    ),
+                    state=combine((refined, *(REASONS[r.code][0] for r in reasons))),
                 )
             )
     return RepositoryReadinessReport(

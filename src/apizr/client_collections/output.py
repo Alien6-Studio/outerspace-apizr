@@ -6,8 +6,8 @@ import shutil
 import stat
 from pathlib import Path
 
-from apizr.config_files import absolute_path, directory_fd
 from apizr.interfaces.serialization import json_bytes
+from apizr.workspace.files import absolute_path, directory_fd
 
 from .model import (
     MANIFEST,

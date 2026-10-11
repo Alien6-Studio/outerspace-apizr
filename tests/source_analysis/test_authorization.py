@@ -214,7 +214,7 @@ def test_memory_primitives_are_not_filesystem_authority():
 
 
 def test_project_cannot_declare_authority(tmp_path):
-    from apizr.project import load_project
+    from apizr.workspace.project import load_project
 
     path = tmp_path / "apizr.toml"
     path.write_text(

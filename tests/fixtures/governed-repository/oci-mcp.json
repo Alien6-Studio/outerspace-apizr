@@ -3,7 +3,7 @@
     "artifacts": {
       "apizr-bundle-provenance.json": {
         "algorithm": "sha256",
-        "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
+        "value": "4236923a880d0f26ccc092b6fa1380c52c7da20eb435fd8ee275116cd239196d"
       },
       "apizr_governed/__init__.py": {
         "algorithm": "sha256",
@@ -19,7 +19,7 @@
       },
       "apizr_governed/capabilities/model.py": {
         "algorithm": "sha256",
-        "value": "aa3c654a9a2b8060c052d78908f1b358a91585459375d6e7d3b44961d2276367"
+        "value": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
       },
       "apizr_governed/capabilities/types.py": {
         "algorithm": "sha256",
@@ -95,7 +95,7 @@
       },
       "apizr_governed/interfaces/model.py": {
         "algorithm": "sha256",
-        "value": "af6cbd6482694fc6ff29f54635425b6844aeae845fc90e7e8c74a4c81e1546fc"
+        "value": "5b1a3374fffbdaf376078d161c87e570f47071c59943dd0532351f964d6a6659"
       },
       "apizr_governed/interfaces/results.py": {
         "algorithm": "sha256",
@@ -103,7 +103,7 @@
       },
       "apizr_governed/interfaces/runtime.py": {
         "algorithm": "sha256",
-        "value": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14"
+        "value": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
       },
       "apizr_governed/interfaces/serialization.py": {
         "algorithm": "sha256",
@@ -175,43 +175,43 @@
       },
       "capability-catalog.json": {
         "algorithm": "sha256",
-        "value": "3374226143f10b3dc4785074ecdf1c1c2d61011dda2a7757505d3e9db2b4617e"
+        "value": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
       },
       "capability-graph.json": {
         "algorithm": "sha256",
-        "value": "1e2c044360f6d4fcdc03ddf2c5a59b02743cb45d67329971e9db26b8a9c8974b"
+        "value": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
       },
       "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
         "algorithm": "sha256",
-        "value": "cbd6ccda4d047fca4046ee6abfc242876c987d7ecce4eb517959da0ef3053979"
+        "value": "94711f606d9d5e35fbcc4a4c2cbc722b2a49c0de8db884237117953825b43209"
       },
       "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json": {
         "algorithm": "sha256",
-        "value": "25fe5622f3a019ad768bde437cec5907bc2d8c7afcb344fc3166a069a320297b"
+        "value": "319f2291e6f7fd0c10e4fc9a882bbfaaec9d7372fde857f4212266a7a2f9da9a"
       },
       "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json": {
         "algorithm": "sha256",
-        "value": "eba80b3e9a104e47d3caff4ceeaea6a6d96f60ec65f8cfc2994911c0baacb8fe"
+        "value": "7e2dcc6c10548503691af6764e606bf814374bee1d73596aa306f2f93d27a5bf"
       },
       "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json": {
         "algorithm": "sha256",
-        "value": "824f08bee1c5488fdc5a09688aec6e4bfd08991f21f72f56b81089993961f780"
+        "value": "9b69070e4aa19d4a674c8148553435b34d8f257991952f5323b8c233d9c573bf"
       },
       "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json": {
         "algorithm": "sha256",
-        "value": "dd54d8bb34cb052fa3c812c36bee5572265d6237a6bf2f30e12a414db7f383b3"
+        "value": "627484560f32861ab6f88ac26cd4e0061b3153e195f04df6644b1e07f50efbe3"
       },
       "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json": {
         "algorithm": "sha256",
-        "value": "47b07e79d009f33075a9d5206d0beefa81002c2a8ff0b85ed767e32290f0db4d"
+        "value": "12471cf957993d597688f4830aad6a0deaabd17aad734d4481643e934c47ed51"
       },
       "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json": {
         "algorithm": "sha256",
-        "value": "cc713403b288876779d986e9c1e83707ca0e1a1ae03ce3f932b513b9dc9b6297"
+        "value": "737d92cae3abb89bb08b0dce53edffbe315f100e6e92d1b7f09ddbba09b52192"
       },
       "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json": {
         "algorithm": "sha256",
-        "value": "3110d29bff8e9753f7afd996e7088cc2081bf630dd6b6a7c8518fe4d3ffe66fb"
+        "value": "420867554d953186100c77afd4560f3bf651b17b6e754900377ca0a77bec5712"
       },
       "execution/policy.json": {
         "algorithm": "sha256",
@@ -223,7 +223,7 @@
       },
       "exposure-plan.json": {
         "algorithm": "sha256",
-        "value": "9cb264ee5672790a2eb980d326d9f6f3e122d3df24d2f27d5461f8cd6f667b5e"
+        "value": "6d43952577dcd202c913717f7fd8fd249c9372813a9fc43f8ad8dfe1142a30c5"
       },
       "exposure-policy.json": {
         "algorithm": "sha256",
@@ -235,11 +235,11 @@
       },
       "repository-interface.json": {
         "algorithm": "sha256",
-        "value": "6f318f9118b5b3a2d23b08d95f6f016dfc4a69f89955b4edea51967a85b33e80"
+        "value": "28c79ddc84d1ee3d4e3d505935e21cb69b3262316473de65a8e728773dce045c"
       },
       "repository-readiness.json": {
         "algorithm": "sha256",
-        "value": "0b410489bf2e4838c66dec259bbb5d5257fa2dc2e8c64fd3c8e9cf8b8f8a3422"
+        "value": "91db7c58901247994d58e25b29e9dd6a5a55cd3b96e840a6c1fb81ca542ff2fe"
       },
       "requirements.txt": {
         "algorithm": "sha256",
@@ -251,7 +251,7 @@
       },
       "source/sample/__init__.py": {
         "algorithm": "sha256",
-        "value": "c67eb7621f104d5712bdccb66cdc440d46d734036a3a2799b737451d1d4015ad"
+        "value": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
       },
       "source/sample/admin.py": {
         "algorithm": "sha256",
@@ -264,6 +264,10 @@
       "source/sample/pricing.py": {
         "algorithm": "sha256",
         "value": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+      },
+      "apizr_governed/contract_types.py": {
+        "algorithm": "sha256",
+        "value": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
       }
     },
     "backend": "oci-container",
@@ -272,56 +276,56 @@
       "python:sample.api:counter": {
         "digest": {
           "algorithm": "sha256",
-          "value": "25fe5622f3a019ad768bde437cec5907bc2d8c7afcb344fc3166a069a320297b"
+          "value": "319f2291e6f7fd0c10e4fc9a882bbfaaec9d7372fde857f4212266a7a2f9da9a"
         },
         "path": "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json"
       },
       "python:sample.api:crash": {
         "digest": {
           "algorithm": "sha256",
-          "value": "dd54d8bb34cb052fa3c812c36bee5572265d6237a6bf2f30e12a414db7f383b3"
+          "value": "627484560f32861ab6f88ac26cd4e0061b3153e195f04df6644b1e07f50efbe3"
         },
         "path": "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json"
       },
       "python:sample.api:environment": {
         "digest": {
           "algorithm": "sha256",
-          "value": "47b07e79d009f33075a9d5206d0beefa81002c2a8ff0b85ed767e32290f0db4d"
+          "value": "12471cf957993d597688f4830aad6a0deaabd17aad734d4481643e934c47ed51"
         },
         "path": "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json"
       },
       "python:sample.api:fail": {
         "digest": {
           "algorithm": "sha256",
-          "value": "cc713403b288876779d986e9c1e83707ca0e1a1ae03ce3f932b513b9dc9b6297"
+          "value": "737d92cae3abb89bb08b0dce53edffbe315f100e6e92d1b7f09ddbba09b52192"
         },
         "path": "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json"
       },
       "python:sample.api:large": {
         "digest": {
           "algorithm": "sha256",
-          "value": "cbd6ccda4d047fca4046ee6abfc242876c987d7ecce4eb517959da0ef3053979"
+          "value": "94711f606d9d5e35fbcc4a4c2cbc722b2a49c0de8db884237117953825b43209"
         },
         "path": "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json"
       },
       "python:sample.api:loop": {
         "digest": {
           "algorithm": "sha256",
-          "value": "3110d29bff8e9753f7afd996e7088cc2081bf630dd6b6a7c8518fe4d3ffe66fb"
+          "value": "420867554d953186100c77afd4560f3bf651b17b6e754900377ca0a77bec5712"
         },
         "path": "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json"
       },
       "python:sample.api:run": {
         "digest": {
           "algorithm": "sha256",
-          "value": "eba80b3e9a104e47d3caff4ceeaea6a6d96f60ec65f8cfc2994911c0baacb8fe"
+          "value": "7e2dcc6c10548503691af6764e606bf814374bee1d73596aa306f2f93d27a5bf"
         },
         "path": "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json"
       },
       "python:sample.pricing:run": {
         "digest": {
           "algorithm": "sha256",
-          "value": "824f08bee1c5488fdc5a09688aec6e4bfd08991f21f72f56b81089993961f780"
+          "value": "9b69070e4aa19d4a674c8148553435b34d8f257991952f5323b8c233d9c573bf"
         },
         "path": "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json"
       }
@@ -332,7 +336,7 @@
     },
     "exposure_plan_digest": {
       "algorithm": "sha256",
-      "value": "9cb264ee5672790a2eb980d326d9f6f3e122d3df24d2f27d5461f8cd6f667b5e"
+      "value": "6d43952577dcd202c913717f7fd8fd249c9372813a9fc43f8ad8dfe1142a30c5"
     },
     "policy_artifact": "execution/policy.json",
     "policy_digest": {
@@ -343,7 +347,7 @@
     "provider_version": "apizr.docker-engine/v1",
     "repository_interface_digest": {
       "algorithm": "sha256",
-      "value": "6f318f9118b5b3a2d23b08d95f6f016dfc4a69f89955b4edea51967a85b33e80"
+      "value": "28c79ddc84d1ee3d4e3d505935e21cb69b3262316473de65a8e728773dce045c"
     },
     "runtime": {
       "image": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
@@ -357,7 +361,7 @@
     "artifacts": {
       "apizr-bundle-provenance.json": {
         "algorithm": "sha256",
-        "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
+        "value": "4236923a880d0f26ccc092b6fa1380c52c7da20eb435fd8ee275116cd239196d"
       },
       "apizr_governed/__init__.py": {
         "algorithm": "sha256",
@@ -373,7 +377,7 @@
       },
       "apizr_governed/capabilities/model.py": {
         "algorithm": "sha256",
-        "value": "aa3c654a9a2b8060c052d78908f1b358a91585459375d6e7d3b44961d2276367"
+        "value": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
       },
       "apizr_governed/capabilities/types.py": {
         "algorithm": "sha256",
@@ -449,7 +453,7 @@
       },
       "apizr_governed/interfaces/model.py": {
         "algorithm": "sha256",
-        "value": "af6cbd6482694fc6ff29f54635425b6844aeae845fc90e7e8c74a4c81e1546fc"
+        "value": "5b1a3374fffbdaf376078d161c87e570f47071c59943dd0532351f964d6a6659"
       },
       "apizr_governed/interfaces/results.py": {
         "algorithm": "sha256",
@@ -457,7 +461,7 @@
       },
       "apizr_governed/interfaces/runtime.py": {
         "algorithm": "sha256",
-        "value": "65cdfbe7b2fc6af530ac48ffc25d3698024fe329ffb99f7fee0c93facadfaf14"
+        "value": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
       },
       "apizr_governed/interfaces/serialization.py": {
         "algorithm": "sha256",
@@ -529,47 +533,47 @@
       },
       "capability-catalog.json": {
         "algorithm": "sha256",
-        "value": "3374226143f10b3dc4785074ecdf1c1c2d61011dda2a7757505d3e9db2b4617e"
+        "value": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
       },
       "capability-graph.json": {
         "algorithm": "sha256",
-        "value": "1e2c044360f6d4fcdc03ddf2c5a59b02743cb45d67329971e9db26b8a9c8974b"
+        "value": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
       },
       "execution/bundle.json": {
         "algorithm": "sha256",
-        "value": "b20c05338b75c53f08d44bc767aedf1dde7eeada26303986839c4900bab1b878"
+        "value": "e7fd1c8fe9093fca4f9d8e3c267baeb4e748f572dbc01d64788605498b9aa8ac"
       },
       "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
         "algorithm": "sha256",
-        "value": "cbd6ccda4d047fca4046ee6abfc242876c987d7ecce4eb517959da0ef3053979"
+        "value": "94711f606d9d5e35fbcc4a4c2cbc722b2a49c0de8db884237117953825b43209"
       },
       "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json": {
         "algorithm": "sha256",
-        "value": "25fe5622f3a019ad768bde437cec5907bc2d8c7afcb344fc3166a069a320297b"
+        "value": "319f2291e6f7fd0c10e4fc9a882bbfaaec9d7372fde857f4212266a7a2f9da9a"
       },
       "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json": {
         "algorithm": "sha256",
-        "value": "eba80b3e9a104e47d3caff4ceeaea6a6d96f60ec65f8cfc2994911c0baacb8fe"
+        "value": "7e2dcc6c10548503691af6764e606bf814374bee1d73596aa306f2f93d27a5bf"
       },
       "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json": {
         "algorithm": "sha256",
-        "value": "824f08bee1c5488fdc5a09688aec6e4bfd08991f21f72f56b81089993961f780"
+        "value": "9b69070e4aa19d4a674c8148553435b34d8f257991952f5323b8c233d9c573bf"
       },
       "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json": {
         "algorithm": "sha256",
-        "value": "dd54d8bb34cb052fa3c812c36bee5572265d6237a6bf2f30e12a414db7f383b3"
+        "value": "627484560f32861ab6f88ac26cd4e0061b3153e195f04df6644b1e07f50efbe3"
       },
       "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json": {
         "algorithm": "sha256",
-        "value": "47b07e79d009f33075a9d5206d0beefa81002c2a8ff0b85ed767e32290f0db4d"
+        "value": "12471cf957993d597688f4830aad6a0deaabd17aad734d4481643e934c47ed51"
       },
       "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json": {
         "algorithm": "sha256",
-        "value": "cc713403b288876779d986e9c1e83707ca0e1a1ae03ce3f932b513b9dc9b6297"
+        "value": "737d92cae3abb89bb08b0dce53edffbe315f100e6e92d1b7f09ddbba09b52192"
       },
       "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json": {
         "algorithm": "sha256",
-        "value": "3110d29bff8e9753f7afd996e7088cc2081bf630dd6b6a7c8518fe4d3ffe66fb"
+        "value": "420867554d953186100c77afd4560f3bf651b17b6e754900377ca0a77bec5712"
       },
       "execution/policy.json": {
         "algorithm": "sha256",
@@ -581,7 +585,7 @@
       },
       "exposure-plan.json": {
         "algorithm": "sha256",
-        "value": "9cb264ee5672790a2eb980d326d9f6f3e122d3df24d2f27d5461f8cd6f667b5e"
+        "value": "6d43952577dcd202c913717f7fd8fd249c9372813a9fc43f8ad8dfe1142a30c5"
       },
       "exposure-policy.json": {
         "algorithm": "sha256",
@@ -593,11 +597,11 @@
       },
       "repository-interface.json": {
         "algorithm": "sha256",
-        "value": "6f318f9118b5b3a2d23b08d95f6f016dfc4a69f89955b4edea51967a85b33e80"
+        "value": "28c79ddc84d1ee3d4e3d505935e21cb69b3262316473de65a8e728773dce045c"
       },
       "repository-readiness.json": {
         "algorithm": "sha256",
-        "value": "0b410489bf2e4838c66dec259bbb5d5257fa2dc2e8c64fd3c8e9cf8b8f8a3422"
+        "value": "91db7c58901247994d58e25b29e9dd6a5a55cd3b96e840a6c1fb81ca542ff2fe"
       },
       "requirements.txt": {
         "algorithm": "sha256",
@@ -609,7 +613,7 @@
       },
       "source/sample/__init__.py": {
         "algorithm": "sha256",
-        "value": "c67eb7621f104d5712bdccb66cdc440d46d734036a3a2799b737451d1d4015ad"
+        "value": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
       },
       "source/sample/admin.py": {
         "algorithm": "sha256",
@@ -622,11 +626,15 @@
       "source/sample/pricing.py": {
         "algorithm": "sha256",
         "value": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+      },
+      "apizr_governed/contract_types.py": {
+        "algorithm": "sha256",
+        "value": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
       }
     },
     "exposure_plan_digest": {
       "algorithm": "sha256",
-      "value": "9cb264ee5672790a2eb980d326d9f6f3e122d3df24d2f27d5461f8cd6f667b5e"
+      "value": "6d43952577dcd202c913717f7fd8fd249c9372813a9fc43f8ad8dfe1142a30c5"
     },
     "protocol": {
       "sdk": "mcp>=2.2,<3",
@@ -634,11 +642,11 @@
     },
     "provenance_digest": {
       "algorithm": "sha256",
-      "value": "66b545a1a4142cbd70ae14880ae04e5f315820f94faa93eb9c903f7b3e50088e"
+      "value": "4236923a880d0f26ccc092b6fa1380c52c7da20eb435fd8ee275116cd239196d"
     },
     "repository_interface_digest": {
       "algorithm": "sha256",
-      "value": "6f318f9118b5b3a2d23b08d95f6f016dfc4a69f89955b4edea51967a85b33e80"
+      "value": "28c79ddc84d1ee3d4e3d505935e21cb69b3262316473de65a8e728773dce045c"
     },
     "schema_version": "apizr.repository-mcp/v1",
     "sources": [
@@ -646,10 +654,10 @@
         "bundle_path": "source/sample/__init__.py",
         "is_package": true,
         "module": "sample",
-        "size": 41,
+        "size": 77,
         "source_digest": {
           "algorithm": "sha256",
-          "value": "c67eb7621f104d5712bdccb66cdc440d46d734036a3a2799b737451d1d4015ad"
+          "value": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
         },
         "source_path": "sample/__init__.py"
       },

@@ -1,6 +1,6 @@
 [project]
 name = "outerspace-apizr"
-version = "0.4.4"
+version = "0.4.5"
 description = "Compile Python codebases into discoverable, typed and governable capabilities."
 requires-python = ">=3.11,<3.15"
 readme = "README.md"
@@ -22,6 +22,7 @@ authors = [
 dependencies = ["pydantic>=2.12,<3"]
 
 [project.optional-dependencies]
+preparation = ["packaging>=26.3,<27"]
 clients = ["PyYAML>=6.0.2,<7"]
 notebook = [
   "nbconvert>=7.17.1,<8",
@@ -88,10 +89,10 @@ dev = [
 ]
 security = ["pip-audit>=2.9,<3"]
 docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5,<10", "plantuml-markdown>=3.10,<4"]
-homebrew-build = ["hatchling==1.28.0"]
+homebrew-build = ["hatchling==1.32.4"]
 
 [build-system]
-requires = ["hatchling>=1.27,<2"]
+requires = ["hatchling<2,>=1.27"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
@@ -119,11 +120,11 @@ select = ["E4", "E7", "E9", "F", "I", "B", "C4", "PIE", "RUF100"]
 include = ["src/apizr", "scripts", "plugins/oci/src", "plugins/attest/src", "plugins/mcp/src"]
 extraPaths = ["src", "plugins/oci/src", "plugins/attest/src", "plugins/mcp/src"]
 typeCheckingMode = "standard"
-strict = ["src/apizr/delivery.py", "src/apizr/distribution_identity.py", "src/apizr/operator_policy.py", "src/apizr/publication_contracts.py", "src/apizr/git_source", "src/apizr/git_source_cli.py", "src/apizr/local_plugins", "src/apizr/plugins_cli.py", "src/apizr/extension_runtime", "src/apizr/project.py", "src/apizr/compiler.py", "src/apizr/subprocess_guard", "src/apizr/repository_execution", "src/apizr/governed_repository", "src/apizr/repository_interfaces", "src/apizr/exposure", "src/apizr/exposure_cli.py", "src/apizr/capabilities", "src/apizr/readiness", "src/apizr/generators/rest", "src/apizr/interfaces", "src/apizr/generators/mcp", "src/apizr/execution", "src/apizr/governed", "src/apizr/oci", "src/apizr/governed_oci", "src/apizr/repository", "src/apizr/scan_cli.py", "src/apizr/graph", "src/apizr/graph_cli.py", "src/apizr/repository_readiness", "src/apizr/repository_readiness_cli.py", "src/apizr/readiness_cli.py", "src/apizr/repository_cli.py"]
+strict = ["src/apizr/experiments", "src/apizr/repository_views", "plugins/mcp/src/apizr_mcp/model.py", "src/apizr/contracts/types.py", "src/apizr/contracts/lowering.py", "src/apizr/contracts/delivery.py", "src/apizr/contracts/distribution.py", "src/apizr/workspace/operator_policy.py", "src/apizr/contracts/publication.py", "src/apizr/git_source", "src/apizr/cli/commands/git_source.py", "src/apizr/plugins/local", "src/apizr/plugins/artifacts", "src/apizr/plugins/preparation", "src/apizr/cli/commands/plugins.py", "src/apizr/cli/commands/plugin_preparation.py", "src/apizr/extension_runtime", "src/apizr/workspace/project.py", "src/apizr/workspace/compiler.py", "src/apizr/subprocess_guard", "src/apizr/repository_execution", "src/apizr/governed_repository", "src/apizr/repository_interfaces", "src/apizr/exposure", "src/apizr/cli/commands/exposure.py", "src/apizr/capabilities", "src/apizr/readiness", "src/apizr/generators/rest", "src/apizr/interfaces", "src/apizr/generators/mcp", "src/apizr/execution", "src/apizr/governed", "src/apizr/oci", "src/apizr/governed_oci", "src/apizr/repository", "src/apizr/cli/commands/scan.py", "src/apizr/graph", "src/apizr/cli/commands/graph.py", "src/apizr/repository_readiness", "src/apizr/cli/commands/repository_readiness.py", "src/apizr/cli/commands/readiness.py", "src/apizr/cli/commands/repository.py"]
 pythonVersion = "3.11"
 
 [tool.coverage.run]
-source = ["apizr"]
+source = ["apizr", "apizr_mcp"]
 branch = true
 
 [tool.coverage.report]

@@ -44,6 +44,8 @@ def prepare_wheels(root: Path, python: str, house: Path) -> None:
                 "--no-dev",
                 "--extra",
                 "mcp",
+                "--extra",
+                "preparation",
                 "--no-emit-project",
                 "--output-file",
                 root / "dependencies.txt",
@@ -84,9 +86,11 @@ def prepare(root: Path, python: str) -> dict:
     prepare_wheels(root, python, house)
     lock_wheels(house, root / "plugin.lock")
     core_wheel = next(house.glob("outerspace_apizr-*.whl"))
+    (mcp_wheel,) = house.glob("mcp-*.whl")
     for name, requirements in [
         ("core", [core_wheel]),
-        ("client", [core_wheel, "mcp==2.2.0"]),
+        ("client", [core_wheel, mcp_wheel]),
+        ("preparer", [str(core_wheel) + "[preparation]"]),
     ]:
         run(
             ["uv", "venv", "--no-python-downloads", "--python", python, root / name],
@@ -226,6 +230,13 @@ def prepare(root: Path, python: str) -> dict:
             [cli, "plugins", "list", "--active", "--json", "--plugins-dir", store], root
         )
     )["installations"]
+    # Keep the earlier catalog/sync proof as an independent inactive profile.
+    # All real stdio calls below now use the newly prepared candidate instead.
+    from plugin_preparation_proof import prepare_profile
+
+    store = prepare_profile(
+        root, cli, root / "preparer/bin/apizr", root / "core/bin/python", house, store
+    )
     shutil.copytree(REPO / "examples/project-config", root / "project")
     project = root / "project/apizr.toml"
     authority = write_analysis_policy(root / "operator.json", project.parent)
@@ -248,7 +259,7 @@ def prepare(root: Path, python: str) -> dict:
             "enable",
             "outerspace-apizr-mcp",
             "--version",
-            "0.4.4",
+            "0.4.5",
             "--plugins-dir",
             store,
         ],
@@ -340,6 +351,8 @@ def main():
     (root / "installed.json").write_text(json.dumps(config))
     for script in (
         "mcp_client_proof.py",
+        "mcp_views_proof.py",
+        "mcp_schema_proof.py",
         "mcp_delivery_local_proof.py",
         "mcp_lifecycle_proof.py",
         "mcp_registry_proof.py",
@@ -360,7 +373,7 @@ def main():
         (root / "core-before.json").read_text()
     )
     assert (root / "activation-before.json").read_bytes() == (
-        root / "plugins/activations.json"
+        Path(config["store"]) / "activations.json"
     ).read_bytes()
     (root / "outcome.json").write_text(
         json.dumps(

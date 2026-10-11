@@ -16,7 +16,7 @@ def planned(source=None, *, policy=None, image=None, interface="rest", files=Non
         }
     if files is None:
         files = {
-            "sample/__init__.py": b'"""real package"""\n',
+            "sample/__init__.py": b'"""real package"""\ndef package_name(): return "sample"\n',
             "sample/api.py": b"def run(x: int = 2, /, *, y: int = 3): return helper(x) + y\ndef helper(x):\n    from .pricing import calculate\n    return calculate(x)\n",
             "sample/pricing.py": b"def calculate(x: int): return x * 2\n",
             "sample/admin.py": b"raise RuntimeError('UNRELATED')\n",

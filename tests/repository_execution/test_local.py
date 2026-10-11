@@ -144,8 +144,18 @@ def test_copy_boundary_and_cleanup(tmp_path, monkeypatch):
     )
 
 
-def test_missing_external_dependency_sanitized():
+def test_unproven_external_dependency_refused_before_worker_launch(monkeypatch):
+    from apizr.exposure import ExposureRefused
+    from apizr.repository_execution import supervisor
+
     source = "def run(): return helper()\ndef helper():\n    import definitely_missing_apizr_test_dependency\n    return 1"
-    plan, exposure, sources, _ = planned(source)
-    result = execute(plan, exposure, sources, {})
-    assert result.status == "execution_failed" and result.value is None
+    monkeypatch.setattr(
+        supervisor, "exchange", lambda *a: pytest.fail("worker launched")
+    )
+    with pytest.raises(ExposureRefused) as raised:
+        planned(source)
+    assert any(
+        d.reason == "import"
+        and d.dependency_path == ("python:sample.api:run", "python:sample.api:helper")
+        for d in raised.value.diagnostics
+    )

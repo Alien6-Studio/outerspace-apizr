@@ -8,7 +8,7 @@ import sys
 import pytest
 
 from apizr.cli import main
-from apizr.local_plugins import (
+from apizr.plugins.local import (
     PluginError,
     backend,
     enable_extension,
@@ -403,7 +403,7 @@ def test_locked_https_uses_one_request_and_offline_uv(chain, tmp_path, monkeypat
 
     from test_download import certificate, https_server
 
-    from apizr.local_plugins import install_from_url
+    from apizr.plugins.local import install_from_url
 
     plugin, digest, lock, wheelhouse = chain
     cert_dir = tmp_path / "cert"

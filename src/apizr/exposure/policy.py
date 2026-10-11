@@ -25,9 +25,18 @@ def capability_id(value: str) -> str:
 
 
 class Selection(ValueModel):
-    include: tuple[str, ...] = ()
-    include_all_ready: StrictBool = False
-    exclude: tuple[str, ...] = ()
+    include: tuple[str, ...] = Field(
+        default=(),
+        description="Exact canonical capability IDs explicitly proposed for exposure, for example python:model:predict. No fuzzy matching or implicit dependency exposure.",
+    )
+    include_all_ready: StrictBool = Field(
+        default=False,
+        description="Add capabilities assessed READY in the repository readiness report to the requested selection before exclusions. All planner eligibility, interface and execution checks still apply; this grants no publication or operator authority.",
+    )
+    exclude: tuple[str, ...] = Field(
+        default=(),
+        description="Exact capability IDs removed after combining include and include_all_ready. Unknown IDs in either include or exclude are refused.",
+    )
 
     @field_validator("include", "exclude")
     @classmethod
@@ -36,13 +45,22 @@ class Selection(ValueModel):
 
 
 class Eligibility(ValueModel):
-    allow_conditional: StrictBool = False
+    allow_conditional: StrictBool = Field(
+        default=False,
+        description="Allow selected capabilities with CONDITIONAL readiness in their required repository evidence to be proposed, subject to all other planner checks. CONDITIONAL does not become READY; ambiguous or unsupported evidence is not made eligible.",
+    )
 
 
 class Execution(ValueModel):
     # No implied execution mode and no ranking. Empty sets are policy errors.
-    allowed: tuple[Mode, ...] = Field(min_length=1)
-    require: tuple[Control, ...] = ()
+    allowed: tuple[Mode, ...] = Field(
+        min_length=1,
+        description="Explicit nonempty set of acceptable execution modes. No ranking, implicit default or fallback. Compatibility must also satisfy the startup readiness policy; selecting a mode does not execute or authorize anything.",
+    )
+    require: tuple[Control, ...] = Field(
+        default=(),
+        description="Explicit execution controls that every compatible proposed mode must support. These requirements narrow compatibility; they do not grant operator permissions or attest to a live runtime.",
+    )
 
     @field_validator("allowed", "require")
     @classmethod
@@ -54,11 +72,25 @@ class Execution(ValueModel):
 
 
 class ExposurePolicy(ValueModel):
-    schema_version: Literal["apizr.exposure-policy/v1"] = "apizr.exposure-policy/v1"
-    selection: Selection = Field(default_factory=Selection)
-    interfaces: tuple[Interface, ...] = Field(min_length=1)
-    eligibility: Eligibility = Field(default_factory=Eligibility)
-    execution: Execution
+    schema_version: Literal["apizr.exposure-policy/v1"] = Field(
+        default="apizr.exposure-policy/v1",
+        description="Version identifier for this exposure planning constraint contract; not operator authorization.",
+    )
+    selection: Selection = Field(
+        default_factory=Selection,
+        description="Explicit capability selection proposal; empty defaults do not select every capability.",
+    )
+    interfaces: tuple[Interface, ...] = Field(
+        min_length=1,
+        description="Nonempty requested generated interface set: rest and/or mcp. Planning checks compatibility for every interface; it does not generate, deploy or run them.",
+    )
+    eligibility: Eligibility = Field(
+        default_factory=Eligibility,
+        description="Readiness eligibility constraints for selected capabilities; cannot replace missing or uncertain evidence.",
+    )
+    execution: Execution = Field(
+        description="Explicit acceptable execution modes and required controls for compatibility planning, not permission to execute."
+    )
 
     @field_validator("interfaces")
     @classmethod

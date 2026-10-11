@@ -4,8 +4,8 @@ import json
 import sys
 from pathlib import Path
 
+from apizr.contracts.publication import ObserveRequest
 from apizr.extension_runtime.protocol import Request, unique_object
-from apizr.publication_contracts import ObserveRequest
 
 from .build import build
 from .model import BuildError, BuildRequest, PushRequest

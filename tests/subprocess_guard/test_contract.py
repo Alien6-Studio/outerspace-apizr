@@ -305,7 +305,7 @@ def test_strict_policy_refuses_bootstrap_environment(module, name):
 
 
 def test_cli_selects_deny_profile(tmp_path, monkeypatch, capsys):
-    from apizr.execute_cli import main
+    from apizr.cli.commands.execute import main
 
     source, policy, args = (
         tmp_path / name for name in ["source.py", "policy.json", "args.json"]

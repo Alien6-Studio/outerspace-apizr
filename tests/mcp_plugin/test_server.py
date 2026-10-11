@@ -14,6 +14,7 @@ from apizr.extension_runtime import (
     InvocationCancelled,
     InvocationTimeout,
 )
+from apizr.extension_runtime.errors import SizeLimitExceeded
 
 
 def setup(project, monkeypatch, limits=None, invoke=None):
@@ -72,6 +73,8 @@ def test_sdk_tools_validation_errors_and_business_results(project, monkeypatch):
         (InvocationTimeout(), "timeout"),
         (CleanupFailed(), "cleanup_failed"),
         (ValueError(), "operation_failed"),
+        (SizeLimitExceeded("stdout"), "response_too_large"),
+        (SizeLimitExceeded("stderr"), "size_limit"),
     ],
 )
 def test_worker_errors_are_redacted_and_following_call_works(
@@ -167,6 +170,76 @@ def test_large_response_and_bad_worker_result(project, monkeypatch):
         project, monkeypatch, invoke=lambda *a, **k: SimpleNamespace(result=[])
     )
     anyio.run(exercise_bad, app)
+
+
+def test_sdk_reduced_views_and_refusal_page_are_structured(project, monkeypatch):
+    _, app = setup(project, monkeypatch)
+
+    async def exercise():
+        async with Client(app) as client:
+            for name in ("apizr_analyze", "apizr_readiness"):
+                for arguments in (
+                    {"view": "summary"},
+                    {"view": "detail", "module": "calculator"},
+                ):
+                    result = await client.call_tool(name, arguments)
+                    assert not result.is_error
+                    assert result.structured_content["view"] == arguments["view"]
+                    assert result.content[0].text.startswith("Static evidence view;")
+            policy = project[1].exposure.model_dump(mode="json")
+            policy["selection"] = {"include": ["python:calculator:missing"]}
+            refused = await client.call_tool(
+                "apizr_plan_exposure",
+                {
+                    "policy": policy,
+                    "limit": 1,
+                },
+            )
+            assert refused.is_error
+            assert refused.structured_content["error"]["code"] == "exposure_refused"
+            assert refused.structured_content["error"]["page"]["complete"]
+            assert refused.structured_content["error"]["diagnostic_count"] == 1
+            assert (
+                refused.structured_content["error"]["diagnostics"][0]["action"]
+                == "select_known_capability"
+            )
+
+    anyio.run(exercise)
+
+
+def test_refusal_size_limit_and_invalid_page_are_owned_errors(project, monkeypatch):
+    for error, expected in [
+        (
+            {"code": "exposure_refused", "diagnostics": [{"code": "x" * 3000}]},
+            "response_too_large",
+        ),
+        (
+            {
+                "code": "exposure_refused",
+                "diagnostics": [],
+                "page": {"host_secret": "private/path"},
+            },
+            "operation_failed",
+        ),
+    ]:
+        _, app = setup(
+            project,
+            monkeypatch,
+            ServerLimits(max_response_bytes=2048),
+            invoke=lambda *a, error=error, **k: SimpleNamespace(
+                result={"ok": False, "error": error}
+            ),
+        )
+
+        async def exercise(app=app, expected=expected):
+            async with Client(app) as client:
+                result = await client.call_tool("apizr_analyze", {"view": "summary"})
+                assert result.is_error
+                assert result.structured_content == {
+                    "error": {"code": expected, "diagnostics": []}
+                }
+
+        anyio.run(exercise)
 
 
 async def exercise_bad(app):

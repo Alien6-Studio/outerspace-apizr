@@ -1,12 +1,18 @@
 """Versioned policy results, separate from the immutable capability contract."""
 
 from enum import Enum
-from typing import Literal, Self
+from typing import Any, Literal, Self
 
-from pydantic import field_validator, model_validator
+from pydantic import (
+    SerializerFunctionWrapHandler,
+    field_validator,
+    model_serializer,
+    model_validator,
+)
 
 from apizr.capabilities.model import Digest, Effects, Source, SourceSpan
 from apizr.capabilities.types import Evidence, ValueModel
+from apizr.contract_types import TypeSpec
 
 
 class State(str, Enum):
@@ -35,6 +41,7 @@ class Code(str, Enum):
     OUTPUT = "APIZR-READY-016"
     METADATA = "APIZR-READY-017"
     CONSTRUCT = "APIZR-READY-018"
+    STRUCTURED_TYPE = "APIZR-READY-019"
 
 
 POLICY: dict[Code, tuple[State, str]] = {
@@ -103,6 +110,10 @@ POLICY: dict[Code, tuple[State, str]] = {
     Code.CONSTRUCT: (
         State.UNSUPPORTED,
         "Callable construct has no supported IR function contract.",
+    ),
+    Code.STRUCTURED_TYPE: (
+        State.UNSUPPORTED,
+        "TypedDict declaration is unsupported; see retained structured type evidence.",
     ),
 }
 RANK = {State.READY: 0, State.CONDITIONAL: 1, State.UNSUPPORTED: 2, State.AMBIGUOUS: 3}
@@ -187,11 +198,47 @@ class Assessment(ValueModel):
         return self
 
 
+class StructuredDeclaration(ValueModel):
+    """Source-bound, statically proven shape or an explicit bounded refusal."""
+
+    name: str
+    source: SourceSpan
+    type: TypeSpec | None = None
+    problem: str | None = None
+
+    @model_validator(mode="after")
+    def consistent(self) -> Self:
+        if self.name != self.source.symbol:
+            raise ValueError("Structured type name must match its source")
+        if (self.type is None) == (self.problem is None):
+            raise ValueError("Structured evidence needs exactly one shape or refusal")
+        if self.type is not None and self.type.kind != "object":
+            raise ValueError("Structured declarations require object contracts")
+        return self
+
+
 class ReadinessReport(ValueModel):
     policy_version: Literal["apizr.readiness/v1"] = "apizr.readiness/v1"
     source: Source
     ir_digest: Digest
     assessments: tuple[Assessment, ...]
+    structured_types: tuple[StructuredDeclaration, ...] = ()
+
+    @field_validator("structured_types")
+    @classmethod
+    def ordered_types(
+        cls, values: tuple[StructuredDeclaration, ...]
+    ) -> tuple[StructuredDeclaration, ...]:
+        if len({value.name for value in values}) != len(values):
+            raise ValueError("Duplicate structured declarations")
+        return tuple(sorted(values, key=lambda value: value.name))
+
+    @model_serializer(mode="wrap")
+    def serialize(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        result = handler(self)
+        if not self.structured_types:
+            result.pop("structured_types", None)
+        return result
 
     @field_validator("assessments")
     @classmethod
@@ -202,6 +249,9 @@ class ReadinessReport(ValueModel):
 
     @model_validator(mode="after")
     def consistent_source(self) -> Self:
-        if any(a.source.module != self.source.module for a in self.assessments):
+        if any(
+            a.source.module != self.source.module
+            for a in (*self.assessments, *self.structured_types)
+        ):
             raise ValueError("Readiness source modules must agree")
         return self

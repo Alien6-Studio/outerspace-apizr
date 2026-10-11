@@ -3,14 +3,15 @@
 from collections.abc import Mapping
 from typing import Literal
 
-from apizr.application import ApplicationInputs
+from apizr.contracts.application import ApplicationInputs
 from apizr.exposure import ExposurePlan, ExposurePolicy, plan_digest, validate_plan
 from apizr.exposure.policy import Interface
 from apizr.graph import Graph
 from apizr.graph.builder import validated_inputs
-from apizr.interfaces.planner import plan as invocation_plan
+from apizr.interfaces.planner import invocation_contract
 from apizr.repository import Catalog
 from apizr.repository_readiness import RepositoryReadinessReport
+from apizr.workspace.application_dependencies import inspect_application_wheel
 
 from .errors import BundleRefused
 from .model import BundledSource, Capability, RepositoryInterface
@@ -26,6 +27,7 @@ def plan_repository_interface(
     *,
     interface: Interface,
     application: ApplicationInputs | None = None,
+    dependency_archives: Mapping[str, bytes] | None = None,
     execution_mode: Literal["direct", "local-process", "oci-container"] = "direct",
 ) -> RepositoryInterface:
     if application is not None:
@@ -37,6 +39,27 @@ def plan_repository_interface(
     sources = dict(sources)
     catalog = validated_inputs(catalog, sources)
     validate_plan(exposure, catalog, graph, readiness, policy=policy)
+    archives = dict(dependency_archives or {})
+    declared = {wheel.filename: wheel for wheel in readiness.policy.dependency_wheels}
+    if (
+        set(archives) != set(declared)
+        or sum(map(len, archives.values())) > 256 * 1024 * 1024
+    ):
+        raise BundleRefused("Dependency wheel snapshots are missing or excessive")
+    for filename, raw in archives.items():
+        if inspect_application_wheel(filename, raw) != declared[filename]:
+            raise BundleRefused(
+                "Dependency wheel snapshot disagrees with readiness evidence"
+            )
+    if readiness.policy.dependency_wheels and (
+        execution_mode != "direct"
+        or application is None
+        or not {wheel.pin for wheel in readiness.policy.dependency_wheels}
+        <= set(application.dependencies)
+    ):
+        raise BundleRefused(
+            "Dependency wheel evidence requires matching direct-service pins"
+        )
     if interface not in exposure.interfaces:
         raise BundleRefused("APIZR-BUNDLE-001: target interface is not planned")
     if not exposure.capabilities:
@@ -67,18 +90,21 @@ def plan_repository_interface(
             BundledSource(
                 module=module,
                 source_path=unit.path,
-                bundle_path=("source/" + unit.path)
-                if application is not None
-                else (
-                    "source/"
-                    + module.replace(".", "/")
-                    + ("/__init__.py" if unit.is_package else ".py")
+                bundle_path=(
+                    ("source/" + unit.path)
+                    if application is not None
+                    else (
+                        "source/"
+                        + module.replace(".", "/")
+                        + ("/__init__.py" if unit.is_package else ".py")
+                    )
                 ),
                 source_digest=unit.source_digest,
                 size=unit.size,
                 is_package=unit.is_package,
             )
         )
+    assessments = {a.capability_id: a for a in readiness.assessments}
     capabilities: list[Capability] = []
     for module, unit in sorted(units.items(), key=lambda item: item[0] or ""):
         selected = [
@@ -87,10 +113,21 @@ def plan_repository_interface(
         if not selected:
             continue
         assert unit.inspection is not None and module is not None
-        invocation = invocation_plan(
-            unit.inspection, sources[unit.path], select=selected
-        )
-        for contract in invocation.capabilities:
+        declarations = {c.id: c for c in unit.inspection.capability_ir.capabilities}
+        for identity in sorted(selected):
+            assessment = assessments[identity]
+            # validate_plan above recomputes the authoritative selected proof,
+            # including private execution support and module initialization.
+            # Do not replace it with a second, source-local eligibility gate.
+            contract = invocation_contract(
+                declarations[identity],
+                assessment.local_readiness,
+                {
+                    declaration.name: declaration.type
+                    for declaration in unit.inspection.readiness.structured_types
+                    if declaration.type is not None
+                },
+            )
             public_name = ".".join(contract.capability_id.split(":")[1:])
             capabilities.append(
                 Capability(

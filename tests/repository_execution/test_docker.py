@@ -2,6 +2,7 @@ import json
 import sys
 
 import pytest
+from oci.conftest import worker_image as worker_image
 from oci.test_provider import HOST, IMAGE_INFO
 
 from apizr.execution.model import ExecutionResult
@@ -12,6 +13,56 @@ from apizr.repository_execution.docker import RepositoryDockerProvider
 from apizr.repository_execution.supervisor import execute
 
 from .helpers import IMAGE, planned
+
+
+def test_real_oci_selected_scope_with_unrelated_ambiguity(worker_image):
+    from exposure.test_scope import API, ROOT, UNRELATED
+    from repository_interfaces.conftest import evidence
+
+    from apizr.exposure import plan_bytes
+    from apizr.repository_execution.planner import container_plan
+    from apizr.repository_interfaces.planner import plan_repository_interface
+
+    values = evidence(
+        {"api.py": API, **UNRELATED, "broken.py": b"raise RuntimeError('UNRELATED')\n"},
+        selected=(ROOT,),
+        modes=("oci-container",),
+    )
+    assert not values[1].complete and not values[2].graph_complete
+    contract = plan_repository_interface(
+        *values, interface="rest", execution_mode="oci-container"
+    )
+    exposure = plan_bytes(values[4])
+    plan = container_plan(contract, exposure, ROOT, ExecutionPolicyV2(), worker_image)
+    sources = {
+        source.bundle_path: values[-1][source.source_path]
+        for source in contract.sources
+    }
+    result = execute(plan, exposure, sources, {"left": 2, "right": 3})
+    assert result.status == "success" and result.value == 5
+    assert [cap.capability_id for cap in contract.capabilities] == [ROOT]
+
+
+def test_real_oci_resolved_private_repository_import(worker_image):
+    from repository_interfaces.conftest import evidence
+    from repository_interfaces.test_local_imports import FILES, SELECTED
+
+    from apizr.exposure import plan_bytes
+    from apizr.repository_execution.planner import container_plan
+    from apizr.repository_interfaces.planner import plan_repository_interface
+
+    values = evidence(FILES, selected=(SELECTED,), modes=("oci-container",))
+    contract = plan_repository_interface(
+        *values, interface="rest", execution_mode="oci-container"
+    )
+    exposure = plan_bytes(values[4])
+    plan = container_plan(
+        contract, exposure, SELECTED, ExecutionPolicyV2(), worker_image
+    )
+    sources = {s.bundle_path: values[-1][s.source_path] for s in contract.sources}
+    result = execute(plan, exposure, sources, {"value": 3})
+    assert result.status == "success" and result.value == 6
+    assert [c.capability_id for c in contract.capabilities] == [SELECTED]
 
 
 def test_exact_shared_launch_controls_with_only_fixed_entrypoint_difference(

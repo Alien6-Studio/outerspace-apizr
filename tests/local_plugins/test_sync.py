@@ -14,7 +14,7 @@ import pytest
 
 from apizr.cli import main
 from apizr.extension_runtime import Limits
-from apizr.local_plugins import (
+from apizr.plugins.local import (
     backend,
     enable_extension,
     install_extension,
@@ -22,10 +22,10 @@ from apizr.local_plugins import (
     run_extension,
     store,
 )
-from apizr.local_plugins.control import InstallationCancelled, InstallControl
-from apizr.local_plugins.models import PluginError
-from apizr.plugin_lock import check_lock, create_lock
-from apizr.plugin_sync import operations, probe, sync_plugins
+from apizr.plugins.local.control import InstallationCancelled, InstallControl
+from apizr.plugins.local.models import PluginError
+from apizr.plugins.lock import check_lock, create_lock
+from apizr.plugins.sync import operations, probe, sync_plugins
 
 pytestmark = pytest.mark.timeout(30)
 
@@ -343,9 +343,12 @@ def test_supervised_uv_stopped_and_reaped(tmp_path, cancelled):
     executable = tmp_path / "uv"
     # Readiness is signalled by the worker, not inferred from an arbitrary delay.
     executable.write_text(
-        f"#!{sys.executable}\nimport os,time\nfrom pathlib import Path\nPath({str(marker)!r}).write_text(str(os.getpid()))\ntime.sleep(30)\n"
+        f"#!{sys.executable}\nimport os,sys,time\nfrom pathlib import Path\nif '--prepare' in sys.argv: raise SystemExit(0)\nPath({str(marker)!r}).write_text(str(os.getpid()))\ntime.sleep(30)\n"
     )
     executable.chmod(0o700)
+    # macOS may assess a newly written executable before its first launch.
+    # Prepare the fixture before starting the unchanged supervision deadline.
+    subprocess.run([str(executable), "--prepare"], check=True, timeout=10)
     event = threading.Event()
     control = InstallControl(time.monotonic() + (10 if cancelled else 0.5), event)
     with ThreadPoolExecutor(max_workers=1) as pool:
@@ -483,7 +486,7 @@ def test_failed_final_probe_does_not_report_earlier_probe_as_current(
 
 
 def test_sync_probes_hold_usage_leases(project, tmp_path, monkeypatch):
-    from apizr.local_plugins import uninstall_extension
+    from apizr.plugins.local import uninstall_extension
 
     root = tmp_path / "plugins"
     original = probe._verify

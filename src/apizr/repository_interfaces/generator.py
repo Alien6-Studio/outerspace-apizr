@@ -3,9 +3,9 @@
 from collections.abc import Mapping
 from importlib.resources import files
 
-from apizr.application import ApplicationInputs
 from apizr.capabilities.model import Digest
-from apizr.delivery import (
+from apizr.contracts.application import ApplicationInputs
+from apizr.contracts.delivery import (
     PROVENANCE_FILE,
     BundleProvenance,
     SourceIdentity,
@@ -61,6 +61,7 @@ def render_repository_bundle(
     application: ApplicationInputs | None = None,
     source_identity: SourceIdentity | None = None,
     resources: Mapping[str, bytes] | None = None,
+    dependency_archives: Mapping[str, bytes] | None = None,
     execution_policy: ExecutionPolicy | ExecutionPolicyV2 | None = None,
     runtime_image: RuntimeImage | None = None,
 ) -> dict[str, bytes]:
@@ -79,9 +80,10 @@ def render_repository_bundle(
         sources,
         interface=interface,
         application=application,
-        execution_mode=execution_policy.backend
-        if execution_policy is not None
-        else "direct",
+        dependency_archives=dependency_archives,
+        execution_mode=(
+            execution_policy.backend if execution_policy is not None else "direct"
+        ),
     )
     resources = dict(resources or {})
     application = contract.application

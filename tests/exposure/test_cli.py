@@ -275,7 +275,7 @@ from pathlib import Path
 from apizr.operator_policy import load_operator_policy
 operator = load_operator_policy(Path(sys.argv[-1]))
 from apizr.cli import main
-import apizr.exposure_cli
+import apizr.cli.commands.exposure
 import apizr.execution.policy
 import importlib.util
 def forbidden(*args, **kwargs): raise AssertionError("runtime or package probe")

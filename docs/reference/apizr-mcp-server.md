@@ -30,75 +30,18 @@ export work="$PWD"
 mkdir -p project/src project/policies
 ```
 
-<details markdown="1">
-<summary>Advanced: build and prepare wheels from a source checkout</summary>
+For a temporary isolated profile, use the [verified preparation workflow](plugin-preparation.md).
+It selects compatible wheels and normalizes multi-hash resolver locks without a
+Python normalization script. Preparation installs nothing; installation and
+activation remain explicit. Contributors use the same workflow with a local
+wheelhouse containing core and plugin wheels from the same recorded commit.
 
-Use macOS or Linux, Python 3.11–3.14 and uv. Build the core and plugin from the
-**same recorded commit**. Preparation below can download build tools and locked
-dependencies. Installation by Apizr uses only the reviewed local wheelhouse.
-The SDK and a copy of the compiler belong to the plugin's separate environment;
-the minimal core receives neither MCP nor REST dependencies.
-
-For contributor verification builds of `0.4.4`, use the source checkout:
-
-```sh
-work=$(mktemp -d)
-work=$(cd "$work" && pwd -P)
-git rev-parse HEAD > "$work/source-commit.txt"
-uv build --wheel --out-dir "$work/wheels"
-uv build --wheel plugins/mcp --out-dir "$work/wheels"
-uv export --locked --no-dev --extra mcp --no-emit-project \
-  --output-file "$work/dependencies.txt"
-cp -R examples/project-config "$work/project"
-cd "$work"
-uv venv --seed --no-python-downloads --python python3 prepare
-prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
-  -r dependencies.txt
-uv venv --no-python-downloads --python python3 core
-uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.4-py3-none-any.whl
-```
-
-Record one exact version and SHA-256 per distribution, including the plugin,
-core and all transitive dependencies. The export uses the repository's reviewed
-lock; the final lock describes the actual wheels for this Python/platform.
-Hashes establish integrity, not trust in their authors.
-
-```sh
-prepare/bin/python - <<'PY'
-import hashlib
-import zipfile
-from email.parser import BytesParser
-from pathlib import Path
-
-lines = []
-for wheel in sorted(Path("wheels").glob("*.whl")):
-    with zipfile.ZipFile(wheel) as archive:
-        name = next(n for n in archive.namelist() if n.endswith(".dist-info/METADATA"))
-        metadata = BytesParser().parsebytes(archive.read(name))
-    digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
-    lines.append(f"{metadata['Name']}=={metadata['Version']} --hash=sha256:{digest}\n")
-Path("plugin.lock").write_text("".join(lines))
-PY
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_mcp-0.4.4-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_mcp-0.4.4-py3-none-any.whl \
-  --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse wheels \
-  --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-mcp --version 0.4.4 --plugins-dir "$work/plugins"
-```
-
-Installation alone leaves the plugin inactive. The existing [locked installation
-rules](local-extensions.md) apply. No installer runs at server
-startup. A missing, inactive, inconsistent or missing-interpreter installation
-is refused without repair.
-
-
-</details>
 
 ## Choose one local project
 
 Create `project/` with this complete `apizr.toml`:
 
+<!-- registry-fixture:apizr.toml -->
 ```toml
 schema_version = "apizr.project/v1"
 root = "."
@@ -116,6 +59,7 @@ max_ast_nodes = 10000
 
 `src/calculator.py`:
 
+<!-- registry-fixture:src/calculator.py -->
 ```python
 def add(a: int, b: int = 1) -> int:
     return a + b
@@ -123,12 +67,14 @@ def add(a: int, b: int = 1) -> int:
 
 `policies/readiness.json`:
 
+<!-- registry-fixture:policies/readiness.json -->
 ```json
 {"execution": {"modes": ["direct"]}}
 ```
 
 `policies/exposure.json`:
 
+<!-- registry-fixture:policies/exposure.json -->
 ```json
 {
   "selection": {"include": ["python:calculator:add"]},
@@ -176,45 +122,207 @@ as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
 
 <span id="directory-integration-043"></span>
 
-## Use the directory launcher {#directory-integration-044}
+<span id="directory-integration-044"></span>
+
+## Registry installation {#registry-installation}
+
+This is the canonical installation path linked by `server.json`. **0.4.5 is a
+qualified development candidate, not a public release.** The command below is
+for use after its separately authorized publication. Existing public installations
+remain on 0.4.4 with matching core and plugin versions. Contributors qualify the
+same launcher using candidate wheels outside the checkout, without contacting PyPI.
 
 The [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Alien6-Studio%2Fouterspace-apizr)
 lists Apizr as `io.github.Alien6-Studio/outerspace-apizr`.
 [Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr) also lists its
 three analysis tools and their inputs.
 
-After [installing and activating the MCP profile](../getting-started/install.md#choose-a-plugin-profile),
-you can start it with:
+1. After 0.4.5 is public, install its core and prepare an explicit MCP profile
+   with the commands below. Use an absolute path to your installed CPython
+   3.11–3.14 interpreter and uv 0.12.x. Run each command in order, stopping on
+   any failure. Keep this temporary directory while using the server.
 
 ```sh
-uvx outerspace-apizr-mcp@0.4.4 \
-  --project /absolute/project/apizr.toml \
-  --operator-policy /absolute/operator.json \
-  --plugins-dir /absolute/plugins
+python=/absolute/path/to/python3.14
+setup=$(mktemp -d)
+setup=$(cd "$setup" && pwd -P)
+uv venv --python "$python" "$setup/core"
+uv pip install --python "$setup/core/bin/python" 'outerspace-apizr[preparation]==0.4.5'
+apizr="$setup/core/bin/apizr"
+"$apizr" plugins prepare outerspace-apizr-mcp --version 0.4.5 \
+  --python "$python" --platform native \
+  --index-url https://pypi.org/simple --output-dir "$setup/prepared" --json
+plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.5" {sub("--hash=sha256:", "", $2); print $2}' \
+  "$setup/prepared/requirements.lock")
+"$apizr" plugins install "$setup/prepared/wheelhouse/outerspace_apizr_mcp-0.4.5-py3-none-any.whl" \
+  --sha256 "$plugin_sha" --python "$python" \
+  --requirements "$setup/prepared/requirements.lock" \
+  --wheelhouse "$setup/prepared/wheelhouse" --plugins-dir "$setup/profile"
+"$apizr" plugins enable outerspace-apizr-mcp --version 0.4.5 \
+  --plugins-dir "$setup/profile"
 ```
 
-Replace the three paths with your project, permissions file and plugin directory.
-This starts a local server; it does not install or activate the managed plugin.
-For version 0.4.2, use `apizr mcp serve` instead.
+   Your managed plugin directory is the absolute `$setup/profile` path.
+   Preparation verifies compatible wheel bytes; review the selected dependencies
+   before installation and activation. Those remain separate explicit steps.
+   The [preparation guide](plugin-preparation.md#targets-and-integrity) explains
+   supported platforms, including the reviewed dependency's macOS Intel refusal.
+   For unpublished contributor candidates, use the qualified local wheelhouse
+   without `--index-url`; do not mix public 0.4.4 artifacts with this profile.
+2. Create the four project files in [Choose one local project](#choose-one-local-project),
+   or select your existing `apizr.toml`. It selects a source root and analysis
+   policies; it does not grant access to that root.
+3. Create and review the following `operator.json`. Replace
+   `<ABSOLUTE_PROJECT_ROOT>` with the absolute root selected by your project file.
+   Approving this grant is an operator decision, not an installation side effect.
 
-Contributors can find publication checks in the
-[release record](../contributing/verification.md#044-publication-record).
+<!-- registry-fixture:operator.json -->
+```json
+{
+  "schema": "apizr.operator-policy/v1",
+  "grants": [{
+    "adapter": "repository",
+    "operation": "analyze",
+    "target": {"kind": "local", "root": "<ABSOLUTE_PROJECT_ROOT>"},
+    "permissions": ["source.analyze"]
+  }]
+}
+```
+
+4. Configure your MCP client's stdio connection with the following command.
+   Replace each angle-bracket placeholder with an absolute path you selected:
+
+```sh
+uvx outerspace-apizr-mcp@0.4.5 \
+  --project "<ABSOLUTE_APIZR_TOML>" \
+  --operator-policy "<ABSOLUTE_OPERATOR_JSON>" \
+  --plugins-dir "<ABSOLUTE_MANAGED_PLUGIN_DIRECTORY>"
+```
+
+5. Connect. Initialization identifies `apizr`, titled **OuterSpace Apizr**, at the
+   matching version. `tools/list` shows **Analyze Python Project**, **Assess
+   Repository Readiness**, and **Plan Capability Exposure**. Ask the first tool
+   for a summary. A response containing repository evidence confirms the connection;
+   a readiness `exit_code: 1` can be valid business evidence. Stdio stdout is MCP
+   traffic, so running the command alone does not print a human-readable welcome.
+
+| Registry argument | Required format | Why no default; where to obtain it |
+| --- | --- | --- |
+| `--project` | Absolute filepath | Source selection is your decision. Create/select `apizr.toml` in step 2. |
+| `--operator-policy` | Absolute filepath | Installation cannot authorize source access. Create and review the JSON grant in step 3. |
+| `--plugins-dir` | Absolute directory path (`filepath` in the registry schema) | The governed store must be deterministic. Use the directory where step 1 explicitly installed and activated the matching plugin. |
+
+The launcher delegates to `apizr mcp serve`; installing it with `uvx` does not
+activate a plugin, authorize a project, or enable delivery. All three registry
+arguments intentionally remain required even where the generic CLI offers
+fallbacks. Missing authorization and absent/inactive plugins fail closed.
+
+The directory UI intentionally excludes `--user-config` (an alternative generic
+CLI configuration source, redundant with this explicit store), `--timeout-ms`,
+`--max-request-bytes` and `--max-response-bytes` (advanced operational tuning), and
+`--delivery-request` (explicit effectful mode). Configure those through the
+operator-run CLI when needed; the registry's normal installation remains
+analysis-only. No credentials or other environment variables are requested.
+
+For Smithery, the prepared MCPB 0.4 bundle presents the same three required
+file/directory inputs and delegates to this same launcher. It targets the
+qualified macOS/Linux platforms and needs an MCPB host supporting the `uv` runtime.
+It neither contains nor provisions your policy or governed plugin store.
+Its submission and actual Smithery listing remain a post-release operation.
+
+See the [distribution qualification matrix](../contributing/mcp-distribution.md)
+for schema checks, supported directory mechanisms and remaining external evidence.
+
+## Choose a tool: discover → assess → propose
+
+The server's initialization instructions and tool descriptions explain this
+journey directly to a connected assistant:
+
+| Need | Choose | Next step |
+| --- | --- | --- |
+| Find what the project contains and obtain exact capability IDs | `apizr_analyze` for static source and relationship evidence | Review a capability and retain its repository digest if subsequent calls should use the same evidence |
+| Understand whether a capability is usable and under which conditions | `apizr_readiness` for limitations, uncertainty and execution/control compatibility under the startup readiness policy | Inspect the relevant full, summary or exact detail result before choosing proposal constraints |
+| Test a selection you already intend to expose | `apizr_plan_exposure` with an explicit policy or the captured startup exposure policy | Review the proposed capability/interface/execution combinations or the refusal diagnostics |
+
+This is guidance, not a required sequence. Readiness and planning can be called
+independently, including as the first call. Each tool assesses current evidence
+within the startup source scope; earlier reports are not cached or supplied to
+later calculations. Digest pinning checks consistency between independent calls.
+
+These three tools do not execute project code, generate a server, change project
+configuration or publish anything. A readiness report assesses evidence; a plan
+is a proposal. Neither grants operator authority. Repository/root, operator
+permissions and server bounds are chosen at startup. Tool arguments cannot
+expand source scope, activate plugins, select infrastructure or enable delivery.
+
+When delivery is explicitly enabled, initialization instead identifies the
+additional effects: status inspects local evidence, while run/resume may mutate
+remote state using captured authority. Analysis/readiness/planning remain
+non-mutating in that mode. See [Explicit delivery mode](#explicit-delivery-mode-042).
 
 ## Tools and results
 
 | Tool | Arguments | Structured result |
 | --- | --- | --- |
-| `apizr_analyze` | Optional `expected_repository_digest` | Existing canonical `catalog`, `graph`, and `repository_digest`; no retained raw sources |
-| `apizr_readiness` | Optional `expected_repository_digest` | Existing canonical `report`, `repository_digest`, and the report's `exit_code` |
-| `apizr_plan_exposure` | Optional `policy` (existing `ExposurePolicy`) and `expected_repository_digest` | Existing canonical `ExposurePlan`, including `repository_digest` |
+| `apizr_analyze` | Optional `view`, exact detail filter, pagination and `expected_repository_digest` | Default/full: existing canonical `catalog`, `graph`, and `repository_digest`. Summary/detail: explicitly identified evidence view |
+| `apizr_readiness` | Same view arguments | Default/full: existing canonical `report`, `repository_digest`, and `exit_code`. Summary/detail: states and focused evidence |
+| `apizr_plan_exposure` | Optional `policy` (existing `ExposurePolicy`), `expected_repository_digest`, `offset` and `limit` | Existing canonical `ExposurePlan`; optional pagination applies only to refused-plan diagnostics |
 
-For example, call `apizr_analyze` with `{}`, retain
-`result.structured_content["repository_digest"]["value"]`, then call
-`apizr_readiness` with `{"expected_repository_digest": "<that 64-digit digest>"}`.
-Call `apizr_plan_exposure` with `{}` to use the startup exposure policy, or
-`{"policy": {"selection": {"include": ["python:calculator:add"]},
-"interfaces": ["mcp"], "execution": {"allowed": ["direct"]}}}` to propose a
-plan. The proposal never overwrites files or authorizes execution.
+The advertised JSON Schemas contain fixed descriptions and valid request examples,
+including documentation under reusable `$defs`/`$ref` references. These are
+generated from the canonical Pydantic models, independently of project text.
+
+`expected_repository_digest` is an optional **plain string**: exactly 64 lowercase
+hexadecimal SHA-256 characters, without a prefix or algorithm name. Omission or
+`null` means normal discovery without asserting a previous identity. It does not
+select a repository or change the startup source scope. Obtain the actual value
+from a preceding response, rather than copying the illustrative digest in a
+schema example. With an initialized official SDK client:
+
+```python
+analysis = await client.call_tool("apizr_analyze", {})
+digest = analysis.structured_content["repository_digest"]["value"]
+readiness = await client.call_tool(
+    "apizr_readiness", {"expected_repository_digest": digest}
+)
+```
+
+The response's reusable `Digest` object is
+`{"algorithm": "sha256", "value": "<64 lowercase hexadecimal characters>"}`.
+Its `algorithm` is fixed to SHA-256; only its `value` goes in the input pin.
+Bounded views provide that same value at `identity.repository_digest.value`.
+Pinning compares evidence discovered by the current call with the expected
+identity; it neither caches the old repository nor disables discovery.
+
+For `apizr_plan_exposure`, an explicit `policy` supplies the proposal constraints.
+Omission or `null` uses the captured startup exposure policy; if neither exists,
+the result is `policy_required`. For a discovered capability with compatible
+startup readiness requirements, an explicit proposal has this shape:
+
+```json
+{
+  "policy": {
+    "selection": {"include": ["python:calculator:add"]},
+    "interfaces": ["mcp"],
+    "execution": {"allowed": ["direct"]}
+  }
+}
+```
+
+Use the exact ID returned by analysis. `selection.include_all_ready` adds the
+report's READY capabilities to explicit `include`; `exclude` then removes exact
+IDs. Unknown IDs are refused. `eligibility.allow_conditional` permits proposals
+with CONDITIONAL required evidence, subject to all other checks; it does not
+turn them into READY capabilities. `interfaces` requests `rest` and/or `mcp`.
+`execution.allowed` is a nonempty acceptable mode set, with no ranking, default
+or fallback; `execution.require` names required controls. Compatibility is also
+constrained by the startup readiness policy.
+
+**ExposurePolicy is a planning constraint, not operator authorization.** It
+cannot enlarge the captured startup permissions. A successful `ExposurePlan`
+contains selected capabilities, interfaces, compatible execution modes, static
+readiness/relationship evidence and artifact/policy digests. It is a proposal,
+not generation, execution, publication or an authority grant.
 
 A missing exposure policy yields `policy_required`; it never selects everything.
 A changed digest yields `repository_changed`. Each call scans once; separate
@@ -229,6 +337,137 @@ schemas reject client-supplied roots, policy paths, executables or startup limit
 The three analysis tool descriptions and read-only annotations are fixed; repository text remains
 data and cannot create tools or replace server instructions. Annotations alone
 are not an authorization boundary.
+
+## Recover from a refusal
+
+The same recovery guidance is available through initialization metadata.
+Inspect `isError` and structured evidence, not just display text:
+
+| Result | Existing recovery |
+| --- | --- |
+| `repository_changed` | Analyze current source evidence again, review what changed and its new identity, then decide whether to continue with the new digest. Never replace a pin blindly. |
+| `policy_required` | Supply an explicit valid ExposurePolicy when no startup exposure policy was captured. This does not edit configuration or confer authority. |
+| `exposure_refused` | Inspect `error.diagnostics` and supported `action` values; correct the proposal or evidence before another attempt. A refusal is not a successful plan. |
+| Scope or authorization refusal | Operator/startup action is required. Alternative tool arguments cannot bypass captured scope or grants. |
+| `server_busy` | The call was refused while another calculation was active. Wait for that call to finish before retrying an analysis tool. This is not a successful assessment or an automatic delivery retry. |
+| `response_too_large` | For analysis/readiness, request summary, exact detail or smaller detail pages. For refused planning diagnostics, use their existing `offset`/`limit` pagination. Successful plans are not paginated; large individual records can still exceed the bound. No response is automatically truncated. |
+| `arguments_too_large` / `invalid_arguments` | Correct or reduce the request within its advertised schema and startup bounds. These tools cannot raise server limits. |
+| Transport, runtime, cleanup or operation failure | Preserve the failure and seek operator diagnosis where necessary. It is not a successful business assessment. Unconfirmed cleanup terminates the session. |
+
+Tool refusals use `isError: true`; transport failures can instead prevent a tool
+response. In contrast, readiness `exit_code: 1` with `isError: false` is a valid
+assessment of limitations or uncertainty. Delivery business outcomes retain
+their separate [existing semantics](#explicit-delivery-mode-042).
+
+## Start with a small view (0.4.5 development)
+
+Ask your AI assistant to summarize the repository before inspecting a function:
+
+```json
+{"view":"summary"}
+```
+
+Use this with `apizr_analyze` for source, capability and graph counts, or with
+`apizr_readiness` for READY/CONDITIONAL/AMBIGUOUS/UNSUPPORTED counts, execution
+compatibility and principal blockers. `principal_blockers` reports `total`, at
+most ten `shown` diagnostics, and `has_more`; the sample is never presented as
+all the evidence. Neither summary embeds a Catalog, Graph or Readiness report.
+
+Then ask “Can I expose `python:model:predict`?” using `apizr_readiness`:
+
+```json
+{"view":"detail","capability_id":"python:model:predict"}
+```
+
+`focus` retains the exact identity, source path, local readiness, repository and
+selected-scope states, interface eligibility and reasons. `principal_blockers`
+remain visible on every page. `records` contains the required dependency context,
+relationships, imports, source metadata and diagnostics. Private helpers are
+execution support, with `exposed: false`; being a dependency does not select a
+public function. Required evidence uses the same selected-scope authority as
+exposure planning, including module initialization and incomplete evidence.
+
+For a Data Scientist, this lets an assistant inspect `model.predict`, explain an
+unresolved feature-normalization dependency and see a precise import refusal,
+while unrelated unfinished experiments remain in the complete repository audit.
+Analysis does not execute models or evaluate annotations. The view supplies
+evidence for a later exposure-policy proposal; it does not authorize execution.
+
+To explore one logical module instead, use:
+
+```json
+{"view":"detail","module":"model"}
+```
+
+Module detail retains its own capabilities, states, source metadata, outgoing
+relationships, imports and diagnostics. Module names and capability IDs match
+exactly: no path filter, fuzzy name matching or implicit selection. Detail
+requires exactly one of `module` or `capability_id`; unknown identities yield
+`unknown_module` or `unknown_capability`. Filters, `offset` and `limit` are valid
+only in detail. All incompatible combinations yield `invalid_arguments`.
+Module strings are bounded to 512 characters and capability IDs to 1,024;
+pagination accepts strict integers, never strings or booleans.
+
+### Keep canonical identity and read every page
+
+Every reduced view declares `view: "summary"` or `view: "detail"`. Its `identity`
+contains the **complete** repository, Catalog and Graph digest objects. Readiness
+views also contain `repository_readiness_digest` and `readiness_policy_digest`.
+Filtering and paging never change those identities. A view has no canonical
+artifact schema version and must not be submitted as a Catalog, Graph or
+RepositoryReadinessReport.
+
+Detail returns `page` with `offset`, `limit`, `total`, `returned`, `next_offset`
+and `complete`. The default limit is 50 records; the maximum is 200 and the
+minimum is 1. `offset` starts at zero and is bounded to 2,147,483,647. Filtering
+precedes deterministic ordering, which precedes pagination. Continue with the
+returned `next_offset`, the same filter and the full repository digest value:
+
+```json
+{"view":"detail","capability_id":"python:model:predict","offset":50,"limit":50,"expected_repository_digest":"<64 lowercase hexadecimal characters>"}
+```
+
+A nonzero offset requires that digest. If any included source changes between
+pages, the next call yields `repository_changed`; restart at page zero with the
+new identity. Changing the filter starts another independent collection, whose
+counts and offset describe that filter. There is no persistent analysis cache or
+pagination session. Each call discovers once and uses retained static artifacts.
+Read until `complete: true` to obtain all ancillary records; focus, decision
+states and principal blockers are never paged away.
+
+### Understand a refused exposure plan
+
+`apizr_plan_exposure` retains `isError: true`, `error.code: "exposure_refused"`
+and every existing diagnostic field. An additive `action` names a corrective
+step when supported by evidence. A dependency refusal can identify:
+
+```json
+{"source_path":"config.py","line":1,"dependency_path":["python:serving:predict","python:features:_normalize","python:config:scale","python-module:config"],"evidence_code":"APIZR-GRAPH-002","reason":"import","action":"fix_import"}
+```
+
+This is a diagnostic excerpt, not a replacement response schema. Stable actions
+include `fix_import`, `fix_binding`, `fix_initialization`,
+`select_known_capability`, `resolve_interface_contract`,
+`adjust_execution_requirements` and `inspect_dependency`. Unknown evidence has
+`action: null`; actions express a suggested correction and grant no authority.
+
+For large refusals, optionally request `limit`/`offset` alongside `policy`.
+`error.page` and `error.diagnostic_count` describe the complete deterministic
+diagnostic collection. Continuations require `expected_repository_digest`;
+successful canonical plans remain unchanged even when paging was requested.
+
+### Request the complete audit when needed
+
+Existing clients calling `{}` receive the same complete canonical fields.
+Explicit `{"view":"full"}` returns that same result. Full reports remain useful
+for audit/export; summary and detail improve normal assistant conversations.
+The advertised output schema accepts each strict response variant.
+
+All modes obey the response limit. A full report exceeding it yields
+`response_too_large`; the server never switches silently to a summary. Request a
+summary or smaller detail page explicitly. A page can still exceed the byte
+limit when an individual record is large. Views contain source metadata and
+retained static evidence, never raw source files, host paths or tracebacks.
 
 ## Explicit delivery mode (0.4.2)
 
@@ -313,7 +552,7 @@ Startup-only options:
 
 The argument allowance reserves 2 KiB within the request bound. Worker stdout
 (including its private response envelope) is bounded while reading; an overflow
-returns `size_limit`, never a truncated canonical report. Result serialization
+returns `response_too_large`, never a truncated canonical report. Result serialization
 is also checked (`response_too_large`). The SDK's protocol envelope and schemas
 have a separate 256 KiB allowance. An oversized/invalid byte stream closes the
 connection with a redacted stderr diagnostic such as `request_too_large`.
@@ -337,8 +576,8 @@ them to its model**. Local stdio alone does not guarantee confidentiality.
 
 ## Client configuration and validation
 
-The real integration proof uses the official Python MCP SDK **2.2.0**, its
-[current low-level API](https://github.com/modelcontextprotocol/python-sdk/blob/v2.2.0/docs/advanced/low-level-server.md),
+The real integration proof uses the locked official Python MCP SDK **2.3.0**, its
+[low-level API](https://github.com/modelcontextprotocol/python-sdk/blob/v2.3.0/docs/advanced/low-level-server.md),
 and a real SDK stdio client. It validates revisions **2026-07-28** (`auto`) and
 **2025-11-25** (`legacy`). No JSON-RPC server implementation is duplicated here.
 
@@ -373,6 +612,55 @@ logs and separate plugin coverage. Linux repeats the installed proof with networ
 access removed by a disposable network namespace. These are development proofs,
 not tests of a graphical client. See the [release record](../releases/0.4.1.md)
 for publication status.
+
+`scripts/mcp_views_proof.py` also measures actual structured response bytes on a
+69-file repository, validates every successful view against its advertised
+schema through real stdio, reads the complete dependency slice and checks source
+changes between pages. Both supported protocols prove that a small response
+bound refuses full reports while allowing an explicitly requested summary.
+
+`scripts/mcp_schema_proof.py`, included in the installed-wheel proof, retains
+`schemas-auto.json` and `schemas-legacy.json` from actual `tools/list` responses,
+plus the corresponding tool results and `schema-proof.json`. It checks property
+descriptions, referenced definitions and schema examples, obtains a real digest
+from analysis, pins readiness to it, and plans an actually discovered capability.
+Its fixture includes uncertain experimental code, so a valid readiness result
+has `exit_code: 1` and `isError: false`. Project prose cannot replace its discovery
+metadata. The proof runs locally without network access after installation and
+does not depend on external directory scoring. `--capture-only` retains prior
+discovery/results for before/after comparison without requiring new descriptions.
+The compact test baseline records the prior validation-schema and business-result
+fingerprints; full discovery JSON stays in qualification artifacts.
+
+The same proof retains `discovery-{auto,legacy}.json` with initialization
+instructions and complete tool metadata, and `recovery-{auto,legacy}.json` with
+SDK responses including error status. Real changed-source, missing-policy and
+refused-selection calls accompany the normal journey. `guidance_baseline.json`
+binds the prior installed wheels and fingerprints every unchanged discovery
+contract and response, including #268's schema descriptions/examples. Only the
+three analysis tool descriptions and initialization instructions are excluded
+from discovery comparison. Delivery discovery retains all six tools and verifies
+their effect annotations separately in `mcp_delivery_local_proof.py`.
+
+### Local TDQS review
+
+This assessment covers the six Tool Definition Quality Score dimensions without
+claiming an external score. `verify_guidance` checks essential selection/recovery
+concepts and a conciseness budget against actual SDK discovery; it does not
+attempt to measure agent intelligence or directory ranking.
+
+| Dimension | Assessment and check |
+| --- | --- |
+| Purpose Clarity | Analyze discovers identities, readiness assesses usability, planning tests a chosen proposal. Each description names its distinct result. |
+| Usage Guidelines | Each tool states when to choose it and a next step; initialization presents discover → assess → propose as optional guidance. Fresh-session readiness/planning tests preserve independent use. |
+| Behavioral Transparency | No project execution or authority grant; fresh evidence, readiness business results, structured refusals, recovery and delivery effects are explicit and exercised. |
+| Parameter Semantics | #268's complete schemas, referenced definitions and valid examples remain unchanged, verified against installed discovery fingerprints. Descriptions refer to those schemas. |
+| Conciseness | Each analysis description is capped at 115 whitespace-delimited words; initialization at 350 in either mode. Shared workflow/recovery guidance lives in initialization rather than being repeated per tool. |
+| Contextual Completeness | Capability IDs, actual digest pinning, policy fallback, startup scope, principal recoveries and mode-specific effects are available without external documentation. |
+
+External Glama evaluations, when available, are dated observations about the
+version indexed there. They are not an offline qualification gate or evidence
+that an unpublished development commit has been evaluated.
 
 Delivery qualification adds official SDK status/run/resume calls for both protocol
 revisions. `scripts/smoke_oci_registry.py --artifacts --output /absolute/new-proof`

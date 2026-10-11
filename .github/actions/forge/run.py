@@ -95,7 +95,7 @@ def wheel_bytes(path, expected_hash, version):
             "Version"
         ) != [version]:
             raise Refused("forge_wheel_identity_mismatch")
-    if version != "0.4.4":
+    if version not in {"0.4.4", "0.4.5"}:
         raise Refused("forge_wheel_development_version_required")
     return source.name, raw
 

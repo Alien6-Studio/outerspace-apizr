@@ -3,11 +3,11 @@
 import json
 from typing import Literal
 
+from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import Digest
 from apizr.execution.serialization import canonical_bytes, digest
 from apizr.governed.embedding import definition, source
 from apizr.governed.embedding import runtime_files as local_files
-from apizr.inspection import Inspection
 from apizr.interfaces.serialization import json_bytes
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.oci.planner import plan

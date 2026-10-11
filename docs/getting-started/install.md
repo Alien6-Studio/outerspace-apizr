@@ -8,6 +8,16 @@ description: Install Apizr with pip, uv, pipx or Homebrew, then add optional plu
 Install **Apizr 0.4.4**, then follow the [Quickstart](quickstart.md) to make your
 first REST or MCP calls. The core is enough for that example; plugins are optional.
 
+## Data scientist
+
+Already have a Python environment with pandas and scikit-learn? Install Apizr's
+notebook support into that environment, then start with `apizr experiment inspect`.
+The [Data Scientist quickstart](data-science.md) explains installation from the
+**0.4.5 candidate wheel (not yet published)** and walks through an unchanged
+notebook, two datasets, comparison and real REST/MCP prediction calls.
+Scientific libraries are your workload dependencies; no analysis plugin is needed.
+The stable installation commands below remain for published 0.4.4.
+
 ## Install the core
 
 Use Python 3.11–3.14 on macOS or Linux, with a POSIX shell and pip.

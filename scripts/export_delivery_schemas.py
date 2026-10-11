@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from apizr.delivery_results import (
+from apizr.contracts.results import (
     AdmissionResult,
     BuildResult,
     DeliveryResult,

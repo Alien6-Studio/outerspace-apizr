@@ -2,7 +2,7 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Optional, Protocol
 
-from apizr.output import write_new_text
+from apizr.interfaces.files import write_new_text
 
 
 class EncodingConfiguration(Protocol):

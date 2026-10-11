@@ -1,7 +1,30 @@
 {
   "dependencies": {
     "@opencollection/schema": "0.14.0",
-    "@usebruno/cli": "4.2.0",
-    "postman-cli": "1.67.0"
+    "@usebruno/cli": "4.2.1",
+    "postman-cli": "1.73.0"
+  },
+  "overrides": {
+    "@usebruno/cli@4.2.1": {
+      "axios": "1.20.0",
+      "csv-parse": "7.0.2",
+      "form-data": "4.0.6",
+      "js-yaml": "4.3.2"
+    },
+    "@usebruno/js@0.54.0": {
+      "axios": "1.20.0",
+      "uuid": "11.1.1",
+      "yaml": "2.8.3"
+    },
+    "@usebruno/requests@0.21.0": {
+      "axios": "1.20.0",
+      "@faker-js/faker": "10.5.0"
+    },
+    "@usebruno/converters@0.24.0": {
+      "js-yaml": "4.3.2"
+    },
+    "@usebruno/filestore@0.13.0": {
+      "yaml": "2.8.3"
+    }
   }
 }

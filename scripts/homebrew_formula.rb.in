@@ -28,7 +28,7 @@ class Apizr < Formula
     ENV["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
     ENV["PYTHONDONTWRITEBYTECODE"] = "1"
     # std_pip_args supplies --no-deps. Its blanket source-only rule must be reset
-    # for the five reviewed build wheels; the application is still this local sdist.
+    # for the six reviewed build wheels; the application is still this local sdist.
     system python, "-m", "pip", "--python=#{libexec}/bin/python", "install",
            *std_pip_args(prefix: false, build_isolation: true),
            "--no-binary=:none:", "--no-cache-dir", buildpath

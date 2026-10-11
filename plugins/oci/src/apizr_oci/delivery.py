@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from apizr.application import ApplicationInputs
-from apizr.delivery import (
+from apizr.contracts.application import ApplicationInputs
+from apizr.contracts.delivery import (
     PROVENANCE_FILE,
     BundleProvenance,
     DeliveryPlan,
@@ -13,7 +13,7 @@ from apizr.delivery import (
 )
 from apizr.exposure.model import ExposurePlan
 from apizr.graph.model import Graph
-from apizr.local_plugins.models import LockedDistribution
+from apizr.plugins.artifacts.models import LockedDistribution
 from apizr.repository.model import Catalog
 from apizr.repository_interfaces.model import (
     MCPManifest,

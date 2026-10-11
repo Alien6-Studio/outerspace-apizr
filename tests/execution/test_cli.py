@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from apizr.execute_cli import main
+from apizr.cli.commands.execute import main
 from apizr.execution import ExecutionPolicy, plan, plan_bytes, policy_bytes
 from apizr.inspection import inspect_source
 

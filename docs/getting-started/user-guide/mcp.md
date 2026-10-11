@@ -34,6 +34,15 @@ Use the written steps for the current release; a recording may show an earlier v
 
 ## Inspect and generate
 
+The [TypedDict model example](inspect.md#structured-model-inputs-with-typeddict)
+works with MCP as well as REST. `predict` advertises the same closed, nested object
+in `inputSchema`. Calling it with
+`{"payload":{"customer_id":"c","features":{"age":2,"score":3}}}` returns
+`isError=false`, structured content `{"result":6.0}` and matching JSON text.
+Missing, extra or invalid nested fields produce `isError=true`, no structured
+content and the text `Invalid tool arguments`. Return annotations remain
+descriptive; generated tools do not advertise `outputSchema`.
+
 Given `pricing.py`:
 
 ```python

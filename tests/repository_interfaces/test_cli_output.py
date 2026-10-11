@@ -166,7 +166,7 @@ def audit(event, args):
  if event == "exec" and str(args[0].co_filename).startswith(root): raise AssertionError("project execution")
 sys.addaudithook(audit)
 from apizr.cli import main
-import apizr.exposure_cli
+import apizr.cli.commands.exposure
 import apizr.execution.policy
 import importlib.util, importlib.metadata
 def forbidden(*args, **kwargs): raise AssertionError("runtime/package probe")

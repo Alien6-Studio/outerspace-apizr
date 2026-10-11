@@ -14,6 +14,7 @@ from apizr.readiness.model import Assessment, State, combine
 from apizr.repository.model import Diagnostic as CatalogDiagnostic
 from apizr.repository.policy import relative_path
 
+from .eligibility import can_generate_interface, interface_state
 from .execution import ModeCompatibility, execution_compatibility
 from .policy import RepositoryReadinessPolicy
 from .serialization import policy_digest
@@ -121,17 +122,19 @@ class DeclarationAssessment(ValueModel):
                 "Catalog membership must agree with validated IR membership"
             )
         expected = combine(
-            (self.local_readiness.state, *(REASONS[r.code][0] for r in self.reasons))
+            (
+                interface_state(
+                    self.local_readiness, self.source_path, self.relationships
+                ),
+                *(REASONS[r.code][0] for r in self.reasons),
+            )
         )
         if self.state != expected:
             raise ValueError(
-                "Repository state must derive from local state and repository reasons"
+                "Repository state must derive from bound local evidence and repository reasons"
             )
-        if (
-            self.state == State.READY
-            and not self.local_readiness.can_generate_interface
-        ):
-            raise ValueError("READY requires local interface eligibility")
+        if self.state == State.READY and not can_generate_interface(self):
+            raise ValueError("READY requires repository interface eligibility")
         return self
 
 

@@ -741,21 +741,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "67a752c0488bd2be1d908472442235188e11ecf7b858b5e4937ff6c201a18de5",
+      "distribution_fingerprint": "fd3211348873d35453946621d958d57499ddfdd7c78f293d5b16324df3f61609",
       "evidence_archive": {
-        "hash": "sha256:e8822fc40db1e1858054d7a949a888695bc9bdce70139178e33bd2871a453ca1",
-        "url": "https://files.pythonhosted.org/packages/8a/02/91e3416a8fdd715abb903a952a6bec7cdd8d14eed55d415fc8595524c319/fastapi-0.141.1.tar.gz"
+        "hash": "sha256:06366626f2e70576367714d9ab2fe8472e6c8456dba69b399f9f797ab5e92570",
+        "url": "https://files.pythonhosted.org/packages/56/4f/f7c30a73127e0a8bbffe788369b8359e530b01ae06e2757936fa35bc5e6d/fastapi-0.142.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "fastapi-0.141.1/LICENSE",
+          "path": "fastapi-0.142.2/LICENSE",
           "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
         }
       ],
       "name": "fastapi",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the exact selected source archive and preserved MIT notice for the existing optional HTTP adapter and validation suite. The notice is byte-identical to the prior review. No FastAPI source is embedded in Apizr distributions; retain upstream attribution for redistribution.",
       "status": "reviewed",
-      "version": "0.141.1"
+      "version": "0.142.2"
     },
     {
       "components": [
@@ -871,21 +871,21 @@
           "scope": "Unmodified build-only Python code and classifier data in the reviewed source and wheel."
         }
       ],
-      "distribution_fingerprint": "cd6595e98a9206dc38385b3a1da916514b00b9c433f51db773eb378fa68c5eb6",
+      "distribution_fingerprint": "1aef3783bb06e021c175517f7442f294c8f400731efe4c888e16a852aaed1fcb",
       "evidence_archive": {
-        "hash": "sha256:4d50b02aece6892b8cd0b3ce6c82cb218594d3ec5836dbde75bf41a21ab004c8",
-        "url": "https://files.pythonhosted.org/packages/0b/8e/e480359492affde4119a131da729dd26da742c2c9b604dff74836e47eef9/hatchling-1.28.0.tar.gz"
+        "hash": "sha256:c4468f73144c054d2aab4ef0f0378c43b9878bf07f8ffd6b79690e970d375f07",
+        "url": "https://files.pythonhosted.org/packages/f6/97/b5312f01a8c6daf729a9d272dd442e0c546dbcc630495788786c4b567ed0/hatchling-1.32.4.tar.gz"
       },
       "license_files": [
         {
-          "path": "hatchling-1.28.0/LICENSE.txt",
+          "path": "hatchling-1.32.4/LICENSE.txt",
           "sha256": "7f143a8127ad4873862d70854b5bd2abd0085aa73e64fd2b08704a3b9f5c07fc"
         }
       ],
       "name": "hatchling",
-      "notes": "Reviewed the exact source, wheel metadata, build hooks and preserved notices for the Homebrew build-only closure. Retain the complete MIT notice when redistributing the wheelhouse; no build code or classifier data is embedded into the Apizr runtime. Hatchling standard wheel backend; custom hooks/plugins are not enabled by the qualified Apizr sdist.",
+      "notes": "Reviewed the exact source archive, MIT notice and dependency metadata for the build-only backend. The notice is byte-identical to the prior review. This version adds tomlkit to the isolated PEP 517 closure; both are build-only and must remain absent from the Homebrew runtime. The qualified wheelhouse preserves all notices and exact artifact hashes.",
       "status": "reviewed",
-      "version": "1.28.0"
+      "version": "1.32.4"
     },
     {
       "components": [
@@ -1065,21 +1065,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "998b5ca317a245d2a415e0e5c0bdbb5b5661122bf97974be96bebe314428c1d4",
+      "distribution_fingerprint": "31be159f0a1e4abbad417cea501f153f108d74ca57f9012458758aa1bbf5ee6b",
       "evidence_archive": {
-        "hash": "sha256:df61fcada928a3fb3fba4602be5b2d569eb50c36fddae0d2e2a5f51419d0ce9b",
-        "url": "https://files.pythonhosted.org/packages/42/10/5795cc413d2ba5ff9c81e5d1b27ba3c652ac6dfac6b1d67072052d338391/hypothesis-6.168.2.tar.gz"
+        "hash": "sha256:a43388f9067678fef6e13bdff325b6cfa6961a590498bb37f7ff31589c83bc75",
+        "url": "https://files.pythonhosted.org/packages/09/b7/13118bbc45d6d8b9d04e2de779e2a4ff23145ea39efa692b994fb874ca72/hypothesis-6.168.3.tar.gz"
       },
       "license_files": [
         {
-          "path": "hypothesis-6.168.2/LICENSE.txt",
+          "path": "hypothesis-6.168.3/LICENSE.txt",
           "sha256": "ac89037bac63550644dce8cf32c6765e5fab9dc1a1ce94b89f8a805f341a6750"
         }
       ],
       "name": "hypothesis",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components. Re-reviewed the hash-verified 6.168.2 source archive; all preserved license and attribution texts are byte-identical to the previously reviewed version.",
+      "notes": "Reviewed the exact source archive and complete MPL-2.0 notice for the existing bounded property tests. The notice is byte-identical to the prior review. Preserve notices and applicable source availability obligations; this is validation tooling and no Hypothesis source is embedded in Apizr distributions.",
       "status": "reviewed",
-      "version": "6.168.2"
+      "version": "6.168.3"
     },
     {
       "components": [
@@ -1631,21 +1631,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "be34868416c892cbf6420112162267d1c9085bdc64c0a5297b6ef30d6feb1d26",
+      "distribution_fingerprint": "0fbd56cc592e4ccd0f0f8172ec05ea12aac97319b878dbb9bef93ee46f9fb07f",
       "evidence_archive": {
-        "hash": "sha256:2dc37ecb1974becdcebdbf7561e7c15a07dbbf20ba21ba16c3593b3038b3afbd",
-        "url": "https://files.pythonhosted.org/packages/76/31/ac54fb0fdd5b37de704486e288bba4fbbb463f24cfcfedbede407b854513/mcp-2.2.0.tar.gz"
+        "hash": "sha256:8b147a50441cf059dc88c684e0aeed3687f0aa0f39c6cde7b90330effd2b34d8",
+        "url": "https://files.pythonhosted.org/packages/9d/8d/e0d339616f4810e9051d4aba6887afab289ab1f81875fe908b606cdfd0e3/mcp-2.3.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "mcp-2.2.0/LICENSE",
+          "path": "mcp-2.3.0/LICENSE",
           "sha256": "5e13dbbc1d120fc2a03cecde7c91424ae2d7de11b63d58ded2f4431e261ee50d"
         }
       ],
       "name": "mcp",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the exact official SDK source archive and MIT notice for existing MCP server/client use. The notice is byte-identical to the prior review. Retain upstream attribution when redistributing the SDK; the Apizr archives do not embed it.",
       "status": "reviewed",
-      "version": "2.2.0"
+      "version": "2.3.0"
     },
     {
       "components": [
@@ -1657,21 +1657,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "93302f2d0ae382be8ba95fcf315314895ca13a174a37f83d9b0f3b1be8edb6c6",
+      "distribution_fingerprint": "a490ecda732b0af25c997cb1609979e2b9fd3794a0c4a38ed472f8980e53252f",
       "evidence_archive": {
-        "hash": "sha256:d3ed53703ddd10d9c6399f29d322bb66f3f67ab41348ac8556ba23e07fedefad",
-        "url": "https://files.pythonhosted.org/packages/ae/91/762d7755d971aff8a28d75f7961656148edf27875c8026e6385aaab08ae7/mcp_types-2.2.0.tar.gz"
+        "hash": "sha256:d1e46549edb35ee19a94940fcee6d1addd7e589ab7ea92dda83f5d84781fc362",
+        "url": "https://files.pythonhosted.org/packages/9e/2d/7c251e34207f6c51000312fc8839111ac45cfe02023f90b44e7f1051dd8e/mcp_types-2.3.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "mcp_types-2.2.0/LICENSE",
+          "path": "mcp_types-2.3.0/LICENSE",
           "sha256": "5e13dbbc1d120fc2a03cecde7c91424ae2d7de11b63d58ded2f4431e261ee50d"
         }
       ],
       "name": "mcp-types",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the exact official SDK protocol-types source archive and MIT notice. The notice is byte-identical to the prior review. The matched 2.3.0 protocol-types dependency supports the existing MCP SDK; retain upstream attribution for redistribution.",
       "status": "reviewed",
-      "version": "2.2.0"
+      "version": "2.3.0"
     },
     {
       "components": [
@@ -3616,33 +3616,33 @@
           "scope": "Vendored annotate-snippets and typeshed; root LICENSE also enumerates copied permissive code."
         }
       ],
-      "distribution_fingerprint": "5d29b415c24eb39fe39e62c2d7ca4d8d62172a17ed25468dd802e97c1ec9ddb8",
+      "distribution_fingerprint": "051abbcd33a276543414be6ae4504c5ec379287710cea372475d38d7b3a81419",
       "evidence_archive": {
-        "hash": "sha256:12b625c6cfba78d285d9f48eda5f053374f1e53cb10ef17342a383750db99161",
-        "url": "https://files.pythonhosted.org/packages/96/bf/c935ca98e73fe8ce65b87ef08a280c0c1e85295d569228c15e87d8fdfaf1/ruff-0.16.9.tar.gz"
+        "hash": "sha256:eff4728c4eaae93f0955cd264d24b2ab348e74bf59986ccf282ba6dc16b3b017",
+        "url": "https://files.pythonhosted.org/packages/c4/49/23802c45f093eb14bde54b141d2b2f058edfa63a06db7beed047308cc08f/ruff-0.16.10.tar.gz"
       },
       "license_files": [
         {
-          "path": "ruff-0.16.9/LICENSE",
+          "path": "ruff-0.16.10/LICENSE",
           "sha256": "2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18"
         },
         {
-          "path": "ruff-0.16.9/crates/ruff_annotate_snippets/LICENSE-APACHE",
+          "path": "ruff-0.16.10/crates/ruff_annotate_snippets/LICENSE-APACHE",
           "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
         },
         {
-          "path": "ruff-0.16.9/crates/ruff_annotate_snippets/LICENSE-MIT",
+          "path": "ruff-0.16.10/crates/ruff_annotate_snippets/LICENSE-MIT",
           "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
         },
         {
-          "path": "ruff-0.16.9/crates/ty_vendored/vendor/typeshed/LICENSE",
+          "path": "ruff-0.16.10/crates/ty_vendored/vendor/typeshed/LICENSE",
           "sha256": "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe"
         }
       ],
       "name": "ruff",
-      "notes": "MIT root and enumerated copied code, plus Apache/MIT vendored components. Cargo dependencies and platform binary contents are outside this Python lock inventory. Re-reviewed the hash-verified 0.16.9 source archive; all preserved license and attribution texts are byte-identical to the previously reviewed version.",
+      "notes": "Reviewed the exact source archive, root MIT/copy notices and vendored annotate-snippets/typeshed Apache-2.0 and MIT notices. All collected notices are byte-identical to the prior review. Ruff remains validation tooling; preserve complete copied-code notices. Native binary and nested dependency redistribution remains outside this source-notice review.",
       "status": "reviewed",
-      "version": "0.16.9"
+      "version": "0.16.10"
     },
     {
       "components": [
@@ -3892,6 +3892,43 @@
       "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
       "status": "reviewed",
       "version": "1.2.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "f2f9b460ba719da6626add264d3782f275a4ff7aab677beda08b330911e23adb"
+          ],
+          "expression": "MIT",
+          "scope": "Primary pure-Python TOML parser in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "01ef58ee6449fa01a284c10808e27800d66bfea271bc29281125ff8e5642b86f"
+          ],
+          "expression": "MIT",
+          "scope": "Separate upstream toml-test fixtures retained in the source archive."
+        }
+      ],
+      "distribution_fingerprint": "12254fe54afcdf1c23683367b82a6ec80cff11cc1d9ddd9b8a8368759cad39fc",
+      "evidence_archive": {
+        "hash": "sha256:e25bbf38843005246210a12982776f27f99cb9be67160e14434d0c0d21ee1e97",
+        "url": "https://files.pythonhosted.org/packages/94/96/e07752635b98536177fa1f37671c8f3cdde2e724c6bcf6034b2cfb571565/tomlkit-0.15.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "tomlkit-0.15.1/LICENSE",
+          "sha256": "f2f9b460ba719da6626add264d3782f275a4ff7aab677beda08b330911e23adb"
+        },
+        {
+          "path": "tomlkit-0.15.1/tests/toml-test/LICENSE",
+          "sha256": "01ef58ee6449fa01a284c10808e27800d66bfea271bc29281125ff8e5642b86f"
+        }
+      ],
+      "name": "tomlkit",
+      "notes": "Reviewed both MIT notices in the exact source archive: the TOML parser and the separate toml-test fixtures. Retain both copyright/permission notices for redistribution. This pure-Python parser has no runtime dependencies and is required only by Hatchling in the isolated build closure; it is not added to the Apizr runtime or an install extra.",
+      "status": "reviewed",
+      "version": "0.15.1"
     },
     {
       "components": [

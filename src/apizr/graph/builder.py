@@ -11,7 +11,7 @@ from apizr.readiness import State
 from apizr.repository import Catalog, ScanPolicy, SourceUnit, catalog_digest
 from apizr.repository.discovery import discover
 from apizr.repository.scanner import assemble
-from apizr.source_access import RepositoryInput
+from apizr.workspace.source_access import RepositoryInput
 
 from .analysis import Analysis, GraphInputError, Index, LimitError, location
 from .bindings import Inventory, Site, inventory, walk_scope
@@ -31,7 +31,7 @@ from .policy import GraphPolicy
 from .serialization import policy_digest
 
 if TYPE_CHECKING:
-    from apizr.operator_policy import OperatorPolicy
+    from apizr.workspace.operator_policy import OperatorPolicy
 
 
 def validated_inputs(catalog: Catalog, sources: Mapping[str, bytes]) -> Catalog:

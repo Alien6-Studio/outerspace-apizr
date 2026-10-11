@@ -1,6 +1,95 @@
 # Changelog
 
-## Unreleased
+## 0.4.5 — release candidate, not yet published
+
+Inspect ordinary notebooks, record and compare trusted Runs, then explicitly
+select a prediction capability for REST/MCP. Python developers also gain private
+helper support, selection within unfinished repositories, structured inputs and
+consistent results across transports. The changes below remain individually
+traceable; notebook qualification is recorded in #267, distribution in #279
+and final dependency security in #280.
+
+- Add trusted MCP tool titles, complete schema descriptions, agent guidance and
+  explicit registry configuration acquisition, preserving analysis/delivery
+  authority and both protocol revisions (#268, #269, #279).
+- Qualify the current MCP Registry descriptor and publication guards, prepare
+  reproducible MCPB distribution and read-only external verification (#279).
+- Update client-collection qualification dependencies with reviewed targeted
+  security overrides and a blocking, unfiltered Node audit. Explicitly authorize
+  only 0.4.5 from protected master with complete provenance/assets (#280).
+
+- Add a synthetic scikit-learn notebook example with identical source across two
+  dataset variants, automatic main-guard metric capture and explicit wheel-bound
+  external import evidence. Scientific packages remain workload dependencies.
+- Coordinate core, MCP, OCI and Attest candidate metadata and internal pins at
+  0.4.5, with a first-class Data Scientist guide; publication remains separate.
+
+- Bridge a validated successful Experiment Run to existing Repository Readiness
+  and Exposure planning with `experiment expose`, explicit capability/interface
+  selection, and content-addressed Run resources and dependencies in REST/MCP
+  direct-service bundles. Shared Readiness recognizes a conservatively proven
+  main guard, allowing the same source to train during a Run and serve on import
+  (#266).
+
+- Compare local Experiment Runs deterministically across code, data, parameters,
+  randomness, environment, metrics and outputs, with finite numeric metric deltas
+  and explicit unknown evidence, without causal inference (`experiment diff`, #265).
+
+- Execute trusted Python scripts and supported notebooks in fresh local processes,
+  derive exact experiment Plans, record runtime observations and persist immutable
+  local history with `experiment run`, `list` and `show` (#264).
+
+- Add zero-execution inspection of Python training scripts and notebooks, presenting
+  code, data, parameter, randomness, environment, metric, output and serving evidence
+  with original cell locations and canonical readiness identities (#259).
+
+- Add explicit finite JSON metric capture, static sklearn metric-call signals and
+  safe output artifact fingerprints with joblib output candidates, without
+  experiment execution, tracking or model-registry behavior (#263).
+
+- Add conservative static randomness-control discovery and selected runtime
+  Python/platform/architecture/package evidence with lock/config byte identities,
+  without claiming deterministic execution (#262).
+
+- Add bounded local experiment-input fingerprinting and conservative static
+  recognition of common literal data reads, preserving separate reference/content
+  provenance without dataset storage or versioning (#261).
+
+- Add independent content-addressed Experiment Plan and Experiment Run v1 contracts
+  to distinguish intended experiment inputs and controls from observed run evidence
+  (#260).
+
+- Add verified target-aware plugin preparation with compatible-wheel selection,
+  normalized artifact-bound locks and isolated temporary profiles. Keep installation
+  and activation explicit; clarify shared artifact verification and preparation
+  ownership while preserving historical imports (#256).
+
+- Define domain-based package composition with an explicit ownership/debt/facade
+  inventory and blocking pre-commit/CI checks. Group project configuration under
+  `apizr.workspace` and keep inspect parsing outside the CLI composition root.
+
+- Group CLI adapters under `apizr.cli` and core plugin management under
+  `apizr.plugins`, preserving historical imports and command behavior. Document
+  compiler/execution boundaries and protect them with architecture checks.
+
+- Add explicit summary and exact capability/module detail views to MCP analysis
+  and readiness, with digest-bound pagination and localized, actionable exposure
+  refusals. Existing default/full reports and successful plans stay compatible
+  (#255).
+
+- Recognize supported Python `TypedDict` inputs as shared structured JSON contracts
+  for REST and MCP, including nested validation, required and optional fields, and
+  strict rejection of missing or extra fields (#254).
+
+- Adopt reviewed Dependabot updates for the 0.4.5 development line, including the isolated Hatchling/tomlkit build closure; retain license notices, exact Homebrew qualification identities and build-tool exclusion from the runtime.
+
+- Expose independent functions from repositories containing unfinished code,
+  while retaining the full audit and refusing problems in required helpers,
+  imports or module initialization (#253).
+
+- Consume proven local repository import evidence for REST/MCP generation,
+  allowing selected functions to call private same-repository helpers while
+  retaining conservative source-local Readiness and unresolved import refusals (#252).
 
 - Recursively normalize Python tuple results to JSON arrays in direct MCP and
   governed local/OCI workers, including repository bundles, preserving REST/MCP

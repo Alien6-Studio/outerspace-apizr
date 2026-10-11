@@ -10,7 +10,7 @@ from analysis_authorization import analysis_policy
 from apizr import cli, mcp_cli
 from apizr.analysis_session import read_session
 from apizr.extension_runtime import PrerequisiteMissing
-from apizr.local_plugins import PluginError
+from apizr.plugins.local import PluginError
 
 
 @pytest.fixture

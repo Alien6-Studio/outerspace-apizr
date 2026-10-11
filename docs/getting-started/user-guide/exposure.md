@@ -7,6 +7,13 @@ This permission does not expose functions or authorize their execution.
 For one Python file or notebook, use the [REST](rest.md) or [MCP](mcp.md)
 single-source guide. This page covers repository-level selection and bundles.
 
+Functions with [supported TypedDict inputs](inspect.md#structured-model-inputs-with-typeddict)
+use the same structured contracts in repository bundles. Keep each declaration
+and its annotated public function in the same module. Select the function's
+capability ID; its local helpers stay private. An unrelated unfinished module
+remains visible in the global audit while an independent selection can generate.
+The closed nested input shape also travels into local-process and OCI workers.
+
 Readiness describes eligibility under a policy. Exposure records what the
 operator explicitly selects for publication, through which interfaces and under
 which execution requirements. It does not generate or start a server.
@@ -125,7 +132,7 @@ by digest, enabling deterministic review across filesystem locations.
 - `CONDITIONAL` requires explicit opt-in and an eligible shared interface
   contract. The opt-in cannot override unresolved local type/callable contracts.
 - `AMBIGUOUS` and `UNSUPPORTED` are always refused.
-- Globally incomplete repository evidence is always refused.
+- Missing required evidence or a repository-wide integrity failure is refused.
 - Any refused selection blocks the whole plan. No partial result is published.
 
 If A calls B, selecting A **does not expose B**. The plan keeps the direct
@@ -199,12 +206,127 @@ These servers execute trusted code directly. Global state and mutable defaults
 persist across calls. Add an explicit execution policy for a fresh local worker
 or OCI container per invocation, as described below.
 
-Existing Readiness restrictions still apply. In particular, a local/relative
-import in a selected declaration or its module may make it ineligible;
-`--allow-conditional` cannot override the shared interface contract. Cross-module
-support is available for plans the existing pipeline actually accepts (for
-example, a selected function calling an unexposed helper with a relative import).
-There is no new dependency-closure or transitive safety claim.
+## Use private helpers from the same repository
+
+In the 0.4.5 candidate, you can organize your Python code into modules
+and expose the function you choose when its local dependencies can be resolved
+statically. Helpers are packaged as implementation support and stay private
+unless you select them too. Published 0.4.4 retains the earlier import restriction.
+
+For example, create this small project:
+
+```text
+project/
+  features.py
+  predict.py
+```
+
+```python
+# features.py
+def normalize(value: float) -> float:
+    return value / 100
+```
+
+```python
+# predict.py
+from features import normalize
+
+
+def predict(value: float) -> float:
+    return normalize(value) * 0.8
+```
+
+Save an analysis grant for the exact `project` root in `operator.json`, as
+explained at the top of this guide. Use the `direct-readiness.json` policy above:
+
+```sh
+apizr expose plan project --operator-policy operator.json \
+  --readiness-policy direct-readiness.json \
+  --interface rest --interface mcp --execution-mode direct \
+  --select python:predict:predict
+
+apizr expose build rest project --operator-policy operator.json \
+  --readiness-policy direct-readiness.json \
+  --interface rest --execution-mode direct --select python:predict:predict \
+  --output-dir .output/predict-rest
+
+apizr expose build mcp project --operator-policy operator.json \
+  --readiness-policy direct-readiness.json \
+  --interface mcp --execution-mode direct --select python:predict:predict \
+  --output-dir .output/predict-mcp
+```
+
+Both bundles include `features.py` and `predict.py`. Only `predict.predict` is
+public: send `{"value": 50.0}` to `/capabilities/predict.predict` for REST, or call
+the MCP Tool `predict.predict`. REST returns `0.4`; MCP returns `{"result": 0.4}`.
+Start the servers as described above, in an environment with their requirements.
+
+The supported forms include `from features import normalize`, its stable alias,
+and `import features` followed by `features.normalize(...)`. A proper package
+with an empty `__init__.py` can use a uniquely resolved relative import. Ambiguous,
+star, rebound, dynamic and unresolved external imports remain refused. Required
+helper bindings and module initialization must also have sufficient evidence.
+A nonempty package initializer without callable Readiness evidence remains
+conditional, even when it contains only a docstring. Private helpers do not need
+their own public JSON input contract. Their effects are not inferred or propagated.
+
+Single-file generation remains conservative because it has no repository evidence.
+`--allow-conditional` does not waive unresolved interface contracts. Repository
+bundles still copy the complete inspected source universe. The 0.4.5 candidate
+release checks the selected function's required helpers and imports as described below.
+See [Repository Readiness](../../architecture/repository-readiness-v1.md#resolved-local-import-refinement)
+for the retained import evidence and its limits.
+
+## Work with unfinished research code
+
+In the 0.4.5 candidate, you can expose a serving function without first
+cleaning up every old experiment or notebook in your research repository.
+Apizr checks the function you select and the code it needs. A problem in a
+required feature helper or import still blocks generation.
+
+The committed `examples/research-serving` project contains:
+
+```text
+project/
+├── serving.py       ← predict: selected
+├── features.py      ← normalize: private helper
+├── experiments.py   ← unfinished experiment
+└── old_notebook.py  ← ambiguous import, unrelated to predict
+```
+
+Copy that directory to `project`. Save an analysis grant for its exact root
+in `operator.json` and use the `direct-readiness.json` policy above. With the
+development candidate, run:
+
+<!-- smoke:selected-scope -->
+```sh
+apizr expose plan project --operator-policy operator.json \
+  --readiness-policy direct-readiness.json \
+  --interface rest --interface mcp --execution-mode direct \
+  --select python:serving:predict --plan > exposure-plan.json
+
+apizr expose build rest project --operator-policy operator.json \
+  --readiness-policy direct-readiness.json \
+  --interface rest --execution-mode direct --select python:serving:predict \
+  --output-dir .output/predict-rest
+
+apizr expose build mcp project --operator-policy operator.json \
+  --readiness-policy direct-readiness.json \
+  --interface mcp --execution-mode direct --select python:serving:predict \
+  --output-dir .output/predict-mcp
+```
+
+Only `serving.predict` is public. As in the example above, `{"value": 50.0}`
+returns `0.4` through REST and `{"result": 0.4}` through MCP.
+The full audit still reports the ambiguous import in `old_notebook.py`, and
+the inspected sources remain in both bundles. Unrelated files are not imported
+just because they are included.
+
+If `predict` starts depending on that ambiguous import, Apizr refuses the
+request and shows the dependency path to the problem. Repository-wide limits
+or corrupt evidence also block generation. This helps you separate serving
+code from unfinished training experiments; it does not establish runtime safety.
+Published 0.4.4 keeps the earlier repository-wide completeness requirement.
 
 Build exits 0 on success, 1 on exposure/bundle refusal, and 2 on invalid or
 operational input. A valid empty Exposure Plan is refused for a server build.

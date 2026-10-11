@@ -1,6 +1,6 @@
 # outerspace-apizr-attest
 
-This checkout prepares the coordinated **0.4.4 candidate**, not a published release.
+This checkout prepares the coordinated **0.4.5 candidate**, not a published release.
 The current public stable baseline described below remains 0.4.3.
 
 Sign, timestamp, transport and verify proofs of an OCI delivery.

@@ -23,7 +23,7 @@ from apizr.extension_runtime import (
     PrerequisiteMissing,
     SizeLimitExceeded,
 )
-from apizr.local_plugins import (
+from apizr.plugins.local import (
     PluginError,
     activation,
     disable_extension,

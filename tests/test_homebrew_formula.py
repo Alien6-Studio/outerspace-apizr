@@ -17,7 +17,7 @@ SHA = "a" * 40
 
 def candidate(tmp_path):
     root = tmp_path / "candidate"
-    source = root / "dist/outerspace_apizr-0.4.4.tar.gz"
+    source = root / "dist/outerspace_apizr-0.4.5.tar.gz"
     source.parent.mkdir(parents=True)
     source.write_bytes(b"exact source fixture")
     sha = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -27,7 +27,7 @@ def candidate(tmp_path):
                 "schema": "apizr.release-candidate/v1",
                 "repository": "Alien6-Studio/outerspace-apizr",
                 "commit": SHA,
-                "version": "0.4.4",
+                "version": "0.4.5",
                 "artifacts": [
                     {
                         "file": "dist/" + source.name,
@@ -51,7 +51,8 @@ def test_renderer_is_deterministic_and_keeps_build_inputs_out_of_runtime(tmp_pat
         b / "Formula/apizr.rb"
     ).read_bytes()
     formula = (a / "Formula/apizr.rb").read_text()
-    assert source.as_uri() in formula and formula.count('  resource "') == 5
+    assert source.as_uri() in formula and formula.count('  resource "') == 6
+    assert 'resource "tomlkit"' in formula
     assert "virtualenv_create(libexec, python, system_site_packages: true)" in formula
     assert (
         "build_isolation: true" in formula and "deny_network_access! :build" in formula
@@ -86,7 +87,7 @@ def test_renderer_rejects_changed_candidate_without_output(tmp_path, change):
         "https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/1/artifacts/2",
         "https://example.com/apizr.tar.gz",
         "https://github.com/Alien6-Studio/outerspace-apizr/archive/refs/heads/main.tar.gz",
-        "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.4/outerspace_apizr-0.4.4.tar.gz",
+        "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.5/outerspace_apizr-0.4.5.tar.gz",
     ],
 )
 def test_unsigned_or_arbitrary_publication_source_is_rejected(tmp_path, url):
@@ -116,7 +117,7 @@ def test_publication_binds_verified_evidence_and_immutable_asset(
     tmp_path, monkeypatch, change
 ):
     root, source, sha = candidate(tmp_path)
-    url = f"https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.4/{source.name}"
+    url = f"https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.5/{source.name}"
     evidence, bundle = tmp_path / "evidence.tar.gz", tmp_path / "bundle.json"
     bundle.write_text("test signature boundary")
     with tarfile.open(evidence, "w:gz") as archive:
@@ -174,20 +175,27 @@ def test_publication_binds_verified_evidence_and_immutable_asset(
     ]
 
 
-def test_retired_candidate_qualifies_without_reopening_publication(tmp_path):
+@pytest.mark.parametrize("version", ["0.4.3", "0.4.4", "0.4.6"])
+def test_retired_or_future_candidate_does_not_reopen_publication(tmp_path, version):
     root, old_source, _ = candidate(tmp_path)
-    source = old_source.with_name("outerspace_apizr-0.4.3.tar.gz")
+    source = old_source.with_name(f"outerspace_apizr-{version}.tar.gz")
     old_source.rename(source)
     path = root / "candidate.json"
     record = json.loads(path.read_text())
-    record["version"] = "0.4.3"
+    record["version"] = version
     record["artifacts"][0]["file"] = "dist/" + source.name
     path.write_text(json.dumps(record))
+    if version == "0.4.6":
+        with pytest.raises(ValueError):
+            tool["render"](root, SHA, tmp_path / "qualification", mode="qualification")
+        with pytest.raises(ValueError):
+            tool["render"](root, SHA, tmp_path / "public", mode="publication")
+        return
     assert (
         tool["render"](root, SHA, tmp_path / "qualification", mode="qualification")[
             "version"
         ]
-        == "0.4.3"
+        == version
     )
     with pytest.raises(ValueError, match="no Homebrew publication authorization"):
         tool["render"](root, SHA, tmp_path / "public", mode="publication")

@@ -9,16 +9,16 @@ from pathlib import Path
 import anyio
 from mcp import Client, StdioServerParameters
 
-from apizr.compiler import assess_readiness, prepare_exposure
 from apizr.exposure import ExposurePolicy
 from apizr.exposure.serialization import plan_bytes
 from apizr.graph import analyze_repository
 from apizr.graph.serialization import graph_bytes
-from apizr.operator_policy import load_operator_policy
-from apizr.project import load_project
 from apizr.repository.serialization import catalog_bytes
 from apizr.repository_readiness import RepositoryReadinessPolicy
 from apizr.repository_readiness.serialization import report_bytes
+from apizr.workspace.compiler import assess_readiness, prepare_exposure
+from apizr.workspace.operator_policy import load_operator_policy
+from apizr.workspace.project import load_project
 
 
 def snapshot(root: Path) -> dict:
@@ -68,7 +68,7 @@ async def exercise(root: Path, mode: str):
             "2025-11-25" if mode == "legacy" else "2026-07-28"
         )
         assert client.server_info is not None
-        assert client.server_info.version == "0.4.4"
+        assert client.server_info.version == "0.4.5"
         tools = (await client.list_tools()).tools
         assert {t.name for t in tools} == {
             "apizr_analyze",
@@ -374,7 +374,8 @@ async def boundary_errors(root: Path):
     async with Client(target, read_timeout_seconds=15) as client:
         large = await client.call_tool("apizr_analyze", {})
         assert (
-            large.is_error and large.structured_content["error"]["code"] == "size_limit"
+            large.is_error
+            and large.structured_content["error"]["code"] == "response_too_large"
         )
         assert len((await client.list_tools()).tools) == 3
     absent_policy = root / "no-policy.toml"

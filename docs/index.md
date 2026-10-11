@@ -1,7 +1,7 @@
 ---
 template: home.html
-title: Python to REST APIs and MCP servers
-description: Turn Python code and notebooks into REST APIs and MCP tools with Apizr. Open source, with practical guides and video tutorials to get you started.
+title: Python experiments, REST APIs and MCP servers
+description: Understand and compare Python experiments, then turn selected notebook and Python capabilities into REST APIs and MCP tools with Apizr.
 ---
 
 <div class="apizr-home-intro" markdown="1">
@@ -16,12 +16,19 @@ or an MCP server. Your business logic stays in Python.
 
 MCP (Model Context Protocol) lets AI assistants discover and use tools.
 
+Working on a training script or notebook? The **0.4.5 release candidate (not yet
+published)** lets you inspect, run and compare experiments, then expose an
+explicitly selected prediction function. Know which data, code, parameters and
+environment produced your result. Start with the
+[Data Scientist quickstart](getting-started/data-science.md).
+
 **[Apizr 0.4.4](releases/0.4.4.md) is available.** Python 3.11–3.14 · Open source,
 GPL-3.0-or-later.
 
 <div class="apizr-home-actions" markdown="1">
 
 [Quickstart: MCP and REST calls](getting-started/quickstart.md){ .md-button .md-button--primary }
+[Notebook → prediction](getting-started/data-science.md){ .md-button }
 [Install Apizr](getting-started/install.md){ .md-button }
 
 </div>
@@ -65,6 +72,7 @@ Docker or AI account is needed for its REST and Python MCP examples.
 
 ## Choose your next step
 
+- **[Compare notebook experiments](getting-started/data-science.md)** — inspect an ordinary scikit-learn notebook, record two Runs and serve its prediction.
 - **[Make your first calls](getting-started/quickstart.md)** — turn Python functions into REST endpoints or MCP tools.
 - **[Explore a project with an AI assistant](reference/apizr-mcp-server.md)** — use Apizr's optional analysis plugin.
 - **[Package a service for deployment](reference/oci-service-plugin.md)** — build a container image and publish it to your registry.

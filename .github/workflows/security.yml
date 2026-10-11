@@ -21,6 +21,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22.22.2'
+      - name: Install exact client-collection lock without lifecycle scripts
+        run: npm ci --prefix scripts/client_collection_tools --ignore-scripts --no-audit --no-fund
+      - name: Audit all client-collection dependencies
+        run: >-
+          npm audit --prefix scripts/client_collection_tools --json
+          --include=prod --include=dev --include=optional --include=peer
+          --audit-level=moderate > node-dependency-audit.json
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           version: '0.12.0'
@@ -37,6 +47,7 @@ jobs:
           path: |
             dependency-audit.json
             dependency-license-report.json
+            node-dependency-audit.json
           if-no-files-found: error
           retention-days: 90
 

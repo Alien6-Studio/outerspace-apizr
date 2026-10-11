@@ -4,17 +4,17 @@ from pathlib import Path
 
 from pydantic import JsonValue
 
+from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import CapabilityDocument, Digest
-from apizr.config_files import directory_fd, read_regular
 from apizr.generators.rest.model import Manifest
 from apizr.generators.rest.planner import plan as retained_rest_plan
 from apizr.generators.rest.schema import openapi
-from apizr.inspection import Inspection
 from apizr.interfaces.model import TypeSpec
 from apizr.interfaces.schema import json_schema, request_schema
 from apizr.interfaces.serialization import json_bytes
 from apizr.readiness.model import ReadinessReport
 from apizr.repository_interfaces.model import RepositoryInterface, RestManifest
+from apizr.workspace.files import directory_fd, read_regular
 
 from .model import (
     MAX_FILE,
@@ -50,6 +50,12 @@ def example_value(spec: TypeSpec, *, depth: int = 0) -> JsonValue:
         return False
     if spec.kind == "dict":
         return {}
+    if spec.kind == "object":
+        return {
+            field.name: example_value(field.type, depth=depth + 1)
+            for field in spec.fields
+            if field.required
+        }
     if spec.kind in ("list", "set") or (spec.kind == "tuple" and spec.variadic):
         return []
     if spec.kind == "tuple":

@@ -92,7 +92,7 @@ def test_combined_cli_checks_analysis_before_acquisition_effects(
     def forbidden(*a, **k):
         pytest.fail("acquisition before source admission")
 
-    monkeypatch.setattr("apizr.git_source_cli.acquire_snapshot", forbidden)
+    monkeypatch.setattr("apizr.cli.commands.git_source.acquire_snapshot", forbidden)
     monkeypatch.setattr(os, "scandir", forbidden)
     assert (
         main(

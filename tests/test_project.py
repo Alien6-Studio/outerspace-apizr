@@ -13,9 +13,9 @@ from analysis_authorization import authorized_main as main
 
 from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
-from apizr.project import MAX_PROJECT_BYTES, load_project
 from apizr.repository import ScanPolicy
 from apizr.repository_readiness import RepositoryReadinessPolicy, report_bytes
+from apizr.workspace.project import MAX_PROJECT_BYTES, load_project
 
 EXAMPLE = Path(__file__).parents[1] / "examples/project-config"
 VERSION = 'schema_version = "apizr.project/v1"\n'
@@ -491,7 +491,7 @@ from pathlib import Path
 from apizr.operator_policy import load_operator_policy
 operator = load_operator_policy(Path(sys.argv[-1]))
 importlib.metadata.entry_points = forbidden
-from apizr.project import load_project
+from apizr.workspace.project import load_project
 assert load_project(path).scan.source_roots == ("src",)
 assert not any(name == "apizr.cli" or name.endswith("_cli") for name in sys.modules)
 from apizr.cli import main

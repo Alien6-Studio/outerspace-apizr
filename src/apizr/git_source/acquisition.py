@@ -11,7 +11,7 @@ from threading import Event, RLock
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from apizr.operator_policy import OperatorPolicy
+    from apizr.workspace.operator_policy import OperatorPolicy
 
 from .contracts import GitTarget, relative_path, validate_source
 from .contracts import validate_ref as validate_ref
@@ -141,7 +141,7 @@ def acquire_snapshot(
     An explicit operator_policy must authorize the captured source before any
     acquisition I/O; source parameters do not discover or expand that policy.
     """
-    from apizr.operator_policy import AuthorizationDenied, decide_git
+    from apizr.workspace.operator_policy import AuthorizationDenied, decide_git
 
     # Capture caller-owned values once before the pure admission decision.
     if any(type(value) is not str for value in (repository, reference, subdir)):

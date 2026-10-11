@@ -47,6 +47,7 @@ def site(tmp_path):
     build.on_config(config)
     # This test builds fixture content, not a deployable checkout.
     config.extra["docs_build"]["source_dirty"] = False
+    config.extra["docs_build"].update(status="stable", target_version="0.4.4")
     build.on_post_build(config)
     return tmp_path
 
@@ -279,7 +280,6 @@ def test_deploy_retained_files_without_running_mkdocs(site, tmp_path):
             "ghp_import",
             "--no-jekyll",
             "--push",
-            "--force",
             "--message",
             "Deploy retained documentation",
             str(retained),
@@ -294,6 +294,18 @@ def test_deploy_retained_files_without_running_mkdocs(site, tmp_path):
             name = path.relative_to(retained).as_posix()
             assert git("show", f"gh-pages:{name}") == path.read_bytes()
     assert git("show", "gh-pages:.nojekyll") == b""
+    first = git("rev-parse", "gh-pages").strip()
+    # A second import preserves the existing Pages history with a normal push.
+    (retained / "extra.html").write_text("next documentation build")
+    git("fetch", "origin", "gh-pages:refs/remotes/origin/gh-pages")
+    subprocess.run(
+        [sys.executable, "-m", "ghp_import", "--no-jekyll", "--push", str(retained)],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+        timeout=30,
+    )
+    assert git("rev-parse", "gh-pages^").strip() == first
     assert git("rev-parse", "gh-pages").strip() in git(
         "ls-remote", "origin", "gh-pages"
     )
@@ -357,3 +369,94 @@ def test_pages_ready_requires_separate_public_probe(monkeypatch):
         ),
     )
     checker.pages_ready("owner/repo", "a" * 40, 1)
+
+
+def test_candidate_docs_can_be_verified_locally_but_not_deployed(site):
+    config = SimpleNamespace(extra={})
+    build.on_config(config)
+    assert config.extra["docs_build"]["status"] == "release-candidate"
+    assert config.extra["docs_build"]["target_version"] == "0.4.5"
+    path = site / "build-info.json"
+    marker = json.loads(path.read_text())
+    marker.update(status="release-candidate", target_version="0.4.5")
+    path.write_text(json.dumps(marker))
+    assert checker.marker_at(site)["status"] == "release-candidate"
+    with pytest.raises(ValueError, match="not authorized for deployment"):
+        checker.publication_marker(site)
+
+
+@pytest.mark.parametrize("status", ["stable", "release-candidate"])
+@pytest.mark.parametrize(
+    "fault", [None, "dirty", "wrong-sha", "missing-sha", "changed-content"]
+)
+def test_build_qualification_never_authorizes_candidate_deployment(
+    site, tmp_path, status, fault
+):
+    marker_path = site / "build-info.json"
+    marker = json.loads(marker_path.read_text())
+    marker.update(
+        status=status,
+        target_version="0.4.5" if status == "release-candidate" else "0.4.4",
+    )
+    if fault == "dirty":
+        marker["source_dirty"] = True
+    marker_path.write_text(json.dumps(marker))
+    if fault == "changed-content":
+        (site / "index.html").write_text("changed after qualification")
+    output = tmp_path / "github-output"
+    command = [
+        sys.executable,
+        str(SCRIPTS / "check_docs_site.py"),
+        "--site",
+        str(site),
+        "--check-build",
+        "--github-output",
+        str(output),
+    ]
+    if fault != "missing-sha":
+        command += [
+            "--source-commit",
+            "f" * 40 if fault == "wrong-sha" else marker["source_commit"],
+        ]
+    result = subprocess.run(command, capture_output=True, text=True, timeout=10)
+    if fault:
+        assert result.returncode != 0
+        assert not output.exists()
+    else:
+        assert result.returncode == 0, result.stderr
+        assert output.read_text() == f"publishable={str(status == 'stable').lower()}\n"
+        if status == "release-candidate":
+            with pytest.raises(ValueError, match="not authorized for deployment"):
+                checker.publication_marker(site, marker["source_commit"])
+
+
+def test_workflow_qualifies_candidates_without_deploying_or_forcing_pages():
+    import yaml
+
+    workflow = yaml.load(
+        (SCRIPTS.parent / ".github/workflows/mkdocs.yaml").read_text(),
+        Loader=yaml.BaseLoader,
+    )
+    build_job, deploy = workflow["jobs"]["build"], workflow["jobs"]["deploy"]
+    identity = next(s for s in build_job["steps"] if s.get("id") == "identity")
+    assert (
+        '--check-build --source-commit "$GITHUB_SHA" --github-output "$GITHUB_OUTPUT"'
+        in identity["run"]
+    )
+    assert (
+        build_job["outputs"]["publishable"]
+        == "${{ steps.identity.outputs.publishable }}"
+    )
+    assert "needs.build.outputs.publishable == 'true'" in deploy["if"]
+    retained = next(
+        s
+        for s in deploy["steps"]
+        if s.get("name") == "Validate the retained site against this exact source"
+    )
+    assert '--check-local --source-commit "$GITHUB_SHA"' in retained["run"]
+    publication = next(s for s in deploy["steps"] if s.get("id") == "deployment")
+    assert (
+        "git fetch origin gh-pages:refs/remotes/origin/gh-pages" in publication["run"]
+    )
+    assert "--force" not in publication["run"]
+    assert "--no-history" not in publication["run"]

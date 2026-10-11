@@ -110,6 +110,79 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
             env=env,
         )
         results["governance_evidence"] = "passed"
+        run(
+            python,
+            "-I",
+            "-B",
+            ROOT / "scripts/experiment_contract_proof.py",
+            "--fixtures",
+            ROOT / "tests/fixtures/experiments/v1",
+            "--output",
+            output / "experiment-contracts.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_contracts"] = "passed"
+        run(
+            python,
+            "-I",
+            "-B",
+            ROOT / "scripts/experiment_inspection_proof.py",
+            "--fixtures",
+            ROOT / "tests/fixtures/experiments/inspection",
+            "--output",
+            output / "experiment-inspection-python.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_inspection"] = "passed"
+        run(
+            python,
+            "-I",
+            "-B",
+            ROOT / "scripts/experiment_run_proof.py",
+            "--output",
+            output / "experiment-run-python.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_run"] = "passed"
+        run(
+            python,
+            "-I",
+            "-B",
+            ROOT / "scripts/experiment_diff_proof.py",
+            "--fixtures",
+            ROOT / "tests/fixtures/experiments/comparison/v1",
+            "--output",
+            output / "experiment-diff.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_diff"] = "passed"
+        run(
+            sys.executable,
+            ROOT / "scripts/experiment_exposure_proof.py",
+            "--python",
+            python,
+            "--fixtures",
+            ROOT / "tests/fixtures/experiments/exposure",
+            "--output",
+            output / "experiment-exposure-python.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_exposure"] = "passed"
+        run(
+            sys.executable,
+            ROOT / "scripts/smoke_experiment_docs.py",
+            cli,
+            "--output",
+            output / "experiment-docs.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_docs"] = "passed"
         results["measurements"]["core"] = {
             "wheel_bytes": size(target / "base"),
             "installed_bytes": size(root / "pip"),
@@ -260,6 +333,7 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
                     str(ROOT / "scripts/smoke_readme.py"),
                     str(cli),
                     "--development",
+                    "--repository-refinement",
                 ],
                 cwd=root,
                 env=env,
@@ -275,6 +349,8 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
                 sys.executable,
                 str(ROOT / "scripts/smoke_installations.py"),
                 str(core_wheel),
+                "--proof-output",
+                str(output),
             ],
             env=os.environ,
             stdout=log,

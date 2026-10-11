@@ -10,7 +10,7 @@ are tracked in [#232](https://github.com/Alien6-Studio/outerspace-apizr/issues/2
 ## Runtime provider
 
 The runtime uses Homebrew `python@3.14`, a system-site-packages virtual
-environment and the official `pydantic` formula. The first qualification requires
+environment and the official `pydantic` formula. The first qualification used
 Pydantic **2.13.5** and pydantic-core **2.46.5**. Import locations must resolve into
 that formula's keg. The proof reproduces the dependency `.pth` written by
 Homebrew's `virtualenv_create`, without modifying global Python files.
@@ -22,13 +22,22 @@ There is no claim of permanent byte parity with `uv.lock`, and no artificial
 versioned Pydantic formula. Python 3.14 is the Homebrew interpreter selection;
 Apizr's supported Python range remains 3.11–3.14.
 
+The ongoing offline-build preflight checks the active provider against the
+formula's current stable/installed identity and that public version constraint.
+Imported Pydantic and pydantic-core must match exactly one distribution each in
+the provider keg, and the loaded core must match Pydantic's exact, unconditional
+metadata requirement. Exact observed versions are retained in the proof.
+The policy's `qualification_version` fields and physical-Mac records remain the
+historical qualification evidence; they do not pin the rolling runtime provider.
+The locked, checksummed build-only wheelhouse and its manifest remain unchanged.
+
 Official references: [Python formula guidance](https://docs.brew.sh/Language-Specific-Formulae),
 [Pydantic formula](https://formulae.brew.sh/formula/pydantic), and
 [Homebrew virtualenv API](https://docs.brew.sh/rubydoc/Language/Python/Virtualenv.html).
 
 ## Build-only inputs
 
-`homebrew-build = ["hatchling==1.28.0"]` adds exactly two packages to the universal
+The initial `homebrew-build = ["hatchling==1.28.0"]` review added exactly two packages to the universal
 lock: Hatchling 1.28.0 and trove-classifiers 2026.9.21.13. Existing packaging 26.3,
 pathspec 1.1.1 and pluggy 1.6.0 complete the five-package closure. No existing
 locked version changes. Python <3.11's conditional `tomli` dependency does not
@@ -211,7 +220,7 @@ production Formula.
 `README.md` and a portable source receipt. The Formula uses Homebrew's
 `virtualenv_create` with Python 3.14 and visibility of the Homebrew Pydantic
 provider. Only Apizr is installed into `libexec`, with runtime dependency
-resolution disabled. The five reviewed universal wheels are build-only resources;
+resolution disabled. The six reviewed universal wheels are build-only resources;
 they feed the isolated PEP 517 environment and never enter the runtime.
 Homebrew denies network access during the build. pip uses an empty cache,
 `PIP_NO_INDEX=1`, `PIP_CONFIG_FILE=/dev/null` and only the reviewed wheelhouse.
@@ -294,3 +303,36 @@ requirements and the build-input policy are identical. The active qualification
 policy binds the new manifest and retains the same host boundary. Historical
 physical and public-tap evidence still describes its original source; it is not
 relabeled as a 0.4.3 qualification.
+
+## 0.4.5 dependency maintenance
+
+The development branch adopts Hatchling **1.32.4** and its new build-only
+TOML parser, tomlkit **0.15.1**. The reviewed closure now contains six universal
+wheels: Hatchling, packaging, pathspec, pluggy, tomlkit and trove-classifiers.
+The exact source notices, dependency metadata and wheel hashes are retained;
+tomlkit's parser and separate toml-test fixture both retain their MIT notices.
+These updates add no build tool to the application runtime or an install extra. The
+offline build and Formula proofs also assert that tomlkit is absent from the
+installed runtime.
+
+The dependency-maintenance build-input manifest was
+`13c81fb17da3238ec4e04d238062847bf86c4f43b30fc2c0c1156798594aeb6b`.
+The full lockfile identity includes the reviewed FastAPI 0.142.2, MCP SDK/types
+2.3.0, Hypothesis 6.168.3 and Ruff 0.16.10 updates. The qualification policy and renderer bound this manifest before the
+preparation metadata change below. Historical release, physical-host and
+public-tap receipts continue to describe their original bytes; they are not
+relabeled. These checks prepare development candidates and publish nothing.
+
+## 0.4.5 plugin preparation metadata
+
+The active build-input manifest is
+`74fb506a5cd43b10062f0a3dc1b77dc7245e74d07b51c0578f964f13c7d8ab64`. Adding the optional `[preparation]` extra changes the full lockfile hash.
+The manifest differs from the dependency-maintenance identity **only in
+`lock_sha256`**: all six build wheels, URLs, hashes, roots and the build-input
+policy are identical. The qualification policy and renderer bind this new
+manifest; all identity checks remain in force. Historical physical-host and
+public-tap receipts retain their original identities.
+
+The optional preparation environment uses PyPA `packaging` for runtime wheel-tag
+selection. Homebrew's minimal application runtime remains Pydantic-only, and its
+isolated build tools still do not enter that environment.

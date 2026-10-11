@@ -8,7 +8,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 from mcp import Client
 
-from apizr.execute_cli import main as execute_cli
+from apizr.cli.commands.execute import main as execute_cli
 from apizr.execution import ExecutionPolicy
 from apizr.generators.mcp import generate as generate_mcp
 from apizr.generators.mcp.runtime import create_server as direct_mcp

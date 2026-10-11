@@ -159,8 +159,8 @@ def test_snapshot_direct_bytes_against_committed_golden():
     # their manifests. The MCP anchor includes #163 envelopes and #251 tuples.
     root = Path(__file__).parents[1] / "fixtures"
     expected = {
-        "rest/v1/apizr-rest.json": "32597062a49b112139741c04a1cd6b8172cdd02c33258f91b032b9229cd8274c",  # gitleaks:allow -- public golden SHA-256, not a credential
-        "mcp/v1/apizr-mcp.json": "6962874894db41c5fab7e9d25f026f9baa4bb4974f21cdbddc11ef1d05672594",  # gitleaks:allow -- public golden SHA-256, not a credential
+        "rest/v1/apizr-rest.json": "f2c5a4b3740c3fa629d1a790511eb01aacd4830a03e58faee29d4123cc166f95",  # gitleaks:allow -- public golden SHA-256, not a credential
+        "mcp/v1/apizr-mcp.json": "6cc3fa605011b58cdeccd00be27d5cb61d9d8736ad5184d54939a80d35989e6f",  # gitleaks:allow -- public golden SHA-256, not a credential
     }
     for path, digest in expected.items():
         assert hashlib.sha256((root / path).read_bytes()).hexdigest() == digest
