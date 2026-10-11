@@ -126,18 +126,17 @@ as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
 
 ## Registry installation {#registry-installation}
 
-This is the canonical installation path linked by `server.json`. **0.4.5 is a
-qualified development candidate, not a public release.** The command below is
-for use after its separately authorized publication. Existing public installations
-remain on 0.4.4 with matching core and plugin versions. Contributors qualify the
-same launcher using candidate wheels outside the checkout, without contacting PyPI.
+This is the canonical installation path linked by `server.json`. **0.4.5 is
+published on PyPI and in the Official MCP Registry.** The launcher and its
+explicit plugin profile have been verified from fresh public installations.
+Use matching 0.4.5 core and plugin versions.
 
 The [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Alien6-Studio%2Fouterspace-apizr)
 lists Apizr as `io.github.Alien6-Studio/outerspace-apizr`.
 [Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr) also lists its
 three analysis tools and their inputs.
 
-1. After 0.4.5 is public, install its core and prepare an explicit MCP profile
+1. Install its core and prepare an explicit MCP profile
    with the commands below. Use an absolute path to your installed CPython
    3.11–3.14 interpreter and uv 0.12.x. Run each command in order, stopping on
    any failure. Keep this temporary directory while using the server.
@@ -359,7 +358,9 @@ response. In contrast, readiness `exit_code: 1` with `isError: false` is a valid
 assessment of limitations or uncertainty. Delivery business outcomes retain
 their separate [existing semantics](#explicit-delivery-mode-042).
 
-## Start with a small view (0.4.5 development)
+<span id="start-with-a-small-view-045-development"></span>
+
+## Start with a small view (0.4.5)
 
 Ask your AI assistant to summarize the repository before inspecting a function:
 

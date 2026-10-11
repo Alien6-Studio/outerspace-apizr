@@ -47,7 +47,9 @@ def site(tmp_path):
     build.on_config(config)
     # This test builds fixture content, not a deployable checkout.
     config.extra["docs_build"]["source_dirty"] = False
-    config.extra["docs_build"].update(status="stable", target_version="0.4.4")
+    config.extra["docs_build"].update(
+        status="stable", target_version="0.4.4", stable_release="0.4.4"
+    )
     build.on_post_build(config)
     return tmp_path
 
@@ -374,7 +376,7 @@ def test_pages_ready_requires_separate_public_probe(monkeypatch):
 def test_candidate_docs_can_be_verified_locally_but_not_deployed(site):
     config = SimpleNamespace(extra={})
     build.on_config(config)
-    assert config.extra["docs_build"]["status"] == "release-candidate"
+    assert config.extra["docs_build"]["status"] == "stable"
     assert config.extra["docs_build"]["target_version"] == "0.4.5"
     path = site / "build-info.json"
     marker = json.loads(path.read_text())
@@ -460,3 +462,26 @@ def test_workflow_qualifies_candidates_without_deploying_or_forcing_pages():
     )
     assert "--force" not in publication["run"]
     assert "--no-history" not in publication["run"]
+
+
+@pytest.mark.parametrize(
+    "status,target,stable,accepted",
+    [
+        ("stable", "0.4.5", "0.4.5", True),
+        ("stable", "0.4.5", "0.4.4", False),
+        ("stable", "0.4.6", "0.4.6", False),
+        ("release-candidate", "0.4.6", "0.4.5", False),
+    ],
+)
+def test_only_explicit_published_documentation_generation_is_admitted(
+    site, status, target, stable, accepted
+):
+    path = site / "build-info.json"
+    marker = json.loads(path.read_text())
+    marker.update(status=status, target_version=target, stable_release=stable)
+    path.write_text(json.dumps(marker))
+    if accepted:
+        assert checker.publication_marker(site)["stable_release"] == "0.4.5"
+    else:
+        with pytest.raises(ValueError, match="Invalid documentation build marker"):
+            checker.publication_marker(site)

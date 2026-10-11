@@ -24,9 +24,16 @@ def marker_at(site: Path) -> dict:
     if (
         marker.get("schema") != "apizr.docs-build/v1"
         or not re.fullmatch(r"[0-9a-f]{40}", marker.get("source_commit", ""))
-        or (marker.get("status"), marker.get("target_version"))
-        not in {("stable", "0.4.4"), ("release-candidate", "0.4.5")}
-        or marker.get("stable_release") != "0.4.4"
+        or (
+            marker.get("status"),
+            marker.get("target_version"),
+            marker.get("stable_release"),
+        )
+        not in {
+            ("stable", "0.4.4", "0.4.4"),
+            ("release-candidate", "0.4.5", "0.4.4"),
+            ("stable", "0.4.5", "0.4.5"),
+        }
         or not isinstance(marker.get("source_dirty"), bool)
         or not isinstance(marker.get("files"), dict)
     ):

@@ -7,7 +7,7 @@ Apizr is an **open-source capability compiler**: analyze existing Python code,
 choose which functions are public, generate their interfaces, and define how
 they execute. Your business logic stays in Python.
 
-**[Data Scientist quickstart: notebook → runs → prediction](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/data-science.md)** ·
+**[Data Scientist quickstart: notebook → runs → prediction](https://apizr.outerspace.sh/getting-started/data-science/)** ·
 **[Quickstart: make your first MCP and REST calls](https://apizr.outerspace.sh/getting-started/quickstart/)** ·
 [The full journey](https://apizr.outerspace.sh/getting-started/introduction/)
 
@@ -17,28 +17,25 @@ for version-specific functionality, compatibility and verified publication.
 The journey is Python code → discover/select capabilities → expose as REST/MCP
 → optionally deliver as OCI.
 
-Apizr **0.4.4** adds portable JSON evidence export/verification and a bounded
-HTTPS check for ambiguous first-publication diagnostics. See the
-[release record](https://apizr.outerspace.sh/releases/0.4.4/) and
-[external governance handoff](https://apizr.outerspace.sh/reference/external-governance/)
-for scope, validation and integration limits. Publication status is recorded in
-the [release history](https://github.com/Alien6-Studio/outerspace-apizr/releases).
+**Apizr 0.4.5 is available on PyPI.** The core and optional MCP, OCI and Attest
+plugins share the same version. See the [release record](https://apizr.outerspace.sh/releases/0.4.5/)
+for functionality, verified public artifacts and external directory status.
 
 Python **3.11–3.14** · GPL-3.0-or-later.
 
-The **0.4.5 release candidate (not yet published)** lets you record and compare
+**Apizr 0.4.5** lets you record and compare
 experiments, then explicitly select a prediction function for REST or MCP.
 Know which data, code, parameters and environment produced your result.
-[Try the ordinary scikit-learn notebook](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.5/examples/data-science/fraud-detection).
+[Try the ordinary scikit-learn notebook](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.4.5/examples/data-science/fraud-detection).
 
-The `0.4.5` candidate also recognizes supported Python `TypedDict` model
+Apizr `0.4.5` also recognizes supported Python `TypedDict` model
 payloads as shared, nested JSON inputs for REST and MCP. See the
-[source inspection guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/inspect.md#structured-model-inputs-with-typeddict)
+[source inspection guide](https://apizr.outerspace.sh/getting-started/user-guide/inspect/#structured-model-inputs-with-typeddict)
 for an executable example and the current declaration limits.
 
 It also adds concise MCP analysis: ask for `view="summary"`, then inspect one
 function with `view="detail", capability_id="python:model:predict"`. The
-[analysis server guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/reference/apizr-mcp-server.md#start-with-a-small-view-045-development)
+[analysis server guide](https://apizr.outerspace.sh/reference/apizr-mcp-server/#start-with-a-small-view-045-development)
 explains dependency evidence, pagination and localized exposure refusals.
 
 [![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg?cacheSeconds=300)](https://pypi.org/project/outerspace-apizr/)
@@ -55,14 +52,14 @@ explains dependency evidence, pagination and localized exposure refusals.
 With [uv](https://docs.astral.sh/uv/getting-started/installation/) and Python 3.11–3.14 installed:
 
 ```sh
-uv tool install outerspace-apizr==0.4.4
+uv tool install outerspace-apizr==0.4.5
 ```
 
 ![Install Apizr 0.4.4 with uv](https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/54e6c13fe8f2bed62f4ac52a0024002df113df19/docs/assets/videos/uv-install.gif)
 
 ## Choose your path
 
-Have a training script or notebook? The **0.4.5 development checkout** adds a
+Have a training script or notebook? **Apizr 0.4.5** adds a
 zero-execution first step:
 
 <!-- experiment-inspection:readme -->
@@ -71,10 +68,10 @@ apizr experiment inspect train.py
 ```
 
 See code, data, parameters, randomness, environment, metrics, outputs and serving
-candidates. Follow the [experiment inspection example](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-inspection.md)
+candidates. Follow the [experiment inspection example](https://apizr.outerspace.sh/getting-started/user-guide/experiment-inspection/)
 for setup, notebooks and JSON. No science-framework installation is needed.
 
-The development checkout can also execute trusted workloads and keep local history.
+Apizr can also execute trusted workloads and keep local history.
 **`run` executes your code with host filesystem, network and subprocess access;
 it is not a security sandbox.** This small example uses only the standard library:
 
@@ -91,12 +88,12 @@ apizr experiment list
 apizr experiment show "$RUN"
 ```
 
-Read the [local run and history guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-runs.md)
+Read the [local run and history guide](https://apizr.outerspace.sh/getting-started/user-guide/experiment-runs/)
 for environment controls, observed evidence, failure handling and storage limits.
 
 | Your goal | Start here |
 | --- | --- |
-| Understand a training script or notebook (0.4.5 development) | [Inspect an experiment without running it](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-inspection.md) |
+| Understand a training script or notebook (0.4.5) | [Inspect an experiment without running it](https://apizr.outerspace.sh/getting-started/user-guide/experiment-inspection/) |
 | Expose Python functions as MCP tools or REST endpoints | [Install](https://apizr.outerspace.sh/getting-started/install/) → [Quickstart](https://apizr.outerspace.sh/getting-started/quickstart/) |
 | Analyze a project from an MCP client | [Install the MCP profile](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile) → [analysis server](https://apizr.outerspace.sh/reference/apizr-mcp-server/) |
 | Build and deliver a service | [Install OCI or delivery](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile) → [OCI](https://apizr.outerspace.sh/reference/oci-service-plugin/) and [Attest](https://apizr.outerspace.sh/reference/attest-delivery-plugin/) |
@@ -107,7 +104,7 @@ The core handles supported static analysis and generation. Generated servers hav
 their own runtime dependencies. Optional plugins live in separate environments;
 installation, activation and operator authorization are independent decisions.
 
-The 0.4.5 candidate lets you expose an independent function while unrelated experiments
+Apizr 0.4.5 lets you expose an independent function while unrelated experiments
 remain unfinished; see the [research repository example](https://apizr.outerspace.sh/getting-started/user-guide/exposure/#work-with-unfinished-research-code).
 
 
@@ -140,7 +137,7 @@ apizr experiment diff "$A" "$B" --format json > comparison.json
 `show` reads one Run; `diff` compares two Runs from the same validated local store.
 Comparison still works after deleting the source. Unknown observations remain unknown.
 Apizr identifies recorded differences; it does not prove which one caused the metric change.
-Read the [comparison guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-comparison.md) for data, environment and output evidence.
+Read the [comparison guide](https://apizr.outerspace.sh/getting-started/user-guide/experiment-comparison/) for data, environment and output evidence.
 
 After reviewing a successful Run, explicitly select its serving capability:
 
@@ -152,7 +149,7 @@ apizr experiment expose <RUN> --root . --operator-policy operator.json \
 
 The current source and selected resource bytes must still match the Run.
 Repository Readiness and Exposure decide eligibility. Follow the
-[Experiment → serving guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/docs/getting-started/user-guide/experiment-exposure.md)
+[Experiment → serving guide](https://apizr.outerspace.sh/getting-started/user-guide/experiment-exposure/)
 for source authority, exact dependency pins and current direct-service limits.
 
 ## Expose the functions you choose

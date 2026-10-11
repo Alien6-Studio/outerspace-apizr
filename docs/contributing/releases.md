@@ -113,11 +113,12 @@ merging the tap update.
 
 ## Current published baseline
 
-The current stable release is **0.4.4** for the core and all three plugins,
-source `46c573d7f808f8d491cde1062d474b145288697f`. Publication is complete.
-The original archives from protected master CI `37222486067` were published
-by workflow `37223902790`; all eight public files match the qualified bytes.
-See the [release record](../releases/0.4.4.md). Master integration and documentation
+The current public package version is **0.4.5** for the core and all three plugins,
+source `da74e6de5800eab9c275e42c5d4c24a59ac4fcbe`. GitHub, PyPI and Official
+Registry publication are verified; third-party directory qualification remains
+incomplete. The original archives from protected master CI `38137540311` were
+published by workflow `38140159100`; all eight public files match the qualified
+bytes. See the [release record](../releases/0.4.5.md). Master integration and documentation
 commits preserve the released product but never replace its immutable source.
 Documentation maintenance targets `master`.
 

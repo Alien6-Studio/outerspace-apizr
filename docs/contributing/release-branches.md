@@ -1,35 +1,18 @@
 # Release branches and qualification
 
-The current stable product is **0.4.3**, released from
-`cfaa5108c37ab9324297bbe5b38d90d537ea57ad` and retained by immutable tag `v0.4.3`.
-[Publication and verification](../releases/0.4.3.md#validation) are complete. Post-release integration targets
-`master`; its integration commit is distinct from the immutable release source.
-All new product changes and documentation branches target protected `master`.
-The completed `release/0.4.2` and `release/0.4.3` branches are retired after their
-published state and the post-release Attest receipt fix from PR #241 are
-integrated into `master`. Only their branch references and dedicated rulesets
-24138072 and 24380834 are removed. The `master` and release-tag protections,
-required checks, squash-only merging and deployment restrictions stay in place.
-`gh-pages` remains the documentation deployment branch.
+The current public packages are **0.4.5**, released from protected `master` at
+`da74e6de5800eab9c275e42c5d4c24a59ac4fcbe` and retained by signed immutable tag
+`v0.4.5`. The [release record](../releases/0.4.5.md) distinguishes verified GitHub,
+PyPI and Official Registry publication from incomplete third-party indexing.
+The `0.4.5` branch remains historical development evidence. Postpublication
+changes use protected PRs into `master`; they cannot move the release tag.
+No future release development is authorized by this record.
 
-The checked-in release ruleset payloads are historical audit records, not active
-configuration. Published tags, original source commits, archives and signed
-provenance retain their existing identities. Verification of published evidence
-must use its original source ref, even after that branch is retired.
-
-CI, Security and Documentation validate `master` pushes and all pull requests.
-Allowlisted web-only changes use the [lighter documentation path](releases.md#web-only-changes)
-while preserving required check names and PR protections. They produce no product
-build or provenance; mixed changes and uncertain comparisons retain full qualification.
-Only protected `master` pushes can sign new build provenance. For **0.4.4**,
-the reviewed [publication policy](releases.md#finalizing-044) selects the exact
-final PR #247 squash-merge SHA and a successful full push qualification on that
-source. Its verified assets are distinct from the frozen candidate; PRs and
-other versions remain previews. This changes no branch/tag protection and
-creates no release branch. Historical source/ref policies and published 0.4.3
-artifacts retain their identities; completed publications must not be replayed.
-The MCP descriptor prepares 0.4.4; its separate publication requires the matching
-public packages and verified GitHub release, plus explicit tag/source inputs.
+CI, Security and Documentation validate master pushes and pull requests. The
+explicit release policy admits 0.4.5 only from protected master with complete
+coordinated push qualification, signed provenance and original assets. Later
+builds do not replace those archives. Documentation deploys to `gh-pages` only
+through the normal workflow, without force updates or direct source pushes.
 
 ## Historical release-line governance
 
