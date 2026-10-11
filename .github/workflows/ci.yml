@@ -579,7 +579,7 @@ jobs:
         run: |
           version=$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
           options=(--preview)
-          if [ "$EVENT_NAME" = push ] && [ "$GITHUB_REF" = refs/heads/master ] && [ "$version" = 0.4.4 ]; then
+          if [ "$EVENT_NAME" = push ] && [ "$GITHUB_REF" = refs/heads/master ] && { [ "$version" = 0.4.4 ] || [ "$version" = 0.4.5 ]; }; then
             options=()
           fi
           python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${options[@]}"

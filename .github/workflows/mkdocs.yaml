@@ -17,6 +17,8 @@ jobs:
     needs: scope
     if: always()
     runs-on: ubuntu-latest
+    outputs:
+      publishable: ${{ steps.identity.outputs.publishable }}
     steps:
       - name: Require a successful scope decision
         env:
@@ -50,8 +52,9 @@ jobs:
           uv pip install --python "$RUNNER_TEMP/docs-dev/bin/python" "$RUNNER_TEMP"/docs-wheel/*.whl
           uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-dev/bin/apizr" --development --repository-refinement
       - name: Validate the source identity before retaining the built site
+        id: identity
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: uv run --locked python scripts/check_docs_site.py --check-local --source-commit "$GITHUB_SHA"
+        run: uv run --locked python scripts/check_docs_site.py --check-build --source-commit "$GITHUB_SHA" --github-output "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
@@ -62,7 +65,7 @@ jobs:
           retention-days: 7
 
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build.outputs.publishable == 'true'
     needs: build
     # Serialize deployment AND observation. Never cancel after gh-pages is pushed.
     concurrency:
@@ -106,7 +109,8 @@ jobs:
         if: steps.current.outputs.deploy == 'true'
         id: deployment
         run: |
-          uv run --locked --group docs python -m ghp_import --no-jekyll --push --force \
+          git fetch origin gh-pages:refs/remotes/origin/gh-pages
+          uv run --locked --group docs python -m ghp_import --no-jekyll --push \
             --message "Deploy documentation from $GITHUB_SHA" site
           generated=$(gh api "repos/$GITHUB_REPOSITORY/commits/gh-pages" --jq .sha)
           echo "commit=$generated" >> "$GITHUB_OUTPUT"

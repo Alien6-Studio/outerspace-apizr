@@ -837,7 +837,7 @@ def test_workflows_separate_release_validation_from_external_publication():
     docs = workflows["mkdocs.yaml"]["jobs"]
     assert (
         docs["deploy"]["if"]
-        == "github.event_name == 'push' && github.ref == 'refs/heads/master'"
+        == "github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build.outputs.publishable == 'true'"
     )
     assert set(workflows["publish-pypi.yml"]["on"]) == {"workflow_dispatch"}
     for name in (

@@ -11,6 +11,14 @@ normal protected PR into `master`. The exact resulting master commit must have
 successful push CI, Security and Documentation. The verifier requires all six
 release targets, distributions, release-delivery, provenance and release-assets,
 plus the actual Node audit step in the required Security dependencies job.
+The master push stages final provenance-bound assets for exactly 0.4.4/0.4.5;
+PR/manual builds and future versions remain previews. The Homebrew publication
+renderer now authorizes only 0.4.5; existing published Formulae stay immutable.
+
+Documentation qualifies the exact clean candidate source but skips deployment
+until the separate post-release documentation commit declares a verified stable
+release. Its later deployment still requires the exact retained stable marker
+and uses a normal fast-forward Pages push, preserving history without force.
 Historical version policies remain unchanged; 0.4.6 remains refused.
 
 [Security blocker #280](https://github.com/Alien6-Studio/outerspace-apizr/issues/280)
