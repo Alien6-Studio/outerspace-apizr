@@ -42,6 +42,12 @@ a remediation trailer in the squash message when its target remains in the
 audited history; omit references to replaced branch commits. Never amend or
 force-push an already published commit to repair its declaration.
 
+GitHub's default squash message is the pull request title and description, not
+the branch commits: sign-offs carried only by the replaced commits do not reach
+the published squash. Write the merge message explicitly (for example
+`gh pr merge --squash --subject … --body …`) with the sign-off matching the
+resulting author, as the #283 squash showed.
+
 GitHub may retain the pull request author's identity for a Dependabot squash,
 even when the merge request supplies the maintainer's author email. A maintainer
 sign-off alone then does not match the resulting bot author. Check the published
