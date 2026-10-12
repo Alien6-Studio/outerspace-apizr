@@ -21,7 +21,7 @@ Documentation, site and example changes use a separate environment under
 
 ```sh
 uv sync --project tools/docs --locked
-uv run --project tools/docs --locked pytest -c tools/docs/pyproject.toml tests/test_ci_scope.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
+uv run --project tools/docs --locked pytest -c tools/docs/pyproject.toml tests/test_ci_scope.py tests/test_dco.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
 uv run --project tools/docs --locked mkdocs build --strict
 uv run --project tools/docs --locked python scripts/check_docs_html.py
 ```

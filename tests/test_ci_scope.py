@@ -316,6 +316,15 @@ def test_docs_jobs_do_not_install_or_build_the_product_for_docs_only_changes():
         in s.get("run", "")
     )
     assert "if" not in tooling
+    dco = next(
+        s
+        for s in workflow["jobs"]["build"]["steps"]
+        if "pytest -c tools/docs/pyproject.toml tests/test_dco.py" in s.get("run", "")
+    )
+    assert "if" not in dco
+    assert workflow["jobs"]["build"]["steps"].index(dco) < workflow["jobs"]["build"][
+        "steps"
+    ].index(tooling)
     public_examples = next(
         s
         for s in workflow["jobs"]["build"]["steps"]

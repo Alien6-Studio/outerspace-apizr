@@ -37,12 +37,14 @@ jobs:
         run: >-
           uv run --project tools/docs --locked python -I -c
           'import importlib.util; assert all(importlib.util.find_spec(name) is None for name in ("apizr", "apizr_oci", "apizr_attest", "apizr_mcp"))'
+      - name: Test the actual DCO workflow without installing the product
+        run: uv run --project tools/docs --locked pytest -c tools/docs/pyproject.toml tests/test_dco.py
       - name: Test change routing and documentation publication tooling
         run: uv run --project tools/docs --locked pytest -c tools/docs/pyproject.toml tests/test_ci_scope.py tests/test_docs_publication.py tests/ci/test_release_consistency.py
       - name: Lint the independent documentation tooling
         run: |
-          uv run --project tools/docs --locked ruff check scripts/ci_scope.py scripts/docs_build.py scripts/check_docs_*.py scripts/smoke_readme.py scripts/smoke_site_examples.py scripts/site_example_packages.py scripts/typed_dict_proof.py tests/test_ci_scope.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
-          uv run --project tools/docs --locked ruff format --check scripts/ci_scope.py scripts/docs_build.py scripts/check_docs_*.py scripts/smoke_readme.py scripts/smoke_site_examples.py scripts/site_example_packages.py scripts/typed_dict_proof.py tests/test_ci_scope.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
+          uv run --project tools/docs --locked ruff check scripts/ci_scope.py scripts/check_dco.py scripts/docs_build.py scripts/check_docs_*.py scripts/smoke_readme.py scripts/smoke_site_examples.py scripts/site_example_packages.py scripts/typed_dict_proof.py tests/test_ci_scope.py tests/test_dco.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
+          uv run --project tools/docs --locked ruff format --check scripts/ci_scope.py scripts/check_dco.py scripts/docs_build.py scripts/check_docs_*.py scripts/smoke_readme.py scripts/smoke_site_examples.py scripts/site_example_packages.py scripts/typed_dict_proof.py tests/test_ci_scope.py tests/test_dco.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
       - name: Check documentation file integrity without product hooks
         run: |
           for hook in trailing-whitespace end-of-file-fixer check-yaml check-toml check-merge-conflict detect-private-key check-added-large-files; do

@@ -83,3 +83,21 @@ Les inventaires JSON/CSV ne changent que les empreintes des deux pages de
 contribution révisées. Les fichiers/URLs historiques, vidéos, image hero,
 styles et widget Git natif restent conservés par les contrôles existants.
 Aucune version, publication PyPI, release ou tag n’est créé.
+
+## Correction de la fixture DCO
+
+Les six matrices Linux/macOS du commit `582c7a20…` échouaient sur les mêmes
+quatre cas DCO : leur fixture interceptait encore `uv`, alors que le workflow
+appelait désormais directement `python3`. Le checkout temporaire ne contenait
+donc pas `scripts/check_dco.py`. La fixture copie maintenant le vrai validateur
+et exécute le shell du workflow sans simuler son lanceur. Les refus de sign-offs
+absents et de branches sans ancêtre audité restent exigés.
+
+Les **18 tests DCO réussissent en 1 s** dans la venv documentaire, sans Apizr.
+Ils sont ajoutés au début du workflow Documentation pour détecter cette
+régression avant les contrôles plus longs. Le lot documentaire complet atteint
+**163 tests réussis en 118 s** ; les commandes locales et inventaires sont adaptés.
+
+Le job Python 3.12 présentait aussi un échec distinct du test d’interruption du
+téléchargement de plugin : code 2 au lieu de 130. Ce test réussit isolément
+en 1,6 s ; aucun diagnostic accepté ni délai produit n’est élargi pour le masquer.
