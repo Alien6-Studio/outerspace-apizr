@@ -31,7 +31,7 @@ def test_every_original_public_page_has_a_review_decision():
     )
 
 
-def test_six_primary_paths_and_native_consent_aware_git_widget():
+def test_primary_paths_and_native_consent_aware_git_widget():
     config = yaml.safe_load((ROOT / "mkdocs.yml").read_text())
     assert [next(iter(entry)) for entry in config["nav"]] == [
         "Start here",
@@ -39,6 +39,7 @@ def test_six_primary_paths_and_native_consent_aware_git_widget():
         "User guide",
         "Developer guide",
         "Operations guide",
+        "Architecture guide",
         "Reference",
     ]
     assert config["extra"]["consent"]["cookies"]["github"]["checked"] is False

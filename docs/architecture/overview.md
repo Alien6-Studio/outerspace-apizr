@@ -5,25 +5,40 @@ and exposes selected functions through REST/MCP. An existing function can be
 compiled directly; the optional experiment path adds recorded context rather
 than becoming a generation prerequisite.
 
+This is the first chapter of the [Architecture guide](index.md). Read the
+[components chapter](system-boundaries.md) next to separate the compiler,
+generated services and optional extensions.
+
 The repository compilation path is:
 
-```text
-Repository
-    ↓ bounded static discovery
-Catalog
-    ↓
-Capability Graph
-    ↓ + Readiness policy
-Repository Readiness
-    ↓ + explicit Exposure policy
-Exposure Plan
-    ↓
-Repository Interface
-    ↓
-REST / MCP bundle
-    ↓
-direct | governed local-process | governed OCI
+<div class="apizr-diagram" tabindex="0" role="region" aria-label="Repository compilation diagram" markdown="1">
+
+```mermaid
+---
+config:
+  flowchart:
+    useMaxWidth: false
+---
+flowchart TB
+    accTitle: Repository compilation and explicit execution
+    accDescr: Static discovery creates a Catalog and Graph. Readiness and explicit exposure policies lead to a repository interface and generated bundle. Starting and calling the bundle are separate runtime actions.
+    Source["Python repository"] --> Catalog["Catalog: bounded static discovery"]
+    Catalog --> Graph["Capability Graph"]
+    Graph --> Readiness["Repository Readiness"]
+    RP["Readiness policy"] --> Readiness
+    Readiness --> Plan["Exposure Plan"]
+    EP["Explicit exposure policy"] --> Plan
+    Plan --> Interface["Repository Interface"]
+    Interface --> Bundle["REST / MCP bundle"]
+    Bundle -->|"start and call explicitly"| Runtime["Direct / local-process / OCI invocation"]
 ```
+
+</div>
+
+The stages above generation inspect evidence without executing project code.
+The runtime stage executes the selected trusted function under its chosen
+contract. An Experiment Run can supply additional context, but is not an input
+required by this repository compilation path.
 
 ## Discover and understand
 

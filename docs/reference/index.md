@@ -8,7 +8,9 @@ progression, choose [User guide](../user-guide/index.md),
 For development onboarding, see [init, doctor and shell completion](../getting-started/onboarding.md).
 
 For your first project, follow [Quickstart](../getting-started/quickstart.md), then [The full journey](../getting-started/introduction.md).
-Read the [Capability Compiler overview](../architecture/overview.md) for the full flow.
+Read the [Architecture guide](../architecture/index.md) for the system's components,
+data flows and execution boundaries. Its contract chapters retain the detailed
+architecture specifications.
 This reference is for using individual interfaces or understanding their contracts.
 See [Install Apizr](../getting-started/install.md) for package availability and
 prerequisites. The [release notes](../releases/0.4.5.md) explain version differences.

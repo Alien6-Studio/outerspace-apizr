@@ -212,7 +212,7 @@ is a separate compatibility path. See
 for dependency, resource and exposure limits.
 
 [Watch the demo](https://apizr.outerspace.sh/#watch-apizr-in-action) ·
-[Architecture](https://apizr.outerspace.sh/architecture/overview/) ·
+[Architecture guide](https://apizr.outerspace.sh/architecture/) ·
 [Development and checks](https://apizr.outerspace.sh/getting-started/developer-guide/setup/) ·
 [Report an issue](https://github.com/Alien6-Studio/outerspace-apizr/issues) ·
 [GPL-3.0-or-later](https://apizr.outerspace.sh/about/LICENSE/)

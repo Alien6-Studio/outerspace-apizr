@@ -53,6 +53,8 @@ shows how to integrate the public compiler in your tools. [Operations guide](../
 follows generated services through environments, verification and delivery.
 Use [Examples](../examples/index.md) for complete files and expected results,
 and [Reference](../reference/index.md) for exact options and contracts.
+The [Architecture guide](../architecture/index.md) explains how the components
+fit together, with diagrams of compilation, evidence, execution and delivery.
 
 ## What the two MCP workflows do
 
