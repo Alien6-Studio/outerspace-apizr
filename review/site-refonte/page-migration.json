@@ -913,7 +913,7 @@
       "validation": "strict MkDocs build; scripts/check_docs_html.py: canonical URL, internal links and every recorded original anchor",
       "source_sha256": "17c1467c9773eb467d88596fe995a9dba094000c6485c06d630e2ae22a9a17af",
       "video_ids": [],
-      "current_source_sha256": "17c1467c9773eb467d88596fe995a9dba094000c6485c06d630e2ae22a9a17af",
+      "current_source_sha256": "0d4696d4e2061a3b52d9f6b71fdda68faecd7d92fc604a75652b415e00c8bcf7",
       "destination_url": "/contributing/releases/",
       "edit_kind": "retained"
     },
@@ -1081,7 +1081,7 @@
       "validation": "strict MkDocs build; scripts/check_docs_html.py: canonical URL, internal links and every recorded original anchor",
       "source_sha256": "155e0d44c2b2ce4768a918081cfc9f21d7331b0f29edbf8fd1aa62947c9683ee",
       "video_ids": [],
-      "current_source_sha256": "155e0d44c2b2ce4768a918081cfc9f21d7331b0f29edbf8fd1aa62947c9683ee",
+      "current_source_sha256": "cbdd190e18fb7ed83e13d05242f33dda375c8b634212c3d80e6fab344810e6a7",
       "destination_url": "/getting-started/developer-guide/setup/",
       "edit_kind": "retained"
     },

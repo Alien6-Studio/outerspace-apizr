@@ -73,8 +73,9 @@ Vérifications locales sur macOS arm64, Python 3.12.13 :
 
 Les pages du guide sont déclarées dans les surfaces critiques du build. Leurs
 HTML et la feuille de style restent liés à la source par les empreintes de
-publication existantes. Aucun comportement produit, paquet, tag, archive publiée,
-exemple exécutable ou workflow de publication n’est modifié.
+publication existantes. L’extraction ne modifie aucun comportement produit,
+paquet, tag ou archive publiée. Le périmètre comprend aussi le
+[cycle documentaire indépendant](documentation-ci.md) demandé lors de la revue.
 
 La branche `docs/architecture-guide` part de `master` au commit
 `c2601ded39246c93c117de384045f6af0adf6486`. La mention `0.4.5` dans AGENTS reste
