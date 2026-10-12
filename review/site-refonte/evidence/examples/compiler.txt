@@ -1,0 +1,2 @@
+Public selection: api.quote; rendered REST and MCP
+Refused unsupported stream: incomplete_evidence

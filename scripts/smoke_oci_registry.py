@@ -28,8 +28,12 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--attest", action="store_true")
     parser.add_argument("--artifacts", action="store_true")
+    parser.add_argument("--public-packages", action="store_true")
+    parser.add_argument("--quote-example", action="store_true")
     args = parser.parse_args()
     candidate = os.environ.get("APIZR_RELEASE_SET")
+    if args.public_packages and candidate:
+        parser.error("public packages cannot be mixed with a release candidate")
     mounts = (
         [
             "--mount",
@@ -250,6 +254,10 @@ PY
                     "APIZR_ARTIFACT_PROOF=" + ("1" if args.artifacts else "0"),
                     "--env",
                     "PATH=/proof/bin:/usr/local/bin:/usr/bin:/bin",
+                    "--env",
+                    "APIZR_DOCS_PUBLIC_PROOF=" + ("1" if args.public_packages else "0"),
+                    "--env",
+                    "APIZR_DOCS_QUOTE_EXAMPLE=" + ("1" if args.quote_example else "0"),
                     *(
                         [
                             "--env",

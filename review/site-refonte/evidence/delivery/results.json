@@ -1,0 +1,408 @@
+[
+  {
+    "protocol": "apizr.extension/v1",
+    "request_id": "da97fffc65c8437d82d0af8b48c918f3",
+    "operation": "build",
+    "status": "ok",
+    "result": {
+      "delivery_plan": {
+        "schema_version": "apizr.delivery-plan/v1",
+        "source": {
+          "kind": "local",
+          "repository_digest": {
+            "algorithm": "sha256",
+            "value": "cf509e390d68ca53b1e84576061432ed835f48c340fd0da636b3a187d8015df5"
+          }
+        },
+        "catalog_digest": {
+          "algorithm": "sha256",
+          "value": "8098fa4b94a48175b1f8fcbc88425f30e5ff51cf7d47a4592967e6ed222e17f2"
+        },
+        "graph_digest": {
+          "algorithm": "sha256",
+          "value": "e0bc66b4336a73eaf0eda65e055d6edd67e5cfaa9ff1ab61bb7ee9d177d90cea"
+        },
+        "scan_policy_digest": {
+          "algorithm": "sha256",
+          "value": "9b8a78b43395f1653c4c28a64d8795ef02a0ffbc08a1566ecc006c6cad43948b"
+        },
+        "graph_policy_digest": {
+          "algorithm": "sha256",
+          "value": "396063302ff5ed08003bb3f98a059950d039c9c2f6e8ecda0ebf591fd755d04d"
+        },
+        "readiness_policy_digest": {
+          "algorithm": "sha256",
+          "value": "fe4da4d9f8583380a22c88b2adf63f4ca87cbb1e02a010604ab212b5d5d69d11"
+        },
+        "repository_readiness_digest": {
+          "algorithm": "sha256",
+          "value": "364e42598efe930b0e3aa3929b7aefe01657c817154876c47482cd05eda31a49"
+        },
+        "exposure_policy_digest": {
+          "algorithm": "sha256",
+          "value": "aa6423b1f770603d1c42ae89d39f3b86e1429b461a89e6418f62d3e15d8b911f"
+        },
+        "exposure_plan_digest": {
+          "algorithm": "sha256",
+          "value": "2d1ab943a8162e2231bfc15e89fd007fda6a1b4ba577c74cf9764a442897302b"
+        },
+        "repository_interface_digest": {
+          "algorithm": "sha256",
+          "value": "9bf905c8bdd944de0ac7f18133969a32b7f9be0db468d363391b795c960c7445"
+        },
+        "application_inputs_digest": null,
+        "bundle_manifest_digest": {
+          "algorithm": "sha256",
+          "value": "500109a4b3e3e05f36d6d0ec59b84469fde7f36e5ce8a45a508d2435878873de"
+        },
+        "interface": "rest",
+        "dependency_closure": [
+          {
+            "name": "annotated-doc",
+            "version": "0.0.5",
+            "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101"
+          },
+          {
+            "name": "annotated-types",
+            "version": "0.8.0",
+            "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0"
+          },
+          {
+            "name": "anyio",
+            "version": "4.15.1",
+            "sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101"
+          },
+          {
+            "name": "click",
+            "version": "8.5.0",
+            "sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360"
+          },
+          {
+            "name": "fastapi",
+            "version": "0.143.0",
+            "sha256": "3e9395fd35276425b61b516a31fdd7c77fe2af83e41b4da22e30696fb1304c5d"
+          },
+          {
+            "name": "h11",
+            "version": "0.16.0",
+            "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86"
+          },
+          {
+            "name": "idna",
+            "version": "3.20",
+            "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"
+          },
+          {
+            "name": "opentelemetry-api",
+            "version": "1.45.1",
+            "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb"
+          },
+          {
+            "name": "pydantic",
+            "version": "2.14.1",
+            "sha256": "9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454"
+          },
+          {
+            "name": "pydantic-core",
+            "version": "2.50.1",
+            "sha256": "42b54c2c90ad348b5e3a85e03e715d572c1fde357ef104cdfe3b03b697a404ea"
+          },
+          {
+            "name": "starlette",
+            "version": "1.7.0",
+            "sha256": "67f8e99895493dd2911a03f11314af6ceebeae4e704bb9f43dfc6a9db151c93e"
+          },
+          {
+            "name": "typing-extensions",
+            "version": "4.16.0",
+            "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8"
+          },
+          {
+            "name": "typing-inspection",
+            "version": "0.4.4",
+            "sha256": "65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147"
+          },
+          {
+            "name": "uvicorn",
+            "version": "0.54.0",
+            "sha256": "505bdb0f318731d45f1f712071fc781a8981f6847a31c902c9f5e652d4f67faf"
+          }
+        ],
+        "generator": {
+          "name": "outerspace-apizr",
+          "version": "0.4.5"
+        },
+        "build_tools": [
+          {
+            "name": "outerspace-apizr",
+            "version": "0.4.5"
+          },
+          {
+            "name": "outerspace-apizr-oci",
+            "version": "0.4.5"
+          }
+        ],
+        "platform": "linux/amd64",
+        "base_image": "python@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170"
+      },
+      "delivery_manifest": {
+        "schema_version": "apizr.delivery-manifest/v1",
+        "delivery_plan_digest": {
+          "algorithm": "sha256",
+          "value": "ce7b4700a9d90504d20253ac9ebb9dc1534c36d8f785162d5e3a35d3d48d4453"
+        },
+        "inputs_sha256": "0de3c00691a3a847273f948bdce13dc17c2bae391d09897ccd8635b1c6122463",
+        "platform": "linux/amd64",
+        "image_id": "sha256:c0f29084e216d2b15f9332eb61977fd36886b398432d4797b6ee89ca99a68284"
+      },
+      "delivery_manifest_digest": {
+        "algorithm": "sha256",
+        "value": "a9c4bae760b48f279f2c13a9b229f4459b762e18c57599d6767f4cbf6fcead17"
+      },
+      "schema": "apizr.oci-build-result/v1",
+      "tag": "apizr-oci-proof:rest-356447634a06",
+      "platform": "linux/amd64",
+      "image_id": "sha256:c0f29084e216d2b15f9332eb61977fd36886b398432d4797b6ee89ca99a68284",
+      "inputs_sha256": "0de3c00691a3a847273f948bdce13dc17c2bae391d09897ccd8635b1c6122463",
+      "published": false
+    }
+  },
+  {
+    "protocol": "apizr.extension/v1",
+    "request_id": "eef3ac2e503e4427bd2cfe195195a061",
+    "operation": "build",
+    "status": "ok",
+    "result": {
+      "delivery_plan": {
+        "schema_version": "apizr.delivery-plan/v1",
+        "source": {
+          "kind": "local",
+          "repository_digest": {
+            "algorithm": "sha256",
+            "value": "cf509e390d68ca53b1e84576061432ed835f48c340fd0da636b3a187d8015df5"
+          }
+        },
+        "catalog_digest": {
+          "algorithm": "sha256",
+          "value": "8098fa4b94a48175b1f8fcbc88425f30e5ff51cf7d47a4592967e6ed222e17f2"
+        },
+        "graph_digest": {
+          "algorithm": "sha256",
+          "value": "e0bc66b4336a73eaf0eda65e055d6edd67e5cfaa9ff1ab61bb7ee9d177d90cea"
+        },
+        "scan_policy_digest": {
+          "algorithm": "sha256",
+          "value": "9b8a78b43395f1653c4c28a64d8795ef02a0ffbc08a1566ecc006c6cad43948b"
+        },
+        "graph_policy_digest": {
+          "algorithm": "sha256",
+          "value": "396063302ff5ed08003bb3f98a059950d039c9c2f6e8ecda0ebf591fd755d04d"
+        },
+        "readiness_policy_digest": {
+          "algorithm": "sha256",
+          "value": "fe4da4d9f8583380a22c88b2adf63f4ca87cbb1e02a010604ab212b5d5d69d11"
+        },
+        "repository_readiness_digest": {
+          "algorithm": "sha256",
+          "value": "364e42598efe930b0e3aa3929b7aefe01657c817154876c47482cd05eda31a49"
+        },
+        "exposure_policy_digest": {
+          "algorithm": "sha256",
+          "value": "aa6423b1f770603d1c42ae89d39f3b86e1429b461a89e6418f62d3e15d8b911f"
+        },
+        "exposure_plan_digest": {
+          "algorithm": "sha256",
+          "value": "2d1ab943a8162e2231bfc15e89fd007fda6a1b4ba577c74cf9764a442897302b"
+        },
+        "repository_interface_digest": {
+          "algorithm": "sha256",
+          "value": "6eb6dd136876ee9440e4e0b0102802dce306d8d3200abc66e3d726bcfce24fe1"
+        },
+        "application_inputs_digest": null,
+        "bundle_manifest_digest": {
+          "algorithm": "sha256",
+          "value": "e4fde4b16b4931cee80ac92ca7cdaf057bafd6bc67b9cc4597d2145d335b407d"
+        },
+        "interface": "mcp",
+        "dependency_closure": [
+          {
+            "name": "annotated-types",
+            "version": "0.8.0",
+            "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0"
+          },
+          {
+            "name": "anyio",
+            "version": "4.15.1",
+            "sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101"
+          },
+          {
+            "name": "attrs",
+            "version": "26.1.0",
+            "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309"
+          },
+          {
+            "name": "cffi",
+            "version": "2.1.1",
+            "sha256": "b0431303acaea1089ad4b3e9ce4e6518193def1118d4073ca848635ee4ea2e96"
+          },
+          {
+            "name": "click",
+            "version": "8.5.0",
+            "sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360"
+          },
+          {
+            "name": "cryptography",
+            "version": "50.0.2",
+            "sha256": "9dab55f57c74c3cad24c323bacbbd04be4705ba6eb0d92e920b1fc4837ed5079"
+          },
+          {
+            "name": "h11",
+            "version": "0.16.0",
+            "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86"
+          },
+          {
+            "name": "httpcore2",
+            "version": "2.13.1",
+            "sha256": "e1e05d4f25f7d7d496bfb96748f6f4b67657b03da069b3a68c36069f3db73d0a"
+          },
+          {
+            "name": "httpx2",
+            "version": "2.13.1",
+            "sha256": "6dff50fabc270ee5fd25d845d0b078ed20564579744d6d962850975996d2f9a4"
+          },
+          {
+            "name": "idna",
+            "version": "3.20",
+            "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"
+          },
+          {
+            "name": "jsonschema",
+            "version": "4.26.0",
+            "sha256": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce"
+          },
+          {
+            "name": "jsonschema-specifications",
+            "version": "2025.9.1",
+            "sha256": "98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe"
+          },
+          {
+            "name": "mcp",
+            "version": "2.3.0",
+            "sha256": "dd0c44c089d16453e8ae31a3877a0054d7a2314caaa81f5e0541b9b1734b2377"
+          },
+          {
+            "name": "mcp-types",
+            "version": "2.3.0",
+            "sha256": "968efdbdaedfab06adae40d378a34395f1090c5921d4be3c9cde283aaf76d91d"
+          },
+          {
+            "name": "opentelemetry-api",
+            "version": "1.45.1",
+            "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb"
+          },
+          {
+            "name": "pycparser",
+            "version": "3.11",
+            "sha256": "51d5a8ba2be0bbe440b99d2112604c95bbbc3c2748a64260186c541e1729cd80"
+          },
+          {
+            "name": "pydantic",
+            "version": "2.14.1",
+            "sha256": "9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454"
+          },
+          {
+            "name": "pydantic-core",
+            "version": "2.50.1",
+            "sha256": "42b54c2c90ad348b5e3a85e03e715d572c1fde357ef104cdfe3b03b697a404ea"
+          },
+          {
+            "name": "pyjwt",
+            "version": "2.15.1",
+            "sha256": "42d59d631f7768a1028a64c7ff581a9bf7519804daf91fc5b6c56e30eec5e193"
+          },
+          {
+            "name": "python-multipart",
+            "version": "0.0.32",
+            "sha256": "ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23"
+          },
+          {
+            "name": "referencing",
+            "version": "0.37.0",
+            "sha256": "381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231"
+          },
+          {
+            "name": "rpds-py",
+            "version": "2026.9.1",
+            "sha256": "eac2f5dbafd585dfe31f86a23ebf0d3ba480a9d49ebc87947267b5608d4ea0cd"
+          },
+          {
+            "name": "sse-starlette",
+            "version": "3.5.0",
+            "sha256": "3e6e1070df3f0f5d9cea81496de92dbb72f6721871d99748ece67441dd8b7997"
+          },
+          {
+            "name": "starlette",
+            "version": "1.7.0",
+            "sha256": "67f8e99895493dd2911a03f11314af6ceebeae4e704bb9f43dfc6a9db151c93e"
+          },
+          {
+            "name": "truststore",
+            "version": "0.10.4",
+            "sha256": "adaeaecf1cbb5f4de3b1959b42d41f6fab57b2b1666adb59e89cb0b53361d981"
+          },
+          {
+            "name": "typing-extensions",
+            "version": "4.16.0",
+            "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8"
+          },
+          {
+            "name": "typing-inspection",
+            "version": "0.4.4",
+            "sha256": "65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147"
+          },
+          {
+            "name": "uvicorn",
+            "version": "0.54.0",
+            "sha256": "505bdb0f318731d45f1f712071fc781a8981f6847a31c902c9f5e652d4f67faf"
+          }
+        ],
+        "generator": {
+          "name": "outerspace-apizr",
+          "version": "0.4.5"
+        },
+        "build_tools": [
+          {
+            "name": "outerspace-apizr",
+            "version": "0.4.5"
+          },
+          {
+            "name": "outerspace-apizr-oci",
+            "version": "0.4.5"
+          }
+        ],
+        "platform": "linux/amd64",
+        "base_image": "python@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170"
+      },
+      "delivery_manifest": {
+        "schema_version": "apizr.delivery-manifest/v1",
+        "delivery_plan_digest": {
+          "algorithm": "sha256",
+          "value": "d5c34785674edbd89e1f0e1c3d776a772f4ad3e38f55e281c570fff6d71c74c5"
+        },
+        "inputs_sha256": "1874b54883f720c427a7e96c80ad7a942a8b568722822471d6468193f66cc05a",
+        "platform": "linux/amd64",
+        "image_id": "sha256:69e3ecf5db2f00511bd0cac8360155c44d9fdac2d8dbb778e761e88258b97d7d"
+      },
+      "delivery_manifest_digest": {
+        "algorithm": "sha256",
+        "value": "3e261d19a0e2798a3440d2fc1badbbb10b7f1f5c4a8963d25be48f7658b94f69"
+      },
+      "schema": "apizr.oci-build-result/v1",
+      "tag": "apizr-oci-proof:mcp-6b5e90e3606f",
+      "platform": "linux/amd64",
+      "image_id": "sha256:69e3ecf5db2f00511bd0cac8360155c44d9fdac2d8dbb778e761e88258b97d7d",
+      "inputs_sha256": "1874b54883f720c427a7e96c80ad7a942a8b568722822471d6468193f66cc05a",
+      "published": false
+    }
+  }
+]

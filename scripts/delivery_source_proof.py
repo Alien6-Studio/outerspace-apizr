@@ -1,6 +1,7 @@
 """Acquire #189's portable application through real Git using installed core."""
 
 import json
+import os
 import shutil
 
 from git_https_fixture import git, handler, repository
@@ -9,6 +10,8 @@ from operator_policy_proof import write_git_policy
 
 
 def prepare(python, repo, work, command):
+    if os.environ.get("APIZR_DOCS_QUOTE_EXAMPLE") == "1":
+        return prepare_quote(python, repo, work, command)
     root = work / "application-git-proof"
     root.mkdir()
     cert, key = certificate(root)
@@ -65,5 +68,41 @@ for interface in ("rest","mcp"):
     assert not source.exists()
     (work / "application-source-proof.json").write_text(
         json.dumps({"provenance": provenance, "source_removed": True}, indent=2)
+    )
+    return outputs
+
+
+def prepare_quote(python, repo, work, command):
+    """Reuse scenario C's exact business files with the installed public compiler."""
+    root = work / "quote-project"
+    shutil.copytree(repo / "examples/repository-shop/quote-service", root)
+    command(python, "-I", "-B", root / "configure.py")
+    outputs = work / "application-bundles"
+    outputs.mkdir()
+    for interface in ("rest", "mcp"):
+        command(
+            python,
+            "-I",
+            "-B",
+            "-m",
+            "apizr.cli",
+            "expose",
+            "build",
+            interface,
+            root,
+            "--source-root",
+            "src",
+            "--operator-policy",
+            root / "operator.json",
+            "--readiness-policy",
+            root / "readiness.json",
+            "--policy",
+            root / "exposure.json",
+            "--output-dir",
+            outputs / interface,
+        )
+    shutil.rmtree(root)
+    (work / "application-source-proof.json").write_text(
+        json.dumps({"example": "business-quote", "source_removed": True}) + "\n"
     )
     return outputs

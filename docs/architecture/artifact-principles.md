@@ -10,7 +10,8 @@ Generated artifacts should avoid timestamps, random identifiers and incidental
 machine paths. Equal inputs in an equal dependency environment should yield equal
 file contents; the result envelope's output directory is location-specific.
 
-Dependency inference currently consults installed distribution metadata. Record
+The legacy pipeline's dependency inference consults installed distribution metadata. Modern
+repository application inputs use explicit pins/resources instead. Record
 the Python and dependency environment or supply explicit requirements when
 reproducing outputs. Dependency installation and container builds can access
 networks separately from generation. Running a generated application imports

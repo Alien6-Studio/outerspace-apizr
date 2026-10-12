@@ -167,7 +167,8 @@ jobs:
           version: '0.12.0'
           python-version: '3.14'
           enable-cache: true
-      - run: uv sync --locked
+      # Type-check the site hook with its declared documentation dependencies.
+      - run: uv sync --locked --group docs
       - name: Check DCO declarations for new contributions
         if: github.event_name == 'pull_request' || github.event_name == 'push'
         env:

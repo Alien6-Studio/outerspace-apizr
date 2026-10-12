@@ -59,6 +59,12 @@ def pr_event(base, head):
         ("docs/assets/videos/demo.mp4", "false"),
         ("docs/assets/images/logo.png", "false"),
         ("overrides/partials/source.html", "false"),
+        ("docs/start/index.md", "true"),
+        ("docs/examples/business-quote.md", "true"),
+        ("docs/developer-guide/compiler.md", "true"),
+        ("docs/user-guide/select-functions.md", "true"),
+        ("docs/operations-guide/local-service.md", "true"),
+        ("docs/getting-started/data-science.md", "true"),
         *[(name, "true") for name in sorted(scope.EXAMPLE_PAGES)],
     ],
 )

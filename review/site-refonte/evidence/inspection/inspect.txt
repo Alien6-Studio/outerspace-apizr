@@ -1,0 +1,32 @@
+Experiment inspection
+fraud_detection.ipynb
+No code executed; runtime evidence not observed.
+
+Code — CAPTURED
+  notebook; module fraud_detection; sha256:bdd26dc7d9d9
+Data — PARTIAL
+  data/transactions.csv: content unverified (cell 1, line 25)
+  input missing
+  +1 more; see --format json
+  Dynamic input reference; value not guessed.
+Parameters — CAPTURED
+  n_estimators = 24 (cell 1, line 7)
+  max_depth = 5 (cell 1, line 8)
+  Static candidates, not runtime parameters.
+Randomness — CAPTURED
+  sklearn.ensemble.RandomForestClassifier.random_state = 42 (static) (cell 1, line 39)
+  sklearn.model_selection.train_test_split.random_state = 42 (static) (cell 1, line 32)
+Environment — PARTIAL
+  requirements.txt: sha256:a167bf952a9d
+  Source mentions: joblib, numpy, pandas, scikit-learn
+  Experiment runtime versions not observed.
+Metrics — PARTIAL
+  sklearn.metrics.roc_auc_score: value not observed (cell 1, line 70)
+  sklearn.metrics.precision_score: value not observed (cell 1, line 71)
+  +1 more; see --format json
+Outputs — PARTIAL
+  artifacts/model.joblib: output not observed (cell 1, line 47)
+Serving — PARTIAL
+  predict: CONDITIONAL; python:fraud_detection:predict (cell 1, line 52)
+  train: CONDITIONAL; python:fraud_detection:train (cell 1, line 18)
+  Source-local readiness; repository context not assessed.

@@ -94,7 +94,20 @@ def classify(event_name: str, event: dict) -> dict[str, str]:
             for name, old, new in changes
         ):
             return full
-        examples = any(name in EXAMPLE_PAGES for name, _, _ in changes)
+        examples = any(
+            name in EXAMPLE_PAGES
+            or name.startswith(
+                (
+                    "docs/examples/",
+                    "docs/start/",
+                    "docs/developer-guide/",
+                    "docs/user-guide/",
+                    "docs/operations-guide/",
+                )
+            )
+            or name == "docs/getting-started/data-science.md"
+            for name, _, _ in changes
+        )
         return {
             "product": "false",
             "examples": str(examples).lower(),

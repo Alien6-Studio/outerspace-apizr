@@ -1,12 +1,17 @@
 # Technical reference
 
+For shared definitions, see [Concepts and limits](concepts.md). For a task
+progression, choose [User guide](../user-guide/index.md),
+[Developer guide](../developer-guide/index.md) or
+[Operations guide](../operations-guide/index.md).
+
 For development onboarding, see [init, doctor and shell completion](../getting-started/onboarding.md).
 
 For your first project, follow [Quickstart](../getting-started/quickstart.md), then [The full journey](../getting-started/introduction.md).
 Read the [Capability Compiler overview](../architecture/overview.md) for the full flow.
 This reference is for using individual interfaces or understanding their contracts.
 See [Install Apizr](../getting-started/install.md) for package availability and
-prerequisites. The [release notes](../releases/0.4.1.md) explain version differences.
+prerequisites. The [release notes](../releases/0.4.5.md) explain version differences.
 
 ## Commands and parameters
 
