@@ -1,0 +1,11 @@
+Cannot create exposure plan
+python:serving:predict
+  Required dependency path: python:serving:predict -> python:features:normalize
+  APIZR-READY-004 at features.py:4: required execution evidence is incomplete.
+python:serving:predict
+  Required dependency path: python:serving:predict -> python:features:normalize -> python-module:features
+  APIZR-READY-004 at features.py:4: required initialization evidence is incomplete.
+python:serving:predict
+  Repository readiness = CONDITIONAL; allow_conditional = false.
+python:serving:predict
+  Shared interface contract is not eligible for rest.

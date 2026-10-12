@@ -1,0 +1,57 @@
+{
+  "README.md": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "b94ef17bb5bd455ec2bfb9bb7ba8e6988f003821613f475d32ea3bd9bd56eca1"
+  },
+  "docs/getting-started/introduction.md": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "e704a22c590359732233aa20f904069008db6a0c8dbb1fa290db4689ae7f12d3"
+  },
+  "docs/getting-started/quickstart.md": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "78a5004b2f7dc0e087046e4185d6b3944cbae75f9e4a009375bd72052e8b86cf"
+  },
+  "docs/getting-started/user-guide/experiment-inspection.md": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "e2f4539342ffbde0a808e7bc5b27db2b50ad64a9e4931a4f297ed898b127a059"
+  },
+  "README.md#run": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "96f127adb83a2467fc99d4a56e257e828a6011a6b8611d08b3e7b54935e403c9"
+  },
+  "docs/getting-started/quickstart.md#run": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "96f127adb83a2467fc99d4a56e257e828a6011a6b8611d08b3e7b54935e403c9"
+  },
+  "docs/getting-started/user-guide/experiment-runs.md#run": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "96f127adb83a2467fc99d4a56e257e828a6011a6b8611d08b3e7b54935e403c9"
+  },
+  "README.md#diff": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "a06392ea9fe073018d0255a1cb675f1a43220d4509f68815dcd2072a7f159329"
+  },
+  "docs/getting-started/quickstart.md#diff": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "a06392ea9fe073018d0255a1cb675f1a43220d4509f68815dcd2072a7f159329"
+  },
+  "docs/getting-started/user-guide/experiment-comparison.md#diff": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "a06392ea9fe073018d0255a1cb675f1a43220d4509f68815dcd2072a7f159329"
+  },
+  "docs/getting-started/user-guide/experiment-exposure.md": {
+    "status": "passed",
+    "blocks": 1,
+    "example_sha256": "02819de9520911b8c5dc7236ff1724940a4d7d5c21f9d2ef91c911727b0ba809"
+  }
+}

@@ -1,5 +1,5 @@
-{# Keep the repository link; the current documentation is not a release selector. #}
-<a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" class="md-source">
+{# Material requests the latest Git release/stars/forks only after GitHub consent. #}
+<a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     {% set icon = config.theme.icon.repo or "fontawesome/brands/git-alt" %}
     {% include ".icons/" ~ icon ~ ".svg" %}

@@ -183,9 +183,9 @@ def check(site: Path) -> None:
         ):
             if obsolete in visible:
                 failures.append(f"{name}: obsolete version choice: {obsolete}")
-        if 'data-md-component="source"' in text:
+        if 'data-md-component="source"' not in text:
             failures.append(
-                f"{name}: repository widget can inject a stale release badge"
+                f"{name}: native Git repository release/star/fork widget is missing"
             )
         headings = re.findall(r"<h[1-6]\b[^>]*>(.*?)</h[1-6]>", text, re.S)
         if any(re.search(r"\bv[12]\b", "".join(Page(h).text)) for h in headings):
@@ -248,6 +248,40 @@ def check(site: Path) -> None:
     ):
         if anchor not in journey.targets:
             failures.append(f"Full journey lost published anchor: {anchor}")
+    # Every pre-refonte page and content anchor must remain addressable.
+    import json
+
+    inventory = (
+        Path(__file__).resolve().parents[1] / "review/site-refonte/page-migration.json"
+    )
+    for row in json.loads(inventory.read_text())["pages"]:
+        target = row["url"].lstrip("/") + "index.html"
+        if target not in pages:
+            failures.append(f"Removed historical URL: {row['url']}")
+            continue
+        for anchor in row["anchors"]:
+            if anchor not in pages[target].targets:
+                failures.append(f"{target}: lost historical anchor #{anchor}")
+    for section in (
+        "start",
+        "examples",
+        "user-guide",
+        "developer-guide",
+        "operations-guide",
+    ):
+        if f"{section}/index.html" not in pages:
+            failures.append(f"Missing reader path: {section}")
+    home_page = pages["index.html"]
+    for destination in (
+        "start/",
+        "examples/",
+        "user-guide/",
+        "developer-guide/",
+        "operations-guide/",
+        "reference/",
+    ):
+        if destination not in home_page.links:
+            failures.append(f"Home lacks reader path: {destination}")
     if failures:
         raise ValueError("\n".join(failures))
     print(

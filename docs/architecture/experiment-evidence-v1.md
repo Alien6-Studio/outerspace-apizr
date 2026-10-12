@@ -12,10 +12,13 @@ An Experiment Plan describes intended experiment inputs and controls. An Experim
 | Declared or static environment evidence | Observed environment evidence |
 | Execution kind, policy digest and declared controls | Status, optional timing, metrics and output artifacts |
 
-These are development contracts in `apizr.experiments`. This version supplies no
-experiment command, inspector, runner, capture mechanism, comparison or history
-store. Producers must supply evidence explicitly. Reading a Plan or Run does not
-execute its source or resolve its references.
+These core contracts live in `apizr.experiments`. Public Apizr 0.4.5 composes them
+through [inspection](../getting-started/user-guide/experiment-inspection.md),
+[trusted Runs and local history](../getting-started/user-guide/experiment-runs.md),
+[comparison](../getting-started/user-guide/experiment-comparison.md) and
+[explicit experiment exposure](../getting-started/user-guide/experiment-exposure.md).
+The primitive constructors below accept supplied evidence; reading a Plan or Run
+does not execute its source or resolve its references.
 
 ## An explicit Plan/Run pair
 

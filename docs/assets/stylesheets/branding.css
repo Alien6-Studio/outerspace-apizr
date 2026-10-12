@@ -141,3 +141,39 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+/* Keep reader paths in the existing Material palette, including dark mode. */
+.apizr-paths {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+
+.apizr-paths > section {
+  padding: 0.9rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.2rem;
+}
+
+.apizr-paths h3 {
+  margin-top: 0;
+}
+
+.md-typeset a:focus-visible,
+.md-nav__link:focus-visible,
+.md-tabs__link:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 3px;
+}
+
+/* Anchor targets must clear the existing, taller bee-logo header. */
+.md-header ~ .md-container .md-typeset :target {
+  --md-scroll-margin: 7rem;
+}
+
+@media screen and (max-width: 44.984375em) {
+  .md-header ~ .md-container .md-typeset :target {
+    --md-scroll-margin: 4.6rem;
+  }
+}

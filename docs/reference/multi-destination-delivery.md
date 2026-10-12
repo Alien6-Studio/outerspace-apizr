@@ -156,10 +156,12 @@ are retained in the fixture artifacts. The services then run from the batch's
 recorded digests after original sources and bundles are removed. Existing
 independent offline proof verification is preserved.
 
-Single-destination APIs and historical evidence remain supported. Versions remain
-`0.4.1`. This increment adds no concurrent delivery, cross-repository proof reuse,
-production registry adapters, MCP delivery tools, rollback or automatic proof
-selection. Live-provider qualification, including Docker Hub, is optional
+Single-destination APIs and historical evidence remain supported. These delivery
+contracts originated in `0.4.1` and remain available in public `0.4.5` without a
+schema change. There is no concurrent delivery, cross-repository proof reuse,
+native rollback or automatic proof selection. The separately configured
+[MCP delivery tools](apizr-mcp-server.md) use the same coordinator; they are not
+enabled in the default read-only analysis profile. Live-provider qualification, including Docker Hub, is optional
 interoperability validation; it is not a remaining 0.4.1 functional requirement.
 The fixture establishes the documented OCI registry profile, not compatibility
 with every registry implementation.

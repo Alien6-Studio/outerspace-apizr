@@ -296,7 +296,7 @@ project/
 
 Copy that directory to `project`. Save an analysis grant for its exact root
 in `operator.json` and use the `direct-readiness.json` policy above. With the
-development candidate, run:
+published 0.4.5 package, run:
 
 <!-- smoke:selected-scope -->
 ```sh

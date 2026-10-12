@@ -1,0 +1,21 @@
+{
+  "browser": "Native Google Chrome on macOS",
+  "preview": "local built static site",
+  "mobile_viewport_css": [
+    400,
+    497
+  ],
+  "observed": [
+    "home, Start here, example gallery, three guides and Reference navigation",
+    "native GitHub release/star/fork widget after opt-in; Analytics left off",
+    "light and dark palettes",
+    "business quote search returns real matching pages",
+    "keyboard focus visible on copy button",
+    "mobile drawer opens and compiler chapter link navigates",
+    "Operations table and compiler code blocks at 400px",
+    "anchor target visible below original large-logo header"
+  ],
+  "screenshots_fabricated": false,
+  "preview_process_stopped": true,
+  "temporary_tabs_closed": true
+}

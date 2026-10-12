@@ -36,6 +36,8 @@ jobs:
       - name: Test change routing and documentation publication tooling
         if: needs.scope.outputs.product != 'false'
         run: uv run --locked pytest tests/test_ci_scope.py tests/test_docs_publication.py
+      - name: Verify retained documentation links, media and example archives
+        run: uv run --locked pytest tests/test_site_refonte.py
       - run: uv run --locked --group docs mkdocs build --strict
       - run: uv run --locked python scripts/check_docs_html.py
       - name: Check current and historical examples with installed wheels outside the checkout
@@ -48,6 +50,7 @@ jobs:
           uv venv --python 3.11 "$RUNNER_TEMP/docs-public"
           uv pip install --python "$RUNNER_TEMP/docs-public/bin/python" outerspace-apizr==0.4.5
           uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-public/bin/apizr" --development --expected-version 0.4.5 --repository-refinement
+          uv run --locked python scripts/smoke_site_examples.py --python "$RUNNER_TEMP/docs-public/bin/python" --output "$RUNNER_TEMP/site-examples"
           uv venv --python 3.11 "$RUNNER_TEMP/docs-dev"
           uv pip install --python "$RUNNER_TEMP/docs-dev/bin/python" "$RUNNER_TEMP"/docs-wheel/*.whl
           uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-dev/bin/apizr" --development --repository-refinement

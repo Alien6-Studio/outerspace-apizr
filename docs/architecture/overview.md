@@ -1,7 +1,11 @@
 # Capability Compiler architecture
 
-Apizr analyzes a local or remote Python repository, prepares explicit exposure
-plans and generates REST/MCP interfaces:
+Apizr inspects Python work, records and compares trusted experiment evidence,
+and exposes selected functions through REST/MCP. An existing function can be
+compiled directly; the optional experiment path adds recorded context rather
+than becoming a generation prerequisite.
+
+The repository compilation path is:
 
 ```text
 Repository
@@ -78,4 +82,9 @@ workflows remain supported. The [legacy pipeline](../getting-started/user-guide/
 is independent and retains its [documented limitations](legacy-behavior-contract.md).
 Canonical artifacts retain their versioned contracts.
 
-See the [release notes and known limitations](../releases/0.4.1.md).
+Explicit [application inputs](../getting-started/user-guide/project.md#application-dependencies-and-resources-041-development)
+add selected resources and exact dependency pins to direct service bundles.
+The [experiment bridge](../getting-started/user-guide/experiment-exposure.md)
+selects matching outputs/dependencies from a successful Run using those contracts.
+
+See the [release notes and known limitations](../releases/0.4.5.md).

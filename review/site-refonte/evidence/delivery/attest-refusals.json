@@ -1,0 +1,94 @@
+[
+  {
+    "case": "wrong-reference",
+    "refused": true
+  },
+  {
+    "case": "wrong-signer",
+    "refused": true
+  },
+  {
+    "case": "missing-attest",
+    "refused": true
+  },
+  {
+    "case": "wrong-version",
+    "refused": true
+  },
+  {
+    "case": "wrong-hash",
+    "refused": true
+  },
+  {
+    "case": "timeout-key-cleanup",
+    "refused": true
+  },
+  {
+    "case": "interruption-key-cleanup",
+    "refused": true
+  },
+  {
+    "case": "manifest",
+    "refused": true
+  },
+  {
+    "case": "push",
+    "refused": true
+  },
+  {
+    "case": "receipt",
+    "refused": true
+  },
+  {
+    "case": "other-image",
+    "refused": true
+  },
+  {
+    "case": "signer",
+    "refused": true
+  },
+  {
+    "case": "untrusted-key",
+    "refused": true
+  },
+  {
+    "case": "revoked-key",
+    "refused": true
+  },
+  {
+    "case": "untrusted-tsa",
+    "refused": true
+  },
+  {
+    "case": "missing-timestamp",
+    "refused": true
+  },
+  {
+    "case": "invalid-timestamp",
+    "refused": true
+  },
+  {
+    "case": "proof-trust",
+    "refused": true
+  },
+  {
+    "case": "rebound-result",
+    "refused": true
+  },
+  {
+    "case": "delivery-manifest",
+    "refused": true
+  },
+  {
+    "case": "delivery-plan",
+    "refused": true
+  },
+  {
+    "case": "build-lineage",
+    "refused": true
+  },
+  {
+    "case": "push-lineage",
+    "refused": true
+  }
+]

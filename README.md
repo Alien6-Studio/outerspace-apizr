@@ -57,6 +57,19 @@ uv tool install outerspace-apizr==0.4.5
 
 ![Install Apizr with uv](https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/master/docs/assets/videos/uv-install.gif)
 
+## Documentation paths
+
+[Start here](https://apizr.outerspace.sh/start/) ·
+[Examples](https://apizr.outerspace.sh/examples/) ·
+[User guide](https://apizr.outerspace.sh/user-guide/) ·
+[Developer guide](https://apizr.outerspace.sh/developer-guide/) ·
+[Operations guide](https://apizr.outerspace.sh/operations-guide/) ·
+[Reference](https://apizr.outerspace.sh/reference/)
+
+Exposing an existing function requires no Experiment Run. The experiment path is
+optional when recorded evidence helps your work. The developer guide integrates
+Apizr; [Contributing](https://apizr.outerspace.sh/about/CONTRIBUTING/) covers changing Apizr itself.
+
 ## Choose your path
 
 Have a training script or notebook? **Apizr 0.4.5** adds a
