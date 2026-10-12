@@ -21,6 +21,11 @@ def main() -> None:
     parser.add_argument("--development", action="store_true")
     parser.add_argument("--expected-version")
     parser.add_argument(
+        "--example-python",
+        type=Path,
+        help="Run the TypedDict proof in an installed environment with http/mcp extras",
+    )
+    parser.add_argument(
         "--repository-refinement",
         action="store_true",
         help="Expect the candidate's proven local imports to refine repository readiness",
@@ -127,9 +132,30 @@ def main() -> None:
         migration(cli, repository)
         if args.repository_refinement:
             selected_scope(cli, repository)
-            from typed_dict_proof import proof
+            if args.example_python:
+                with tempfile.TemporaryDirectory(prefix="apizr-readme-proof-") as work:
+                    subprocess.run(
+                        [
+                            str(args.example_python.absolute()),
+                            "-I",
+                            str(repository / "scripts/typed_dict_proof.py"),
+                            str(cli),
+                            "--python",
+                            str(args.example_python.absolute()),
+                        ],
+                        cwd=work,
+                        env={
+                            k: v
+                            for k, v in os.environ.items()
+                            if k not in {"PYTHONPATH", "PYTHONHOME", "VIRTUAL_ENV"}
+                        },
+                        check=True,
+                        timeout=120,
+                    )
+            else:
+                from typed_dict_proof import proof
 
-            proof(cli, Path(sys.executable))
+                proof(cli, Path(sys.executable))
         quickstart(
             cli, repository, candidate=True, expected_version=args.expected_version
         )

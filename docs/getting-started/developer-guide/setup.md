@@ -7,14 +7,28 @@ This page covers work on Apizr itself; the [development installation](../../deve
 shows how to acquire a checkout and test an unreleased wheel separately.
 For using Apizr, start with [Install Apizr](../install.md).
 
-`pyproject.toml` defines the package and dependency groups; `uv.lock` is the only
-lockfile. Use `uv lock --upgrade` deliberately for dependency updates and commit
+`pyproject.toml` defines the package and dependency groups; `uv.lock` locks the
+product environment. Use `uv lock --upgrade` deliberately for dependency updates and commit
 the resulting lockfile with the tested changes. The installed namespace is
 `apizr`, with a conventional `src/apizr/` layout.
 
 See [Code organization](../../architecture/code-organization.md) for CLI adapters,
 core plugin management, compiler domains and the supported compatibility imports
 on the `0.4.5` development branch.
+
+Documentation, site and example changes use a separate environment under
+`tools/docs/`, without installing the checkout package or invoking Attest:
+
+```sh
+uv sync --project tools/docs --locked
+uv run --project tools/docs --locked pytest -c tools/docs/pyproject.toml tests/test_ci_scope.py tests/test_dco.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
+uv run --project tools/docs --locked mkdocs build --strict
+uv run --project tools/docs --locked python scripts/check_docs_html.py
+```
+
+See [documentation CI and publication](../../contributing/releases.md#web-only-changes)
+for the classifier boundary and installed public example checks. Mixed changes
+still require the product checks below.
 
 <span id="foundation-quality-gates"></span>
 

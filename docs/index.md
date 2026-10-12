@@ -73,9 +73,16 @@ Prepare permissions and runtimes, verify services and hand over delivery evidenc
 </section>
 <section markdown="1">
 
+### [Architecture guide](architecture/index.md)
+
+Follow the components, compilation, execution and delivery boundaries with diagrams.
+
+</section>
+<section markdown="1">
+
 ### [Reference](reference/index.md)
 
-Find exact commands, APIs, formats, compatibility and architecture contracts.
+Find exact commands, APIs, formats and compatibility details.
 
 </section>
 </div>

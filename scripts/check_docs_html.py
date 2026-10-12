@@ -268,6 +268,7 @@ def check(site: Path) -> None:
         "user-guide",
         "developer-guide",
         "operations-guide",
+        "architecture",
     ):
         if f"{section}/index.html" not in pages:
             failures.append(f"Missing reader path: {section}")
@@ -278,6 +279,7 @@ def check(site: Path) -> None:
         "user-guide/",
         "developer-guide/",
         "operations-guide/",
+        "architecture/",
         "reference/",
     ):
         if destination not in home_page.links:

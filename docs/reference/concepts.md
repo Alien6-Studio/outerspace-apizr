@@ -1,6 +1,6 @@
 # Concepts and limits
 
-These definitions are shared by all three guides. An observed result and a static
+These definitions are shared by the guides. An observed result and a static
 claim have different meanings; keep their evidence together when reviewing work.
 
 | Term | Meaning | Does not establish |

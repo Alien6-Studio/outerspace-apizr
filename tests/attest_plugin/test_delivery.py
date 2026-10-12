@@ -331,8 +331,11 @@ def test_binary_hash_and_version(tmp_path):
     ],
 )
 def test_real_bounded_process_and_recovery(tmp_path, args, code):
+    # Only the timeout case needs a short deadline. The other cases must allow
+    # Python startup on a loaded runner before asserting their exact diagnostic.
+    budget = 0.3 if code == "attest_timeout" else 5
     with pytest.raises(AttestError, match=code):
-        run(Path(sys.executable), args, tmp_path, time.monotonic() + 0.3, 1024)
+        run(Path(sys.executable), args, tmp_path, time.monotonic() + budget, 1024)
     assert (
         run(
             Path(sys.executable),
