@@ -37,6 +37,10 @@
          <lastmod>2026-10-12</lastmod>
     </url>
     <url>
+         <loc>https://apizr.outerspace.sh/architecture/</loc>
+         <lastmod>2026-10-12</lastmod>
+    </url>
+    <url>
          <loc>https://apizr.outerspace.sh/architecture/artifact-principles/</loc>
          <lastmod>2026-10-12</lastmod>
     </url>
@@ -57,7 +61,15 @@
          <lastmod>2026-10-12</lastmod>
     </url>
     <url>
+         <loc>https://apizr.outerspace.sh/architecture/compilation-flow/</loc>
+         <lastmod>2026-10-12</lastmod>
+    </url>
+    <url>
          <loc>https://apizr.outerspace.sh/architecture/delivery-identities/</loc>
+         <lastmod>2026-10-12</lastmod>
+    </url>
+    <url>
+         <loc>https://apizr.outerspace.sh/architecture/execution-boundaries/</loc>
          <lastmod>2026-10-12</lastmod>
     </url>
     <url>
@@ -69,11 +81,19 @@
          <lastmod>2026-10-12</lastmod>
     </url>
     <url>
+         <loc>https://apizr.outerspace.sh/architecture/experiments-and-artifacts/</loc>
+         <lastmod>2026-10-12</lastmod>
+    </url>
+    <url>
          <loc>https://apizr.outerspace.sh/architecture/exposure-plan-v1/</loc>
          <lastmod>2026-10-12</lastmod>
     </url>
     <url>
          <loc>https://apizr.outerspace.sh/architecture/extension-packaging-v04/</loc>
+         <lastmod>2026-10-12</lastmod>
+    </url>
+    <url>
+         <loc>https://apizr.outerspace.sh/architecture/extensions-and-delivery/</loc>
          <lastmod>2026-10-12</lastmod>
     </url>
     <url>
@@ -126,6 +146,10 @@
     </url>
     <url>
          <loc>https://apizr.outerspace.sh/architecture/subprocess-deny/</loc>
+         <lastmod>2026-10-12</lastmod>
+    </url>
+    <url>
+         <loc>https://apizr.outerspace.sh/architecture/system-boundaries/</loc>
          <lastmod>2026-10-12</lastmod>
     </url>
     <url>
