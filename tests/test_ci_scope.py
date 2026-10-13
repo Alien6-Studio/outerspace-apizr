@@ -210,7 +210,8 @@ def test_required_matrix_checks_are_emitted_for_web_changes():
         job = workflow["jobs"][name]
         assert job["if"] == "always()"
         assert job["strategy"]["matrix"]["python"] == versions
-        assert all("needs.scope.outputs.product" in step["if"] for step in job["steps"])
+        assert job["env"]["PRODUCT_CHECKS"] == "${{ needs.scope.outputs.product }}"
+        assert all("env.PRODUCT_CHECKS" in step["if"] for step in job["steps"])
     assert "ubuntu-latest" in workflow["jobs"]["macos"]["runs-on"]
     assert workflow["jobs"]["quality"]["if"] == "always()"
 
@@ -254,3 +255,37 @@ def test_scope_summary_and_outputs(repo, monkeypatch):
     scope.main()
     assert "product=false\nexamples=false\n" in output.read_text()
     assert "Only allowlisted web content changed" in summary.read_text()
+
+
+@pytest.mark.parametrize(
+    "paths",
+    [("src/product.py",), ("docs/index.md",), ("docs/index.md", "src/product.py")],
+)
+@pytest.mark.parametrize("prior_success", [False, True])
+def test_bound_step_conditions_preserve_scope_and_failure_behavior(
+    repo, paths, prior_success
+):
+    base = git(repo, "rev-parse", "HEAD")
+    for name in paths:
+        head = commit(repo, name, "changed")
+    product = scope.classify("pull_request", pr_event(base, head))["product"]
+    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+    for name in ("quality", "compatibility", "macos", "container"):
+        job = workflow["jobs"][name]
+        assert job["env"]["PRODUCT_CHECKS"] == "${{ needs.scope.outputs.product }}"
+        for step in job["steps"]:
+            condition = step.get("if", "")
+            assert "needs.scope.outputs.product" not in condition
+            if "env.PRODUCT_CHECKS" not in condition:
+                continue
+            predicate = (
+                product == "false" if " == " in condition else product != "false"
+            )
+            selected = predicate and ("always()" in condition or prior_success)
+            web_placeholder = (
+                step.get("name") == "Web-only change; product tests are not needed"
+            )
+            should_run = product == "false" if web_placeholder else product != "false"
+            is_upload = step.get("uses", "").startswith("actions/upload-artifact@")
+            assert ("always()" in condition) == is_upload
+            assert selected == (should_run and (is_upload or prior_success))

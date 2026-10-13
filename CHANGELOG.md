@@ -2,6 +2,8 @@
 
 ## 0.4.6 — development, not published
 
+- Bind product scope once per mixed CI job while retaining job-level gates,
+  required matrix check names and upload behavior after failures (#286).
 - Add context-local in-process tracking sessions and explicit bounded parameter,
   input, metric and artifact logging. Preserve business exceptions, record failed
   and cancelled captures, and publish through the canonical immutable store (#303).
