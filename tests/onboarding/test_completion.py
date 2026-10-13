@@ -25,7 +25,7 @@ def test_completion_covers_actual_parsers_and_dispatch():
     spec.loader.exec_module(module)
     assert module.capture() == COMMANDS
     source = ast.parse(Path(cli.__file__).read_text())
-    commands = set()
+    commands = set(cli.COMMAND_TARGETS)
     for node in ast.walk(source):
         if isinstance(node, ast.Compare) and ast.unparse(node.left) == "arguments[0]":
             for right in node.comparators:

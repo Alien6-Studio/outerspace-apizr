@@ -1,10 +1,30 @@
 """Static and runtime commands, separate from the historical generation parser."""
 
 import sys
+from importlib import import_module
 from importlib.metadata import version
 from typing import Sequence
 
 from apizr.environment.extras import MissingExtra, available, require
+
+# Only the selected adapter is imported. Completion and onboarding have distinct
+# call signatures and remain explicit in _main alongside the top-level help.
+COMMAND_TARGETS: dict[str, tuple[str, str]] = {
+    "ci": ("apizr.cli.commands.ci", "main"),
+    "clients": ("apizr.cli.commands.clients", "main"),
+    "delivery": ("apizr.cli.commands.delivery", "main"),
+    "mcp": ("apizr.cli.commands.mcp", "main"),
+    "plugins": ("apizr.cli.commands.plugins", "main"),
+    "expose": ("apizr.cli.commands.exposure", "main"),
+    "readiness": ("apizr.cli.commands.readiness", "main"),
+    "repository-readiness": ("apizr.cli.commands.repository_readiness", "main"),
+    "graph": ("apizr.cli.commands.graph", "main"),
+    "scan": ("apizr.cli.commands.scan", "main"),
+    "execute": ("apizr.cli.commands.execute", "main"),
+    "inspect": ("apizr.cli.commands.inspect", "main"),
+    "experiment": ("apizr.cli.commands.experiment", "main"),
+    "generate": ("apizr.cli.commands.generate", "main"),
+}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -20,10 +40,6 @@ def _main(argv: Sequence[str] | None = None) -> int:
     if arguments == ["--version"]:
         print(f"outerspace-apizr {version('outerspace-apizr')}")
         return 0
-    if arguments and arguments[0] == "ci":
-        from apizr.cli.commands.ci import main as ci_command
-
-        return ci_command(arguments[1:])
     if arguments and arguments[0] in ("completion", "__complete"):
         from apizr.cli.completion import main as completion_command
 
@@ -32,58 +48,12 @@ def _main(argv: Sequence[str] | None = None) -> int:
         from apizr.cli.commands.onboarding import diagnose, init
 
         return (init if arguments[0] == "init" else diagnose)(arguments[1:])
-    if arguments and arguments[0] == "clients":
-        from apizr.cli.commands.clients import main as clients_command
-
-        return clients_command(arguments[1:])
-    if arguments and arguments[0] == "delivery":
-        from apizr.cli.commands.delivery import main as delivery_command
-
-        return delivery_command(arguments[1:])
-    if arguments and arguments[0] == "mcp":
-        from apizr.cli.commands.mcp import main as mcp_command
-
-        return mcp_command(arguments[1:])
-    if arguments and arguments[0] == "plugins":
-        from apizr.cli.commands.plugins import main as plugins_command
-
-        return plugins_command(arguments[1:])
-    if arguments and arguments[0] == "expose":
-        from apizr.cli.commands.exposure import main as exposure_command
-
-        return exposure_command(arguments[1:])
-    if arguments and arguments[0] == "readiness":
-        from apizr.cli.commands.readiness import main as readiness_repo_command
-
-        return readiness_repo_command(arguments[1:])
-    if arguments and arguments[0] == "repository-readiness":
-        from apizr.cli.commands.repository_readiness import main as readiness_command
-
-        return readiness_command(arguments[1:])
-    if arguments and arguments[0] == "graph":
-        from apizr.cli.commands.graph import main as graph_command
-
-        return graph_command(arguments[1:])
-    if arguments and arguments[0] == "scan":
-        from apizr.cli.commands.scan import main as scan_command
-
-        return scan_command(arguments[1:])
-    if arguments and arguments[0] == "execute":
-        from apizr.cli.commands.execute import main as execute_command
-
-        return execute_command(arguments[1:])
-    if arguments and arguments[0] == "inspect":
-        from apizr.cli.commands.inspect import main as inspect_command
-
-        return inspect_command(arguments[1:])
-    if arguments and arguments[0] == "experiment":
-        from apizr.cli.commands.experiment import main as experiment_command
-
-        return experiment_command(arguments[1:])
-    if arguments and arguments[0] == "generate":
-        from apizr.cli.commands.generate import main as generate_modern
-
-        return generate_modern(arguments[1:])
+    if arguments and arguments[0] in COMMAND_TARGETS:
+        module, attribute = COMMAND_TARGETS[arguments[0]]
+        return getattr(import_module(module), attribute)(arguments[1:])
+    # Help describes ordered workflows, permissions and prerequisites rather
+    # than a flat command list. Keep its reviewed text byte-stable; completion
+    # tests bind COMMAND_TARGETS and the explicit cases to the captured grammar.
     if arguments in (["--help"], ["-h"]):
         print("Apizr — an open-source capability compiler for Python codebases.\n")
         print("Version: apizr --version")
@@ -159,6 +129,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
             if exc.code != 0:
                 raise
         return 0
+    # The remaining historical generation fallback is retired by #284/#331.
     require(
         "legacy", "yaml", "questionary", "jinja2", "packaging", "nbconvert", "black"
     )

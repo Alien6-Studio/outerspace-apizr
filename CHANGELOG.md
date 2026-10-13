@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.6 — development, not published
+
+- Resolve modern CLI commands through one lazy dispatch table, retaining the
+  completion/onboarding special cases, existing help bytes and captured grammar.
+  Importing the CLI and resolving its adapters does not load optional SDKs (#293).
+
 ## 0.4.5 — release candidate, not yet published
 
 Inspect ordinary notebooks, record and compare trusted Runs, then explicitly
