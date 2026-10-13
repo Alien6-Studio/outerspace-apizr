@@ -216,6 +216,6 @@ randomness/environment capture, experiment execution, history or CLI is added.
 The minimal core needs no pandas, NumPy, joblib, pyarrow or remote storage SDK.
 
 The additive `InputArtifact` fields preserve old Plan/Run v1 canonical bytes when
-absent. See [experiment evidence v1](../architecture/experiment-evidence-v1.md#additive-input-evidence-in-045-development)
+absent. See [experiment evidence v1](../architecture/experiment-evidence-v1.md#additive-input-evidence-in-045)
 for provenance constraints and schema limits. Fingerprinted inputs are reusable
 Plan evidence; future Run producers must separately supply runtime observations.

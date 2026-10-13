@@ -104,8 +104,8 @@ canonical_run = run_bytes(run)
 identity = run_digest(run)
 ```
 
-The reviewed [Plan fixture](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/tests/fixtures/experiments/v1/plan.json)
-and [Run fixture](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.5/tests/fixtures/experiments/v1/run.json)
+The reviewed [Plan fixture](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.5/tests/fixtures/experiments/v1/plan.json)
+and [Run fixture](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.5/tests/fixtures/experiments/v1/run.json)
 include partial unknown input evidence and explicit environment/timing records.
 They are fictional test values, not reported scientific results.
 
@@ -247,7 +247,7 @@ bytes later. The [package composition rule](code-organization.md#experiment-evid
 records this dependency boundary.
 
 
-## Additive input evidence in 0.4.5 development
+## Additive input evidence in 0.4.5
 
 #261 adds three optional fields to `InputArtifact`: `content_origin`, `format_hint`
 and `uri`. Absent values are omitted from canonical serialization. Old valid v1

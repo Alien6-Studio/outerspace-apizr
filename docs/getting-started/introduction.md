@@ -10,7 +10,7 @@ description: Choose Python functions, create a service and call them through RES
 
 <span id="introduction"></span>
 
-## Start with an experiment (0.4.5 development)
+## Start with an experiment
 
 For a training script or notebook, begin by inspecting the evidence. With the
 development checkout installed, this first example needs no science framework:

@@ -14,7 +14,7 @@ the resulting lockfile with the tested changes. The installed namespace is
 
 See [Code organization](../../architecture/code-organization.md) for CLI adapters,
 core plugin management, compiler domains and the supported compatibility imports
-on the `0.4.5` development branch.
+on the `0.4.6` development branch.
 
 <span id="foundation-quality-gates"></span>
 

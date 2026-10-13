@@ -1,6 +1,6 @@
 # Repository development
 
-Use the official development branch `0.4.5`. Keep stable `master`, published
+Use the official development branch `0.4.6`. Keep stable `master`, published
 versions and release/tag/publication workflows outside development changes unless
 explicitly requested by the user.
 

@@ -329,6 +329,8 @@ Complete against the final commit; historical green runs are not sufficient.
 - [ ] Dependency audit, CodeQL and strict MkDocs build pass.
 - [ ] License inventory/policy and preserved notices cover the exact universal lock.
 - [ ] Open issues are classified and no release blocker remains unresolved.
+- [ ] Roll development-cycle references in `AGENTS.md`, the architecture guide and
+      contributor documentation forward to the next development branch.
 - [ ] Ownership, Trusted Publisher and protected `pypi` environment are verified.
 - [ ] The tag identifies the exact verified source commit and CI artifact run (protected master for 0.4.4).
 - [ ] Managed Attest identity, signature, RFC 3161 timestamp and recomputation pass

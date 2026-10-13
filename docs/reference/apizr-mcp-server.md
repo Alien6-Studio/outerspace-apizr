@@ -359,7 +359,7 @@ response. In contrast, readiness `exit_code: 1` with `isError: false` is a valid
 assessment of limitations or uncertainty. Delivery business outcomes retain
 their separate [existing semantics](#explicit-delivery-mode-042).
 
-## Start with a small view (0.4.5 development)
+## Start with a small view
 
 Ask your AI assistant to summarize the repository before inspecting a function:
 

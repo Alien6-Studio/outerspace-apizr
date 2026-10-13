@@ -7,8 +7,8 @@ description: Select compatible prebuilt wheels, verify resolver-admitted hashes 
 
 `apizr plugins prepare` prepares wheels and a strict installer lock for an
 explicit interpreter. It installs nothing and leaves activation to `plugins enable`.
-This command is available in the **0.4.5 development line**; published 0.4.4 does
-not contain it.
+This command is available in the published **0.4.5** release and the **0.4.6**
+development line.
 
 Use a build containing this command with the **`[preparation]` extra**, which
 provides PyPA's wheel compatibility rules. For example, install the verified core

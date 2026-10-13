@@ -1,8 +1,8 @@
-# Code organization (0.4.5 development)
+# Code organization (0.4.6 development)
 
 ## Accepted package composition rule
 
-This rule governs new code and the ongoing 0.4.5 migration. Organize by domain
+This rule governs new code and the ongoing 0.4.6 implementation. Organize by domain
 responsibility. A domain owns its models, policy and operations; transports and
 optional providers consume those contracts. Do not introduce a global `models/`,
 `services/`, `utils/`, `helpers/` or `common/` collection.

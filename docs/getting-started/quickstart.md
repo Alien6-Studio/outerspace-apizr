@@ -6,10 +6,10 @@ description: Generate your first REST API or MCP server from Python, run it loca
 # Make your first MCP and REST calls
 
 Working with a training notebook? Follow the [Data Scientist quickstart](data-science.md)
-for the 0.4.5 candidate: inspect, record two Runs, compare and serve a prediction.
+for the 0.4.5 release: inspect, record two Runs, compare and serve a prediction.
 
 
-## Inspect a training script first (0.4.5 development)
+## Inspect a training script first
 
 If you have the development checkout installed, you can start with experiment
 evidence before building a service. This example requires only Apizr's core:
@@ -30,7 +30,7 @@ unobserved. Undefined names and an absent sklearn installation are fine because
 inspection does not execute the file. See the [experiment guide](user-guide/experiment-inspection.md)
 for data fingerprints, notebooks and all eight sections.
 
-## Run a trusted experiment (0.4.5 development)
+## Run a trusted experiment
 
 `inspect` never executes your code. **`run` executes trusted code in a fresh
 process with host filesystem, network and subprocess access. It is not a security

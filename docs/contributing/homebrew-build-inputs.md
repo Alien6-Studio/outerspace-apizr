@@ -306,7 +306,7 @@ relabeled as a 0.4.3 qualification.
 
 ## 0.4.5 dependency maintenance
 
-The development branch adopts Hatchling **1.32.4** and its new build-only
+The 0.4.5 development branch adopted Hatchling **1.32.4** and its new build-only
 TOML parser, tomlkit **0.15.1**. The reviewed closure now contains six universal
 wheels: Hatchling, packaging, pathspec, pluggy, tomlkit and trove-classifiers.
 The exact source notices, dependency metadata and wheel hashes are retained;
