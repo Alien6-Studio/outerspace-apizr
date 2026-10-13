@@ -265,3 +265,47 @@ def test_invalid_environment_selection_refuses_before_business_code(tmp_path):
             executed = True
     assert not executed
     assert list(records(tmp_path / DEFAULT_STORE)) == []
+
+
+def test_custom_task_equality_cannot_claim_parent_ownership(tmp_path):
+    class EqualTask(asyncio.Task):
+        def __eq__(self, other):
+            return True
+
+        __hash__ = object.__hash__
+
+    async def run():
+        with tracking.session(root=tmp_path) as parent:
+            loop = asyncio.get_running_loop()
+            loop.set_task_factory(
+                lambda loop, coroutine, **kwargs: EqualTask(
+                    coroutine, loop=loop, **kwargs
+                )
+            )
+            try:
+
+                async def child():
+                    assert tracking.TrackingSession.current() is None
+                    with pytest.raises(
+                        tracking.TrackingError, match="tracking_context_mismatch"
+                    ):
+                        parent.log_metric("foreign", 1)
+
+                await asyncio.create_task(child())
+            finally:
+                loop.set_task_factory(None)
+        assert parent.record.run.metrics == ()
+
+    asyncio.run(run())
+
+
+def test_explicit_finalize_reports_publication_failure(tmp_path, monkeypatch):
+    def fail(*args):
+        raise OSError("unavailable")
+
+    monkeypatch.setattr(implementation, "publish", fail)
+    with tracking.session(root=tmp_path) as capture:
+        with pytest.raises(OSError):
+            capture.finalize()
+        assert str(capture.publication_error) == "tracking_publication_failed"
+    assert capture.record is None

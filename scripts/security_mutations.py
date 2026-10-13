@@ -44,7 +44,7 @@ MUTATIONS = (
     Mutation(
         "tracking-cross-context-refusal",
         "src/apizr/tracking/session.py",
-        '        if self._context_owner != _owner():\n            raise TrackingError("tracking_context_mismatch")\n        if self._closed:',
+        '        if not _same_owner(self._context_owner, _owner()):\n            raise TrackingError("tracking_context_mismatch")\n        if self._closed:',
         "        if self._closed:",
         "tests/tracking/test_sessions.py::test_independent_thread_contexts_and_cross_thread_refusal",
     ),

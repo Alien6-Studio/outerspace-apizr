@@ -53,12 +53,23 @@ class TrackingError(ValueError):
     """Stable capture refusal, with no logged values or business exception text."""
 
 
-def _owner() -> tuple[int, asyncio.Task[object] | None]:
+Owner = tuple[threading.Thread, asyncio.Task[object] | None]
+
+
+def _owner() -> Owner:
     try:
         task = asyncio.current_task()
     except RuntimeError:
         task = None
-    return threading.get_ident(), task
+    return threading.current_thread(), task
+
+
+def _same_owner(expected: Owner | None, observed: Owner) -> bool:
+    return (
+        expected is not None
+        and expected[0] is observed[0]
+        and expected[1] is observed[1]
+    )
 
 
 def _suppressed() -> bool:
@@ -100,7 +111,7 @@ class TrackingSession:
         self.disabled = False
         self._entered = False
         self._closed = False
-        self._context_owner: tuple[int, asyncio.Task[object] | None] | None = None
+        self._context_owner: Owner | None = None
         self._token: Token[TrackingSession | None] | None = None
         self._parameters: dict[str, Parameter] = {}
         self._inputs: dict[str, InputArtifact] = {}
@@ -122,7 +133,7 @@ class TrackingSession:
         if (
             not self.disabled
             and active is not None
-            and active._context_owner == self._context_owner
+            and _same_owner(active._context_owner, self._context_owner)
         ):
             active._failure = "tracking_nested_session"
             raise TrackingError("tracking_nested_session")
@@ -181,7 +192,7 @@ class TrackingSession:
         error: BaseException | None,
         traceback: TracebackType | None,
     ) -> Literal[False]:
-        if self._context_owner != _owner():
+        if not _same_owner(self._context_owner, _owner()):
             raise TrackingError("tracking_context_mismatch")
         try:
             if not self._closed:
@@ -209,7 +220,7 @@ class TrackingSession:
     def _open(self) -> None:
         if not self._entered:
             raise TrackingError("tracking_session_not_started")
-        if self._context_owner != _owner():
+        if not _same_owner(self._context_owner, _owner()):
             raise TrackingError("tracking_context_mismatch")
         if self._closed:
             raise TrackingError("tracking_session_closed")
@@ -219,7 +230,9 @@ class TrackingSession:
         """The active session only when the caller owns its execution context."""
         active = _ACTIVE.get()
         return (
-            active if active is not None and active._context_owner == _owner() else None
+            active
+            if active is not None and _same_owner(active._context_owner, _owner())
+            else None
         )
 
     def _reserve(self, items: dict[str, T], name: str) -> None:
@@ -320,7 +333,7 @@ class TrackingSession:
 
     def finalize(self) -> RunRecordV2 | None:
         if self._closed and (self.record is not None or self.disabled):
-            if self._context_owner != _owner():
+            if not _same_owner(self._context_owner, _owner()):
                 raise TrackingError("tracking_context_mismatch")
             return self.record
         return self._finish("success")
@@ -365,7 +378,11 @@ class TrackingSession:
                 else (),
             }
         )
-        self.record = publish(self.store, self._plan, run)
+        try:
+            self.record = publish(self.store, self._plan, run)
+        except BaseException:
+            self.publication_error = TrackingError("tracking_publication_failed")
+            raise
         return self.record
 
 

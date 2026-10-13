@@ -63,10 +63,12 @@ stdout, stderr or notebook display output is collected.
 from pathlib import Path
 from apizr import tracking
 
+
 @tracking.experiment(parameters=["learning_rate"], root=Path.cwd())
 def fit(learning_rate: float, secret: str = "not-recorded") -> float:
     tracking.log_metric("score", 0.75)
     return 0.75
+
 
 assert fit(0.1) == 0.75
 ```
