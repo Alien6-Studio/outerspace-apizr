@@ -12,10 +12,15 @@ from tempfile import TemporaryDirectory
 
 import apizr.experiments as experiments
 from apizr.experiments import (
+    CaptureIdentity,
+    CaptureMode,
     ExecutionIntent,
     ExperimentPlan,
+    ExperimentPlanV2,
     ExperimentRun,
+    ExperimentRunV2,
     OutputDeclaration,
+    SourceEvidence,
     SourceIdentity,
     capture_metric,
     capture_runtime_environment,
@@ -29,6 +34,8 @@ from apizr.experiments import (
     parse_input_declaration,
     plan_bytes,
     plan_digest,
+    read_plan,
+    read_run,
     run_bytes,
     run_digest,
     validate_run_binding,
@@ -270,6 +277,37 @@ def results_producer_proof(fixtures: Path) -> dict[str, object]:
         }
 
 
+def capture_contract_proof() -> dict[str, object]:
+    plan = ExperimentPlanV2(
+        subject=SourceEvidence(),
+        execution=ExecutionIntent(kind="in_process"),
+        capture=CaptureIdentity(
+            mode=CaptureMode.SDK_SESSION,
+            producer="apizr.tracking",
+            producer_version="1",
+        ),
+    )
+    run = ExperimentRunV2(
+        plan_digest=plan_digest(plan),
+        subject=plan.subject,
+        capture=plan.capture,
+        execution_id="a" * 32,
+        status="success",
+    )
+    validate_run_binding(run, plan)
+    assert read_plan(plan_bytes(plan)) == plan
+    assert read_run(run_bytes(run)) == run
+    assert run_digest(run) != run.execution_id
+    assert run.subject.identity is None
+    return {
+        "status": "passed",
+        "plan": plan_digest(plan),
+        "run": run_digest(run),
+        "unknown_source_not_fabricated": True,
+        "execution_id_is_not_evidence_digest": True,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--fixtures", required=True, type=Path)
@@ -327,6 +365,7 @@ def main() -> None:
                 "optional_sdks_absent": True,
                 "construction_binding_roundtrip": "passed",
                 "goldens": goldens,
+                "in_process_v2": capture_contract_proof(),
                 "input_producer": input_producer_proof(),
                 "randomness_environment_producer": randomness_environment_proof(),
                 "results_producer": results_producer_proof(args.fixtures),

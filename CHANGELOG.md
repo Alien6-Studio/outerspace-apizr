@@ -2,6 +2,11 @@
 
 ## 0.4.6 — development, not published
 
+- Add explicit v2 Plan/Run evidence for in-process captures, selected call
+  parameters, function bindings, kernel cells and unknown source observations.
+  Preserve v1 schema exports, canonical bytes and digests, with versioned readers
+  and frozen 0.4.5 store qualification. In-flight execution ids remain distinct
+  from final evidence digests (#302).
 - Resolve modern CLI commands through one lazy dispatch table, retaining the
   completion/onboarding special cases, existing help bytes and captured grammar.
   Importing the CLI and resolving its adapters does not load optional SDKs (#293).

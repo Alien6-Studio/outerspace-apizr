@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from apizr.experiments import ExperimentPlan, ExperimentRun
+from apizr.experiments.capture_model import ExperimentPlanV2, ExperimentRunV2
 from apizr.experiments.comparison import ExperimentDiff
 from apizr.experiments.exposure_model import ExperimentExposureBinding
 from apizr.experiments.history import HistoryList, RunSummary
@@ -24,6 +25,11 @@ def main() -> None:
         ("exposure", ExperimentExposureBinding),
     ):
         (root / f"apizr-experiment-{name}-v1.schema.json").write_text(
+            json.dumps(model.model_json_schema(), indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+    for name, model in (("plan", ExperimentPlanV2), ("run", ExperimentRunV2)):
+        (root / f"apizr-experiment-{name}-v2.schema.json").write_text(
             json.dumps(model.model_json_schema(), indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8",
         )

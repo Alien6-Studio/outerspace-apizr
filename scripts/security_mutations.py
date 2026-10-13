@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "experiment-v2-capture-binding",
+        "src/apizr/experiments/serialization.py",
+        '            raise ValueError("experiment_capture_mismatch")',
+        "            pass",
+        "tests/experiments/test_capture_contract.py::test_binding_refuses_changed_capture_or_subject",
+    ),
+    Mutation(
         "application-import-exact-provider",
         "src/apizr/repository_readiness/eligibility.py",
         "if declaration.relative_level or module not in external_modules:",

@@ -35,7 +35,7 @@ The v1 surface is deliberately limited to:
   publishes the canonical Plan/Run pair.
 
 The public names and responsibilities are fixed here. Argument fields and
-evidence identity follow the versioned Plan/Run contracts; implementation
+evidence identity follow the [versioned in-process Plan/Run contracts](experiment-evidence-v2.md); implementation
 helpers, provider registries and internal context state are private. Active
 sessions are context-local, never a process-global mutable "current run".
 
