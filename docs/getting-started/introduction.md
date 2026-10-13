@@ -10,6 +10,9 @@ description: Choose Python functions, create a service and call them through RES
 
 <span id="introduction"></span>
 
+Prefer a guided learning path? [Apizr Academy](../academy/index.md) orders the
+existing tutorials and explains capabilities, readiness, selection and execution.
+
 ## Start with an experiment
 
 For a training script or notebook, begin by inspecting the evidence. With the

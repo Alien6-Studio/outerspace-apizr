@@ -50,6 +50,7 @@ Docker or AI account is needed for its REST and Python MCP examples.
         </a>
       </div>
       <p class="apizr-demo-section__language">English narration · English captions</p>
+      <p><a href="academy/">Continue with Apizr Academy</a>: follow the tutorials in order and read the written lessons.</p>
       <details class="apizr-demo-transcript">
         <summary>Read the transcript</summary>
         <div class="apizr-demo-transcript__body">
@@ -120,7 +121,7 @@ Find Apizr's analysis plugin on
 It helps an assistant explore your project. To let an assistant call your own
 functions, follow the [MCP guide](getting-started/user-guide/mcp.md).
 
-Watch the tutorials throughout these guides or visit
+Follow [Apizr Academy](academy/index.md), watch the tutorials throughout these guides or visit
 [Alien6 Studio on YouTube](https://www.youtube.com/@Alien6Studio).
 
 Want to improve Apizr? The [contributor guide](about/CONTRIBUTING.md) covers

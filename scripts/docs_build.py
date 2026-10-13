@@ -7,6 +7,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CRITICAL = {
+    "academy/index.html": "Apizr Academy",
+    "academy/capabilities/index.html": "What is a capability?",
+    "academy/readiness/index.html": "What does Readiness decide?",
+    "academy/exposure/index.html": "What does Exposure select?",
+    "academy/execution/index.html": "Where does execution happen?",
+    "academy/interfaces/index.html": "What do REST and MCP expose?",
     "getting-started/install/index.html": "Install Apizr",
     "getting-started/quickstart-0.4/index.html": "The walkthrough is now at",
     "contributing/publish-0.4/index.html": "Release attachment inventory",
@@ -38,6 +44,11 @@ ASSETS = (
     "assets/images/logo.png",
     "assets/images/illustration.png",
     "assets/videos/paris-route.jpg",
+    "assets/videos/tutorial-install.jpg",
+    "assets/videos/tutorial-inspect.jpg",
+    "assets/videos/tutorial-rest.jpg",
+    "assets/videos/tutorial-mcp.jpg",
+    "assets/videos/tutorial-oci.jpg",
     "assets/stylesheets/branding.css",
     "assets/javascripts/video.js",
 )

@@ -35,9 +35,8 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-  font:
-    text: Roboto
-    code: Roboto Mono
+  # System fonts avoid third-party requests before consent or video playback.
+  font: false
   favicon: assets/images/favicon.png
   features:
     - content.code.copy
@@ -104,6 +103,13 @@ nav:
       - Quickstart: getting-started/quickstart.md
       - Data Scientist quickstart: getting-started/data-science.md
       - The full journey: getting-started/introduction.md
+      - Academy:
+          - Learning paths: academy/index.md
+          - What is a capability?: academy/capabilities.md
+          - What does Readiness decide?: academy/readiness.md
+          - What does Exposure select?: academy/exposure.md
+          - Where does execution happen?: academy/execution.md
+          - What do REST and MCP expose?: academy/interfaces.md
   - Guides:
       - Inspect an experiment: getting-started/user-guide/experiment-inspection.md
       - Run and inspect local history: getting-started/user-guide/experiment-runs.md
