@@ -127,6 +127,17 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
             python,
             "-I",
             "-B",
+            ROOT / "scripts/tracking_proof.py",
+            "--output",
+            output / "tracking.json",
+            cwd=root,
+            env=env,
+        )
+        results["tracking"] = "passed"
+        run(
+            python,
+            "-I",
+            "-B",
             ROOT / "scripts/experiment_inspection_proof.py",
             "--fixtures",
             ROOT / "tests/fixtures/experiments/inspection",

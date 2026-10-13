@@ -28,6 +28,27 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "tracking-preserve-business-exception",
+        "src/apizr/tracking/session.py",
+        "        return False",
+        "        return True",
+        "tests/tracking/test_sessions.py::test_business_exception_identity_is_preserved",
+    ),
+    Mutation(
+        "tracking-duplicate-key-refusal",
+        "src/apizr/tracking/session.py",
+        "        if name in items:",
+        "        if False:",
+        "tests/tracking/test_sessions.py::test_duplicate_names_are_refused_before_repeated_file_reads",
+    ),
+    Mutation(
+        "tracking-cross-context-refusal",
+        "src/apizr/tracking/session.py",
+        '        if self._context_owner != _owner():\n            raise TrackingError("tracking_context_mismatch")\n        if self._closed:',
+        "        if self._closed:",
+        "tests/tracking/test_sessions.py::test_independent_thread_contexts_and_cross_thread_refusal",
+    ),
+    Mutation(
         "experiment-v2-capture-binding",
         "src/apizr/experiments/serialization.py",
         '            raise ValueError("experiment_capture_mismatch")',
@@ -177,7 +198,7 @@ MUTATIONS = (
     Mutation(
         "diff-record-binding",
         "src/apizr/experiments/comparison.py",
-        "a = RunRecord.model_validate(a)",
+        "a = validate_record(a)",
         "a = a  # mutation: skip caller-provided record validation",
         "tests/experiments/test_comparison.py::test_revalidates_records_and_nested_binding",
     ),
@@ -205,7 +226,7 @@ MUTATIONS = (
     Mutation(
         "experiment-store-binding-bypass",
         "src/apizr/experiments/store.py",
-        "validate_run_binding(self.run, self.plan)",
+        "validate_run_binding(run, plan)",
         "pass  # mutation: accept a Run bound to a different source",
         "tests/experiments/test_store_history.py::test_corruption_not_hidden_by_filters_or_limits[wrong_binding]",
     ),

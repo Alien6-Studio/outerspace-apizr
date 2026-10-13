@@ -286,6 +286,7 @@ def _history(args: argparse.Namespace) -> int:
         if args.command == "list":
             listing = list_runs(
                 path,
+                include_values=True,
                 query=HistoryQuery(
                     status=args.status,
                     source=args.source,

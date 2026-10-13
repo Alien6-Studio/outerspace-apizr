@@ -32,7 +32,8 @@ The v1 surface is deliberately limited to:
 - `log_parameter(...)`, `log_input(...)`, `log_metric(...)` and
   `log_artifact(...)`: explicit bounded evidence calls;
 - `TrackingSession.finalize()`: the terminal operation that validates and
-  publishes the canonical Plan/Run pair.
+  publishes the canonical Plan/Run pair;
+- `TrackingSession.current()`: the current thread/task's capture, or `None`.
 
 The public names and responsibilities are fixed here. Argument fields and
 evidence identity follow the [versioned in-process Plan/Run contracts](experiment-evidence-v2.md); implementation
@@ -56,8 +57,8 @@ the same lifecycle for a function call. Normal context exit finalizes the
 capture if it is still open; an explicit `finalize()` returns its canonical
 record and is the terminal operation for that capture.
 
-The precise duplicate-key, nested-session, size/count and exception-finalization
-rules are qualified by the session implementation contract. A workload exception
+The [qualified SDK reference](../reference/tracking-sdk.md) defines duplicate-key,
+nested-session, size/count and exception-finalization rules. A workload exception
 must remain visible to its caller; a failed or incomplete capture is never
 reported as a successful Run.
 

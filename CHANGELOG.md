@@ -2,6 +2,15 @@
 
 ## 0.4.6 — development, not published
 
+- Add context-local in-process tracking sessions and explicit bounded parameter,
+  input, metric and artifact logging. Preserve business exceptions, record failed
+  and cancelled captures, and publish through the canonical immutable store (#303).
+- Add an inert-on-import experiment decorator with explicit argument selection,
+  preserved ordinary/async function behavior and unknown scientific object values
+  without pickling (#304).
+- Unify CLI and SDK history, validated record exports and producer-aware pure
+  comparison, with explicit v2 derived views and unchanged stored v1 evidence.
+  The outer CLI runner owns publication for instrumented workloads (#306).
 - Add explicit v2 Plan/Run evidence for in-process captures, selected call
   parameters, function bindings, kernel cells and unknown source observations.
   Preserve v1 schema exports, canonical bytes and digests, with versioned readers

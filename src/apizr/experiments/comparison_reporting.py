@@ -5,9 +5,10 @@ from collections.abc import Iterable
 
 from apizr.experiments.comparison import (
     ChangeState,
+    Diff,
     DifferenceCounts,
     EnvironmentChange,
-    ExperimentDiff,
+    ExperimentDiffV2,
     diff_bytes,
 )
 from apizr.experiments.model import ExperimentValue
@@ -62,7 +63,7 @@ def _environment(label: str, value: EnvironmentChange) -> Iterable[str]:
     )
 
 
-def _sections(value: ExperimentDiff) -> Iterable[str]:
+def _sections(value: Diff) -> Iterable[str]:
     yield f"Material evidence differences ({_counts(value.material_counts)})\n"
     if not (
         value.material_counts.changed
@@ -80,8 +81,21 @@ def _sections(value: ExperimentDiff) -> Iterable[str]:
         "capability_id",
     ):
         state = getattr(value.source, name)
-        a, b = getattr(value.source.a, name), getattr(value.source.b, name)
+        a, b = getattr(value.source.a, name, None), getattr(value.source.b, name, None)
         yield f"  {name}: A {a if a is not None else 'unknown'}; B {b if b is not None else 'unknown'} — {state.value.upper()}\n"
+    if isinstance(value, ExperimentDiffV2):
+        yield f"Capture — {value.capture.mode_state.value.upper()}\n  A {value.capture.mode_a.value}; B {value.capture.mode_b.value}\n"
+        yield _pair(
+            "producer/function/cell evidence",
+            value.capture.identity_state,
+            value.capture.a,
+            value.capture.b,
+        )
+        yield "Selected call parameters\n"
+        yield from _limit(
+            _pair(item.name, item.state, item.a, item.b)
+            for item in value.call_parameters
+        )
     yield "Data\n"
     yield from _limit(
         _pair(
@@ -149,7 +163,7 @@ def _sections(value: ExperimentDiff) -> Iterable[str]:
     )
 
 
-def diff_text(value: ExperimentDiff) -> str:
+def diff_text(value: Diff) -> str:
     """Full input IDs and disclaimer survive all presentation limits."""
     diff_bytes(value)
     result = (

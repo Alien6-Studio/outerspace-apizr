@@ -58,7 +58,7 @@ def expose(args: argparse.Namespace) -> int:
     from apizr.experiments.exposure import expose_run
     from apizr.experiments.exposure_model import ExperimentExposureRefused
     from apizr.experiments.history import show_run
-    from apizr.experiments.store import DEFAULT_STORE, StoreError
+    from apizr.experiments.store import DEFAULT_STORE, RunRecord, StoreError
     from apizr.exposure import ExposureRefused
     from apizr.repository_interfaces import BundleRefused
     from apizr.repository_interfaces.output import write_bundle
@@ -71,6 +71,8 @@ def expose(args: argparse.Namespace) -> int:
         if len(args.capability) != 1 or len(args.interface) != 1:
             raise ExperimentExposureRefused("experiment_selection_requires_one")
         record = show_run(args.store or args.root / DEFAULT_STORE, args.run_id)
+        if not isinstance(record, RunRecord):
+            raise ExperimentExposureRefused("run_capture_exposure_unsupported")
         result = expose_run(
             record,
             args.root,

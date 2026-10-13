@@ -12,12 +12,18 @@ from apizr.experiments import (
     CaptureIdentity,
     CaptureMode,
     CellIdentity,
+    EnvironmentEvidence,
+    EnvironmentValue,
     EvidenceOrigin,
     ExecutionIntent,
     ExperimentPlanV2,
     ExperimentRunV2,
     FunctionBinding,
+    InputArtifact,
+    RandomnessControl,
+    RunDiagnostic,
     SourceEvidence,
+    SourceIdentity,
     plan_bytes,
     plan_digest,
     read_plan,
@@ -178,3 +184,113 @@ def test_published_v1_store_history_show_and_diff_preserve_every_byte():
     assert difference.metrics[0].delta == 0.0
     assert json.loads(diff_bytes(difference))["run_a_digest"] == a.run_digest
     assert {name: (store / name).read_bytes() for name in before} == before
+
+
+@pytest.mark.parametrize(
+    "mode,parameters,error",
+    [
+        (CaptureMode.DECORATED_CALL, (), "decorated_call_function_unknown"),
+        (CaptureMode.SDK_SESSION, ("x",), "call_parameters_function_unknown"),
+        (CaptureMode.JUPYTER_CELL, (), "jupyter_cell_unknown"),
+    ],
+)
+def test_required_capture_bindings_cannot_be_inferred(mode, parameters, error):
+    with pytest.raises(ValueError, match="experiment_" + error):
+        CaptureIdentity(
+            mode=mode,
+            producer="test",
+            producer_version="1",
+            selected_parameters=parameters,
+        )
+
+
+def test_intended_and_observed_v2_origins_remain_distinct():
+    plan, run = pair()
+    environment = EnvironmentEvidence(
+        python_version=EnvironmentValue(value="3.12.13", origin=EvidenceOrigin.RUNTIME)
+    )
+    observed = InputArtifact(
+        name="data",
+        origin=EvidenceOrigin.RUNTIME,
+        digest="a" * 64,
+        content_origin=EvidenceOrigin.RUNTIME,
+    )
+    with pytest.raises(
+        ValueError, match="experiment_plan_contains_runtime_observation"
+    ):
+        plan_bytes(plan.model_copy(update={"inputs": (observed,)}))
+    with pytest.raises(
+        ValueError, match="experiment_plan_contains_runtime_observation"
+    ):
+        plan_bytes(plan.model_copy(update={"environment": environment}))
+    declared = observed.model_copy(
+        update={
+            "origin": EvidenceOrigin.DECLARED,
+            "content_origin": EvidenceOrigin.STATIC,
+        }
+    )
+    with pytest.raises(ValueError, match="experiment_run_contains_unobserved_evidence"):
+        run_bytes(
+            run.model_copy(
+                update={"observed_inputs": (declared,), "environment": environment}
+            )
+        )
+    with pytest.raises(ValueError, match="experiment_success_has_failure_diagnostics"):
+        run_bytes(
+            run.model_copy(
+                update={
+                    "diagnostics": (
+                        RunDiagnostic(code="failed", origin=EvidenceOrigin.RUNTIME),
+                    )
+                }
+            )
+        )
+    known_plan = plan.model_copy(
+        update={
+            "inputs": (declared,),
+            "randomness": (
+                RandomnessControl(
+                    name="seed",
+                    provider="numpy",
+                    value=42,
+                    origin=EvidenceOrigin.DECLARED,
+                ),
+            ),
+        }
+    )
+    assert read_plan(plan_bytes(known_plan)).inputs[0] == declared
+    known_run = run.model_copy(
+        update={
+            "environment": environment,
+            "randomness": (
+                RandomnessControl(
+                    name="seed",
+                    provider="numpy",
+                    value=42,
+                    origin=EvidenceOrigin.RUNTIME,
+                ),
+            ),
+        }
+    )
+    assert read_run(run_bytes(known_run)).environment == environment
+
+
+def test_v2_binding_refuses_source_substitution_and_cross_version_pair():
+    plan, run = pair()
+    changed = run.model_copy(
+        update={
+            "subject": SourceEvidence(
+                identity=SourceIdentity(
+                    kind="python", reference="other.py", digest="a" * 64
+                ),
+                origin=EvidenceOrigin.RUNTIME,
+            )
+        }
+    )
+    with pytest.raises(ValueError, match="experiment_source_mismatch"):
+        validate_run_binding(changed, plan)
+    v1 = read_plan((ROOT / "tests/fixtures/experiments/v1/plan.json").read_bytes())
+    with pytest.raises(ValueError, match="experiment_schema_binding_mismatch"):
+        validate_run_binding(
+            run.model_copy(update={"plan_digest": plan_digest(v1)}), v1
+        )

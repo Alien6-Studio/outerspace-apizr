@@ -3,6 +3,7 @@
 import base64
 import io
 import json
+import os
 import sys
 from hashlib import sha256
 from types import SimpleNamespace
@@ -38,6 +39,21 @@ def request(source=b"pass", **kw):
         executable=base64.b64encode(source).decode(),
         **kw,
     )
+
+
+def test_worker_restores_parent_publication_marker_after_execution(
+    tmp_path, monkeypatch
+):
+    source = b"assert __import__('os').environ['APIZR_EXPERIMENT_RUNNER'] == '1'\n"
+    (tmp_path / "train.py").write_bytes(source)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("APIZR_EXPERIMENT_RUNNER", "previous")
+    monkeypatch.setitem(sys.modules, "__main__", sys.modules["__main__"])
+    monkeypatch.setattr(sys, "argv", list(sys.argv))
+    monkeypatch.setattr(sys, "path", list(sys.path))
+    result = worker.execute(request(source), lambda value: None)
+    assert result.status == "success"
+    assert os.environ["APIZR_EXPERIMENT_RUNNER"] == "previous"
 
 
 @pytest.mark.parametrize(

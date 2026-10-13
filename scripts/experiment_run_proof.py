@@ -10,7 +10,7 @@ from hashlib import sha256
 from pathlib import Path
 
 import apizr.experiments.runner as implementation
-from apizr.experiments.history import HistoryList, RunSummary
+from apizr.experiments.history import RunSummary, read_history
 from apizr.experiments.serialization import plan_bytes, run_bytes, validate_run_binding
 from apizr.experiments.store import RunRecord
 
@@ -125,8 +125,9 @@ Path("model.bin").write_bytes(b"MODEL")
         assert (store / "runs" / f"{record.run_digest}.json").read_bytes() == run_bytes(
             record.run
         )
-        listing = HistoryList.model_validate_json(command("list", "--format", "json"))
-        assert listing.total == 1 and listing.runs[0] == brief
+        listing = read_history(command("list", "--format", "json"))
+        assert listing.total == 1 and listing.runs[0].run_digest == brief.run_digest
+        assert listing.runs[0].status == brief.status
         assert b"SUCCESS" in command("show", brief.run_digest[:12])
         failure = root / "failure.py"
         failure.write_text('raise RuntimeError("exception_secret")')

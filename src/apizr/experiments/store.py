@@ -8,16 +8,24 @@ from collections.abc import Generator, Iterator
 from contextlib import contextmanager
 from hashlib import sha256
 from pathlib import Path
-from typing import Literal, Self
+from typing import Annotated, Literal, Self, overload
 
-from pydantic import model_validator
+from pydantic import Field, TypeAdapter, model_validator
 
 from apizr.contracts.distribution import Digest
-from apizr.experiments.model import ExperimentPlan, ExperimentRun, ExperimentValue
+from apizr.experiments.capture_model import ExperimentPlanV2, ExperimentRunV2, Plan, Run
+from apizr.experiments.model import (
+    ExperimentPlan,
+    ExperimentRun,
+    ExperimentValue,
+    SourceIdentity,
+)
 from apizr.experiments.serialization import (
     MAX_ARTIFACT_BYTES,
     plan_bytes,
     plan_digest,
+    read_plan,
+    read_run,
     run_bytes,
     run_digest,
     validate_run_binding,
@@ -35,6 +43,14 @@ class StoreError(ValueError):
     """Stable refusal without filenames, source text or exception details."""
 
 
+def _validate_record_binding(
+    plan: Plan, run: Run, expected_plan: str, expected_run: str
+) -> None:
+    validate_run_binding(run, plan)
+    if expected_run != run_digest(run) or expected_plan != plan_digest(plan):
+        raise ValueError("store_digest_mismatch")
+
+
 class RunRecord(ExperimentValue):
     schema_version: Literal["apizr.experiment-record/v1"] = "apizr.experiment-record/v1"
     run_digest: Digest
@@ -44,12 +60,58 @@ class RunRecord(ExperimentValue):
 
     @model_validator(mode="after")
     def bound(self) -> Self:
-        validate_run_binding(self.run, self.plan)
-        if self.run_digest != run_digest(self.run) or self.plan_digest != plan_digest(
-            self.plan
-        ):
-            raise ValueError("store_digest_mismatch")
+        _validate_record_binding(self.plan, self.run, self.plan_digest, self.run_digest)
         return self
+
+
+class RunRecordV2(ExperimentValue):
+    schema_version: Literal["apizr.experiment-record/v2"] = "apizr.experiment-record/v2"
+    run_digest: Digest
+    plan_digest: Digest
+    plan: ExperimentPlanV2
+    run: ExperimentRunV2
+
+    @model_validator(mode="after")
+    def bound(self) -> Self:
+        _validate_record_binding(self.plan, self.run, self.plan_digest, self.run_digest)
+        return self
+
+
+Record = RunRecord | RunRecordV2
+_RECORD: TypeAdapter[Record] = TypeAdapter(
+    Annotated[Record, Field(discriminator="schema_version")]
+)
+
+
+def validate_record(record: Record) -> Record:
+    return _RECORD.validate_python(record)
+
+
+def record_source(record: Record) -> SourceIdentity | None:
+    """Return only retained exact source evidence; never synthesize an identity."""
+    return (
+        record.run.subject.identity
+        if isinstance(record, RunRecordV2)
+        else record.run.subject
+    )
+
+
+def _record(plan: Plan, run: Run) -> Record:
+    if isinstance(plan, ExperimentPlanV2) and isinstance(run, ExperimentRunV2):
+        return RunRecordV2(
+            plan=plan,
+            run=run,
+            plan_digest=plan_digest(plan),
+            run_digest=run_digest(run),
+        )
+    if isinstance(plan, ExperimentPlan) and isinstance(run, ExperimentRun):
+        return RunRecord(
+            plan=plan,
+            run=run,
+            plan_digest=plan_digest(plan),
+            run_digest=run_digest(run),
+        )
+    raise StoreError("store_schema_binding_mismatch")
 
 
 @contextmanager
@@ -189,7 +251,7 @@ def _initialize(root: int) -> None:
         fcntl.flock(root, fcntl.LOCK_UN)
 
 
-def records(path: Path, *, create: bool = False) -> Iterator[RunRecord]:
+def records(path: Path, *, create: bool = False) -> Iterator[Record]:
     """Validate all plans/runs, yielding one record at a time within fixed bounds.
 
     Missing store means empty history. Missing subdirectories or canonical Plans
@@ -207,7 +269,7 @@ def records(path: Path, *, create: bool = False) -> Iterator[RunRecord]:
                 _child(root, "runs", create=False) as runs,
             ):
                 budget = MAX_READ_BYTES
-                cache: dict[str, ExperimentPlan] = {}
+                cache: dict[str, Plan] = {}
 
                 def read(directory: int, name: str) -> bytes:
                     nonlocal budget
@@ -219,12 +281,12 @@ def records(path: Path, *, create: bool = False) -> Iterator[RunRecord]:
                         raise StoreError("store_corrupt")
                     return data
 
-                def load_plan(name: str) -> ExperimentPlan:
+                def load_plan(name: str) -> Plan:
                     if name not in cache:
                         if len(cache) >= MAX_ENTRIES:
                             raise StoreError("store_limit")
                         raw = read(plans, name)
-                        plan = ExperimentPlan.model_validate_json(raw)
+                        plan = read_plan(raw)
                         if plan_bytes(plan) != raw:
                             raise StoreError("store_corrupt")
                         cache[name] = plan
@@ -234,16 +296,11 @@ def records(path: Path, *, create: bool = False) -> Iterator[RunRecord]:
                     load_plan(name)
                 for name in _names(runs):
                     raw = read(runs, name)
-                    run = ExperimentRun.model_validate_json(raw)
+                    run = read_run(raw)
                     if run_bytes(run) != raw:
                         raise StoreError("store_corrupt")
                     plan = load_plan(run.plan_digest + ".json")
-                    yield RunRecord(
-                        run_digest=name[:-5],
-                        plan_digest=run.plan_digest,
-                        plan=plan,
-                        run=run,
-                    )
+                    yield _record(plan, run)
     except FileNotFoundError:
         # Only an absent selected root is an empty store. Never hide a missing
         # referenced plan or subdirectory, including dangling symlink roots.
@@ -261,16 +318,20 @@ def prepare_store(path: Path) -> None:
         pass
 
 
-def publish(path: Path, plan: ExperimentPlan, run: ExperimentRun) -> RunRecord:
+@overload
+def publish(path: Path, plan: ExperimentPlan, run: ExperimentRun) -> RunRecord: ...
+
+
+@overload
+def publish(
+    path: Path, plan: ExperimentPlanV2, run: ExperimentRunV2
+) -> RunRecordV2: ...
+
+
+def publish(path: Path, plan: Plan, run: Run) -> Record:
     """Validate binding before publication, durably publish Plan before Run, never replace."""
     try:
-        validate_run_binding(run, plan)
-        record = RunRecord(
-            plan=plan,
-            run=run,
-            plan_digest=plan_digest(plan),
-            run_digest=run_digest(run),
-        )
+        record = _record(plan, run)
         planned, observed = plan_bytes(plan), run_bytes(run)
         prepare_store(path)
         with _root(path, create=False) as root:
