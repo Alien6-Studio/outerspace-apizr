@@ -5,9 +5,9 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 ## Authorized 0.4.5 finalization
 
-The maintainer has authorized **0.4.5 only**, conditional on every mandatory
-security/release gate. Development work stays on `0.4.5`; integration uses the
-normal protected PR into `master`. The exact resulting master commit must have
+The maintainer authorized **0.4.5 only**, conditional on every mandatory
+security/release gate. At that time, development work stayed on `0.4.5`; integration
+used the normal protected PR into `master`. The exact resulting master commit must have
 successful push CI, Security and Documentation. The verifier requires all six
 release targets, distributions, release-delivery, provenance and release-assets,
 plus the actual Node audit step in the required Security dependencies job.
