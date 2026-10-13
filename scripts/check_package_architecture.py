@@ -160,6 +160,27 @@ def check(source: Path, manifest: Path) -> list[str]:
                         errors.append(
                             f"{path}: composition initializer defines {node.name}"
                         )
+        internal_policy = entry.get("allowed_internal_imports")
+        external_policy = entry.get("allowed_external_imports")
+        if internal_policy is not None and external_policy is not None:
+            own_prefix = "apizr." + directory.replace("/", ".")
+            for imported in sorted(names):
+                if within(imported, own_prefix):
+                    continue
+                if imported == "apizr" or imported.startswith("apizr."):
+                    if not any(within(imported, prefix) for prefix in internal_policy):
+                        errors.append(
+                            f"{path}: domain dependency not declared: {imported}"
+                        )
+                else:
+                    root = imported.split(".", 1)[0]
+                    if (
+                        root not in sys.stdlib_module_names
+                        and root not in external_policy
+                    ):
+                        errors.append(
+                            f"{path}: external dependency not declared: {imported}"
+                        )
         for imported in sorted(names):
             if path.startswith("experiments/"):
                 primitives = (

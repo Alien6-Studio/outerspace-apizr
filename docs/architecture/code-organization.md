@@ -86,6 +86,9 @@ src/apizr/
 ├── repository_readiness/     repository evidence assessment
 ├── repository_views/         pure bounded projections of complete evidence
 ├── experiments/              intended experiment controls and observed-run evidence
+├── tracking/                 in-process SDK; consumes canonical experiment evidence
+├── scientific_providers/     bounded recognition contracts; no workload imports
+├── editor_contracts/         versioned editor-facing engine contracts
 ├── exposure/                 explicit selection and required-evidence planning
 ├── interfaces/               shared interface contracts and runtime validation
 ├── repository_interfaces/    retained multi-source bundles
@@ -116,6 +119,24 @@ snapshot, import hook or new runtime composition mechanism is introduced.
 CLI commands parse input, call operations and present results. Core operations
 and plugin management must not import CLI adapters. `workspace/compiler.py` remains usable
 without importing CLI commands or optional REST/MCP/notebook dependencies.
+
+The `tracking` SDK consumes `experiments` contracts and the existing Pydantic
+runtime; it never imports CLI adapters, plugin lifecycle code, optional SDKs or
+scientific libraries. `experiments` does not depend on `tracking`. The
+`scientific_providers` domain consumes bounded capability and experiment values;
+recognizers return candidates for core validation and never publish records.
+`editor_contracts` consumes experiment and provider contracts, while clients and
+transports adapt to it rather than defining alternate evidence formats. These
+allowlisted edges are enforced by `scripts/check_package_architecture.py`.
+
+Static recognition providers and in-process scientific adapters are distinct
+contracts. Static recognition stays bounded and does not import or execute
+scientific libraries. An adapter that needs those libraries is an out-of-tree
+extension using the existing `apizr.extension/v1` protocol; it reports through
+the SDK's bounded calls and cannot write to the evidence store. No second plugin
+loader is introduced. Existing recognizer implementations remain in
+`experiments` until the provider extraction is qualified; new recognition work
+belongs to `scientific_providers`.
 
 Bounded file access (`workspace.files`) has no Apizr domain dependencies. Workspace
 configuration and plugin management have no optional SDK or plugin-distribution
@@ -357,6 +378,8 @@ The remaining root debt and historical pipelines are recorded explicitly. Runtim
 source embedding in `governed*/embedding.py` and generator resource reads must
 keep using real implementation sources, never compatibility facade source text.
 Keep the three execution contract identities separate during any later migration.
+They remain `apizr.execution/v1`, `apizr.runtime/v1` and
+`apizr.local-process/v1`; experiment tracking does not redefine any of them.
 
 Coverage gates and security mutation targets follow the moved implementations.
 Their existing thresholds and mutations are preserved. Continue to run

@@ -55,6 +55,26 @@ def test_repository_satisfies_declared_composition():
         ("experiments/model.py", "import wandb\n", "non-primitive"),
         ("experiments/model.py", "import dvc\n", "non-primitive"),
         ("experiments/model.py", "import external_governance_sdk\n", "non-primitive"),
+        (
+            "tracking/session.py",
+            "from apizr.cli import main\n",
+            "domain dependency not declared",
+        ),
+        (
+            "tracking/session.py",
+            "import apizr_mcp\n",
+            "external dependency not declared",
+        ),
+        (
+            "tracking/session.py",
+            "import sklearn\n",
+            "external dependency not declared",
+        ),
+        (
+            "tracking/session.py",
+            "import fastapi\n",
+            "external dependency not declared",
+        ),
         ("another_service.py", "def run(): pass\n", "composition namespace"),
         (
             "new_domain/__init__.py",
@@ -146,6 +166,21 @@ def test_a_compatibility_docstring_cannot_bypass_dependencies(tmp_path):
         "domain depends on CLI" in error
         for error in check(source, ROOT / "architecture/packages.toml")
     )
+
+
+def test_tracking_allows_core_contracts_and_pydantic_only(tmp_path):
+    source = tmp_path / "apizr"
+    shutil.copytree(
+        ROOT / "src/apizr", source, ignore=shutil.ignore_patterns("__pycache__")
+    )
+    tracking = source / "tracking/session.py"
+    tracking.parent.mkdir(exist_ok=True)
+    tracking.write_text(
+        "from contextvars import ContextVar\n"
+        "from pydantic import BaseModel\n"
+        "from apizr.experiments import ExperimentPlan\n"
+    )
+    assert check(source, ROOT / "architecture/packages.toml") == []
 
 
 def test_allowed_plugin_dependencies_cannot_introduce_a_cycle(tmp_path):

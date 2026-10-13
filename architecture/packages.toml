@@ -44,6 +44,24 @@ responsibility = "Explicit governed execution of trusted code in fresh local pro
 kind = "domain"
 responsibility = "Content-addressed experiment contracts, bounded evidence producers, static inspection, explicit trusted local workload execution, immutable local history, deterministic evidence comparison and explicit Run binding to repository exposure; no remote tracking, registry or causal inference."
 
+[packages."tracking"]
+kind = "domain"
+responsibility = "In-process experiment-tracking SDK sessions and explicit logging, publishing canonical experiment evidence through experiments; no execution isolation, CLI, plugin management or scientific-library dependency."
+allowed_internal_imports = ["apizr.experiments"]
+allowed_external_imports = ["pydantic"]
+
+[packages."scientific_providers"]
+kind = "domain"
+responsibility = "Contracts and bounded static recognition for scientific evidence providers; no scientific-library imports, workload execution or direct evidence-store publication."
+allowed_internal_imports = ["apizr.capabilities", "apizr.experiments"]
+allowed_external_imports = ["pydantic"]
+
+[packages."editor_contracts"]
+kind = "domain"
+responsibility = "Versioned editor capability, request, response and diagnostic contracts over existing engine evidence; no editor UI or transport implementation."
+allowed_internal_imports = ["apizr.experiments", "apizr.scientific_providers"]
+allowed_external_imports = ["pydantic"]
+
 [packages."exposure"]
 kind = "domain"
 responsibility = "Exposure Plan v1: explicit publication decisions over static evidence."
