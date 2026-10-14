@@ -22,6 +22,7 @@ authors = [
 dependencies = ["pydantic>=2.12,<3"]
 
 [project.optional-dependencies]
+# Ordered native wheel selection uses packaging 26.3's native-Linux-first tags.
 preparation = ["packaging>=26.3,<27"]
 clients = ["PyYAML>=6.0.2,<7"]
 notebook = [
@@ -51,7 +52,8 @@ legacy = [
   "python-multipart>=0.0.31,<1",
   "PyYAML>=6.0.2,<7",
   "questionary>=2.0.1,<3",
-  "packaging>=24,<27",
+  # Keep the same ordered-tag baseline as preparation.
+  "packaging>=26.3,<27",
 ]
 
 [project.scripts]
@@ -75,7 +77,8 @@ dev = [
     "python-multipart>=0.0.31,<1",
     "PyYAML>=6.0.2,<7",
     "questionary>=2.0.1,<3",
-    "packaging>=24,<27",
+    # Qualify preparation with the same tag ordering users install.
+    "packaging>=26.3,<27",
     "pytest>=9.0.3,<10",
     "pytest-cov>=7,<8",
     "httpx>=0.28,<1",

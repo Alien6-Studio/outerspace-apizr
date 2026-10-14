@@ -4,6 +4,18 @@ Changes to dependencies are reviewed through the protected pull-request process,
 including Dependabot updates. An available update is not an instruction to merge
 it. Keep runtime dependency changes separate from release and documentation work.
 
+## Packaging compatibility floor
+
+The `preparation` and `legacy` extras and the development group use
+`packaging>=26.3,<27`. Preparation preserves the ordered native wheel tags from
+`packaging.tags`; 26.3 prefers native Linux tags before manylinux/musllinux tags,
+so changing that baseline can change which admitted wheel is selected. See the
+[upstream 26.3 changes](https://packaging.pypa.io/en/stable/changelog.html).
+Development qualification and installed extras therefore use the same minimum.
+The reviewed lock already resolves 26.3; harmonizing the floor changes no locked
+third-party version or archive hash. A different ordering requires renewed
+native preparation qualification, including supported-platform refusal cases.
+
 ## Sources and integrity
 
 All third-party locked packages must resolve from `https://pypi.org/simple`.
