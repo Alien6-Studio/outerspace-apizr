@@ -33,7 +33,11 @@ def main() -> None:
     for name, data in sorted(report["files"].items()):
         if (
             name.startswith(
-                ("src/apizr/plugins/preparation/", "src/apizr/experiments/")
+                (
+                    "src/apizr/plugins/preparation/",
+                    "src/apizr/experiments/",
+                    "src/apizr/scientific_providers/",
+                )
             )
             and data["summary"]["num_statements"]
         ):

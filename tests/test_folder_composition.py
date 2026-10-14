@@ -32,6 +32,21 @@ def test_repository_satisfies_declared_composition():
         ),
         ("experiments/inspection.py", "import sklearn\n", "non-primitive"),
         (
+            "scientific_providers/contracts.py",
+            "import numpy\n",
+            "external dependency not declared",
+        ),
+        (
+            "scientific_providers/contracts.py",
+            "from apizr.experiments.store import publish\n",
+            "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/contracts.py",
+            "from apizr.tracking import session\n",
+            "domain dependency not declared",
+        ),
+        (
             "experiments/inspection_model.py",
             "from apizr.generators.notebooks import inspect_notebook_bytes\n",
             "non-primitive",

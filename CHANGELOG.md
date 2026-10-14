@@ -2,6 +2,10 @@
 
 ## 0.4.6 — development, not published
 
+- Define separate bounded static scientific provider and in-process SDK adapter
+  contracts, with core admission over existing evidence types and reuse of the
+  current extension protocol and ordinary SDK validation (#308).
+
 - Capture active Jupyter cell identities, prompt counters and bounded source
   digests through the ordinary SDK session/decorator, with independent saved-file
   evidence, preserved displays and real interrupt/recovery qualification (#305).

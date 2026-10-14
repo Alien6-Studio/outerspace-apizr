@@ -16,6 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wheel", type=Path)
     parser.add_argument("--python", default=sys.executable)
+    parser.add_argument("--scientific-proof", type=Path)
     parser.add_argument(
         "--runtime-image-config", type=Path, help="Explicit local OCI test image JSON"
     )
@@ -67,6 +68,27 @@ print(apizr.__file__)
             ],
             cwd=root,
             check=True,
+        )
+        scientific_probe = root / "scientific_contract_proof.py"
+        shutil.copyfile(
+            Path(__file__).with_name("scientific_contract_proof.py"), scientific_probe
+        )
+        subprocess.run(
+            [
+                str(python),
+                "-I",
+                "-B",
+                str(scientific_probe),
+                "--output",
+                str(
+                    args.scientific_proof.resolve()
+                    if args.scientific_proof
+                    else root / "scientific-proof.json"
+                ),
+            ],
+            cwd=root,
+            check=True,
+            timeout=20,
         )
         subprocess.run(
             [str(cli), "--help"], cwd=root, check=True, stdout=subprocess.DEVNULL

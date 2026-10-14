@@ -156,6 +156,7 @@ nav:
       - Experiment evidence: architecture/experiment-evidence-v1.md
       - In-process experiment evidence: architecture/experiment-evidence-v2.md
       - Tracking SDK contract: architecture/tracking-sdk-v1.md
+      - Scientific provider and adapter contracts: architecture/scientific-providers-v1.md
       - Experiment inputs: guides/experiment-inputs.md
       - Seeds and environment evidence: guides/experiment-randomness-environment.md
       - Metrics and output artifacts: guides/experiment-results.md

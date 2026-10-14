@@ -138,6 +138,14 @@ loader is introduced. Existing recognizer implementations remain in
 `experiments` until the provider extraction is qualified; new recognition work
 belongs to `scientific_providers`.
 
+The [scientific contract](scientific-providers-v1.md) separates static provider
+payloads and SDK adapter reporting. `experiments.provider_source` exposes the
+bounded source/lexical authority, while `scientific_providers` admits untrusted
+results over existing experiment values and the existing extension envelope.
+`tracking.adapters` consumes only the adapter contracts and delegates to ordinary
+session logging. Providers have no store/publication API; plugin lifecycle remains
+in `plugins/*`.
+
 Bounded file access (`workspace.files`) has no Apizr domain dependencies. Workspace
 configuration and plugin management have no optional SDK or plugin-distribution
 dependencies. Project loading reads only the explicit project file and grants no

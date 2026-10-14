@@ -28,6 +28,27 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "scientific-provider-source-digest",
+        "src/apizr/scientific_providers/admission.py",
+        "            or result.source_digest != request.source.digest\n",
+        "",
+        "tests/scientific_providers/test_contracts.py::test_identity_source_schema_and_unknown_fields_are_rejected[source_digest]",
+    ),
+    Mutation(
+        "scientific-provider-static-input",
+        "src/apizr/scientific_providers/contracts.py",
+        "                or item.digest is not None\n",
+        "",
+        "tests/scientific_providers/test_contracts.py::test_static_provider_cannot_assert_input_content_observations[digest]",
+    ),
+    Mutation(
+        "scientific-adapter-finite-value",
+        "src/apizr/tracking/adapters.py",
+        "        log_metric(name, value, unit=unit)\n",
+        "        log_metric(name, 0.0, unit=unit)\n",
+        "tests/tracking/test_adapters.py::test_adapter_never_bypasses_experiment_value_validation[nonfinite]",
+    ),
+    Mutation(
         "preparation-qualified-uv-series",
         "src/apizr/plugins/preparation/resolver.py",
         "or (int(match[2]), int(match[3])) not in QUALIFIED_UV_SERIES",

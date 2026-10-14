@@ -47,13 +47,13 @@ responsibility = "Content-addressed experiment contracts, bounded evidence produ
 [packages."tracking"]
 kind = "domain"
 responsibility = "In-process experiment-tracking SDK sessions, bounded observation of existing kernel executions and explicit logging, publishing canonical experiment evidence through experiments; no execution isolation, CLI, plugin management or scientific-library dependency."
-allowed_internal_imports = ["apizr.tracking", "apizr.experiments"]
+allowed_internal_imports = ["apizr.tracking", "apizr.experiments", "apizr.scientific_providers.contracts"]
 allowed_external_imports = ["pydantic"]
 
 [packages."scientific_providers"]
 kind = "domain"
-responsibility = "Contracts and bounded static recognition for scientific evidence providers; no scientific-library imports, workload execution or direct evidence-store publication."
-allowed_internal_imports = ["apizr.capabilities", "apizr.experiments"]
+responsibility = "Static scientific provider and in-process SDK adapter contracts, bounded candidate admission and payloads over the existing extension protocol; no scientific-library imports, discovery, workload execution or direct evidence-store publication."
+allowed_internal_imports = ["apizr.capabilities.types", "apizr.experiments.model", "apizr.experiments.inputs", "apizr.experiments.metrics", "apizr.experiments.outputs", "apizr.experiments.randomness", "apizr.experiments.provider_source", "apizr.contracts.distribution", "apizr.contracts.json", "apizr.extension_runtime.protocol"]
 allowed_external_imports = ["pydantic"]
 
 [packages."editor_contracts"]

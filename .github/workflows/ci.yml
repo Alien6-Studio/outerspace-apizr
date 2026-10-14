@@ -390,7 +390,7 @@ jobs:
         run: |
           uv run --locked python scripts/smoke_installations.py dist/outerspace_apizr-*.whl
           uv run --locked python scripts/smoke_installations.py dist/outerspace_apizr-*.whl --python 3.11
-      - run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl
+      - run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --scientific-proof release-evidence/scientific-contracts-proof.json
       - name: Real Jupyter SDK sessions from the installed candidate outside checkout
         run: uv run --locked python scripts/experiment_jupyter_proof.py dist/outerspace_apizr-*.whl --output release-evidence/jupyter-proof.json
       - name: Check the same wheel on the oldest supported Python
