@@ -1,4 +1,4 @@
-"""Measured uv 0.12 resolution and artifact evidence; no installation or builds."""
+"""Measured, explicitly qualified uv resolution; no installation or builds."""
 
 import re
 import shutil
@@ -12,6 +12,9 @@ from .models import MAX_REQUIREMENTS_BYTES, AdmittedPin, Control, PreparationErr
 from .process import run
 from .requirements import parse_resolver_lock
 from .target import NativeTarget
+
+QUALIFIED_UV_SERIES = ((0, 12), (0, 13))
+QUALIFICATION_UV_VERSION = "0.13.1"
 
 
 @dataclass(frozen=True)
@@ -44,8 +47,14 @@ def configure(
     if found is None or not Path(found).is_absolute():
         raise PreparationError("resolver_unavailable")
     result = run([found, "--version"], work, control, max_stdout=8192)
-    match = re.match(rb"uv (0\.12\.[0-9]+)(?:\s|$)", result.stdout)
-    if result.code or match is None:
+    match = re.match(
+        rb"uv (([0-9]{1,3})\.([0-9]{1,3})\.[0-9]{1,9})(?:\s|$)", result.stdout
+    )
+    if (
+        result.code
+        or match is None
+        or (int(match[2]), int(match[3])) not in QUALIFIED_UV_SERIES
+    ):
         raise PreparationError("resolver_version_unsupported")
     return Resolver(
         found, "uv " + match[1].decode(), python, target, wheelhouse, index_url
@@ -86,7 +95,7 @@ def compile_evidence(
     ]
     if candidates:
         arguments += ["--no-deps", "--universal", "--format", "pylock.toml"]
-    else:
+    elif not resolver.target.native_resolution:
         arguments += ["--python-platform", resolver.target.resolver_platform]
     if resolver.index_url is None:
         arguments += ["--offline", "--no-index"]

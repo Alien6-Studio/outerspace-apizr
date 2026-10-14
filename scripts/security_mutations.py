@@ -28,6 +28,27 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "preparation-qualified-uv-series",
+        "src/apizr/plugins/preparation/resolver.py",
+        "or (int(match[2]), int(match[3])) not in QUALIFIED_UV_SERIES",
+        "or False",
+        "tests/local_plugins/test_preparation_resolver_versions.py::test_only_qualified_stable_series_are_measured",
+    ),
+    Mutation(
+        "preparation-glibc-native-host",
+        "src/apizr/plugins/preparation/target.py",
+        'if sys.platform != "linux" or target.machine != host_platform.machine():',
+        "if False:",
+        "tests/local_plugins/test_preparation_target.py::test_glibc_241_native_resolution_refuses_a_foreign_host",
+    ),
+    Mutation(
+        "preparation-glibc-native-resolution",
+        "src/apizr/plugins/preparation/resolver.py",
+        "elif not resolver.target.native_resolution:",
+        "else:",
+        "tests/local_plugins/test_preparation_resolver_versions.py::test_native_glibc_resolution_never_substitutes_an_older_platform",
+    ),
+    Mutation(
         "single-worker-restores-capture-context",
         "src/apizr/execution/worker.py",
         'os.environ.pop("APIZR_SERVED_PROCESS", None)',

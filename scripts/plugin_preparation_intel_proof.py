@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import platform
+import shutil
 import sys
 import tomllib
 from pathlib import Path
@@ -16,14 +17,19 @@ from pathlib import Path
 from smoke_mcp_server import REPO, run
 
 
-def prove(root: Path, python: str) -> None:
+def prove(root: Path, python: str, candidate_wheels: Path | None = None) -> None:
     assert platform.system() == "Darwin" and platform.machine() == "x86_64"
     assert sys.version_info[:2] == (3, 14)
     root.mkdir(parents=True, exist_ok=False)
     house = root / "wheels"
     house.mkdir()
-    for project in (REPO, REPO / "plugins/mcp"):
-        run(["uv", "build", "--wheel", project, "--out-dir", house], root)
+    if candidate_wheels is None:
+        for project in (REPO, REPO / "plugins/mcp"):
+            run(["uv", "build", "--wheel", project, "--out-dir", house], root)
+    else:
+        for stem in ("outerspace_apizr", "outerspace_apizr_mcp"):
+            (wheel,) = candidate_wheels.glob(stem + "-*.whl")
+            shutil.copyfile(wheel, house / wheel.name)
     (core,) = house.glob("outerspace_apizr-*.whl")
     (plugin,) = house.glob("outerspace_apizr_mcp-*.whl")
     run(
@@ -125,6 +131,7 @@ def prove(root: Path, python: str) -> None:
             {
                 "commit": run(["git", "rev-parse", "HEAD"], REPO).strip(),
                 "candidate_sha256": hashlib.sha256(core.read_bytes()).hexdigest(),
+                "resolver": run(["uv", "--version"], root).strip(),
                 "interpreter": python,
                 "target": result["target"],
                 "locked_distribution": f"cryptography=={crypto['version']}",
@@ -144,5 +151,6 @@ def prove(root: Path, python: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--candidate-wheels", type=Path)
     args = parser.parse_args()
-    prove(args.output.resolve(), sys.executable)
+    prove(args.output.resolve(), sys.executable, args.candidate_wheels)

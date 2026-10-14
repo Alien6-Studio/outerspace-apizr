@@ -14,9 +14,12 @@ Use a build containing this command with the **`[preparation]` extra**, which
 provides PyPA's wheel compatibility rules. For example, install the verified core
 candidate into your existing tool environment with
 `uv tool install '/absolute/path/outerspace_apizr-0.4.4-py3-none-any.whl[preparation]'`.
-The minimal core still requires only Pydantic. Preparation also requires **uv
-0.12.x**; `--uv /absolute/path/to/uv` selects a specific executable, whose version
-is recorded in the result. Qualification uses uv 0.12.0.
+The minimal core still requires only Pydantic. In the **0.4.6 development line**,
+preparation accepts stable **uv 0.12.x or 0.13.x**. Development CI uses **0.13.1**;
+the preparation matrix also checks 0.13.0 and the 0.12.0 Linux baseline.
+`--uv /absolute/path/to/uv` selects a specific executable, whose measured version
+is recorded in the result. Published 0.4.5 retains its uv 0.12.x requirement.
+See the [qualification policy](../contributing/preparation-qualification.md).
 
 ## Prepare, install, activate, serve
 
@@ -96,8 +99,14 @@ catalog and wheelhouse. It does not acquire packages. `plugins install`, `lock`,
 
 The recorded target includes implementation, exact Python version, operating
 system platform, machine and ABI. `resolver_platform` also records the exact
-uv platform triple, including the glibc level on Linux. This implementation supports **native CPython
-3.11–3.14**, macOS arm64/x86_64 and glibc Linux aarch64/x86_64 (glibc 2.17, 2.28 or 2.31–2.40, the explicit platforms supported by uv 0.12).
+resolver platform, including the glibc level on Linux. The 0.4.6 implementation
+supports **native CPython 3.11–3.14**, macOS arm64/x86_64 and glibc Linux
+aarch64/x86_64 (glibc 2.17, 2.28 or 2.31–2.41). Through 2.40 it uses uv's
+explicit platform triples. For 2.41, uv 0.12/0.13 have no explicit triple:
+Apizr verifies the native host and resolves without `--python-platform`, retaining
+`native-<machine>-glibc-2.41` as the resolver mode. Wheel selection still uses
+the measured interpreter's PyPA tags, including `manylinux_2_41`; it never
+substitutes an older glibc target. Published 0.4.5 stops at glibc 2.40.
 `--platform native`, the measured platform, or its corresponding uv platform
 triple must agree with the explicit interpreter. macOS records the running OS,
 not the interpreter's build deployment minimum. Other targets fail closed;
@@ -159,6 +168,7 @@ identical lock and manifest bytes regardless of location, input ordering or
 | Diagnostic reason | Action |
 | --- | --- |
 | `preparation_extra_required` | Install the same core build with `[preparation]`. |
+| `resolver_version_unsupported` | Use stable uv 0.12.x or 0.13.x on 0.4.6; select it with `--uv`. Other series and prereleases require qualification. |
 | `invalid_resolver_lock` | Supply exact pins with admitted SHA-256 hashes. |
 | `interpreter_unavailable`, `target_invalid` | Supply an executable absolute interpreter and matching native platform. |
 | `compatible_wheel_unavailable` | Obtain a prebuilt wheel for the named distribution/target. |

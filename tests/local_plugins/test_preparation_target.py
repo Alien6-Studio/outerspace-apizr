@@ -70,6 +70,31 @@ def test_measured_native_targets_are_explicit(
     )
 
 
+@pytest.mark.parametrize("machine", ["x86_64", "aarch64"])
+def test_glibc_241_retains_the_measured_native_platform(tmp_path, monkeypatch, machine):
+    monkeypatch.setattr(target.sys, "platform", "linux")
+    monkeypatch.setattr(target.host_platform, "machine", lambda: machine)
+    data = measured("linux", machine, "linux-" + machine)
+    data["libc"] = ["glibc", "2.41"]
+    result = probe(data, tmp_path, monkeypatch)
+    assert result.resolver_platform == "native-" + machine + "-glibc-2.41"
+    assert result.native_resolution is True
+    assert result.identity.platform == "linux-" + machine
+
+
+def test_glibc_241_native_resolution_refuses_a_foreign_host(tmp_path, monkeypatch):
+    data = measured("linux", "x86_64", "linux-x86_64")
+    data["libc"] = ["glibc", "2.41"]
+    monkeypatch.setattr(target.sys, "platform", "linux")
+    monkeypatch.setattr(target.host_platform, "machine", lambda: "aarch64")
+    with pytest.raises(PreparationError, match="target_invalid"):
+        probe(data, tmp_path, monkeypatch)
+    monkeypatch.setattr(target.sys, "platform", "darwin")
+    monkeypatch.setattr(target.host_platform, "machine", lambda: "x86_64")
+    with pytest.raises(PreparationError, match="target_invalid"):
+        probe(data, tmp_path, monkeypatch)
+
+
 @pytest.mark.parametrize(
     "data",
     [
@@ -88,6 +113,10 @@ def test_measured_native_targets_are_explicit(
         {
             **measured(system="linux", platform="linux-x86_64"),
             "libc": ["glibc", "2.27"],
+        },
+        {
+            **measured(system="linux", platform="linux-x86_64"),
+            "libc": ["glibc", "2.42"],
         },
         measured(python="3.15.0"),
     ],

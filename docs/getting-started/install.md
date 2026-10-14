@@ -100,6 +100,11 @@ Plugins live in their own environments. Keep all selected core/plugin versions
 at **0.4.4**. Install **uv 0.12.0** separately and check `uv --version` before
 installing or syncing plugins. This also applies to Homebrew installations.
 
+For the **0.4.6 development candidate**, preparation accepts stable uv 0.12.x
+and 0.13.x; CI qualifies with **0.13.1**. See the
+[native preparation policy](../contributing/preparation-qualification.md).
+Published 0.4.5 preparation continues to require uv 0.12.x.
+
 <span id="install-the-published-release"></span>
 <span id="evaluate-the-040-candidate"></span>
 

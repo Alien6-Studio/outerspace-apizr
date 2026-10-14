@@ -54,7 +54,7 @@ def main():
             # Static project locks deliberately refuse unverifiable musl versions.
             (context / "Dockerfile").write_text("""FROM docker:29-dind AS docker
 FROM ubuntu:24.04
-RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-venv python3-pip git openssl apache2-utils ca-certificates curl iptables util-linux pigz xz-utils && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages uv==0.12.0
+RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-venv python3-pip git openssl apache2-utils ca-certificates curl iptables util-linux pigz xz-utils && rm -rf /var/lib/apt/lists/* && python3 -m pip install --break-system-packages uv==0.13.1
 COPY --from=docker /usr/local/bin/ /usr/local/bin/
 COPY --from=docker /usr/local/libexec/ /usr/local/libexec/
 VOLUME /var/lib/docker
