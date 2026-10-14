@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "scientific-provider-python-line-boundary",
+        "src/apizr/experiments/provider_source.py",
+        '.split("\\n")',
+        ".splitlines()",
+        "tests/scientific_providers/test_contracts.py::test_python_line_positions_ignore_unicode_separators",
+    ),
+    Mutation(
         "scientific-provider-source-digest",
         "src/apizr/scientific_providers/admission.py",
         "            or result.source_digest != request.source.digest\n",

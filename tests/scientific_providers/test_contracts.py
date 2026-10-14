@@ -339,6 +339,28 @@ def test_source_digest_tree_ownership_and_utf8_locations():
     assert copy.deepcopy(view) == view
 
 
+def test_python_line_positions_ignore_unicode_separators():
+    for separator in ("\v", "\f", "\x1c", "\x1d", "\x1e", "\x85", "\u2028", "\u2029"):
+        for newline in ("\n", "\r", "\r\n"):
+            source = newline.join(
+                (
+                    "from sklearn.metrics import accuracy_score",
+                    f'label = "a{separator}b"',
+                    "score = accuracy_score([1], [1])",
+                    "",
+                )
+            )
+            selected = request(source=source)
+            candidate = result(selected)
+            signal = candidate.metric_signals.signals[0]
+            assert (signal.line, signal.column) == (3, 8)
+            assert selected.source.contains_location(signal.line, signal.column)
+            assert not selected.source.contains_location(4, 0)
+            assert admit_result(candidate, request=selected) == candidate
+    assert not SourceView(reference="empty.py", text="").contains_location(1, 0)
+    assert SourceView(reference="last.py", text="pass").contains_location(1, 4)
+
+
 @pytest.mark.parametrize(
     "source",
     [

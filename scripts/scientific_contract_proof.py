@@ -28,7 +28,7 @@ from apizr.tracking.session import TrackingError
 def prove(root: Path) -> dict[str, object]:
     source = SourceView(
         reference="example.py",
-        text="from sklearn.metrics import accuracy_score\naccuracy_score([1], [1])\n",
+        text='from sklearn.metrics import accuracy_score\nlabel = "a\u2028b"\nscore = accuracy_score([1], [1])\n',
     )
     identity = ProducerIdentity(name="qualification.static", version="1.0")
     request = ProviderRequest(

@@ -62,7 +62,11 @@ class SourceView(ExperimentValue):
 
     def contains_location(self, line: int, column: int) -> bool:
         """AST columns are UTF-8 byte offsets, with a zero-based column."""
-        lines = self.text.splitlines()
+        # Python physical lines use LF, CRLF or CR. Other Unicode separators
+        # remain bytes inside strings/comments and must not invent source lines.
+        lines = self.text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+        if lines[-1] == "":
+            lines.pop()
         return 1 <= line <= len(lines) and 0 <= column <= len(
             lines[line - 1].encode("utf-8")
         )

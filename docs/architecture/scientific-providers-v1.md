@@ -87,7 +87,11 @@ reproducibility or scientific causality. See the
 capability and `ProviderLocation`. The source reference is required; line and
 column are either both present or both unknown. Lines are one-based and columns
 are zero-based UTF-8 byte offsets. Admission checks all returned signal and
-diagnostic locations against the selected source. Existing section diagnostics
+diagnostic locations against the selected source. Locations follow Python's
+LF, CRLF and CR physical lines; other Unicode separators inside
+strings or comments do not create positions on additional source lines. Admission
+checks correspondence and evidence bounds, without independently proving a
+provider's scientific interpretation. Existing section diagnostics
 may have an unknown location; a claimed position must name the selected source.
 Raw exception messages, stderr, library objects and free-form provider messages
 do not enter these diagnostics. Admission failures expose only
