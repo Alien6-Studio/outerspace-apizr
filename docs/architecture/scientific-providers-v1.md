@@ -136,10 +136,12 @@ from apizr import tracking
 from apizr.scientific_providers import ProducerIdentity, SDKAdapterDescriptor
 from apizr.tracking.adapters import AdapterReporter
 
-reporter = AdapterReporter(SDKAdapterDescriptor(
-    identity=ProducerIdentity(name="example.adapter", version="1.0"),
-    capabilities=("metric",),
-))
+reporter = AdapterReporter(
+    SDKAdapterDescriptor(
+        identity=ProducerIdentity(name="example.adapter", version="1.0"),
+        capabilities=("metric",),
+    )
+)
 with tracking.session(root=project_root):
     reporter.log_metric("accuracy", explicitly_selected_score)
 ```
