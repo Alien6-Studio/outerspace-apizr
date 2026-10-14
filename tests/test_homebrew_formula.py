@@ -41,6 +41,24 @@ def candidate(tmp_path):
     return root, source, sha
 
 
+def test_development_lock_does_not_reauthorize_published_045(tmp_path):
+    root, source, sha = candidate(tmp_path)
+    assert (
+        tool["BUILD_MANIFEST"]
+        == "1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd"
+    )
+    with pytest.raises(ValueError, match="Reviewed build-input identity changed"):
+        tool["render"](
+            root,
+            SHA,
+            tmp_path / "tap",
+            mode="publication",
+            source_url=f"https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.5/{source.name}",
+            source_sha256=sha,
+        )
+    assert not (tmp_path / "tap").exists()
+
+
 def test_renderer_is_deterministic_and_keeps_build_inputs_out_of_runtime(tmp_path):
     root, source, sha = candidate(tmp_path)
     a, b = tmp_path / "a", tmp_path / "b"
@@ -58,7 +76,7 @@ def test_renderer_is_deterministic_and_keeps_build_inputs_out_of_runtime(tmp_pat
         "build_isolation: true" in formula and "deny_network_access! :build" in formula
     )
     assert "pip_install_and_link resources" not in formula
-    assert first["build_inputs_manifest_sha256"] == tool["BUILD_MANIFEST"]
+    assert first["build_inputs_manifest_sha256"] == tool["QUALIFICATION_BUILD_MANIFEST"]
     assert str(tmp_path) not in json.dumps(first)
 
 
@@ -116,6 +134,10 @@ def test_qualification_cannot_accept_publication_overrides(tmp_path):
 def test_publication_binds_verified_evidence_and_immutable_asset(
     tmp_path, monkeypatch, change
 ):
+    frozen = json.loads(
+        (ROOT / "tests/fixtures/homebrew/published-0.4.5-build-inputs.json").read_text()
+    )
+    monkeypatch.setitem(tool["render"].__globals__, "manifest", lambda *a: frozen)
     root, source, sha = candidate(tmp_path)
     url = f"https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.5/{source.name}"
     evidence, bundle = tmp_path / "evidence.tar.gz", tmp_path / "bundle.json"

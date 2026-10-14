@@ -32,13 +32,25 @@ def test_homebrew_boundary_is_explicit_deterministic_and_preserves_build_identit
         {"platform": "linux", "reason": "runtime-not-qualified-in-0.4.3"},
     ]
     assert policy["build_inputs_manifest_sha256"] == (
-        "1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd"
+        "1d817f4dd97c52b3a0dd5a59d5e24ac1cd7be086fd6ed8b1290e64920b4c3bb3"
     )
     reordered = dict(reversed(list(policy.items())))
     assert tool["encoded"](result) == tool["encoded"](
         tool["validate"](reordered, manifest)
     )
     assert str(ROOT).encode() not in tool["encoded"](result)
+
+
+def test_development_and_frozen_publication_differ_only_in_full_lock_identity():
+    _, current = policy_and_manifest()
+    published = json.loads(
+        (ROOT / "tests/fixtures/homebrew/published-0.4.5-build-inputs.json").read_text()
+    )
+    development = json.loads(current)
+    assert development["lock_sha256"] != published["lock_sha256"]
+    assert {k: v for k, v in development.items() if k != "lock_sha256"} == {
+        k: v for k, v in published.items() if k != "lock_sha256"
+    }
 
 
 @pytest.mark.parametrize(

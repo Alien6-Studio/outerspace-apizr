@@ -15,6 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "Alien6-Studio/outerspace-apizr"
 VERSION = "0.4.5"
 BUILD_MANIFEST = "1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd"
+QUALIFICATION_BUILD_MANIFEST = (
+    "1d817f4dd97c52b3a0dd5a59d5e24ac1cd7be086fd6ed8b1290e64920b4c3bb3"
+)
 
 
 def publication_source(url, sha256, source, commit, candidate, evidence, bundle):
@@ -98,7 +101,10 @@ def render(
     if mode == "publication" and candidate_version != VERSION:
         raise ValueError("Candidate has no Homebrew publication authorization")
     inputs = manifest(ROOT / "uv.lock", ROOT / "policy/homebrew-build-inputs.json")
-    if digest(encoded(inputs)) != BUILD_MANIFEST:
+    expected_manifest = (
+        QUALIFICATION_BUILD_MANIFEST if mode == "qualification" else BUILD_MANIFEST
+    )
+    if digest(encoded(inputs)) != expected_manifest:
         raise ValueError("Reviewed build-input identity changed")
     if mode == "qualification":
         if any(
@@ -151,7 +157,7 @@ def render(
         "source_commit": commit,
         "source_sha256": source_hash,
         "formula_sha256": digest(formula.encode()),
-        "build_inputs_manifest_sha256": BUILD_MANIFEST,
+        "build_inputs_manifest_sha256": expected_manifest,
     }
     (output / "formula-source.json").write_bytes(encoded(receipt))
     return receipt

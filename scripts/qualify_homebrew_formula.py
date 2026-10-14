@@ -9,7 +9,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from homebrew_formula import BUILD_MANIFEST, ROOT, render
+from homebrew_formula import QUALIFICATION_BUILD_MANIFEST, ROOT, render
 from prepare_homebrew_build_inputs import digest, encoded
 from smoke_extension_packaging import snapshot
 
@@ -253,7 +253,7 @@ print(json.dumps({'python': sys.version.split()[0], 'pydantic': pydantic.__versi
                 run("uninstall", ["brew", "uninstall", "--formula", FORMULA])
             run("untrust", ["brew", "untrust", "--formula", FORMULA])
             run("untap", ["brew", "untap", TAP])
-    if receipt["build_inputs_manifest_sha256"] != BUILD_MANIFEST:
+    if receipt["build_inputs_manifest_sha256"] != QUALIFICATION_BUILD_MANIFEST:
         raise RuntimeError("Build manifest changed")
     proof["checks"] = {
         k: results[k]

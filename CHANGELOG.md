@@ -2,6 +2,13 @@
 
 ## 0.4.6 — development, not published
 
+- Qualify stable uv 0.13.x for plugin preparation, retain measured resolver
+  versions, pin development CI to 0.13.1 and detect new unqualified series (#329).
+- Support measured native glibc 2.41 hosts without passing an unsupported uv
+  triple or substituting an older libc; retain the earlier Linux baselines and
+  secure Intel MCP refusal. Rebase the development Glama recipe to Debian 13 (#285).
+- Bind Homebrew development qualification to the current full lock identity,
+  preserving the frozen 0.4.5 publication manifest and identical build wheels.
 - Bind product scope once per mixed CI job while retaining job-level gates,
   required matrix check names and upload behavior after failures (#286).
 - Add context-local in-process tracking sessions and explicit bounded parameter,

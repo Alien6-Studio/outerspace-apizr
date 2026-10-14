@@ -134,6 +134,17 @@ the manifest SHA-256 remains
 The boundary validator binds its deterministic receipt to that manifest, and
 release evidence archives both policies.
 
+On the **0.4.6 development branch**, raising the legacy/dev packaging constraint
+to the already locked 26.3 changed the full `uv.lock` identity without changing
+any third-party package or wheel. Development qualification therefore binds
+`1d817f4dd97c52b3a0dd5a59d5e24ac1cd7be086fd6ed8b1290e64920b4c3bb3`.
+The renderer's publication mode retains the frozen 0.4.5 identity
+`1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd`
+and refuses the changed development lock. The frozen publication fixture verifies
+that its distribution inventory, hashes, policy and roots differ from development
+only in the full lock hash. This qualification update grants no new publication
+authorization.
+
 GitHub's [hosted macOS runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
 are virtual machines. `macos-26` supplies an ARM64 CI proof for the intended
 target; it is **not itself certified as a Homebrew Tier-1 host**. A separate

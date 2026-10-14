@@ -91,6 +91,12 @@ jobs:
               python scripts/plugin_preparation_matrix_proof.py --output /proof/results --expect-glibc "$QUALIFICATION_LIBC"
             '
           docker image inspect "python:3.14-slim-$DEBIAN" > "$RUNNER_TEMP/preparation-linux/image.json"
+      - name: Return disposable container evidence to the artifact uploader
+        if: always()
+        run: |
+          if [ -d "$RUNNER_TEMP/preparation-linux" ]; then
+            sudo chown -R "$(id -u):$(id -g)" "$RUNNER_TEMP/preparation-linux"
+          fi
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
