@@ -28,6 +28,48 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "sdk-binding-is-not-name-matching",
+        "src/apizr/capabilities/instrumentation.py",
+        'if self.member(target) != "experiment":',
+        "if False:",
+        "tests/readiness/test_tracking_decorators.py::test_unproven_or_stacked_decorator_remains_unknown",
+    ),
+    Mutation(
+        "sdk-import-binding-must-be-unique",
+        "src/apizr/capabilities/instrumentation.py",
+        "if len(events) != 1:",
+        "if False:",
+        "tests/readiness/test_tracking_decorators.py::test_unproven_or_stacked_decorator_remains_unknown",
+    ),
+    Mutation(
+        "sdk-local-lookalike-is-not-official",
+        "src/apizr/repository_readiness/eligibility.py",
+        'if sdk_import and any(name.resolution != "external" for name in declaration.names):',
+        "if False:",
+        "tests/readiness/test_tracking_decorators.py::test_repository_local_sdk_lookalike_cannot_discharge_dependency",
+    ),
+    Mutation(
+        "sdk-serving-disables-capture",
+        "src/apizr/tracking/session.py",
+        'or os.environ.get("APIZR_SERVED_PROCESS") == "1"',
+        "or False",
+        "tests/tracking/test_served.py::test_served_decorator_never_constructs_a_session",
+    ),
+    Mutation(
+        "sdk-service-marker-precedes-project-import",
+        "src/apizr/repository_interfaces/generator.py",
+        "APIZR_SERVED_PROCESS",
+        "APIZR_UNRECOGNIZED_SERVING_MODE",
+        "tests/experiments/test_capture_exposure.py::test_instrumented_service_suppresses_capture_before_source_import",
+    ),
+    Mutation(
+        "sdk-exposure-retains-capture-binding",
+        "src/apizr/experiments/exposure_model.py",
+        'raise ExperimentExposureRefused("experiment_capture_binding_mismatch")',
+        "pass",
+        "tests/experiments/test_capture_exposure.py::test_portable_binding_cannot_swap_capture_or_observed_source",
+    ),
+    Mutation(
         "tracking-preserve-business-exception",
         "src/apizr/tracking/session.py",
         "        return False",

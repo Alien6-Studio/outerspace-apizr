@@ -7,6 +7,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
+from .instrumentation import TrackingBindings, own_yield
 from .model import (
     Availability,
     Capability,
@@ -150,35 +151,18 @@ class _ModuleScope(ast.NodeVisitor):
         return True
 
 
-class _OwnYield(ast.NodeVisitor):
-    found = False
-
-    def visit_Yield(self, node: ast.Yield | ast.YieldFrom) -> None:
-        self.found = True
-
-    visit_YieldFrom = visit_Yield
-
-    def visit_FunctionDef(self, node: Function | ast.ClassDef | ast.Lambda) -> None:
-        pass
-
-    visit_AsyncFunctionDef = visit_FunctionDef
-    visit_ClassDef = visit_FunctionDef
-    visit_Lambda = visit_FunctionDef
-
-
 def _execution(node: Function) -> ExecutionForm:
-    visitor = _OwnYield()
-    for statement in node.body:
-        visitor.visit(statement)
+    generator = own_yield(node)
     if isinstance(node, ast.AsyncFunctionDef):
-        return ExecutionForm.ASYNC_GENERATOR if visitor.found else ExecutionForm.ASYNC
-    return ExecutionForm.GENERATOR if visitor.found else ExecutionForm.SYNC
+        return ExecutionForm.ASYNC_GENERATOR if generator else ExecutionForm.ASYNC
+    return ExecutionForm.GENERATOR if generator else ExecutionForm.SYNC
 
 
 class _Analyzer:
     def __init__(self, tree: ast.Module, source: Source) -> None:
         self.source = source
         self.scope = _ModuleScope(tree)
+        self.tracking = TrackingBindings(tree)
         self.diagnostics: list[Diagnostic] = []
 
     def span(self, node: ast.stmt, symbol: str) -> SourceSpan:
@@ -333,7 +317,10 @@ class _Analyzer:
                 node,
                 node.name,
             )
-        if node.decorator_list:
+        unknown_decorator = bool(
+            node.decorator_list
+        ) and not self.tracking.inert_decorator(node)
+        if unknown_decorator:
             self.diagnostic(
                 DiagnosticCode.BINDING,
                 Severity.WARNING,
@@ -341,7 +328,7 @@ class _Analyzer:
                 node,
                 node.name,
             )
-        unknown = conditional or bool(node.decorator_list)
+        unknown = conditional or unknown_decorator
         return Capability(
             id=f"python:{self.source.module}:{node.name}",
             name=node.name,

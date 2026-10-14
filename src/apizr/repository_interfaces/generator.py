@@ -3,6 +3,7 @@
 from collections.abc import Mapping
 from importlib.resources import files
 
+from apizr.capabilities.instrumentation import is_tracking_import
 from apizr.capabilities.model import Digest
 from apizr.contracts.application import ApplicationInputs
 from apizr.contracts.delivery import (
@@ -126,6 +127,18 @@ def render_repository_bundle(
     artifacts[PROVENANCE_FILE] = canonical_bytes(provenance)
     provenance_digest = Digest.of_bytes(artifacts[PROVENANCE_FILE])
     pin = repr(contract_digest.model_dump())
+    served = (
+        b"import os\nos.environ['APIZR_SERVED_PROCESS'] = '1'\n\n"
+        if any(
+            is_tracking_import(
+                module=d.declared_module,
+                names=tuple(n.name for n in d.names),
+                relative_level=d.relative_level,
+            )
+            for d in graph.imports
+        )
+        else b""
+    )
     endpoints = tuple(
         Endpoint(**c.invocation.model_dump(), route="/capabilities/" + c.public_name)
         for c in contract.capabilities
@@ -149,7 +162,8 @@ def render_repository_bundle(
         }
         artifacts["openapi.json"] = json_bytes(document)
         artifacts["app.py"] = (
-            template("rest_runtime.py")
+            served
+            + template("rest_runtime.py")
             + f"\n\napp = create_app(Path(__file__).resolve().parent, {pin})\n".encode()
         )
         manifest = RestManifest(
@@ -195,7 +209,8 @@ def render_repository_bundle(
             }
         )
         artifacts["server.py"] = (
-            template("mcp_runtime.py").replace(
+            served
+            + template("mcp_runtime.py").replace(
                 b"from apizr.interfaces.results import", b"from apizr_results import"
             )
             + f'\n\nif __name__ == "__main__":\n    main({pin})\n'.encode()

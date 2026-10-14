@@ -111,3 +111,61 @@ logging does not become an alternate source of automatically inferred metrics.
 
 See the [v2 evidence contract](../architecture/experiment-evidence-v2.md) and
 [SDK ownership contract](../architecture/tracking-sdk-v1.md).
+
+## Expose an observed Python source
+
+For a serving function, use literal decorator options so the static compiler can
+establish the import binding. Save this as `prediction.py`:
+
+```python
+from apizr import tracking
+
+
+@tracking.experiment(
+    parameters=["value"],
+    source="prediction.py",
+    distributions=("outerspace-apizr",),
+)
+def predict(value: int) -> int:
+    tracking.log_metric("value", value)
+    return value * 3
+
+
+if __name__ == "__main__":
+    predict(4)
+```
+
+Run `python prediction.py` in that directory, then use `apizr experiment list`
+to find its Run. Prepare an explicit
+[repository analysis permission](operator-policy.md#authorize-repository-analysis)
+in `operator.json`. With the exact SDK wheel retained in `wheelhouse/`, select the
+recorded dependency and its evidence explicitly:
+
+```sh
+apizr experiment expose RUN --root . --operator-policy operator.json \
+  --capability python:prediction:predict --interface rest \
+  --dependency outerspace-apizr --dependency-wheelhouse wheelhouse \
+  --allow-conditional --exclude-dir .output --output-dir .output/rest
+```
+
+Replace `RUN` with its digest. Use `--interface mcp` and another output directory
+to select MCP. Dependency versions come from the Run; the wheel's exact bytes
+establish its import providers. `--allow-conditional` opts into the existing
+repository refinement, whose evidence checks still apply. It does not bypass
+unknown decorators, source admission or missing dependencies.
+
+Exposure checks the current Python file and selected artifacts against recorded
+digests. It never reruns or retrains the workload. An unknown source is refused;
+SDK notebook observations without a proven executable binding are also refused.
+The derived exposure v2 retains the original capture and observed source, with
+the selected static module kept separately. It never rewrites history or turns
+an unknown defining-code digest into known runtime evidence.
+
+In a generated SDK-dependent service, `APIZR_SERVED_PROCESS=1` is set before
+project imports. The decorator keeps the original function binding and SDK
+logging creates no session or store writes. Governed worker processes use the
+same suppression. Bundles whose retained source imports no SDK acquire no SDK
+dependency or capture marker.
+
+Dynamic decorator configuration, shadowed imports and stacked decorators remain
+conditional. See the [source-only binding rule](../architecture/capability-readiness-v1.md#proven-sdk-decoration-046).

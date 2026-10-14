@@ -54,3 +54,19 @@ The v1 schema exports remain unchanged. The independent v2 exports live at
 `scripts/export_experiment_schemas.py`. Frozen 0.4.5 store fixtures qualify
 `list`, `show` and `diff`, canonical bytes and original digests. The installed
 contract proof exercises both versions without optional or scientific SDKs.
+
+## SDK Run to serving
+
+`apizr.experiment-exposure/v2` binds a successful SDK Run to the existing
+repository exposure pipeline. It retains `observed_source` and `capture` exactly
+as recorded, independently from `source`, the static source/module selected for
+the bundle. A module name derived from explicit capability selection is never
+written back into runtime provenance. The function's defining-code digest and
+notebook executable evidence remain unknown when they were not captured.
+
+The initial bridge accepts an explicitly observed Python file whose current
+bytes still match the Run. Unknown files and SDK notebook captures without a
+proven executable binding are refused. Source admission, readiness, selected
+artifact digests and explicitly observed dependency versions remain mandatory;
+exposure does not execute or retrain the workload. The independent v2 schema
+leaves the published exposure v1 schema and canonical bytes unchanged.

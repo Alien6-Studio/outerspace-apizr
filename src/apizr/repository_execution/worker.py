@@ -94,6 +94,7 @@ def handle(request: Request, root: Path) -> ExecutionResult:
 
 
 def main() -> None:
+    os.environ["APIZR_SERVED_PROCESS"] = "1"
     protocol_fd = os.dup(1)
     os.dup2(2, 1)
     limit = 128

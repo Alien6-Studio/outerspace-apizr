@@ -91,6 +91,7 @@ def handle(request: Request, root: Path) -> ExecutionResult:
 
 
 def main() -> None:
+    os.environ["APIZR_SERVED_PROCESS"] = "1"
     # Reserve a private non-inheritable duplicate for protocol output. Ordinary
     # print/os.write(1, ...) and stderr never mix with the response frame.
     protocol_fd = os.dup(1)

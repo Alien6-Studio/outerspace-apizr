@@ -6,6 +6,7 @@ import tokenize
 from collections import defaultdict
 
 from apizr.capabilities import CapabilityDocument, document_digest, inspect_source
+from apizr.capabilities.instrumentation import TrackingBindings
 from apizr.capabilities.model import Capability, DiagnosticCode, Effects, SourceSpan
 
 from .contracts import classify
@@ -49,6 +50,7 @@ def _capability(
     facts: SourceFacts,
     stub_lines: set[int],
     structured_types: tuple[StructuredDeclaration, ...],
+    tracking: TrackingBindings,
 ) -> Assessment:
     source = capability.source
     function = facts.functions[source.symbol, source.line]
@@ -68,7 +70,7 @@ def _capability(
     }
     if capability.availability.value == "unknown" and function not in facts.tree.body:
         binding.extend(_reasons((Code.CONDITIONAL,), source.line))
-    if capability.decorators:
+    if capability.decorators and not tracking.inert_decorator(function):
         binding.extend(_reasons((Code.DECORATOR,), source.line))
     for event in facts.bindings[source.symbol]:
         if event.order > order:
@@ -78,7 +80,7 @@ def _capability(
     for statement in facts.tree.body:
         if (
             statement.lineno not in stub_lines | safe_classes
-            and initialization_risk(statement)
+            and initialization_risk(statement, tracking=tracking)
             and not facts.import_only_main_guard(statement, source.module)
         ):
             execution.extend(_reasons((Code.INITIALIZATION,), statement.lineno))
@@ -147,10 +149,12 @@ def assess(document: CapabilityDocument, source: str | bytes) -> ReadinessReport
         encoding, _ = tokenize.detect_encoding(io.BytesIO(source).readline)
         source = source.decode(encoding)
     facts = SourceFacts(ast.parse(source, filename="<readiness-source>"))
+    tracking = TrackingBindings(facts.tree)
     stubs = {o.source.line for c in document.capabilities for o in c.overloads}
     structured_types = declarations(facts, document.source.module)
     assessments = [
-        _capability(c, facts, stubs, structured_types) for c in document.capabilities
+        _capability(c, facts, stubs, structured_types, tracking)
+        for c in document.capabilities
     ]
     present = {c.name for c in document.capabilities}
     rejected: dict[str, list[Reason]] = defaultdict(list)

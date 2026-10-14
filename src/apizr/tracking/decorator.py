@@ -15,7 +15,7 @@ from apizr.experiments import (
     EvidenceOrigin,
     FunctionBinding,
 )
-from apizr.tracking.session import TrackingError, session
+from apizr.tracking.session import TrackingError, capture_suppressed, session
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -93,6 +93,10 @@ def experiment(
         raise TrackingError("tracking_parameter_selection_duplicate")
 
     def decorate(function: Callable[P, R]) -> Callable[P, R]:
+        if capture_suppressed():
+            # Served imports retain the original executable binding, including its
+            # code signature. They never construct a session or touch the store.
+            return function
         signature = inspect.signature(function)
         if any(name not in signature.parameters for name in names):
             raise TrackingError("tracking_parameter_selection_unknown")
@@ -143,6 +147,8 @@ def experiment(
 
             @wraps(function)
             async def async_call(*args: P.args, **kwargs: P.kwargs):
+                if capture_suppressed():
+                    return await function(*args, **kwargs)
                 with capture(selected(args, kwargs)):
                     return await function(*args, **kwargs)
 
@@ -150,6 +156,8 @@ def experiment(
 
         @wraps(function)
         def call(*args: P.args, **kwargs: P.kwargs) -> R:
+            if capture_suppressed():
+                return function(*args, **kwargs)
             with capture(selected(args, kwargs)):
                 return function(*args, **kwargs)
 

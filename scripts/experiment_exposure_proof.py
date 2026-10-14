@@ -7,6 +7,7 @@ import shutil
 import socket
 import subprocess
 import sys
+import sysconfig
 import tempfile
 import time
 from hashlib import sha256
@@ -19,16 +20,48 @@ from mcp import Client, StdioServerParameters
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
+def prove(
+    python: Path,
+    fixtures: Path,
+    *,
+    notebook: bool = False,
+    instrumented: bool = False,
+    wheelhouse: Path | None = None,
+) -> dict:
     env = dict(os.environ)
     env.pop("PYTHONPATH", None)
     env.pop("VIRTUAL_ENV", None)
+    env.pop("APIZR_SERVED_PROCESS", None)
+    env.pop("APIZR_EXPERIMENT_RUNNER", None)
     python = python.absolute()
     with tempfile.TemporaryDirectory(prefix="apizr-exposure-installed-") as folder:
         root = Path(folder).resolve()
         project = root / "research"
         shutil.copytree(fixtures / "project", project)
         script = project / "serving.py"
+        if instrumented:
+            assert not notebook and wheelhouse is not None
+            source = script.read_text()
+            source = (
+                "from apizr.tracking import experiment, log_metric, log_artifact\n"
+                + source
+            )
+            source = source.replace(
+                "def predict(", '@experiment(parameters=["request"])\ndef predict('
+            )
+            source = source.replace(
+                '    return {"predictions":',
+                '    log_metric("served_value", request["value"])\n    return {"predictions":',
+            )
+            source = source.replace(
+                "def train()",
+                '@experiment(source="serving.py", distributions=("outerspace-apizr",))\ndef train()',
+            )
+            source = source.replace(
+                '    return "private training helper"',
+                '    log_artifact("model", "model.json")\n    log_artifact("debug", "debug.json")\n    return "private training helper"',
+            )
+            script.write_text(source)
         for name in ("model.json", "debug.json"):
             (project / name).unlink()
             assert not (project / name).exists()
@@ -106,24 +139,54 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
             )
         )
         source = script.read_bytes()
-        run = command(
-            "run",
-            script,
-            "--root",
-            project,
-            "--output",
-            "model=model.json",
-            "--output",
-            "debug=debug.json",
-            "--format",
-            "json",
-        )
+        if instrumented:
+            completed = subprocess.run(
+                [
+                    str(python),
+                    "-I",
+                    "-B",
+                    "-c",
+                    "import sys,runpy,json; from pathlib import Path; from apizr.experiments.store import records,DEFAULT_STORE; sys.path.insert(0,sys.argv[1]); runpy.run_path(sys.argv[2],run_name='__main__'); record=next(records(Path(sys.argv[1])/DEFAULT_STORE)); print(json.dumps({'run_digest':record.run_digest,'plan_digest':record.plan_digest,'status':record.run.status}))",
+                    str(project),
+                    str(script),
+                ],
+                cwd=project,
+                env=env,
+                capture_output=True,
+                timeout=30,
+            )
+            assert completed.returncode == 0, completed.stderr.decode()
+            run = json.loads(completed.stdout)
+        else:
+            run = command(
+                "run",
+                script,
+                "--root",
+                project,
+                "--output",
+                "model=model.json",
+                "--output",
+                "debug=debug.json",
+                "--format",
+                "json",
+            )
         assert run["status"] == "success"
         assert script.read_bytes() == source
         assert (project / "model.json").read_bytes() == b'{"multiplier": 3}'
         assert (project / "debug.json").read_bytes() == b'{"private": true}'
         bindings = {}
         for interface in ("rest", "mcp"):
+            selected_dependencies = (
+                (
+                    "--dependency",
+                    "outerspace-apizr",
+                    "--dependency-wheelhouse",
+                    wheelhouse,
+                    "--allow-conditional",
+                )
+                if instrumented
+                else ()
+            )
             result = command(
                 "expose",
                 run["run_digest"],
@@ -139,6 +202,7 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
                 "model",
                 "--output-dir",
                 root / interface,
+                *selected_dependencies,
                 "--format",
                 "json",
             )
@@ -165,9 +229,29 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
             listener.bind(("127.0.0.1", 0))
             port = listener.getsockname()[1]
         server = "import sys; sys.path.insert(0,sys.argv[1]); from app import app; import uvicorn; assert not any(n=='apizr' or n.startswith('apizr.') for n in sys.modules); uvicorn.run(app,host='127.0.0.1',port=int(sys.argv[2]),log_level='error')"
+        runtime_python = python if instrumented else Path(sys.executable)
+        runtime_prefix = ""
+        if instrumented:
+            # Use the installed candidate SDK first. Optional transport libraries
+            # come from this qualification environment, without processing its
+            # editable-install .pth files or adding the checkout to sys.path.
+            runtime_prefix = (
+                f"import sys; sys.path.append({sysconfig.get_path('purelib')!r}); "
+            )
+            server = runtime_prefix + server.replace(
+                "assert not any(n=='apizr' or n.startswith('apizr.') for n in sys.modules)",
+                f"import apizr.tracking as tracking; from pathlib import Path; assert not Path(tracking.__file__).resolve().is_relative_to(Path({str(ROOT)!r})); assert tracking.TrackingSession.current() is None",
+            )
         with (root / "rest.log").open("w+") as log:
             process = subprocess.Popen(
-                [sys.executable, "-I", "-c", server, str(root / "rest"), str(port)],
+                [
+                    str(runtime_python),
+                    "-I",
+                    "-c",
+                    server,
+                    str(root / "rest"),
+                    str(port),
+                ],
                 cwd=root,
                 env=env,
                 stdout=log,
@@ -211,8 +295,18 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
         async def mcp():
             async with Client(
                 StdioServerParameters(
-                    command=sys.executable,
-                    args=[str(root / "mcp/server.py")],
+                    command=str(runtime_python),
+                    args=(
+                        [
+                            "-I",
+                            "-c",
+                            runtime_prefix
+                            + "import runpy; from pathlib import Path; entry=sys.argv[1]; sys.path.insert(0,str(Path(entry).parent)); sys.argv=[entry]; runpy.run_path(entry, run_name='__main__')",
+                            str(root / "mcp/server.py"),
+                        ]
+                        if instrumented
+                        else [str(root / "mcp/server.py")]
+                    ),
                     cwd=root,
                     env=env,
                 ),
@@ -229,13 +323,17 @@ def prove(python: Path, fixtures: Path, *, notebook: bool = False) -> dict:
         anyio.run(mcp)
         assert not (root / "model.json").exists()
         assert not (root / "debug.json").exists()
+        assert not list(root.rglob(".apizr")), "Serving produced an SDK store"
         return {
             "status": "passed",
             "installed_outside_checkout": True,
             "kind": "notebook" if notebook else "python",
             "run_digest": run["run_digest"],
             "plan_digest": run["plan_digest"],
-            "binding_schema": "apizr.experiment-exposure/v1",
+            "binding_schema": bindings["rest"]["schema_version"],
+            "instrumented": instrumented,
+            "served_capture_disabled": instrumented,
+            "conditional_gate_explicit": instrumented,
             "rest": expected,
             "mcp": expected,
             "public_capabilities": ["python:serving:predict"],
@@ -250,9 +348,19 @@ def main():
     parser.add_argument("--python", type=Path, required=True)
     parser.add_argument("--fixtures", type=Path, required=True)
     parser.add_argument("--notebook", action="store_true")
+    parser.add_argument("--instrumented", action="store_true")
+    parser.add_argument("--wheelhouse", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = prove(args.python, args.fixtures, notebook=args.notebook)
+    if args.instrumented and (args.notebook or args.wheelhouse is None):
+        parser.error("--instrumented requires --wheelhouse and a Python source")
+    result = prove(
+        args.python,
+        args.fixtures,
+        notebook=args.notebook,
+        instrumented=args.instrumented,
+        wheelhouse=args.wheelhouse,
+    )
     args.output.write_text(json.dumps(result, indent=2) + "\n")
 
 

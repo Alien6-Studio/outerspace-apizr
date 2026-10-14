@@ -72,8 +72,11 @@ def _same_owner(expected: Owner | None, observed: Owner) -> bool:
     )
 
 
-def _suppressed() -> bool:
-    return os.environ.get("APIZR_EXPERIMENT_RUNNER") == "1"
+def capture_suppressed() -> bool:
+    return (
+        os.environ.get("APIZR_EXPERIMENT_RUNNER") == "1"
+        or os.environ.get("APIZR_SERVED_PROCESS") == "1"
+    )
 
 
 class TrackingSession:
@@ -128,7 +131,7 @@ class TrackingSession:
         if self._entered or self._closed:
             raise TrackingError("tracking_session_reused")
         self._context_owner = _owner()
-        self.disabled = _suppressed()
+        self.disabled = capture_suppressed()
         active = _ACTIVE.get()
         if (
             not self.disabled
@@ -420,22 +423,22 @@ def _current() -> TrackingSession:
 
 
 def log_parameter(name: str, value: object) -> None:
-    if not _suppressed():
+    if not capture_suppressed():
         _current().log_parameter(name, value)
 
 
 def log_metric(name: str, value: object, *, unit: str | None = None) -> None:
-    if not _suppressed():
+    if not capture_suppressed():
         _current().log_metric(name, value, unit=unit)
 
 
 def log_input(
     name: str, reference: str | None = None, *, uri: str | None = None
 ) -> None:
-    if not _suppressed():
+    if not capture_suppressed():
         _current().log_input(name, reference, uri=uri)
 
 
 def log_artifact(name: str, reference: str, *, media_type: str | None = None) -> None:
-    if not _suppressed():
+    if not capture_suppressed():
         _current().log_artifact(name, reference, media_type=media_type)

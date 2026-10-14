@@ -186,6 +186,22 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
         results["experiment_exposure"] = "passed"
         run(
             sys.executable,
+            ROOT / "scripts/experiment_exposure_proof.py",
+            "--python",
+            python,
+            "--fixtures",
+            ROOT / "tests/fixtures/experiments/exposure",
+            "--instrumented",
+            "--wheelhouse",
+            candidate / "dist",
+            "--output",
+            output / "experiment-exposure-sdk.json",
+            cwd=root,
+            env=env,
+        )
+        results["experiment_exposure_sdk"] = "passed"
+        run(
+            sys.executable,
             ROOT / "scripts/smoke_experiment_docs.py",
             cli,
             "--output",

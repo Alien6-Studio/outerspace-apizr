@@ -6,7 +6,10 @@ from pathlib import Path
 from apizr.experiments import ExperimentPlan, ExperimentRun
 from apizr.experiments.capture_model import ExperimentPlanV2, ExperimentRunV2
 from apizr.experiments.comparison import ExperimentDiff, ExperimentDiffV2
-from apizr.experiments.exposure_model import ExperimentExposureBinding
+from apizr.experiments.exposure_model import (
+    ExperimentExposureBinding,
+    ExperimentExposureBindingV2,
+)
 from apizr.experiments.history import (
     HistoryList,
     HistoryListV2,
@@ -40,6 +43,7 @@ def main() -> None:
         ("history", HistoryListV2),
         ("run-result", RunSummaryV2),
         ("diff", ExperimentDiffV2),
+        ("exposure", ExperimentExposureBindingV2),
     ):
         (root / f"apizr-experiment-{name}-v2.schema.json").write_text(
             json.dumps(model.model_json_schema(), indent=2, ensure_ascii=False) + "\n",
