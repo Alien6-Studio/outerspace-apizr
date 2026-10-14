@@ -103,7 +103,7 @@ jobs:
               --signer-workflow Alien6-Studio/outerspace-apizr/.github/workflows/ci.yml \
               --source-digest "$RELEASE_SHA" --source-ref "$SOURCE_REF"
           done
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: verified-release-evidence
           path: release-evidence/
@@ -119,13 +119,13 @@ jobs:
         run: |
           version=$(python3 -c 'import tomllib;print(tomllib.load(open("release-source/pyproject.toml","rb"))["project"]["version"])')
           python3 scripts/prepare_publication.py --dist dist --version "$version" --output pending --github-output "$GITHUB_OUTPUT"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pending-distributions
           path: pending/
           if-no-files-found: error
           retention-days: 30
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: verified-distributions
           path: dist/*
@@ -169,7 +169,7 @@ jobs:
       - name: Remove temporary private material even after interruption
         if: always()
         run: rm -f "$RUNNER_TEMP/apizr-attest-workspace/.attest/keys/"*.key
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: attest-release-evidence
           path: attest-evidence/
@@ -234,7 +234,7 @@ jobs:
           else
             python3 scripts/prepare_publication.py --dist dist --version "$RELEASE_VERSION" --output public-verification --require-package "$PACKAGE"
           fi
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: public-package-comparison

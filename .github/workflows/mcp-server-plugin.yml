@@ -53,7 +53,7 @@ jobs:
           "$RUNNER_TEMP/mcp-proof/client/bin/python" -B
           scripts/mcp_uninstall_proof.py "$RUNNER_TEMP/mcp-proof"
           > "$RUNNER_TEMP/mcp-proof/uninstall.log" 2>&1
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: mcp-stdio-${{ matrix.os }}-python-${{ matrix.python }}
@@ -85,7 +85,7 @@ jobs:
           python-version: '3.14'
       - name: Installed preparation refuses the locked wheel unavailable on Intel
         run: uv run --no-project python scripts/plugin_preparation_intel_proof.py --output "$RUNNER_TEMP/preparation-intel"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: preparation-macos-intel-python-3.14
@@ -115,7 +115,7 @@ jobs:
       - run: uv sync --locked
       - name: Fixed generated-business-MCP recovery series (stdio and HTTP)
         run: uv run --locked python scripts/repeat_mcp_transports.py --output "$RUNNER_TEMP/mcp-recovery"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: mcp-recovery-${{ matrix.os }}-python-${{ matrix.python }}

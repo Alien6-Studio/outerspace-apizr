@@ -31,7 +31,7 @@ jobs:
         run: |
           uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/forge-candidate"
           uv run --locked python scripts/check_distribution.py "$RUNNER_TEMP/forge-candidate/dist" --coordinated --manifest "$RUNNER_TEMP/forge-candidate/SHA256SUMS.json"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: forge-candidate
           path: ${{ runner.temp }}/forge-candidate
@@ -59,7 +59,7 @@ jobs:
           uv run --locked pytest tests/ci
           --cov=apizr.ci --cov=apizr.cli.commands.ci --cov-report=term-missing
           --cov-report=json:forge-coverage.json --junitxml=forge-tests.xml
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: forge-contracts
@@ -155,7 +155,7 @@ jobs:
         run: |
           test "$RESULT" = .apizr-ci-check/result.json && test "$STATE" = success
           python -I scripts/forge_integrations_proof.py --wheel "$WHEEL_PATH" --sha256 "$WHEEL_SHA256" --output "$RUNNER_TEMP/forge-proof" --compare-root "$GITHUB_WORKSPACE"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: forge-python-${{ matrix.python }}
           include-hidden-files: true

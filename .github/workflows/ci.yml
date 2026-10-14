@@ -28,19 +28,19 @@ jobs:
         run: |
           uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/candidate"
           uv run --locked python scripts/check_distribution.py "$RUNNER_TEMP/candidate/dist" --coordinated --manifest "$RUNNER_TEMP/candidate/SHA256SUMS.json"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: python-distributions
           path: ${{ runner.temp }}/candidate/dist/*
           if-no-files-found: error
           retention-days: 90
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: distribution-checksums
           path: ${{ runner.temp }}/candidate/SHA256SUMS.json
           if-no-files-found: error
           retention-days: 90
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-candidate
           path: ${{ runner.temp }}/candidate/
@@ -106,7 +106,7 @@ jobs:
           if test -d "$RUNNER_TEMP/data-science/science-wheels"; then
             tar -czf "$RUNNER_TEMP/science-wheels.tar.gz" -C "$RUNNER_TEMP/data-science" science-wheels
           fi
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: release-target-${{ matrix.os }}-${{ matrix.python }}
@@ -139,7 +139,7 @@ jobs:
           path: ${{ runner.temp }}/candidate
       - name: Same candidates through build, TLS push, signing, timestamp and offline proof
         run: python3 scripts/smoke_oci_registry.py --artifacts --output "$RUNNER_TEMP/candidate-delivery"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: release-delivery
@@ -287,7 +287,7 @@ jobs:
 
       - name: Preserve tests and branch coverage
         if: (always()) && needs.scope.outputs.product != 'false'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: validation-linux-python-${{ matrix.python }}
           path: |
@@ -327,7 +327,7 @@ jobs:
         run: uv run --locked python scripts/check_scope_coverage.py coverage.json
       - run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
         if: needs.scope.outputs.product != 'false'
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: (always()) && needs.scope.outputs.product != 'false'
         with:
           name: validation-macos-python-${{ matrix.python }}
@@ -350,7 +350,7 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
       - run: uv run --locked python scripts/security_mutations.py
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: security-mutation-evidence
@@ -390,7 +390,7 @@ jobs:
         run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --python 3.11
       - name: Preserve source, lock and dependency SBOMs
         run: uv run --locked python scripts/build_evidence.py
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-evidence
           path: release-evidence/
@@ -479,7 +479,7 @@ jobs:
       - name: Assert no invocation containers remain
         if: always()
         run: test -z "$(docker ps -aq --filter label=org.apizr.execution=oci-v1)"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: validation-oci
@@ -547,7 +547,7 @@ jobs:
         run: |
           cp "$PROVENANCE_BUNDLE" attestations/build-provenance.sigstore.json
           cp "$SBOM_BUNDLE" attestations/runtime-sbom.sigstore.json
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-attestations
           path: attestations/
@@ -588,7 +588,7 @@ jobs:
             options=()
           fi
           python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${options[@]}"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-assets
           path: release-assets/
