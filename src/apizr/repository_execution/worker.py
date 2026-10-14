@@ -93,8 +93,7 @@ def handle(request: Request, root: Path) -> ExecutionResult:
         loader.close()
 
 
-def main() -> None:
-    os.environ["APIZR_SERVED_PROCESS"] = "1"
+def _run_protocol() -> None:
     protocol_fd = os.dup(1)
     os.dup2(2, 1)
     limit = 128
@@ -109,6 +108,18 @@ def main() -> None:
     with os.fdopen(protocol_fd, "wb") as output:
         output.write(frame(encode(outcome.model_dump(mode="json"), limit)))
         output.flush()
+
+
+def main() -> None:
+    previous = os.environ.get("APIZR_SERVED_PROCESS")
+    os.environ["APIZR_SERVED_PROCESS"] = "1"
+    try:
+        _run_protocol()
+    finally:
+        if previous is None:
+            os.environ.pop("APIZR_SERVED_PROCESS", None)
+        else:
+            os.environ["APIZR_SERVED_PROCESS"] = previous
 
 
 if __name__ == "__main__":

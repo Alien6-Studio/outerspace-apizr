@@ -166,8 +166,9 @@ the official SDK. Graph import/call evidence remains complete and unmodified;
 rendering uses those retained facts and never reparses source to find SDK imports.
 
 The v1 policy/schema stays unchanged: this reviewed allowance uses existing
-binding, initialization and dependency reasons. Historical noninstrumented golden
-artifacts retain their original bytes. Generated SDK-dependent repository entrypoints and
+binding, initialization and dependency reasons. Capability/readiness goldens for
+noninstrumented sources retain their original bytes. Governed runtime artifact
+digests change with the reviewed worker implementation. Generated SDK-dependent repository entrypoints and
 governed workers set `APIZR_SERVED_PROCESS=1` before project imports. In that
 process the SDK decorator returns the original function and logging is disabled;
 served calls create no sessions or history writes. This is capture suppression,

@@ -90,8 +90,7 @@ def handle(request: Request, root: Path) -> ExecutionResult:
         return ExecutionResult(status="result_invalid")
 
 
-def main() -> None:
-    os.environ["APIZR_SERVED_PROCESS"] = "1"
+def _run_protocol() -> None:
     # Reserve a private non-inheritable duplicate for protocol output. Ordinary
     # print/os.write(1, ...) and stderr never mix with the response frame.
     protocol_fd = os.dup(1)
@@ -108,6 +107,18 @@ def main() -> None:
     with os.fdopen(protocol_fd, "wb") as output:
         output.write(frame(encode(outcome.model_dump(mode="json"), limit)))
         output.flush()
+
+
+def main() -> None:
+    previous = os.environ.get("APIZR_SERVED_PROCESS")
+    os.environ["APIZR_SERVED_PROCESS"] = "1"
+    try:
+        _run_protocol()
+    finally:
+        if previous is None:
+            os.environ.pop("APIZR_SERVED_PROCESS", None)
+        else:
+            os.environ["APIZR_SERVED_PROCESS"] = previous
 
 
 if __name__ == "__main__":

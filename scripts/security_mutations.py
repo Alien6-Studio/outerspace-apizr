@@ -28,6 +28,20 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "single-worker-restores-capture-context",
+        "src/apizr/execution/worker.py",
+        'os.environ.pop("APIZR_SERVED_PROCESS", None)',
+        "pass",
+        "tests/execution/test_serving_context.py::test_worker_restores_callers_serving_marker",
+    ),
+    Mutation(
+        "repository-worker-restores-capture-context",
+        "src/apizr/repository_execution/worker.py",
+        'os.environ.pop("APIZR_SERVED_PROCESS", None)',
+        "pass",
+        "tests/execution/test_serving_context.py::test_worker_restores_callers_serving_marker",
+    ),
+    Mutation(
         "sdk-binding-is-not-name-matching",
         "src/apizr/capabilities/instrumentation.py",
         'if self.member(target) != "experiment":',
