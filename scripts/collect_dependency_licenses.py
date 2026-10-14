@@ -21,7 +21,7 @@ MAX_ARCHIVE_BYTES = 200 * 1024 * 1024
 MAX_NOTICE_BYTES = 2 * 1024 * 1024
 NOTICE = re.compile(
     r"(^|/)(licen[sc]e(?:[-.][a-z0-9_.-]+)?|copying(?:[-.][a-z0-9_.-]+)?|"
-    r"notice(?:[-.][a-z0-9_.-]+)?|copyright|third.party.notices(?:\.md)?|"
+    r"notice(?:[-.][a-z0-9_.-]+)?|copyright|third[-_. ]?party[-_. ]?notices(?:\.(?:md|txt))?|"
     r"[^/]+\.LICENSE|[^/]+\.ABOUT)$",
     re.IGNORECASE,
 )

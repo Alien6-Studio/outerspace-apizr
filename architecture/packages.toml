@@ -46,7 +46,7 @@ responsibility = "Content-addressed experiment contracts, bounded evidence produ
 
 [packages."tracking"]
 kind = "domain"
-responsibility = "In-process experiment-tracking SDK sessions and explicit logging, publishing canonical experiment evidence through experiments; no execution isolation, CLI, plugin management or scientific-library dependency."
+responsibility = "In-process experiment-tracking SDK sessions, bounded observation of existing kernel executions and explicit logging, publishing canonical experiment evidence through experiments; no execution isolation, CLI, plugin management or scientific-library dependency."
 allowed_internal_imports = ["apizr.tracking", "apizr.experiments"]
 allowed_external_imports = ["pydantic"]
 

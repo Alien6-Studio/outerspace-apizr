@@ -116,6 +116,19 @@
       "name": "wcwidth",
       "reason": "Markus Kuhn permits use, copying, modification and distribution for any purpose without fee; retain this notice.",
       "version": "0.8.4"
+    },
+    {
+      "name": "debugpy",
+      "version": "1.8.22",
+      "licenses": [
+        "EPL-1.0",
+        "HPND"
+      ],
+      "evidence_sha256": [
+        "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+      ],
+      "reason": "Admit only unmodified, non-vendored development dependency use for real Jupyter qualification. Preserve all third-party notices and corresponding-source obligations. This is not admission into the Apizr runtime, containers or distributed services.",
+      "development_only": true
     }
   ],
   "schema_version": 1,

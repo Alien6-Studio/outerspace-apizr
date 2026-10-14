@@ -86,6 +86,57 @@ unknown values with a bounded type name where safely available. They are never
 pickled, converted, traversed or represented with `repr()`. Use an explicit
 `log_artifact` call for a serialized file you want to identify by content.
 
+## Live Jupyter captures (0.4.6 development)
+
+Run the ordinary session or decorator inside an existing IPython kernel:
+
+```python
+from pathlib import Path
+from apizr import tracking
+
+with tracking.session(root=Path.cwd()) as capture:
+    tracking.log_input("training_frame")
+    tracking.log_parameter("threshold", 0.5)
+    tracking.log_metric("score", 0.75)
+
+print(capture.record.run.capture.cell.execution_count)
+```
+
+The session observes the active execution when entered, even if it was created
+in an earlier cell. It records the frontend's optional cell identifier, the
+active prompt counter and a bounded SHA-256 digest of the raw execute-request
+source. The next-input counter is not mistaken for the current execution.
+These are kernel observations; raw cell code and outputs are not retained.
+
+Without an explicit `source`, saved-file evidence is unknown. Supplying a
+`source="training.ipynb"` observes that file independently; it does not prove
+that an unsaved or re-executed cell matches the saved notebook. No exporter
+sidecar or generated Python file is required for live capture.
+
+Each session entry or decorated call publishes its own Run. Re-executing a cell
+creates new execution identities; redecorating a redefined function creates a
+new definition identity. Decorated calls retain their defining function binding
+and observe the calling cell separately. Objects already in memory stay unknown
+unless explicitly logged through a supported bounded operation. The example's
+`log_input("training_frame")` records an unknown input, not a serialization of
+the frame.
+
+An interruption publishes a `cancelled` Run, restores the active context and
+leaves `KeyboardInterrupt` visible to Jupyter. Existing stdout, stderr, plots,
+display identifiers and display updates remain visible. Importing the SDK or
+applying a decorator does not start a kernel or register IPython hooks.
+
+The real-kernel qualification uses **ipykernel 7.4.0**, **IPython 9.17.1** and
+**jupyter-client 8.10.0**, on the supported Python 3.11–3.14 Linux/macOS CI
+targets. Frontend-specific behavior in JupyterLab, classic Notebook and VS Code
+notebooks is not separately qualified by this kernel proof. Kernel packages
+belong to the user's notebook environment, not to the SDK's runtime dependencies.
+The [Jupyter protocol](https://jupyter-client.readthedocs.io/en/latest/messaging.html)
+and [ipykernel parent-request API](https://ipykernel.readthedocs.io/en/stable/api/ipykernel.html#ipykernel.kernelbase.Kernel.get_parent)
+define the observed context.
+
+See the runnable [live-capture notebook](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.6/examples/tracking/jupyter-capture.ipynb).
+
 ## Shared CLI history and evidence export
 
 ```sh

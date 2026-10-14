@@ -86,6 +86,32 @@
       "version": "4.15.1"
     },
     {
+      "name": "appnope",
+      "version": "1.0.0",
+      "status": "reviewed",
+      "distribution_fingerprint": "7890b7afb2887ccff21825bcf673a7d2e7b1ee37618e4434a17b5f9cda4fe126",
+      "evidence_archive": {
+        "hash": "sha256:685db59cb6043c3c2e528adc0b3bce3a5f8d09bcf7492c6ea650d1b7421f3c49",
+        "url": "https://files.pythonhosted.org/packages/11/f7/a82489c2b6ebe32d3e2831895ae19c77861f0eadf3bb16034484d965dbb2/appnope-1.0.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "appnope-1.0.0/LICENSE",
+          "sha256": "0d32193e358c88e30be8ec37069cd41867d5f7db3273776fc7bd5c19517332c4"
+        }
+      ],
+      "components": [
+        {
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
+          "expression": "BSD-2-Clause",
+          "evidence_sha256": [
+            "0d32193e358c88e30be8ec37069cd41867d5f7db3273776fc7bd5c19517332c4"
+          ]
+        }
+      ],
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
+    },
+    {
       "components": [
         {
           "evidence_sha256": [
@@ -544,6 +570,32 @@
       "version": "0.4.6"
     },
     {
+      "name": "comm",
+      "version": "0.2.3",
+      "status": "reviewed",
+      "distribution_fingerprint": "eb987551743c1e9153413b73fc9d6b61c37b0d27c22ba15b93c65356547211f1",
+      "evidence_archive": {
+        "hash": "sha256:2dc8048c10962d55d7ad693be1e7045d891b7ce8d999c97963a5e3e99c055971",
+        "url": "https://files.pythonhosted.org/packages/4c/13/7d740c5849255756bc17888787313b61fd38a0a8304fc4f073dfc46122aa/comm-0.2.3.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "comm-0.2.3/LICENSE",
+          "sha256": "97a7e0a142b7c1dcd26461b20fc13980988b4449b7446ed776928826fd2ca9c4"
+        }
+      ],
+      "components": [
+        {
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
+          "expression": "BSD-3-Clause",
+          "evidence_sha256": [
+            "97a7e0a142b7c1dcd26461b20fc13980988b4449b7446ed776928826fd2ca9c4"
+          ]
+        }
+      ],
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
+    },
+    {
       "components": [
         {
           "evidence_sha256": [
@@ -636,6 +688,78 @@
       "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
       "status": "reviewed",
       "version": "11.12.0"
+    },
+    {
+      "name": "debugpy",
+      "version": "1.8.22",
+      "status": "reviewed",
+      "distribution_fingerprint": "ed92ef8c5a72f430bc35154e95fdfc436cbf741762063b464c4042b8330822d5",
+      "evidence_archive": {
+        "hash": "sha256:e489c7268e1c7b41e13b438d9c533d2a7af73fb59bf8cd30fead8286c1c39c4e",
+        "url": "https://files.pythonhosted.org/packages/44/9d/3cb6693342acf96802dba89934a5b8da43c201d764ebd1f2c0514a3d42bd/debugpy-1.8.22.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "debugpy-1.8.22/LICENSE",
+          "sha256": "649844f60da138e54b9bcc13338c62c5f97be8612cb6249ac10f84bbb97ffc88"
+        },
+        {
+          "path": "debugpy-1.8.22/src/debugpy/ThirdPartyNotices.txt",
+          "sha256": "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+        }
+      ],
+      "components": [
+        {
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
+          "expression": "MIT",
+          "evidence_sha256": [
+            "649844f60da138e54b9bcc13338c62c5f97be8612cb6249ac10f84bbb97ffc88"
+          ]
+        },
+        {
+          "scope": "Bundled PyDev.Debugger, used unmodified only in development kernel qualification; retain its notices and corresponding source. Not an Apizr runtime dependency or vendored distribution.",
+          "expression": "EPL-1.0",
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ]
+        },
+        {
+          "scope": "Bundled Python-derived code and cumulative BeOpen, CNRI and CWI notices.",
+          "expression": "Python-2.0",
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ]
+        },
+        {
+          "scope": "Bundled IPython, WinAppDbg and scandir components.",
+          "expression": "BSD-3-Clause",
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ]
+        },
+        {
+          "scope": "Bundled Microsoft and Brainwy Apache-licensed files.",
+          "expression": "Apache-2.0",
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ]
+        },
+        {
+          "scope": "Bundled six, Spyder methods and bytecode components.",
+          "expression": "MIT",
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ]
+        },
+        {
+          "scope": "Bundled Secret Labs XML-RPC client permission and attribution notice.",
+          "expression": "HPND",
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ]
+        }
+      ],
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
     },
     {
       "components": [
@@ -1158,6 +1282,32 @@
       "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
       "status": "reviewed",
       "version": "2.3.0"
+    },
+    {
+      "name": "ipykernel",
+      "version": "7.4.0",
+      "status": "reviewed",
+      "distribution_fingerprint": "616b674131309b017cc05edfd004b2328d64117df70bcb0b34446a6d28c808fe",
+      "evidence_archive": {
+        "hash": "sha256:4330114d22b9b33575b2c7c68753fc8faabbbcfbc60b0cdff9f14dd4ce63742f",
+        "url": "https://files.pythonhosted.org/packages/7a/05/e5499c8b762387d83926bf0389e8fff888c9bf6e7af30566a8527bc12f4a/ipykernel-7.4.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "ipykernel-7.4.0/LICENSE",
+          "sha256": "36ec29c871f7a382cde301cba47698191cf327c3f95ff5c240065e95dde80bfd"
+        }
+      ],
+      "components": [
+        {
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
+          "expression": "BSD-3-Clause",
+          "evidence_sha256": [
+            "36ec29c871f7a382cde301cba47698191cf327c3f95ff5c240065e95dde80bfd"
+          ]
+        }
+      ],
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
     },
     {
       "components": [
@@ -2021,6 +2171,32 @@
       "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
       "status": "reviewed",
       "version": "5.11.1"
+    },
+    {
+      "name": "nest-asyncio2",
+      "version": "1.7.4",
+      "status": "reviewed",
+      "distribution_fingerprint": "1cc00a39c85e4370b0944bf2ad293c03843d9fc0dc9987578cfe43b74a28b4ea",
+      "evidence_archive": {
+        "hash": "sha256:995b1409d926ec55e0876ea39a69bffdd8852cf1db3652c177e8c8ffdbcaf3cc",
+        "url": "https://files.pythonhosted.org/packages/32/2c/70e3b6bb2189cfd260280b7e1042bd622949a258663f95e887fada4ac1e6/nest_asyncio2-1.7.4.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "nest_asyncio2-1.7.4/LICENSE",
+          "sha256": "cec819c02a99e78449d64f3c0217d415c3a210f2a6abfcd827c6b1cb76954e78"
+        }
+      ],
+      "components": [
+        {
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
+          "expression": "BSD-2-Clause",
+          "evidence_sha256": [
+            "cec819c02a99e78449d64f3c0217d415c3a210f2a6abfcd827c6b1cb76954e78"
+          ]
+        }
+      ],
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
     },
     {
       "components": [

@@ -40,6 +40,7 @@ from apizr.experiments import (
 )
 from apizr.experiments.model import ExperimentValue
 from apizr.experiments.store import DEFAULT_STORE, RunRecordV2, prepare_store, publish
+from apizr.tracking.kernel import current_cell
 
 MAX_ITEMS = 256
 MAX_CAPTURE_BYTES = 1024 * 1024
@@ -107,6 +108,7 @@ class TrackingSession:
                 producer_version=version("outerspace-apizr"),
             )
         )
+        self._automatic_capture = capture is None
         self.call_parameters = call_parameters
         self.execution_id = uuid.uuid4().hex
         self.record: RunRecordV2 | None = None
@@ -141,6 +143,22 @@ class TrackingSession:
             active._failure = "tracking_nested_session"
             raise TrackingError("tracking_nested_session")
         if not self.disabled:
+            if self.capture.cell.origin == EvidenceOrigin.UNKNOWN:
+                try:
+                    cell = current_cell()
+                except Exception:
+                    raise TrackingError("tracking_kernel_observation_invalid") from None
+                if cell.origin == EvidenceOrigin.RUNTIME:
+                    self.capture = CaptureIdentity.model_validate(
+                        self.capture.model_copy(
+                            update={
+                                "cell": cell,
+                                "mode": CaptureMode.JUPYTER_CELL
+                                if self._automatic_capture
+                                else self.capture.mode,
+                            }
+                        )
+                    )
             prepare_store(self.store)
             self._environment = capture_runtime_environment(
                 distributions=self.distributions, root=self.root, policy=self.policy

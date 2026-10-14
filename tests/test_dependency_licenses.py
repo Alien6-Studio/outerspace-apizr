@@ -36,6 +36,42 @@ def test_current_universal_graph_has_preserved_license_evidence(inputs):
     assert report["limitations"]
 
 
+@pytest.mark.parametrize("scope", ["core", "extra", "transitive"])
+def test_development_license_exception_cannot_enter_runtime(inputs, scope):
+    lock, inventory, policy, texts = inputs
+    project = next(p for p in lock["package"] if p["name"] == "outerspace-apizr")
+    if scope == "core":
+        dependencies = project["dependencies"]
+    elif scope == "extra":
+        dependencies = project["optional-dependencies"]["notebook"]
+    else:
+        dependencies = next(p for p in lock["package"] if p["name"] == "pydantic")[
+            "dependencies"
+        ]
+    dependencies.append({"name": "debugpy"})
+    refused = False
+    try:
+        CHECKER["validate_inventory"](lock, inventory, policy, texts)
+    except ValueError as error:
+        assert (
+            str(error) == "Development-only license exception reached runtime: debugpy"
+        )
+        refused = True
+    assert refused, "Development-only admission must not authorize runtime use"
+
+
+def test_runtime_scope_includes_alternative_locked_versions():
+    lock = {
+        "package": [
+            {"name": "outerspace-apizr", "dependencies": [{"name": "variant"}]},
+            {"name": "variant", "version": "1", "dependencies": [{"name": "debugpy"}]},
+            {"name": "variant", "version": "2"},
+            {"name": "debugpy"},
+        ]
+    }
+    assert "debugpy" in CHECKER["runtime_dependencies"](lock)
+
+
 @pytest.mark.parametrize(
     ("expression", "allowed", "expected"),
     [
@@ -201,9 +237,11 @@ def test_collector_preserves_nonstandard_license_names_in_wheels(monkeypatch):
     with zipfile.ZipFile(buffer, "w") as archive:
         archive.writestr("dist-info/licenses/mit.LICENSE", "MIT evidence\n")
         archive.writestr("data/index.ABOUT", "Attribution\n")
+        archive.writestr("package/ThirdPartyNotices.txt", "Cumulative obligations\n")
     data = buffer.getvalue()
     result = collect(data, {"hash": "sha256:" + hashlib.sha256(data).hexdigest()})
     assert {r["path"] for r in result} == {
         "dist-info/licenses/mit.LICENSE",
         "data/index.ABOUT",
+        "package/ThirdPartyNotices.txt",
     }

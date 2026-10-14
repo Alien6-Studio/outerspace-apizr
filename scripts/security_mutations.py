@@ -112,6 +112,27 @@ MUTATIONS = (
         "tests/tracking/test_sessions.py::test_business_exception_identity_is_preserved",
     ),
     Mutation(
+        "tracking-kernel-source-byte-bound",
+        "src/apizr/tracking/kernel.py",
+        "if len(raw) > MAX_CELL_BYTES:",
+        "if False:",
+        "tests/tracking/test_kernel.py::test_invalid_observations_refuse_before_business_code_or_store",
+    ),
+    Mutation(
+        "tracking-kernel-execute-request-only",
+        "src/apizr/tracking/kernel.py",
+        'if cast(dict[str, object], header).get("msg_type") != "execute_request":',
+        "if False:",
+        "tests/tracking/test_kernel.py::test_non_execution_request_is_not_presented_as_a_cell[completion]",
+    ),
+    Mutation(
+        "development-license-cannot-reach-runtime",
+        "scripts/check_dependency_licenses.py",
+        'if exception.get("development_only") and name in runtime:',
+        "if False:",
+        "tests/test_dependency_licenses.py::test_development_license_exception_cannot_enter_runtime",
+    ),
+    Mutation(
         "tracking-duplicate-key-refusal",
         "src/apizr/tracking/session.py",
         "        if name in items:",
@@ -775,13 +796,14 @@ def main() -> None:
     results = []
     with tempfile.TemporaryDirectory(prefix="apizr-mutations-") as directory:
         checkout = Path(directory)
-        for name in ("src", "tests", "scripts", "plugins"):
+        for name in ("src", "tests", "scripts", "plugins", "policy"):
             shutil.copytree(
                 root / name,
                 checkout / name,
                 ignore=shutil.ignore_patterns("__pycache__"),
             )
         shutil.copyfile(root / "pyproject.toml", checkout / "pyproject.toml")
+        shutil.copyfile(root / "uv.lock", checkout / "uv.lock")
         tests = sorted({mutation.test for mutation in MUTATIONS})
         baseline = output / "baseline.xml"
         validate_result(

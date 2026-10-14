@@ -2,6 +2,10 @@
 
 ## 0.4.6 — development, not published
 
+- Capture active Jupyter cell identities, prompt counters and bounded source
+  digests through the ordinary SDK session/decorator, with independent saved-file
+  evidence, preserved displays and real interrupt/recovery qualification (#305).
+
 - Qualify stable uv 0.13.x for plugin preparation, retain measured resolver
   versions, pin development CI to 0.13.1 and detect new unqualified series (#329).
 - Support measured native glibc 2.41 hosts without passing an unsupported uv

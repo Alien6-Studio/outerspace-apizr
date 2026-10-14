@@ -78,6 +78,33 @@ def license_allowed(expression: str, allowed: set[str]) -> bool:
     return result
 
 
+def runtime_dependencies(lock: dict) -> set[str]:
+    """Conservatively include every supported runtime extra and platform branch."""
+    by_name = {}
+    for package in lock["package"]:
+        by_name.setdefault(package["name"], []).append(package)
+    project = by_name["outerspace-apizr"][0]
+    pending = list(project.get("dependencies", []))
+    for dependencies in project.get("optional-dependencies", {}).values():
+        pending.extend(dependencies)
+    selected = set()
+    visited = set()
+    while pending:
+        dependency = pending.pop()
+        name = canonicalize_name(dependency["name"])
+        extras = tuple(sorted(dependency.get("extra", [])))
+        key = (name, extras)
+        if key in visited:
+            continue
+        visited.add(key)
+        selected.add(name)
+        for package in by_name[name]:
+            pending.extend(package.get("dependencies", []))
+            for extra in extras:
+                pending.extend(package.get("optional-dependencies", {}).get(extra, []))
+    return selected
+
+
 def validate_inventory(lock: dict, inventory: dict, policy: dict, texts: dict) -> dict:
     if any(x.get("schema_version") != 1 for x in (inventory, policy, texts)):
         raise ValueError("Unsupported license policy schema")
@@ -104,6 +131,7 @@ def validate_inventory(lock: dict, inventory: dict, policy: dict, texts: dict) -
     denied = {canonicalize_name(p["name"]): p for p in policy["denied_packages"]}
     allowed = set(policy["allowed_licenses"])
     exceptions = policy["exceptions"]
+    runtime = runtime_dependencies(lock)
     used_exceptions = set()
     referenced_texts = set()
     for key, package in expected.items():
@@ -137,6 +165,12 @@ def validate_inventory(lock: dict, inventory: dict, policy: dict, texts: dict) -
         scoped_allowed = set(allowed)
         for index, exception in enumerate(exceptions):
             if (exception["name"], exception["version"]) == key:
+                if type(exception.get("development_only", False)) is not bool:
+                    raise ValueError(f"Invalid development-only license scope: {name}")
+                if exception.get("development_only") and name in runtime:
+                    raise ValueError(
+                        f"Development-only license exception reached runtime: {name}"
+                    )
                 if not exception.get("reason", "").strip() or not exception.get(
                     "evidence_sha256"
                 ):

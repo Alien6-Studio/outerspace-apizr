@@ -86,6 +86,28 @@ The execution identities `apizr.execution/v1`, `apizr.runtime/v1` and
 `apizr.local-process/v1` remain unchanged. In-process tracking is not a sandbox
 and does not change existing execution authorization.
 
+## Live kernel ownership
+
+`tracking/kernel.py` owns bounded observation of an already-running IPython
+kernel. It consumes the existing `CellIdentity` contract. It reads the existing
+`get_ipython` builtin only at session entry, without importing optional packages,
+registering hooks, traversing the user namespace or altering display behavior.
+Cell identity, active prompt counter and the raw request's digest remain distinct
+from saved-file and function-definition evidence. The cell digest is not used to
+claim a defining-code digest or a proven exported notebook binding.
+
+The SDK uses the same session lifecycle, context ownership, failure publication
+and canonical store. Suppressed CLI/served captures do not access the kernel.
+Cell source observation is bounded to 1 MiB, with the same structured refusal
+before business execution for malformed observations. No raw code, connection
+information or notebook output is stored.
+
+`scripts/experiment_jupyter_proof.py` owns the Jupyter SDK qualification journey.
+The development `jupyter-qualification` group supplies its kernel dependencies;
+the installed proof exports their exact hashes, installs the candidate outside
+checkout and retains the generated requirements alongside the proof. The CI
+package job includes both files in its existing build-evidence manifest.
+
 ## License
 
 Apizr and `apizr.tracking` are distributed under
