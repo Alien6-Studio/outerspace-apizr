@@ -205,9 +205,9 @@ def test_tuple_business_parity_over_real_generated_stdio(
     # Generated bundles copy the exact reviewed semantic implementation, not a fork.
     reviewed = files("apizr.interfaces").joinpath("results.py").read_text()
     if backend == "direct":
-        expected_source = reviewed.replace(
-            "from apizr.interfaces.runtime import", "from apizr_runtime import"
-        )
+        from apizr.interfaces.embedding import portable_imports
+
+        expected_source = portable_imports(reviewed)
         assert (mcp / "apizr_results.py").read_text() == expected_source
     else:
         expected_source = reviewed.replace("from apizr.", "from apizr_governed.")

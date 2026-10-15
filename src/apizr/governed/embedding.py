@@ -15,6 +15,7 @@ from apizr.execution import (
     policy_bytes,
     policy_digest,
 )
+from apizr.interfaces.embedding import PORTABLE_ADMISSION_FILES
 from apizr.interfaces.serialization import json_bytes
 
 from .model import ExecutionBundle, PlanArtifact
@@ -23,6 +24,7 @@ from .model import ExecutionBundle, PlanArtifact
 # No analyzer, notebook exporter, legacy pipeline or generator is shipped.
 MODULES = (
     "contract_types.py",
+    "contracts/json_budget.py",
     "contract_lowering.py",
     "capabilities/model.py",
     "capabilities/types.py",
@@ -35,6 +37,8 @@ MODULES = (
     "interfaces/serialization.py",
     "interfaces/runtime.py",
     "interfaces/results.py",
+    "interfaces/json_budget.py",
+    "interfaces/http_admission.py",
     "execution/model.py",
     "execution/policy.py",
     "execution/planner.py",
@@ -77,6 +81,8 @@ def definition(path: str, name: str) -> str:
 
 def runtime_files(transport: Literal["rest", "mcp"]) -> dict[str, bytes]:
     modules = {name: source(name) for name in (*MODULES, f"governed/{transport}.py")}
+    if transport == "mcp":
+        modules["generators/mcp/transport.py"] = source("generators/mcp/transport.py")
     # Inspection's model validates linkage; its unrelated analyzer/reporting entry
     # points would pull in the source analyzer and are deliberately not embedded.
     modules["inspection.py"] = (
@@ -103,6 +109,9 @@ def runtime_files(transport: Literal["rest", "mcp"]) -> dict[str, bytes]:
     }
     for package in (
         "",
+        "contracts/",
+        "generators/",
+        "generators/mcp/",
         "capabilities/",
         "readiness/",
         "interfaces/",
@@ -138,7 +147,8 @@ def govern(
     policy = ExecutionPolicy.model_validate(policy.model_dump(mode="json"))
     # The direct MCP helper is superseded by the single embedded shared binder.
     artifacts.pop("apizr_runtime.py", None)
-    artifacts.pop("apizr_results.py", None)
+    for helper in PORTABLE_ADMISSION_FILES:
+        artifacts.pop(helper, None)
     manifest_name = f"apizr-{transport}.json"
     manifest = json.loads(artifacts.pop(manifest_name))
     contracts = manifest["capabilities" if transport == "rest" else "tools"]

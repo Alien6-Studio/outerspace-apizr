@@ -65,6 +65,12 @@ interfaces, governed transports and repository workers consume this one policy.
 Generators embed its complete module and `contracts.json_budget` in their
 standalone closures and check final bundle sizes before output staging.
 
+`interfaces.json_budget` owns bounded interface-value traversal and encoded size;
+`interfaces.http_admission` applies lexical admission to ASGI body streams.
+`generators.mcp.transport` integrates public SDK streams and MCP representations;
+the static compiler remains independent of optional SDK imports. All standalone
+closures copy these implementations, including the inlined single-file REST form.
+
 ```text
 src/apizr/
 ├── cli/

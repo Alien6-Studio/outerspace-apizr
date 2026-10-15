@@ -14,6 +14,7 @@ from pydantic import JsonValue
 from apizr.capabilities import canonical_bytes as ir_bytes
 from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import Digest
+from apizr.interfaces.embedding import admission_files, portable_imports
 from apizr.interfaces.output import write_bundle
 from apizr.interfaces.serialization import json_bytes
 from apizr.readiness import canonical_bytes as readiness_bytes
@@ -70,21 +71,17 @@ def render(
         "from apizr.interfaces.runtime import (", "from apizr_runtime import ("
     ).replace("from apizr.interfaces.results import", "from apizr_results import")
     artifacts = {
-        "server.py": runtime.encode("utf-8"),
+        "server.py": portable_imports(runtime).encode("utf-8"),
         "apizr_runtime.py": files("apizr.interfaces")
         .joinpath("runtime.py")
         .read_bytes(),
-        "apizr_results.py": files("apizr.interfaces")
-        .joinpath("results.py")
-        .read_text(encoding="utf-8")
-        .replace("from apizr.interfaces.runtime import", "from apizr_runtime import")
-        .encode("utf-8"),
         contract.executable_path: executable,
         "capability-ir.json": ir_bytes(inspection.capability_ir),
         "readiness.json": readiness_bytes(inspection.readiness),
         "mcp-tools.json": json_bytes(tool_document(contract)),
         "requirements.txt": REQUIREMENTS,
     }
+    artifacts.update(admission_files("mcp"))
     for parent in PurePosixPath(contract.executable_path).parents:
         if parent.as_posix() not in (".", "source"):
             artifacts.setdefault(parent.as_posix() + "/__init__.py", b"")

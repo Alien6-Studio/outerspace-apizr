@@ -168,6 +168,7 @@ nav:
       - Static readiness: architecture/capability-readiness-v1.md
       - REST generator: architecture/rest-generator-v1.md
       - MCP generator: architecture/mcp-generator-v1.md
+      - REST and MCP admission: architecture/transport-admission.md
       - Execution Policy: architecture/execution-policy-v1.md
       - OCI container execution: architecture/oci-container-runtime-v1.md
       - Subprocess deny: architecture/subprocess-deny.md

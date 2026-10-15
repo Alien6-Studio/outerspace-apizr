@@ -23,6 +23,7 @@ from apizr.generators.rest.generator import REQUIREMENTS as REST_REQUIREMENTS
 from apizr.generators.rest.model import Endpoint
 from apizr.generators.rest.schema import openapi
 from apizr.graph import Graph, graph_bytes
+from apizr.interfaces.embedding import admission_files, portable_imports
 from apizr.interfaces.schema import request_schema
 from apizr.interfaces.serialization import json_bytes
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
@@ -36,7 +37,7 @@ from .planner import BundleRefused, plan_repository_interface
 
 
 def template(name: str) -> bytes:
-    source = (
+    source = portable_imports(
         files("apizr.repository_interfaces").joinpath(name).read_text(encoding="utf-8")
     )
     return (
@@ -126,6 +127,7 @@ def render_repository_bundle(
         .joinpath("runtime.py")
         .read_bytes(),
     }
+    artifacts.update(admission_files(interface))
     artifacts.update({s.bundle_path: sources[s.source_path] for s in contract.sources})
     if application is not None:
         artifacts["application-requirements.txt"] = application.requirements()
@@ -193,15 +195,6 @@ def render_repository_bundle(
         )
     else:
         artifacts["requirements.txt"] = MCP_REQUIREMENTS
-        artifacts["apizr_results.py"] = (
-            files("apizr.interfaces")
-            .joinpath("results.py")
-            .read_text(encoding="utf-8")
-            .replace(
-                "from apizr.interfaces.runtime import", "from apizr_runtime import"
-            )
-            .encode("utf-8")
-        )
         artifacts["mcp-tools.json"] = json_bytes(
             {
                 "schema_version": "apizr.repository-mcp/v1",

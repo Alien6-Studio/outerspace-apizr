@@ -9,6 +9,7 @@ from apizr.capabilities.model import Digest
 from apizr.execution.policy import ExecutionPolicy
 from apizr.execution.serialization import canonical_bytes, digest
 from apizr.governed.embedding import definition, source
+from apizr.interfaces.embedding import PORTABLE_ADMISSION_FILES
 from apizr.interfaces.serialization import json_bytes
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.repository_execution.planner import container_plan, worker_plan
@@ -28,6 +29,8 @@ MODULES = (
     "interfaces/serialization.py",
     "interfaces/runtime.py",
     "interfaces/results.py",
+    "interfaces/json_budget.py",
+    "interfaces/http_admission.py",
     "execution/policy.py",
     "execution/invocation.py",
     "execution/protocol.py",
@@ -60,6 +63,8 @@ def runtime_files(transport: Literal["rest", "mcp"]) -> dict[str, bytes]:
     modules = {
         name: source(name) for name in (*MODULES, f"governed_repository/{transport}.py")
     }
+    if transport == "mcp":
+        modules["generators/mcp/transport.py"] = source("generators/mcp/transport.py")
     modules["capabilities/types.py"] = modules["capabilities/types.py"].replace(
         definition("capabilities/types.py", "declared_type"), ""
     )
@@ -208,10 +213,10 @@ def govern(
         artifacts[path] = canonical_bytes(plan)
         plans[capability.capability_id] = PlanArtifact(path=path, digest=digest(plan))
     artifacts.pop("apizr_runtime.py")
-    artifacts.pop("apizr_results.py", None)
+    for helper in PORTABLE_ADMISSION_FILES:
+        artifacts.pop(helper, None)
     artifacts.pop("apizr_repository_runtime.py")
     artifacts.pop("apizr_repository_artifacts.py")
-    artifacts.pop("apizr_json_preflight.py")
     runtime_artifacts = runtime_files(transport)
     if isinstance(policy, ExecutionPolicyV2) and policy.subprocess.mode == "deny":
         from apizr.subprocess_guard.embedding import strict_files

@@ -5,10 +5,11 @@ from pathlib import Path
 from typing import Any, cast
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
+from apizr.interfaces.http_admission import JsonAdmission
+from apizr.interfaces.results import normalize_rest_result
 from apizr.interfaces.runtime import RuntimeInvocation, arguments
 from apizr.repository_interfaces.runtime import load_bundle
 
@@ -16,6 +17,7 @@ from apizr.repository_interfaces.runtime import load_bundle
 def create_app(root: Path, expected: dict[str, str] | None = None) -> FastAPI:
     manifest, bindings, loader, artifacts = load_bundle(root, "rest", expected)
     app = FastAPI(title="Apizr Repository REST API", redoc_url=None)
+    app.add_middleware(JsonAdmission)
     app.state.repository_loader = loader
     document = json.loads(artifacts["openapi.json"])
     app.openapi = lambda: document
@@ -39,7 +41,7 @@ def create_app(root: Path, expected: dict[str, str] | None = None) -> FastAPI:
                     result = await function(*args, **kwargs)
                 else:
                     result = await run_in_threadpool(function, *args, **kwargs)
-                return JSONResponse(content=jsonable_encoder(result))
+                return JSONResponse(content=normalize_rest_result(result))
             except Exception:
                 raise HTTPException(500, "Internal server error") from None
 
