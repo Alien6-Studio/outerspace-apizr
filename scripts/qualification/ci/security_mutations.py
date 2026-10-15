@@ -448,6 +448,20 @@ MUTATIONS = (
         "tests/tracking/test_sessions.py::test_duplicate_names_are_refused_before_repeated_file_reads",
     ),
     Mutation(
+        "tracking-aggregate-byte-refusal",
+        "src/apizr/tracking/session.py",
+        "if self._bytes + size > MAX_CAPTURE_BYTES:",
+        "if False:",
+        "tests/tracking/test_collection_cost.py::test_capture_boundary_accepts_exact_bytes_and_refuses_next_item",
+    ),
+    Mutation(
+        "experiment-value-byte-accounting",
+        "src/apizr/experiments/values.py",
+        "if remaining_bytes < 0:",
+        "if False:",
+        "tests/experiments/test_value_budget.py::test_exact_value_boundary_and_one_byte_over",
+    ),
+    Mutation(
         "tracking-cross-context-refusal",
         "src/apizr/tracking/session.py",
         '        if not _same_owner(self._context_owner, _owner()):\n            raise TrackingError("tracking_context_mismatch")\n        if self._closed:',

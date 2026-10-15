@@ -34,6 +34,7 @@ another matrix to ordinary development pushes.
 | Imports and CLI startup | Fresh isolated interpreter for `import apizr`, `import apizr.tracking` and `apizr --version`; process startup included |
 | Inspection | Real CLI JSON inspection of `examples/data-science/fraud-detection/fraud_detection.ipynb` and a deterministic 500-function Python script; no scientific workload execution |
 | SDK | Session entry, each of 256 explicit metric observations, and exit/durable publication; empty sessions measured separately |
+| Cold first capture | Fresh process importing the selected checkout's SDK and completing one empty session; includes dependency loading and durable publication |
 | Content digests | Existing `_files.py` descriptor-based SHA-256 reader at 0, 1 MiB and 16 MiB; content read on each observation |
 | Publication | Existing durable Plan-before-Run publication into a new empty store; fixture construction excluded |
 | History | List JSON, show JSON and diff JSON at 10 and 1,000 Runs sharing a canonical v1 Plan; complete validation included |
@@ -53,6 +54,9 @@ application cache across commands. Compare the same fixtures, Python and machine
 under similar load, using retained samples rather than one timing.
 The machine is shared; unrelated workloads are not stopped or controlled by the
 benchmark. Reported changes are observations, not isolated causal estimates.
+Per-phase SDK measurements use already loaded engine dependencies. The cold first
+capture is separate: making the SDK import lazy moves initialization to explicit
+use and does not establish an equal saving in end-to-end capture latency.
 
 ## Admission work and budgets
 

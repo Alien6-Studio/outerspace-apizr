@@ -54,5 +54,3 @@
      6003    0.008    0.000    0.032    0.000 model.py:367(observed_evidence)
      1009    0.030    0.000    0.030    0.000 {built-in method posix.open}
     22018    0.005    0.000    0.029    0.000 model.py:202(ordered_inventory)
-
-

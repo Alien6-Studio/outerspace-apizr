@@ -1,63 +1,53 @@
 """Explicit, bounded observations in the caller's context; no workload execution."""
 
-import asyncio
-import os
-import threading
-import time
-import uuid
-from contextvars import ContextVar, Token
-from datetime import UTC, datetime
-from importlib.metadata import version
-from pathlib import Path
-from types import TracebackType
-from typing import Literal, TypeVar
+from __future__ import annotations
 
-from apizr.experiments import (
-    CallParameter,
-    CaptureIdentity,
-    CaptureMode,
-    EnvironmentEvidence,
-    EvidenceOrigin,
-    ExecutionIntent,
-    ExperimentPlanV2,
-    ExperimentRunV2,
-    FingerprintPolicy,
-    InputArtifact,
-    InputDeclaration,
-    Metric,
-    OutputArtifact,
-    OutputDeclaration,
-    Parameter,
-    RunDiagnostic,
-    RunTiming,
-    SourceEvidence,
-    SourceIdentity,
-    capture_metric,
-    capture_runtime_environment,
-    fingerprint_input,
-    fingerprint_output,
-    plan_digest,
-)
-from apizr.experiments.model import ExperimentValue
-from apizr.experiments.store import DEFAULT_STORE, RunRecordV2, prepare_store, publish
-from apizr.tracking.kernel import current_cell
+import os
+import time
+from contextvars import ContextVar, Token
+from types import TracebackType
+from typing import TYPE_CHECKING, Literal, TypeVar
+
+if TYPE_CHECKING:
+    import asyncio
+    import threading
+    from datetime import datetime
+    from pathlib import Path
+
+    from apizr.experiments.capture_model import (
+        CallParameter,
+        CaptureIdentity,
+        ExperimentPlanV2,
+    )
+    from apizr.experiments.model import (
+        EnvironmentEvidence,
+        ExperimentValue,
+        InputArtifact,
+        Metric,
+        OutputArtifact,
+        Parameter,
+    )
+    from apizr.experiments.store import RunRecordV2
 
 MAX_ITEMS = 256
 MAX_CAPTURE_BYTES = 1024 * 1024
 _ACTIVE: ContextVar["TrackingSession | None"] = ContextVar(
     "apizr_tracking_session", default=None
 )
-T = TypeVar("T", bound=ExperimentValue)
+T = TypeVar("T", bound="ExperimentValue")
 
 
 class TrackingError(ValueError):
     """Stable capture refusal, with no logged values or business exception text."""
 
 
-Owner = tuple[threading.Thread, asyncio.Task[object] | None]
+Owner = tuple["threading.Thread", "asyncio.Task[object] | None"]
 
 
 def _owner() -> Owner:
+    import asyncio
+    import threading
+
     try:
         task = asyncio.current_task()
     except RuntimeError:
@@ -92,6 +82,14 @@ class TrackingSession:
         capture: CaptureIdentity | None = None,
         call_parameters: tuple[CallParameter, ...] = (),
     ):
+        import uuid
+        from importlib.metadata import version
+        from pathlib import Path
+
+        from apizr.experiments.capture_model import CaptureIdentity, CaptureMode
+        from apizr.experiments.inputs import FingerprintPolicy
+        from apizr.experiments.store import DEFAULT_STORE
+
         self.root = Path.cwd() if root is None else Path(root).absolute()
         self.store = (
             self.root / DEFAULT_STORE if store is None else Path(store).absolute()
@@ -125,11 +123,34 @@ class TrackingSession:
         self._bytes = 0
         self._failure: str | None = None
         self._plan: ExperimentPlanV2 | None = None
+        self._plan_digest: str | None = None
         self._environment: EnvironmentEvidence | None = None
         self._started_at: datetime | None = None
         self._started_clock = 0.0
 
     def __enter__(self) -> "TrackingSession":
+        from datetime import UTC, datetime
+        from pathlib import Path
+
+        from apizr.experiments.capture_model import (
+            CaptureIdentity,
+            CaptureMode,
+            ExperimentPlanV2,
+            ExperimentRunV2,
+            SourceEvidence,
+        )
+        from apizr.experiments.environment import capture_runtime_environment
+        from apizr.experiments.inputs import InputDeclaration, fingerprint_input
+        from apizr.experiments.model import (
+            EvidenceOrigin,
+            ExecutionIntent,
+            SourceIdentity,
+        )
+        from apizr.experiments.serialization import plan_digest
+        from apizr.experiments.store import prepare_store
+        from apizr.tracking.budget import capture_size
+        from apizr.tracking.kernel import current_cell
+
         if self._entered or self._closed:
             raise TrackingError("tracking_session_reused")
         self._context_owner = _owner()
@@ -187,18 +208,17 @@ class TrackingSession:
                 capture=self.capture,
             )
             # Validate selected call evidence before business code starts.
-            ExperimentRunV2(
-                plan_digest=plan_digest(self._plan),
+            self._plan_digest = plan_digest(self._plan)
+            admitted = ExperimentRunV2(
+                plan_digest=self._plan_digest,
                 subject=subject,
                 capture=self.capture,
                 execution_id=self.execution_id,
                 call_parameters=self.call_parameters,
                 status="success",
             )
-            self._bytes = sum(
-                len(item.model_dump_json().encode("utf-8"))
-                for item in self.call_parameters
-            )
+            self.call_parameters = admitted.call_parameters
+            self._bytes = sum(capture_size(item) for item in self.call_parameters)
             if self._bytes > MAX_CAPTURE_BYTES:
                 raise TrackingError("tracking_capture_limit")
         self._started_at = datetime.now(UTC)
@@ -213,6 +233,8 @@ class TrackingSession:
         error: BaseException | None,
         traceback: TracebackType | None,
     ) -> Literal[False]:
+        import asyncio
+
         if not _same_owner(self._context_owner, _owner()):
             raise TrackingError("tracking_context_mismatch")
         try:
@@ -269,7 +291,9 @@ class TrackingSession:
             raise TrackingError(self._failure)
 
     def _append(self, items: dict[str, T], item: T, name: str) -> None:
-        size = len(item.model_dump_json().encode("utf-8"))
+        from apizr.tracking.budget import capture_size
+
+        size = capture_size(item)
         if self._bytes + size > MAX_CAPTURE_BYTES:
             self._failure = "tracking_capture_limit"
             raise TrackingError(self._failure)
@@ -280,6 +304,8 @@ class TrackingSession:
         self._reserve(self._parameters, name)
         if self.disabled:
             return
+        from apizr.experiments.model import EvidenceOrigin, Parameter
+
         try:
             item = Parameter.model_validate(
                 {"name": name, "value": value, "origin": EvidenceOrigin.RUNTIME}
@@ -293,6 +319,8 @@ class TrackingSession:
         self._reserve(self._metrics, name)
         if self.disabled:
             return
+        from apizr.experiments.metrics import capture_metric
+
         try:
             item = capture_metric(name, value, unit=unit)
         except ValueError:
@@ -306,6 +334,9 @@ class TrackingSession:
         self._reserve(self._inputs, name)
         if self.disabled:
             return
+        from apizr.experiments.inputs import InputDeclaration, fingerprint_input
+        from apizr.experiments.model import EvidenceOrigin, InputArtifact
+
         try:
             if reference is None and uri is None:
                 item = InputArtifact(name=name, origin=EvidenceOrigin.UNKNOWN)
@@ -336,6 +367,8 @@ class TrackingSession:
         self._reserve(self._outputs, name)
         if self.disabled:
             return
+        from apizr.experiments.outputs import OutputDeclaration, fingerprint_output
+
         try:
             result = fingerprint_output(
                 self.root,
@@ -364,7 +397,17 @@ class TrackingSession:
         self._closed = True
         if self.disabled:
             return None
-        assert self._plan is not None and self._environment is not None
+        from datetime import UTC, datetime
+
+        from apizr.experiments.capture_model import ExperimentRunV2
+        from apizr.experiments.model import EvidenceOrigin, RunDiagnostic, RunTiming
+        from apizr.experiments.store import publish
+
+        assert (
+            self._plan is not None
+            and self._environment is not None
+            and self._plan_digest is not None
+        )
         diagnostic = self._failure or (
             "tracking_cancelled"
             if status == "cancelled"
@@ -375,7 +418,7 @@ class TrackingSession:
         actual_status = "failed" if self._failure else status
         run = ExperimentRunV2.model_validate(
             {
-                "plan_digest": plan_digest(self._plan),
+                "plan_digest": self._plan_digest,
                 "subject": self._plan.subject,
                 "capture": self.capture,
                 "execution_id": self.execution_id,

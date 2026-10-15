@@ -1,0 +1,66 @@
+         250655 function calls (235252 primitive calls) in 0.037 seconds
+
+   Ordered by: cumulative time
+   List reduced from 383 to 60 due to restriction <60>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.037    0.037 <stdin>:9(collect)
+        1    0.000    0.000    0.030    0.030 session.py:230(__exit__)
+        1    0.000    0.000    0.030    0.030 session.py:395(_finish)
+        1    0.000    0.000    0.028    0.028 store.py:350(publish)
+        3    0.000    0.000    0.023    0.008 serialization.py:29(run_bytes)
+        1    0.000    0.000    0.019    0.019 store.py:101(_record)
+  295/287    0.003    0.000    0.019    0.000 {method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+        8    0.005    0.001    0.017    0.002 json.py:27(encode)
+        2    0.000    0.000    0.016    0.008 serialization.py:34(run_digest)
+       19    0.000    0.000    0.012    0.001 main.py:270(__init__)
+        1    0.000    0.000    0.010    0.010 store.py:76(bound)
+        1    0.000    0.000    0.010    0.010 store.py:48(_validate_record_binding)
+    15042    0.001    0.000    0.008    0.000 encoder.py:414(_iterencode)
+       18    0.000    0.000    0.007    0.000 type_adapter.py:362(validate_python)
+30264/15042    0.004    0.000    0.007    0.000 encoder.py:334(_iterencode_dict)
+     1887    0.000    0.000    0.005    0.000 model.py:23(_text)
+    13976    0.002    0.000    0.005    0.000 encoder.py:278(_iterencode_list)
+     1937    0.001    0.000    0.004    0.000 {built-in method builtins.any}
+      256    0.000    0.000    0.004    0.000 session.py:318(log_metric)
+     3584    0.001    0.000    0.004    0.000 values.py:66(_freeze)
+    19845    0.002    0.000    0.003    0.000 model.py:24(<genexpr>)
+      258    0.000    0.000    0.003    0.000 main.py:746(model_validate)
+     3584    0.002    0.000    0.003    0.000 values.py:76(visit)
+      256    0.000    0.000    0.002    0.000 metrics.py:71(capture_metric)
+        1    0.000    0.000    0.002    0.002 session.py:131(__enter__)
+      256    0.000    0.000    0.002    0.000 session.py:293(_append)
+        1    0.000    0.000    0.002    0.002 serialization.py:52(validate_run_binding)
+      256    0.000    0.000    0.002    0.000 budget.py:63(capture_size)
+35206/35110    0.002    0.000    0.002    0.000 {built-in method builtins.len}
+        8    0.000    0.000    0.001    0.000 main.py:472(model_dump)
+        8    0.001    0.000    0.001    0.000 {method 'to_python' of 'pydantic_core._pydantic_core.SchemaSerializer' objects}
+    17439    0.001    0.000    0.001    0.000 {method 'encode' of 'str' objects}
+       26    0.000    0.000    0.001    0.000 {built-in method builtins.next}
+     1024    0.000    0.000    0.001    0.000 budget.py:32(_value_size)
+    35937    0.001    0.000    0.001    0.000 {built-in method builtins.ord}
+        2    0.000    0.000    0.001    0.001 __init__.py:882(version)
+    15461    0.001    0.000    0.001    0.000 {built-in method builtins.isinstance}
+    15034    0.001    0.000    0.001    0.000 {method 'extend' of 'bytearray' objects}
+        5    0.000    0.000    0.001    0.000 serialization.py:20(plan_bytes)
+       12    0.000    0.000    0.001    0.000 contextlib.py:132(__enter__)
+        1    0.000    0.000    0.001    0.001 environment.py:180(capture_runtime_environment)
+        4    0.000    0.000    0.001    0.000 serialization.py:25(plan_digest)
+      512    0.000    0.000    0.001    0.000 values.py:18(json_string_size)
+        2    0.000    0.000    0.001    0.000 store.py:194(_publish)
+        2    0.000    0.000    0.001    0.000 __init__.py:464(version)
+        2    0.000    0.000    0.001    0.000 store.py:335(prepare_store)
+        2    0.000    0.000    0.001    0.000 store.py:256(records)
+        2    0.000    0.000    0.001    0.000 __init__.py:436(metadata)
+        8    0.000    0.000    0.001    0.000 json.py:23(finite_json)
+        6    0.000    0.000    0.001    0.000 store.py:119(_root)
+        1    0.000    0.000    0.001    0.001 session.py:453(session)
+        1    0.000    0.000    0.001    0.001 session.py:74(__init__)
+        2    0.000    0.000    0.001    0.000 __init__.py:31(message_from_string)
+        2    0.000    0.000    0.001    0.000 parser.py:56(parsestr)
+        2    0.000    0.000    0.001    0.000 parser.py:41(parse)
+        4    0.000    0.000    0.001    0.000 feedparser.py:171(feed)
+        6    0.000    0.000    0.001    0.000 feedparser.py:176(_call_parse)
+        6    0.000    0.000    0.001    0.000 feedparser.py:216(_parsegen)
+        2    0.000    0.000    0.000    0.000 {built-in method posix.link}
+        4    0.000    0.000    0.000    0.000 files.py:10(absolute_path)

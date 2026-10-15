@@ -43,7 +43,7 @@ def test_served_decorator_never_constructs_a_session(
     monkeypatch.setattr(module, "session", forbidden)
     monkeypatch.setattr(module, "_argument", forbidden)
     if not already_decorated:
-        monkeypatch.setattr(module.inspect, "signature", forbidden)
+        monkeypatch.setattr(inspect, "signature", forbidden)
         wrapped = tracking.experiment(parameters=["value"], root=tmp_path)(original)
         assert wrapped is original
     else:

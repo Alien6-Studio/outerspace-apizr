@@ -54,5 +54,3 @@
      2002    0.003    0.000    0.003    0.000 {built-in method posix.read}
      8120    0.002    0.000    0.003    0.000 values.py:54(visit)
      1000    0.001    0.000    0.003    0.000 serialization.py:59(check_run_binding)
-
-

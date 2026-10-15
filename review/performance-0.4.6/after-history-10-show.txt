@@ -54,5 +54,3 @@
         2    0.000    0.000    0.000    0.000 store.py:119(_root)
       159    0.000    0.000    0.000    0.000 encoder.py:205(iterencode)
      1224    0.000    0.000    0.000    0.000 types.py:3212(_get_type_name)
-
-

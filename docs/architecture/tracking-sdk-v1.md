@@ -108,6 +108,45 @@ the installed proof exports their exact hashes, installs the candidate outside
 checkout and retains the generated requirements alongside the proof. The CI
 package job includes both files in its existing build-evidence manifest.
 
+## Capture cost and observation boundaries
+
+Importing `apizr.tracking` exposes the same public API without loading Pydantic,
+experiment models, asyncio or scientific/kernel libraries. Core models are loaded
+on explicit session/decorator use; suppressed logging and a served decorator
+remain inert. Imports use ordinary canonical modules without an import hook or
+a second SDK implementation.
+
+`tracking/budget.py` counts the exact UTF-8 size of admitted immutable observations
+without producing complete JSON for each logging call. Fixed schema metadata is
+bounded to the five SDK evidence kinds. String escaping is accounted without
+creating an escaped copy; the installed Pydantic serializer supplies individual
+floating-point numeric tokens so its exponent spelling is counted exactly.
+`experiments/values.py` likewise enforces the unchanged 64-KiB value budget during
+its bounded freeze traversal, rather than thawing/encoding a second JSON graph.
+All type, finite-number, Unicode, nesting and item-count checks remain active.
+
+The 1-MiB aggregate capture limit, including selected call parameters, is checked
+before accepting each observation. Call evidence is admitted before business
+execution. The initial immutable Plan digest is retained for finalization; the
+store still independently validates the published Plan/Run binding and bytes.
+Full observation/Run JSON is produced at finalization, not for each logged item.
+Plan identity is established before execution; scalar byte accounting is not a
+second evidence serialization or a stored JSON cache.
+
+Each selected source/input/artifact observation computes its content digest once
+through the existing descriptor-based reader. Distinct log calls reread bytes,
+even at the same path, size and timestamps. No path/mtime content cache exists.
+Finalization publishes those retained observations without rereading a file or
+claiming a new observation time. SDK logging observes the file at the explicit
+call; source capture observes entry. Existing CLI before/after workload reads are
+unchanged. Environment-specification reads and durable publication remain bounded.
+
+The [SDK measurement report](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/review/sdk-performance-0.4.6)
+retains before/after samples from the [engine baseline](engine-performance.md),
+plus call profiles and source identities. Small timing movements on shared
+machines are informational; import isolation, exact byte boundaries, no logging
+JSON copies, fresh file observations and corruption detection have blocking tests.
+
 ## License
 
 Apizr and `apizr.tracking` are distributed under

@@ -74,3 +74,9 @@ def test_profiler_retains_machine_readable_calls_and_human_readable_report(tmp_p
     assert calls["serialization.py:read_run"] == 10
     assert (tmp_path / "show.prof").stat().st_size > 0
     assert "function calls" in (tmp_path / "show.txt").read_text()
+    assert not (tmp_path / "show.txt").read_bytes().endswith(b"\n\n")
+
+
+def test_cold_capture_uses_selected_checkout_and_durably_publishes(tmp_path):
+    benchmark.cold_session(benchmark.ROOT / "src", tmp_path / "cold")
+    assert list_runs(tmp_path / "cold/.apizr/experiments/v1").total == 1

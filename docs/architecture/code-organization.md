@@ -145,6 +145,11 @@ without importing CLI commands or optional REST/MCP/notebook dependencies.
 The `tracking` SDK consumes `experiments` contracts and the existing Pydantic
 runtime; it never imports CLI adapters, plugin lifecycle code, optional SDKs or
 scientific libraries. `experiments` does not depend on `tracking`. The
+SDK initializer exports lightweight session/decorator definitions; their core
+imports occur on explicit use. `tracking/budget.py` owns exact aggregate capture
+accounting over admitted observations, while `experiments/values.py` owns bounded
+immutable value admission and its canonical JSON byte budget. Neither caches
+file observations or shares mutable values between sessions. The
 `scientific_providers/contracts` consumes bounded capability and experiment values;
 recognizers return candidates for core validation and never publish records.
 `editor_contracts` consumes experiment and provider contracts, while clients and

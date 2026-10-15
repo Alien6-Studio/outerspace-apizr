@@ -54,5 +54,3 @@
      1001    0.001    0.000    0.003    0.000 serialization.py:59(check_run_binding)
         1    0.000    0.000    0.003    0.003 history.py:277(history_bytes)
      8064    0.002    0.000    0.003    0.000 values.py:54(visit)
-
-

@@ -54,5 +54,3 @@
       100    0.000    0.000    0.000    0.000 encoder.py:205(iterencode)
        41    0.000    0.000    0.000    0.000 types.py:43(logical_module)
        10    0.000    0.000    0.000    0.000 main.py:333(model_construct)
-
-

@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 import pytest
 
 from apizr import tracking
-from apizr.experiments import EvidenceOrigin, run_bytes
+from apizr.experiments import EvidenceOrigin, inputs, outputs, run_bytes, store
 from apizr.experiments.comparison import compare_runs
 from apizr.experiments.history import (
     history_bytes,
@@ -85,7 +85,7 @@ def test_publication_failure_never_masks_business_exception(tmp_path, monkeypatc
     def fail(*args):
         raise OSError("store-secret")
 
-    monkeypatch.setattr(implementation, "publish", fail)
+    monkeypatch.setattr(store, "publish", fail)
     with pytest.raises(RuntimeError) as caught:
         with tracking.session(root=tmp_path) as capture:
             raise business
@@ -101,7 +101,7 @@ def test_publication_failure_on_normal_exit_is_visible(tmp_path, monkeypatch):
     def fail(*args):
         raise OSError("unavailable")
 
-    monkeypatch.setattr(implementation, "publish", fail)
+    monkeypatch.setattr(store, "publish", fail)
     with pytest.raises(OSError, match="unavailable"):
         with tracking.session(root=tmp_path) as capture:
             pass
@@ -138,8 +138,8 @@ def test_duplicate_names_are_refused_before_repeated_file_reads(
         def forbidden(*args, **kwargs):
             raise AssertionError("duplicate re-read")
 
-        monkeypatch.setattr(implementation, "fingerprint_input", forbidden)
-        monkeypatch.setattr(implementation, "fingerprint_output", forbidden)
+        monkeypatch.setattr(inputs, "fingerprint_input", forbidden)
+        monkeypatch.setattr(outputs, "fingerprint_output", forbidden)
         with pytest.raises(tracking.TrackingError, match="tracking_duplicate_key"):
             getattr(capture, method)(*args)
     assert capture.record.run.status == "failed"
@@ -303,7 +303,7 @@ def test_explicit_finalize_reports_publication_failure(tmp_path, monkeypatch):
     def fail(*args):
         raise OSError("unavailable")
 
-    monkeypatch.setattr(implementation, "publish", fail)
+    monkeypatch.setattr(store, "publish", fail)
     with tracking.session(root=tmp_path) as capture:
         with pytest.raises(OSError):
             capture.finalize()

@@ -54,5 +54,3 @@
      8008    0.002    0.000    0.002    0.000 values.py:54(visit)
      2004    0.001    0.000    0.002    0.000 {method 'extend' of 'list' objects}
      1000    0.001    0.000    0.002    0.000 serialization.py:59(check_run_binding)
-
-

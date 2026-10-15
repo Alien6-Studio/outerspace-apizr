@@ -1,0 +1,29 @@
+{
+  "method": "Same isolated interpreter, alternating before/after source checkouts; import plus first empty capture and durable publication; shared machine, 5 samples",
+  "bytecode": "Both checkouts compiled with this interpreter before measuring. Fresh processes; OS caches not evicted.",
+  "python": "3.12.13 (main, Jul 23 2026, 14:33:47) [Clang 22.1.3 ]",
+  "lock_sha256": "d5c6b8b640c2f17167ea89ba573ba9909d42fae0455e1199db47739b495ea0db",
+  "before_source": "4e4ab95a2337fb22b52040fb951c7b1c530b29a8",
+  "measurements": {
+    "before": {
+      "seconds": [
+        0.1025108750036452,
+        0.10157250000338536,
+        0.10099958299542777,
+        0.10841241700109094,
+        0.10587516699160915
+      ],
+      "median_seconds": 0.1025108750036452
+    },
+    "after": {
+      "seconds": [
+        0.10474758299824316,
+        0.10042083299777005,
+        0.10119337499781977,
+        0.10250370799622033,
+        0.11241929199604783
+      ],
+      "median_seconds": 0.10250370799622033
+    }
+  }
+}

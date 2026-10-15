@@ -1,27 +1,26 @@
 """Explicit call-parameter selection over the same context-local session lifecycle."""
 
-import inspect
-import uuid
+from __future__ import annotations
+
 from collections.abc import Callable, Sequence
 from functools import wraps
-from importlib.metadata import version
-from pathlib import Path
-from typing import ParamSpec, TypeVar, cast, overload
+from typing import TYPE_CHECKING, ParamSpec, TypeVar, cast, overload
 
-from apizr.experiments import (
-    CallParameter,
-    CaptureIdentity,
-    CaptureMode,
-    EvidenceOrigin,
-    FunctionBinding,
-)
 from apizr.tracking.session import TrackingError, capture_suppressed, session
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from apizr.experiments.capture_model import CallParameter
 
 P = ParamSpec("P")
 R = TypeVar("R")
 
 
 def _argument(name: str, value: object) -> CallParameter:
+    from apizr.experiments.capture_model import CallParameter
+    from apizr.experiments.model import EvidenceOrigin
+
     try:
         return CallParameter.model_validate(
             {"name": name, "value": value, "origin": EvidenceOrigin.RUNTIME}
@@ -97,6 +96,18 @@ def experiment(
             # Served imports retain the original executable binding, including its
             # code signature. They never construct a session or touch the store.
             return function
+        import inspect
+        import uuid
+        from importlib.metadata import version
+
+        from apizr.experiments.capture_model import (
+            CallParameter,
+            CaptureIdentity,
+            CaptureMode,
+            FunctionBinding,
+        )
+        from apizr.experiments.model import EvidenceOrigin
+
         signature = inspect.signature(function)
         if any(name not in signature.parameters for name in names):
             raise TrackingError("tracking_parameter_selection_unknown")

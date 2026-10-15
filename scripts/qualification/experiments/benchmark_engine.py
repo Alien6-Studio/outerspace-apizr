@@ -62,6 +62,31 @@ def command(arguments: list[str], *, stdin: bytes | None = None) -> bytes:
     return result.stdout
 
 
+def cold_session(source: Path, root: Path) -> None:
+    """Include import plus first capture, rather than crediting deferred work as saved.
+
+    A recorded checkout may be selected for a same-interpreter before/after
+    comparison. The child verifies that both SDK and value admission came from
+    that checkout; all dependencies still come from this locked interpreter.
+    """
+    command(
+        [
+            "-c",
+            "import sys; from pathlib import Path; "
+            "source=Path(sys.argv[1]).resolve(); sys.path.insert(0,str(source)); "
+            "import apizr.tracking as tracking; "
+            "assert Path(tracking.__file__).resolve().is_relative_to(source); "
+            "capture=tracking.session(root=Path(sys.argv[2])); "
+            "capture.__enter__(); capture.__exit__(None,None,None); "
+            "from apizr.experiments import values; "
+            "assert Path(values.__file__).resolve().is_relative_to(source); "
+            "assert capture.record is not None",
+            str(source),
+            str(root),
+        ]
+    )
+
+
 def make_history(path: Path, count: int) -> tuple[str, str]:
     """Prepare canonical synthetic fixtures, outside the measured operations.
 
@@ -111,6 +136,8 @@ def profile(operation: Callable[[], object], path: Path) -> dict[str, int]:
         pstats.Stats(profiler, stream=output).strip_dirs().sort_stats(
             "cumulative"
         ).print_stats(50)
+    readable = path.with_suffix(".txt")
+    readable.write_text(readable.read_text().rstrip() + "\n")
     # Record actual Python entry counts, not estimates from wall-clock timings.
     # Preserve per-location identities: get_stats_profile merges equal function
     # names (including distinct encode functions). Typeshed omits this mapping.
@@ -216,8 +243,16 @@ def run(output: Path, *, repeats: int, sizes: list[int]) -> dict[str, Any]:
                 "src/apizr/experiments/comparison.py",
                 "src/apizr/workspace/editor_session.py",
                 "src/apizr/cli/commands/experiment.py",
+                "src/apizr/experiments/values.py",
+                "src/apizr/tracking/__init__.py",
+                "src/apizr/tracking/session.py",
+                "src/apizr/tracking/decorator.py",
+                "src/apizr/tracking/kernel.py",
+                "src/apizr/tracking/adapters.py",
+                "src/apizr/tracking/budget.py",
                 "scripts/qualification/experiments/benchmark_engine.py",
             )
+            if (ROOT / name).is_file()
         },
         "python": sys.version,
         "executable": sys.executable,
@@ -300,6 +335,14 @@ def run(output: Path, *, repeats: int, sizes: list[int]) -> dict[str, Any]:
         publish(project / f"publication-{publication}", plan, run_value)
 
     retain("publication_empty_store", publication_once)
+    cold_number = 0
+
+    def cold_once() -> None:
+        nonlocal cold_number
+        cold_number += 1
+        cold_session(ROOT / "src", project / f"cold-session-{cold_number}")
+
+    retain("sdk_cold_empty_session", cold_once)
     session_number = 0
     for count in (0, 256):
         entries, values, exits = [], [], []
