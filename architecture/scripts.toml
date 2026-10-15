@@ -641,8 +641,8 @@ gate = "Stable CLI forwarding to scripts.qualification.fixtures.homebrew_network
 canonical = "scripts/qualification/fixtures/homebrew_network_guard.py"
 standalone = true
 workflows = []
-ci_blocking = true
-evidence = ["${{ runner.temp }}/homebrew-build-proof/build-phase.json", "${{ runner.temp }}/homebrew-build-proof/offline-build.log", "${{ runner.temp }}/homebrew-build-proof/proof.json", "/private/tmp/apizr-homebrew-formula/qualification/evidence", "stdout/stderr (workflow step log)"]
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
 
 [files."scripts/homebrew_pip_build.py"]
 group = "packaging"

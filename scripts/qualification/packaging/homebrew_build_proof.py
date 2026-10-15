@@ -22,6 +22,7 @@ from scripts.qualification.packaging.prepare_homebrew_build_inputs import (
 )
 
 ROOT = Path(__file__).resolve().parents[3]
+NETWORK_GUARD = ROOT / "scripts/qualification/fixtures/homebrew_network_guard.py"
 
 
 def run(argv, cwd, *, env=None, combined=False):
@@ -133,7 +134,7 @@ def prove(candidate, commit, inputs, output):
         raise RuntimeError(
             "Current Homebrew Pydantic violates Apizr's runtime constraint"
         )
-    guard = ROOT / "scripts/homebrew_network_guard.py"
+    guard = NETWORK_GUARD
     sandbox = [
         "/usr/bin/sandbox-exec",
         "-p",

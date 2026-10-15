@@ -69,6 +69,9 @@ async def exercise(
             "apizr_analyze",
             "apizr_readiness",
             "apizr_plan_exposure",
+            "apizr_experiment_list",
+            "apizr_experiment_show",
+            "apizr_experiment_diff",
         ]
         assert all(
             t.annotations and t.annotations.read_only_hint for t in original_tools
@@ -82,16 +85,19 @@ async def exercise(
         assert client.server_info is not None
         assert client.server_info.version == version("outerspace-apizr-mcp") == "0.4.5"
         tools = (await client.list_tools()).tools
-        assert tools[:3] == original_tools
+        assert tools[:6] == original_tools
         assert [t.name for t in tools] == [
             "apizr_analyze",
             "apizr_readiness",
             "apizr_plan_exposure",
+            "apizr_experiment_list",
+            "apizr_experiment_show",
+            "apizr_experiment_diff",
             "apizr_delivery_status",
             "apizr_delivery_run",
             "apizr_delivery_resume",
         ]
-        for tool in tools[3:]:
+        for tool in tools[6:]:
             effect = tool.name != "apizr_delivery_status"
             assert tool.annotations is not None
             assert tool.annotations.read_only_hint is (not effect)

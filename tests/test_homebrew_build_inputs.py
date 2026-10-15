@@ -4,7 +4,9 @@ import copy
 import hashlib
 import io
 import json
+import os
 import runpy
+import subprocess
 import sys
 import tomllib
 import zipfile
@@ -17,6 +19,44 @@ ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 tool = runpy.run_path(str(qualification_script("prepare_homebrew_build_inputs")))
 proof = runpy.run_path(str(qualification_script("homebrew_build_proof")))
+
+
+def test_offline_build_observer_runs_without_the_checkout_on_sys_path(tmp_path):
+    instrumentation = tmp_path / "instrumentation"
+    instrumentation.mkdir()
+    guard = proof["NETWORK_GUARD"]
+    (instrumentation / "sitecustomize.py").write_text(
+        f"exec(compile(open({str(guard)!r}).read(), {str(guard)!r}, 'exec'))\n"
+    )
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            "-c",
+            "import socket\n"
+            "try: socket.create_connection(('127.0.0.1', 9))\n"
+            "except RuntimeError: print('audit-refused')\n"
+            "else: raise AssertionError('network guard missing')\n",
+        ],
+        cwd=tmp_path,
+        env={
+            "PATH": os.environ["PATH"],
+            "PYTHONNOUSERSITE": "1",
+            "PYTHONPATH": str(instrumentation),
+            "APIZR_BUILD_PROOF_ROOT": str(tmp_path),
+            "APIZR_BUILD_NETWORK_GUARD": str(guard),
+        },
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+    assert result.returncode == 0 and result.stdout.strip() == "audit-refused", result
+    assert not result.stderr
+    events = [
+        json.loads(line)
+        for line in (tmp_path / "network-events.jsonl").read_text().splitlines()
+    ]
+    assert any(event["event"] == "network_attempt" for event in events)
 
 
 def test_reviewed_build_manifest_is_portable_and_stable(tmp_path):
