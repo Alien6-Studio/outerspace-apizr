@@ -113,7 +113,14 @@ def generated(root, *, repository, backend, image, transport):
 
 
 @pytest.mark.parametrize("repository", [False, True])
-@pytest.mark.parametrize("backend", ["direct", "local-process", "oci-container"])
+@pytest.mark.parametrize(
+    "backend",
+    [
+        "direct",
+        "local-process",
+        pytest.param("oci-container", marks=pytest.mark.serial),
+    ],
+)
 @pytest.mark.parametrize("protocol", ["auto", "legacy"])
 def test_tuple_business_parity_over_real_generated_stdio(
     tmp_path,

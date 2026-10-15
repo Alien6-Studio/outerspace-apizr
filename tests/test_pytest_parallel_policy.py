@@ -38,6 +38,8 @@ def test_serial_marker_keeps_real_docker_cases_collectable():
             "-m",
             "serial",
             "tests/oci",
+            "tests/governed_repository/test_transports.py",
+            "tests/governed_oci/test_tuple_results.py",
         ],
         cwd=ROOT,
         env={**os.environ, "APIZR_TEST_OCI_IMAGE": "/image-must-not-be-opened"},
@@ -47,4 +49,10 @@ def test_serial_marker_keeps_real_docker_cases_collectable():
     )
     assert result.returncode == 0, result.stderr
     assert "tests/oci/test_integration.py::" in result.stdout
+    selected = [
+        line for line in result.stdout.splitlines() if line.startswith("tests/")
+    ]
+    dynamic = [line for line in selected if "tests/oci/" not in line]
+    assert len(dynamic) == 7
+    assert all("oci-container" in line for line in dynamic)
     assert "no tests collected" not in result.stdout

@@ -23,7 +23,10 @@ AUDITED = SERVER.replace(
 )
 
 
-@pytest.mark.parametrize("backend", ["local-process", "oci-container"])
+@pytest.mark.parametrize(
+    "backend",
+    ["local-process", pytest.param("oci-container", marks=pytest.mark.serial)],
+)
 @pytest.mark.parametrize("transport", ["rest", "stdio", "streamable-http"])
 def test_real_multisource_transports(
     tmp_path, monkeypatch, request, backend, transport
