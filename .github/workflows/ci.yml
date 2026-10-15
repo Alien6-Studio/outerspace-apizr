@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: '0.13.1'
           python-version: '3.14'
@@ -34,19 +34,19 @@ jobs:
         run: |
           uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/candidate"
           uv run --locked python scripts/check_distribution.py "$RUNNER_TEMP/candidate/dist" --coordinated --manifest "$RUNNER_TEMP/candidate/SHA256SUMS.json"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: python-distributions
           path: ${{ runner.temp }}/candidate/dist/*
           if-no-files-found: error
           retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: distribution-checksums
           path: ${{ runner.temp }}/candidate/SHA256SUMS.json
           if-no-files-found: error
           retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-candidate
           path: ${{ runner.temp }}/candidate/
@@ -75,11 +75,11 @@ jobs:
           echo "APIZR_RELEASE_SET=$RUNNER_TEMP/candidate" >> "$GITHUB_ENV"
           echo "APIZR_RELEASE_TARGET=$RUNNER_TEMP/target" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: '0.13.1'
           python-version: ${{ matrix.python }}
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-candidate
           path: ${{ runner.temp }}/candidate
@@ -112,7 +112,7 @@ jobs:
           if test -d "$RUNNER_TEMP/data-science/science-wheels"; then
             tar -czf "$RUNNER_TEMP/science-wheels.tar.gz" -C "$RUNNER_TEMP/data-science" science-wheels
           fi
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: release-target-${{ matrix.os }}-${{ matrix.python }}
@@ -139,13 +139,13 @@ jobs:
           echo "APIZR_RELEASE_SET=$RUNNER_TEMP/candidate" >> "$GITHUB_ENV"
           echo "APIZR_RELEASE_TARGET=$RUNNER_TEMP/target" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-candidate
           path: ${{ runner.temp }}/candidate
       - name: Same candidates through build, TLS push, signing, timestamp and offline proof
         run: python3 scripts/smoke_oci_registry.py --artifacts --output "$RUNNER_TEMP/candidate-delivery"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: release-delivery
@@ -170,7 +170,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: '0.13.1'
           python-version: '3.14'
@@ -226,7 +226,7 @@ jobs:
         run: echo "Web-only change; validated by quality and Documentation."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: env.PRODUCT_CHECKS != 'false'
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         if: env.PRODUCT_CHECKS != 'false'
         with:
           version: '0.13.1'
@@ -295,7 +295,7 @@ jobs:
 
       - name: Preserve tests and branch coverage
         if: (always()) && env.PRODUCT_CHECKS != 'false'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: validation-linux-python-${{ matrix.python }}
           path: |
@@ -323,7 +323,7 @@ jobs:
         run: echo "Web-only change; validated by quality and Documentation."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: env.PRODUCT_CHECKS != 'false'
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         if: env.PRODUCT_CHECKS != 'false'
         with:
           version: '0.13.1'
@@ -338,7 +338,7 @@ jobs:
         run: uv run --locked python scripts/check_scope_coverage.py coverage.json
       - run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
         if: env.PRODUCT_CHECKS != 'false'
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: (always()) && env.PRODUCT_CHECKS != 'false'
         with:
           name: validation-macos-python-${{ matrix.python }}
@@ -354,14 +354,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: '0.13.1'
           python-version: '3.14'
           enable-cache: true
       - run: uv sync --locked
       - run: uv run --locked python scripts/security_mutations.py
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: security-mutation-evidence
@@ -374,7 +374,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: '0.13.1'
           python-version: '3.14'
@@ -387,7 +387,7 @@ jobs:
           fi
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: python-distributions
           path: dist
@@ -403,7 +403,7 @@ jobs:
         run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --python 3.11
       - name: Preserve source, lock and dependency SBOMs
         run: uv run --locked python scripts/build_evidence.py
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-evidence
           path: release-evidence/
@@ -428,7 +428,7 @@ jobs:
         run: echo "Web-only change; validated by quality and Documentation."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: env.PRODUCT_CHECKS != 'false'
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         if: env.PRODUCT_CHECKS != 'false'
         with:
           version: '0.13.1'
@@ -445,7 +445,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: '0.13.1'
           python-version: '3.14'
@@ -470,7 +470,7 @@ jobs:
           docker info --format 'Docker={{.ServerVersion}} cgroup_driver={{.CgroupDriver}} cgroup_version={{.CgroupVersion}}'
           test "$(docker info --format '{{.CgroupDriver}}')" = cgroupfs
       - run: uv sync --locked
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: python-distributions
           path: dist
@@ -495,7 +495,7 @@ jobs:
       - name: Assert no invocation containers remain
         if: always()
         run: test -z "$(docker ps -aq --filter label=org.apizr.execution=oci-v1)"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: validation-oci
