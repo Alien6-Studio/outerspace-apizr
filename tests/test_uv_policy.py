@@ -38,3 +38,46 @@ def test_inconsistent_development_pin_fails_but_publication_is_separate(tmp_path
     (workflows / "ci.yml").write_text(text)
     with pytest.raises(ValueError, match="differs from qualification pin"):
         CHECK(tmp_path, "0.13.1")
+
+
+@pytest.mark.parametrize("latest", ["0.13.1", "0.14.0"])
+def test_authenticated_adapter_tag_keeps_the_real_policy_without_another_fetch(
+    tmp_path, monkeypatch, latest
+):
+    import sys
+
+    from scripts.qualification.ci import check_uv_policy as checker
+
+    report = tmp_path / "report.json"
+    monkeypatch.setattr(
+        sys, "argv", ["check_uv_policy", "--latest", latest, "--output", str(report)]
+    )
+
+    def no_anonymous_fetch(*args, **kwargs):
+        raise AssertionError("CI must not repeat an unauthenticated GitHub request")
+
+    monkeypatch.setattr(checker.urllib.request, "urlopen", no_anonymous_fetch)
+    if latest == "0.14.0":
+        with pytest.raises(ValueError, match="stable series is not qualified"):
+            checker.main()
+        assert not report.exists()
+    else:
+        checker.main()
+        assert report.is_file()
+
+
+def test_workflow_fetches_the_upstream_tag_with_its_scoped_token():
+    import yaml
+
+    workflow = yaml.safe_load(
+        (ROOT / ".github/workflows/plugin-preparation-qualification.yml").read_text()
+    )
+    step = next(
+        s
+        for s in workflow["jobs"]["uv-policy"]["steps"]
+        if "check_uv_policy" in s.get("run", "")
+    )
+    assert step["env"] == {"GH_TOKEN": "${{ github.token }}"}
+    assert "gh api repos/astral-sh/uv/releases/latest --jq .tag_name" in step["run"]
+    assert '--latest "$qualification_uv_latest"' in step["run"]
+    assert "continue-on-error" not in step

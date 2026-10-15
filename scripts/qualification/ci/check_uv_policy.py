@@ -61,19 +61,24 @@ def check(root: Path, latest: str) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
-    args = parser.parse_args()
-    request = urllib.request.Request(
-        "https://api.github.com/repos/astral-sh/uv/releases/latest",
-        headers={
-            "User-Agent": "apizr-uv-qualification",
-            "Accept": "application/vnd.github+json",
-        },
+    parser.add_argument(
+        "--latest", help="Stable upstream tag obtained by the authenticated CI adapter"
     )
-    with urllib.request.urlopen(request, timeout=20) as response:
-        raw = response.read(1024 * 1024 + 1)
-    if len(raw) > 1024 * 1024:
-        raise ValueError("uv release metadata exceeds qualification bound")
-    latest = json.loads(raw)["tag_name"]
+    args = parser.parse_args()
+    latest = args.latest
+    if latest is None:
+        request = urllib.request.Request(
+            "https://api.github.com/repos/astral-sh/uv/releases/latest",
+            headers={
+                "User-Agent": "apizr-uv-qualification",
+                "Accept": "application/vnd.github+json",
+            },
+        )
+        with urllib.request.urlopen(request, timeout=20) as response:
+            raw = response.read(1024 * 1024 + 1)
+        if len(raw) > 1024 * 1024:
+            raise ValueError("uv release metadata exceeds qualification bound")
+        latest = json.loads(raw)["tag_name"]
     report = check(ROOT, latest)
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(

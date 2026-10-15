@@ -91,6 +91,7 @@ jobs:
   offline-build-arm64:
     name: Offline Apple Silicon build (CI VM for the Tier-1 target)
     needs: candidate
+    if: ${{ !cancelled() && needs.candidate.result == 'success' }}
     timeout-minutes: 45
     runs-on: macos-26
     env:

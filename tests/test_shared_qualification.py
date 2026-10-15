@@ -183,3 +183,32 @@ def test_master_security_publication_and_development_read_permissions_stay_separ
         "group": "documentation-publication",
         "cancel-in-progress": False,
     }
+
+
+@pytest.mark.parametrize(
+    "candidate,cancelled,expected",
+    [
+        ("success", False, True),
+        ("failure", False, False),
+        ("skipped", False, False),
+        ("cancelled", False, False),
+        ("success", True, False),
+    ],
+)
+def test_offline_homebrew_proof_survives_the_intentionally_skipped_local_scope(
+    candidate, cancelled, expected
+):
+    job = load("homebrew-build-inputs.yml")["jobs"]["offline-build-arm64"]
+    assert job["needs"] == "candidate"
+    # GitHub otherwise propagates the skipped scope through candidate's needs.
+    assert "!cancelled()" in job["if"]
+    condition = (
+        job["if"]
+        .removeprefix("${{")
+        .removesuffix("}}")
+        .strip()
+        .replace("!cancelled()", str(not cancelled))
+        .replace("&&", "and")
+    )
+    needs = SimpleNamespace(candidate=SimpleNamespace(result=candidate))
+    assert eval(condition, {"__builtins__": {}}, {"needs": needs}) is expected

@@ -16,7 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Detect an unqualified stable uv series and inconsistent development pins
-        run: python3 -m scripts.qualification.ci.check_uv_policy --output uv-policy.json
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          qualification_uv_latest=$(gh api repos/astral-sh/uv/releases/latest --jq .tag_name)
+          python3 -m scripts.qualification.ci.check_uv_policy --latest "$qualification_uv_latest" --output uv-policy.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: uv-policy
