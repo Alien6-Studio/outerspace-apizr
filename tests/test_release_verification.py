@@ -832,14 +832,15 @@ def test_workflows_separate_release_validation_from_external_publication():
     }
     for name in ("ci.yml", "security.yml", "mkdocs.yaml"):
         triggers = workflows[name]["on"]
-        assert triggers["push"]["branches"] == ["master"]
+        assert triggers["push"]["branches"] == ["master", "0.4.6"]
         assert not triggers["pull_request"]  # No target-branch or path exclusions.
     docs = workflows["mkdocs.yaml"]["jobs"]
     assert (
         docs["deploy"]["if"]
         == "github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build.outputs.publishable == 'true'"
     )
-    assert set(workflows["publish-pypi.yml"]["on"]) == {"workflow_dispatch"}
+    for name in ("publish-pypi.yml", "publish-mcp.yml", "verify-mcp-distribution.yml"):
+        assert set(workflows[name]["on"]) == {"workflow_dispatch"}
     for name in (
         "oci-service-plugin.yml",
         "attest-delivery-plugin.yml",
@@ -847,7 +848,12 @@ def test_workflows_separate_release_validation_from_external_publication():
         "extension-packaging.yml",
         "extension-cleanup.yml",
     ):
-        assert set(workflows[name]["on"]) == {"pull_request", "workflow_dispatch"}
+        assert set(workflows[name]["on"]) == {
+            "push",
+            "pull_request",
+            "workflow_dispatch",
+        }
+        assert workflows[name]["on"]["push"] == {"branches": ["0.4.6"]}
         assert workflows[name]["permissions"] == {"contents": "read"}
     signer = workflows["ci.yml"]["jobs"]["provenance"]
     assert " ".join(signer["if"].split()) == (

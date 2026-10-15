@@ -187,6 +187,23 @@ def test_missing_empty_manual_and_release_comparisons_run_full_checks(repo):
         assert result["product"] == result["examples"] == "true"
 
 
+@pytest.mark.parametrize("branch_creation", [False, True])
+def test_official_development_push_qualifies_even_web_only_changes(
+    repo, branch_creation
+):
+    base = git(repo, "rev-parse", "HEAD")
+    head = commit(repo, "docs/index.md")
+    assert scope.classify("push", event(base, head))["product"] == "false"
+    payload = event("0" * 40 if branch_creation else base, head)
+    payload["ref"] = "refs/heads/0.4.6"
+    result = scope.classify("push", payload)
+    assert result == {
+        "product": "true",
+        "examples": "true",
+        "reason": "Development push; full qualification required",
+    }
+
+
 def test_cli_invalid_event_defaults_to_full_checks(repo, monkeypatch):
     payload, output = repo / "event.json", repo / "output"
     payload.write_text("invalid JSON")

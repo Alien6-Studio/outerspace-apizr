@@ -1,10 +1,27 @@
 # Release branches and qualification
 
-The current stable product is **0.4.3**, released from
+Current development uses the official **`0.4.6`** branch. Each push starts the
+14 qualification entry workflows automatically, with full product and installed
+example checks. Shared plugin preparation runs through the MCP workflow rather
+than a second push trigger. Retain successful push run IDs for the exact source
+SHA, as described in [development qualification](releases.md#automatic-development-qualification).
+Manual reruns remain available and are recorded separately.
+
+Existing master/PR routing and publication protections are preserved. Development
+pushes produce previews; protected master provenance and documentation deployment
+conditions remain distinct from branch qualification. No release tag or public
+distribution follows from a development push.
+
+## Historical stable integration record
+
+The following paragraphs record the earlier 0.4.3/0.4.4 integration policy;
+current development follows the `0.4.6` procedure above.
+
+The stable product at that stage was **0.4.3**, released from
 `cfaa5108c37ab9324297bbe5b38d90d537ea57ad` and retained by immutable tag `v0.4.3`.
 [Publication and verification](../releases/0.4.3.md#validation) are complete. Post-release integration targets
 `master`; its integration commit is distinct from the immutable release source.
-All new product changes and documentation branches target protected `master`.
+At that stage, new product changes and documentation branches targeted protected `master`.
 The completed `release/0.4.2` and `release/0.4.3` branches are retired after their
 published state and the post-release Attest receipt fix from PR #241 are
 integrated into `master`. Only their branch references and dedicated rulesets

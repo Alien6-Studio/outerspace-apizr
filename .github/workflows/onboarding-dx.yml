@@ -1,6 +1,8 @@
 name: Local developer experience
 
 on:
+  push:
+    branches: ['0.4.6']
   pull_request:
   workflow_dispatch:
 

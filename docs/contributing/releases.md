@@ -360,6 +360,34 @@ batch. The complete version/platform matrix, coverage floors and final release
 qualification remain required. Dependency refreshes include the lock, licence
 inventory and Homebrew qualification metadata in the same batch.
 
+### Automatic development qualification
+
+Every push to the official `0.4.6` branch starts the 14 qualification entry
+workflows: CI, Security, Documentation, Attest delivery, client collections,
+extension cleanup, extension packaging, forge integrations, governed REST,
+Homebrew build inputs, Homebrew Formula, MCP server, OCI service and local
+developer experience. MCP also calls the shared plugin preparation qualification;
+that callable workflow has no additional push trigger.
+
+Development pushes always require the full candidate and installed documentation
+examples, including web-only commits and branch creation. Batch related work
+before pushing. Master and master-targeted PRs retain their existing web-only
+routing. Existing PR path filters, check names, matrices and thresholds remain.
+
+Retain the exact source SHA and the successful **push** run IDs from this
+automatic set in the development qualification record. Check that every expected
+workflow belongs to that commit and completed successfully; one successful CI
+run does not imply that the other entry workflows passed. Do not dispatch a
+second full batch by hand. `workflow_dispatch` remains available for a deliberate
+rerun or a comparison on the same source, and its event must be identified in
+the evidence separately from the automatic push.
+
+These development runs produce qualification previews. The existing protected
+master provenance, release-asset and documentation deployment conditions stay
+unchanged. Python/MCP publication and post-release distribution verification
+remain manual, separately authorized procedures. A successful `0.4.6` push does
+not authorize any publication or alter the accepted release source refs.
+
 Every PR qualification workflow supersedes older runs for the same PR and
 workflow. Push, scheduled and manually dispatched runs use unique concurrency
 groups, preserving both pending and running qualification evidence. PR artifacts

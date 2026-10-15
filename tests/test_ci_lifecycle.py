@@ -53,12 +53,30 @@ def test_pr_artifact_retention_preserves_qualification_evidence(name, workflow):
                 )
 
 
-def test_retired_branch_triggers_are_absent_and_manual_reruns_remain():
-    for _, workflow in WORKFLOWS:
+def test_only_supported_push_branches_trigger_and_manual_reruns_remain():
+    for name, workflow in WORKFLOWS:
         events = workflow.get("on", workflow.get(True, {}))
         assert "workflow_dispatch" in events
-        for branch in (events.get("push") or {}).get("branches", []):
-            assert not branch.startswith(("feature/", "fix/", "chore/"))
+        assert events["push"] == {
+            "branches": (
+                ["master", "0.4.6"]
+                if name in {"ci.yml", "security.yml", "mkdocs.yaml"}
+                else ["0.4.6"]
+            )
+        }
+
+
+def test_preparation_is_qualified_by_mcp_without_a_second_push_run():
+    workflows = dict(WORKFLOWS)
+    assert (
+        workflows["mcp-server-plugin.yml"]["jobs"]["preparation-qualification"]["uses"]
+        == "./.github/workflows/plugin-preparation-qualification.yml"
+    )
+    preparation = yaml.safe_load(
+        (ROOT / ".github/workflows/plugin-preparation-qualification.yml").read_text()
+    )
+    events = preparation.get("on", preparation.get(True, {}))
+    assert set(events) == {"workflow_call", "workflow_dispatch", "schedule"}
 
 
 def test_dependabot_groups_compatible_updates_and_all_codeql_steps():

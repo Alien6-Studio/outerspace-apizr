@@ -3,7 +3,7 @@ name: Documentation
 on:
   pull_request:
   push:
-    branches: [master]
+    branches: [master, '0.4.6']
   workflow_dispatch:
 
 # Supersede only earlier runs for the same PR. Other events get unique groups,

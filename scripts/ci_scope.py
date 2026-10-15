@@ -1,4 +1,10 @@
-"""Select web-only checks from a complete Git diff; uncertainty runs product CI."""
+"""Select web-only checks from a complete Git diff; uncertainty runs product CI.
+
+Pushes to the official development branch 0.4.6 always qualify the full candidate,
+including documentation examples, even for web-only changes or branch creation.
+Diff-based web routing applies only to master pushes and PRs targeting master.
+Manual, scheduled and other release-line events also require full qualification.
+"""
 
 import json
 import os
@@ -74,6 +80,10 @@ def classify(event_name: str, event: dict) -> dict[str, str]:
             base = event["pull_request"]["base"]["sha"]
             head = event["pull_request"]["head"]["sha"]
         else:
+            if event["ref"] == "refs/heads/0.4.6":
+                return full | {
+                    "reason": "Development push; full qualification required"
+                }
             if event["ref"] != "refs/heads/master":
                 return full
             base, head = event["before"], event["after"]

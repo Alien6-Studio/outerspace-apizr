@@ -1,6 +1,8 @@
 name: Governed REST qualification
 
 on:
+  push:
+    branches: ['0.4.6']
   pull_request:
     paths:
       - tests/governed/test_transports.py
