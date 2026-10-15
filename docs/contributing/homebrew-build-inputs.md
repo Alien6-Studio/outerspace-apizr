@@ -29,13 +29,23 @@ the provider keg, and the loaded core must match Pydantic's exact, unconditional
 metadata requirement. Exact observed versions are retained in the proof.
 The policy's `qualification_version` fields and physical-Mac records remain the
 historical qualification evidence; they do not pin the rolling runtime provider.
-The locked, checksummed build-only wheelhouse and its manifest remain unchanged.
+Build-only inputs have a separate reviewed identity; a runtime-provider update
+does not select new build wheels.
 
 Official references: [Python formula guidance](https://docs.brew.sh/Language-Specific-Formulae),
 [Pydantic formula](https://formulae.brew.sh/formula/pydantic), and
 [Homebrew virtualenv API](https://docs.brew.sh/rubydoc/Language/Python/Virtualenv.html).
 
 ## Build-only inputs
+
+The `0.4.6` development refresh retains Hatchling 1.32.4 and the same packaging,
+pathspec, tomlkit and trove-classifiers bytes. Its six-package build closure
+updates only Pluggy 1.6.0 to 1.7.0, with an unchanged MIT notice. The reviewed
+policy, qualification manifest and Formula qualification identity bind these
+new bytes and the complete development lock. Frozen 0.4.5 publication evidence
+and its Formula publication identity remain separate.
+
+### Initial qualification baseline
 
 The initial `homebrew-build = ["hatchling==1.28.0"]` review added exactly two packages to the universal
 lock: Hatchling 1.28.0 and trove-classifiers 2026.9.21.13. Existing packaging 26.3,

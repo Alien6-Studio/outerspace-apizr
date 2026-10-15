@@ -225,29 +225,29 @@
           "scope": "Unicode data used by the generation tools, under Exhibit 1 data/software terms; this does not grant rights to mirror the Unicode website or modify its terms."
         }
       ],
-      "distribution_fingerprint": "b7bbe832d59ee4a198928241664d6622fecdfa7877753b66f5ba364de6d51333",
+      "distribution_fingerprint": "d00a19375e8e7c3d2a9dd7bb233ad7dd55460fb3d72f5a099b9ba2bdca5eb34c",
       "evidence_archive": {
-        "hash": "sha256:b556cd7d36c3a3a2f256b89590b176b8eddfb73bcfaee3a3ddd84ea66d21ce50",
-        "url": "https://files.pythonhosted.org/packages/ec/56/4744bcd0c82184e80c52b0ac4076c261a8ffa1f1b343ff2f6e89ce0e1cef/backrefs-8.0.tar.gz"
+        "hash": "sha256:f86d9312df3ebae1241758af80809a319cafa1d8f32189edfb242c9aa55573b6",
+        "url": "https://files.pythonhosted.org/packages/68/bc/c4b75b0279b2cf9e208c7dea5755a452d158a32abe1b7330824ff1127e86/backrefs-8.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "backrefs-8.0/docs/src/markdown/about/license.md",
+          "path": "backrefs-8.1/LICENSE.md",
+          "sha256": "c1127b4363b735b7898a7127396ff7e4faa48e58d221c5d9dc616533f811a25c"
+        },
+        {
+          "path": "backrefs-8.1/docs/src/markdown/about/license.md",
           "sha256": "1180657bb59f8f5ed1f89801de3269d334b279c4ae1583e9ab09b6019c39a682"
         },
         {
-          "path": "backrefs-8.0/tools/unicodedata/LICENSE",
+          "path": "backrefs-8.1/tools/unicodedata/LICENSE",
           "sha256": "0d96e68d626e6dc1a595000cfa62ff0b901199067188c566cf81c4e006994416"
-        },
-        {
-          "path": "backrefs-8.0/LICENSE.md",
-          "sha256": "c1127b4363b735b7898a7127396ff7e4faa48e58d221c5d9dc616533f811a25c"
         }
       ],
       "name": "backrefs",
-      "notes": "MIT project code and Unicode generation-data notice reviewed. General Unicode website terms are not permission to redistribute every Unicode publication.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "8.0"
+      "version": "8.1"
     },
     {
       "components": [
@@ -497,25 +497,25 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "0b7b3444daaaf9c34b74628d535c03c2f9c194e724a2c78413baba150a861d32",
+      "distribution_fingerprint": "7bb076f2caa548b82a0d29aafca0bfef3968cd4e91ea94bb4e510e7cd166b61c",
       "evidence_archive": {
-        "hash": "sha256:6117b84ea48435e5356dc737f5121485c30920ba43375fa7b434fd753df0eac3",
-        "url": "https://files.pythonhosted.org/packages/e5/3f/143b048436775b0f76ac3eec145c019e8173ccc2885c8f20319b996d5e83/charset_normalizer-3.5.1.tar.gz"
+        "hash": "sha256:39de2a259fc954455c57274dc94c79d5842774e1247a016aff30bc0efed0f4ef",
+        "url": "https://files.pythonhosted.org/packages/33/1c/f41d4e74c28ab327ff3acd36053f7ea506c55872d7a90b0fa71aa3ab0c89/charset_normalizer-3.5.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "charset_normalizer-3.5.1/LICENSE",
+          "path": "charset_normalizer-3.5.2/LICENSE",
           "sha256": "6d0d41bfe170ac6c7dc248c9a63e254d0fb45a60d50a8257d0af92c6e249b887"
         },
         {
-          "path": "charset_normalizer-3.5.1/data/NOTICE.md",
+          "path": "charset_normalizer-3.5.2/data/NOTICE.md",
           "sha256": "0cb3efcfd8f7a02a337e98dc3de4b0b57424d7208a332b26e7deb8cb94c13922"
         }
       ],
       "name": "charset-normalizer",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "3.5.1"
+      "version": "3.5.2"
     },
     {
       "components": [
@@ -609,25 +609,25 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "ed5830d67c12accd72c9aa9f1c4c044ff56baeabdbe965829a0578d31b1340e0",
+      "distribution_fingerprint": "010a59ef1c69d1e9c2443835f2c2756b8b93671f93457d821addfb0c200162c8",
       "evidence_archive": {
-        "hash": "sha256:f83981779bcf9dfa06fa0a8d4cb43e0faec1706328ce07aa3e7b665b4ac0f210",
-        "url": "https://files.pythonhosted.org/packages/65/2d/c738872f477f5687152acae68635790387425d407ae37dd3d3a8a6692307/coverage-7.16.1.tar.gz"
+        "hash": "sha256:ca64d9f1f384f151b9511bec01126072acd2f313439f8ed015a22d8790aab6fa",
+        "url": "https://files.pythonhosted.org/packages/2f/55/d1eaf3e73781174340a00dc1ba2aee8a65f82fadb18e2797b192b6b3925b/coverage-7.16.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "coverage-7.16.1/LICENSE.txt",
+          "path": "coverage-7.16.2/LICENSE.txt",
           "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
         },
         {
-          "path": "coverage-7.16.1/NOTICE.txt",
+          "path": "coverage-7.16.2/NOTICE.txt",
           "sha256": "80e177ab397d5f332954693a52abc1b34b06c5792dd57297608b6d68a2f6af11"
         }
       ],
       "name": "coverage",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "7.16.1"
+      "version": "7.16.2"
     },
     {
       "components": [
@@ -639,29 +639,29 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "a2b057981683f1a071b4ad4440ac92e9537517a62c23e6828428b6a020f4542a",
+      "distribution_fingerprint": "abcca431625b3d5551c32f0621b8a3d4ac31f3782266f99e2762e26c98aa14d4",
       "evidence_archive": {
-        "hash": "sha256:5dd9bda1c12b4162f6ff568eeb5e0ff956c28d14406e875cfe8a63a2d414ff20",
-        "url": "https://files.pythonhosted.org/packages/bb/ad/5d6702db60b1e40b41ef513b6967ff5848f307d50f8449baf1634f5908f1/cryptography-50.0.1.tar.gz"
+        "hash": "sha256:7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5",
+        "url": "https://files.pythonhosted.org/packages/9d/af/182eb91b0df3fe75c4d9f26fe70684569566745f6ba7e5c9c73a862c5252/cryptography-50.0.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "cryptography-50.0.1/LICENSE",
+          "path": "cryptography-50.0.2/LICENSE",
           "sha256": "3e0c7c091a948b82533ba98fd7cbb40432d6f1a9acbf85f5922d2f99a93ae6bb"
         },
         {
-          "path": "cryptography-50.0.1/LICENSE.APACHE",
+          "path": "cryptography-50.0.2/LICENSE.APACHE",
           "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe"
         },
         {
-          "path": "cryptography-50.0.1/LICENSE.BSD",
+          "path": "cryptography-50.0.2/LICENSE.BSD",
           "sha256": "602c4c7482de6479dd2e9793cda275e5e63d773dacd1eca689232ab7008fb4fb"
         }
       ],
       "name": "cryptography",
-      "notes": "Dual-license choice applies to project code. Native wheel OpenSSL/Rust components are outside this source-archive inventory; preserve upstream binary notices and review the exact image before redistribution.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "50.0.1"
+      "version": "50.0.2"
     },
     {
       "components": [
@@ -843,21 +843,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "d83bcfe83fdbbdd470694b3d4170c28f813b9680122bbf078c2cfc3125599edf",
+      "distribution_fingerprint": "a0113b3dae5876ccffdc988238c0aa95ad4ba9d1999ee25861929164a7721bef",
       "evidence_archive": {
-        "hash": "sha256:3632cc370565f6648cc328b32435bd120a1e4ebb20c77e3fdde9a13cd1e533c4",
-        "url": "https://files.pythonhosted.org/packages/cc/28/c14e053b6762b1044f34a13aab6859bbf40456d37d23aa286ac24cfd9a5d/executing-2.2.1.tar.gz"
+        "hash": "sha256:15919cb5d667e5cb4e099511971d00d659573fff2dd5c4e6cd8b71636c7858d2",
+        "url": "https://files.pythonhosted.org/packages/52/92/8a611141e42930c0f194f7504063ab87dfe970cf1a5af28e7703df448734/executing-2.3.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "executing-2.2.1/LICENSE.txt",
+          "path": "executing-2.3.0/LICENSE.txt",
           "sha256": "a476a2cb0ef4c41450340a577a28b91ac4c7f669136b2ee148047fabd5fc4181"
         }
       ],
       "name": "executing",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "2.2.1"
+      "version": "2.3.0"
     },
     {
       "components": [
@@ -869,21 +869,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "4a39b8a6e25c8f201678d18166f43c0b24a484cff8d20d365c2206996cb5b2fc",
+      "distribution_fingerprint": "045972ee04871708748184ea2bebf8aeb8a0777117e0e9b9efb417736ed29d0e",
       "evidence_archive": {
-        "hash": "sha256:1acffe48206a80917cf7dac21992b5c44b25384e8902bf745c1fd9dabcf6c51f",
-        "url": "https://files.pythonhosted.org/packages/0b/d7/6a8753ab6c1d432dc53703c3e1b92974a94531b7d047c32bbaae461ea844/fastapi-0.143.0.tar.gz"
+        "hash": "sha256:e9e6d97018dcfd748da7d9e7c61cedefbe9eb91b1a3288e45b13fbae76df2d54",
+        "url": "https://files.pythonhosted.org/packages/19/f5/4bbb2df9bb6f365151f2c02795ca3f17f78d08e670a394df963f3d8881ce/fastapi-0.143.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "fastapi-0.143.0/LICENSE",
+          "path": "fastapi-0.143.2/LICENSE",
           "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
         }
       ],
       "name": "fastapi",
-      "notes": "Reviewed the exact selected source archive and preserved MIT notice for the existing optional HTTP adapter and validation suite. The notice is byte-identical to the prior review. No FastAPI source is embedded in Apizr distributions; retain upstream attribution for redistribution. Requalified 0.143.0 from its exact hash-verified source archive on 2026-10-15; the previously reviewed legal notices remain byte-identical.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "0.143.0"
+      "version": "0.143.2"
     },
     {
       "components": [
@@ -921,21 +921,25 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "647c27b728f4a2cbb07aadf5430473b6ec01529eb3e15ebf4fc4b31c708bac13",
+      "distribution_fingerprint": "e495e60bc48852c29393182293fe6373607a8e4c293331c3dddbcbde328bc605",
       "evidence_archive": {
-        "hash": "sha256:37b8a3d9811b0f9aef7e5ec5c71bb320de52df51e6ca9bcd6f5ad81187660da7",
-        "url": "https://files.pythonhosted.org/packages/0f/59/e19834834cb01a32febfbb0f8a23a9088088f5d45991824ff2bc3b5e8acb/filelock-3.32.7.tar.gz"
+        "hash": "sha256:7a60906c75227cf04d0c273afadc8219400f11aeb13cc69591d4f6cdc6c8036e",
+        "url": "https://files.pythonhosted.org/packages/f4/a9/1af41b37c3279712b22cdc63aac78a52432202b6fe1f9666a2a3d2831fb4/filelock-4.2.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "filelock-3.32.7/LICENSE",
+          "path": "filelock-4.2.0/LICENSE",
           "sha256": "608c89d5060ae9921adccf3236695bc654a9946e12323ef6c021dfa04e294d48"
+        },
+        {
+          "path": "filelock-4.2.0/docs/license.rst",
+          "sha256": "feec665d3f93b49689f5a94040c514454bb8aeea2ca9f8edf58f6ab7536f8298"
         }
       ],
       "name": "filelock",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "3.32.7"
+      "version": "4.2.0"
     },
     {
       "components": [
@@ -1051,21 +1055,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "01ea8dfb6052fb96d2834264655417d43951dc9fdd0123be345624a47b7822f2",
+      "distribution_fingerprint": "d5aa6b323585f73bf3d8dea18b6dc1e151a59576fe614294e2050e040f0bd43b",
       "evidence_archive": {
-        "hash": "sha256:2adc8be4fb285fbcd6d894298db3b52c177e74b6674eda3a76bd36be3292a3db",
-        "url": "https://files.pythonhosted.org/packages/15/8c/e925b1c92018abb3a1863ce1549d76d2381e334d21d65d4ac8f65dabd78a/httpcore2-2.13.0.tar.gz"
+        "hash": "sha256:e0aa977abe17e69a3b820a24542a6fa88702676d83880b8d194dcd18408e5103",
+        "url": "https://files.pythonhosted.org/packages/cb/f3/1db7aa2bc2524062192bb0e0323969492d1883152a232fe36eea65f4e35c/httpcore2-2.13.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "httpcore2-2.13.0/LICENSE.md",
+          "path": "httpcore2-2.13.1/LICENSE.md",
           "sha256": "c4df125c807b0613501e943a5c92496dd11d2c16604ce396097a8dde396304d9"
         }
       ],
       "name": "httpcore2",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "2.13.0"
+      "version": "2.13.1"
     },
     {
       "components": [
@@ -1077,33 +1081,33 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "fa80a5ecf6cd7eb2cce64bd44901bd6359dbbf6cbf4a2ac5311e2829f2f45abd",
+      "distribution_fingerprint": "a2a86feb9d5d0a636fb65a5457e70cb1970cf63a2a7bc28781ebe614018012bc",
       "evidence_archive": {
-        "hash": "sha256:6b2a32f18d97e16e90827d7a819ffa8dbd8cc245fc4e1fa9d1095b54ef4bd999",
-        "url": "https://files.pythonhosted.org/packages/43/e5/d471fcb0e14523fe1c3f4ba58ca52480e7bd70ad7109a3846bc75892f7fb/httptools-0.8.0.tar.gz"
+        "hash": "sha256:d484ebb7e3a3f3597b0f645fbd1b85633674ca808c1f5ba11c2caf7c66f5c8b6",
+        "url": "https://files.pythonhosted.org/packages/3a/ec/deed52912ab7ca6c0b12859330c571c60c61d7267b341b28951fcbf13694/httptools-0.9.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "httptools-0.8.0/LICENSE",
+          "path": "httptools-0.9.0/LICENSE",
           "sha256": "f4573e7cb7676745fb5b8d36fa548aa93e391cfb6872ddacd65130c45ea6a92d"
         },
         {
-          "path": "httptools-0.8.0/vendor/http-parser/LICENSE-MIT",
+          "path": "httptools-0.9.0/vendor/http-parser/LICENSE-MIT",
           "sha256": "79e6ba8b687cb54786207342b9b6fcee0ac10218453ed9009b84d949b2233cc0"
         },
         {
-          "path": "httptools-0.8.0/vendor/llhttp/LICENSE",
+          "path": "httptools-0.9.0/vendor/llhttp/LICENSE",
           "sha256": "628168d68bb5a8a17e0bbefb3bd74e326e1edc20583d76f52f457c82c921867d"
         },
         {
-          "path": "httptools-0.8.0/vendor/llhttp/LICENSE-MIT",
+          "path": "httptools-0.9.0/vendor/llhttp/LICENSE-MIT",
           "sha256": "ebca854e0134cd256d673627c20499f42577eb74bacf08b9f25b626a73c91277"
         }
       ],
       "name": "httptools",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "0.8.0"
+      "version": "0.9.0"
     },
     {
       "components": [
@@ -1141,21 +1145,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "b6c7a910aaef1b63934d2e2a7da670f05632131e980fb9ddbfbc8bb484d18373",
+      "distribution_fingerprint": "b7124581b831b9a16d919bf25aee8f4cfeb0388385dbf322b6769f7b17c9acbb",
       "evidence_archive": {
-        "hash": "sha256:81bd07dc67a3701729ef1f777a3c00c915d4539604fdb5afd327f8682f6b7b44",
-        "url": "https://files.pythonhosted.org/packages/b9/a0/e9deef4654132857b5a5dbe4eddd0ac59c2814500e11f2f5044cd81103ee/httpx2-2.13.0.tar.gz"
+        "hash": "sha256:e48744a19e3af5ee48313d0ce5fe941d5422fae5705ea922a4aabf94d7800dfa",
+        "url": "https://files.pythonhosted.org/packages/d5/44/474bef2a0e9d90f1715d32cb98b0738695ca17ba324095fb2497ed7fbd59/httpx2-2.13.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "httpx2-2.13.0/LICENSE.md",
+          "path": "httpx2-2.13.1/LICENSE.md",
           "sha256": "7e7d6dbaf7fe160d39fd6e84fd02c33cab96bcbea34d36998d545bceb4a19c30"
         }
       ],
       "name": "httpx2",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "2.13.0"
+      "version": "2.13.1"
     },
     {
       "components": [
@@ -1193,21 +1197,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "35566db86c97faa0ff3dadfd82a4d41f9c3c4e21701d96ad3e49050407aa0906",
+      "distribution_fingerprint": "084514ee7a60f07c7638961f5cf076ff8f4339972f86c45fbb9542515624ba10",
       "evidence_archive": {
-        "hash": "sha256:b65749d7f7a2fddfb106bb57c9902db4ab25ce8724c821f4af50cc58891a6b7b",
-        "url": "https://files.pythonhosted.org/packages/b7/b7/fcddfc235d1ab24b831e99ad3385361e87eb4fed427f527a7f15866214ad/hypothesis-6.169.0.tar.gz"
+        "hash": "sha256:fff94830fcfdd6d52b035603b347807b808ba4ccfbd2b5ddeed958a69b8f4f92",
+        "url": "https://files.pythonhosted.org/packages/68/08/605de498d3ea896d2c7fb2df365ce9eee72f91e16d715185cf74104a42d8/hypothesis-6.169.4.tar.gz"
       },
       "license_files": [
         {
-          "path": "hypothesis-6.169.0/LICENSE.txt",
+          "path": "hypothesis-6.169.4/LICENSE.txt",
           "sha256": "ac89037bac63550644dce8cf32c6765e5fab9dc1a1ce94b89f8a805f341a6750"
         }
       ],
       "name": "hypothesis",
-      "notes": "Reviewed the exact source archive and complete MPL-2.0 notice for the existing bounded property tests. The notice is byte-identical to the prior review. Preserve notices and applicable source availability obligations; this is validation tooling and no Hypothesis source is embedded in Apizr distributions. Requalified 6.169.0 from its exact hash-verified source archive on 2026-10-15; the previously reviewed legal notices remain byte-identical.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "6.169.0"
+      "version": "6.169.4"
     },
     {
       "components": [
@@ -1219,21 +1223,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "605a76500670796c758491789b6490561e1d57f174775fad1312207d43a0ffaf",
+      "distribution_fingerprint": "56e8099af5da7d9524217ad0667ca3d88157163998831d8e2fc15f268a17e0ef",
       "evidence_archive": {
-        "hash": "sha256:6be5020c38fcb07da56c53733538a3081ea5aa70d36a156f83044bfbf9173842",
-        "url": "https://files.pythonhosted.org/packages/52/63/51723b5f116cc04b061cb6f5a561790abf249d25931d515cd375e063e0f4/identify-2.6.19.tar.gz"
+        "hash": "sha256:ad729860a923858d26917c2f4fb0a1d83d27a75b1e090c06440c573f048f3285",
+        "url": "https://files.pythonhosted.org/packages/53/35/d70c0006c7cee65999ea94a6273e60b2094f600a3d8b71b04318253fc643/identify-2.6.20.tar.gz"
       },
       "license_files": [
         {
-          "path": "identify-2.6.19/LICENSE",
+          "path": "identify-2.6.20/LICENSE",
           "sha256": "edbc2ad3b7084fac873e1b1b450fd370d914eb97f7f31263b4ff65f47dc10c43"
         }
       ],
       "name": "identify",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "2.6.19"
+      "version": "2.6.20"
     },
     {
       "components": [
@@ -1271,21 +1275,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "0755079c624f147d9aafa2f4571ded600b7a42c6ca33e055ac5e2be3d4f9b452",
+      "distribution_fingerprint": "7c9595a4a7753d0f826ee0b5296044b2de67b1098281ab82d6522f0e1ff6b0ba",
       "evidence_archive": {
-        "hash": "sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730",
-        "url": "https://files.pythonhosted.org/packages/72/34/14ca021ce8e5dfedc35312d08ba8bf51fdd999c576889fc2c24cb97f4f10/iniconfig-2.3.0.tar.gz"
+        "hash": "sha256:67f4b9c50da0dedf52af349e7749a80a9057a5031199791b906c3bb3ae878960",
+        "url": "https://files.pythonhosted.org/packages/01/e1/2069291243c926a2ff1cd706c7f3eeb9b62144bf60f77c9fb9ff2fb26bd3/iniconfig-2.3.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "iniconfig-2.3.0/LICENSE",
+          "path": "iniconfig-2.3.1/LICENSE",
           "sha256": "3409fa91f7ace557894632676656e32264fe5ef7581535725dc9a23774551bd4"
         }
       ],
       "name": "iniconfig",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "2.3.0"
+      "version": "2.3.1"
     },
     {
       "name": "ipykernel",
@@ -1383,29 +1387,29 @@
           "scope": "Vendored typeshed and django-stubs."
         }
       ],
-      "distribution_fingerprint": "b1644b7ef6640ce48b96a9378226dae6018387f4ba32f7e8086f903e3dd015cd",
+      "distribution_fingerprint": "463436670cf077648563ecc382f989ac4d0b464810c173cf07da45704dcb8b8e",
       "evidence_archive": {
-        "hash": "sha256:c3f4ccbd276696f4b19c54618d4fb18f9fc24b0aef02acf704b23f487daa1011",
-        "url": "https://files.pythonhosted.org/packages/46/b7/a3635f6a2d7cf5b5dd98064fc1d5fbbafcb25477bcea204a3a92145d158b/jedi-0.20.0.tar.gz"
+        "hash": "sha256:2f71208c3f9c1bca057c0e90d3f272aba44ace88fc4067d7587e9e069331b7e5",
+        "url": "https://files.pythonhosted.org/packages/a3/a4/4692ecd7fa700ac1066b1c1f6cadef60aa2e01e5e364710235137d823e0a/jedi-0.20.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "jedi-0.20.0/LICENSE.txt",
+          "path": "jedi-0.20.1/LICENSE.txt",
           "sha256": "78e60cd0b8f28694f30195482c33d76908d846b0d15278deb7332aa22ba8e412"
         },
         {
-          "path": "jedi-0.20.0/jedi/third_party/django-stubs/LICENSE.txt",
+          "path": "jedi-0.20.1/jedi/third_party/django-stubs/LICENSE.txt",
           "sha256": "235e993965d399a25e7d493d25c8622f78718510884b9c051f1f1866b6f34e9d"
         },
         {
-          "path": "jedi-0.20.0/jedi/third_party/typeshed/LICENSE",
+          "path": "jedi-0.20.1/jedi/third_party/typeshed/LICENSE",
           "sha256": "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe"
         }
       ],
       "name": "jedi",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "0.20.0"
+      "version": "0.20.1"
     },
     {
       "components": [
@@ -1677,21 +1681,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "28fb1e86097321efc85abb8dbab8dc258051f7709ced0efe67c32b51f0486bc6",
+      "distribution_fingerprint": "3399f99fb64062c9d714b6530288dae730cbdc8439b676fd782e3930e9dc28e0",
       "evidence_archive": {
-        "hash": "sha256:3589362618f743188b4d955b874402bc814f4f83f544dc207719f4baa7d9c45f",
-        "url": "https://files.pythonhosted.org/packages/29/6f/da4c6aea59b3001f2e8c0ec7497475aadaf3b021c10cab5b2858f0f32b26/markdown-3.10.3.tar.gz"
+        "hash": "sha256:496f4f80f9ebd3395a04c8ec9595c40bbe8ec19e9c67d21fe071a1643e876606",
+        "url": "https://files.pythonhosted.org/packages/4e/d4/f3f4b6ed70b7c7608fa026ff3bbe59ace9b1ebca43d8ae4886c87c95e81d/markdown-3.11.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "markdown-3.10.3/LICENSE.md",
+          "path": "markdown-3.11.1/LICENSE.md",
           "sha256": "7ba4eb6d10b32b2d11dce13821340351cdbbb30ba8ccc67841db2ffd86e79aca"
         }
       ],
       "name": "markdown",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "3.10.3"
+      "version": "3.11.1"
     },
     {
       "components": [
@@ -1733,21 +1737,25 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "73aac76647598c161c6ccbb4b125c0416534d3e76abe21ae241d2c5dfe712017",
+      "distribution_fingerprint": "5d574bdf35302509adb4e041917f5b8b0dc8dac70cb312ece70e33c3c87944a7",
       "evidence_archive": {
-        "hash": "sha256:722695808f4b6457b320fdc131280796bdceb04ab50fe1795cd540799ebe1698",
-        "url": "https://files.pythonhosted.org/packages/7e/99/7690b6d4034fffd95959cbe0c02de8deb3098cc577c67bb6a24fe5d7caa7/markupsafe-3.0.3.tar.gz"
+        "hash": "sha256:2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6",
+        "url": "https://files.pythonhosted.org/packages/38/9b/e422a865e1d5d57d0e509b4e0bf1c1a70a7f6382c29a5aa428df994c8bc8/markupsafe-3.0.4.tar.gz"
       },
       "license_files": [
         {
-          "path": "markupsafe-3.0.3/LICENSE.txt",
+          "path": "markupsafe-3.0.4/LICENSE.txt",
           "sha256": "489a8e1108509ed98a37bb983e11e0f7e1d31f0bd8f99a79c8448e7ff37d07ea"
+        },
+        {
+          "path": "markupsafe-3.0.4/docs/license.rst",
+          "sha256": "6fc7e80b75b5999783a328d90976a2585e0956c4a348c3c888453938ceca742d"
         }
       ],
       "name": "markupsafe",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "3.0.3"
+      "version": "3.0.4"
     },
     {
       "components": [
@@ -2056,21 +2064,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "3046a04671f93cdfc79bbd434f0a7caae6d992a248b384ff398be022220c45fe",
+      "distribution_fingerprint": "5abbfd98b45c41168d5a3e792a1eb218d3106f4c4b58e75b446466f3dcd52ad2",
       "evidence_archive": {
-        "hash": "sha256:9eb0b0e602064527a045ea28c4f174ed69383587e29cebe28947e3b84106eb2a",
-        "url": "https://files.pythonhosted.org/packages/6d/44/ea2100ec54d30c46ee9dba10a3bfb79b655e96c6df237238a3234c75869b/msgpack-1.2.2.tar.gz"
+        "hash": "sha256:32edb81a2b5eb7cd7c9d941b2bfbbb082fd2cd09e0e725930316af6b708db186",
+        "url": "https://files.pythonhosted.org/packages/0a/e7/bb605a7bab2d8425a64b3fa762b39dc1bf1c7e3f11ba6fb5413d6db0ff8c/msgpack-1.2.3.tar.gz"
       },
       "license_files": [
         {
-          "path": "msgpack-1.2.2/COPYING",
+          "path": "msgpack-1.2.3/COPYING",
           "sha256": "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427"
         }
       ],
       "name": "msgpack",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "1.2.2"
+      "version": "1.2.3"
     },
     {
       "components": [
@@ -2134,21 +2142,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "95de94d4e5c6b56d2d260b663fa570c02e2a21a280c9d092d2713fb7961daad1",
+      "distribution_fingerprint": "d07410b2102974a9ffda69f42b2a6dd2616081f767872b4d1208cc8a08e09de6",
       "evidence_archive": {
-        "hash": "sha256:34d0d0a7e73ce3cbab6c5aae8f4f468797280b01fd8bd2ca746da8569eddd7d2",
-        "url": "https://files.pythonhosted.org/packages/01/b1/708e53fe2e429c103c6e6e159106bcf0357ac41aa4c28772bd8402339051/nbconvert-7.17.1.tar.gz"
+        "hash": "sha256:344a218e8595117ce37396ed025d994f146d076226ebac59255a2fa085ab24d8",
+        "url": "https://files.pythonhosted.org/packages/53/6a/252c7620305a9661205aed7a2a4b3592f5207bfca56ad11b7dea2c5ec2f6/nbconvert-7.17.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "nbconvert-7.17.1/LICENSE",
+          "path": "nbconvert-7.17.2/LICENSE",
           "sha256": "5ca74e4d2eeb9330b0d129c25f874d3544a13413bc62ae8d367819100d095072"
         }
       ],
       "name": "nbconvert",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "7.17.1"
+      "version": "7.17.2"
     },
     {
       "components": [
@@ -2212,25 +2220,25 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "2609792ac2ab0e9e914a3de34eef088f04059b77b042b53f0e7fc3819cd5e3ab",
+      "distribution_fingerprint": "5d7fb53edd562533c2c73ba36734a274a956a300e299b0d5021f7ae022c3e956",
       "evidence_archive": {
-        "hash": "sha256:996c191ad80897d076bdfba80a41994c2b47c68e224c542b48feba42ba00f8bb",
-        "url": "https://files.pythonhosted.org/packages/24/bf/d1bda4f6168e0b2e9e5958945e01910052158313224ada5ce1fb2e1113b8/nodeenv-1.10.0.tar.gz"
+        "hash": "sha256:3ce8fe5b71d16e8af7039ca65257354100bc772965d6bc549070649e53b1b146",
+        "url": "https://files.pythonhosted.org/packages/9a/8e/105de02c1322cfada6d9710d9146ef8026419d433c9d08359a2d35805811/nodeenv-1.11.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "nodeenv-1.10.0/LICENSE",
+          "path": "nodeenv-1.11.0/LICENSE",
           "sha256": "606faf42d48b54d539dae99db6fecd48544535587e27275b319a3f36113cb6fa"
         },
         {
-          "path": "nodeenv-1.10.0/debian-upstream/copyright",
+          "path": "nodeenv-1.11.0/debian-upstream/copyright",
           "sha256": "606faf42d48b54d539dae99db6fecd48544535587e27275b319a3f36113cb6fa"
         }
       ],
       "name": "nodeenv",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "1.10.0"
+      "version": "1.11.0"
     },
     {
       "components": [
@@ -2242,21 +2250,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "de2be5fb21288b03e1b9505fdf0b7e51ba4bd3c9bffe5ca059c3bfd8c6a5cc9d",
+      "distribution_fingerprint": "f1a6903d4b07e5a17e0c308d9635c7ae0266c7a9d7b1b333be2db9718c087cd4",
       "evidence_archive": {
-        "hash": "sha256:67647e5e9566edcf421166fdf022b3537f818635daa852b289e34604dc6fb33a",
-        "url": "https://files.pythonhosted.org/packages/ee/8b/aa9e2d8b8dfa7c946f7dec5d1f8f6ba8eca062f43509a06bdb5ce93d26c0/opentelemetry_api-1.44.0.tar.gz"
+        "hash": "sha256:aa38ed19bcc084ba42782a73255b3582283eced7ad6dddbd6695189e69adfb75",
+        "url": "https://files.pythonhosted.org/packages/2e/02/6e0ae9cc61bd3169d401077b507b3ebc344745171e1051ab430be012dcd9/opentelemetry_api-1.45.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "opentelemetry_api-1.44.0/LICENSE",
+          "path": "opentelemetry_api-1.45.1/LICENSE",
           "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
         }
       ],
       "name": "opentelemetry-api",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "1.44.0"
+      "version": "1.45.1"
     },
     {
       "components": [
@@ -2781,21 +2789,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "a1358dd73564d25145f75cf6c80c8c69ec97a8a67d3489a8d8952bbbdee4bc9e",
+      "distribution_fingerprint": "7b566e0617dfa13456deccd2e567e11559cbbdd03eb2ffd67b9106309dee52ca",
       "evidence_archive": {
-        "hash": "sha256:b0befe8a90759e4a9a8b9820d434ae226a6549063210b596da0038a7a05aede4",
-        "url": "https://files.pythonhosted.org/packages/f8/13/f870dd0b42690138e4e37a76b5138e5690ed4365a77071bb092d59037da0/platformdirs-4.11.11.tar.gz"
+        "hash": "sha256:1aa0b0d3f224c1f07c295121e312a5a24a180d6ae5a8425ea1784b3e3863e9c0",
+        "url": "https://files.pythonhosted.org/packages/80/a8/66d45abadff219e36e2a824181b8f6a67e7ed4572934d6252c71c29d5731/platformdirs-4.13.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "platformdirs-4.11.11/LICENSE",
+          "path": "platformdirs-4.13.0/LICENSE",
           "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
         }
       ],
       "name": "platformdirs",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "4.11.11"
+      "version": "4.13.0"
     },
     {
       "components": [
@@ -2807,21 +2815,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "9709b685adb2b0c85a1a0ea4b8f70cd08ceb5b9b3d1fa613df2ba840ec894beb",
+      "distribution_fingerprint": "995dd6375f4fa2fc3c840e76782cbb52072b927f45c4d517a047d26e1d1fac6f",
       "evidence_archive": {
-        "hash": "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3",
-        "url": "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe6ef3fa267035b518369d9511ffab804f839851d2779/pluggy-1.6.0.tar.gz"
+        "hash": "sha256:d1eaa46ebb595891b860ab086b4d09c8588af65ebd4361b8e8f4bb8920b90ba8",
+        "url": "https://files.pythonhosted.org/packages/bf/db/7fc19e6f2dc92a966727031389fc2e08b558f0f25eb7403c1119ad4713cd/pluggy-1.7.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "pluggy-1.6.0/LICENSE",
+          "path": "pluggy-1.7.0/LICENSE",
           "sha256": "d6b65e6c213a5d0b577911d34d6e5949b9f59d76c238c5071a2f3fc16cfb2606"
         }
       ],
       "name": "pluggy",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "1.6.0"
+      "version": "1.7.0"
     },
     {
       "components": [
@@ -2833,21 +2841,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "15b79747ad241e0be68a5b1cf2725947e3fee4c270bcbe22b928dae7b412897d",
+      "distribution_fingerprint": "6e7525261cde93874a58ea2c4883437aaade5e08d145b10dedee5c3bb2679737",
       "evidence_archive": {
-        "hash": "sha256:8f5d7bfb021ecdbcd9d49d89847082dd24172ccde534390081a679ad046e2441",
-        "url": "https://files.pythonhosted.org/packages/74/89/1f3e8e1fc3e97de0fa963495832f581f025f29471602a309e48808244292/pre_commit-4.6.2.tar.gz"
+        "hash": "sha256:1f3deee12b914c8fa184bd2b5953391c2e4f36763e403d4a23dc9983fa7c6e86",
+        "url": "https://files.pythonhosted.org/packages/3a/c3/6965c2690ddce885ec75121572d065a5b94c5a5d8d3e657927ecda9fd715/pre_commit-4.7.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "pre_commit-4.6.2/LICENSE",
+          "path": "pre_commit-4.7.0/LICENSE",
           "sha256": "ea2ca27cba7cc35822d95a46d59bcd3cc88e196592e6390d1949a359ffc990e8"
         }
       ],
       "name": "pre-commit",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "4.6.2"
+      "version": "4.7.0"
     },
     {
       "components": [
@@ -2983,27 +2991,27 @@
       "components": [
         {
           "evidence_sha256": [
-            "0c846399369ea76ddd7b5c44fe6d16497415fcf015f5cbb508c24bf98b81c5b1"
+            "0a9e78156ae8b96caf1b4f11ac2df424b83de29736f9e757630548a6272fdf90"
           ],
           "expression": "BSD-3-Clause",
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "1215633a867dd63b605abff23600e64e4a4bbd1a057d0e739bb278c8dbed58ff",
+      "distribution_fingerprint": "8b034d3dc25b845b5f8ecd66bcbf53de2068e0caf742bbfc3f0780087d467c1c",
       "evidence_archive": {
-        "hash": "sha256:600f49d217304a5902ac3c37e1281c9fe94e4d0489de643a9504c5cdfdfc6b29",
-        "url": "https://files.pythonhosted.org/packages/1b/7d/92392ff7815c21062bea51aa7b87d45576f649f16458d78b7cf94b9ab2e6/pycparser-3.0.tar.gz"
+        "hash": "sha256:d875f09c3507d00e1aba0eecc6dcadc1352f30fff09dc6bff2f1c2935e97c2bc",
+        "url": "https://files.pythonhosted.org/packages/da/a8/c5fdbeee588bb8ada9458774f43adf1bdd30bd59157055142183e769a024/pycparser-3.11.tar.gz"
       },
       "license_files": [
         {
-          "path": "pycparser-3.0/LICENSE",
-          "sha256": "0c846399369ea76ddd7b5c44fe6d16497415fcf015f5cbb508c24bf98b81c5b1"
+          "path": "pycparser-3.11/LICENSE",
+          "sha256": "0a9e78156ae8b96caf1b4f11ac2df424b83de29736f9e757630548a6272fdf90"
         }
       ],
       "name": "pycparser",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission. The BSD-3-Clause copyright end year changes from 2022 to 2027; terms are identical.",
       "status": "reviewed",
-      "version": "3.0"
+      "version": "3.11"
     },
     {
       "components": [
@@ -3126,25 +3134,25 @@
           "scope": "Python Markdown-derived extensions, in addition to MIT code and emoji indices."
         }
       ],
-      "distribution_fingerprint": "19da9bf67722771926ff8474d97c247290cc9d6b830de25120435a48f0e50808",
+      "distribution_fingerprint": "3289f7d3cec5e0f43907c8ea3449e4842b07f000f85d662a88c22e6067620574",
       "evidence_archive": {
-        "hash": "sha256:88fe2c97fb9153b9f2cc1da59f1d7c7cb74971110daf33cccb2a5514e0f7e970",
-        "url": "https://files.pythonhosted.org/packages/eb/7e/53144b512818c75d459523e3a91d9bf7b65cd6a1dfb964fe690adc8b3670/pymdown_extensions-12.0.1.tar.gz"
+        "hash": "sha256:a7f2a4e0bc60c6e6babfa7922cfb3b01cd640eb00fb208f3c582e12bae00ea67",
+        "url": "https://files.pythonhosted.org/packages/f3/fe/ac50ee24a80a1b344e643f6fb626063cc7041b978cd1dd9a7f9963ae1cd1/pymdown_extensions-12.3.tar.gz"
       },
       "license_files": [
         {
-          "path": "pymdown_extensions-12.0.1/docs/src/markdown/about/license.md",
-          "sha256": "08ed1e49a9de2d78306524157eabc68bb64b9b4cdbfcb97ac83896369a3cf682"
+          "path": "pymdown_extensions-12.3/LICENSE.md",
+          "sha256": "e6645f914fbae5bc557419fcafbeab9e375897e8274c54e2b177953e9354f93e"
         },
         {
-          "path": "pymdown_extensions-12.0.1/LICENSE.md",
-          "sha256": "e6645f914fbae5bc557419fcafbeab9e375897e8274c54e2b177953e9354f93e"
+          "path": "pymdown_extensions-12.3/docs/src/markdown/about/license.md",
+          "sha256": "08ed1e49a9de2d78306524157eabc68bb64b9b4cdbfcb97ac83896369a3cf682"
         }
       ],
       "name": "pymdown-extensions",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "12.0.1"
+      "version": "12.3"
     },
     {
       "components": [
@@ -3156,21 +3164,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "6ad6d83bea5a0a24c992dc13c76f6d17d6472550997e83bb09c4b51c4f5b0e08",
+      "distribution_fingerprint": "4f8d66e8c7d3c72f68547710c31059e5feb22461403405e3b5790bb01c322a30",
       "evidence_archive": {
-        "hash": "sha256:c777f4d763f140633dcb6d8a3eda953bf7a214dc4eff598413c070bcdc117cbc",
-        "url": "https://files.pythonhosted.org/packages/f3/91/9c6ee907786a473bf81c5f53cf703ba0957b23ab84c264080fb5a450416f/pyparsing-3.3.2.tar.gz"
+        "hash": "sha256:928ae7e20211f3b6f3915a72f06a0cfd29ab9d24279dd6346b6b1a7146397d36",
+        "url": "https://files.pythonhosted.org/packages/e4/11/b213bebff182584360cb8d17c72c1677fec5c5c228de439e63bcf8ab1c8f/pyparsing-3.3.3.tar.gz"
       },
       "license_files": [
         {
-          "path": "pyparsing-3.3.2/LICENSE",
+          "path": "pyparsing-3.3.3/LICENSE",
           "sha256": "a5425f9dc14ac74d4c5f0b679e941f2442e32cca7452a4418d5b1a49893ebe4e"
         }
       ],
       "name": "pyparsing",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "3.3.2"
+      "version": "3.3.3"
     },
     {
       "components": [
@@ -3327,21 +3335,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "68bfc84f6ed9d5a48dd75963ee61b4b3cdcf9cc32ad51f5db18a1a6127f7819b",
+      "distribution_fingerprint": "fc20fbe4ddf722cf52ae4e1f557434477bb5a235994bfd83ebf10fbac8cb17fa",
       "evidence_archive": {
-        "hash": "sha256:cf87d3627dfb4412437fdd5b13eae402607722998d21567993aedbc59b23c15e",
-        "url": "https://files.pythonhosted.org/packages/0c/57/250bd238b966cece44328235eb85290045d059265fdaf7527a3a958123db/python_discovery-1.6.1.tar.gz"
+        "hash": "sha256:cd1738ca1d37c86ef9d0b654dd46fcee1e41c97c6add12575e8501ced39afdb4",
+        "url": "https://files.pythonhosted.org/packages/b0/73/54993df8fc57e906dc9b7e01d1d9b0b2d3eb0ce3190639e33dccb12853f7/python_discovery-1.6.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "python_discovery-1.6.1/LICENSE",
+          "path": "python_discovery-1.6.2/LICENSE",
           "sha256": "90e25e1faf2a4aaea8d95ee8e7f5738b052a1acc0c9c58068101f931a86bd588"
         }
       ],
       "name": "python-discovery",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "1.6.1"
+      "version": "1.6.2"
     },
     {
       "components": [
@@ -3353,25 +3361,25 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "15fdc430375495f284ce1f6876bb6b5c03f88fdf86d3f33b6b2722371df0822c",
+      "distribution_fingerprint": "e4ce09ce19c622784e0fc1190d0167c8390fbe284e9995379e6e748996e7bc62",
       "evidence_archive": {
-        "hash": "sha256:a20a594dabeaa385725aa239d5244871c143ecb356add8a20fcf23773a6c3a35",
-        "url": "https://files.pythonhosted.org/packages/6a/53/ed9d74092561d4b01a2ef1349d52cdbc135e526c245f366b089cfca6de49/python_dotenv-1.2.3.tar.gz"
+        "hash": "sha256:f0d53e69935a851c0dcc78f3ab7aaccd8cabef0b92382b576b824212902873c0",
+        "url": "https://files.pythonhosted.org/packages/74/26/2fbeedb218a787a5eea551c7532cac4e009f83d689dd2faa0d0353473f86/python_dotenv-1.2.4.tar.gz"
       },
       "license_files": [
         {
-          "path": "python_dotenv-1.2.3/LICENSE",
+          "path": "python_dotenv-1.2.4/LICENSE",
           "sha256": "80619b7049f08c81683ad0e01f08f257a840652dd71ee83146d36658c7d2c2b9"
         },
         {
-          "path": "python_dotenv-1.2.3/docs/license.md",
+          "path": "python_dotenv-1.2.4/docs/license.md",
           "sha256": "80619b7049f08c81683ad0e01f08f257a840652dd71ee83146d36658c7d2c2b9"
         }
       ],
       "name": "python-dotenv",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "1.2.3"
+      "version": "1.2.4"
     },
     {
       "components": [
@@ -3761,21 +3769,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "37601422db4f15b3cfdf69fd35004db173a7bc7d976c55cede14a0268a05c05d",
+      "distribution_fingerprint": "7910fa931ed4610bdaca2113d0dacd46fbe776daed9814821ecce2c5469f9ba8",
       "evidence_archive": {
-        "hash": "sha256:1cebd1337c242e4ec2293e541f712b2da849b29f48f0c293684b71c0632625d4",
-        "url": "https://files.pythonhosted.org/packages/aa/2a/9618a122aeb2a169a28b03889a2995fe297588964333d4a7d67bdf46e147/rpds_py-2026.6.3.tar.gz"
+        "hash": "sha256:4793ef7f78268b124b73fa933440f01d258bbae01de9fa53e9080c9ab0425a12",
+        "url": "https://files.pythonhosted.org/packages/42/68/3bd46b8a5e01d3c2ebdf9c5e9497912e3fe0cde02bac21a7130ca866e403/rpds_py-2026.9.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "rpds_py-2026.6.3/LICENSE",
+          "path": "rpds_py-2026.9.1/LICENSE",
           "sha256": "314e4e91be3baa93c0fb4bccc9e4e97cd643eb839b065af921782c2175fe9909"
         }
       ],
       "name": "rpds-py",
-      "notes": "MIT root code. Transitive Rust crates/native wheel contents are outside this Python lock inventory.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "2026.6.3"
+      "version": "2026.9.1"
     },
     {
       "components": [
@@ -3921,25 +3929,55 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "086c4654adfadcd3b342e8388db1c867b0ce91fc062f6ddf6fe5b651c84f1e58",
+      "distribution_fingerprint": "c1560de6415a560aa5e7d79290b43ab4ff6e7cfec555b09e64ac92e614ed70ad",
       "evidence_archive": {
-        "hash": "sha256:4a55d8cf158a9c2e587fa4922f1bbb91d68ac829e2d6f25403a85747c71daf74",
-        "url": "https://files.pythonhosted.org/packages/69/99/a6ca3beb3ccacb41fb3321d8a60e5566f9e6467601ef8eba6a17e1b89778/soupsieve-2.9.2.tar.gz"
+        "hash": "sha256:49e9380d7d2905463583bafe285e818c7366a9ed7b3aee221c1ac79c905d8bc0",
+        "url": "https://files.pythonhosted.org/packages/71/c3/1b817965ac12dc002d7c9cd7dfffdd7d4fbf9b45763ef2ffe7b86ee94670/soupsieve-2.10.tar.gz"
       },
       "license_files": [
         {
-          "path": "soupsieve-2.9.2/docs/src/markdown/about/license.md",
-          "sha256": "1180657bb59f8f5ed1f89801de3269d334b279c4ae1583e9ab09b6019c39a682"
+          "path": "soupsieve-2.10/LICENSE.md",
+          "sha256": "76a0acdb98c3a63681e20b6f096699ef8cad5fb35d56eef8387e0fa71d797a9a"
         },
         {
-          "path": "soupsieve-2.9.2/LICENSE.md",
-          "sha256": "76a0acdb98c3a63681e20b6f096699ef8cad5fb35d56eef8387e0fa71d797a9a"
+          "path": "soupsieve-2.10/docs/src/markdown/about/license.md",
+          "sha256": "1180657bb59f8f5ed1f89801de3269d334b279c4ae1583e9ab09b6019c39a682"
         }
       ],
       "name": "soupsieve",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "2.9.2"
+      "version": "2.10"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "76a0acdb98c3a63681e20b6f096699ef8cad5fb35d56eef8387e0fa71d797a9a"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "2b0d14420ab88982b338711787b1989d157efcedb09d9c23e599a03c09b5f376",
+      "evidence_archive": {
+        "hash": "sha256:7dcf6022eed0399eb9934a75e020148f7a2024c37b7dfcd3cf2c5505d69c364e",
+        "url": "https://files.pythonhosted.org/packages/5e/77/2dcfa996b01702ab8fd0763d84098f6a640d6162a328f1c04c2697579a1a/soupsieve-3.0.3.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "soupsieve-3.0.3/LICENSE.md",
+          "sha256": "76a0acdb98c3a63681e20b6f096699ef8cad5fb35d56eef8387e0fa71d797a9a"
+        },
+        {
+          "path": "soupsieve-3.0.3/docs/src/markdown/about/license.md",
+          "sha256": "1180657bb59f8f5ed1f89801de3269d334b279c4ae1583e9ab09b6019c39a682"
+        }
+      ],
+      "name": "soupsieve",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "3.0.3"
     },
     {
       "components": [
@@ -3951,21 +3989,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "a130b462993bc83daa7a784af4e07a7607f7ba36a132ddadea0953aeed1f37eb",
+      "distribution_fingerprint": "00ab6566a2c862e9da2f4ee5c02b9b94401960e8b6121828c7619ce7c0d5c3e6",
       "evidence_archive": {
-        "hash": "sha256:1bae716c02f3e6f294be41ff333220692dae7c3cbab077c900f159676719dade",
-        "url": "https://files.pythonhosted.org/packages/2b/54/6767bb789b2f2fed6e0f953df949cd39dc263a384c1b65a95232598621d6/sse_starlette-3.4.11.tar.gz"
+        "hash": "sha256:75de713aa8a9441513cc283220826da079d982770965b951e9437720e8bafdb2",
+        "url": "https://files.pythonhosted.org/packages/e4/be/0123026f719d1a7936f214a88b553bb5701e04ff2511147c1dab0c5035eb/sse_starlette-3.5.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "sse_starlette-3.4.11/LICENSE",
+          "path": "sse_starlette-3.5.0/LICENSE",
           "sha256": "80af6bfccbebd2c14d4aab96695cab9950e177190cc80f5ef819e99996883e8e"
         }
       ],
       "name": "sse-starlette",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "3.4.11"
+      "version": "3.5.0"
     },
     {
       "components": [
@@ -4003,21 +4041,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "39c3c00fa99a8fc1961e492e163aac9427554e16d79c018b0cfc9e2973f7a8fc",
+      "distribution_fingerprint": "fa204a75e26ad9ee0f797527160664c2f498d7b1082fc21841c40407f4e269a5",
       "evidence_archive": {
-        "hash": "sha256:d4e3ac5e546444960c710297a3c9fc3f7ebae1b7e963f3d36173b49da535be9b",
-        "url": "https://files.pythonhosted.org/packages/b5/b4/205b0d5241d934e8add0c38aa924c4f9fb7330834ff11e5444db964ec3f9/starlette-1.6.0.tar.gz"
+        "hash": "sha256:1565dc0b35d5737a271ed1e0e04e949f4e81198799f216d2667b0a0fb9cf9522",
+        "url": "https://files.pythonhosted.org/packages/e9/0c/6efb252d091ecccd7d62048ae11f0ea35cd75a4fbaeea5e30f9c3bf91d10/starlette-1.8.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "starlette-1.6.0/LICENSE.md",
+          "path": "starlette-1.8.0/LICENSE.md",
           "sha256": "dcb95677a02240243187e964f941847d19b17821cf99e5afae684fab328c19bf"
         }
       ],
       "name": "starlette",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "1.6.0"
+      "version": "1.8.0"
     },
     {
       "components": [
@@ -4066,21 +4104,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "1bfc72c3c3ab029398921202c8858e7d5a83431b1f3f8a853fdab744ec646062",
+      "distribution_fingerprint": "f59ef78d37a0e9ba090ffaccdb6e6f60e65c3d67ac622985168b3921de6c7979",
       "evidence_archive": {
-        "hash": "sha256:7c7e1a961a0b2f2472c1ac5b69affa0ae1132c39adcb67aba98568702b9cc23f",
-        "url": "https://files.pythonhosted.org/packages/22/de/48c59722572767841493b26183a0d1cc411d54fd759c5607c4590b6563a6/tomli-2.4.1.tar.gz"
+        "hash": "sha256:264507556cd8b8c8e7c6ee037cdf443a463f03f4c958e57195e3d369711b8ff6",
+        "url": "https://files.pythonhosted.org/packages/b0/78/9ad63712633ed3ab5cc1a648d863d7e7da371e9425e209555a0fe711b695/tomli-2.5.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "tomli-2.4.1/LICENSE",
+          "path": "tomli-2.5.0/LICENSE",
           "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
         }
       ],
       "name": "tomli",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "2.4.1"
+      "version": "2.5.0"
     },
     {
       "components": [
@@ -4233,21 +4271,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "1a462cb82175433e14173aaaa6b84ba1ab367e40a6ad0c842c28801d2865a585",
+      "distribution_fingerprint": "80d8ab1aecce605cdd9465113db3f08ee2c05e56cbdd61df81c155e9eca10bdb",
       "evidence_archive": {
-        "hash": "sha256:9d91bd436463ad5e4ee4aba766628dd6cd7010cf3e2461756b3303710eebc301",
-        "url": "https://files.pythonhosted.org/packages/53/a3/1585216310e344e8102c22482f6060c7a6ea0322b63e026372e6dcefcfd6/truststore-0.10.4.tar.gz"
+        "hash": "sha256:30d36967ccaded5cbb38d602c433f53600036c79d502f4533a49b60a03bbefcd",
+        "url": "https://files.pythonhosted.org/packages/ee/9f/c5201d42a484c061e528825fc8e2d565f5abd50a4ced6fb7d29c4ec99b2b/truststore-0.10.5.tar.gz"
       },
       "license_files": [
         {
-          "path": "truststore-0.10.4/LICENSE",
+          "path": "truststore-0.10.5/LICENSE",
           "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca"
         }
       ],
       "name": "truststore",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "0.10.4"
+      "version": "0.10.5"
     },
     {
       "components": [
@@ -4337,21 +4375,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "fd5d702ebabc0038f157fb2d40d27f701b3e506e1674c12fdcd82777a442a483",
+      "distribution_fingerprint": "ac391b4b7706f8fbca52d1e9269e89c874e3f345c63aa41e6f820afe72eae513",
       "evidence_archive": {
-        "hash": "sha256:a9356f0cb89b3b8621529c5d5eebd69bfe154f4c3f68b4cf2de47e45fa855c2e",
-        "url": "https://files.pythonhosted.org/packages/5d/ad/04bbb797c84fc1f26cb171f7394716f4865ffb8d8c5e1eef42565c2dfa6b/uvicorn-0.53.0.tar.gz"
+        "hash": "sha256:a2e33cbfaa0306f8e6b0c13e0cb89d7d7a2da3e62b90c66e18c33d9807b28620",
+        "url": "https://files.pythonhosted.org/packages/da/34/30e9280707135d2cfc589dfff3cb796bd07a3aeb1a3e415ba09dd89d7bb4/uvicorn-0.54.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "uvicorn-0.53.0/LICENSE.md",
+          "path": "uvicorn-0.54.0/LICENSE.md",
           "sha256": "efe1acf3e62fb99c288b0ec73e5a773b7268ef4320fe757ea994214e4b63c371"
         }
       ],
       "name": "uvicorn",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "0.53.0"
+      "version": "0.54.0"
     },
     {
       "components": [
@@ -4380,43 +4418,43 @@
           "scope": "libuv documentation only; retain attribution when copying its documentation."
         }
       ],
-      "distribution_fingerprint": "1a0c409f2978b4e5bbbab975f909a3d7eaf5758c44fd9d4edae1586615b25725",
+      "distribution_fingerprint": "2cd236286b420e4d8ff3d592d2120fbb9e012041025dbc12ea5f5dbc3a70be7d",
       "evidence_archive": {
-        "hash": "sha256:6c84bae345b9147082b17371e3dd5d42775bddce91f885499017f4607fdaf39f",
-        "url": "https://files.pythonhosted.org/packages/06/f0/18d39dbd1971d6d62c4629cc7fa67f74821b0dc1f5a77af43719de7936a7/uvloop-0.22.1.tar.gz"
+        "hash": "sha256:28d160f51ab4da3b187063652e643dea6831072add4adc1e6d62afbe73b6be27",
+        "url": "https://files.pythonhosted.org/packages/fa/42/02c739ce85fb2ee8d99212c61417da8140c6b87e9d97c430bea520d76044/uvloop-0.23.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "uvloop-0.22.1/LICENSE-APACHE",
+          "path": "uvloop-0.23.0/LICENSE-APACHE",
           "sha256": "377025287798f9dcd819e1f826fa5fc5e2f382528691ab0528c5cf8c8c282c27"
         },
         {
-          "path": "uvloop-0.22.1/LICENSE-MIT",
+          "path": "uvloop-0.23.0/LICENSE-MIT",
           "sha256": "6dd4c399f26de043d77a2ad7e31db4cb5bf08ea8368b0a42d6e158635cc8ab62"
         },
         {
-          "path": "uvloop-0.22.1/vendor/libuv/LICENSE",
+          "path": "uvloop-0.23.0/vendor/libuv/LICENSE",
           "sha256": "16de0c32b265cb7d46a6d3bd614f259dd4d693a5e26b3407b04aae8d73041f0c"
         },
         {
-          "path": "uvloop-0.22.1/vendor/libuv/LICENSE-docs",
+          "path": "uvloop-0.23.0/vendor/libuv/LICENSE-docs",
           "sha256": "cce5d01fa4a83b794271bd2c28cffdf99afd43c803e6ddefddae39b591ea7448"
         },
         {
-          "path": "uvloop-0.22.1/vendor/libuv/LICENSE-extra",
+          "path": "uvloop-0.23.0/vendor/libuv/LICENSE-extra",
           "sha256": "262c44bd2cdba037e6d2a82fba15f5800d292bc993a6f5d6b6ea487744d02836"
         }
       ],
       "name": "uvloop",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "0.22.1"
+      "version": "0.23.0"
     },
     {
       "components": [
         {
           "evidence_sha256": [
-            "5c15919378c5b2aaab7b19cea70d8cdc75f76879e32454e4c0399f8b71d171e9"
+            "38ef740a641ff08df082680e98ab30d09badccee9e5fb686bce21212f3a663f0"
           ],
           "expression": "MIT",
           "scope": "Primary project code in the reviewed archive."
@@ -4429,25 +4467,25 @@
           "scope": "Unmodified bundled pip/setuptools wheels retain their own nested notices; this top-level notice does not enumerate their transitive code."
         }
       ],
-      "distribution_fingerprint": "d5f803c4da81bb8407114e18b6f91a263c848bd741fd05d4c0c38647a767299a",
+      "distribution_fingerprint": "71e41905e52e1a340eb7794431938d6c008d2d07337654b025c13eb0f0868c0e",
       "evidence_archive": {
-        "hash": "sha256:fa0f2a26fcb6f32b376fc8b2c705b6057366763d5b9e5242d1ab10ecc3279fd3",
-        "url": "https://files.pythonhosted.org/packages/2f/5d/42254e91a9203a13d95ab4f5211f4cdda52b82fc3546340f7fb33a642173/virtualenv-21.9.0.tar.gz"
+        "hash": "sha256:5f427d56f39eb7e7447d641dd4b7ab1e9c92793f498f35f26da2e4972c5546ae",
+        "url": "https://files.pythonhosted.org/packages/dc/3f/935cf1757643381fb7f7cc98197b4bc119223d9c2cf37dc3b03ad2a4455f/virtualenv-21.14.7.tar.gz"
       },
       "license_files": [
         {
-          "path": "virtualenv-21.9.0/LICENSE",
-          "sha256": "5c15919378c5b2aaab7b19cea70d8cdc75f76879e32454e4c0399f8b71d171e9"
+          "path": "virtualenv-21.14.7/LICENSE",
+          "sha256": "38ef740a641ff08df082680e98ab30d09badccee9e5fb686bce21212f3a663f0"
         },
         {
-          "path": "virtualenv-21.9.0/THIRD-PARTY-NOTICES.md",
+          "path": "virtualenv-21.14.7/THIRD-PARTY-NOTICES.md",
           "sha256": "0e51b915e26da42c998b274c1a81804c5f9eea5ca49d69da2f96418872590825"
         }
       ],
       "name": "virtualenv",
-      "notes": "MIT wrapper; THIRD-PARTY-NOTICES identifies embedded pip/setuptools wheels. Their nested inventories and dynamically downloaded tooling are outside uv.lock scope.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission. The MIT copyright year becomes 2020-present; bundled-wheel notice and scope are unchanged.",
       "status": "reviewed",
-      "version": "21.9.0"
+      "version": "21.14.7"
     },
     {
       "components": [
@@ -4490,21 +4528,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "e581d46ab539461dac39ce7058f4e0c2b5e54f970a2351502052e779ff2466d7",
+      "distribution_fingerprint": "9c1b4b1d59c852555c6e306fbfb3df749a7938306cb088063d202429aad3f17a",
       "evidence_archive": {
-        "hash": "sha256:c995fba777f1ea992f090f9236e9284cf7a5d1a0130dd5a3d82c598cacd76838",
-        "url": "https://files.pythonhosted.org/packages/cd/41/5e1a4bb12aac5f1493fa1bdc11154eca3b258ca4eba65d39c473fe19d8e9/watchfiles-1.2.0.tar.gz"
+        "hash": "sha256:99aee4a07847c06820765fd7b1b49ceac4f3f711ccb7d104655a33231de1c207",
+        "url": "https://files.pythonhosted.org/packages/b3/68/e6aa0b77d217b31f8f486ec0cdfe5e00e6e38dc0be657e7d85819b9faf0a/watchfiles-1.3.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "watchfiles-1.2.0/LICENSE",
+          "path": "watchfiles-1.3.0/LICENSE",
           "sha256": "4fd78355b67ce2677ede9fb6f63a250f377bb7e22088136a5f4699adb4bc069f"
         }
       ],
       "name": "watchfiles",
-      "notes": "MIT root code. Transitive Rust crates/native wheel contents are outside this Python lock inventory.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "1.2.0"
+      "version": "1.3.0"
     },
     {
       "components": [
@@ -4523,21 +4561,25 @@
           "scope": "Markus Kuhn permits use, copying, modification and distribution for any purpose without fee; retain this notice."
         }
       ],
-      "distribution_fingerprint": "682dd592fc694f2e272e2d8c30cce0caeac8a8573f71c7380182b056048234f7",
+      "distribution_fingerprint": "f397e64eff8bd4ff711e8be8b13c84a749c7ea64decbb64c0291afa6d5628b1a",
       "evidence_archive": {
-        "hash": "sha256:2dae09efa25253ae2874188e86d6861af3b1652aef4118cdf3f0bda288a957fb",
-        "url": "https://files.pythonhosted.org/packages/3d/7a/f98d4ada7c499565ab0c0fcef28a4e54fafa72b8228a6309803c80493c92/wcwidth-0.8.4.tar.gz"
+        "hash": "sha256:ae0ef90b90f6af38b54f1fe6d58662ec33b3cb4b8391958a62416d654231727b",
+        "url": "https://files.pythonhosted.org/packages/f0/b4/7830542634bb2d3e62aa3b586a72d5b3b6c91c3168929e7000ef3fed041d/wcwidth-0.9.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "wcwidth-0.8.4/LICENSE",
+          "path": "wcwidth-0.9.2/LICENSE",
+          "sha256": "70b98a95a2144eb70af8017fa8c6d95ce247e40867436e8bc649e137fe13d21a"
+        },
+        {
+          "path": "wcwidth-0.9.2/libwcwidth/LICENSE",
           "sha256": "70b98a95a2144eb70af8017fa8c6d95ce247e40867436e8bc649e137fe13d21a"
         }
       ],
       "name": "wcwidth",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "0.8.4"
+      "version": "0.9.2"
     },
     {
       "components": [
@@ -4575,21 +4617,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "063092569a6b9eb478d5f2504cb68266656b3fc5559a8ba6db74a23a51074c17",
+      "distribution_fingerprint": "7d7d9f3d0d62f040b456ded8352d1b826c7c6377b1c00b78838484709c6db017",
       "evidence_archive": {
-        "hash": "sha256:acfea4c20bf54384883ea33b1240fc1db4f52e190823a4e2b334bc3e8bfca96a",
-        "url": "https://files.pythonhosted.org/packages/18/72/fba934cb3dff7a85d811820efffcd141ddd52b5a2a01637f64551373ff4d/websockets-17.1.tar.gz"
+        "hash": "sha256:36c2fb94c990cc2545143b12690e2de6c16300f9dbe5b4f33fa300cf57dc8792",
+        "url": "https://files.pythonhosted.org/packages/01/89/3f825ab71c242fffb62ea8fe638741c290f62f8d7aadf8125ff897747af3/websockets-17.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "websockets-17.1/LICENSE",
+          "path": "websockets-17.2/LICENSE",
           "sha256": "3d6a0c050d8bec52fabad502e45fb25bd02bcadbd70dea34d447b6a0ff4e6da8"
         }
       ],
       "name": "websockets",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
-      "version": "17.1"
+      "version": "17.2"
     }
   ],
   "review_date": "2026-10-15",

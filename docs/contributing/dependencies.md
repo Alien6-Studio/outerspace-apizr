@@ -43,13 +43,13 @@ maintainer has resolved the issue and recorded the decision. Do not treat packag
 metadata or an SBOM entry as a legal compatibility determination.
 
 The required `dependencies` job runs `scripts/check_dependency_licenses.py`.
-Its reviewed baseline covers all **141 third-party versions** in the universal
+Its reviewed baseline covers all **147 third-party versions** in the universal
 lock, including platform alternatives and every dependency group:
 
 - `policy/dependency-licenses.json` records component expressions, review scope,
   notes, the exact evidence archive and its license-file hashes.
-- `policy/dependency-license-texts.json` preserves 199 distinct UTF-8 notice texts
-  from 261 archive paths, including original line endings inside JSON strings.
+- `policy/dependency-license-texts.json` preserves 211 distinct UTF-8 notice texts
+  from 278 archive paths, including original line endings inside JSON strings.
 - `policy/dependency-policy.json` defines the SPDX allowlist, version-specific
   exceptions and named-package denials with upstream references.
 
@@ -84,7 +84,7 @@ nested wheels or tools downloaded outside `uv.lock`.
 | pywin32 | BSD/MIT/Python/Scintilla notices plus LGPL 2.1 for adodbapi; do not strip these or ignore source/relinking obligations. |
 | Native and nested packages | cryptography, pyzmq, cffi, Rust extensions and virtualenv need an exact-content review before binary redistribution. |
 
-The eight exceptions are confined to the named versions and preserved evidence;
+The nine exceptions are confined to the named versions and preserved evidence;
 they do not globally allow these terms for arbitrary packages. Before publishing
 containers, vendoring dependencies, modifying third-party code or selecting new
 documentation assets, review the actual contents and meet their notice, source,

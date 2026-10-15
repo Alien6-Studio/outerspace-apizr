@@ -104,7 +104,7 @@
       ],
       "name": "uvloop",
       "reason": "libuv documentation only; retain attribution when copying its documentation.",
-      "version": "0.22.1"
+      "version": "0.23.0"
     },
     {
       "evidence_sha256": [
@@ -115,7 +115,7 @@
       ],
       "name": "wcwidth",
       "reason": "Markus Kuhn permits use, copying, modification and distribution for any purpose without fee; retain this notice.",
-      "version": "0.8.4"
+      "version": "0.9.2"
     },
     {
       "name": "debugpy",

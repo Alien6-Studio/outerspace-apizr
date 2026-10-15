@@ -32,7 +32,7 @@ def test_homebrew_boundary_is_explicit_deterministic_and_preserves_build_identit
         {"platform": "linux", "reason": "runtime-not-qualified-in-0.4.3"},
     ]
     assert policy["build_inputs_manifest_sha256"] == (
-        "fa5a8fd6b35ac4697c907910f2636ecc7784ead7ba08bc4a085b8210e85f32e9"
+        "ba9d14f92183d5ecea4d5dad94fc5c9dbb7790c8fc3d7dac8acf4e66b038d331"
     )
     reordered = dict(reversed(list(policy.items())))
     assert tool["encoded"](result) == tool["encoded"](
@@ -41,16 +41,32 @@ def test_homebrew_boundary_is_explicit_deterministic_and_preserves_build_identit
     assert str(ROOT).encode() not in tool["encoded"](result)
 
 
-def test_development_and_frozen_publication_differ_only_in_full_lock_identity():
+def test_development_build_refresh_preserves_frozen_publication_identity():
     _, current = policy_and_manifest()
     published = json.loads(
         (ROOT / "tests/fixtures/homebrew/published-0.4.5-build-inputs.json").read_text()
     )
     development = json.loads(current)
+    assert inputs["digest"](inputs["encoded"](published)) == (
+        "1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd"
+    )
     assert development["lock_sha256"] != published["lock_sha256"]
-    assert {k: v for k, v in development.items() if k != "lock_sha256"} == {
-        k: v for k, v in published.items() if k != "lock_sha256"
+    assert development["policy_sha256"] != published["policy_sha256"]
+    refreshed = {"lock_sha256", "policy_sha256", "distributions"}
+    assert {k: v for k, v in development.items() if k not in refreshed} == {
+        k: v for k, v in published.items() if k not in refreshed
     }
+    previous = {item["name"]: item for item in published["distributions"]}
+    changed = [
+        item for item in development["distributions"] if item != previous[item["name"]]
+    ]
+    assert len(development["distributions"]) == len(previous)
+    assert len(changed) == 1 and changed[0]["name"] == "pluggy"
+    assert previous["pluggy"]["version"] == "1.6.0"
+    assert changed[0]["version"] == "1.7.0"
+    assert changed[0]["sha256"] == (
+        "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec"
+    )
 
 
 @pytest.mark.parametrize(

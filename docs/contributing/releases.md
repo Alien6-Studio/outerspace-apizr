@@ -155,6 +155,20 @@ validation. No personal token or rebuild is required.
 
 ## Retain and publish one coordinated artifact set
 
+Before building a release-line candidate, complete the dependency freeze:
+
+- [ ] Refresh runtime, optional and development dependencies within the reviewed
+  bounds; record any deliberate hold or constraint change.
+- [ ] Review the exact locked source/archive hashes and upstream notices. Pass
+  source, licence, all Python audit scopes and the unfiltered client-tool Node
+  audit; qualify the corresponding development Homebrew build inputs and Formula.
+- [ ] Commit the reviewed `uv.lock` and policy together before building from the
+  exact clean source. Retain that lock with the candidate and its SBOMs.
+- [ ] Use that same committed lock for final qualification and publication.
+  A subsequent dependency or notice change requires a new candidate and renewed
+  qualification; never re-resolve dependencies during publication or replace
+  the retained candidate archives.
+
 CI builds four wheels and four sdists once per candidate. Independent sdist
 reconstructions are tests and never replace the selected archives. Retain
 `release-candidate`, the six `release-target-*` exports, `release-delivery`,
