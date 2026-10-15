@@ -13,6 +13,7 @@ from typing import Annotated, Literal, Self, overload
 from pydantic import Field, TypeAdapter, model_validator
 
 from apizr.contracts.distribution import Digest
+from apizr.contracts.json import encode
 from apizr.experiments.capture_model import ExperimentPlanV2, ExperimentRunV2, Plan, Run
 from apizr.experiments.model import (
     ExperimentPlan,
@@ -22,6 +23,7 @@ from apizr.experiments.model import (
 )
 from apizr.experiments.serialization import (
     MAX_ARTIFACT_BYTES,
+    check_run_binding,
     plan_bytes,
     plan_digest,
     read_plan,
@@ -287,7 +289,10 @@ def records(path: Path, *, create: bool = False) -> Iterator[Record]:
                             raise StoreError("store_limit")
                         raw = read(plans, name)
                         plan = read_plan(raw)
-                        if plan_bytes(plan) != raw:
+                        if (
+                            encode(plan.model_dump(mode="json"), MAX_ARTIFACT_BYTES)
+                            != raw
+                        ):
                             raise StoreError("store_corrupt")
                         cache[name] = plan
                     return cache[name]
@@ -297,10 +302,24 @@ def records(path: Path, *, create: bool = False) -> Iterator[Record]:
                 for name in _names(runs):
                     raw = read(runs, name)
                     run = read_run(raw)
-                    if run_bytes(run) != raw:
+                    if encode(run.model_dump(mode="json"), MAX_ARTIFACT_BYTES) != raw:
                         raise StoreError("store_corrupt")
                     plan = load_plan(run.plan_digest + ".json")
-                    yield _record(plan, run)
+                    check_run_binding(run, plan, run.plan_digest)
+                    # This is the single trusted assembly point for store reads.
+                    # Both artifacts were fully validated above, their exact
+                    # bytes canonicalized and hashed, and their binding checked.
+                    # Public record constructors/validate_record still revalidate
+                    # caller-supplied objects, including forged model_copy values.
+                    record_type = (
+                        RunRecordV2 if isinstance(run, ExperimentRunV2) else RunRecord
+                    )
+                    yield record_type.model_construct(
+                        plan=plan,
+                        run=run,
+                        plan_digest=run.plan_digest,
+                        run_digest=name.removesuffix(".json"),
+                    )
     except FileNotFoundError:
         # Only an absent selected root is an empty store. Never hide a missing
         # referenced plan or subdirectory, including dangling symlink roots.

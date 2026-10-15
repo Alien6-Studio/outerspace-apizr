@@ -53,7 +53,16 @@ def validate_run_binding(run: Run, plan: Plan) -> None:
     """Validate the supplied artifacts, their exact digest and selected source."""
     plan = _PLAN.validate_python(plan)
     run = _RUN.validate_python(run)
-    if run.plan_digest != plan_digest(plan):
+    check_run_binding(run, plan, plan_digest(plan))
+
+
+def check_run_binding(run: Run, plan: Plan, digest: str) -> None:
+    """Bind already validated artifacts to a verified canonical Plan digest.
+
+    Internal only: the store obtains the digest by hashing admitted bytes and
+    verifies their canonical form. Public callers use validate_run_binding.
+    """
+    if run.plan_digest != digest:
         raise ValueError("experiment_plan_digest_mismatch")
     if isinstance(plan, ExperimentPlanV2) or isinstance(run, ExperimentRunV2):
         if not isinstance(plan, ExperimentPlanV2) or not isinstance(

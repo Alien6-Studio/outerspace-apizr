@@ -321,6 +321,12 @@ history. `history.py` owns list/show queries and their intended/observed views.
 bounded factual text. Inspection → Plan → Run → Comparison is an evidence lifecycle.
 Comparison revalidates stored identities and never captures or recreates evidence.
 It separates material evidence changes from observed results without causal inference.
+`compare_stored_runs` resolves both identities through `history.select_runs` in one
+complete bounded validation. `store.records` validates each canonical artifact
+once, checks its byte digest and Run-to-Plan binding, then assembles its envelope
+without repeating those admissions. The Plan cache lives only in that iterator.
+Public record constructors, serializers and `compare_runs` still revalidate
+caller-supplied values. No digest-only lookup replaces the complete store check.
 These modules belong to the same evidence lifecycle; neither inspection nor its
 producers import the runner, worker, protocol or history. CLI dispatch is lazy.
 

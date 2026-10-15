@@ -82,3 +82,8 @@ Implement related tickets locally, use focused checks while the batch evolves,
 then push and qualify the whole batch once. Moving a proof or adding a ticket
 does not require starting another full platform matrix in the middle of that
 batch. The separate pytest performance comparison is manual only.
+
+The engine performance baseline is also manual only. Its
+`scripts.qualification.experiments.benchmark_engine` command records import,
+inspection, SDK, file digest, publication, history and editor timings, with
+function-call profiles. See [the measurement method and budgets](../architecture/engine-performance.md).

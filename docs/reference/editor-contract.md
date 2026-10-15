@@ -83,8 +83,10 @@ Oversized results produce `response_too_large`; they are never silently truncate
 Close stdin after the request; clients own process cancellation and deadlines.
 
 History list/show/diff use the existing complete bounded-store validation before
-returning evidence, including records beyond a display filter or limit. Producer
-and capture values come from retained Runs; reading never imports the producing
+returning evidence, including records beyond a display filter or limit.
+Diff resolves both identities in one complete traversal, sharing admitted values
+only for that request. It does not use a persistent index or a targeted check.
+Producer and capture values come from retained Runs; reading never imports the producing
 provider. Missing, ambiguous and corrupt records produce explicit diagnostics.
 No operation runs code, retrains a model, changes evidence or generates a service.
 

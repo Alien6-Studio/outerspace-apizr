@@ -1,0 +1,58 @@
+         52361330 function calls (48702286 primitive calls) in 8.081 seconds
+
+   Ordered by: cumulative time
+   List reduced from 206 to 50 due to restriction <50>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    8.081    8.081 benchmark_engine.py:148(<lambda>)
+        2    0.009    0.004    8.070    4.035 history.py:242(show_run)
+     2002    0.010    0.000    8.061    0.004 store.py:254(records)
+     2000    0.004    0.000    6.515    0.003 store.py:99(_record)
+30082/14066    0.642    0.000    5.433    0.000 {method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+     2025    0.001    0.000    4.402    0.002 main.py:270(__init__)
+    12040    1.209    0.000    4.202    0.000 json.py:27(encode)
+     2002    0.001    0.000    3.746    0.002 store.py:61(bound)
+     2002    0.005    0.000    3.745    0.002 store.py:46(_validate_record_binding)
+     6002    0.009    0.000    3.262    0.001 serialization.py:29(run_bytes)
+     6004    0.010    0.000    3.084    0.001 serialization.py:25(plan_digest)
+     6006    0.009    0.000    3.066    0.001 serialization.py:20(plan_bytes)
+28057/28041    0.007    0.000    2.601    0.000 type_adapter.py:362(validate_python)
+     4002    0.007    0.000    2.191    0.001 serialization.py:34(run_digest)
+  3173020    0.303    0.000    1.908    0.000 encoder.py:414(_iterencode)
+6815988/3173020    0.985    0.000    1.600    0.000 encoder.py:334(_iterencode_dict)
+     2002    0.005    0.000    1.579    0.001 serialization.py:52(validate_run_binding)
+   396658    0.123    0.000    1.347    0.000 model.py:23(_text)
+   570912    0.328    0.000    1.301    0.000 {built-in method builtins.any}
+  5035944    0.585    0.000    0.923    0.000 model.py:24(<genexpr>)
+   176256    0.142    0.000    0.770    0.000 values.py:51(_freeze)
+  1874800    0.259    0.000    0.724    0.000 encoder.py:278(_iterencode_list)
+    76118    0.060    0.000    0.590    0.000 model.py:53(_reference)
+   176256    0.109    0.000    0.420    0.000 __init__.py:183(dumps)
+     2000    0.001    0.000    0.344    0.000 serialization.py:45(read_run)
+     2002    0.001    0.000    0.343    0.000 type_adapter.py:421(validate_json)
+     2002    0.075    0.000    0.342    0.000 {method 'validate_json' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+  9278572    0.337    0.000    0.337    0.000 {built-in method builtins.ord}
+6832608/6832564    0.323    0.000    0.323    0.000 {built-in method builtins.len}
+  3501391    0.249    0.000    0.308    0.000 {built-in method builtins.isinstance}
+    12040    0.004    0.000    0.303    0.000 main.py:472(model_dump)
+  3733894    0.300    0.000    0.300    0.000 {method 'encode' of 'str' objects}
+    12040    0.199    0.000    0.300    0.000 {method 'to_python' of 'pydantic_core._pydantic_core.SchemaSerializer' objects}
+   176256    0.092    0.000    0.288    0.000 encoder.py:183(encode)
+  3162982    0.258    0.000    0.258    0.000 {method 'extend' of 'bytearray' objects}
+    12040    0.003    0.000    0.227    0.000 json.py:23(finite_json)
+   188296    0.169    0.000    0.220    0.000 encoder.py:205(iterencode)
+   156120    0.113    0.000    0.202    0.000 model.py:44(ordered_evidence)
+   224330    0.048    0.000    0.168    0.000 values.py:43(_thaw)
+  1201942    0.117    0.000    0.117    0.000 {built-in method _json.encode_basestring}
+   336423    0.090    0.000    0.103    0.000 {built-in method builtins.sorted}
+     2002    0.003    0.000    0.102    0.000 store.py:274(read)
+     2002    0.008    0.000    0.096    0.000 store.py:172(_read)
+   895392    0.094    0.000    0.094    0.000 types.py:3212(_get_type_name)
+   294464    0.040    0.000    0.080    0.000 <frozen abc>:117(__instancecheck__)
+    48024    0.011    0.000    0.075    0.000 model.py:348(ordered_named)
+    22038    0.015    0.000    0.073    0.000 distribution.py:14(canonical_name)
+    12006    0.016    0.000    0.067    0.000 model.py:367(observed_evidence)
+     2018    0.065    0.000    0.065    0.000 {built-in method posix.open}
+    44036    0.009    0.000    0.060    0.000 model.py:202(ordered_inventory)
+
+

@@ -8,6 +8,7 @@ scores; exact Plan identity and timing are context, not counted facets.
 from collections.abc import Callable, Iterable
 from enum import Enum
 from math import isfinite
+from pathlib import Path
 from typing import Annotated, Literal, TypeVar
 
 from pydantic import Field, TypeAdapter
@@ -15,6 +16,7 @@ from pydantic import Field, TypeAdapter
 from apizr.contracts.distribution import Digest
 from apizr.contracts.json import encode
 from apizr.experiments.capture_model import CallParameter, CaptureIdentity, CaptureMode
+from apizr.experiments.history import select_runs
 from apizr.experiments.model import (
     EnvironmentEvidence,
     EnvironmentValue,
@@ -373,6 +375,16 @@ def compare_runs(a: Record, b: Record) -> Diff:
     """Revalidate exact Run/Plan bindings, then compare A → B with zero I/O."""
     a = validate_record(a)
     b = validate_record(b)
+    return _compare_runs(a, b)
+
+
+def compare_stored_runs(path: Path, run_a: str, run_b: str) -> Diff:
+    """Compare after one complete store validation; preserve all global refusals."""
+    a, b = select_runs(path, (run_a, run_b))
+    return _compare_runs(a, b)
+
+
+def _compare_runs(a: Record, b: Record) -> Diff:
     x, y = record_source(a), record_source(b)
     serving = _evidence_identity(
         x.capability_id if x else None, y.capability_id if y else None

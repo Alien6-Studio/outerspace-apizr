@@ -1,0 +1,58 @@
+         40747365 function calls (37991339 primitive calls) in 6.020 seconds
+
+   Ordered by: cumulative time
+   List reduced from 174 to 50 due to restriction <50>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    6.019    6.019 benchmark_engine.py:140(<lambda>)
+        1    0.008    0.008    6.017    6.017 history.py:199(list_runs)
+25006/9006    0.501    0.000    4.703    0.001 {method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+     1001    0.005    0.000    3.880    0.004 store.py:254(records)
+     2000    0.001    0.000    3.613    0.002 store.py:61(bound)
+     2000    0.005    0.000    3.612    0.002 store.py:46(_validate_record_binding)
+23003/15003    0.006    0.000    3.363    0.000 type_adapter.py:362(validate_python)
+     1000    0.002    0.000    3.107    0.003 store.py:99(_record)
+     9002    0.882    0.000    3.034    0.000 json.py:27(encode)
+     5000    0.008    0.000    2.437    0.000 serialization.py:25(plan_digest)
+     5001    0.007    0.000    2.423    0.000 serialization.py:20(plan_bytes)
+     1000    0.002    0.000    2.128    0.002 history.py:139(summary)
+     4000    0.006    0.000    2.128    0.001 serialization.py:29(run_bytes)
+     2002    0.001    0.000    2.111    0.001 main.py:270(__init__)
+     1000    0.000    0.000    2.101    0.002 store.py:86(validate_record)
+     3000    0.005    0.000    1.584    0.001 serialization.py:34(run_digest)
+     2000    0.004    0.000    1.574    0.001 serialization.py:52(validate_run_binding)
+  2363448    0.214    0.000    1.377    0.000 encoder.py:414(_iterencode)
+5095452/2363448    0.714    0.000    1.158    0.000 encoder.py:334(_iterencode_dict)
+   326116    0.101    0.000    1.103    0.000 model.py:23(_text)
+   472214    0.259    0.000    1.061    0.000 {built-in method builtins.any}
+  4163376    0.496    0.000    0.762    0.000 model.py:24(<genexpr>)
+   144016    0.113    0.000    0.574    0.000 values.py:51(_freeze)
+  1401314    0.188    0.000    0.524    0.000 encoder.py:278(_iterencode_list)
+    64048    0.049    0.000    0.475    0.000 model.py:53(_reference)
+   144016    0.086    0.000    0.297    0.000 __init__.py:183(dumps)
+  7674520    0.267    0.000    0.267    0.000 {built-in method builtins.ord}
+5120999/5120977    0.236    0.000    0.236    0.000 {built-in method builtins.len}
+  2666153    0.186    0.000    0.232    0.000 {built-in method builtins.isinstance}
+  2824578    0.220    0.000    0.220    0.000 {method 'encode' of 'str' objects}
+     9002    0.003    0.000    0.214    0.000 main.py:472(model_dump)
+     9002    0.138    0.000    0.211    0.000 {method 'to_python' of 'pydantic_core._pydantic_core.SchemaSerializer' objects}
+   144016    0.073    0.000    0.194    0.000 encoder.py:183(encode)
+  2355447    0.185    0.000    0.185    0.000 {method 'extend' of 'bytearray' objects}
+     1000    0.001    0.000    0.163    0.000 serialization.py:45(read_run)
+     1001    0.000    0.000    0.162    0.000 type_adapter.py:421(validate_json)
+     1001    0.035    0.000    0.162    0.000 {method 'validate_json' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+     9002    0.002    0.000    0.162    0.000 json.py:23(finite_json)
+   126012    0.087    0.000    0.157    0.000 model.py:44(ordered_evidence)
+   180020    0.039    0.000    0.131    0.000 values.py:43(_thaw)
+   153018    0.098    0.000    0.128    0.000 encoder.py:205(iterencode)
+   894584    0.084    0.000    0.084    0.000 {built-in method _json.encode_basestring}
+   261077    0.069    0.000    0.079    0.000 {built-in method builtins.sorted}
+   667381    0.067    0.000    0.067    0.000 types.py:3212(_get_type_name)
+   234025    0.031    0.000    0.061    0.000 <frozen abc>:117(__instancecheck__)
+    18002    0.012    0.000    0.057    0.000 distribution.py:14(canonical_name)
+    36000    0.008    0.000    0.054    0.000 model.py:348(ordered_named)
+     1001    0.002    0.000    0.051    0.000 store.py:274(read)
+     9000    0.012    0.000    0.049    0.000 model.py:367(observed_evidence)
+     1001    0.004    0.000    0.048    0.000 store.py:172(_read)
+
+

@@ -1,0 +1,58 @@
+         606110 function calls (562546 primitive calls) in 0.094 seconds
+
+   Ordered by: cumulative time
+   List reduced from 206 to 50 due to restriction <50>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.094    0.094 benchmark_engine.py:148(<lambda>)
+        2    0.000    0.000    0.083    0.041 history.py:242(show_run)
+       22    0.000    0.000    0.083    0.004 store.py:254(records)
+       20    0.000    0.000    0.065    0.003 store.py:99(_record)
+  382/206    0.007    0.000    0.061    0.000 {method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+      160    0.014    0.000    0.049    0.000 json.py:27(encode)
+       45    0.000    0.000    0.044    0.001 main.py:270(__init__)
+       22    0.000    0.000    0.041    0.002 store.py:61(bound)
+       22    0.000    0.000    0.041    0.002 store.py:46(_validate_record_binding)
+       62    0.000    0.000    0.034    0.001 serialization.py:29(run_bytes)
+       66    0.000    0.000    0.034    0.001 serialization.py:20(plan_bytes)
+       64    0.000    0.000    0.033    0.001 serialization.py:25(plan_digest)
+  337/321    0.000    0.000    0.032    0.000 type_adapter.py:362(validate_python)
+       42    0.000    0.000    0.023    0.001 serialization.py:34(run_digest)
+    36700    0.004    0.000    0.022    0.000 encoder.py:414(_iterencode)
+80028/36700    0.012    0.000    0.019    0.000 encoder.py:334(_iterencode_dict)
+       22    0.000    0.000    0.017    0.001 serialization.py:52(validate_run_binding)
+     4618    0.001    0.000    0.015    0.000 model.py:23(_text)
+     6612    0.004    0.000    0.015    0.000 {built-in method builtins.any}
+    58224    0.007    0.000    0.010    0.000 model.py:24(<genexpr>)
+        1    0.000    0.000    0.009    0.009 comparison.py:372(compare_runs)
+     2016    0.002    0.000    0.008    0.000 values.py:51(_freeze)
+    21520    0.003    0.000    0.008    0.000 encoder.py:278(_iterencode_list)
+      878    0.001    0.000    0.007    0.000 model.py:53(_reference)
+     2016    0.001    0.000    0.004    0.000 __init__.py:183(dumps)
+        2    0.000    0.000    0.004    0.002 store.py:86(validate_record)
+        2    0.000    0.000    0.004    0.002 comparison.py:597(diff_bytes)
+       22    0.000    0.000    0.004    0.000 type_adapter.py:421(validate_json)
+       22    0.001    0.000    0.004    0.000 {method 'validate_json' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+   107212    0.004    0.000    0.004    0.000 {built-in method builtins.ord}
+78828/78784    0.004    0.000    0.004    0.000 {built-in method builtins.len}
+       20    0.000    0.000    0.004    0.000 serialization.py:45(read_run)
+      160    0.000    0.000    0.004    0.000 main.py:472(model_dump)
+    40351    0.003    0.000    0.004    0.000 {built-in method builtins.isinstance}
+      160    0.002    0.000    0.004    0.000 {method 'to_python' of 'pydantic_core._pydantic_core.SchemaSerializer' objects}
+    43174    0.003    0.000    0.003    0.000 {method 'encode' of 'str' objects}
+    36562    0.003    0.000    0.003    0.000 {method 'extend' of 'bytearray' objects}
+     2016    0.001    0.000    0.003    0.000 encoder.py:183(encode)
+      160    0.000    0.000    0.003    0.000 json.py:23(finite_json)
+     1680    0.001    0.000    0.002    0.000 model.py:44(ordered_evidence)
+     2176    0.002    0.000    0.002    0.000 encoder.py:205(iterencode)
+     2570    0.001    0.000    0.002    0.000 values.py:43(_thaw)
+       22    0.000    0.000    0.001    0.000 store.py:284(load_plan)
+    13942    0.001    0.000    0.001    0.000 {built-in method _json.encode_basestring}
+     3783    0.001    0.000    0.001    0.000 {built-in method builtins.sorted}
+    10332    0.001    0.000    0.001    0.000 types.py:3212(_get_type_name)
+       15    0.000    0.000    0.001    0.000 comparison.py:257(_evidence)
+       30    0.000    0.000    0.001    0.000 comparison.py:253(_canonical)
+     3404    0.000    0.000    0.001    0.000 <frozen abc>:117(__instancecheck__)
+      258    0.000    0.000    0.001    0.000 distribution.py:14(canonical_name)
+
+

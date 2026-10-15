@@ -251,14 +251,13 @@ def _run(args: argparse.Namespace) -> int:
 
 
 def _diff(args: argparse.Namespace) -> int:
-    from apizr.experiments.comparison import compare_runs, diff_bytes
+    from apizr.experiments.comparison import compare_stored_runs, diff_bytes
     from apizr.experiments.comparison_reporting import diff_text
-    from apizr.experiments.history import show_run
     from apizr.experiments.store import DEFAULT_STORE
 
     try:
         path = args.store if args.store is not None else DEFAULT_STORE
-        result = compare_runs(show_run(path, args.run_a), show_run(path, args.run_b))
+        result = compare_stored_runs(path, args.run_a, args.run_b)
         output = (
             diff_bytes(result)
             if args.format == "json"

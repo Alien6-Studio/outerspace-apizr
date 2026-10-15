@@ -2403,3 +2403,12 @@ standalone = true
 workflows = ["publish-pypi.yml#verify"]
 ci_blocking = true
 evidence = ["dist/*", "pending/", "release-evidence/", "stdout/stderr (workflow step log)"]
+
+[files."scripts/qualification/experiments/benchmark_engine.py"]
+group = "experiments"
+role = "tool"
+kind = "implementation"
+gate = "Record reproducible engine timing baselines, canonical-history call profiles and explicit refusal at unsupported sizes; no wall-time gate on shared runners."
+workflows = ["engine-performance.yml#measure"]
+ci_blocking = true
+evidence = ["${{ runner.temp }}/engine-performance/*.prof", "${{ runner.temp }}/engine-performance/*.txt", "${{ runner.temp }}/engine-performance/summary.json", "stdout/stderr (workflow step log)"]

@@ -138,6 +138,11 @@ def read_history(data: bytes) -> HistoryList | HistoryListV2:
 
 def summary(record: Record, *, include_values: bool = False) -> Summary:
     record = validate_record(record)
+    return _summary(record, include_values=include_values)
+
+
+def _summary(record: Record, *, include_values: bool = False) -> Summary:
+    """Project a record validated by this operation, without a second admission."""
     if isinstance(record, RunRecordV2):
         return RunSummaryV2(
             run_digest=record.run_digest,
@@ -220,7 +225,7 @@ def list_runs(
             )
         ):
             continue
-        selected.append(summary(record, include_values=include_values))
+        selected.append(_summary(record, include_values=include_values))
     if has_v2 or include_values:
         return HistoryListV2(
             query=query,
@@ -240,19 +245,33 @@ def list_runs(
 
 
 def show_run(path: Path, run_id: str) -> Record:
-    if not re.fullmatch(r"[0-9a-f]{12,64}", run_id):
+    return select_runs(path, (run_id,))[0]
+
+
+def select_runs(path: Path, run_ids: tuple[str, ...]) -> tuple[Record, ...]:
+    """Resolve one or two identities after one complete bounded store validation.
+
+    Filters never suppress corruption elsewhere. No record escapes until the
+    entire iterator has completed. The operation-local selection retains at most
+    two records; it is not an index, cache or targeted digest-only read.
+    """
+    if not 1 <= len(run_ids) <= 2 or any(
+        not re.fullmatch(r"[0-9a-f]{12,64}", run_id) for run_id in run_ids
+    ):
         raise StoreError("run_id_invalid")
-    found: Record | None = None
-    count = 0
+    found: list[Record | None] = [None] * len(run_ids)
+    counts = [0] * len(run_ids)
     for record in records(path):
-        if record.run_digest.startswith(run_id):
-            count += 1
-            found = record
-    if count > 1:
-        raise StoreError("run_id_ambiguous")
-    if found is None:
-        raise StoreError("run_not_found")
-    return found
+        for index, run_id in enumerate(run_ids):
+            if record.run_digest.startswith(run_id):
+                counts[index] += 1
+                found[index] = record
+    for count in counts:
+        if count > 1:
+            raise StoreError("run_id_ambiguous")
+        if count == 0:
+            raise StoreError("run_not_found")
+    return tuple(record for record in found if record is not None)
 
 
 def history_bytes(result: HistoryList | HistoryListV2 | Record | Summary) -> bytes:
@@ -327,7 +346,7 @@ def show_text(record: Record) -> str:
     if isinstance(record, RunRecordV2):
         return _capture_text(record)
     plan, run = record.plan, record.run
-    lines = [summary_text(summary(record)).rstrip()]
+    lines = [summary_text(_summary(record)).rstrip()]
     mode = "cli_run" if plan.execution.kind == "trusted-local-process" else "unknown"
     lines.append(f"Capture: {mode}; producer: unknown (v1 evidence)")
     if run.timing is not None:
@@ -459,7 +478,7 @@ def show_text(record: Record) -> str:
 def _capture_text(record: RunRecordV2) -> str:
     run = record.run
     lines = [
-        summary_text(summary(record)).rstrip(),
+        summary_text(_summary(record)).rstrip(),
         f"Execution: {run.execution_id} (correlation id)",
     ]
     lines.append("Parameters")

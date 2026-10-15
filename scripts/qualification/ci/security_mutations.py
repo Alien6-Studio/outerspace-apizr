@@ -632,9 +632,30 @@ MUTATIONS = (
     Mutation(
         "experiment-store-binding-bypass",
         "src/apizr/experiments/store.py",
+        "check_run_binding(run, plan, run.plan_digest)",
+        "pass  # mutation: accept a canonical Run bound to a different source",
+        "tests/experiments/test_store_history.py::test_corruption_not_hidden_by_filters_or_limits[wrong_binding]",
+    ),
+    Mutation(
+        "experiment-store-publication-binding-bypass",
+        "src/apizr/experiments/store.py",
         "validate_run_binding(run, plan)",
         "pass  # mutation: accept a Run bound to a different source",
-        "tests/experiments/test_store_history.py::test_corruption_not_hidden_by_filters_or_limits[wrong_binding]",
+        "tests/experiments/test_store_history.py::test_wrong_binding_cannot_publish_anything",
+    ),
+    Mutation(
+        "experiment-store-plan-canonical-bypass",
+        "src/apizr/experiments/store.py",
+        'if (\n                            encode(plan.model_dump(mode="json"), MAX_ARTIFACT_BYTES)\n                            != raw\n                        ):',
+        "if False:",
+        "tests/experiments/test_store_history.py::test_noncanonical_plan_refused",
+    ),
+    Mutation(
+        "experiment-store-run-canonical-bypass",
+        "src/apizr/experiments/store.py",
+        'if encode(run.model_dump(mode="json"), MAX_ARTIFACT_BYTES) != raw:',
+        "if False:",
+        "tests/experiments/test_store_history.py::test_corruption_not_hidden_by_filters_or_limits[noncanonical]",
     ),
     Mutation(
         "experiment-store-digest-bypass",
@@ -779,7 +800,7 @@ MUTATIONS = (
     Mutation(
         "experiment-plan-binding",
         "src/apizr/experiments/serialization.py",
-        "    if run.plan_digest != plan_digest(plan):",
+        "    if run.plan_digest != digest:",
         "    if False:",
         "tests/experiments/test_identity.py::test_binding_rejects_wrong_plan_digest",
     ),

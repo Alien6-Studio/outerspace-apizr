@@ -16,7 +16,7 @@ from apizr.editor_contracts.model import (
     ShowArguments,
 )
 from apizr.environment.extras import MissingExtra
-from apizr.experiments.comparison import compare_runs
+from apizr.experiments.comparison import compare_stored_runs
 from apizr.experiments.history import HistoryQuery, list_runs, show_run
 from apizr.experiments.store import DEFAULT_STORE, StoreError
 from apizr.exposure import ExposureRefused, plan_exposure
@@ -53,9 +53,7 @@ def history_value(
     elif request.operation == "experiment_diff" and isinstance(
         arguments, DiffArguments
     ):
-        value = compare_runs(
-            show_run(path, arguments.run_a), show_run(path, arguments.run_b)
-        )
+        value = compare_stored_runs(path, arguments.run_a, arguments.run_b)
     else:
         raise ValueError("history_operation_invalid")
     check_scope(scope)
