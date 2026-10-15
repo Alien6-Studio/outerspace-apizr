@@ -91,6 +91,7 @@ async def prove(root: Path, config: dict[str, Any]) -> dict[str, Any]:
         [
             python,
             "-I",
+            "-B",
             "-c",
             """
 import json,sys
@@ -469,6 +470,7 @@ print(json.dumps(runs))
                     [
                         python,
                         "-I",
+                        "-B",
                         "-m",
                         "apizr.cli",
                         "experiment",

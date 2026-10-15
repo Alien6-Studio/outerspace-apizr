@@ -164,3 +164,16 @@ def test_private_worker_uses_the_same_history_request_contract(
     assert response["result"]["ok"] and response["result"]["value"] == a.model_dump(
         mode="json"
     )
+
+
+@pytest.mark.parametrize("operation", ["capabilities", "inspect", "plan_exposure"])
+def test_history_worker_refuses_non_history_operations(project, operation):
+    _, scope = project
+    arguments = {"source": "train.py"} if operation == "inspect" else {}
+    with pytest.raises(ValueError, match="history_operation_invalid"):
+        HistoryJob(
+            scope=history_scope(scope),
+            request=EditorRequest.model_validate(
+                {"operation": operation, "arguments": arguments}
+            ),
+        )

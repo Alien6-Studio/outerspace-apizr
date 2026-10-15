@@ -76,7 +76,7 @@ async def exercise(root: Path, capture_only: bool = False):
                 tool.model_dump(mode="json", by_alias=True)
                 for tool in (await client.list_tools()).tools
             ]
-            assert len(tools) == 6
+            assert len(tools) == 9
             metadata = discovery(client, tools)
             write(root / f"delivery-discovery-{mode}.json", metadata)
             if not capture_only:

@@ -186,7 +186,7 @@ async def exercise(root: Path, delivery=False):
                     tasks.start_soon(call)
                     await appeared(directory / "worker.pid")
                     assert len((await client.list_tools()).tools) == (
-                        6 if delivery else 3
+                        9 if delivery else 6
                     )
                     busy = await client.call_tool("apizr_readiness", {})
                     assert busy.structured_content["error"]["code"] == "server_busy"

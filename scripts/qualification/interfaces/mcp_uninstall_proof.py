@@ -51,7 +51,7 @@ async def prove(root: Path) -> None:
     )
     with anyio.fail_after(60):
         async with Client(target, read_timeout_seconds=15) as client:
-            assert len((await client.list_tools()).tools) == 3
+            assert len((await client.list_tools()).tools) == 6
             cli("disable", "outerspace-apizr-mcp")
             refused = cli(
                 "uninstall",

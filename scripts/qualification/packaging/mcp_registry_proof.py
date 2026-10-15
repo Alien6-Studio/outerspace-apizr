@@ -66,9 +66,25 @@ async def inspect_client(client, root: Path, label: str):
     verify_discovery_contract(metadata)
     write(root / f"registry-discovery-{label}.json", metadata)
     write(root / f"registry-tool-review-{label}.json", review(metadata))
+    history_arguments = {
+        "apizr_experiment_list": {},
+        "apizr_experiment_show": {"run_id": "0" * 64},
+        "apizr_experiment_diff": {"run_a": "0" * 64, "run_b": "1" * 64},
+    }
+    refusals = {}
     for tool in tools:
-        result = await client.call_tool(tool["name"], {})
-        validate_result(tool, result)
+        name = tool["name"]
+        result = await client.call_tool(name, history_arguments.get(name, {}))
+        if name in history_arguments:
+            # The documented new-user policy grants source analysis only.
+            assert result.is_error
+            code = result.structured_content["error"]["code"]
+            assert code == "operator_operation_denied"
+            refusals[name] = code
+        else:
+            validate_result(tool, result)
+    assert set(refusals) == set(history_arguments)
+    write(root / f"registry-history-refusals-{label}.json", refusals)
 
 
 async def main(root: Path):
@@ -222,14 +238,15 @@ async def main(root: Path):
         "success": True,
         "source": "local 0.4.5 candidate wheels; no public package or directory mutation",
         "protocol_modes": ["auto", "legacy"],
-        "read_only_tools": 3,
+        "read_only_tools": 6,
+        "history_requires_explicit_authority": True,
         "policy_and_installation_refusals": True,
         "documented_new_user_inputs": True,
         "titles_schemas_annotations": True,
         "mcpb_offline_launch": True,
     }
     (root / "registry-launch.json").write_text(json.dumps(report, indent=2) + "\n")
-    print("PASS registry uvx launcher, three read-only tools, policy/store refusals")
+    print("PASS registry uvx launcher, six read-only tools, policy/store refusals")
 
 
 if __name__ == "__main__":

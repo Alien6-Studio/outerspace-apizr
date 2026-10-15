@@ -74,6 +74,9 @@ async def exercise(root: Path, mode: str):
             "apizr_analyze",
             "apizr_readiness",
             "apizr_plan_exposure",
+            "apizr_experiment_list",
+            "apizr_experiment_show",
+            "apizr_experiment_diff",
         }
         assert all(
             t.annotations is not None
@@ -377,7 +380,7 @@ async def boundary_errors(root: Path):
             large.is_error
             and large.structured_content["error"]["code"] == "response_too_large"
         )
-        assert len((await client.list_tools()).tools) == 3
+        assert len((await client.list_tools()).tools) == 6
     absent_policy = root / "no-policy.toml"
     absent_policy.write_text('schema_version="apizr.project/v1"\nroot="project"\n')
     target = target.model_copy(
