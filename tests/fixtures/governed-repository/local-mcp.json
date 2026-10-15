@@ -29,6 +29,14 @@
         "algorithm": "sha256",
         "value": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
       },
+      "apizr_governed/contracts/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/contracts/json_budget.py": {
+        "algorithm": "sha256",
+        "value": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+      },
       "apizr_governed/execution/__init__.py": {
         "algorithm": "sha256",
         "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -83,7 +91,7 @@
       },
       "apizr_governed/governed_repository/mcp.py": {
         "algorithm": "sha256",
-        "value": "aac38a3c1cd977f7badbdb03940bdee834554c641d0e2433775342c6f8876ba0"
+        "value": "205dbc310c3129c1d795b260f52761e548b241d5da4afc765bb7f8b2b84367bf"
       },
       "apizr_governed/governed_repository/model.py": {
         "algorithm": "sha256",
@@ -91,7 +99,7 @@
       },
       "apizr_governed/governed_repository/runtime.py": {
         "algorithm": "sha256",
-        "value": "fc9bfe30e402d0207f0be47100aa86a9733f5ee91495906bb8d3c6aa8a47c1d1"
+        "value": "a48e19b0424c3a54d7ecefd16f9a556c478e792fd14c891ff2e5353f0a65132a"
       },
       "apizr_governed/interfaces/__init__.py": {
         "algorithm": "sha256",
@@ -163,11 +171,15 @@
       },
       "apizr_governed/repository_execution/worker.py": {
         "algorithm": "sha256",
-        "value": "ee130ec42bf54edb1216f94fefc26fb2819a394c6931475b36608d768fb58dda"
+        "value": "151f4ec9c192319b6c00b74f65c7ac78bd1127dea719169e9b5e580f07f9d5a6"
       },
       "apizr_governed/repository_interfaces/__init__.py": {
         "algorithm": "sha256",
         "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/repository_interfaces/artifacts.py": {
+        "algorithm": "sha256",
+        "value": "788491c1c8d6ffed2b6b5ad95e3eed1cb7f3010ae1c02614044c928a92b8c2e6"
       },
       "apizr_governed/repository_interfaces/model.py": {
         "algorithm": "sha256",
@@ -175,7 +187,7 @@
       },
       "apizr_governed/repository_interfaces/runtime.py": {
         "algorithm": "sha256",
-        "value": "c5c223509dfdb48a6e9640308a313dbdd9a5c352f6c51ba5d7f96d33956d004a"
+        "value": "57779912661f68bf5820a360050396abdd47969067cf32c42a797dd8c1d49a2d"
       },
       "capability-catalog.json": {
         "algorithm": "sha256",
@@ -381,6 +393,14 @@
         "algorithm": "sha256",
         "value": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
       },
+      "apizr_governed/contracts/__init__.py": {
+        "algorithm": "sha256",
+        "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/contracts/json_budget.py": {
+        "algorithm": "sha256",
+        "value": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+      },
       "apizr_governed/execution/__init__.py": {
         "algorithm": "sha256",
         "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -435,7 +455,7 @@
       },
       "apizr_governed/governed_repository/mcp.py": {
         "algorithm": "sha256",
-        "value": "aac38a3c1cd977f7badbdb03940bdee834554c641d0e2433775342c6f8876ba0"
+        "value": "205dbc310c3129c1d795b260f52761e548b241d5da4afc765bb7f8b2b84367bf"
       },
       "apizr_governed/governed_repository/model.py": {
         "algorithm": "sha256",
@@ -443,7 +463,7 @@
       },
       "apizr_governed/governed_repository/runtime.py": {
         "algorithm": "sha256",
-        "value": "fc9bfe30e402d0207f0be47100aa86a9733f5ee91495906bb8d3c6aa8a47c1d1"
+        "value": "a48e19b0424c3a54d7ecefd16f9a556c478e792fd14c891ff2e5353f0a65132a"
       },
       "apizr_governed/interfaces/__init__.py": {
         "algorithm": "sha256",
@@ -515,11 +535,15 @@
       },
       "apizr_governed/repository_execution/worker.py": {
         "algorithm": "sha256",
-        "value": "ee130ec42bf54edb1216f94fefc26fb2819a394c6931475b36608d768fb58dda"
+        "value": "151f4ec9c192319b6c00b74f65c7ac78bd1127dea719169e9b5e580f07f9d5a6"
       },
       "apizr_governed/repository_interfaces/__init__.py": {
         "algorithm": "sha256",
         "value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apizr_governed/repository_interfaces/artifacts.py": {
+        "algorithm": "sha256",
+        "value": "788491c1c8d6ffed2b6b5ad95e3eed1cb7f3010ae1c02614044c928a92b8c2e6"
       },
       "apizr_governed/repository_interfaces/model.py": {
         "algorithm": "sha256",
@@ -527,7 +551,7 @@
       },
       "apizr_governed/repository_interfaces/runtime.py": {
         "algorithm": "sha256",
-        "value": "c5c223509dfdb48a6e9640308a313dbdd9a5c352f6c51ba5d7f96d33956d004a"
+        "value": "57779912661f68bf5820a360050396abdd47969067cf32c42a797dd8c1d49a2d"
       },
       "capability-catalog.json": {
         "algorithm": "sha256",
@@ -539,7 +563,7 @@
       },
       "execution/bundle.json": {
         "algorithm": "sha256",
-        "value": "25ca3b536b6ff31e3437a661f8d86f2e98ce8c07082028d0f9a38d469e01314e"
+        "value": "2c8a3621c021be72ce0bbe3661799c95efc87d115256463453ce44010f37d85e"
       },
       "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json": {
         "algorithm": "sha256",

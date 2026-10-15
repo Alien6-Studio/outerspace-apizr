@@ -12,12 +12,15 @@ from apizr.governed.embedding import definition, source
 from apizr.interfaces.serialization import json_bytes
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.repository_execution.planner import container_plan, worker_plan
+from apizr.repository_interfaces.artifacts import check_bundle
 from apizr.repository_interfaces.model import RepositoryInterface
 
 from .model import Bridge, ContainerBundle, ExecutionBundle, PlanArtifact
 
 MODULES = (
     "contract_types.py",
+    "contracts/json_budget.py",
+    "repository_interfaces/artifacts.py",
     "application.py",
     "capabilities/model.py",
     "capabilities/types.py",
@@ -81,10 +84,10 @@ def runtime_files(transport: Literal["rest", "mcp"]) -> dict[str, bytes]:
         'Interface = Literal["rest", "mcp"]',
     )
     modules["repository_interfaces/runtime.py"] = (
-        "import hashlib\nimport importlib.abc\nimport importlib.util\nimport os\nimport stat\nimport sys\nimport types\nfrom pathlib import Path, PurePosixPath\nfrom typing import Any\nfrom apizr.interfaces.runtime import IntegrityError\n\n"
+        "import hashlib\nimport importlib.abc\nimport importlib.util\nimport sys\nimport types\nfrom pathlib import Path\nfrom typing import Any\nfrom apizr.interfaces.runtime import IntegrityError\nfrom apizr.repository_interfaces.artifacts import read_artifact\n\n"
         + "\n".join(
             definition("repository_interfaces/runtime.py", name)
-            for name in ("digest", "read_artifact", "RepositoryLoader")
+            for name in ("digest", "RepositoryLoader")
         )
     )
     modules["execution/model.py"] = (
@@ -207,6 +210,8 @@ def govern(
     artifacts.pop("apizr_runtime.py")
     artifacts.pop("apizr_results.py", None)
     artifacts.pop("apizr_repository_runtime.py")
+    artifacts.pop("apizr_repository_artifacts.py")
+    artifacts.pop("apizr_json_preflight.py")
     runtime_artifacts = runtime_files(transport)
     if isinstance(policy, ExecutionPolicyV2) and policy.subprocess.mode == "deny":
         from apizr.subprocess_guard.embedding import strict_files
@@ -240,4 +245,5 @@ def govern(
         for name, content in sorted(artifacts.items())
     }
     artifacts[manifest_name] = json_bytes(manifest)
+    check_bundle(artifacts)
     return dict(sorted(artifacts.items()))

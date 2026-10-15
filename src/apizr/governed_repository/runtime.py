@@ -26,12 +26,13 @@ from apizr.repository_execution.model import (
 )
 from apizr.repository_execution.planner import evidence, validate_plan, validate_sources
 from apizr.repository_execution.supervisor import execute
+from apizr.repository_interfaces.artifacts import BundleBudget, read_artifact
 from apizr.repository_interfaces.model import (
     MCPManifest,
     RepositoryInterface,
     RestManifest,
 )
-from apizr.repository_interfaces.runtime import RepositoryLoader, read_artifact
+from apizr.repository_interfaces.runtime import RepositoryLoader
 
 from .model import ContainerBundle, ExecutionBundle
 
@@ -71,15 +72,14 @@ class GovernedRuntime:
         dict[str, bytes],
         dict[str, bytes],
     ]:
-        raw = read_artifact(self.root, self.manifest_name)
+        budget = BundleBudget()
+        raw = budget.read(self.root, self.manifest_name)
         if Digest.of_bytes(raw) != self.anchor:
             raise ValueError("Manifest changed")
         manifest = (
             RestManifest if self.transport == "rest" else MCPManifest
         ).model_validate_json(raw)
-        artifacts = {
-            name: read_artifact(self.root, name) for name in manifest.artifacts
-        }
+        artifacts = budget.read_many(self.root, manifest.artifacts)
         if any(
             Digest.of_bytes(content) != manifest.artifacts[name]
             for name, content in artifacts.items()

@@ -99,6 +99,44 @@ isolation is claimed. An explicit execution policy adds the independently versio
 [governed repository runtime](governed-repository-runtime.md), with a fresh local
 process or OCI container per invocation. Direct behavior remains unchanged.
 
+## Artifact admission budgets
+
+Direct, governed and worker readers share the portable
+`repository_interfaces.artifacts` admission policy. These limits also apply to
+emitted standalone runtimes; they require no installed Apizr package.
+
+| Admission boundary | Maximum |
+| --- | --- |
+| REST or MCP manifest | 16 MiB |
+| Individual artifact | 64 MiB |
+| Retained bytes, including the manifest | 512 MiB |
+| Retained artifact count, including the manifest | 100,256 |
+| Metadata JSON values, keys and containers per document | 1,000,000 |
+| Metadata JSON nesting | 128 |
+
+```mermaid
+flowchart LR
+    M[Bounded manifest read] --> J[JSON lexical preflight]
+    J --> C[Artifact count check]
+    C --> R[Read within remaining byte allowance]
+    R --> H[Digest and evidence binding]
+    H --> I[Verified project import]
+```
+
+The reader keeps descriptor-relative traversal, refuses symlinks and nonregular
+files, checks file size before reading, and limits the read itself to the current
+allowance plus one sentinel byte. File growth cannot bypass the byte limit. Each
+retained file reduces the next read's allowance. Metadata JSON is checked before
+ordinary JSON or Pydantic decoding; application resources below `source/` remain
+opaque bytes. The loader bounds every source reread by its declared size and
+rechecks its digest before compilation.
+
+Generation refuses bundles exceeding these limits before output staging. Scanner
+and application limits remain independent: combining every individual maximum
+does not guarantee that the resulting bundle fits its aggregate or metadata
+budget. These admission limits bound retained inputs and decoding work; they do
+not impose an operating-system memory quota on trusted project execution.
+
 ## Local imports and private implementation support
 
 A selected capability may use a uniquely resolved local import when the bound
@@ -135,7 +173,8 @@ its packaged UTF-8 resource, preserving its explicit dependency/resource proof.
 
 REST emits `app.py`, `openapi.json`, `apizr-repository-rest.json`; MCP emits
 `server.py`, `mcp-tools.json`, `apizr-repository-mcp.json`. Both include
-`apizr_repository_runtime.py`, the existing shared invocation runtime,
+`apizr_repository_runtime.py`, `apizr_repository_artifacts.py`,
+`apizr_json_preflight.py`, the existing shared invocation runtime,
 `repository-interface.json`, evidence JSON, exact `source/` files and reviewed
 transport requirements. Application dependencies remain the operator's explicit
 runtime/deployment responsibility; names are not converted into pip requirements.

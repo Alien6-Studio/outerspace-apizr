@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from apizr.execution.protocol import finite_json
-from apizr.repository_interfaces.runtime import read_artifact as artifact
+from apizr.repository_interfaces.artifacts import read_artifact as artifact
 
 from .runtime import GovernedRuntime
 

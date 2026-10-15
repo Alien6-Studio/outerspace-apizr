@@ -19,7 +19,7 @@ from mcp.types import (
 )
 
 from apizr.execution.protocol import finite_json
-from apizr.repository_interfaces.runtime import read_artifact as artifact
+from apizr.repository_interfaces.artifacts import read_artifact as artifact
 
 from .runtime import GovernedRuntime
 

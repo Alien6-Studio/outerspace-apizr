@@ -16,6 +16,7 @@ def main() -> None:
         "src/apizr/contracts/lowering.py",
         "src/apizr/capabilities/source.py",
         "src/apizr/contracts/json_budget.py",
+        "src/apizr/repository_interfaces/artifacts.py",
         "src/apizr/plugins/artifacts/central_directory.py",
         "src/apizr/repository_views/model.py",
         "src/apizr/repository_views/projection.py",

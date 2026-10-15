@@ -3,3 +3,9 @@
 # Only the two matching entries in the immutable direct-baseline fixture.
 tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:8
 tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:28
+
+# Reviewed generated apizr_json_preflight.py SHA-256, not an API key:
+# 681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8
+# Exact two current generator-golden entries, verified against contracts/json_budget.py.
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:6
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:29

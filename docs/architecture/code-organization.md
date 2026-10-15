@@ -59,6 +59,12 @@ the portable lexical preflight in `contracts.json_budget` before JSON decoding.
 standard library builds its per-entry index. These checks add no optional imports
 to the core and do not execute inspected content.
 
+`repository_interfaces.artifacts` owns retained-bundle admission: descriptor reads,
+per-file and aggregate byte/count limits, and metadata JSON preflight. Direct
+interfaces, governed transports and repository workers consume this one policy.
+Generators embed its complete module and `contracts.json_budget` in their
+standalone closures and check final bundle sizes before output staging.
+
 ```text
 src/apizr/
 ├── cli/

@@ -114,7 +114,9 @@ def test_embedded_definitions_reuse_reviewed_logic():
     files = runtime_files("rest")
     for path, names in {
         "execution/supervisor.py": ["exchange", "kill_group", "worker_environment"],
-        "repository_interfaces/runtime.py": ["RepositoryLoader", "read_artifact"],
+        "repository_interfaces/runtime.py": ["RepositoryLoader"],
+        "repository_interfaces/artifacts.py": ["read_artifact", "BundleBudget"],
+        "contracts/json_budget.py": ["preflight_json"],
         "oci/docker.py": ["DockerProvider"],
     }.items():
         for name in names:

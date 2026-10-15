@@ -30,6 +30,7 @@ from apizr.repository import Catalog, catalog_bytes
 from apizr.repository.serialization import canonical_bytes
 from apizr.repository_readiness import RepositoryReadinessReport, report_bytes
 
+from .artifacts import check_bundle
 from .model import MCPManifest, RestManifest
 from .planner import BundleRefused, plan_repository_interface
 
@@ -45,6 +46,14 @@ def template(name: str) -> bytes:
         .replace(
             "from apizr.repository_interfaces.runtime import",
             "from apizr_repository_runtime import",
+        )
+        .replace(
+            "from apizr.repository_interfaces.artifacts import",
+            "from apizr_repository_artifacts import",
+        )
+        .replace(
+            "from apizr.contracts.json_budget import",
+            "from apizr_json_preflight import",
         )
         .encode("utf-8")
     )
@@ -109,6 +118,10 @@ def render_repository_bundle(
         "exposure-policy.json": policy_bytes(policy),
         "exposure-plan.json": plan_bytes(exposure),
         "apizr_repository_runtime.py": template("runtime.py"),
+        "apizr_repository_artifacts.py": template("artifacts.py"),
+        "apizr_json_preflight.py": files("apizr.contracts")
+        .joinpath("json_budget.py")
+        .read_bytes(),
         "apizr_runtime.py": files("apizr.interfaces")
         .joinpath("runtime.py")
         .read_bytes(),
@@ -232,4 +245,5 @@ def render_repository_bundle(
         from apizr.governed_repository.embedding import govern
 
         return govern(artifacts, execution_policy, runtime_image, interface)
+    check_bundle(artifacts)
     return dict(sorted(artifacts.items()))
