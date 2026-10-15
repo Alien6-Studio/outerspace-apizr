@@ -106,3 +106,46 @@ def test_zip64_locator_cannot_point_beyond_its_record():
     struct.pack_into("<Q", raw, position + 8, len(raw))
     with pytest.raises(PluginError, match="invalid_wheel"):
         preflight_directory(bytes(raw))
+
+
+def test_zip64_extensible_record_cannot_hide_a_second_directory(monkeypatch):
+    raw = directory_archive(MAX_ENTRIES + 1)
+    end = len(raw) - 22
+    _, _, _, count, _, size, offset, _ = struct.unpack_from("<4s4H2IH", raw, end)
+    small = directory_archive(1)
+    fake_directory = small[small.index(b"PK\x01\x02") : -22]
+    fake_end = struct.pack(
+        "<4sQ2H2I4Q",
+        b"PK\x06\x06",
+        44,
+        45,
+        45,
+        0,
+        0,
+        1,
+        1,
+        len(fake_directory),
+        end - len(fake_directory),
+    )
+    extension = fake_directory + fake_end
+    real_end = struct.pack(
+        "<4sQ2H2I4Q",
+        b"PK\x06\x06",
+        44 + len(extension),
+        45,
+        45,
+        0,
+        0,
+        count,
+        count,
+        size,
+        offset,
+    )
+    locator = struct.pack("<4sIQI", b"PK\x06\x07", 0, end, 1)
+    classic = struct.pack(
+        "<4s4H2IH", b"PK\x05\x06", 0, 0, 65535, 65535, 0xFFFFFFFF, 0xFFFFFFFF, 0
+    )
+    forged = raw[:end] + real_end + extension + locator + classic
+    monkeypatch.setattr(wheel.zipfile, "ZipFile", forbidden)
+    with pytest.raises(PluginError, match="invalid_wheel"):
+        wheel.inspect_dependency_bytes(forged, "probe-1-py3-none-any.whl")

@@ -26,7 +26,17 @@ def preflight_directory(data: bytes) -> None:
     if end >= 20 and data[end - 20 : end - 16] == b"PK\x06\x07":
         _, locator_disk, location, disks = struct.unpack_from("<4sIQI", data, end - 20)
         directory_end = end - 76
-        if directory_end < 0 or location > directory_end:
+        if (
+            directory_end < 0
+            or location > directory_end
+            or (
+                location != directory_end
+                and data[location : location + 4] == b"PK\x06\x06"
+            )
+        ):
+            # Python versions supporting extensible ZIP64 prefer a valid record
+            # at the locator's offset over the fixed record immediately before
+            # it. Refuse that ambiguity rather than preflight a different index.
             raise PluginError("invalid_wheel")
         (
             signature,

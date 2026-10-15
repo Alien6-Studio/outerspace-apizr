@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "wheel-zip64-directory-selection",
+        "src/apizr/plugins/artifacts/central_directory.py",
+        '                and data[location : location + 4] == b"PK\\x06\\x06"',
+        "                and False",
+        "tests/local_plugins/test_central_directory_bounds.py::test_zip64_extensible_record_cannot_hide_a_second_directory",
+    ),
+    Mutation(
         "wheel-central-directory-before-index",
         "src/apizr/plugins/artifacts/wheel.py",
         "    preflight_directory(data)\n",
