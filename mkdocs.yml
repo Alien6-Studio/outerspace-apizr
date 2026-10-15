@@ -220,6 +220,7 @@ nav:
       - Publication and documentation cutover: contributing/publish-0.4.md
       - Extension packaging ADR: architecture/extension-packaging-v04.md
       - Code organization: architecture/code-organization.md
+      - Qualification scripts: contributing/qualification-scripts.md
       - Release branch governance: contributing/release-branches.md
       - Publish a release: contributing/releases.md
       - MCP distribution qualification: contributing/mcp-distribution.md

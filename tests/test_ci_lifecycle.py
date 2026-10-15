@@ -6,11 +6,19 @@ import pytest
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-WORKFLOWS = []
+DEFINITIONS = {}
 for path in sorted((ROOT / ".github/workflows").glob("*.y*ml")):
-    workflow = yaml.safe_load(path.read_text())
-    if "pull_request" in workflow.get("on", workflow.get(True, {})):
-        WORKFLOWS.append((path.name, workflow))
+    DEFINITIONS[path.name] = yaml.safe_load(path.read_text())
+CALLEES = {
+    Path(job["uses"]).name
+    for name, job in DEFINITIONS["ci.yml"]["jobs"].items()
+    if name != "scope" and job.get("uses", "").startswith("./.github/workflows/")
+}
+WORKFLOWS = [
+    (name, workflow)
+    for name, workflow in DEFINITIONS.items()
+    if name == "ci.yml" or name in CALLEES
+]
 
 
 @pytest.mark.parametrize(
@@ -21,8 +29,9 @@ def test_supersession_is_bound_to_one_pr_and_one_workflow(name, workflow):
     # events use run_id: pending push/dispatch/schedule runs never share a group.
     assert all("always()" not in job.get("if", "") for job in workflow["jobs"].values())
     concurrency = workflow["concurrency"]
+    prefix = "${{ github.workflow }}" if name == "ci.yml" else workflow["name"]
     assert concurrency["group"] == (
-        "${{ github.workflow }}-${{ github.event_name }}-"
+        prefix + "-${{ github.event_name }}-"
         "${{ github.event.pull_request.number || github.run_id }}"
     )
     assert (
@@ -53,23 +62,22 @@ def test_pr_artifact_retention_preserves_qualification_evidence(name, workflow):
                 )
 
 
-def test_only_supported_push_branches_trigger_and_manual_reruns_remain():
-    for name, workflow in WORKFLOWS:
-        events = workflow.get("on", workflow.get(True, {}))
-        assert "workflow_dispatch" in events
-        assert events["push"] == {
-            "branches": (
-                ["master", "0.4.6"]
-                if name in {"ci.yml", "security.yml", "mkdocs.yaml"}
-                else ["0.4.6"]
-            )
-        }
+def test_only_ci_receives_pr_and_development_push_events():
+    assert [
+        name
+        for name, workflow in DEFINITIONS.items()
+        if "pull_request" in workflow.get("on", workflow.get(True, {}))
+    ] == ["ci.yml"]
+    ci = DEFINITIONS["ci.yml"]
+    events = ci.get("on", ci.get(True, {}))
+    assert events["push"] == {"branches": ["master", "0.4.6"]}
+    assert "workflow_dispatch" in events
 
 
 def test_preparation_is_qualified_by_mcp_without_a_second_push_run():
-    workflows = dict(WORKFLOWS)
+    mcp = yaml.safe_load((ROOT / ".github/workflows/mcp-server-plugin.yml").read_text())
     assert (
-        workflows["mcp-server-plugin.yml"]["jobs"]["preparation-qualification"]["uses"]
+        mcp["jobs"]["preparation-qualification"]["uses"]
         == "./.github/workflows/plugin-preparation-qualification.yml"
     )
     preparation = yaml.safe_load(

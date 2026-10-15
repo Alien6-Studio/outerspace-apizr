@@ -10,6 +10,7 @@ import pytest
 from apizr_oci import oras
 from apizr_oci.model import BuildError
 from apizr_oci.native import run
+from qualification_scripts import implementation as qualification_script
 
 REF = "registry.test:5443/services/rest@sha256:" + "a" * 64
 
@@ -189,11 +190,7 @@ def test_fixture_gateway_does_not_relay_injected_headers(monkeypatch):
     import ssl
 
     monkeypatch.setattr(ssl, "create_default_context", lambda **kwargs: None)
-    namespace = runpy.run_path(
-        str(
-            Path(__file__).resolve().parents[2] / "scripts/artifact_registry_gateway.py"
-        )
-    )
+    namespace = runpy.run_path(str(qualification_script("artifact_registry_gateway")))
     handler = object.__new__(namespace["Handler"])
     handler.command = "GET"
     handler.request_version = "HTTP/1.1"

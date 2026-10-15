@@ -11,11 +11,12 @@ import zipfile
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-tool = runpy.run_path(str(ROOT / "scripts/prepare_homebrew_build_inputs.py"))
-proof = runpy.run_path(str(ROOT / "scripts/homebrew_build_proof.py"))
+tool = runpy.run_path(str(qualification_script("prepare_homebrew_build_inputs")))
+proof = runpy.run_path(str(qualification_script("homebrew_build_proof")))
 
 
 def test_reviewed_build_manifest_is_portable_and_stable(tmp_path):

@@ -1,0 +1,1 @@
+"""Fixtures qualification ownership boundary."""

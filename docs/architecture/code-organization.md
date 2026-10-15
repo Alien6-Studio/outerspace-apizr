@@ -392,6 +392,13 @@ canonical JSON and generated business runtime contracts are unchanged.
 
 ## Maintaining the boundaries
 
+Repository proof tooling has a separate ownership inventory in
+`architecture/scripts.toml`. Its implementations live in named responsibility
+packages under `scripts/qualification`; stable command paths only dispatch.
+See [qualification scripts](../contributing/qualification-scripts.md) for groups,
+evidence, source-free probes and the executable inventory check. This tooling is
+outside the installed Apizr distributions and does not extend core ownership.
+
 Run the structural gate directly:
 
 ```sh

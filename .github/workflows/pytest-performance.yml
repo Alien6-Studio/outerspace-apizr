@@ -1,11 +1,6 @@
 name: Pytest performance comparison
 
 on:
-  push:
-    branches: ['0.4.6']
-    paths:
-      - '.github/workflows/pytest-performance.yml'
-      - 'scripts/benchmark_pytest.py'
   workflow_dispatch:
 
 concurrency:
@@ -40,7 +35,7 @@ jobs:
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
       - name: Same-source serial and parallel full suites with all coverage gates
-        run: uv run --locked python scripts/benchmark_pytest.py --output "$RUNNER_TEMP/pytest-comparison"
+        run: uv run --locked python -m scripts.qualification.ci.benchmark_pytest --output "$RUNNER_TEMP/pytest-comparison"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

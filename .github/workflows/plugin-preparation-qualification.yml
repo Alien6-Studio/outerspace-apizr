@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Detect an unqualified stable uv series and inconsistent development pins
-        run: python3 scripts/check_uv_policy.py --output uv-policy.json
+        run: python3 -m scripts.qualification.ci.check_uv_policy --output uv-policy.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: uv-policy
@@ -46,7 +46,7 @@ jobs:
       - name: Installed native core resolution and MCP, OCI, Attest preparation
         env:
           WITHOUT_MCP: ${{ matrix.intel && '--without-mcp' || '' }}
-        run: uv run --no-project --python "${{ matrix.python }}" python scripts/plugin_preparation_matrix_proof.py --output "$RUNNER_TEMP/preparation-native" $WITHOUT_MCP
+        run: uv run --no-project --python "${{ matrix.python }}" python -m scripts.qualification.extensions.plugin_preparation_matrix_proof --output "$RUNNER_TEMP/preparation-native" $WITHOUT_MCP
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -88,7 +88,7 @@ jobs:
               apt-get update >/dev/null
               apt-get install -y --no-install-recommends git ca-certificates >/dev/null
               python -m pip install "uv==$QUALIFICATION_UV" >/dev/null
-              python scripts/plugin_preparation_matrix_proof.py --output /proof/results --expect-glibc "$QUALIFICATION_LIBC"
+              python -m scripts.qualification.extensions.plugin_preparation_matrix_proof --output /proof/results --expect-glibc "$QUALIFICATION_LIBC"
             '
           docker image inspect "python:3.14-slim-$DEBIAN" > "$RUNNER_TEMP/preparation-linux/image.json"
       - name: Return disposable container evidence to the artifact uploader

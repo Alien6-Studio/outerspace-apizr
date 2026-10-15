@@ -1,15 +1,30 @@
 name: Forge integrations
 
 on:
-  push:
-    branches: ['0.4.6']
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
+      candidate_artifact:
+        description: Immutable candidate artifact from this same workflow run
+        type: string
+        default: ''
   workflow_dispatch:
 
 # Supersede only earlier runs for the same PR. Other events get unique groups,
 # so even pending manual, push and scheduled qualifications cannot cancel each other.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  group: Forge integrations-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -17,17 +32,18 @@ permissions:
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   candidate:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' && inputs.candidate_artifact == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ inputs.scope_ready && github.sha || github.event.pull_request.head.sha || github.sha }}
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: '0.13.1'
@@ -35,8 +51,8 @@ jobs:
       - run: uv sync --locked
       - name: Build original coordinated candidates once for this exact source head
         run: |
-          uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/forge-candidate"
-          uv run --locked python scripts/check_distribution.py "$RUNNER_TEMP/forge-candidate/dist" --coordinated --manifest "$RUNNER_TEMP/forge-candidate/SHA256SUMS.json"
+          uv run --locked python -m scripts.qualification.packaging.coordinated_distributions build --candidate "$RUNNER_TEMP/forge-candidate"
+          uv run --locked python -m scripts.qualification.packaging.check_distribution "$RUNNER_TEMP/forge-candidate/dist" --coordinated --manifest "$RUNNER_TEMP/forge-candidate/SHA256SUMS.json"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: forge-candidate
@@ -46,13 +62,13 @@ jobs:
 
   contracts:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ inputs.scope_ready && github.sha || github.event.pull_request.head.sha || github.sha }}
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: '0.13.1'
@@ -77,7 +93,8 @@ jobs:
           if-no-files-found: error
 
   composite:
-    needs: candidate
+    needs: [scope, candidate]
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' && ((inputs.scope_ready && inputs.candidate_artifact != '') || needs.candidate.result == 'success') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -87,19 +104,21 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ inputs.scope_ready && github.sha || github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: forge-candidate
+          name: ${{ inputs.candidate_artifact || 'forge-candidate' }}
           path: ${{ runner.temp }}/forge-candidate
       - name: Select original development wheel bytes
         id: wheel
         shell: bash
         run: |
           python3 - <<'PY'
-          import hashlib, os
+          import hashlib, json, os
           from pathlib import Path
+          candidate = Path(os.environ['RUNNER_TEMP']) / 'forge-candidate'
+          assert json.loads((candidate / 'candidate.json').read_text())['commit'] == os.environ['GITHUB_SHA']
           wheel = Path(os.environ['RUNNER_TEMP']) / 'forge-candidate/dist/outerspace_apizr-0.4.5-py3-none-any.whl'
           with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
               stream.write(f'path={wheel}\nsha256={hashlib.sha256(wheel.read_bytes()).hexdigest()}\n')
@@ -160,7 +179,7 @@ jobs:
           STATE: ${{ steps.check.outputs.state }}
         run: |
           test "$RESULT" = .apizr-ci-check/result.json && test "$STATE" = success
-          python -I scripts/forge_integrations_proof.py --wheel "$WHEEL_PATH" --sha256 "$WHEEL_SHA256" --output "$RUNNER_TEMP/forge-proof" --compare-root "$GITHUB_WORKSPACE"
+          python -I scripts/qualification/ci/forge_integrations_proof.py --wheel "$WHEEL_PATH" --sha256 "$WHEEL_SHA256" --output "$RUNNER_TEMP/forge-proof" --compare-root "$GITHUB_WORKSPACE"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: forge-python-${{ matrix.python }}

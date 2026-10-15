@@ -1,0 +1,90 @@
+"""MkDocs hook: identify source, then fingerprint the actual deployed content."""
+
+import hashlib
+import json
+import subprocess
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+CRITICAL = {
+    "academy/index.html": "Apizr Academy",
+    "academy/capabilities/index.html": "What is a capability?",
+    "academy/readiness/index.html": "What does Readiness decide?",
+    "academy/exposure/index.html": "What does Exposure select?",
+    "academy/execution/index.html": "Where does execution happen?",
+    "academy/interfaces/index.html": "What do REST and MCP expose?",
+    "getting-started/install/index.html": "Install Apizr",
+    "getting-started/quickstart-0.4/index.html": "The walkthrough is now at",
+    "contributing/publish-0.4/index.html": "Release attachment inventory",
+    "releases/0.4.0/index.html": "Core and all three plugins published as 0.4.0rc1.",
+    "releases/0.4.1/index.html": "0.4.1 is published and verified.",
+    "architecture/delivery-identities/index.html": "DeliveryManifest",
+    "architecture/transport-admission/index.html": "REST and MCP admission budgets",
+    "reference/delivery-admission/index.html": "admission",
+    "reference/multi-destination-delivery/index.html": "resume",
+    "reference/operator-policy/index.html": "receipt.sign",
+    "getting-started/quickstart/index.html": "Make your first MCP and REST calls",
+    "reference/project-plugin-locks/index.html": "Project plugin declarations and locks",
+    "reference/apizr-mcp-server/index.html": "Apizr as a local MCP server",
+    "index.html": "Apizr 0.4.4",
+    "getting-started/data-science/index.html": "From a notebook to a prediction service",
+    "releases/0.4.5/index.html": "Not yet published.",
+    "releases/0.4.4/index.html": "0.4.4 is published and verified.",
+    "releases/0.4.3/index.html": "0.4.3 is published and verified.",
+    "releases/0.4.2/index.html": "0.4.2 is published and verified.",
+    "getting-started/user-guide/ci-integrations/index.html": "apizr ci",
+    "getting-started/onboarding/index.html": "Initialize and check a local project",
+    "development/0.4/index.html": "Build and qualify Apizr from source",
+    "reference/git-sources/index.html": "One explicit revision",
+    "reference/git-ssh/index.html": "ssh-known-hosts",
+    "reference/oci-service-plugin/index.html": "Publish a verified service image",
+    "reference/attest-delivery-plugin/index.html": "build not supervised by Attest",
+    "reference/attest-oci-artifacts/index.html": "remote_state_unconfirmed",
+}
+ASSETS = (
+    "assets/images/logo.png",
+    "assets/images/illustration.png",
+    "assets/videos/paris-route.jpg",
+    "assets/videos/tutorial-install.jpg",
+    "assets/videos/tutorial-inspect.jpg",
+    "assets/videos/tutorial-rest.jpg",
+    "assets/videos/tutorial-mcp.jpg",
+    "assets/videos/tutorial-oci.jpg",
+    "assets/stylesheets/branding.css",
+    "assets/javascripts/video.js",
+    "assets/javascripts/feedback.js",
+)
+
+
+def on_config(config):
+    commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, timeout=10
+    ).strip()
+    dirty = bool(
+        subprocess.check_output(
+            ["git", "status", "--porcelain"], cwd=ROOT, text=True, timeout=10
+        ).strip()
+    )
+    config.extra["docs_build"] = {
+        "schema": "apizr.docs-build/v1",
+        "source_commit": commit,
+        "source_dirty": dirty,
+        "status": "release-candidate",
+        "target_version": "0.4.5",
+        "stable_release": "0.4.4",
+    }
+    return config
+
+
+def on_post_build(config):
+    site = Path(config.site_dir)
+    hashes = {}
+    for name, content in CRITICAL.items():
+        data = (site / name).read_bytes()
+        if content not in data.decode():
+            raise ValueError(f"Missing documentation content: {name}: {content}")
+        hashes[name] = hashlib.sha256(data).hexdigest()
+    for name in ASSETS:
+        hashes[name] = hashlib.sha256((site / name).read_bytes()).hexdigest()
+    marker = {**config.extra["docs_build"], "files": hashes}
+    (site / "build-info.json").write_text(json.dumps(marker, indent=2) + "\n")

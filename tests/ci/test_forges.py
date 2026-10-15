@@ -370,13 +370,26 @@ def test_real_workflow_requires_original_candidate_and_read_only_permissions():
         Loader=yaml.BaseLoader,
     )
     assert workflow["permissions"] == {"contents": "read"}
-    assert {"pull_request", "workflow_dispatch"} <= set(workflow["on"])
+    assert {"workflow_call", "workflow_dispatch"} == set(workflow["on"])
+    caller = yaml.load(
+        (ROOT / ".github/workflows/ci.yml").read_text(), Loader=yaml.BaseLoader
+    )
+    assert "pull_request" in caller["on"]
+    assert caller["jobs"]["forge-integrations-qualification"]["uses"] == (
+        "./.github/workflows/forge-integrations.yml"
+    )
     jobs = workflow["jobs"]
     assert all(
         "environment" not in job and "permissions" not in job for job in jobs.values()
     )
     composite = jobs["composite"]
-    assert composite["needs"] == "candidate"
+    assert composite["needs"] == ["scope", "candidate"]
+    assert "needs.candidate.result == 'success'" in composite["if"]
+    assert "inputs.scope_ready && inputs.candidate_artifact != ''" in composite["if"]
+    assert any(
+        "['commit'] == os.environ['GITHUB_SHA']" in step.get("run", "")
+        for step in composite["steps"]
+    )
     assert composite["strategy"]["matrix"]["python"] == ["3.11", "3.12", "3.13", "3.14"]
     steps = [s for s in composite["steps"] if s.get("uses") == "./"]
     assert {s["with"].get("operation", "check") for s in steps} == {

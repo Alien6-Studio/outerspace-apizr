@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 
 @pytest.mark.parametrize("exit_code", [0, 2])
@@ -16,7 +17,7 @@ def test_early_core_exit_preserves_diagnostics_and_still_fails(
     scripts = Path(__file__).parents[1] / "scripts"
     monkeypatch.syspath_prepend(str(scripts))
     spec = importlib.util.spec_from_file_location(
-        "oci_smoke_diagnostics", scripts / "smoke_oci_plugin.py"
+        "oci_smoke_diagnostics", str(qualification_script("smoke_oci_plugin"))
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

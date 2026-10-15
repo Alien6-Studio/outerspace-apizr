@@ -4,9 +4,10 @@ import importlib.util
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 spec = importlib.util.spec_from_file_location(
-    "verify_release", Path(__file__).resolve().parents[1] / "scripts/verify_release.py"
+    "verify_release", str(qualification_script("verify_release"))
 )
 assert spec and spec.loader
 release = importlib.util.module_from_spec(spec)
@@ -830,10 +831,14 @@ def test_workflows_separate_release_validation_from_external_publication():
         p.name: yaml.load(p.read_text(), Loader=yaml.BaseLoader)
         for p in directory.iterdir()
     }
-    for name in ("ci.yml", "security.yml", "mkdocs.yaml"):
+    triggers = workflows["ci.yml"]["on"]
+    assert triggers["push"]["branches"] == ["master", "0.4.6"]
+    assert not triggers["pull_request"]  # No target-branch or path exclusions.
+    for name in ("security.yml", "mkdocs.yaml"):
         triggers = workflows[name]["on"]
-        assert triggers["push"]["branches"] == ["master", "0.4.6"]
-        assert not triggers["pull_request"]  # No target-branch or path exclusions.
+        assert triggers["push"]["branches"] == ["master"]
+        assert "pull_request" not in triggers
+        assert "workflow_call" in triggers
     docs = workflows["mkdocs.yaml"]["jobs"]
     assert (
         docs["deploy"]["if"]
@@ -849,12 +854,15 @@ def test_workflows_separate_release_validation_from_external_publication():
         "extension-cleanup.yml",
     ):
         assert set(workflows[name]["on"]) == {
-            "push",
-            "pull_request",
+            "workflow_call",
             "workflow_dispatch",
         }
-        assert workflows[name]["on"]["push"] == {"branches": ["0.4.6"]}
         assert workflows[name]["permissions"] == {"contents": "read"}
+        assert any(
+            job.get("uses") == "./.github/workflows/" + name
+            and "github.ref != 'refs/heads/master'" in job["if"]
+            for job in workflows["ci.yml"]["jobs"].values()
+        )
     signer = workflows["ci.yml"]["jobs"]["provenance"]
     assert " ".join(signer["if"].split()) == (
         "github.event_name == 'push' && github.ref == 'refs/heads/master' && github.ref_protected"

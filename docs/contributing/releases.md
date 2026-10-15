@@ -353,65 +353,68 @@ Complete against the final commit; historical green runs are not sufficient.
 
 ## Development iteration and PR qualification
 
-On the `0.4.6` development line, related changes are developed and reviewed in
-coherent batches. Run relevant tests and structural/security checks while the
-batch evolves, then qualify the complete candidate once before accepting that
-batch. The complete version/platform matrix, coverage floors and final release
-qualification remain required. Dependency refreshes include the lock, licence
-inventory and Homebrew qualification metadata in the same batch.
+On the `0.4.6` development line, implement several related milestone tickets
+locally before pushing. Run focused checks while the batch evolves, including
+the mandatory package architecture gate before commits. Do not wait for a full
+matrix between individual tickets and do not push each ticket separately: one
+push starts the complete qualification of the batch. The complete platform
+matrix, coverage/security floors and final release qualification remain required.
+Dependency refreshes include their lock, licence inventory and Homebrew identity
+in the same batch. Qualification closes the batch, rather than interrupting each
+implementation step.
 
 ### Automatic development qualification
 
-Every push to the official `0.4.6` branch starts the 14 qualification entry
-workflows: CI, Security, Documentation, Attest delivery, client collections,
-extension cleanup, extension packaging, forge integrations, governed REST,
-Homebrew build inputs, Homebrew Formula, MCP server, OCI service and local
-developer experience. MCP also calls the shared plugin preparation qualification;
-that callable workflow has no additional push trigger.
+`CI` is the single automatic entry point for development pushes and pull requests.
+It classifies the complete change once, builds one coordinated candidate, then
+calls the existing satellite workflows with the validated scope and immutable
+candidate artifact from the same run. All native, installed, vendor, cleanup,
+security and documentation proofs remain. Documentation examples reuse the core
+wheel from that candidate. The MCP caller still invokes native preparation.
 
-Development pushes always require the full candidate and installed documentation
-examples, including web-only commits and branch creation. Batch related work
-before pushing. Master and master-targeted PRs retain their existing web-only
-routing. Existing PR path filters, required check names and coverage thresholds remain.
+Security and Documentation retain their independent **master push** and manual
+entry points, and Security retains its scheduled audit. Their master publication
+and verification contracts remain unchanged. On development/PR runs, three
+small top-level result jobs retain the protected `dependencies`, `codeql` and
+`build` contexts; each requires its actual shared qualification to succeed.
+On master those result jobs have distinct `external-*` names and are skipped,
+so they cannot replace or mask the existing protected master checks. Development
+builds have read permissions; the existing documentation deploy remains restricted
+to master. Publication workflows and accepted release source refs remain separate.
 
-Retain the exact source SHA and the successful **push** run IDs from this
-automatic set in the development qualification record. Check that every expected
-workflow belongs to that commit and completed successfully; one successful CI
-run does not imply that the other entry workflows passed. Do not dispatch a
-second full batch by hand. `workflow_dispatch` remains available for a deliberate
-rerun or a comparison on the same source, and its event must be identified in
-the evidence separately from the automatic push.
+The called workflows skip their fallback scope job when a validated caller
+supplies it. Standalone manual runs still classify their own source and build a
+candidate if needed. Shared candidates use the caller's checked-out GitHub SHA,
+including the synthetic merge commit for PR qualification; consumers verify the
+manifest/source identity before using its wheel bytes. No artifact from another
+workflow run or source is selected implicitly.
 
-An additional `Pytest performance comparison` runs only when its workflow or
-`scripts/benchmark_pytest.py` changes on `0.4.6`, or on explicit dispatch. It is
-separate from the 14 qualification entries and does not replace their evidence.
+Retain the source SHA, run ID, event, attempt and all job conclusions from the
+orchestrating CI run. A green subset is not qualification. PR supersession uses
+the root workflow/PR group, while each called workflow has its own literal group
+prefix; reusable calls must never share the caller's `github.workflow` group and
+cancel one another. PR artifacts retain seven days and qualification artifacts
+90 days. The existing documentation deployment serialization remains unchanged.
 
-These development runs produce qualification previews. The existing protected
-master provenance, release-asset and documentation deployment conditions stay
-unchanged. Python/MCP publication and post-release distribution verification
-remain manual, separately authorized procedures. A successful `0.4.6` push does
-not authorize any publication or alter the accepted release source refs.
+A deliberate same-source cost comparison can dispatch CI with
+`qualification_layout=independent`, then `shared`, on the same development ref.
+The control restores independent scope decisions, candidate builds and the docs
+wheel build while retaining the same proofs, thresholds and job graph. Normal
+pushes always share inputs. This comparison is opt-in: it must not add a second
+full matrix to ordinary development batches. Record runner time and wall-clock
+from completed runs before claiming an orchestration gain.
 
-Every PR qualification workflow supersedes older runs for the same PR and
-workflow. Push, scheduled and manually dispatched runs use unique concurrency
-groups, preserving both pending and running qualification evidence. PR artifacts
-are kept for seven days; retained qualification artifacts stay at 90 days.
-Qualification jobs use `!cancelled()` instead of a job-level `always()` so an
-obsolete PR run can stop. Failure-artifact steps retain their existing behavior.
-The documentation deployment's existing serialization and site-input retention
-remain separate.
+`Pytest performance comparison` is now manual only. Its accepted #296 measurement
+is retained; moving or maintaining the benchmark must not automatically run four
+more full suites. A deliberate serial/parallel comparison remains separate from
+qualification of the complete batch.
 
-Dependabot groups compatible minor/patch uv updates and proposes Actions updates
-monthly as one group, keeping CodeQL init/analyze versions together. Its active
-configuration is read from the default branch: the development configuration
-does not modify the ten existing master-targeted PRs or enable their merge.
-The required `codeql` context and native CodeQL alert publication are preserved;
-scanner consolidation needs to account for the current branch rules and the
-development line's exact-source qualification first.
-
-See GitHub's [concurrency reference](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#concurrency)
-[cancellation reference](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-cancellation)
-and [Dependabot grouping reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#groups--).
+Dependabot's development configuration groups compatible minor/patch uv updates
+and groups monthly Actions updates, including CodeQL init/analyze together. It
+does not modify the ten existing master-targeted PRs or authorize their merge.
+Scanner consolidation still needs to preserve the explicit protected `codeql`
+context and native alert publication. Development work never changes master
+protection implicitly.
 
 ### Parallel full-suite qualification
 

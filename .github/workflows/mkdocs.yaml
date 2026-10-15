@@ -1,15 +1,32 @@
 name: Documentation
 
 on:
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
+      candidate_artifact:
+        description: Immutable candidate artifact from this same workflow run
+        type: string
+        default: ''
   push:
-    branches: [master, '0.4.6']
+    branches: [master]
   workflow_dispatch:
 
 # Supersede only earlier runs for the same PR. Other events get unique groups,
 # so even pending manual, push and scheduled qualifications cannot cancel each other.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  group: Documentation-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -17,9 +34,12 @@ permissions:
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   build:
+    permissions:
+      contents: read
     needs: scope
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
@@ -28,8 +48,8 @@ jobs:
     steps:
       - name: Require a successful scope decision
         env:
-          SCOPE_RESULT: ${{ needs.scope.result }}
-          EXAMPLE_CHECKS: ${{ needs.scope.outputs.examples }}
+          SCOPE_RESULT: ${{ inputs.scope_ready && 'success' || needs.scope.result }}
+          EXAMPLE_CHECKS: ${{ (inputs.scope_ready && format('{0}', inputs.examples) || needs.scope.outputs.examples) }}
         run: |
           test "$SCOPE_RESULT" = success
           test "$EXAMPLE_CHECKS" = true || test "$EXAMPLE_CHECKS" = false
@@ -40,27 +60,40 @@ jobs:
           python-version: '3.11'
       - run: uv sync --locked --group docs
       - name: Test change routing and documentation publication tooling
-        if: needs.scope.outputs.product != 'false'
+        if: (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false'
         run: uv run --locked pytest tests/test_ci_scope.py tests/test_docs_publication.py
       - run: uv run --locked --group docs mkdocs build --strict
-      - run: uv run --locked python scripts/check_docs_html.py
+      - run: uv run --locked python -m scripts.qualification.docs.check_docs_html
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        if: inputs.candidate_artifact != '' && (inputs.scope_ready && format('{0}', inputs.examples) || needs.scope.outputs.examples) != 'false'
+        with:
+          name: ${{ inputs.candidate_artifact }}
+          path: ${{ runner.temp }}/docs-candidate
       - name: Check current and historical examples with installed wheels outside the checkout
-        if: needs.scope.outputs.examples != 'false'
+        if: (inputs.scope_ready && format('{0}', inputs.examples) || needs.scope.outputs.examples) != 'false'
+        env:
+          SHARED_CANDIDATE: ${{ inputs.candidate_artifact != '' }}
         run: |
-          uv build --wheel --out-dir "$RUNNER_TEMP/docs-wheel"
+          if test "$SHARED_CANDIDATE" = true; then
+            uv run --locked python -m scripts.qualification.packaging.coordinated_distributions verify --candidate "$RUNNER_TEMP/docs-candidate"
+            mkdir "$RUNNER_TEMP/docs-wheel"
+            cp "$RUNNER_TEMP"/docs-candidate/dist/outerspace_apizr-*.whl "$RUNNER_TEMP/docs-wheel/"
+          else
+            uv build --wheel --out-dir "$RUNNER_TEMP/docs-wheel"
+          fi
           uv venv --python 3.11 "$RUNNER_TEMP/docs-stable"
           uv pip install --python "$RUNNER_TEMP/docs-stable/bin/python" outerspace-apizr==0.3.0
-          uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-stable/bin/apizr"
+          uv run --locked python -m scripts.qualification.docs.smoke_readme "$RUNNER_TEMP/docs-stable/bin/apizr"
           uv venv --python 3.11 "$RUNNER_TEMP/docs-public"
           uv pip install --python "$RUNNER_TEMP/docs-public/bin/python" outerspace-apizr==0.4.4
-          uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-public/bin/apizr" --development --expected-version 0.4.4
+          uv run --locked python -m scripts.qualification.docs.smoke_readme "$RUNNER_TEMP/docs-public/bin/apizr" --development --expected-version 0.4.4
           uv venv --python 3.11 "$RUNNER_TEMP/docs-dev"
           uv pip install --python "$RUNNER_TEMP/docs-dev/bin/python" "$RUNNER_TEMP"/docs-wheel/*.whl
-          uv run --locked python scripts/smoke_readme.py "$RUNNER_TEMP/docs-dev/bin/apizr" --development --repository-refinement
+          uv run --locked python -m scripts.qualification.docs.smoke_readme "$RUNNER_TEMP/docs-dev/bin/apizr" --development --repository-refinement
       - name: Validate the source identity before retaining the built site
         id: identity
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: uv run --locked python scripts/check_docs_site.py --check-build --source-commit "$GITHUB_SHA" --github-output "$GITHUB_OUTPUT"
+        run: uv run --locked python -m scripts.qualification.docs.check_docs_site --check-build --source-commit "$GITHUB_SHA" --github-output "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:

@@ -10,7 +10,9 @@ import pytest
 @pytest.fixture
 def packaging(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "scripts"))
-    module = importlib.import_module("coordinated_distributions")
+    module = importlib.import_module(
+        "scripts.qualification.packaging.coordinated_distributions"
+    )
     monkeypatch.setattr(module, "source_commit", lambda: "a" * 40)
     return module
 
@@ -77,7 +79,9 @@ def test_candidate_proof_never_falls_back_to_rebuild(packaging, tmp_path, monkey
 @pytest.fixture
 def publication(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "scripts"))
-    return importlib.import_module("prepare_publication")
+    return importlib.import_module(
+        "scripts.qualification.packaging.prepare_publication"
+    )
 
 
 @pytest.mark.parametrize("fault", ["different", "extra", "network"])

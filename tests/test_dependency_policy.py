@@ -4,10 +4,12 @@ import runpy
 import tomllib
 from pathlib import Path
 
+from qualification_scripts import implementation as qualification_script
+
 
 def test_audit_scopes_cover_every_locked_dependency_variant(tmp_path):
     root = Path(__file__).resolve().parents[1]
-    audit = runpy.run_path(str(root / "scripts/audit_dependencies.py"))
+    audit = runpy.run_path(str(qualification_script("audit_dependencies")))
     locked = tomllib.loads((root / "uv.lock").read_text())
     expected = {
         (package["name"], package["version"])
@@ -60,9 +62,9 @@ def test_dependency_source_policy_refuses_unreviewed_origins_and_missing_hashes(
 
     import pytest
 
-    validate = runpy.run_path(
-        str(Path(__file__).parents[1] / "scripts/check_dependency_sources.py")
-    )["validate_sources"]
+    validate = runpy.run_path(str(qualification_script("check_dependency_sources")))[
+        "validate_sources"
+    ]
     archive = {
         "url": "https://files.pythonhosted.org/packages/example.whl",
         "hash": "sha256:" + "a" * 64,

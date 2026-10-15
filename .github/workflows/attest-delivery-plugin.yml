@@ -1,15 +1,26 @@
 name: Attest delivery plugin
 
 on:
-  push:
-    branches: ['0.4.6']
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   workflow_dispatch:
 
 # Supersede only earlier runs for the same PR. Other events get unique groups,
 # so even pending manual, push and scheduled qualifications cannot cancel each other.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  group: Attest delivery plugin-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -17,11 +28,12 @@ permissions:
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   delivery-receipts:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -34,7 +46,7 @@ jobs:
       - name: Optional plugin coverage
         run: uv run --locked pytest tests/attest_plugin --cov=apizr_attest --cov-report=term-missing --cov-report=json:attest-coverage.json --junitxml=attest-tests.xml
       - name: Signed delivery, OCI artifacts and isolated read-only consumer
-        run: python3 scripts/smoke_oci_registry.py --artifacts --output "$RUNNER_TEMP/attest-delivery-proof"
+        run: python3 -m scripts.qualification.delivery.smoke_oci_registry --artifacts --output "$RUNNER_TEMP/attest-delivery-proof"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

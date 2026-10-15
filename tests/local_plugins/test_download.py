@@ -11,10 +11,10 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler
-from pathlib import Path
 from urllib.parse import urlsplit
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 from apizr.cli import main
 from apizr.plugins.local import (
@@ -33,7 +33,7 @@ from apizr.plugins.local import (
 from apizr.plugins.local import wheel as wheel_module
 
 SPEC = importlib.util.spec_from_file_location(
-    "https_fixture", Path(__file__).resolve().parents[2] / "scripts/https_fixture.py"
+    "https_fixture", str(qualification_script("https_fixture"))
 )
 assert SPEC is not None and SPEC.loader is not None
 fixture_module = importlib.util.module_from_spec(SPEC)

@@ -1,0 +1,420 @@
+"""Exercise the base wheel and every optional installation in separate environments."""
+
+import argparse
+import json
+import shutil
+import subprocess
+import sys
+import tempfile
+from collections.abc import Callable
+from pathlib import Path
+
+from scripts.qualification.delivery.operator_policy_proof import (
+    refuse_analysis,
+    write_analysis_policy,
+)
+from scripts.qualification.packaging.coordinated_distributions import target_root
+from scripts.qualification.repository.smoke_git_source import exercise as git_example
+from scripts.qualification.repository.smoke_git_ssh import exercise as ssh_example
+
+
+def project_example(
+    root: Path,
+    command: Callable[..., subprocess.CompletedProcess[str]],
+    probe: Callable[[str], None],
+) -> None:
+    """Exercise the committed project example from an unrelated working directory."""
+    checkout = Path(__file__).resolve().parents[3]
+    example = root / "examples/project-config"
+    shutil.copytree(checkout / "examples/project-config", example)
+    project = example / "apizr.toml"
+    operator = write_analysis_policy(root / "project-operator.json", example)
+    scan = [
+        example,
+        "--operator-policy",
+        operator,
+        "--source-root",
+        "src",
+        "--exclude-dir",
+        "ignored",
+        "--max-file-bytes",
+        "4096",
+        "--max-ast-nodes",
+        "10000",
+    ]
+    readiness = example / "policies/readiness.json"
+    exposure = example / "policies/exposure.json"
+    configured = command(
+        "readiness", "--project", project, "--operator-policy", operator, "--report"
+    )
+    explicit = command("readiness", *scan, "--policy", readiness, "--report")
+    assert configured.stdout == explicit.stdout
+    configured = command(
+        "expose", "plan", "--project", project, "--operator-policy", operator, "--plan"
+    )
+    explicit = command(
+        "expose",
+        "plan",
+        *scan,
+        "--policy",
+        exposure,
+        "--readiness-policy",
+        readiness,
+        "--plan",
+    )
+    assert configured.stdout == explicit.stdout
+    for target in ("rest", "mcp"):
+        actual, expected = root / ("project-" + target), root / ("explicit-" + target)
+        command(
+            "expose",
+            "build",
+            target,
+            "--project",
+            project,
+            "--operator-policy",
+            operator,
+            "--output-dir",
+            actual,
+        )
+        command(
+            "expose",
+            "build",
+            target,
+            *scan,
+            "--policy",
+            exposure,
+            "--readiness-policy",
+            readiness,
+            "--output-dir",
+            expected,
+        )
+        assert {
+            p.relative_to(actual): p.read_bytes()
+            for p in actual.rglob("*")
+            if p.is_file()
+        } == {
+            p.relative_to(expected): p.read_bytes()
+            for p in expected.rglob("*")
+            if p.is_file()
+        }
+    documentation = (checkout / "docs/getting-started/user-guide/project.md").read_text(
+        encoding="utf-8"
+    )
+    probe(
+        documentation.split("```python\n", 1)[1].split("```", 1)[0]
+        + """
+import sys
+assert not any(name == "apizr.cli" or name.endswith("_cli") or name.startswith("apizr.extensions.plugins") for name in sys.modules)
+print("PASS project configuration: documented Python example and four CLI commands outside checkout")
+"""
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("wheel", type=Path)
+    parser.add_argument("--python", default=sys.executable)
+    parser.add_argument("--proof-output", type=Path)
+    args = parser.parse_args()
+    wheel = args.wheel.resolve()
+    retained_target = target_root()
+    with tempfile.TemporaryDirectory(prefix="apizr-installations-") as directory:
+        root = Path(directory).resolve()
+        source = root / "repository"
+        source.mkdir()
+        (source / "sample.py").write_text(
+            "def add(a: int, b: int = 1) -> int: return a + b\n"
+        )
+        notebook = root / "sample.ipynb"
+        notebook.write_text(
+            json.dumps(
+                {
+                    "nbformat": 4,
+                    "nbformat_minor": 5,
+                    "metadata": {},
+                    "cells": [
+                        {
+                            "cell_type": "code",
+                            "id": "sample",
+                            "metadata": {},
+                            "execution_count": None,
+                            "outputs": [],
+                            "source": (source / "sample.py").read_text(),
+                        }
+                    ],
+                }
+            )
+        )
+        readiness = root / "readiness.json"
+        readiness.write_text('{"execution":{"modes":["direct"],"require_controls":[]}}')
+        exposure = root / "exposure.json"
+        exposure.write_text(
+            '{"selection":{"include":["python:sample:add"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}'
+        )
+        authority = write_analysis_policy(root / "operator-local.json", source)
+        for extra in ("base", "clients", "notebook", "http", "mcp", "legacy"):
+            env = root / ("env-" + extra)
+            subprocess.run(
+                ["uv", "venv", "--python", args.python, str(env)],
+                check=True,
+                stdout=subprocess.DEVNULL,
+            )
+            python = env / "bin/python"
+            cli = env / "bin/apizr"
+            requirement = str(wheel) + ("" if extra == "base" else f"[{extra}]")
+            subprocess.run(
+                [
+                    "uv",
+                    "pip",
+                    "install",
+                    "--quiet",
+                    "--python",
+                    str(python),
+                    *(
+                        [
+                            "--offline",
+                            "--no-index",
+                            "--find-links",
+                            str(retained_target / "extras"),
+                        ]
+                        if retained_target
+                        else []
+                    ),
+                    requirement,
+                ],
+                check=True,
+            )
+
+            def command(*values, code=0, cli=cli, extra=extra):
+                result = subprocess.run(
+                    [str(cli), *map(str, values)],
+                    cwd=root,
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+                assert result.returncode == code, (
+                    extra,
+                    values,
+                    result.stdout,
+                    result.stderr,
+                )
+                return result
+
+            def probe(code, python=python):
+                subprocess.run(
+                    [str(python), "-I", "-c", code], cwd=root, check=True, timeout=30
+                )
+
+            command("--help")
+            command("inspect", source / "sample.py", "--ir")
+            if extra == "base":
+                probe(
+                    "from importlib.metadata import distributions; names={d.metadata['Name'].lower().replace('_','-') for d in distributions()}; assert names == {'outerspace-apizr','pydantic','pydantic-core','annotated-types','typing-extensions','typing-inspection'}, names; print('Base installation: exactly 5 dependencies')"
+                )
+                refuse_analysis(python, root, source)
+                project_example(root, command, probe)
+                git_example(python, cli, root)
+                ssh_example(python, cli, root)
+                for cmd, flag in (
+                    ("scan", "--catalog"),
+                    ("graph", "--graph"),
+                    ("readiness", "--report"),
+                ):
+                    command(cmd, source, "--operator-policy", authority, flag)
+                command(
+                    "expose",
+                    "plan",
+                    source,
+                    "--operator-policy",
+                    authority,
+                    "--readiness-policy",
+                    readiness,
+                    "--policy",
+                    exposure,
+                    "--plan",
+                )
+                for target in ("rest", "mcp"):
+                    command(
+                        "expose",
+                        "build",
+                        target,
+                        source,
+                        "--operator-policy",
+                        authority,
+                        "--readiness-policy",
+                        readiness,
+                        "--policy",
+                        exposure,
+                        "--output-dir",
+                        root / ("base-" + target),
+                    )
+                    command(
+                        "generate",
+                        target,
+                        source / "sample.py",
+                        "--output-dir",
+                        root / ("single-" + target),
+                    )
+                # Execute the documented Python example with the base wheel,
+                # outside the checkout. Block optional/CLI imports and plugin
+                # discovery even if an environment accidentally provides them.
+                documentation = (
+                    Path(__file__).resolve().parents[3]
+                    / "docs/reference/compiler-api.md"
+                ).read_text(encoding="utf-8")
+                example = documentation.split("```python\n", 1)[1].split("```", 1)[0]
+                probe(
+                    """import sys, importlib.metadata
+def audit(event, args):
+    if event == "import" and (
+        args[0].split(".")[0] in {"fastapi", "mcp", "nbconvert", "IPython", "black", "questionary", "uvicorn", "docker"}
+        or args[0] == "apizr.cli" or args[0].endswith("_cli")
+        or args[0].startswith("apizr.extensions.plugins")
+    ):
+        raise AssertionError(args[0])
+def forbidden(*args, **kwargs):
+    raise AssertionError("plugin discovery")
+sys.addaudithook(audit)
+importlib.metadata.entry_points = forbidden
+"""
+                    + example
+                    + """
+from apizr.compiler import assess_readiness
+from apizr.repository_readiness import report_bytes
+from apizr.exposure import plan_bytes
+assert report_bytes(assess_readiness(Path("repository"), operator_policy=operator, readiness_policy=RepositoryReadinessPolicy.model_validate({"execution":{"modes":["direct"]}}))) == report_bytes(report)
+assert rest["repository-readiness.json"] == report_bytes(report)
+assert rest["exposure-plan.json"] == plan_bytes(plan)
+for target in ("rest", "mcp"):
+    def contents(directory):
+        return {p.relative_to(directory).as_posix(): p.read_bytes() for p in directory.rglob("*") if p.is_file()}
+    assert contents(Path("python-" + target)) == contents(Path("base-" + target))
+print("PASS documented compiler API: base wheel, outside checkout, exact CLI parity")
+"""
+                )
+                missing = command("inspect", notebook, code=2)
+                assert (
+                    "[notebook]" in missing.stderr and "Traceback" not in missing.stderr
+                )
+                missing = command("experiment", "inspect", notebook, code=2)
+                assert (
+                    "[notebook]" in missing.stderr and "Traceback" not in missing.stderr
+                )
+                missing = command("--script", source / "sample.py", code=2)
+                assert (
+                    "[legacy]" in missing.stderr and "Traceback" not in missing.stderr
+                )
+            elif extra == "clients":
+                probe(
+                    "import yaml; from apizr.client_collections import plan_client_collection; from importlib.util import find_spec; assert find_spec('mcp') is None; assert find_spec('fastapi') is None"
+                )
+                for format in ("postman", "bruno", "insomnia"):
+                    command(
+                        "clients",
+                        "export",
+                        "--bundle",
+                        root / "base-rest",
+                        "--format",
+                        format,
+                        "--output-dir",
+                        root / ("clients-" + format),
+                    )
+                    command(
+                        "clients",
+                        "sync",
+                        "--bundle",
+                        root / "base-rest",
+                        "--format",
+                        format,
+                        "--output-dir",
+                        root / ("clients-" + format),
+                    )
+            elif extra == "notebook":
+                checkout = Path(__file__).resolve().parents[3]
+                subprocess.run(
+                    [
+                        sys.executable,
+                        str(checkout / "scripts/experiment_exposure_proof.py"),
+                        "--python",
+                        str(python),
+                        "--fixtures",
+                        str(checkout / "tests/fixtures/experiments/exposure"),
+                        "--notebook",
+                        "--output",
+                        str(
+                            (args.proof_output or root)
+                            / "experiment-exposure-notebook.json"
+                        ),
+                    ],
+                    cwd=root,
+                    check=True,
+                    timeout=90,
+                )
+                subprocess.run(
+                    [
+                        str(python),
+                        "-I",
+                        "-B",
+                        str(checkout / "scripts/experiment_run_proof.py"),
+                        "--notebook",
+                        "--output",
+                        str(
+                            (args.proof_output or root) / "experiment-run-notebook.json"
+                        ),
+                    ],
+                    cwd=root,
+                    check=True,
+                    timeout=60,
+                )
+                subprocess.run(
+                    [
+                        str(python),
+                        "-I",
+                        "-B",
+                        str(checkout / "scripts/experiment_inspection_proof.py"),
+                        "--fixtures",
+                        str(checkout / "tests/fixtures/experiments/inspection"),
+                        "--notebook",
+                        "--output",
+                        str(
+                            (args.proof_output or root)
+                            / "experiment-inspection-notebook.json"
+                        ),
+                    ],
+                    cwd=root,
+                    check=True,
+                    timeout=60,
+                )
+                command("inspect", notebook, "--ir")
+                command(
+                    "generate", "rest", notebook, "--output-dir", root / "notebook-rest"
+                )
+                probe(
+                    "from importlib.util import find_spec; assert find_spec('fastapi') is None; assert find_spec('questionary') is None"
+                )
+            elif extra == "http":
+                probe(
+                    "import fastapi, uvicorn; from apizr.governed_repository.rest import create_app; from apizr.generators.rest.runtime import create_app; from importlib.util import find_spec; assert find_spec('nbconvert') is None"
+                )
+            elif extra == "mcp":
+                probe(
+                    "import mcp, uvicorn; from apizr.governed_repository.mcp import create_server; from importlib.util import find_spec; assert find_spec('nbconvert') is None"
+                )
+            else:
+                result = json.loads(
+                    command(
+                        "--notebook", notebook, "--output-dir", root / "legacy"
+                    ).stdout
+                )
+                assert {"Dockerfile", "requirements.txt", "sample_api.py"} <= set(
+                    result["files"]
+                )
+                probe(
+                    "from apizr.app import app; assert app.title == 'OuterSpace Apizr'"
+                )
+            print(f"PASS isolated installation: {extra}")
+
+
+if __name__ == "__main__":
+    main()

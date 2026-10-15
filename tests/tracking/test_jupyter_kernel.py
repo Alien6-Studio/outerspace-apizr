@@ -4,10 +4,9 @@ import runpy
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
-PROOF = runpy.run_path(
-    str(Path(__file__).resolve().parents[2] / "scripts" / "experiment_jupyter_proof.py")
-)
+PROOF = runpy.run_path(str(qualification_script("experiment_jupyter_proof")))
 
 
 @pytest.fixture

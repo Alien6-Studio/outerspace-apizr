@@ -4,9 +4,10 @@ import runpy
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).resolve().parents[1]
-CHECK = runpy.run_path(str(ROOT / "scripts/check_uv_policy.py"))["check"]
+CHECK = runpy.run_path(str(qualification_script("check_uv_policy")))["check"]
 
 
 @pytest.mark.parametrize("latest", ["0.12.17", "0.13.0", "0.13.1"])

@@ -1,15 +1,26 @@
 name: MCP server plugin
 
 on:
-  push:
-    branches: ['0.4.6']
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   workflow_dispatch:
 
 # Supersede only earlier runs for the same PR. Other events get unique groups,
 # so even pending manual, push and scheduled qualifications cannot cancel each other.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  group: MCP server plugin-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -17,16 +28,17 @@ permissions:
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   preparation-qualification:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     uses: ./.github/workflows/plugin-preparation-qualification.yml
 
   stdio:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -48,15 +60,15 @@ jobs:
       - name: Separate plugin branch coverage
         run: uv run --locked pytest tests/test_mcp_cli.py tests/test_mcp_session.py tests/mcp_plugin --cov=apizr_mcp --cov-report=term-missing --cov-report=json:mcp-coverage.json --junitxml=mcp-tests.xml
       - name: Installed core, plugin and official stdio client
-        run: uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-proof"
+        run: uv run --locked python -m scripts.qualification.interfaces.smoke_mcp_server --output "$RUNNER_TEMP/mcp-proof"
       - name: Catalog profiles and separate closures without network access
-        run: uv run --locked python scripts/run_catalog_offline_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/catalog-offline.log" 2>&1
+        run: uv run --locked python -m scripts.qualification.extensions.run_catalog_offline_proof "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/catalog-offline.log" 2>&1
       - name: Installed protocol proof without network access
         if: runner.os == 'Linux'
         run: |
           sudo unshare --net --setgid "$(id -g)" --setuid "$(id -u)" \
             env PYTHONDONTWRITEBYTECODE=1 "$RUNNER_TEMP/mcp-proof/client/bin/python" \
-            scripts/mcp_client_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/network-isolated.log" 2>&1
+            scripts/qualification/interfaces/mcp_client_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/network-isolated.log" 2>&1
           sudo unshare --net --setgid "$(id -g)" --setuid "$(id -u)" \
             env PYTHONDONTWRITEBYTECODE=1 "$RUNNER_TEMP/mcp-proof/client/bin/python" \
             scripts/mcp_schema_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/schema-network-isolated.log" 2>&1
@@ -86,7 +98,7 @@ jobs:
 
   preparation-intel:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 15
     runs-on: macos-15-intel
     steps:
@@ -96,7 +108,7 @@ jobs:
           version: '0.13.1'
           python-version: '3.14'
       - name: Installed preparation refuses the locked wheel unavailable on Intel
-        run: uv run --no-project --python 3.14 python scripts/plugin_preparation_intel_proof.py --output "$RUNNER_TEMP/preparation-intel"
+        run: uv run --no-project --python 3.14 python -m scripts.qualification.extensions.plugin_preparation_intel_proof --output "$RUNNER_TEMP/preparation-intel"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -110,7 +122,7 @@ jobs:
 
   generated-recovery:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -126,7 +138,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: uv sync --locked
       - name: Fixed generated-business-MCP recovery series (stdio and HTTP)
-        run: uv run --locked python scripts/repeat_mcp_transports.py --output "$RUNNER_TEMP/mcp-recovery"
+        run: uv run --locked python -m scripts.qualification.interfaces.repeat_mcp_transports --output "$RUNNER_TEMP/mcp-recovery"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

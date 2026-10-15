@@ -7,9 +7,10 @@ import tomllib
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).resolve().parents[1]
-CHECKER = runpy.run_path(str(ROOT / "scripts/check_dependency_licenses.py"))
+CHECKER = runpy.run_path(str(qualification_script("check_dependency_licenses")))
 
 
 @pytest.fixture
@@ -190,7 +191,7 @@ def test_collector_checks_archive_hash_and_reads_without_extraction(
     import tarfile
 
     monkeypatch.syspath_prepend(str(ROOT / "scripts"))
-    collect = runpy.run_path(str(ROOT / "scripts/collect_dependency_licenses.py"))[
+    collect = runpy.run_path(str(qualification_script("collect_dependency_licenses")))[
         "notices"
     ]
     buffer = io.BytesIO()
@@ -230,7 +231,7 @@ def test_collector_preserves_nonstandard_license_names_in_wheels(monkeypatch):
     import zipfile
 
     monkeypatch.syspath_prepend(str(ROOT / "scripts"))
-    collect = runpy.run_path(str(ROOT / "scripts/collect_dependency_licenses.py"))[
+    collect = runpy.run_path(str(qualification_script("collect_dependency_licenses")))[
         "notices"
     ]
     buffer = io.BytesIO()

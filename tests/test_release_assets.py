@@ -14,7 +14,9 @@ import pytest
 @pytest.fixture
 def assets(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "scripts"))
-    return importlib.import_module("prepare_release_assets")
+    return importlib.import_module(
+        "scripts.qualification.packaging.prepare_release_assets"
+    )
 
 
 def archive(path, files):

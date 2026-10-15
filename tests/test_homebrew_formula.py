@@ -8,10 +8,11 @@ import tarfile
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-tool = runpy.run_path(str(ROOT / "scripts/homebrew_formula.py"))
+tool = runpy.run_path(str(qualification_script("homebrew_formula")))
 SHA = "a" * 40
 
 

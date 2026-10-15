@@ -9,6 +9,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 from apizr import cli
 from apizr.cli.completion import FILES, candidates, main, script
@@ -19,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_completion_covers_actual_parsers_and_dispatch():
     spec = importlib.util.spec_from_file_location(
-        "completion_model", ROOT / "scripts/completion_model.py"
+        "completion_model", str(qualification_script("completion_model"))
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

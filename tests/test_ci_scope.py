@@ -7,9 +7,12 @@ from pathlib import Path
 
 import pytest
 import yaml
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("ci_scope", ROOT / "scripts/ci_scope.py")
+spec = importlib.util.spec_from_file_location(
+    "ci_scope", str(qualification_script("ci_scope"))
+)
 assert spec and spec.loader
 scope = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(scope)

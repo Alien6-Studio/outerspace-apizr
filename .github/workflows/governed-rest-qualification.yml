@@ -1,19 +1,26 @@
 name: Governed REST qualification
 
 on:
-  push:
-    branches: ['0.4.6']
-  pull_request:
-    paths:
-      - tests/governed/test_transports.py
-      - tests/execution/test_deadline.py
-      - .github/workflows/governed-rest-qualification.yml
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   workflow_dispatch:
 
 # Supersede only earlier runs for the same PR. Other events get unique groups,
 # so even pending manual, push and scheduled qualifications cannot cancel each other.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  group: Governed REST qualification-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:

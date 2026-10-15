@@ -1,9 +1,22 @@
 name: Security
 
 on:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   push:
-    branches: [master, '0.4.6']
-  pull_request:
+    branches: [master]
   schedule:
     - cron: '23 6 * * 1'
   workflow_dispatch:
@@ -11,7 +24,7 @@ on:
 # Supersede only earlier runs for the same PR. Other events get unique groups,
 # so even pending manual, push and scheduled qualifications cannot cancel each other.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  group: Security-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -19,11 +32,12 @@ permissions:
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   dependencies:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -43,9 +57,9 @@ jobs:
           python-version: '3.14'
           enable-cache: true
       - run: uv sync --locked --group security
-      - run: uv run --locked python scripts/check_dependency_sources.py
-      - run: uv run --locked python scripts/check_dependency_licenses.py --output dependency-license-report.json
-      - run: uv run --locked --group security python scripts/audit_dependencies.py --output dependency-audit.json
+      - run: uv run --locked python -m scripts.qualification.ci.check_dependency_sources
+      - run: uv run --locked python -m scripts.qualification.ci.check_dependency_licenses --output dependency-license-report.json
+      - run: uv run --locked --group security python -m scripts.qualification.ci.audit_dependencies --output dependency-audit.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -59,7 +73,7 @@ jobs:
 
   codeql:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

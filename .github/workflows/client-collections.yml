@@ -1,15 +1,26 @@
 name: Client collections
 
 on:
-  push:
-    branches: ['0.4.6']
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   workflow_dispatch:
 
 # Supersede only earlier runs for the same PR. Other events get unique groups,
 # so even pending manual, push and scheduled qualifications cannot cancel each other.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  group: Client collections-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -17,11 +28,12 @@ permissions:
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   native-formats:
     needs: scope
-    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -52,10 +64,10 @@ jobs:
       - name: Reviewed vendor dependency compatibility
         run: node scripts/client_collection_tools/check-compatibility.cjs > client-tools-compatibility.json
       - name: Checksum-pinned Inso CLI
-        run: uv run --locked python scripts/prepare_client_tools.py "$RUNNER_TEMP/inso"
+        run: uv run --locked python -m scripts.qualification.interfaces.prepare_client_tools "$RUNNER_TEMP/inso"
       - name: Installed wheel, official native validation and real source-free execution
         run: >-
-          uv run --locked python scripts/client_collections_proof.py
+          uv run --locked python -m scripts.qualification.interfaces.client_collections_proof
           --output "$RUNNER_TEMP/client-collections-proof"
           --tools scripts/client_collection_tools
           --postman scripts/client_collection_tools/node_modules/.bin/postman

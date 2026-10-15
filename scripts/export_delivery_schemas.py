@@ -1,40 +1,22 @@
-"""Regenerate schemas for the existing public delivery result models."""
+"""Compatibility CLI for scripts.qualification.delivery.export_delivery_schemas."""
 
-import json
+import runpy
+import sys
+from importlib import import_module
 from pathlib import Path
 
-from apizr.contracts.results import (
-    AdmissionResult,
-    BuildResult,
-    DeliveryResult,
-    ObservationResult,
-    PublishResult,
-    PushResult,
-)
-
-MODELS = (
-    BuildResult,
-    PushResult,
-    DeliveryResult,
-    PublishResult,
-    AdmissionResult,
-    ObservationResult,
-)
-
-
-def main() -> None:
-    root = Path(__file__).resolve().parents[1] / "docs/specs"
-    for model in MODELS:
-        schema = model.model_json_schema()
-        name = (
-            schema["properties"]["schema"]["default"]
-            .replace(".", "-", 1)
-            .replace("/", "-")
-        )
-        (root / (name + ".schema.json")).write_text(
-            json.dumps(schema, indent=2, ensure_ascii=False) + "\n"
-        )
-
-
 if __name__ == "__main__":
-    main()
+    runpy.run_path(
+        str(
+            Path(__file__).resolve().parents[1]
+            / "scripts/qualification/delivery/export_delivery_schemas.py"
+        ),
+        run_name="__main__",
+    )
+else:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    _implementation = import_module(
+        "scripts.qualification.delivery.export_delivery_schemas"
+    )
+    sys.modules[__name__] = _implementation
+    globals().update(vars(_implementation))

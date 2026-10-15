@@ -5,6 +5,12 @@ on:
     branches: [master, '0.4.6']
   pull_request:
   workflow_dispatch:
+    inputs:
+      qualification_layout:
+        description: Shared inputs normally; independent inputs only for a deliberate cost comparison
+        type: choice
+        default: shared
+        options: [shared, independent]
 
 # Supersede only earlier runs for the same PR. Other events get unique groups,
 # so even pending manual, push and scheduled qualifications cannot cancel each other.
@@ -32,8 +38,8 @@ jobs:
       - run: uv sync --locked
       - name: Build the four candidate wheels and sdists exactly once
         run: |
-          uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/candidate"
-          uv run --locked python scripts/check_distribution.py "$RUNNER_TEMP/candidate/dist" --coordinated --manifest "$RUNNER_TEMP/candidate/SHA256SUMS.json"
+          uv run --locked python -m scripts.qualification.packaging.coordinated_distributions build --candidate "$RUNNER_TEMP/candidate"
+          uv run --locked python -m scripts.qualification.packaging.check_distribution "$RUNNER_TEMP/candidate/dist" --coordinated --manifest "$RUNNER_TEMP/candidate/SHA256SUMS.json"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: python-distributions
@@ -93,16 +99,16 @@ jobs:
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
       - name: Export locked dependency closures and catalog for this exact target
-        run: uv run --locked python scripts/coordinated_distributions.py target --candidate "$APIZR_RELEASE_SET" --output "$APIZR_RELEASE_TARGET"
+        run: uv run --locked python -m scripts.qualification.packaging.coordinated_distributions target --candidate "$APIZR_RELEASE_SET" --output "$APIZR_RELEASE_TARGET"
       - name: pip, uv, pipx, extras, Git, migration and profile installation
-        run: uv run --locked python scripts/qualify_distributions.py --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/qualification"
+        run: uv run --locked python -m scripts.qualification.packaging.qualify_distributions --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/qualification"
       - name: Real MCP sessions from the same candidate bytes
         run: |
-          uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-candidate"
-          uv run --locked python scripts/run_catalog_offline_proof.py "$RUNNER_TEMP/mcp-candidate"
+          uv run --locked python -m scripts.qualification.interfaces.smoke_mcp_server --output "$RUNNER_TEMP/mcp-candidate"
+          uv run --locked python -m scripts.qualification.extensions.run_catalog_offline_proof "$RUNNER_TEMP/mcp-candidate"
           "$RUNNER_TEMP/mcp-candidate/client/bin/python" -B scripts/mcp_uninstall_proof.py "$RUNNER_TEMP/mcp-candidate"
       - name: Ordinary scikit-learn notebook, real REST/MCP and retained-wheel replay
-        run: uv run --locked python scripts/qualify_data_science_journey.py --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/data-science"
+        run: uv run --locked python -m scripts.qualification.experiments.qualify_data_science_journey --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/data-science"
       - name: Archive installable export without installed environments
         if: always()
         run: |
@@ -144,7 +150,7 @@ jobs:
           name: release-candidate
           path: ${{ runner.temp }}/candidate
       - name: Same candidates through build, TLS push, signing, timestamp and offline proof
-        run: python3 scripts/smoke_oci_registry.py --artifacts --output "$RUNNER_TEMP/candidate-delivery"
+        run: python3 -m scripts.qualification.delivery.smoke_oci_registry --artifacts --output "$RUNNER_TEMP/candidate-delivery"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -192,7 +198,7 @@ jobs:
           elif git merge-base --is-ancestor "$DCO_AUDIT_BASE" "$DCO_BASE"; then
             DCO_BASE="$DCO_AUDIT_BASE"
           fi
-          uv run --locked python scripts/check_dco.py --base "$DCO_BASE" --head "$DCO_HEAD"
+          uv run --locked python -m scripts.qualification.ci.check_dco --base "$DCO_BASE" --head "$DCO_HEAD"
       - if: env.PRODUCT_CHECKS != 'false'
         run: uv run --locked ruff check .
       - if: env.PRODUCT_CHECKS != 'false'
@@ -200,13 +206,15 @@ jobs:
       - if: env.PRODUCT_CHECKS != 'false'
         run: uv run --locked pyright
       - name: Enforce package composition and dependency boundaries
-        run: uv run --locked python scripts/check_package_architecture.py
+        run: uv run --locked python -m scripts.qualification.ci.check_package_architecture
+      - name: Enforce qualification ownership and workflow script references
+        run: uv run --locked python -m scripts.qualification.ci.check_script_architecture
       - run: uv run --locked pre-commit run --all-files
       - uses: ./.github/actions/install-attest
         if: env.PRODUCT_CHECKS != 'false'
       - name: Verify managed Attest identity and real offline rejection cases
         if: env.PRODUCT_CHECKS != 'false'
-        run: uv run --locked python scripts/check_attest_identity.py --attest "$(command -v attest)"
+        run: uv run --locked python -m scripts.qualification.packaging.check_attest_identity --attest "$(command -v attest)"
 
   compatibility:
     needs: scope
@@ -249,7 +257,7 @@ jobs:
         run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
       - name: Protect selected evidence line and branch coverage separately
         if: env.PRODUCT_CHECKS != 'false'
-        run: uv run --locked python scripts/check_scope_coverage.py coverage.json
+        run: uv run --locked python -m scripts.qualification.ci.check_scope_coverage coverage.json
       - run: uv run --locked coverage report --include='src/apizr/capabilities/*' --fail-under=90
         if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/readiness/*' --fail-under=90
@@ -335,7 +343,7 @@ jobs:
         if: env.PRODUCT_CHECKS != 'false'
       - name: Protect selected evidence line and branch coverage separately
         if: env.PRODUCT_CHECKS != 'false'
-        run: uv run --locked python scripts/check_scope_coverage.py coverage.json
+        run: uv run --locked python -m scripts.qualification.ci.check_scope_coverage coverage.json
       - run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
         if: env.PRODUCT_CHECKS != 'false'
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -360,7 +368,7 @@ jobs:
           python-version: '3.14'
           enable-cache: true
       - run: uv sync --locked
-      - run: uv run --locked python scripts/security_mutations.py
+      - run: uv run --locked python -m scripts.qualification.ci.security_mutations
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -391,18 +399,18 @@ jobs:
         with:
           name: python-distributions
           path: dist
-      - run: uv run --locked python scripts/check_distribution.py dist --coordinated --manifest SHA256SUMS.json
+      - run: uv run --locked python -m scripts.qualification.packaging.check_distribution dist --coordinated --manifest SHA256SUMS.json
       - name: Verify minimal and optional installed-wheel dependency paths
         run: |
-          uv run --locked python scripts/smoke_installations.py dist/outerspace_apizr-*.whl
-          uv run --locked python scripts/smoke_installations.py dist/outerspace_apizr-*.whl --python 3.11
-      - run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --scientific-proof release-evidence/scientific-contracts-proof.json
+          uv run --locked python -m scripts.qualification.packaging.smoke_installations dist/outerspace_apizr-*.whl
+          uv run --locked python -m scripts.qualification.packaging.smoke_installations dist/outerspace_apizr-*.whl --python 3.11
+      - run: uv run --locked python -m scripts.qualification.packaging.smoke_wheel dist/outerspace_apizr-*.whl --scientific-proof release-evidence/scientific-contracts-proof.json
       - name: Real Jupyter SDK sessions from the installed candidate outside checkout
-        run: uv run --locked python scripts/experiment_jupyter_proof.py dist/outerspace_apizr-*.whl --output release-evidence/jupyter-proof.json
+        run: uv run --locked python -m scripts.qualification.experiments.experiment_jupyter_proof dist/outerspace_apizr-*.whl --output release-evidence/jupyter-proof.json
       - name: Check the same wheel on the oldest supported Python
-        run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --python 3.11
+        run: uv run --locked python -m scripts.qualification.packaging.smoke_wheel dist/outerspace_apizr-*.whl --python 3.11
       - name: Preserve source, lock and dependency SBOMs
-        run: uv run --locked python scripts/build_evidence.py
+        run: uv run --locked python -m scripts.qualification.packaging.build_evidence
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-evidence
@@ -437,7 +445,7 @@ jobs:
       - run: uv sync --locked
         if: env.PRODUCT_CHECKS != 'false'
       # Generate once per target: verifies target-specific dependency resolution in Docker.
-      - run: uv run --locked python scripts/smoke_container.py --python-version "${{ matrix.python }}"
+      - run: uv run --locked python -m scripts.qualification.packaging.smoke_container --python-version "${{ matrix.python }}"
         if: env.PRODUCT_CHECKS != 'false'
 
   oci-isolation:
@@ -475,7 +483,7 @@ jobs:
           name: python-distributions
           path: dist
       - name: Deliberately build local fixture worker image
-        run: uv run --locked python scripts/build_worker_image.py dist/outerspace_apizr-*.whl --output /tmp/apizr-worker-image.json
+        run: uv run --locked python -m scripts.qualification.packaging.build_worker_image dist/outerspace_apizr-*.whl --output /tmp/apizr-worker-image.json
       - name: Exercise actual Linux container boundaries
         env:
           APIZR_TEST_OCI_IMAGE: /tmp/apizr-worker-image.json
@@ -491,7 +499,7 @@ jobs:
       - run: uv run --locked coverage report --include='src/apizr/repository_execution/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/governed_repository/*' --fail-under=90
       - name: Installed wheel supports explicit OCI execution
-        run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --runtime-image-config /tmp/apizr-worker-image.json
+        run: uv run --locked python -m scripts.qualification.packaging.smoke_wheel dist/outerspace_apizr-*.whl --runtime-image-config /tmp/apizr-worker-image.json
       - name: Assert no invocation containers remain
         if: always()
         run: test -z "$(docker ps -aq --filter label=org.apizr.execution=oci-v1)"
@@ -570,7 +578,6 @@ jobs:
           if-no-files-found: error
           retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
-
   release-assets:
     needs: [provenance, release-target, release-delivery]
     if: >-
@@ -610,3 +617,182 @@ jobs:
           path: release-assets/
           if-no-files-found: error
           retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
+
+  attest-delivery-plugin-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/attest-delivery-plugin.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  client-collections-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/client-collections.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  extension-cleanup-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/extension-cleanup.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  extension-packaging-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/extension-packaging.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  forge-integrations-qualification:
+    needs: [scope, distributions]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' && (needs.distributions.result == 'success') }}
+    uses: ./.github/workflows/forge-integrations.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+      candidate_artifact: ${{ inputs.qualification_layout != 'independent' && needs.distributions.result == 'success' && 'release-candidate' || '' }}
+
+  governed-rest-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/governed-rest-qualification.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  homebrew-build-inputs-qualification:
+    needs: [scope, distributions]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' && (needs.distributions.result == 'success') }}
+    uses: ./.github/workflows/homebrew-build-inputs.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+      candidate_artifact: ${{ inputs.qualification_layout != 'independent' && needs.distributions.result == 'success' && 'release-candidate' || '' }}
+
+  homebrew-formula-qualification:
+    needs: [scope, distributions]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' && (needs.distributions.result == 'success') }}
+    uses: ./.github/workflows/homebrew-formula.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+      candidate_artifact: ${{ inputs.qualification_layout != 'independent' && needs.distributions.result == 'success' && 'release-candidate' || '' }}
+
+  mcp-server-plugin-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/mcp-server-plugin.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  oci-service-plugin-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/oci-service-plugin.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  onboarding-dx-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/onboarding-dx.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  security-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/security.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  mkdocs-qualification:
+    needs: [scope, distributions]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && (needs.distributions.result == 'success' || (needs.scope.outputs.product == 'false' && needs.distributions.result == 'skipped')) }}
+    # Upper bound for the existing master-only deploy job. The called build
+    # explicitly has contents: read; this caller never runs on master.
+    permissions:
+      contents: write
+      pages: read
+    uses: ./.github/workflows/mkdocs.yaml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+      candidate_artifact: ${{ inputs.qualification_layout != 'independent' && needs.distributions.result == 'success' && 'release-candidate' || '' }}
+
+  dependencies:
+    name: ${{ github.ref == 'refs/heads/master' && 'external-dependencies' || 'dependencies' }}
+    needs: [scope, security-qualification]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the shared qualification result
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
+          QUALIFICATION_RESULT: ${{ needs.security-qualification.result }}
+        run: |
+          test "$SCOPE_RESULT" = success
+          case "$PRODUCT_CHECKS" in
+            true) test "$QUALIFICATION_RESULT" = success ;;
+            false) test "$QUALIFICATION_RESULT" = skipped ;;
+            *) exit 1 ;;
+          esac
+
+  codeql:
+    name: ${{ github.ref == 'refs/heads/master' && 'external-codeql' || 'codeql' }}
+    needs: [scope, security-qualification]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the shared qualification result
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
+          QUALIFICATION_RESULT: ${{ needs.security-qualification.result }}
+        run: |
+          test "$SCOPE_RESULT" = success
+          case "$PRODUCT_CHECKS" in
+            true) test "$QUALIFICATION_RESULT" = success ;;
+            false) test "$QUALIFICATION_RESULT" = skipped ;;
+            *) exit 1 ;;
+          esac
+
+  build:
+    name: ${{ github.ref == 'refs/heads/master' && 'external-build' || 'build' }}
+    needs: [scope, mkdocs-qualification]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the shared qualification result
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
+          QUALIFICATION_RESULT: ${{ needs.mkdocs-qualification.result }}
+        run: |
+          test "$SCOPE_RESULT" = success
+          test "$QUALIFICATION_RESULT" = success

@@ -8,11 +8,12 @@ from pathlib import Path
 
 import pytest
 import yaml
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-tool = runpy.run_path(str(ROOT / "scripts/check_homebrew_qualification.py"))
-inputs = runpy.run_path(str(ROOT / "scripts/prepare_homebrew_build_inputs.py"))
+tool = runpy.run_path(str(qualification_script("check_homebrew_qualification")))
+inputs = runpy.run_path(str(qualification_script("prepare_homebrew_build_inputs")))
 
 
 def policy_and_manifest():
@@ -133,10 +134,13 @@ def test_required_workflow_matches_the_explicit_arm64_boundary():
     )
     jobs = workflow["jobs"]
     assert set(jobs) == {"scope", "candidate", "offline-build-arm64"}
-    assert jobs["scope"] == {"uses": "./.github/workflows/change-scope.yml"}
+    assert jobs["scope"] == {
+        "if": "${{ !inputs.scope_ready }}",
+        "uses": "./.github/workflows/change-scope.yml",
+    }
     assert jobs["candidate"]["needs"] == "scope"
     assert jobs["candidate"]["if"] == (
-        "${{ !cancelled() && needs.scope.outputs.product != 'false' }}"
+        "${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}"
     )
     job = jobs["offline-build-arm64"]
     assert job["needs"] == "candidate"
@@ -145,6 +149,7 @@ def test_required_workflow_matches_the_explicit_arm64_boundary():
     assert "strategy" not in job
     assert "continue-on-error" not in json.dumps(workflow)
     assert any(
-        "check_homebrew_qualification.py" in step.get("run", "")
+        "-m scripts.qualification.packaging.check_homebrew_qualification"
+        in step.get("run", "")
         for step in jobs["candidate"]["steps"]
     )

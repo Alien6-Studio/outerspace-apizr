@@ -11,12 +11,13 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 
 
 def load(name):
-    spec = importlib.util.spec_from_file_location(name, SCRIPTS / f"{name}.py")
+    spec = importlib.util.spec_from_file_location(name, str(qualification_script(name)))
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

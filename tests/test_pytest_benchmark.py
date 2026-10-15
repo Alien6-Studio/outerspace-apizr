@@ -4,9 +4,10 @@ import runpy
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).resolve().parents[1]
-TOOL = runpy.run_path(str(ROOT / "scripts/benchmark_pytest.py"))
+TOOL = runpy.run_path(str(qualification_script("benchmark_pytest")))
 
 
 def junit(path, cases, total=None):
@@ -71,7 +72,9 @@ def test_junit_refuses_empty_skipped_incomplete_or_failed_evidence(
 def test_benchmark_uses_every_current_compatibility_coverage_floor():
     gates = TOOL["coverage_gates"]()
     assert len(gates) >= 23
-    assert any("scripts/check_scope_coverage.py" in gate for gate in gates)
+    assert any(
+        "scripts.qualification.ci.check_scope_coverage" in gate for gate in gates
+    )
     assert any("--fail-under=59.5" in gate for gate in gates)
     assert sum("--fail-under=90" in gate for gate in gates) >= 21
 

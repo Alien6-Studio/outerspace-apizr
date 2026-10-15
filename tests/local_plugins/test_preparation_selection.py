@@ -8,6 +8,7 @@ from http.server import BaseHTTPRequestHandler
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 from apizr.plugins.lock.models import Target
 from apizr.plugins.preparation import selection
@@ -16,7 +17,7 @@ from apizr.plugins.preparation.selection import Candidate
 
 SPEC = importlib.util.spec_from_file_location(
     "preparation_https_fixture",
-    Path(__file__).resolve().parents[2] / "scripts/https_fixture.py",
+    str(qualification_script("https_fixture")),
 )
 assert SPEC and SPEC.loader
 https = importlib.util.module_from_spec(SPEC)

@@ -8,8 +8,9 @@ from pathlib import Path
 
 import pytest
 import yaml
+from qualification_scripts import implementation as qualification_script
 
-CHECK = runpy.run_path(str(Path(__file__).parents[1] / "scripts/check_dco.py"))
+CHECK = runpy.run_path(str(qualification_script("check_dco")))
 
 
 def commit(sha="a" * 40, message="Change\n\nSigned-off-by: Ada <ada@example.test>\n"):
@@ -195,8 +196,8 @@ def test_workflow_audits_branch_creation_without_exempting_contributions(
             "bash",
             "-e",
             "-c",
-            'uv() { shift 4; "$DCO_TEST_PYTHON" "$DCO_TEST_SCRIPT" "$@"; }\n'
-            + step["run"],
+            'uv() { shift 3; if test "$1" = -m; then shift 2; else shift; fi; '
+            '"$DCO_TEST_PYTHON" "$DCO_TEST_SCRIPT" "$@"; }\n' + step["run"],
         ],
         cwd=tmp_path,
         text=True,
