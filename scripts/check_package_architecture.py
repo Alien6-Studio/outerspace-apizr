@@ -92,6 +92,7 @@ def check(source: Path, manifest: Path) -> list[str]:
     packages = config["packages"]
     debt = config["root_debt"]
     aliases = config["compatibility"]
+    alias_modules = tuple(module_name(path) for path in aliases)
     errors: list[str] = []
     graph = config["plugin_dependencies"]
     for owner, dependencies in graph.items():
@@ -262,7 +263,7 @@ def check(source: Path, manifest: Path) -> list[str]:
                         f"{path}: experiment contracts depend on non-primitive {imported}"
                     )
             embedded = config.get("embedded_imports", {}).get(path, [])
-            if any(within(imported, module_name(old)) for old in aliases) and not any(
+            if any(within(imported, alias) for alias in alias_modules) and not any(
                 within(imported, allowed) for allowed in embedded
             ):
                 errors.append(f"{path}: imports compatibility path {imported}")
