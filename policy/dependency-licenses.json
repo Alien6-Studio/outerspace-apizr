@@ -834,6 +834,32 @@
       "version": "0.4.3"
     },
     {
+      "name": "execnet",
+      "version": "2.1.2",
+      "status": "reviewed",
+      "distribution_fingerprint": "a80a9a2373dcfa8157776801b7ce1521464359256ed63627ed056b9e92af217e",
+      "evidence_archive": {
+        "hash": "sha256:63d83bfdd9a23e35b9c6a3261412324f964c2ec8dcd8d3c6916ee9373e0befcd",
+        "url": "https://files.pythonhosted.org/packages/bf/89/780e11f9588d9e7128a3f87788354c7946a9cbb1401ad38a48c4db9a4f07/execnet-2.1.2.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "execnet-2.1.2/LICENSE",
+          "sha256": "e89eed1074d3a943198ba139b80844f5b445b860bba74a8aeadc0610566164ea"
+        }
+      ],
+      "components": [
+        {
+          "scope": "Primary project code in the reviewed source archive, used only by development test workers.",
+          "expression": "MIT",
+          "evidence_sha256": [
+            "e89eed1074d3a943198ba139b80844f5b445b860bba74a8aeadc0610566164ea"
+          ]
+        }
+      ],
+      "notes": "Reviewed the complete MIT license in the SHA-256-verified locked source archive for unmodified development-only pytest worker use. Retain upstream notices; no runtime, vendoring or distribution scope is added."
+    },
+    {
       "components": [
         {
           "evidence_sha256": [
@@ -3298,6 +3324,32 @@
       "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
       "status": "reviewed",
       "version": "2.4.0"
+    },
+    {
+      "name": "pytest-xdist",
+      "version": "3.8.0",
+      "status": "reviewed",
+      "distribution_fingerprint": "c207f8875bf9a537020e026caf33e8923bb6d60e3682daaefc765ad0cb804314",
+      "evidence_archive": {
+        "hash": "sha256:7e578125ec9bc6050861aa93f2d59f1d8d085595d6551c2c90b6f4fad8d3a9f1",
+        "url": "https://files.pythonhosted.org/packages/78/b4/439b179d1ff526791eb921115fca8e44e596a13efeda518b9d845a619450/pytest_xdist-3.8.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pytest_xdist-3.8.0/LICENSE",
+          "sha256": "36c15bf831b218a24d122e3b30256b3e1ca285716c24937fe6d8475074ee9032"
+        }
+      ],
+      "components": [
+        {
+          "scope": "Primary project code in the reviewed source archive, used only by development test workers.",
+          "expression": "MIT",
+          "evidence_sha256": [
+            "36c15bf831b218a24d122e3b30256b3e1ca285716c24937fe6d8475074ee9032"
+          ]
+        }
+      ],
+      "notes": "Reviewed the complete MIT license in the SHA-256-verified locked source archive for unmodified development-only pytest worker use. Retain upstream notices; no runtime, vendoring or distribution scope is added."
     },
     {
       "components": [

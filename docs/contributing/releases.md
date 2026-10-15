@@ -372,7 +372,7 @@ that callable workflow has no additional push trigger.
 Development pushes always require the full candidate and installed documentation
 examples, including web-only commits and branch creation. Batch related work
 before pushing. Master and master-targeted PRs retain their existing web-only
-routing. Existing PR path filters, check names, matrices and thresholds remain.
+routing. Existing PR path filters, required check names and coverage thresholds remain.
 
 Retain the exact source SHA and the successful **push** run IDs from this
 automatic set in the development qualification record. Check that every expected
@@ -381,6 +381,10 @@ run does not imply that the other entry workflows passed. Do not dispatch a
 second full batch by hand. `workflow_dispatch` remains available for a deliberate
 rerun or a comparison on the same source, and its event must be identified in
 the evidence separately from the automatic push.
+
+An additional `Pytest performance comparison` runs only when its workflow or
+`scripts/benchmark_pytest.py` changes on `0.4.6`, or on explicit dispatch. It is
+separate from the 14 qualification entries and does not replace their evidence.
 
 These development runs produce qualification previews. The existing protected
 master provenance, release-asset and documentation deployment conditions stay
@@ -408,6 +412,64 @@ development line's exact-source qualification first.
 See GitHub's [concurrency reference](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#concurrency)
 [cancellation reference](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-cancellation)
 and [Dependabot grouping reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#groups--).
+
+### Parallel full-suite qualification
+
+The four Linux compatibility jobs and both macOS full-suite jobs use
+`-n auto --maxprocesses=2 --dist=loadfile --max-worker-restart=0`. Each worker
+collects the complete test directory with its nested fixtures; file scheduling
+keeps module fixtures together without rewriting test identities. The cap of two
+limits competing process starts in deadline-sensitive tests. Worker crashes fail
+the run without automatic restart. Local serial reproduction uses `-n 0`.
+
+Pytest-cov combines worker data into the existing `.coverage`, `coverage.json`
+and Linux `coverage.xml`; JUnit remains `tests.xml`. All 23 compatibility coverage
+commands and the two macOS coverage commands remain in place, including the
+global, legacy, domain and selected line/branch floors. Artifact names and the
+17 protected check contexts are unchanged.
+
+The resource audit for parallel execution is:
+
+| Resource | Isolation and scheduling |
+| --- | --- |
+| HTTP/TLS and SSH fixtures | Loopback port 0, per-test keys/configuration, temporary roots and owned process groups; parallel allowed |
+| Unix sockets, agents, fake OCI daemons | Unique temporary directories and socket paths; parallel allowed |
+| Environment/import/working-directory mutations | Confined to a worker process or a disposable source copy; file fixtures remain together |
+| Real Docker worker integration (`worker_image` fixture) | Explicit `serial` marker, including dependent fixtures; `APIZR_TEST_OCI_IMAGE` rejects distributed pytest before opening the image inventory |
+
+No tests are deselected for parallel runs. The real Docker and repeated kernel
+boundary cases stay in the existing serial `oci-isolation` job with its image,
+coverage gates and repetitions unchanged. Their ordinary full-suite skips remain
+visible when no worker image is configured.
+
+`scripts/benchmark_pytest.py --output /absolute/new/directory` runs serial then
+parallel on the same checkout, interpreter, lock and runner. It retains both
+JUnit/JSON/XML reports, logs, commands, durations, source SHA and lock digest.
+Every compatibility coverage gate runs against each independent coverage data
+file. It rejects changed test identities, multiplicities or pass/skip outcomes,
+failed/incomplete reports, and a duration reduction below 40%. The dedicated
+workflow measures Python 3.14 on Ubuntu and macOS. One ordered pair is a bounded
+comparison, not a statistical estimate: the second run may benefit from caches,
+and runner load can vary. Read its retained summary before claiming a measured
+gain; historical runs on different commits are not the before/after pair.
+
+Satellite workflows retain these distinct macOS proofs while removing six
+redundant Python 3.11 cells:
+
+| Satellite job | Retained macOS Python | Removed cell and remaining evidence |
+| --- | --- | --- |
+| MCP stdio | 3.14 | 3.11; all four Linux versions plus full-suite and installed-target macOS 3.11 remain |
+| MCP generated recovery | 3.11 | None; already one macOS version, retains its fixed stdio/HTTP recovery series |
+| Extension cleanup and Git/worker cleanup | 3.14 | One 3.11 cell each; Linux 3.11/3.14 and all 25 repetitions per remaining cell remain |
+| Extension packaging | 3.14 | 3.11; Linux 3.11–3.14, macOS Homebrew and installed candidates remain |
+| Client collections | 3.14 | 3.11; Linux 3.11/3.14 and actual vendor-tool validation remain |
+| Onboarding | 3.14 | 3.11; Linux 3.11/3.14 with real bash/zsh/fish and installed proofs remain |
+
+The main macOS 3.11/3.14 full suites and installed-target jobs remain. Native
+preparation's ARM/Intel and libc-specific proofs are distinct and unchanged.
+Cleanup keeps 25 macOS samples: process-group, pipe and SSH cleanup are OS-sensitive
+and a single pass would discard repeated native evidence. Removing duplicate
+Python cells reduces runner contention without making that tradeoff.
 
 ## Documentation publication
 

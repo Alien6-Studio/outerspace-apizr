@@ -43,13 +43,13 @@ maintainer has resolved the issue and recorded the decision. Do not treat packag
 metadata or an SBOM entry as a legal compatibility determination.
 
 The required `dependencies` job runs `scripts/check_dependency_licenses.py`.
-Its reviewed baseline covers all **147 third-party versions** in the universal
+Its reviewed baseline covers all **149 third-party versions** in the universal
 lock, including platform alternatives and every dependency group:
 
 - `policy/dependency-licenses.json` records component expressions, review scope,
   notes, the exact evidence archive and its license-file hashes.
-- `policy/dependency-license-texts.json` preserves 211 distinct UTF-8 notice texts
-  from 278 archive paths, including original line endings inside JSON strings.
+- `policy/dependency-license-texts.json` preserves 213 distinct UTF-8 notice texts
+  from 280 archive paths, including original line endings inside JSON strings.
 - `policy/dependency-policy.json` defines the SPDX allowlist, version-specific
   exceptions and named-package denials with upstream references.
 

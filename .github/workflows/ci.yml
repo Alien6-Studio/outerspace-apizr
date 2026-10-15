@@ -242,7 +242,7 @@ jobs:
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
         if: env.PRODUCT_CHECKS != 'false'
-      - run: uv run --locked pytest --cov --cov-report=term-missing --cov-report=json:coverage.json --cov-report=xml:coverage.xml --junitxml=tests.xml
+      - run: uv run --locked pytest -n auto --maxprocesses=2 --dist=loadfile --max-worker-restart=0 --cov --cov-report=term-missing --cov-report=json:coverage.json --cov-report=xml:coverage.xml --junitxml=tests.xml
         if: env.PRODUCT_CHECKS != 'false'
       - name: Protect the measured legacy coverage separately
         if: env.PRODUCT_CHECKS != 'false'
@@ -331,7 +331,7 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
         if: env.PRODUCT_CHECKS != 'false'
-      - run: uv run --locked pytest --cov --cov-report=term-missing --cov-report=json:coverage.json --junitxml=tests.xml
+      - run: uv run --locked pytest -n auto --maxprocesses=2 --dist=loadfile --max-worker-restart=0 --cov --cov-report=term-missing --cov-report=json:coverage.json --junitxml=tests.xml
         if: env.PRODUCT_CHECKS != 'false'
       - name: Protect selected evidence line and branch coverage separately
         if: env.PRODUCT_CHECKS != 'false'

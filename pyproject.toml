@@ -81,6 +81,7 @@ dev = [
     "packaging>=26.3,<27",
     "pytest>=9.0.3,<10",
     "pytest-cov>=7,<8",
+    "pytest-xdist>=3.8,<4",
     "httpx>=0.28,<1",
     "ruff>=0.11,<1",
     "pyright>=1.1.400,<2",
@@ -109,6 +110,7 @@ include = ["/src/apizr", "/pyproject.toml", "/README.md", "/CHANGELOG.md", "/LIC
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --cov-config=pyproject.toml"
+markers = ["serial: real shared Docker worker boundary; requires -n 0 when configured"]
 
 [tool.ruff]
 target-version = "py311"

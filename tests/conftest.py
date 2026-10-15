@@ -1,11 +1,27 @@
 """Make shared qualification fixtures importable with pytest's console entrypoint."""
 
+import os
 import sys
 from pathlib import Path
 
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+
+def pytest_configure(config):
+    """Keep the real shared Docker boundary qualification in one process."""
+    if os.environ.get("APIZR_TEST_OCI_IMAGE") and (
+        config.getoption("numprocesses", default=0)
+        or config.getoption("dist", default="no") != "no"
+    ):
+        raise pytest.UsageError("APIZR_TEST_OCI_IMAGE requires serial pytest (-n 0)")
+
+
+def pytest_collection_modifyitems(items):
+    for item in items:
+        if "worker_image" in item.fixturenames:
+            item.add_marker(pytest.mark.serial)
 
 
 @pytest.fixture
