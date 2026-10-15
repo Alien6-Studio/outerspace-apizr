@@ -98,6 +98,7 @@ def write_signing_policy(python, store, path, arguments, command):
         command(
             python,
             "-I",
+            "-B",
             "-c",
             "import json,sys; from apizr.contracts.publication import Tool; "
             "from apizr.workspace.verification import capture_verification; "
