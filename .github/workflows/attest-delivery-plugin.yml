@@ -4,6 +4,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
@@ -13,7 +19,7 @@ jobs:
 
   delivery-receipts:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -31,7 +37,7 @@ jobs:
         if: always()
         with:
           name: attest-delivery-proof
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: |
             attest-coverage.json

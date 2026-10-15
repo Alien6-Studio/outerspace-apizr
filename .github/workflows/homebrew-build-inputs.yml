@@ -1,10 +1,14 @@
 name: Homebrew build inputs
 
 on:
-  push:
-    branches: [chore/homebrew-build-closure]
   pull_request:
   workflow_dispatch:
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -15,7 +19,7 @@ jobs:
 
   candidate:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -46,13 +50,13 @@ jobs:
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: homebrew-build-candidate
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: ${{ runner.temp }}/candidate
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: homebrew-build-wheelhouse
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: ${{ runner.temp }}/inputs
 
@@ -96,7 +100,7 @@ jobs:
         if: always()
         with:
           name: homebrew-build-proof-macos-26
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: |
             ${{ runner.temp }}/homebrew-build-proof/proof.json

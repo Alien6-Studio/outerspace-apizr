@@ -8,6 +8,12 @@ on:
     - cron: '23 6 * * 1'
   workflow_dispatch:
 
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
@@ -17,7 +23,7 @@ jobs:
 
   dependencies:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -49,11 +55,11 @@ jobs:
             dependency-license-report.json
             node-dependency-audit.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   codeql:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -74,4 +80,4 @@ jobs:
           name: codeql-python-sarif
           path: codeql-results/*.sarif
           if-no-files-found: error
-          retention-days: 14
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

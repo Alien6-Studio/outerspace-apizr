@@ -1,10 +1,14 @@
 name: Forge integrations
 
 on:
-  push:
-    branches: [feature/forge-integrations]
   pull_request:
   workflow_dispatch:
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -15,7 +19,7 @@ jobs:
 
   candidate:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -35,12 +39,12 @@ jobs:
         with:
           name: forge-candidate
           path: ${{ runner.temp }}/forge-candidate
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
 
   contracts:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -67,7 +71,7 @@ jobs:
             forge-tests.xml
             forge-coverage.json
             forge-parity.json
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
 
   composite:
@@ -164,5 +168,5 @@ jobs:
             .apizr-ci-build-rest/
             .apizr-ci-build-mcp/
             ${{ runner.temp }}/forge-proof/forge-proof.json
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error

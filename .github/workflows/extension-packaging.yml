@@ -4,6 +4,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
@@ -13,7 +19,7 @@ jobs:
 
   uv-tool:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     strategy:
       fail-fast: false
       matrix:
@@ -49,11 +55,11 @@ jobs:
             ${{ runner.temp }}/apizr-extension-proof/update/backend-network.jsonl
             ${{ runner.temp }}/apizr-extension-proof/update/update-summary.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   homebrew:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: macos-latest
     env:
       HOMEBREW_NO_AUTO_UPDATE: '1'
@@ -99,4 +105,4 @@ jobs:
             ${{ runner.temp }}/apizr-extension-proof/homebrew-receipt.json
             ${{ runner.temp }}/apizr-brew/dependency-evidence.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

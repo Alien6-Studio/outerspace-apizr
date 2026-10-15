@@ -4,6 +4,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
@@ -13,12 +19,12 @@ jobs:
 
   preparation-qualification:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     uses: ./.github/workflows/plugin-preparation-qualification.yml
 
   stdio:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -62,7 +68,7 @@ jobs:
         if: always()
         with:
           name: mcp-stdio-${{ matrix.os }}-python-${{ matrix.python }}
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: |
             mcp-tests.xml
@@ -79,7 +85,7 @@ jobs:
 
   preparation-intel:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     timeout-minutes: 15
     runs-on: macos-15-intel
     steps:
@@ -94,7 +100,7 @@ jobs:
         if: always()
         with:
           name: preparation-macos-intel-python-3.14
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: |
             ${{ runner.temp }}/preparation-intel/*.json
@@ -103,7 +109,7 @@ jobs:
 
   generated-recovery:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -124,6 +130,6 @@ jobs:
         if: always()
         with:
           name: mcp-recovery-${{ matrix.os }}-python-${{ matrix.python }}
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: ${{ runner.temp }}/mcp-recovery

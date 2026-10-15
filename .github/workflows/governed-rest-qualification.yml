@@ -1,14 +1,18 @@
 name: Governed REST qualification
 
 on:
-  push:
-    branches: [fix/042-macos-governed-rest]
   pull_request:
     paths:
       - tests/governed/test_transports.py
       - tests/execution/test_deadline.py
       - .github/workflows/governed-rest-qualification.yml
   workflow_dispatch:
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -41,6 +45,6 @@ jobs:
         if: always()
         with:
           name: governed-rest-macos-python-3.14
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: rest-qualification/*.xml

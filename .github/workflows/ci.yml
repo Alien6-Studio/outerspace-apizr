@@ -6,6 +6,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
@@ -15,7 +21,7 @@ jobs:
 
   distributions:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -33,19 +39,19 @@ jobs:
           name: python-distributions
           path: ${{ runner.temp }}/candidate/dist/*
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: distribution-checksums
           path: ${{ runner.temp }}/candidate/SHA256SUMS.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-candidate
           path: ${{ runner.temp }}/candidate/
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   release-target:
     needs: distributions
@@ -110,7 +116,7 @@ jobs:
         if: always()
         with:
           name: release-target-${{ matrix.os }}-${{ matrix.python }}
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: |
             ${{ runner.temp }}/target-export.tar.gz
@@ -143,13 +149,13 @@ jobs:
         if: always()
         with:
           name: release-delivery
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: ${{ runner.temp }}/candidate-delivery/
 
   quality:
     needs: scope
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     # Preserve required contexts and mixed unscoped checks; bind once for steps.
     env:
@@ -204,7 +210,7 @@ jobs:
 
   compatibility:
     needs: scope
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -297,11 +303,11 @@ jobs:
             coverage.json
             coverage.xml
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   macos:
     needs: scope
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ${{ needs.scope.outputs.product == 'false' && 'ubuntu-latest' || 'macos-latest' }}
     strategy:
       fail-fast: false
@@ -340,11 +346,11 @@ jobs:
             tests.xml
             coverage.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   security-mutations:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -361,7 +367,7 @@ jobs:
           name: security-mutation-evidence
           path: mutation-evidence/
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   package:
     needs: distributions
@@ -402,11 +408,11 @@ jobs:
           name: build-evidence
           path: release-evidence/
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   container:
     needs: scope
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -500,7 +506,7 @@ jobs:
             /tmp/apizr-worker-image.json
             /tmp/apizr-worker-image.inventory.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   provenance:
     # New evidence is limited to the active protected development branch.
@@ -562,13 +568,13 @@ jobs:
           name: build-attestations
           path: attestations/
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
 
   release-assets:
     needs: [provenance, release-target, release-delivery]
     if: >-
-      always() && needs.release-target.result == 'success' &&
+      !cancelled() && needs.release-target.result == 'success' &&
       needs.release-delivery.result == 'success' &&
       (needs.provenance.result == 'success' || github.event_name == 'pull_request')
     runs-on: ubuntu-latest
@@ -603,4 +609,4 @@ jobs:
           name: release-assets
           path: release-assets/
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

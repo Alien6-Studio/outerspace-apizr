@@ -4,6 +4,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
@@ -13,7 +19,7 @@ jobs:
 
   cleanup:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -36,11 +42,11 @@ jobs:
           name: cleanup-${{ matrix.os }}-${{ matrix.python }}
           path: ${{ runner.temp }}/extension-cleanup
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   git-worker-cleanup:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -71,4 +77,4 @@ jobs:
           name: git-worker-cleanup-${{ matrix.os }}-${{ matrix.python }}
           path: ${{ runner.temp }}/git-worker-cleanup
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

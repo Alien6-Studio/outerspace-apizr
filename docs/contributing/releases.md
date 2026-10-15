@@ -337,6 +337,36 @@ Complete against the final commit; historical green runs are not sufficient.
       for the exact delivery; receipt and public verification material are archived.
 - [ ] PyPI file hashes and fresh index installation are verified after publication.
 
+## Development iteration and PR qualification
+
+On the `0.4.6` development line, related changes are developed and reviewed in
+coherent batches. Run relevant tests and structural/security checks while the
+batch evolves, then qualify the complete candidate once before accepting that
+batch. The complete version/platform matrix, coverage floors and final release
+qualification remain required. Dependency refreshes include the lock, licence
+inventory and Homebrew qualification metadata in the same batch.
+
+Every PR qualification workflow supersedes older runs for the same PR and
+workflow. Push, scheduled and manually dispatched runs use unique concurrency
+groups, preserving both pending and running qualification evidence. PR artifacts
+are kept for seven days; retained qualification artifacts stay at 90 days.
+Qualification jobs use `!cancelled()` instead of a job-level `always()` so an
+obsolete PR run can stop. Failure-artifact steps retain their existing behavior.
+The documentation deployment's existing serialization and site-input retention
+remain separate.
+
+Dependabot groups compatible minor/patch uv updates and proposes Actions updates
+monthly as one group, keeping CodeQL init/analyze versions together. Its active
+configuration is read from the default branch: the development configuration
+does not modify the ten existing master-targeted PRs or enable their merge.
+The required `codeql` context and native CodeQL alert publication are preserved;
+scanner consolidation needs to account for the current branch rules and the
+development line's exact-source qualification first.
+
+See GitHub's [concurrency reference](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#concurrency)
+[cancellation reference](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-cancellation)
+and [Dependabot grouping reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#groups--).
+
 ## Documentation publication
 
 Documentation is independent of PyPI and follows `master`; it is not a frozen

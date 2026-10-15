@@ -208,12 +208,12 @@ def test_required_matrix_checks_are_emitted_for_web_changes():
         ("macos", ["3.11", "3.14"]),
     ):
         job = workflow["jobs"][name]
-        assert job["if"] == "always()"
+        assert job["if"] == "${{ !cancelled() }}"
         assert job["strategy"]["matrix"]["python"] == versions
         assert job["env"]["PRODUCT_CHECKS"] == "${{ needs.scope.outputs.product }}"
         assert all("env.PRODUCT_CHECKS" in step["if"] for step in job["steps"])
     assert "ubuntu-latest" in workflow["jobs"]["macos"]["runs-on"]
-    assert workflow["jobs"]["quality"]["if"] == "always()"
+    assert workflow["jobs"]["quality"]["if"] == "${{ !cancelled() }}"
 
 
 def test_web_allowlist_does_not_overlap_published_sources():
