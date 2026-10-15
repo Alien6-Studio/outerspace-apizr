@@ -1,17 +1,24 @@
 """Convert notebooks without executing their cells."""
 
 import ast
+import datetime
 import io
 import json
+import os
+import sys
 from pathlib import Path
 
-from apizr.capabilities.source import MAX_NOTEBOOK_BYTES, check_tree, notebook_text
+from apizr.capabilities.source import (
+    MAX_NOTEBOOK_BYTES,
+    check_tree,
+    notebook_text,
+    read_notebook,
+)
 from apizr.environment.extras import require
 from apizr.interfaces.files import write_new_text
 from apizr.modules.notebook_transformr.configuration import (
     NotebookTransformrConfiguration,
 )
-from apizr.workspace.files import read_regular
 
 
 class NotebookTransformr:
@@ -29,10 +36,10 @@ class NotebookTransformr:
         from nbformat import ValidationError, reads, validate
 
         # nbformat assumes a mapping and otherwise raises an internal AttributeError.
+        filename = None
         if isinstance(content, (str, Path)):
-            raw = notebook_text(
-                read_regular(Path(content).resolve(strict=True), MAX_NOTEBOOK_BYTES)
-            )
+            filename = str(content)
+            raw = notebook_text(read_notebook(content))
             content = io.StringIO(raw)
         else:
             raw = notebook_text(content.read(MAX_NOTEBOOK_BYTES + 1))
@@ -73,10 +80,26 @@ class NotebookTransformr:
                     raise ValueError("Notebook selection contains no code cells")
                 source, resources = self.exporter.from_notebook_node(notebook)
             else:
-                source, resources = (
-                    self.exporter.from_filename(str(content))
-                    if isinstance(content, (str, Path))
-                    else self.exporter.from_file(content)
+                resources = None
+                if filename is not None:
+                    # Keep nbconvert's filename metadata while exporting the
+                    # already admitted snapshot, without reopening source bytes.
+                    directory, basename = os.path.split(filename)
+                    modified = datetime.datetime.fromtimestamp(
+                        os.path.getmtime(filename), tz=datetime.timezone.utc
+                    )
+                    date_format = (
+                        "%B %d, %Y" if sys.platform == "win32" else "%B %-d, %Y"
+                    )
+                    resources = {
+                        "metadata": {
+                            "name": os.path.splitext(basename)[0],
+                            "path": directory,
+                            "modified_date": modified.strftime(date_format),
+                        }
+                    }
+                source, resources = self.exporter.from_file(
+                    content, resources=resources
                 )
         except ValidationError as exc:
             raise ValueError("Invalid notebook structure") from exc

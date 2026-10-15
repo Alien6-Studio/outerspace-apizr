@@ -17,13 +17,27 @@ MAX_NOTEBOOK_NODES = 100_000
 MAX_NOTEBOOK_DEPTH = 64
 
 
+def _read_selected(path: Path, limit: int) -> bytes:
+    try:
+        resolved = path.resolve(strict=True)
+    except RuntimeError:
+        # Python 3.11/3.12 report symlink loops as RuntimeError rather than OSError.
+        raise ValueError("source_path_invalid") from None
+    return read_regular(resolved, limit)
+
+
+def read_notebook(path: str | Path) -> bytes:
+    """Admit notebook bytes without imposing a suffix on the legacy converter."""
+    return _read_selected(Path(path), MAX_NOTEBOOK_BYTES)
+
+
 def read_source(path: str | Path) -> bytes:
     """Follow the explicitly selected alias, then read a bounded regular file."""
     selected = Path(path)
     if selected.suffix not in {".py", ".ipynb"}:
         raise ValueError("Source supports one .py or .ipynb file")
-    return read_regular(
-        selected.resolve(strict=True),
+    return _read_selected(
+        selected,
         MAX_SOURCE_BYTES if selected.suffix == ".py" else MAX_NOTEBOOK_BYTES,
     )
 

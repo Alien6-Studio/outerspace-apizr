@@ -4,6 +4,7 @@ import ast
 import io
 import json
 import os
+from pathlib import Path
 
 import pytest
 from hypothesis import given
@@ -167,6 +168,73 @@ def test_source_kind_and_encoded_notebook_size_are_checked(tmp_path):
         read_source(tmp_path / "wrong.txt")
     with pytest.raises(ValueError, match="json_byte_limit"):
         preflight_json('"éé"', max_bytes=5, max_nodes=10, max_depth=2)
+
+
+@pytest.mark.parametrize("suffix", [".py", ".ipynb"])
+def test_source_alias_loop_has_controlled_cli_failure(tmp_path, capsys, suffix):
+    from apizr.cli import main
+
+    path = tmp_path / ("loop" + suffix)
+    path.symlink_to(path)
+    assert main(["inspect", str(path)]) == 2
+    assert "Traceback" not in capsys.readouterr().err
+    if suffix == ".ipynb":
+        with pytest.raises((ValueError, OSError)):
+            NotebookTransformr().convert_notebook(path)
+
+
+def test_legacy_python_resolver_failure_becomes_a_source_error(tmp_path, monkeypatch):
+    def cycle(*args, **kwargs):
+        raise RuntimeError("legacy symlink loop")
+
+    with monkeypatch.context() as guard:
+        guard.setattr(Path, "resolve", cycle)
+        with pytest.raises(ValueError, match="source_path_invalid"):
+            read_source(tmp_path / "loop.py")
+
+
+def test_bounded_notebook_snapshot_preserves_filename_resources(tmp_path):
+    # The historical converter accepts an explicitly selected extensionless path.
+    path = tmp_path / "notebook-without-suffix"
+    path.write_text(
+        json.dumps({"nbformat": 4, "nbformat_minor": 5, "metadata": {}, "cells": []})
+    )
+    converter = NotebookTransformr()
+    expected_source, expected_resources = converter.exporter.from_filename(str(path))
+    source, resources = converter.convert_notebook(path)
+    assert source == expected_source
+    assert resources["metadata"] == expected_resources["metadata"]
+
+
+def test_notebook_export_uses_admitted_snapshot_after_file_changes(
+    tmp_path, monkeypatch
+):
+    from apizr.modules.notebook_transformr.transformr import nbTransformr as module
+
+    path = tmp_path / "snapshot.ipynb"
+    raw = json.dumps(
+        {"nbformat": 4, "nbformat_minor": 5, "metadata": {}, "cells": []}
+    ).encode()
+    path.write_bytes(raw)
+    original_read = module.read_notebook
+    converter = NotebookTransformr()
+    original_export = converter.exporter.from_file
+
+    def read_and_replace(selected):
+        admitted = original_read(selected)
+        path.write_bytes(b"not JSON: changed after admission")
+        return admitted
+
+    def export_snapshot(content, **kwargs):
+        assert isinstance(content, io.StringIO)
+        assert content.getvalue() == raw.decode()
+        return original_export(content, **kwargs)
+
+    monkeypatch.setattr(module, "read_notebook", read_and_replace)
+    monkeypatch.setattr(converter.exporter, "from_file", export_snapshot)
+    source, resources = converter.convert_notebook(path)
+    assert isinstance(source, str)
+    assert resources["metadata"]["name"] == "snapshot"
 
 
 @given(

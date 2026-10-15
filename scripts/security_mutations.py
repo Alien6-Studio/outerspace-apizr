@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "notebook-admitted-snapshot-export",
+        "src/apizr/modules/notebook_transformr/transformr/nbTransformr.py",
+        "                source, resources = self.exporter.from_file(\n                    content, resources=resources\n                )",
+        "                source, resources = self.exporter.from_filename(\n                    filename, resources=resources\n                )",
+        "tests/capabilities/test_source_bounds.py::test_notebook_export_uses_admitted_snapshot_after_file_changes",
+    ),
+    Mutation(
         "wheel-zip64-directory-selection",
         "src/apizr/plugins/artifacts/central_directory.py",
         '                and data[location : location + 4] == b"PK\\x06\\x06"',
