@@ -1,21 +1,13 @@
 """Static output selections and explicit, read-only observations of current bytes."""
 
-import ast
 import errno
 from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import Field, TypeAdapter, field_validator
+from pydantic import Field, field_validator
 
 from apizr.experiments._files import FileFailure, FileFailureCode, fingerprint_file
-from apizr.experiments._lexical import (
-    MAX_DEPTH,
-    MAX_NODES,
-    MAX_SOURCE_BYTES,
-    LexicalVisitor,
-    SourceLimit,
-    bounded_tree,
-)
+from apizr.experiments._lexical import MAX_SOURCE_BYTES as MAX_SOURCE_BYTES
 from apizr.experiments.inputs import FingerprintPolicy
 from apizr.experiments.model import (
     EvidenceOrigin,
@@ -26,7 +18,6 @@ from apizr.experiments.model import (
     ordered_evidence,
 )
 
-_REFERENCE = TypeAdapter[str](Reference)
 OutputDiagnosticCode = Literal[
     "dynamic_output_reference",
     "nonportable_output_reference",
@@ -212,107 +203,10 @@ def fingerprint_output(
     return fingerprint_outputs(root, (selection,), policy=policy)
 
 
-class _Discovery(LexicalVisitor):
-    def __init__(self, source: str) -> None:
-        super().__init__(
-            lambda name: name == "joblib", lambda name: name == "joblib.dump"
-        )
-        self.source = source
-        self.signals: list[OutputSignal] = []
-        self.diagnostics: list[OutputDiagnostic] = []
-
-    def diagnostic(self, code: OutputDiagnosticCode, node: ast.Call) -> None:
-        self.diagnostics.append(
-            OutputDiagnostic(
-                code=code, source=self.source, line=node.lineno, column=node.col_offset
-            )
-        )
-
-    def visit_Call(self, node: ast.Call) -> None:
-        if self.resolve_call(node) == "joblib.dump":
-            self.output_call(node)
-        self.generic_visit(node)
-
-    def output_call(self, node: ast.Call) -> None:
-        parameters = ("value", "filename", "compress", "protocol")
-        keywords = {k.arg: k.value for k in node.keywords}
-        if (
-            len(node.args) > 4
-            or any(isinstance(arg, ast.Starred) for arg in node.args)
-            or len(keywords) != len(node.keywords)
-            or any(
-                key not in parameters or key in parameters[: len(node.args)]
-                for key in keywords
-            )
-            or (not node.args and "value" not in keywords)
-        ):
-            self.diagnostic("unsupported_output_arguments", node)
-            return
-        expression = node.args[1] if len(node.args) >= 2 else keywords.get("filename")
-        if expression is None:
-            self.diagnostic("unsupported_output_arguments", node)
-            return
-        if not isinstance(expression, ast.Constant) or not isinstance(
-            expression.value, str
-        ):
-            self.diagnostic("dynamic_output_reference", node)
-            return
-        try:
-            reference = _REFERENCE.validate_python(expression.value, strict=True)
-        except (ValueError, UnicodeError):
-            self.diagnostic("nonportable_output_reference", node)
-            return
-        try:
-            declaration = OutputDeclaration(name=reference, reference=reference)
-        except (ValueError, UnicodeError):
-            self.diagnostic("output_name_required", node)
-            return
-        self.signals.append(
-            OutputSignal(
-                declaration=declaration,
-                source=self.source,
-                line=node.lineno,
-                column=node.col_offset,
-            )
-        )
-
-
 def discover_outputs(
     source: str | bytes, *, source_reference: str
 ) -> OutputDiscoveryResult:
-    """Recognize joblib.dump literal filename arguments, without observing any file."""
-    try:
-        _REFERENCE.validate_python(source_reference, strict=True)
-        tree = bounded_tree(
-            source, max_bytes=MAX_SOURCE_BYTES, max_nodes=MAX_NODES, max_depth=MAX_DEPTH
-        )
-    except SourceLimit as error:
-        return OutputDiscoveryResult(
-            diagnostics=(
-                OutputDiagnostic(
-                    code="output_discovery_limit",
-                    source=source_reference if error.parsed else None,
-                ),
-            )
-        )
-    except (ValueError, UnicodeError, SyntaxError, RecursionError, TypeError):
-        return OutputDiscoveryResult(
-            diagnostics=(OutputDiagnostic(code="output_source_invalid"),)
-        )
-    discovery = _Discovery(source_reference)
-    discovery.visit(tree)
-    if len(discovery.signals) > 256 or len(discovery.diagnostics) > 512:
-        return OutputDiscoveryResult(
-            diagnostics=(
-                OutputDiagnostic(
-                    code="output_discovery_limit", source=source_reference
-                ),
-            )
-        )
-    return OutputDiscoveryResult(
-        signals=tuple(discovery.signals),
-        diagnostics=tuple(discovery.diagnostics),
-        relevant_distributions=("joblib",)
-        if discovery.signals or discovery.diagnostics
-        else (),
-    )
+    """Dispatch to the official built-in recognizer, installed with the core."""
+    from apizr.scientific_providers.builtin.outputs import discover_outputs as recognize
+
+    return recognize(source, source_reference=source_reference)

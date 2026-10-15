@@ -1,13 +1,8 @@
 """Bounded scientific evidence provider contracts and recognition."""
 
-from .admission import (
+from .contracts import (
     DESCRIBE_OPERATION,
     RECOGNIZE_OPERATION,
-    admit_extension_response,
-    admit_result,
-    extension_arguments,
-)
-from .contracts import (
     ProducerIdentity,
     ProviderDescriptor,
     ProviderDiagnostic,
@@ -19,6 +14,9 @@ from .contracts import (
     SDKAdapterDescriptor,
     SDKReporter,
     StaticProvider,
+    admit_extension_response,
+    admit_result,
+    extension_arguments,
 )
 
 __all__ = [

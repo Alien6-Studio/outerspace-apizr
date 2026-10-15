@@ -16,8 +16,8 @@ from apizr.experiments import (
     RandomnessResult,
     _lexical,
     discover_randomness,
-    randomness,
 )
+from apizr.scientific_providers.builtin import randomness
 
 
 def scan(source):

@@ -9,7 +9,6 @@ from apizr.capabilities.inspection import Inspection, inspect_source
 from apizr.capabilities.model import Digest
 from apizr.capabilities.types import logical_module
 from apizr.experiments._lexical import MAX_SOURCE_BYTES, SourceLimit, bounded_tree
-from apizr.experiments._locations import trace_locations
 from apizr.experiments.environment import discover_environment_specs
 from apizr.experiments.inputs import (
     FingerprintPolicy,
@@ -43,6 +42,7 @@ from apizr.repository.model import CapabilityEntry, Catalog
 from apizr.repository_readiness import RepositoryReadinessReport, validate_report
 from apizr.repository_views.model import CapabilityFocus, ReadinessDetail, ViewQuery
 from apizr.repository_views.projection import readiness_view
+from apizr.scientific_providers.builtin.locations import trace_locations
 from apizr.workspace.files import absolute_path, read_regular
 
 MAX_NOTEBOOK_BYTES = 16 * 1024 * 1024

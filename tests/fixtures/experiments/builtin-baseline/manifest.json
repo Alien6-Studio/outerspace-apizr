@@ -1,0 +1,85 @@
+{
+  "source_commit": "62f3ec7bbe4118102d454f5d5a00fa8ab9565c2f",
+  "cases": [
+    {
+      "name": "inspection-python",
+      "fixture": "tests/fixtures/experiments/inspection",
+      "target": "train.py",
+      "artifact": "inspection-python.json",
+      "sha256": "9bfdfc8b65ec91c97bf2c9e900df6b613ed7394984cdcd63235439942f3d83f3",
+      "size": 10886
+    },
+    {
+      "name": "inspection-python",
+      "fixture": "tests/fixtures/experiments/inspection",
+      "target": "train.py",
+      "artifact": "inspection-python.txt",
+      "sha256": "bc7b507c5448568b4ea0d2e1a9efd799c008533ac4ce74dd40754241c05d60cc",
+      "size": 1216
+    },
+    {
+      "name": "inspection-notebook",
+      "fixture": "tests/fixtures/experiments/inspection",
+      "target": "fraud_detection.ipynb",
+      "artifact": "inspection-notebook.json",
+      "sha256": "c344b9ee554a36acfce6e0d181b96a7a81a999261006f0a42a7abb5cf2c04924",
+      "size": 11487
+    },
+    {
+      "name": "inspection-notebook",
+      "fixture": "tests/fixtures/experiments/inspection",
+      "target": "fraud_detection.ipynb",
+      "artifact": "inspection-notebook.txt",
+      "sha256": "c31e9bb1430023763495fd0e31c1383fcdeb2bd0fee3d420978c9a363f6ef33a",
+      "size": 1321
+    },
+    {
+      "name": "input-python",
+      "fixture": "tests/fixtures/experiments/inputs",
+      "target": "train.py",
+      "artifact": "input-python.json",
+      "sha256": "1aaea0b18bf3a1e9c2a0146c7bb3deadec716c225d02175d934a23e1910baa39",
+      "size": 3766
+    },
+    {
+      "name": "input-python",
+      "fixture": "tests/fixtures/experiments/inputs",
+      "target": "train.py",
+      "artifact": "input-python.txt",
+      "sha256": "dae5d4e7cff4d6434dbe873ecffa90675598032c96ede0fc5a369c85dc5bd2c5",
+      "size": 710
+    },
+    {
+      "name": "results-python",
+      "fixture": "tests/fixtures/experiments/results",
+      "target": "train.py",
+      "artifact": "results-python.json",
+      "sha256": "efa597fde5f77d44c504bdb8f5f1c42d68ac5abe80341032f27aa5f162323646",
+      "size": 5340
+    },
+    {
+      "name": "results-python",
+      "fixture": "tests/fixtures/experiments/results",
+      "target": "train.py",
+      "artifact": "results-python.txt",
+      "sha256": "6ed5f0d2f26eb009f34151c3e93806d941eb8c1fb705d8f6db818125eed1d70d",
+      "size": 914
+    },
+    {
+      "name": "fraud-example",
+      "fixture": "examples/data-science/fraud-detection",
+      "target": "fraud_detection.ipynb",
+      "artifact": "fraud-example.json",
+      "sha256": "acf34e68b3600917eda449bac9e81ad8f66117c887a293a60c6b1e0e73c64c7f",
+      "size": 10060
+    },
+    {
+      "name": "fraud-example",
+      "fixture": "examples/data-science/fraud-detection",
+      "target": "fraud_detection.ipynb",
+      "artifact": "fraud-example.txt",
+      "sha256": "fd88319b3fd4ddaedbf375eb89c9e39b93b632016a908ab609c8f75753991b78",
+      "size": 1335
+    }
+  ]
+}

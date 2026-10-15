@@ -28,6 +28,20 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "builtin-provider-identity",
+        "src/apizr/scientific_providers/builtin/provider.py",
+        "        if request.provider.identity != self.descriptor.identity:",
+        "        if False:",
+        "tests/scientific_providers/test_builtin.py::test_reference_provider_rejects_other_identity_and_aggregate_limits",
+    ),
+    Mutation(
+        "builtin-provider-admission",
+        "src/apizr/scientific_providers/builtin/provider.py",
+        "        return admit_result(result, request=request)",
+        "        return result",
+        "tests/scientific_providers/test_builtin.py::test_reference_provider_rejects_other_identity_and_aggregate_limits",
+    ),
+    Mutation(
         "scientific-provider-python-line-boundary",
         "src/apizr/experiments/provider_source.py",
         '.split("\\n")',
@@ -36,14 +50,14 @@ MUTATIONS = (
     ),
     Mutation(
         "scientific-provider-source-digest",
-        "src/apizr/scientific_providers/admission.py",
+        "src/apizr/scientific_providers/contracts/admission.py",
         "            or result.source_digest != request.source.digest\n",
         "",
         "tests/scientific_providers/test_contracts.py::test_identity_source_schema_and_unknown_fields_are_rejected[source_digest]",
     ),
     Mutation(
         "scientific-provider-static-input",
-        "src/apizr/scientific_providers/contracts.py",
+        "src/apizr/scientific_providers/contracts/model.py",
         "                or item.digest is not None\n",
         "",
         "tests/scientific_providers/test_contracts.py::test_static_provider_cannot_assert_input_content_observations[digest]",
@@ -421,9 +435,9 @@ MUTATIONS = (
     ),
     Mutation(
         "experiment-static-metric-runtime",
-        "src/apizr/experiments/metrics.py",
+        "src/apizr/scientific_providers/builtin/metrics.py",
         "    return MetricDiscoveryResult(\n        signals=tuple(discovery.signals),",
-        '    return MetricDiscoveryResult.model_construct(\n        signals=(capture_metric("invented", 0.91),),',
+        '    from apizr.experiments.metrics import capture_metric\n    return MetricDiscoveryResult.model_construct(\n        signals=(capture_metric("invented", 0.91),),',
         "tests/experiments/test_metrics.py::test_six_callables_and_safe_aliases",
     ),
     Mutation(
@@ -463,14 +477,14 @@ MUTATIONS = (
     ),
     Mutation(
         "experiment-randomness-dynamic",
-        "src/apizr/experiments/randomness.py",
+        "src/apizr/scientific_providers/builtin/randomness.py",
         '        return None, "dynamic_randomness_control"',
         "        return 42, None",
         "tests/experiments/test_randomness.py::test_unknown_values",
     ),
     Mutation(
         "experiment-accelerator-uncertainty",
-        "src/apizr/experiments/randomness.py",
+        "src/apizr/scientific_providers/builtin/randomness.py",
         '        if provider in {"torch", "tensorflow"}:',
         "        if False:",
         "tests/experiments/test_randomness.py::test_fixed_literals",

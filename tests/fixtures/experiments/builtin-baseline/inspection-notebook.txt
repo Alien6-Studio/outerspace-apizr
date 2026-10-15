@@ -1,0 +1,33 @@
+Experiment inspection
+fraud_detection.ipynb
+No code executed; runtime evidence not observed.
+
+Code — CAPTURED
+  notebook; module fraud_detection; sha256:7593b81ff06f
+Data — PARTIAL
+  data/train.csv: sha256:33947c26577e, 24 bytes (cell 3, line 3)
+  s3://examples/validation.parquet: content unverified (cell 3, line 7)
+  +1 more; see --format json
+  Dynamic input reference; value not guessed.
+Parameters — PARTIAL
+  learning_rate = 0.05 (cell 2, line 2)
+  max_depth = 8 (cell 2, line 3)
+  +2 more; see --format json
+  Static candidates; 6 unresolved assignments.
+Randomness — UNCONTROLLED
+  numpy.random.default_rng = null (unknown) (cell 4, line 2)
+  numpy.random.seed = 42 (static) (cell 4, line 1)
+  +1 more; see --format json
+  uncontrolled randomness
+Environment — PARTIAL
+  requirements.txt: sha256:deb31e05f6b8
+  Source mentions: joblib, numpy, pandas, scikit-learn
+  Experiment runtime versions not observed.
+Metrics — PARTIAL
+  sklearn.metrics.roc_auc_score: value not observed (cell 5, line 3)
+  sklearn.metrics.precision_score: value not observed (cell 5, line 4)
+Outputs — PARTIAL
+  artifacts/fraud.joblib: output not observed (cell 5, line 5)
+Serving — PARTIAL
+  predict: CONDITIONAL; python:fraud_detection:predict (cell 6, line 5)
+  Source-local readiness; repository context not assessed.

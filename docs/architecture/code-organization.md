@@ -87,7 +87,9 @@ src/apizr/
 ├── repository_views/         pure bounded projections of complete evidence
 ├── experiments/              intended experiment controls and observed-run evidence
 ├── tracking/                 in-process SDK; consumes canonical experiment evidence
-├── scientific_providers/     bounded recognition contracts; no workload imports
+├── scientific_providers/     composes contracts and built-in lexical recognition
+│   ├── contracts/            bounded provider/adapter values and result admission
+│   └── builtin/              official default scientific rules and occurrence locations
 ├── editor_contracts/         versioned editor-facing engine contracts
 ├── exposure/                 explicit selection and required-evidence planning
 ├── interfaces/               shared interface contracts and runtime validation
@@ -123,7 +125,7 @@ without importing CLI commands or optional REST/MCP/notebook dependencies.
 The `tracking` SDK consumes `experiments` contracts and the existing Pydantic
 runtime; it never imports CLI adapters, plugin lifecycle code, optional SDKs or
 scientific libraries. `experiments` does not depend on `tracking`. The
-`scientific_providers` domain consumes bounded capability and experiment values;
+`scientific_providers/contracts` consumes bounded capability and experiment values;
 recognizers return candidates for core validation and never publish records.
 `editor_contracts` consumes experiment and provider contracts, while clients and
 transports adapt to it rather than defining alternate evidence formats. These
@@ -134,13 +136,26 @@ contracts. Static recognition stays bounded and does not import or execute
 scientific libraries. An adapter that needs those libraries is an out-of-tree
 extension using the existing `apizr.extension/v1` protocol; it reports through
 the SDK's bounded calls and cannot write to the evidence store. No second plugin
-loader is introduced. Existing recognizer implementations remain in
-`experiments` until the provider extraction is qualified; new recognition work
-belongs to `scientific_providers`.
+loader is introduced. `scientific_providers/builtin` owns the existing sklearn
+metric calls, joblib output calls, pandas/numpy/joblib input calls, seed APIs,
+scientific import-to-distribution mapping and their occurrence-location hooks.
+It ships in the core wheel and is selected by default. The four existing
+`experiments.discover_*` operations dispatch lazily to their canonical built-in
+implementation, preserving their public imports and historical bounds. Inspection
+uses the built-in location tracer; neither path imports a scientific library.
+
+Canonical result models, closed v1 schema refinements, explicit input/output
+selection and fingerprinting, explicit metric capture, literal parameters and
+main-guard detection remain in `experiments`. Filename suffix hints also remain
+there: they describe explicitly selected file formats without resolving a
+scientific callable. Recognition uses the supported `provider_source` lexical
+API, never private cross-domain imports. Contracts do not depend on the built-in
+implementation. `scientific_providers` is a declared composition namespace;
+its initializer exports and its old `admission` module forwards only.
 
 The [scientific contract](scientific-providers-v1.md) separates static provider
 payloads and SDK adapter reporting. `experiments.provider_source` exposes the
-bounded source/lexical authority, while `scientific_providers` admits untrusted
+bounded source/lexical authority, while `scientific_providers/contracts` admits untrusted
 results over existing experiment values and the existing extension envelope.
 `tracking.adapters` consumes only the adapter contracts and delegates to ordinary
 session logging. Providers have no store/publication API; plugin lifecycle remains
@@ -242,15 +257,16 @@ from shared transport/build/publication primitives in `contracts`.
 `model.py` owns strict Plan/Run values and evidence semantics; `values.py` owns
 bounded, deeply immutable recursive JSON; `serialization.py` owns canonical
 bytes, content digests and explicit Run-to-Plan validation. `__init__.py` exports
-this public API. `inputs.py` owns source-only input recognition, explicit selection
+this public API. `inputs.py` owns canonical input results, explicit selection
 and bounded local fingerprinting; it uses the existing `workspace.files` descriptor
 primitive without importing workspace configuration or compilation. There is no
-historical experiment facade. `randomness.py` owns bounded source-only randomness
-controls and explicit distribution candidates; `environment.py` owns selected
+historical experiment facade. `randomness.py` owns canonical randomness results
+and their closed v1 refinements; `environment.py` owns selected
 trusted-runtime facts and static/runtime root-level specification identities.
-Both source producers share the internal `_lexical.py` authority and AST bounds.
-`metrics.py` owns explicit metric construction and static sklearn call signals;
-`outputs.py` owns explicit output selections, static joblib candidates and current
+Scientific recognizers live in `scientific_providers/builtin` and consume the
+supported `provider_source` lexical view over `_lexical.py` and its AST bounds.
+`metrics.py` owns explicit metric construction and canonical static signal models;
+`outputs.py` owns canonical output candidates, explicit selections and current
 byte observations. `_files.py` owns the one internal regular-file digest primitive
 shared by input, environment and output capture. It returns factual identity or a
 safety failure; callers assign their context-specific evidence provenance.
@@ -259,8 +275,9 @@ safety failure; callers assign their context-specific evidence provenance.
 `Parameter` value. `inspection.py` composes these producers and canonical compiler
 evidence; `inspection_model.py` binds their identities and derives section states.
 `notebook_source.py` provides a transient cell sidecar verified against the unchanged
-exporter's AST. `_locations.py` observes same-domain discovery hooks for provenance;
-it adds no input/control recognition rules. `reporting.py` presents bounded text
+exporter's AST. `scientific_providers/builtin/locations.py` observes its owning
+domain's discovery hooks for provenance; it adds no independent input/control
+recognition rules. `reporting.py` presents bounded text
 and deterministic JSON. CLI parsing remains in `cli/commands/experiment.py`.
 
 `planning.py` derives immutable intent from Inspection. `bindings.py` correlates

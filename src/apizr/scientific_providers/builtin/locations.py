@@ -2,13 +2,11 @@
 
 import ast
 
-from apizr.experiments._lexical import bounded_tree
-from apizr.experiments.inputs import (
-    _Discovery as InputDiscovery,  # pyright: ignore[reportPrivateUsage]
-)
 from apizr.experiments.model import RandomnessControl
-from apizr.experiments.randomness import (
-    _Discovery as RandomnessDiscovery,  # pyright: ignore[reportPrivateUsage]
+from apizr.experiments.provider_source import bounded_tree
+from apizr.scientific_providers.builtin.inputs import Discovery as InputDiscovery
+from apizr.scientific_providers.builtin.randomness import (
+    Discovery as RandomnessDiscovery,
 )
 
 

@@ -51,9 +51,20 @@ allowed_internal_imports = ["apizr.tracking", "apizr.experiments", "apizr.scient
 allowed_external_imports = ["pydantic"]
 
 [packages."scientific_providers"]
+kind = "composition"
+responsibility = "Compose scientific provider contracts and the official built-in source recognizers; retain admission compatibility exports."
+modules = ["__init__.py", "admission.py"]
+
+[packages."scientific_providers/contracts"]
 kind = "domain"
-responsibility = "Static scientific provider and in-process SDK adapter contracts, bounded candidate admission and payloads over the existing extension protocol; no scientific-library imports, discovery, workload execution or direct evidence-store publication."
+responsibility = "Static scientific provider and in-process SDK adapter contracts, bounded candidate admission and payloads over the existing extension protocol; no discovery, scientific-library imports, workload execution or direct evidence-store publication."
 allowed_internal_imports = ["apizr.capabilities.types", "apizr.experiments.model", "apizr.experiments.inputs", "apizr.experiments.metrics", "apizr.experiments.outputs", "apizr.experiments.randomness", "apizr.experiments.provider_source", "apizr.contracts.distribution", "apizr.contracts.json", "apizr.extension_runtime.protocol"]
+allowed_external_imports = ["pydantic"]
+
+[packages."scientific_providers/builtin"]
+kind = "domain"
+responsibility = "Official default source-only scientific API recognition and occurrence locations, shipped in the core wheel; no scientific imports, file observations, workload execution or store publication."
+allowed_internal_imports = ["apizr.experiments.model", "apizr.experiments.inputs", "apizr.experiments.metrics", "apizr.experiments.outputs", "apizr.experiments.randomness", "apizr.experiments.provider_source", "apizr.scientific_providers.contracts"]
 allowed_external_imports = ["pydantic"]
 
 [packages."editor_contracts"]

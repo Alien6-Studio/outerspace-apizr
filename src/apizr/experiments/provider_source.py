@@ -18,6 +18,16 @@ from apizr.experiments._lexical import (
 )
 from apizr.experiments.model import ExperimentValue, Reference
 
+__all__ = [
+    "MAX_DEPTH",
+    "MAX_NODES",
+    "MAX_SOURCE_BYTES",
+    "SourceLimit",
+    "bounded_tree",
+    "SourceView",
+    "SourceLexicalVisitor",
+]
+
 
 class SourceView(ExperimentValue):
     """Exact UTF-8 source; a fresh bounded AST prevents shared mutable authority."""

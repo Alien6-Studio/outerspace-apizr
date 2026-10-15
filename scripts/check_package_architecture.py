@@ -192,6 +192,18 @@ def check(source: Path, manifest: Path) -> list[str]:
                 )
                 # Narrow composition exceptions. Producers and Plan/Run stay primitive.
                 composition_dependencies = {
+                    "experiments/metrics.py": (
+                        "apizr.scientific_providers.builtin.metrics",
+                    ),
+                    "experiments/outputs.py": (
+                        "apizr.scientific_providers.builtin.outputs",
+                    ),
+                    "experiments/inputs.py": (
+                        "apizr.scientific_providers.builtin.inputs",
+                    ),
+                    "experiments/randomness.py": (
+                        "apizr.scientific_providers.builtin.randomness",
+                    ),
                     "experiments/exposure_model.py": (
                         "apizr.capabilities.model",
                         "apizr.contracts.application",
@@ -228,6 +240,7 @@ def check(source: Path, manifest: Path) -> list[str]:
                         "apizr.repository_views.model",
                     ),
                     "experiments/inspection.py": (
+                        "apizr.scientific_providers.builtin.locations",
                         "apizr.capabilities",
                         "apizr.readiness",
                         "apizr.repository.model",

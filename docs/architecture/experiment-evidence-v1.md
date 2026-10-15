@@ -316,6 +316,15 @@ new experiment execution, history, metrics or comparison orchestration.
 
 ## Metric signals and observed results (#263)
 
+On the 0.4.6 development branch, library-specific metric, output, input and
+randomness recognition lives in the official `scientific_providers/builtin`
+package, shipped in the core wheel and active by default. The existing
+`experiments.discover_*` imports dispatch to that implementation. Canonical
+models, explicit values/declarations, file observations, literal parameters and
+main-guard evidence remain owned by the core. The
+[provider contract](scientific-providers-v1.md#official-built-in-provider)
+documents the ownership and pre-extraction byte-for-byte compatibility checks.
+
 `capture_metric(name, value, unit=...)` constructs a canonical runtime `Metric`
 from the caller's explicit observation, without execution or tracking state.
 `Metric.value` now uses the existing bounded, deeply immutable `FiniteValue`

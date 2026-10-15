@@ -7,6 +7,7 @@ from pathlib import Path
 
 import apizr
 from apizr import tracking
+from apizr.experiments.inspection import inspect_experiment
 from apizr.experiments.metrics import discover_metrics
 from apizr.experiments.provider_source import SourceView
 from apizr.extension_runtime.protocol import Request, validate_response
@@ -21,6 +22,7 @@ from apizr.scientific_providers import (
     admit_result,
     extension_arguments,
 )
+from apizr.scientific_providers.builtin import BuiltinProvider
 from apizr.tracking.adapters import AdapterReporter
 from apizr.tracking.session import TrackingError
 
@@ -89,6 +91,29 @@ def prove(root: Path) -> dict[str, object]:
         else:
             raise AssertionError("Non-finite adapter metric admitted")
     assert failed.record is not None and failed.record.run.status == "failed"
+    builtin = BuiltinProvider()
+    builtin_source = SourceView(
+        reference="builtin.py",
+        text=source.text
+        + "import pandas as pd\nimport numpy as np\nimport joblib\n"
+        + 'np.random.seed(42)\ndata = pd.read_csv("data/train.csv")\n'
+        + 'joblib.dump(model, "model.joblib")\n',
+    )
+    builtin_request = ProviderRequest(
+        provider=builtin.descriptor, source=builtin_source
+    )
+    recognized = builtin.recognize(builtin_request)
+    (root / builtin_source.reference).write_text(builtin_source.text, encoding="utf-8")
+    inspected = inspect_experiment(root / builtin_source.reference)
+    assert inspected.metrics == recognized.metric_signals
+    assert inspected.outputs == recognized.output_candidates
+    assert inspected.randomness == recognized.randomness_controls
+    assert len(inspected.data.artifacts) == len(recognized.input_reads.artifacts) == 1
+    assert inspected.data.artifacts[0].reference == "data/train.csv"
+    assert recognized.input_reads.artifacts[0].digest is None
+    assert len(recognized.metric_signals.signals) == 1
+    assert len(recognized.output_candidates.signals) == 1
+    assert len(recognized.randomness_controls.controls) == 1
     return {
         "status": "passed",
         "installed_package": apizr.__file__,
@@ -97,6 +122,9 @@ def prove(root: Path) -> dict[str, object]:
         "sdk_run_schema": capture.record.run.schema_version,
         "source_mismatch": "refused",
         "non_finite_adapter_value": "refused",
+        "builtin_identity": builtin.descriptor.identity.model_dump(mode="json"),
+        "builtin_default_inspection": "passed",
+        "builtin_capabilities": list(builtin.descriptor.capabilities),
     }
 
 

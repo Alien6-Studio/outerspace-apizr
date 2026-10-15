@@ -26,6 +26,10 @@ def main():
         names = archive.namelist()
         assert "apizr/__init__.py" in names
         assert "apizr/capabilities/model.py" in names
+        assert "apizr/scientific_providers/builtin/provider.py" in names
+        assert "apizr/scientific_providers/builtin/locations.py" in names
+        assert "apizr/scientific_providers/contracts/model.py" in names
+        assert "apizr/scientific_providers/contracts/admission.py" in names
         assert "apizr/readiness/model.py" in names
         assert "apizr/generators/rest/runtime.py" in names
         assert "apizr/generators/rest/templates/preamble.txt" in names

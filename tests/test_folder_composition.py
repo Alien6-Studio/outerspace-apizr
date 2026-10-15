@@ -32,19 +32,44 @@ def test_repository_satisfies_declared_composition():
         ),
         ("experiments/inspection.py", "import sklearn\n", "non-primitive"),
         (
-            "scientific_providers/contracts.py",
+            "scientific_providers/contracts/model.py",
             "import numpy\n",
             "external dependency not declared",
         ),
         (
-            "scientific_providers/contracts.py",
+            "scientific_providers/contracts/model.py",
             "from apizr.experiments.store import publish\n",
             "domain dependency not declared",
         ),
         (
-            "scientific_providers/contracts.py",
+            "scientific_providers/contracts/model.py",
             "from apizr.tracking import session\n",
             "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/builtin/metrics.py",
+            "import sklearn\n",
+            "external dependency not declared",
+        ),
+        (
+            "scientific_providers/builtin/inputs.py",
+            "from apizr.experiments.store import publish\n",
+            "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/builtin/locations.py",
+            "from apizr.experiments._lexical import bounded_tree\n",
+            "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/contracts/model.py",
+            "from apizr.scientific_providers.builtin import BuiltinProvider\n",
+            "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/__init__.py",
+            "class RecognitionRule: pass\n",
+            "initializer defines",
         ),
         (
             "experiments/inspection_model.py",

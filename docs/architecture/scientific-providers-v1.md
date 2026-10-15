@@ -3,8 +3,9 @@
 !!! note "0.4.6 development"
 
     These contracts are implemented on `0.4.6` and are not yet published.
-    Built-in recognizer extraction and provider selection remain separate
-    milestone work. Existing inspection behavior and stored evidence stay unchanged.
+    The official built-in recognizers ship in the core and remain active by default.
+    Provider selection and stored producer inventory remain separate milestone work.
+    Existing inspection behavior and stored evidence stay unchanged.
 
 Static recognition and in-process observation have different authority. A static
 provider sees bounded source and returns candidates. An SDK adapter receives an
@@ -171,12 +172,46 @@ code. Producer inventory in stored Runs is subsequent selection work.
 ## Ownership and qualification
 
 `experiments.provider_source` owns source admission and the supported lexical
-view. `scientific_providers` owns descriptors, requests, untrusted candidate
+view, including the supported bounded parser, limits and parse-limit diagnostic.
+`scientific_providers/contracts` owns descriptors, requests, untrusted candidate
 results and admission over canonical evidence. `tracking.adapters` owns the
 reporter delegating to the ordinary SDK. `plugins/*` continues to own installation,
 activation and lifecycle; `extension_runtime` continues to own the process envelope.
 The dependency inventory declares these edges without moving plugin management
 into an optional scientific SDK or allowing evidence-store publication by providers.
+
+### Official built-in provider
+
+`scientific_providers/builtin` owns all existing library-specific recognition as
+whole units: sklearn metric occurrences, joblib dump candidates,
+pandas/numpy/joblib literal input reads, seed/random-state controls and scientific
+import candidates. The occurrence-location observers move with those rules so
+notebook cells keep their original positions. The provider uses the core's public
+lexical view and canonical result types without importing scientific packages,
+reading candidate files or executing workload code.
+
+`BuiltinProvider` implements `StaticProvider` with identity `apizr.builtin`,
+implementation version `1`, and all four static capabilities. Its `recognize`
+method accepts a request for any declared subset and returns admitted results,
+enforcing the request's aggregate bounds. It rejects another producer identity.
+The compatibility `experiments.discover_*` operations delegate to the same rules
+and retain their historical individual limits (256 inputs, metrics and outputs;
+128 randomness controls), invalid-source diagnostics and Python-encoded byte
+input support. They do not acquire the aggregate limits of a new combined request.
+Provider selection will compose these contract requests in the subsequent work.
+
+The core retains explicit declarations and metric values, input/output byte
+observations, literal parameters, main guards and immutable publication. Closed
+v1 callable/distribution refinements stay in their canonical result models.
+Filename suffix hints stay with generic input selection: a `.npy` or `.joblib`
+hint describes a file format without recognizing or importing a library API.
+
+Ten byte-for-byte JSON/text golden artifacts were frozen before extraction at
+`62f3ec7b` and retained under `tests/fixtures/experiments/builtin-baseline`, with
+their sizes and SHA-256 manifest. Relocated Python/notebook fixtures and the
+fraud-detection example must reproduce those exact bytes. The existing coverage
+gate includes every module under both `experiments/` and `scientific_providers/`:
+moving the rules does not remove their 100% line / 95% branch requirement.
 
 The contract tests exercise canonical type reuse, source/identity mismatches,
 tampered instances, strict capabilities, UTF-8 and AST limits, aggregate limits,
@@ -184,5 +219,6 @@ located unknown diagnostics and the existing extension envelope. Adapter tests
 exercise ordinary publication, failed non-finite/oversized values and opaque
 objects. `scripts/scientific_contract_proof.py` also runs with the installed
 candidate wheel from an external directory in the existing wheel qualification.
-It proves contract admission and SDK reporting, not a live scientific-library
-integration or automatic provider selection.
+It proves contract admission, SDK reporting and default built-in inspection with
+all four capabilities, without a scientific-library integration or extension
+selection policy.
