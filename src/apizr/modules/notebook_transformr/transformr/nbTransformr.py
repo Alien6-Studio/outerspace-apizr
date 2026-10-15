@@ -5,11 +5,13 @@ import io
 import json
 from pathlib import Path
 
+from apizr.capabilities.source import MAX_NOTEBOOK_BYTES, check_tree, notebook_text
 from apizr.environment.extras import require
 from apizr.interfaces.files import write_new_text
 from apizr.modules.notebook_transformr.configuration import (
     NotebookTransformrConfiguration,
 )
+from apizr.workspace.files import read_regular
 
 
 class NotebookTransformr:
@@ -28,11 +30,12 @@ class NotebookTransformr:
 
         # nbformat assumes a mapping and otherwise raises an internal AttributeError.
         if isinstance(content, (str, Path)):
-            raw = Path(content).read_text(encoding="utf-8")
+            raw = notebook_text(
+                read_regular(Path(content).resolve(strict=True), MAX_NOTEBOOK_BYTES)
+            )
+            content = io.StringIO(raw)
         else:
-            raw = content.read()
-            if isinstance(raw, bytes):
-                raw = raw.decode("utf-8")
+            raw = notebook_text(content.read(MAX_NOTEBOOK_BYTES + 1))
             content = io.StringIO(raw)
         if not isinstance(json.loads(raw), dict):
             raise ValueError("Invalid notebook structure: expected a JSON object")
@@ -78,6 +81,7 @@ class NotebookTransformr:
         except ValidationError as exc:
             raise ValueError("Invalid notebook structure") from exc
         tree = ast.parse(source)
+        check_tree(tree)
         if any(
             isinstance(n, ast.Call)
             and isinstance(n.func, ast.Name)

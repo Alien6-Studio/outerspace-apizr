@@ -9,6 +9,7 @@ from pydantic import model_validator
 from apizr.capabilities import CapabilityDocument, document_digest
 from apizr.capabilities import inspect_source as inspect_capabilities
 from apizr.capabilities.model import Digest, Severity
+from apizr.capabilities.source import read_source
 from apizr.capabilities.types import ValueModel
 from apizr.readiness import ReadinessReport, State, assess, report_digest
 
@@ -60,7 +61,7 @@ def inspect_file(path: str | Path, *, module_name: str) -> Inspection:
     path = Path(path)
     if path.suffix not in {".py", ".ipynb"}:
         raise ValueError("Inspection supports one .py or .ipynb file")
-    raw = path.read_bytes()
+    raw = read_source(path)
     if path.suffix == ".py":
         return inspect_source(raw, module_name=module_name)
     # Keep notebook/exporter dependencies outside the Python-only core path.

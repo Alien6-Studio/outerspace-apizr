@@ -77,6 +77,13 @@ For a reviewed local wheelhouse, replace `--index-url` with
 `--wheelhouse /absolute/candidate-wheels`. With no index option the entire
 preparation stays offline. Local sdists are ignored and cannot run a build.
 
+In **0.4.6 development**, wheel admission checks the actual central-directory
+records before creating the ZIP index. The existing **10,000-entry** limit applies
+even when archive count fields are forged. Ordinary ZIPs, archive comments,
+prepended archives and fixed ZIP64 records are supported. Multi-disk archives and
+ZIP64 extensible data are refused. The **64 MiB** compressed and **256 MiB**
+expanded wheel budgets remain in effect.
+
 To retain the admitted hashes from an existing `uv pip compile --generate-hashes`
 lock, also pass `--requirements /absolute/resolver.lock`. Exact pins can contain
 multiple SHA-256 hashes with uv-style line continuation and comments. Unpinned

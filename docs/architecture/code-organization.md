@@ -51,6 +51,14 @@ interpreter requirements live in `environment`.
 Static compiler domains and execution contracts remain explicit packages. Optional
 plugin distributions live outside the core package.
 
+`capabilities.source` owns explicit source admission and AST traversal budgets.
+Notebook adapters reuse its byte and structure limits before export;
+`experiments.notebook_source` retains its stricter source/cell contract and uses
+the portable lexical preflight in `contracts.json_budget` before JSON decoding.
+`plugins.artifacts.central_directory` bounds wheel directory records before the
+standard library builds its per-entry index. These checks add no optional imports
+to the core and do not execute inspected content.
+
 ```text
 src/apizr/
 ├── cli/

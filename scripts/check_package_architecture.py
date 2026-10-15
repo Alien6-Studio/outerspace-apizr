@@ -188,6 +188,7 @@ def check(source: Path, manifest: Path) -> list[str]:
                     "apizr.capabilities.types",
                     "apizr.contracts.distribution",
                     "apizr.contracts.json",
+                    "apizr.contracts.json_budget",
                     "apizr.workspace.files",
                 )
                 # Narrow composition exceptions. Producers and Plan/Run stay primitive.

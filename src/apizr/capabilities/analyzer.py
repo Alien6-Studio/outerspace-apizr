@@ -25,6 +25,7 @@ from .model import (
     Source,
     SourceSpan,
 )
+from .source import MAX_SOURCE_BYTES, check_tree, read_source
 from .types import (
     DeclaredType,
     Evidence,
@@ -374,13 +375,18 @@ class _Analyzer:
 def inspect_source(source: str | bytes, *, module_name: str) -> CapabilityDocument:
     """Inspect source text/bytes without execution. Strings mean UTF-8 bytes."""
     module = logical_module(module_name)
+    if len(source) > MAX_SOURCE_BYTES:
+        raise ValueError("source_byte_limit")
     raw = source.encode("utf-8") if isinstance(source, str) else source
+    if len(raw) > MAX_SOURCE_BYTES:
+        raise ValueError("source_byte_limit")
     if isinstance(source, str):
         text = source
     else:
         encoding, _ = tokenize.detect_encoding(io.BytesIO(raw).readline)
         text = raw.decode(encoding)
     tree = ast.parse(text, filename="<capability-source>")
+    check_tree(tree)
     return _Analyzer(
         tree, Source(kind="python", module=module, digest=Digest.of_bytes(raw))
     ).document()
@@ -388,4 +394,4 @@ def inspect_source(source: str | bytes, *, module_name: str) -> CapabilityDocume
 
 def inspect_file(path: str | Path, *, module_name: str) -> CapabilityDocument:
     """Read exactly the explicitly supplied file, without resolving imports."""
-    return inspect_source(Path(path).read_bytes(), module_name=module_name)
+    return inspect_source(read_source(path), module_name=module_name)

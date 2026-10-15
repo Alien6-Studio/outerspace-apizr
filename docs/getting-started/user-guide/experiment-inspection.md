@@ -62,6 +62,11 @@ Exit **0** means inspection completed, including partial, unknown or uncontrolle
 evidence. Exit **2** means invalid arguments or a source that cannot be inspected.
 Interface readiness does not change this exit policy.
 
+In **0.4.6 development**, notebook JSON is checked before decoding: **16 MiB**,
+**100,000 values and keys**, and container depth **64**. These budgets include
+outputs and metadata, even though they do not become experiment evidence. The
+existing limits of **1 MiB** of Python source and **1,024 notebook cells** remain.
+
 ## Read the evidence
 
 | Section | Evidence and deterministic state |

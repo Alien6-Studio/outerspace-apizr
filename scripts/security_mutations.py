@@ -28,6 +28,48 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "wheel-central-directory-before-index",
+        "src/apizr/plugins/artifacts/wheel.py",
+        "    preflight_directory(data)\n",
+        "",
+        "tests/local_plugins/test_central_directory_bounds.py::test_entry_budget_precedes_zipfile_even_with_forged_counts[0]",
+    ),
+    Mutation(
+        "source-regular-read-budget",
+        "src/apizr/capabilities/source.py",
+        'MAX_SOURCE_BYTES if selected.suffix == ".py" else MAX_NOTEBOOK_BYTES',
+        "MAX_SOURCE_BYTES * 2",
+        "tests/capabilities/test_source_bounds.py::test_large_regular_source_is_bounded_before_parsing[read_source]",
+    ),
+    Mutation(
+        "source-encoded-byte-budget",
+        "src/apizr/capabilities/analyzer.py",
+        "    if len(raw) > MAX_SOURCE_BYTES:",
+        "    if False:",
+        "tests/capabilities/test_source_bounds.py::test_inmemory_source_limit_precedes_parser[unicode]",
+    ),
+    Mutation(
+        "source-analysis-structure-budget",
+        "src/apizr/capabilities/analyzer.py",
+        "    check_tree(tree)\n",
+        "",
+        "tests/capabilities/test_source_bounds.py::test_broad_and_deep_asts_are_refused_before_recursive_analysis[nodes]",
+    ),
+    Mutation(
+        "notebook-json-before-materialization",
+        "src/apizr/contracts/json_budget.py",
+        "        if nodes > max_nodes or depth > max_depth:",
+        "        if False:",
+        "tests/capabilities/test_source_bounds.py::test_notebook_budget_precedes_json_decoder[nodes-code_cells]",
+    ),
+    Mutation(
+        "notebook-export-before-materialization",
+        "src/apizr/modules/notebook_transformr/transformr/nbTransformr.py",
+        "            raw = notebook_text(content.read(MAX_NOTEBOOK_BYTES + 1))",
+        '            raw = content.read(MAX_NOTEBOOK_BYTES + 1).decode("utf-8")',
+        "tests/capabilities/test_source_bounds.py::test_notebook_budget_precedes_json_decoder[depth-exporter]",
+    ),
+    Mutation(
         "signing-verification-authority",
         "src/apizr/workspace/operator_policy.py",
         "signing_grants = [g for g in signing_grants if g.verification == target]",
