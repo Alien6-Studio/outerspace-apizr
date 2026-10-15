@@ -120,7 +120,7 @@ def test_required_workflow_matches_the_explicit_arm64_boundary():
     assert jobs["scope"] == {"uses": "./.github/workflows/change-scope.yml"}
     assert jobs["candidate"]["needs"] == "scope"
     assert jobs["candidate"]["if"] == (
-        "always() && needs.scope.outputs.product != 'false'"
+        "${{ !cancelled() && needs.scope.outputs.product != 'false' }}"
     )
     job = jobs["offline-build-arm64"]
     assert job["needs"] == "candidate"

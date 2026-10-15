@@ -442,6 +442,13 @@ def test_delivery_decisions_without_secret_reads(
     trust.mkdir()
     grants = []
     for item in inputs["destinations"]:
+        if required:
+            proof = item["proof"]
+            proof["verification"]["trust_store"] = str(trust)
+            proof["verification"]["tool"]["executable"] = str(tool)
+            proof["signing"]["key_file"] = str(secret)
+            proof["transport"]["tool"]["executable"] = str(tool)
+            proof["transport"]["authentication"] = {"config_file": str(secret)}
         push = item["push"]
         push["docker"] = {"executable": str(tool), "socket": str(unix_socket)}
         push["authentication"] = {"config_file": str(secret), "ca_file": str(secret)}
@@ -469,14 +476,17 @@ def test_delivery_decisions_without_secret_reads(
                     tsa_url="https://tsa.example/timestamp",
                     permissions=["registry.read", "receipt.sign", "timestamp.request"],
                 )
+            if op in {"attest", "publish", "admit"}:
+                grant["verification"] = {
+                    key: item["proof"]["verification"][key]
+                    for key in (
+                        "tool",
+                        "expected_signer",
+                        "trust_store",
+                        "trust_store_sha256",
+                    )
+                }
             grants.append(grant)
-        if required:
-            proof = item["proof"]
-            proof["verification"]["trust_store"] = str(trust)
-            proof["verification"]["tool"]["executable"] = str(tool)
-            proof["signing"]["key_file"] = str(secret)
-            proof["transport"]["tool"]["executable"] = str(tool)
-            proof["transport"]["authentication"] = {"config_file": str(secret)}
     request_file = tmp_path / "delivery.json"
     request_file.write_text(json.dumps(inputs))
     if granted:

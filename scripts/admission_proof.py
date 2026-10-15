@@ -171,7 +171,34 @@ def exercise(python, store, work, builds, pushes, rest, mcp, command, environmen
             ),
             ("wrong-signer", {"expected_signer": "0" * 64}),
         ):
-            invoke("admit", arguments | change, operator, refused=True)
+            selected = operator
+            if fault == "wrong-signer":
+                refusals.append(
+                    refuse(
+                        python,
+                        store,
+                        work,
+                        "outerspace-apizr-attest",
+                        "admit",
+                        arguments | change,
+                        operator,
+                        "operator_verification_denied",
+                        environment,
+                    )
+                )
+                # Then explicitly grant the wrong expected signer to retain the
+                # independent native cryptographic refusal, after core admission.
+                selected = write_policy(
+                    python,
+                    store,
+                    work / ("wrong-signer-" + str(index) + ".json"),
+                    "outerspace-apizr-attest",
+                    "admit",
+                    repositories,
+                    command,
+                    verification=verification_target(arguments | change),
+                )
+            invoke("admit", arguments | change, selected, refused=True)
             absent(pushed["destination"])
             refusals.append(
                 {
