@@ -137,6 +137,11 @@ does not guarantee that the resulting bundle fits its aggregate or metadata
 budget. These admission limits bound retained inputs and decoding work; they do
 not impose an operating-system memory quota on trusted project execution.
 
+The optional OCI image builder retains its separate, stricter capture limits:
+64 MiB and 4,096 declared artifacts. It admits historical self-contained v1
+runtimes and the current complete pair of admission modules; a partial pair or an
+undeclared helper is refused before Docker starts.
+
 ## Local imports and private implementation support
 
 A selected capability may use a uniquely resolved local import when the bound

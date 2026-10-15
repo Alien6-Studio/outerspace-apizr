@@ -204,7 +204,25 @@ raise SystemExit(child.wait())
     try:
         deadline = time.monotonic() + 30
         while not marker.exists():
-            if process.poll() is not None or time.monotonic() >= deadline:
+            exit_code = process.poll()
+            if exit_code is not None:
+                out, err = process.communicate(timeout=5)
+                (work / "build-diagnostic.log").write_bytes(
+                    b"stdout:\n" + out[:65536] + b"\nstderr:\n" + err[:65536]
+                )
+                (work / "build-observation.json").write_text(
+                    json.dumps(
+                        {
+                            "phase": "interrupt_build",
+                            "state": "exited_before_progress",
+                            "exit_code": exit_code,
+                        }
+                    )
+                )
+                raise AssertionError(
+                    f"Core exited ({exit_code}) before Docker progress; see build-diagnostic.log"
+                )
+            if time.monotonic() >= deadline:
                 raise AssertionError("Docker progress handshake absent")
             time.sleep(0.02)
         observed = json.loads(marker.read_text())

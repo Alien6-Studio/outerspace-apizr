@@ -28,6 +28,13 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "oci-bundle-admission-complete-closure",
+        "plugins/oci/src/apizr_oci/snapshot.py",
+        "        allowed |= ADMISSION_MODULES",
+        "        allowed |= ADMISSION_MODULES.intersection(manifest.artifacts)",
+        "tests/oci_plugin/test_build.py::test_portable_admission_closure_is_copied_verified_and_closed[partial-reader-rest]",
+    ),
+    Mutation(
         "bundle-bounded-read",
         "src/apizr/repository_interfaces/artifacts.py",
         "            content = stream.read(limit + 1)",
