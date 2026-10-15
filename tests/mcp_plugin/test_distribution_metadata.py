@@ -1,4 +1,4 @@
-"""All six advertised contracts and the installation presentation remain coherent."""
+"""All advertised contracts and the installation presentation remain coherent."""
 
 import json
 from copy import deepcopy
@@ -39,7 +39,7 @@ def test_all_advertised_results_match_live_schemas_and_unknown_arguments_refuse(
                 for t in (await client.list_tools()).tools
             ]
             rows = review(discovery(client, tools), delivery=delivery)
-            assert len(rows) == (6 if delivery else 3)
+            assert len(rows) == (9 if delivery else 6)
             for tool in tools:
                 args = (
                     arguments(batch)
@@ -55,7 +55,16 @@ def test_all_advertised_results_match_live_schemas_and_unknown_arguments_refuse(
                     == "invalid_arguments"
                 )
                 result = await client.call_tool(tool["name"], args)
-                validate_result(tool, result)
+                if tool["name"].startswith("apizr_experiment_"):
+                    # This fixture has analysis/delivery authority only: a
+                    # new history tool must not inherit either permission.
+                    assert result.is_error
+                    assert result.structured_content["error"]["code"] in {
+                        "invalid_arguments",
+                        "operator_operation_denied",
+                    }
+                else:
+                    validate_result(tool, result)
 
     anyio.run(exercise)
 
@@ -84,7 +93,7 @@ def test_review_detects_real_public_contract_gaps(project, tmp_path, fault):
                 ],
             )
         broken = deepcopy(data)
-        tool = broken["tools"][4]
+        tool = next(t for t in broken["tools"] if t["name"] == "apizr_delivery_run")
         if fault == "title":
             tool["title"] = None
         elif fault == "description":

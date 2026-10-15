@@ -6,7 +6,11 @@ The current public stable baseline remains 0.4.4.
 <!-- mcp-name: io.github.Alien6-Studio/outerspace-apizr -->
 
 Analyze a local Python project from an MCP client without executing its functions.
-Default mode exposes exactly three read-only tools. The published **0.4.2** version also supports opt-in
+The 0.4.6 development engine adds read-only experiment list/show/diff to the three
+analysis tools. History requires a separate `history.read` grant for the configured
+project's store; installation and `source.analyze` grant no history permission.
+These new tools require matching development core/plugin candidates and are not
+advertised as available in an existing published package. The existing delivery path supports opt-in
 status/run/resume for an existing
 delivery request selected by the operator with `--delivery-request`. Clients
 cannot choose operational paths, credentials or keys. Existing per-operation

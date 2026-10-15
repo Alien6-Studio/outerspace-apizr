@@ -8,6 +8,9 @@ TITLES = {
     "apizr_analyze": "Analyze Python Project",
     "apizr_readiness": "Assess Repository Readiness",
     "apizr_plan_exposure": "Plan Capability Exposure",
+    "apizr_experiment_list": "List Experiment Runs",
+    "apizr_experiment_show": "Show Experiment Evidence",
+    "apizr_experiment_diff": "Compare Experiment Runs",
     "apizr_delivery_status": "Inspect Delivery Status",
     "apizr_delivery_run": "Run Approved Delivery",
     "apizr_delivery_resume": "Resume Approved Delivery",
@@ -32,7 +35,7 @@ def input_properties(schema, path=""):
 
 def review(metadata: dict, *, delivery: bool = False) -> list[dict]:
     """A deterministic review matrix, not a remote score or an authorization check."""
-    expected = list(TITLES) if delivery else list(TITLES)[:3]
+    expected = list(TITLES) if delivery else list(TITLES)[:6]
     assert [t["name"] for t in metadata["tools"]] == expected
     assert metadata["server"]["name"] == "apizr"
     assert metadata["server"]["title"] == "OuterSpace Apizr"
@@ -83,8 +86,15 @@ def validate_result(tool: dict, response) -> None:
 
 
 def before_distribution_metadata(metadata: dict) -> dict:
-    """Remove exactly the additive #279 metadata for the retained #268/#269 proof."""
+    """Retain the historical #268/#269 surface before #279/#333 additions."""
     prior = deepcopy(metadata)
+    # Preserve the historical analysis/delivery contract fingerprint while
+    # independently qualifying the additive 0.4.6 history tools and schemas.
+    prior["tools"] = [
+        tool
+        for tool in prior["tools"]
+        if not tool["name"].startswith("apizr_experiment_")
+    ]
     prior["server"]["title"] = None
     for tool in prior["tools"]:
         tool["title"] = None

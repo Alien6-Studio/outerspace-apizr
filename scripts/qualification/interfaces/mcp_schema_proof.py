@@ -71,7 +71,7 @@ def discovery(client: Client, tools: list[dict]) -> dict:
 
 
 def discovery_contract(metadata: dict) -> dict:
-    """Preserve #268/#269, allowing only the reviewed #279 metadata additions."""
+    """Preserve the historical contract across additive metadata and history tools."""
     metadata = before_distribution_metadata(metadata)
     return {
         **{key: value for key, value in metadata.items() if key != "instructions"},
@@ -189,7 +189,11 @@ def verify_guidance(metadata: dict, *, delivery: bool = False) -> None:
     ):
         assert phrase in instructions, phrase
     assert len(instructions.split()) <= 350
-    expected = set(concepts)
+    expected = set(concepts) | {
+        "apizr_experiment_list",
+        "apizr_experiment_show",
+        "apizr_experiment_diff",
+    }
     if delivery:
         expected |= {
             "apizr_delivery_status",
@@ -230,12 +234,26 @@ def verify_schemas(tools: list[dict]) -> None:
         "apizr_analyze",
         "apizr_readiness",
         "apizr_plan_exposure",
+        "apizr_experiment_list",
+        "apizr_experiment_show",
+        "apizr_experiment_diff",
     }
     for tool in tools:
         inputs, outputs = tool["inputSchema"], tool["outputSchema"]
         for schema in (inputs, outputs):
             Draft202012Validator.check_schema(schema)
         described_properties(inputs)
+        if tool["name"].startswith("apizr_experiment_"):
+            assert inputs["additionalProperties"] is False
+            for example in inputs["examples"]:
+                Draft202012Validator(inputs).validate(example)
+            assert outputs["type"] == "object"
+            assert "apizr.experiment-" in json.dumps(outputs)
+            assert (
+                not {"root", "store", "operator_policy", "permissions"}
+                & inputs["properties"].keys()
+            )
+            continue
         pin = inputs["properties"]["expected_repository_digest"]["description"]
         for phrase in (
             "null",
@@ -306,17 +324,30 @@ async def prove(root: Path, config: dict, *, capture_only: bool = False) -> dict
     outcomes = {}
     for mode, revision in (("auto", "2026-07-28"), ("legacy", "2025-11-25")):
         target = StdioServerParameters(
-            command=config["cli"],
-            args=[
-                "mcp",
-                "serve",
-                "--project",
-                str(project),
-                "--operator-policy",
-                str(authority),
-                "--plugins-dir",
-                config["store"],
-            ],
+            command=config.get("server_python") or config["cli"],
+            args=(
+                [
+                    "-I",
+                    "-m",
+                    "apizr_mcp",
+                    "serve",
+                    "--project",
+                    str(project),
+                    "--operator-policy",
+                    str(authority),
+                ]
+                if "server_python" in config
+                else [
+                    "mcp",
+                    "serve",
+                    "--project",
+                    str(project),
+                    "--operator-policy",
+                    str(authority),
+                    "--plugins-dir",
+                    config["store"],
+                ]
+            ),
             cwd=root,
             env={"PYTHONDONTWRITEBYTECODE": "1"},
         )
@@ -464,12 +495,22 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", type=Path)
     parser.add_argument(
+        "--server-python",
+        type=Path,
+        help="Direct installed-plugin interpreter for focused development qualification",
+    )
+    parser.add_argument(
         "--capture-only",
         action="store_true",
         help="Retain a pre-change baseline without requiring new documentation",
     )
     args = parser.parse_args()
-    config = json.loads((args.root / "installed.json").read_text())
+    args.root.mkdir(parents=True, exist_ok=True)
+    config = (
+        {"server_python": str(args.server_python.absolute())}
+        if args.server_python
+        else json.loads((args.root / "installed.json").read_text())
+    )
 
     async def run():
         return await prove(args.root, config, capture_only=args.capture_only)

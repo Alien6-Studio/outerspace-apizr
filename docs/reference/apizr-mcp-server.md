@@ -5,6 +5,20 @@ description: Explore Python projects from your AI assistant with Apizr's MCP plu
 
 # Apizr as a local MCP server
 
+!!! note "0.4.6 development: experiment history"
+    Matching development core/plugin candidates add `apizr_experiment_list`,
+    `apizr_experiment_show` and `apizr_experiment_diff`. These read the configured
+    project's `.apizr/experiments/v1` store, using the same argument contracts and
+    canonical history/comparison as the [editor engine](editor-contract.md).
+    Add an exact `history.read` grant with `experiments.read` alongside the existing
+    `source.analyze` grant. Installation and analysis authority alone grant no
+    history access. Tool arguments cannot select another root, store or authority.
+    Every read validates the complete bounded history; a display filter or limit
+    never hides corruption. Producers/capture modes are retained, unknowns stay
+    unknown, and comparison does not infer causality. No new tool executes,
+    retrains, exposes, mutates evidence or loads the producing provider. These
+    additions are development features, not a claim about existing public packages.
+
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 Let your AI assistant explore a Python project with the optional

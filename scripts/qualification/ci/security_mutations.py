@@ -434,6 +434,13 @@ MUTATIONS = (
         "tests/test_dependency_licenses.py::test_development_license_exception_cannot_enter_runtime",
     ),
     Mutation(
+        "experiment-history-requires-explicit-read-authority",
+        "src/apizr/workspace/editor_session.py",
+        "    if not decision.allowed:\n        raise AuthorizationDenied(decision.code)",
+        "    if False:\n        raise AuthorizationDenied(decision.code)",
+        "tests/test_editor_contract.py::test_history_requires_its_own_exact_grant_before_store_io",
+    ),
+    Mutation(
         "tracking-duplicate-key-refusal",
         "src/apizr/tracking/session.py",
         "        if name in items:",

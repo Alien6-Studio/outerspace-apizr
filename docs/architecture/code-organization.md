@@ -151,6 +151,14 @@ recognizers return candidates for core validation and never publish records.
 transports adapt to it rather than defining alternate evidence formats. These
 allowlisted edges are enforced by `scripts/check_package_architecture.py`.
 
+`editor_contracts/model.py` owns the closed editor request/response, discovery and
+history argument schemas over canonical experiment and exposure values.
+`workspace/editor_session.py` composes their read-only operations with captured
+project scope and exact history authorization. CLI JSON and MCP adapt those
+shared operations; neither transport validates stored evidence or computes a
+second diff. MCP history workers receive only analysis/history grants, never
+delivery credentials or signing authority.
+
 Static recognition providers and in-process scientific adapters are distinct
 contracts. Static recognition stays bounded and does not import or execute
 scientific libraries. An adapter that needs those libraries is an out-of-tree

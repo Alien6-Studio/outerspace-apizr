@@ -146,8 +146,28 @@ def test_digest_bytes_and_all_discovery_validation_keywords_match_baseline():
         (Path(__file__).with_name("schema_baseline.json")).read_text()
     )
     assert (
-        fingerprint(without_documentation(tools_from_models()))
+        fingerprint(
+            without_documentation(
+                [
+                    t
+                    for t in tools_from_models()
+                    if not t["name"].startswith("apizr_experiment_")
+                ]
+            )
+        )
         == baseline["validation_schema_sha256"]
+    )
+    assert (
+        fingerprint(
+            without_documentation(
+                [
+                    t
+                    for t in tools_from_models()
+                    if t["name"].startswith("apizr_experiment_")
+                ]
+            )
+        )
+        == baseline["history_validation_schema_sha256"]
     )
 
 

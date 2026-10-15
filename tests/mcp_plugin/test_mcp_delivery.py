@@ -83,6 +83,9 @@ def test_default_discovery_does_not_enable_delivery_from_authority(
                 "apizr_analyze",
                 "apizr_readiness",
                 "apizr_plan_exposure",
+                "apizr_experiment_list",
+                "apizr_experiment_show",
+                "apizr_experiment_diff",
             ]
             assert all(
                 t.annotations.read_only_hint and not t.annotations.open_world_hint
@@ -114,7 +117,9 @@ def test_schema_annotations_and_request_cannot_be_replaced(
             assert [t.name for t in tools] == [
                 t[0] for t in (*server.TOOLS, *server.DELIVERY_TOOLS)
             ]
-            for t in tools[3:]:
+            for t in (
+                tool for tool in tools if tool.name.startswith("apizr_delivery_")
+            ):
                 assert t.input_schema["additionalProperties"] is False
                 effect = t.name != "apizr_delivery_status"
                 assert t.annotations.read_only_hint is (not effect)
@@ -310,7 +315,7 @@ def test_cancellation_blocks_other_tools_and_waits_for_native_cleanup(
                 with anyio.fail_after(5):
                     while not started.is_set():
                         await anyio.sleep(0.01)
-                assert len((await client.list_tools()).tools) == 6
+                    assert len((await client.list_tools()).tools) == 9
                 for name in [
                     "apizr_analyze",
                     "apizr_delivery_status",

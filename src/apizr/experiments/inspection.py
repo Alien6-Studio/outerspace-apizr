@@ -188,6 +188,7 @@ def inspect_experiment(
     module_name: str | None = None,
     declarations: tuple[InputDeclaration, ...] = (),
     fingerprint_policy: FingerprintPolicy | None = None,
+    max_source_bytes: int | None = None,
 ) -> ExperimentInspection:
     """Inspect one explicit source, bounded local inputs and root-level environment specs.
 
@@ -212,10 +213,14 @@ def inspect_experiment(
         if fingerprint_policy is None
         else FingerprintPolicy.model_validate(fingerprint_policy)
     )
-    raw = read_regular(
-        source_path,
-        MAX_SOURCE_BYTES if source_path.suffix == ".py" else MAX_NOTEBOOK_BYTES,
+    source_limit = (
+        MAX_SOURCE_BYTES if source_path.suffix == ".py" else MAX_NOTEBOOK_BYTES
     )
+    if max_source_bytes is not None:
+        if type(max_source_bytes) is not int or max_source_bytes < 1:
+            raise ValueError("inspection_source_limit_invalid")
+        source_limit = min(source_limit, max_source_bytes)
+    raw = read_regular(source_path, source_limit)
     notebook = None
     source: str | bytes = raw
     if source_path.suffix == ".ipynb":

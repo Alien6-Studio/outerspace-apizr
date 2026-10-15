@@ -58,6 +58,7 @@ Code = Literal[
     "operator_source_invalid",
     "operator_source_unavailable",
     "operator_source_changed",
+    "operator_history_denied",
 ]
 
 
@@ -216,12 +217,31 @@ class AnalysisGrant(Model):
     permissions: tuple[Literal["source.analyze"], ...] = Field(max_length=1)
 
 
+class HistoryGrant(Model):
+    """Read one exact project's selected local experiment store; grants no execution."""
+
+    adapter: Literal["experiments"]
+    operation: Literal["history.read"]
+    target: LocalTarget
+    store: str = ".apizr/experiments/v1"
+    permissions: tuple[Literal["experiments.read"], ...] = Field(max_length=1)
+
+    @field_validator("store")
+    @classmethod
+    def relative_store(cls, value: str) -> str:
+        from pydantic import TypeAdapter
+
+        from apizr.experiments.model import Reference
+
+        return TypeAdapter[str](Reference).validate_python(value, strict=True)
+
+
 class OperatorPolicy(Model):
     model_config = ConfigDict(serialize_by_alias=True)
     schema_version: Literal["apizr.operator-policy/v1"] = Field(alias="schema")
     grants: tuple[
         Annotated[
-            Grant | SigningGrant | BuildGrant | GitGrant | AnalysisGrant,
+            Grant | SigningGrant | BuildGrant | GitGrant | AnalysisGrant | HistoryGrant,
             Field(discriminator="operation"),
         ],
         ...,
@@ -357,7 +377,8 @@ def decide(
     grants = [
         g
         for g in policy.grants
-        if not isinstance(g, (GitGrant, AnalysisGrant)) and g.plugin == identity
+        if not isinstance(g, (GitGrant, AnalysisGrant, HistoryGrant))
+        and g.plugin == identity
     ]
     if not grants:
         return Decision(allowed=False, code="operator_identity_denied")
@@ -504,5 +525,30 @@ def decide_analysis(
     if not grants:
         return Decision(allowed=False, code="operator_analysis_denied")
     if not any(g.permissions == ("source.analyze",) for g in grants):
+        return Decision(allowed=False, code="operator_permissions_denied")
+    return Decision(allowed=True, code="authorized")
+
+
+def decide_history(
+    policy: OperatorPolicy | None, target: LocalTarget, store: str
+) -> Decision:
+    """Pure admission for one exact local store; source grants do not imply this right."""
+    if policy is None:
+        return Decision(allowed=False, code="operator_policy_required")
+    try:
+        policy = _validated_policy(policy)
+        target = LocalTarget.model_validate_json(target.model_dump_json(), strict=True)
+        store = HistoryGrant.relative_store(store)
+    except AuthorizationDenied as error:
+        return error.decision
+    except (ValueError, TypeError, AttributeError, RecursionError):
+        return Decision(allowed=False, code="operator_source_invalid")
+    grants = [g for g in policy.grants if isinstance(g, HistoryGrant)]
+    if not grants:
+        return Decision(allowed=False, code="operator_operation_denied")
+    grants = [g for g in grants if g.target == target and g.store == store]
+    if not grants:
+        return Decision(allowed=False, code="operator_history_denied")
+    if not any(g.permissions == ("experiments.read",) for g in grants):
         return Decision(allowed=False, code="operator_permissions_denied")
     return Decision(allowed=True, code="authorized")

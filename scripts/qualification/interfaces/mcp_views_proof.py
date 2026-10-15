@@ -1,7 +1,8 @@
-"""Real SDK proof for bounded repository views from installed core/plugin bytes."""
+"""Real SDK proof for bounded repository views and recorded experiment history."""
 
 import argparse
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -73,6 +74,48 @@ def serialized_bytes(value: Any) -> int:
 
 async def prove(root: Path, config: dict[str, Any]) -> dict[str, Any]:
     project, operator_path = fixture(root / "views-project")
+    python = config.get("server_python") or str(Path(config["cli"]).with_name("python"))
+    history_authority = operator_path.with_name("history-operator.json")
+    history_policy = json.loads(operator_path.read_text())
+    history_policy["grants"].append(
+        {
+            "adapter": "experiments",
+            "operation": "history.read",
+            "target": {"kind": "local", "root": str(project.parent)},
+            "store": ".apizr/experiments/v1",
+            "permissions": ["experiments.read"],
+        }
+    )
+    history_authority.write_text(json.dumps(history_policy))
+    prepared = subprocess.run(
+        [
+            python,
+            "-I",
+            "-c",
+            """
+import json,sys
+from pathlib import Path
+from apizr import tracking
+import apizr
+root=Path(sys.argv[1]); checkout=Path(sys.argv[2])
+assert not Path(apizr.__file__).resolve().is_relative_to(checkout)
+runs=[]
+for value in (0.1,0.2):
+    with tracking.session(root=root,source='model.py') as session:
+        tracking.log_parameter('rate',value)
+        tracking.log_metric('score',value+0.7)
+    runs.append(session.record.run_digest)
+print(json.dumps(runs))
+""",
+            str(project.parent),
+            str(Path(__file__).resolve().parents[3]),
+        ],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    run_a, run_b = json.loads(prepared.stdout)
     authority = load_operator_policy(operator_path)
     evidence = analyze_repository(project.parent, operator_policy=authority)
     report = assess_repository(evidence.catalog, evidence.graph)
@@ -94,7 +137,9 @@ async def prove(root: Path, config: dict[str, Any]) -> dict[str, Any]:
         "execution": {"allowed": ["direct"]},
     }
 
-    def target(bound: int | None = None) -> StdioServerParameters:
+    def target(
+        bound: int | None = None, *, history: bool = False
+    ) -> StdioServerParameters:
         args = ["serve"] if "server_python" in config else ["mcp", "serve"]
         command = (
             config["server_python"] if "server_python" in config else config["cli"]
@@ -103,7 +148,12 @@ async def prove(root: Path, config: dict[str, Any]) -> dict[str, Any]:
             args = ["-I", "-m", "apizr_mcp", *args]
         else:
             args += ["--plugins-dir", config["store"]]
-        args += ["--project", str(project), "--operator-policy", str(operator_path)]
+        args += [
+            "--project",
+            str(project),
+            "--operator-policy",
+            str(history_authority if history else operator_path),
+        ]
         if bound is not None:
             args += ["--max-response-bytes", str(bound)]
         return StdioServerParameters(
@@ -122,12 +172,21 @@ async def prove(root: Path, config: dict[str, Any]) -> dict[str, Any]:
                 "apizr_analyze",
                 "apizr_readiness",
                 "apizr_plan_exposure",
+                "apizr_experiment_list",
+                "apizr_experiment_show",
+                "apizr_experiment_diff",
             }
             schemas = {t.name: t.output_schema for t in tools}
             for tool in tools:
                 assert tool.input_schema["additionalProperties"] is False
                 assert tool.output_schema and tool.output_schema["type"] == "object"
                 properties = tool.input_schema["properties"]
+                if tool.name.startswith("apizr_experiment_"):
+                    assert (
+                        not {"root", "store", "operator_policy", "permissions"}
+                        & properties.keys()
+                    )
+                    continue
                 assert {"expected_repository_digest", "offset", "limit"} <= set(
                     properties
                 )
@@ -156,6 +215,8 @@ async def prove(root: Path, config: dict[str, Any]) -> dict[str, Any]:
                     assert response.is_error and value["error"]["code"] == code, value
                 assert str(project.parent) not in json.dumps(value)
                 return value
+
+            await call("apizr_experiment_list", {}, "operator_operation_denied")
 
             full = {}
             for name in ("apizr_analyze", "apizr_readiness"):
@@ -378,6 +439,76 @@ async def prove(root: Path, config: dict[str, Any]) -> dict[str, Any]:
                 "max_response_bytes": bound,
                 "full": "response_too_large",
                 "summary": "success",
+            }
+        async with Client(
+            target(history=True), mode=mode, read_timeout_seconds=30
+        ) as client:
+            store = project.parent / ".apizr/experiments/v1"
+            before = {
+                p.relative_to(store).as_posix(): p.read_bytes()
+                for p in store.rglob("*")
+                if p.is_file()
+            }
+            retained = {}
+            for name, arguments, cli_args in (
+                ("apizr_experiment_list", {}, ["list"]),
+                ("apizr_experiment_show", {"run_id": run_a}, ["show", run_a]),
+                (
+                    "apizr_experiment_diff",
+                    {"run_a": run_a, "run_b": run_b},
+                    ["diff", run_a, run_b],
+                ),
+            ):
+                response = await client.call_tool(name, arguments)
+                assert not response.is_error, response
+                value = response.structured_content
+                schema = schemas[name]
+                assert isinstance(schema, dict)
+                jsonschema.validate(value, schema)
+                output = subprocess.run(
+                    [
+                        python,
+                        "-I",
+                        "-m",
+                        "apizr.cli",
+                        "experiment",
+                        *cli_args,
+                        "--store",
+                        str(store),
+                        "--format",
+                        "json",
+                    ],
+                    cwd=root,
+                    capture_output=True,
+                    check=True,
+                )
+                assert value == json.loads(output.stdout)
+                retained[name] = value
+            assert {
+                r["capture"]["mode"] for r in retained["apizr_experiment_list"]["runs"]
+            } == {"sdk_session"}
+            assert before == {
+                p.relative_to(store).as_posix(): p.read_bytes()
+                for p in store.rglob("*")
+                if p.is_file()
+            }
+            damaged = store / "runs" / (run_a + ".json")
+            original = damaged.read_bytes()
+            try:
+                damaged.write_bytes(original + b" ")
+                refused = await client.call_tool("apizr_experiment_list", {"limit": 1})
+                assert (
+                    refused.is_error
+                    and refused.structured_content["error"]["code"] == "history_invalid"
+                )
+            finally:
+                damaged.write_bytes(original)
+            entry["history"] = {
+                "results": retained,
+                "canonical_cli_parity": True,
+                "store_unchanged": True,
+                "missing_authority": "operator_operation_denied",
+                "corruption": "history_invalid",
             }
         results[mode] = entry
         print(

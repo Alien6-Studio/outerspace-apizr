@@ -1,8 +1,13 @@
-"""Regenerate the independent Experiment Plan and Experiment Run v1 schemas."""
+"""Regenerate canonical experiment and editor wire schemas."""
 
 import json
 from pathlib import Path
 
+from apizr.editor_contracts.model import (
+    EditorRequest,
+    EditorResponse,
+    EngineCapabilities,
+)
 from apizr.experiments import ExperimentPlan, ExperimentRun
 from apizr.experiments.capture_model import ExperimentPlanV2, ExperimentRunV2
 from apizr.experiments.comparison import ExperimentDiff, ExperimentDiffV2
@@ -22,6 +27,15 @@ from apizr.experiments.store import RunRecord, RunRecordV2
 
 def main() -> None:
     root = Path(__file__).resolve().parents[3] / "docs/specs"
+    for name, model in (
+        ("request", EditorRequest),
+        ("response", EditorResponse),
+        ("capabilities", EngineCapabilities),
+    ):
+        (root / f"apizr-editor-{name}-v1.schema.json").write_text(
+            json.dumps(model.model_json_schema(), indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
     for name, model in (
         ("plan", ExperimentPlan),
         ("run", ExperimentRun),

@@ -87,6 +87,16 @@ exec and workers. Policy edits require a **restart**; there is no dynamic
 revocation. Clients cannot choose roots or new authority. See the
 [complete MCP example](apizr-mcp-server.md#choose-one-local-project).
 
+## Authorize experiment-history reading (0.4.6 development)
+
+Editor and MCP history tools also require an exact `adapter: experiments`,
+`operation: history.read` grant with `permissions: [experiments.read]`, a local
+`target` root and the project-relative `store`. This is independent of analysis,
+execution and delivery. The default store is `.apizr/experiments/v1`.
+See the complete grant and request examples in the [editor contract](editor-contract.md).
+MCP uses that configured project's default store; clients cannot choose a different
+one through tool arguments. The engine checks admission before reading records.
+
 ## Authorize a Git source
 
 Git is part of the minimal core, not an installed plugin. Use a separate

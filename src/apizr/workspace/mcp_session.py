@@ -12,7 +12,7 @@ from apizr.delivery_batch import BatchRequest
 from apizr.extension_runtime.protocol import unique_object
 from apizr.workspace.analysis_session import MAX_SESSION_BYTES, Scope, check_scope
 from apizr.workspace.files import read_regular
-from apizr.workspace.operator_policy import AnalysisGrant, OperatorPolicy
+from apizr.workspace.operator_policy import AnalysisGrant, HistoryGrant, OperatorPolicy
 
 MAX_DELIVERY_REQUEST_BYTES = 524288
 
@@ -28,6 +28,25 @@ def analysis_scope(scope: Scope) -> Scope:
                 schema="apizr.operator-policy/v1",
                 grants=tuple(
                     g for g in authority.grants if isinstance(g, AnalysisGrant)
+                ),
+            )
+        }
+    )
+
+
+def history_scope(scope: Scope) -> Scope:
+    """Read-only workers receive no build, signing, registry or key authority."""
+    authority = scope.operator_policy
+    if authority is None:
+        return scope
+    return scope.model_copy(
+        update={
+            "operator_policy": OperatorPolicy(
+                schema="apizr.operator-policy/v1",
+                grants=tuple(
+                    g
+                    for g in authority.grants
+                    if isinstance(g, (AnalysisGrant, HistoryGrant))
                 ),
             )
         }
