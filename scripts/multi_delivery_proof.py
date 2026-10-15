@@ -123,7 +123,15 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
             sign = {k: signing[k] for k in ("key_id", "key_file", "tsa_url")}
             if scope == "b":
                 sign["key_file"] = str(broken_key)
-            verify = {k: signing[k] for k in ("expected_signer", "trust_store", "tool")}
+            verify = {
+                k: signing[k]
+                for k in (
+                    "expected_signer",
+                    "trust_store",
+                    "trust_store_sha256",
+                    "tool",
+                )
+            }
             destinations.append(
                 {
                     "push": push,
@@ -153,6 +161,8 @@ os.execv('/usr/local/bin/docker',['/usr/local/bin/docker',*args])
                 }
                 if operation == "attest":
                     grant.update(sign | {"expected_signer": signing["expected_signer"]})
+                if operation in {"attest", "publish", "admit"}:
+                    grant["verification"] = verify
                 grants.append(grant)
         project = None
         if mcp_python is not None:

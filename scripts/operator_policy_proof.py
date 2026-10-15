@@ -28,7 +28,16 @@ def installed_identity(python, store, name, command):
     }
 
 
-def write_policy(python, store, path, name, operation, repositories, command):
+def verification_target(arguments):
+    return {
+        key: arguments[key]
+        for key in ("expected_signer", "trust_store", "trust_store_sha256", "tool")
+    }
+
+
+def write_policy(
+    python, store, path, name, operation, repositories, command, *, verification=None
+):
     identity = installed_identity(python, store, name, command)
     document = {
         "schema": "apizr.operator-policy/v1",
@@ -42,6 +51,9 @@ def write_policy(python, store, path, name, operation, repositories, command):
             for repository in repositories
         ],
     }
+    if verification is not None:
+        for grant in document["grants"]:
+            grant["verification"] = verification
     path.write_text(json.dumps(document))
     return path
 
@@ -81,6 +93,22 @@ def write_build_policy(python, store, path, arguments, command):
 
 
 def write_signing_policy(python, store, path, arguments, command):
+    # These inputs belong to the disposable proof operator, not the project.
+    pinned = json.loads(
+        command(
+            python,
+            "-I",
+            "-c",
+            "import json,sys; from apizr.contracts.publication import Tool; "
+            "from apizr.workspace.verification import capture_verification; "
+            "v=json.loads(sys.argv[1]); v['tool']=Tool.model_validate(v['tool']); "
+            "print(capture_verification(**v).model_dump_json())",
+            json.dumps(
+                {k: arguments[k] for k in ("expected_signer", "trust_store", "tool")}
+            ),
+        )
+    )
+    arguments["trust_store_sha256"] = pinned["trust_store_sha256"]
     write_policy(
         python,
         store,
@@ -89,6 +117,7 @@ def write_signing_policy(python, store, path, arguments, command):
         "attest",
         [arguments["expected_reference"].split("@")[0]],
         command,
+        verification=pinned,
     )
     raw = json.loads(path.read_bytes())
     grant = raw["grants"][0]

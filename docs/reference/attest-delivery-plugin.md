@@ -108,6 +108,12 @@ No proxy or parent authentication environment is inherited.
 Managed signing requires an explicit [operator signing grant](operator-policy.md#authorize-signing-separately)
 binding the installed plugin identity, repository, key ID/file, expected signer
 and TSA, with `registry.read`, `receipt.sign` and `timestamp.request` permissions.
+Its `verification` target also binds the exact Attest executable/version/hash,
+signer, trust directory and `trust_store_sha256`. Capture this digest from your
+reviewed public trust files using the [operator authoring example](operator-policy.md#bind-proof-verification-authority)
+and put that same value in the request. An older grant without the binding is
+refused before invocation. The plugin rechecks the trust snapshot before using
+Attest or the signing key.
 The core decides before launching the plugin or accessing credentials or keys.
 A publication grant does not authorize signing. These permissions compare the
 operator's expectations; native cryptographic verification remains mandatory.
@@ -139,6 +145,7 @@ build/push results, paths, signer and TSA):
   "key_id": "cccccccccccccccccccccccccccccccc",
   "tsa_url": "https://tsa.example/timestamp",
   "trust_store": "/private/independent-trust",
+  "trust_store_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
   "output_dir": "/work/proofs/delivery",
   "timeout_ms": 300000,
   "max_output_bytes": 1048576

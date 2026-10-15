@@ -64,6 +64,7 @@ def request(tmp_path, required=True, count=3):
                     "verification": {
                         "expected_signer": SIGNER,
                         "trust_store": "/private/trust",
+                        "trust_store_sha256": "c" * 64,
                         "tool": {
                             "executable": "/private/attest",
                             "version": "0.1.0",

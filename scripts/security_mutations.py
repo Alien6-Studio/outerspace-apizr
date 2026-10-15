@@ -28,6 +28,34 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "signing-verification-authority",
+        "src/apizr/workspace/operator_policy.py",
+        "signing_grants = [g for g in signing_grants if g.verification == target]",
+        "signing_grants = signing_grants",
+        "tests/local_plugins/test_verification_policy.py::test_verification_authority_is_exact_and_pure[tool_hash-attest]",
+    ),
+    Mutation(
+        "publication-verification-authority",
+        "src/apizr/workspace/operator_policy.py",
+        "if isinstance(g, Grant) and g.verification == target",
+        "if isinstance(g, Grant)",
+        "tests/local_plugins/test_verification_policy.py::test_verification_authority_is_exact_and_pure[signer-publish]",
+    ),
+    Mutation(
+        "admission-verification-authority",
+        "src/apizr/workspace/operator_policy.py",
+        "if isinstance(g, Grant) and g.verification == target",
+        "if isinstance(g, Grant)",
+        "tests/local_plugins/test_verification_policy.py::test_verification_authority_is_exact_and_pure[trust_path-admit]",
+    ),
+    Mutation(
+        "attest-trust-snapshot-identity",
+        "plugins/attest/src/apizr_attest/delivery.py",
+        "if expected_sha256 is not None and trust_identity(files) != expected_sha256:",
+        "if False:",
+        "tests/attest_plugin/test_delivery.py::test_changed_trust_refused_before_verifier_or_key_access",
+    ),
+    Mutation(
         "builtin-provider-identity",
         "src/apizr/scientific_providers/builtin/provider.py",
         "        if request.provider.identity != self.descriptor.identity:",

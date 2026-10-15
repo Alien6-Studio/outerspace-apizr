@@ -92,6 +92,7 @@ def arguments(operation):
         "expected_reference": REPOSITORY + "@sha256:" + "a" * 64,
         "expected_signer": "b" * 64,
         "trust_store": "/proof/trust",
+        "trust_store_sha256": "f" * 64,
         "proof_dir": "/proof/signed",
         "tool": {
             "executable": "/native/attest",
@@ -163,6 +164,11 @@ def document(binding, operation="push", repository=REPOSITORY):
             "receipt.sign",
             "timestamp.request",
         ]
+    if operation in {"attest", "publish", "admit"}:
+        result["grants"][0]["verification"] = {
+            k: arguments(operation)[k]
+            for k in ("tool", "expected_signer", "trust_store", "trust_store_sha256")
+        }
     return result
 
 

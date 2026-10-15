@@ -160,9 +160,28 @@ class VerificationInputs(Model):
     expected_signer: str = Field(pattern=r"^[0-9a-f]{64}$")
     trust_store: str
     tool: Tool
+    trust_store_sha256: str | None = Field(
+        default=None, pattern=r"^[0-9a-f]{64}$", exclude_if=lambda v: v is None
+    )
     timeout_ms: int = Field(default=120000, ge=1, le=540000)
     max_output_bytes: int = Field(default=1048576, ge=1024, le=4194304)
     _trust = field_validator("trust_store")(Docker.absolute.__func__)
+
+
+class VerificationTarget(Model):
+    """Operator-selected verification authority, including public trust contents."""
+
+    expected_signer: str = Field(pattern=r"^[0-9a-f]{64}$")
+    tool: Tool
+    trust_store: str
+    trust_store_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    _trust = field_validator("trust_store")(Docker.absolute.__func__)
+
+    @classmethod
+    def from_request(cls, request: VerificationInputs) -> "VerificationTarget":
+        return cls.model_validate(
+            request.model_dump(include=set(cls.model_fields)), strict=True
+        )
 
 
 class Common(VerificationInputs):

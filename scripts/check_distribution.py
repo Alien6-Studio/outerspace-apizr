@@ -163,6 +163,7 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
                 "apizr/workspace/compiler.py",
                 "apizr/workspace/mcp_session.py",
                 "apizr/workspace/operator_policy.py",
+                "apizr/workspace/verification.py",
                 "apizr/workspace/source_access.py",
                 "apizr/generators/notebooks.py",
                 "apizr/capabilities/inspection.py",

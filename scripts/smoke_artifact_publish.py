@@ -36,7 +36,13 @@ def exercise(python, store, work, first, second, signing, command, environment):
     )
     common = {
         key: signing[key]
-        for key in ("expected_reference", "expected_signer", "trust_store", "tool")
+        for key in (
+            "expected_reference",
+            "expected_signer",
+            "trust_store",
+            "trust_store_sha256",
+            "tool",
+        )
     }
     auth = json.loads(Path("/proof/auth/config.json").read_text())["auths"][
         "registry.test:5443"
@@ -62,6 +68,7 @@ def exercise(python, store, work, first, second, signing, command, environment):
             common["expected_reference"].split("@")[0],
         ],
         command,
+        verification={k: v for k, v in common.items() if k != "expected_reference"},
     )
     refusals = []
 

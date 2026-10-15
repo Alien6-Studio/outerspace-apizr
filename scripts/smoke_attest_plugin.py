@@ -216,6 +216,25 @@ def exercise(python, store, work, builds, command, environment):
                     environment,
                 )
             )
+        for change in (
+            {"tool": tool | {"executable": "/different/attest"}},
+            {"tool": tool | {"sha256": "0" * 64}},
+            {"trust_store": "/different/trust"},
+            {"trust_store_sha256": "0" * 64},
+        ):
+            operator_refusals.append(
+                refuse(
+                    python,
+                    store,
+                    work,
+                    "outerspace-apizr-attest",
+                    "attest",
+                    arguments | change,
+                    operator,
+                    "operator_verification_denied",
+                    environment,
+                )
+            )
         assert not calls and not output.exists()
         (work / "operator-signing-refusals.json").write_text(
             json.dumps(operator_refusals)
@@ -229,12 +248,16 @@ def exercise(python, store, work, builds, command, environment):
         ):
             # Explicitly authorize changed signing identities too: these cases
             # must still exercise native verification, not stop at admission.
-            changed_policy = write_signing_policy(
-                python,
-                store,
-                work / "negative-signing.json",
-                arguments | change,
-                command,
+            changed_policy = (
+                operator
+                if name == "wrong-version"  # Invalid contracts cannot be granted.
+                else write_signing_policy(
+                    python,
+                    store,
+                    work / "negative-signing.json",
+                    arguments | change,
+                    command,
+                )
             )
             invoke("attest", arguments | change, refused=True, selected=changed_policy)
             assert not output.exists()
@@ -282,9 +305,12 @@ def exercise(python, store, work, builds, command, environment):
                 blocked_ca,
                 _,
             ):
-                shutil.copyfile(blocked_ca, trust / "tsa/blocked.crt")
+                blocked_trust = work / (mode + "-trust")
+                shutil.copytree(trust, blocked_trust)
+                shutil.copyfile(blocked_ca, blocked_trust / "tsa/blocked.crt")
                 blocked = arguments | {
                     "tsa_url": blocked_url,
+                    "trust_store": str(blocked_trust),
                     "timeout_ms": 10000 if mode == "timeout" else 300000,
                     "output_dir": str(work / (mode + "-proof")),
                 }

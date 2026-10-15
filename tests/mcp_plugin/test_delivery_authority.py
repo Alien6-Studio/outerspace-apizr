@@ -88,6 +88,15 @@ def test_exact_existing_grants_remain_authoritative(
                     expected_signer=destination.proof.verification.expected_signer,
                     permissions=["registry.read", "receipt.sign", "timestamp.request"],
                 )
+            if operation in {"attest", "publish", "admit"}:
+                grant["verification"] = destination.proof.verification.model_dump(
+                    include={
+                        "tool",
+                        "expected_signer",
+                        "trust_store",
+                        "trust_store_sha256",
+                    }
+                )
             if index == 1 and fault == "partial_grants" and operation == "push":
                 grants.extend(
                     [

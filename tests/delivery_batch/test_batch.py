@@ -484,6 +484,15 @@ def test_managed_authorization_is_independent_at_every_destination_stage(
                     expected_signer=SIGNER,
                     permissions=["registry.read", "receipt.sign", "timestamp.request"],
                 )
+            if operation in {"attest", "publish", "admit"}:
+                grant["verification"] = destination.proof.verification.model_dump(
+                    include={
+                        "tool",
+                        "expected_signer",
+                        "trust_store",
+                        "trust_store_sha256",
+                    }
+                )
             grants.append(grant)
     policy = OperatorPolicy.model_validate_json(
         json.dumps({"schema": "apizr.operator-policy/v1", "grants": grants})

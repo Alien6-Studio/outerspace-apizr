@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from operator_policy_proof import refuse, write_policy
+from operator_policy_proof import refuse, verification_target, write_policy
 
 
 def exercise(python, store, work, builds, pushes, rest, mcp, command, environment):
@@ -20,6 +20,7 @@ def exercise(python, store, work, builds, pushes, rest, mcp, command, environmen
         "admit",
         repositories,
         command,
+        verification=verification_target(rest),
     )
     publisher = write_policy(
         python,
@@ -29,6 +30,7 @@ def exercise(python, store, work, builds, pushes, rest, mcp, command, environmen
         "publish",
         repositories,
         command,
+        verification=verification_target(rest),
     )
     base = [
         str(python),
@@ -88,7 +90,13 @@ def exercise(python, store, work, builds, pushes, rest, mcp, command, environmen
         assert not Path(signing["key_file"]).exists()
         common = {
             k: signing[k]
-            for k in ("expected_reference", "expected_signer", "trust_store", "tool")
+            for k in (
+                "expected_reference",
+                "expected_signer",
+                "trust_store",
+                "trust_store_sha256",
+                "tool",
+            )
         }
         published = (
             record["published"]
