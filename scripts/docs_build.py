@@ -19,6 +19,7 @@ CRITICAL = {
     "releases/0.4.0/index.html": "Core and all three plugins published as 0.4.0rc1.",
     "releases/0.4.1/index.html": "0.4.1 is published and verified.",
     "architecture/delivery-identities/index.html": "DeliveryManifest",
+    "architecture/transport-admission/index.html": "REST and MCP admission budgets",
     "reference/delivery-admission/index.html": "admission",
     "reference/multi-destination-delivery/index.html": "resume",
     "reference/operator-policy/index.html": "receipt.sign",
@@ -51,6 +52,7 @@ ASSETS = (
     "assets/videos/tutorial-oci.jpg",
     "assets/stylesheets/branding.css",
     "assets/javascripts/video.js",
+    "assets/javascripts/feedback.js",
 )
 
 

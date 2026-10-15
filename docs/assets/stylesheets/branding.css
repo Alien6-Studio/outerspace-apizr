@@ -141,3 +141,37 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+.apizr-home-feedback {
+  margin: 1rem 0;
+  font-size: 0.8rem;
+}
+
+.apizr-home-feedback p {
+  margin: 0.4rem 0;
+}
+
+.apizr-home-feedback__badge {
+  display: block;
+  width: 250px;
+  max-width: 100%;
+  height: 54px;
+}
+
+.apizr-home-feedback__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.2rem;
+}
+
+.apizr-home-feedback [hidden] {
+  display: none;
+}
+
+.apizr-home-feedback__settings {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.7rem;
+}

@@ -70,8 +70,8 @@ extra:
     title: Cookie consent
     description: >-
       Optional Google Analytics cookies measure documentation visits. Optional
-      GitHub requests show repository statistics. Both stay off until you choose
-      them. You can reject them or change your choice at any time.
+      GitHub requests show repository statistics. Optional Product Hunt requests
+      display the homepage badge. These stay off until you choose them. You can reject them or change your choice at any time.
     actions:
       - accept
       - reject
@@ -83,6 +83,9 @@ extra:
       github:
         name: GitHub repository statistics
         checked: false
+      producthunt:
+        name: Product Hunt badge
+        checked: false
 
 validation:
   links:
@@ -93,6 +96,7 @@ extra_css:
   - assets/stylesheets/branding.css
 extra_javascript:
   - assets/javascripts/video.js
+  - assets/javascripts/feedback.js
 
 # Organize by reader task; keep published page paths stable.
 nav:

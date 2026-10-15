@@ -33,6 +33,16 @@ GPL-3.0-or-later.
 
 </div>
 
+<div class="apizr-home-feedback" data-apizr-producthunt>
+  <p>Share your feedback on Product Hunt.</p>
+  <a class="apizr-home-feedback__badge" href="https://www.producthunt.com/products/outerspace-apizr?launch=outerspace-apizr" target="_blank" rel="noopener noreferrer" aria-label="View OuterSpace Apizr on Product Hunt">
+    <span class="apizr-home-feedback__placeholder">View Apizr on Product Hunt</span>
+    <img data-apizr-badge-src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=410734&amp;theme=light#only-light" alt="OuterSpace Apizr on Product Hunt" width="250" height="54" loading="lazy" referrerpolicy="no-referrer" hidden />
+    <img data-apizr-badge-src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=410734&amp;theme=dark#only-dark" alt="OuterSpace Apizr on Product Hunt" width="250" height="54" loading="lazy" referrerpolicy="no-referrer" hidden />
+  </a>
+  <p class="apizr-home-feedback__settings">Badge preferences: <a href="#__consent">Cookie settings</a>.</p>
+</div>
+
 </div>
 
 Start with two Python functions and make your first calls in the
