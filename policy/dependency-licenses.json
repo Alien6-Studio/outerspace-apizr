@@ -292,29 +292,33 @@
           "scope": "blib2to3 code derived from Python; preserve the complete historical notice."
         }
       ],
-      "distribution_fingerprint": "bdf38acb235e5d7ec238d22db9228752ccfb7cd83345f63dd81e07151b943462",
+      "distribution_fingerprint": "823f3f690ba7f20d6e94710a2cc925eb8e149a0abab70cd3373f9f6ce03b5808",
       "evidence_archive": {
-        "hash": "sha256:dd321f668053961824bcc1be1cc1df748b2d7e4fa28086b08331e577b0100a73",
-        "url": "https://files.pythonhosted.org/packages/c0/37/5628dd55bf2b34257fc7603f0fe97c40e3aaf24265f416a9c85c95ca1436/black-26.5.1.tar.gz"
+        "hash": "sha256:5f9f83beae62437e060dafd53d7f1fc327e3d3494f74d72ee5c2b73eb90fc4e7",
+        "url": "https://files.pythonhosted.org/packages/f8/65/a9611a6ec0a8c88d86e59385da02d68d9533f7e86a05913d20c67be54029/black-26.10.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "black-26.5.1/docs/license.md",
+          "path": "black-26.10.1/LICENSE",
+          "sha256": "9c0428f0c3b4779850cf5bd96e11aaa8afc72d4a86d4a36223d7aba2e58d6e00"
+        },
+        {
+          "path": "black-26.10.1/docs/_static/license.svg",
+          "sha256": "1e5e26d2da281749750fd535c0c46a74e1884087b50d88066ac1d8be49aa76a6"
+        },
+        {
+          "path": "black-26.10.1/docs/license.md",
           "sha256": "2ff4913ffefc5475c299790a4c54027e2c61e41d97d47797d78ff4420862d34a"
         },
         {
-          "path": "black-26.5.1/src/blib2to3/LICENSE",
+          "path": "black-26.10.1/src/blib2to3/LICENSE",
           "sha256": "5789881b8aeb9c91f5835f5bb7cabe84a0fecd4bb2be2f54c9e6957a78ec799d"
-        },
-        {
-          "path": "black-26.5.1/LICENSE",
-          "sha256": "9c0428f0c3b4779850cf5bd96e11aaa8afc72d4a86d4a36223d7aba2e58d6e00"
         }
       ],
       "name": "black",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components. Requalified 26.10.1 from its exact hash-verified source archive on 2026-10-15; the previously reviewed legal notices remain byte-identical. The additional license.svg is documentation badge artwork, retained separately from the legal notices.",
       "status": "reviewed",
-      "version": "26.5.1"
+      "version": "26.10.1"
     },
     {
       "components": [
@@ -865,21 +869,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "fd3211348873d35453946621d958d57499ddfdd7c78f293d5b16324df3f61609",
+      "distribution_fingerprint": "4a39b8a6e25c8f201678d18166f43c0b24a484cff8d20d365c2206996cb5b2fc",
       "evidence_archive": {
-        "hash": "sha256:06366626f2e70576367714d9ab2fe8472e6c8456dba69b399f9f797ab5e92570",
-        "url": "https://files.pythonhosted.org/packages/56/4f/f7c30a73127e0a8bbffe788369b8359e530b01ae06e2757936fa35bc5e6d/fastapi-0.142.2.tar.gz"
+        "hash": "sha256:1acffe48206a80917cf7dac21992b5c44b25384e8902bf745c1fd9dabcf6c51f",
+        "url": "https://files.pythonhosted.org/packages/0b/d7/6a8753ab6c1d432dc53703c3e1b92974a94531b7d047c32bbaae461ea844/fastapi-0.143.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "fastapi-0.142.2/LICENSE",
+          "path": "fastapi-0.143.0/LICENSE",
           "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
         }
       ],
       "name": "fastapi",
-      "notes": "Reviewed the exact selected source archive and preserved MIT notice for the existing optional HTTP adapter and validation suite. The notice is byte-identical to the prior review. No FastAPI source is embedded in Apizr distributions; retain upstream attribution for redistribution.",
+      "notes": "Reviewed the exact selected source archive and preserved MIT notice for the existing optional HTTP adapter and validation suite. The notice is byte-identical to the prior review. No FastAPI source is embedded in Apizr distributions; retain upstream attribution for redistribution. Requalified 0.143.0 from its exact hash-verified source archive on 2026-10-15; the previously reviewed legal notices remain byte-identical.",
       "status": "reviewed",
-      "version": "0.142.2"
+      "version": "0.143.0"
     },
     {
       "components": [
@@ -1189,21 +1193,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "31be159f0a1e4abbad417cea501f153f108d74ca57f9012458758aa1bbf5ee6b",
+      "distribution_fingerprint": "35566db86c97faa0ff3dadfd82a4d41f9c3c4e21701d96ad3e49050407aa0906",
       "evidence_archive": {
-        "hash": "sha256:a43388f9067678fef6e13bdff325b6cfa6961a590498bb37f7ff31589c83bc75",
-        "url": "https://files.pythonhosted.org/packages/09/b7/13118bbc45d6d8b9d04e2de779e2a4ff23145ea39efa692b994fb874ca72/hypothesis-6.168.3.tar.gz"
+        "hash": "sha256:b65749d7f7a2fddfb106bb57c9902db4ab25ce8724c821f4af50cc58891a6b7b",
+        "url": "https://files.pythonhosted.org/packages/b7/b7/fcddfc235d1ab24b831e99ad3385361e87eb4fed427f527a7f15866214ad/hypothesis-6.169.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "hypothesis-6.168.3/LICENSE.txt",
+          "path": "hypothesis-6.169.0/LICENSE.txt",
           "sha256": "ac89037bac63550644dce8cf32c6765e5fab9dc1a1ce94b89f8a805f341a6750"
         }
       ],
       "name": "hypothesis",
-      "notes": "Reviewed the exact source archive and complete MPL-2.0 notice for the existing bounded property tests. The notice is byte-identical to the prior review. Preserve notices and applicable source availability obligations; this is validation tooling and no Hypothesis source is embedded in Apizr distributions.",
+      "notes": "Reviewed the exact source archive and complete MPL-2.0 notice for the existing bounded property tests. The notice is byte-identical to the prior review. Preserve notices and applicable source availability obligations; this is validation tooling and no Hypothesis source is embedded in Apizr distributions. Requalified 6.169.0 from its exact hash-verified source archive on 2026-10-15; the previously reviewed legal notices remain byte-identical.",
       "status": "reviewed",
-      "version": "6.168.3"
+      "version": "6.169.0"
     },
     {
       "components": [
@@ -3011,21 +3015,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "d3fad38cb65d464985369fd2196ab7730ab3733691b808cb6336e553642ba688",
+      "distribution_fingerprint": "7695ae9a49a5201c2c5df8e492b98aa8a1716b941650d0cb1cdbc08273209c2c",
       "evidence_archive": {
-        "hash": "sha256:51a9c5f7b2f8e636f04c6cada605d9b6a3bf1348fdf945a3d8869b19bba0ee08",
-        "url": "https://files.pythonhosted.org/packages/53/ef/fc4f868f4e2cee79f863883abffceff107875f569b848507319842d2a681/pydantic-2.13.5.tar.gz"
+        "hash": "sha256:94f478203dd03404682a1ada216965651dd74b1d2d5ffd62e00e0837caab5c26",
+        "url": "https://files.pythonhosted.org/packages/7c/0b/8e10b2e693af8ec54346a14caf36221334775975a747c9ceaa3f8371d96d/pydantic-2.14.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "pydantic-2.13.5/LICENSE",
+          "path": "pydantic-2.14.1/LICENSE",
           "sha256": "a9e186f3ca16b5eef84318e7a701721351a00cb7b8ae3a4394b67b49e3529ef3"
         }
       ],
       "name": "pydantic",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components. Requalified 2.14.1 from its exact hash-verified source archive on 2026-10-15; the previously reviewed legal notices remain byte-identical.",
       "status": "reviewed",
-      "version": "2.13.5"
+      "version": "2.14.1"
     },
     {
       "components": [
@@ -3037,21 +3041,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "ac036114a3b8a15dba6452f56db5186c8f482eeb189942a04c26373ab0ca2d76",
+      "distribution_fingerprint": "ddb34c9585f502e114ba6f58034c18540a86c82e1e46fe23308dd700195e0964",
       "evidence_archive": {
-        "hash": "sha256:10416c15b8839ecc4ef4d0885da76da6fd0f67333a0eb8aff6d93c4b8f2910fc",
-        "url": "https://files.pythonhosted.org/packages/af/f9/8a06bea35ef8daf588f707784c973a7046e0034c8d8cfb08828eeffb8b75/pydantic_core-2.46.5.tar.gz"
+        "hash": "sha256:e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09",
+        "url": "https://files.pythonhosted.org/packages/a6/24/af4ec4be49fbc810f35b0bdcacc3d433b56bbfa469fd3bfd4ae116cd9bf1/pydantic_core-2.50.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "pydantic_core-2.46.5/LICENSE",
+          "path": "pydantic_core-2.50.1/LICENSE",
           "sha256": "2afdd30d54b4d62b6f488a6bcc1546e84ec5061f13f4209c03d012348783795a"
         }
       ],
       "name": "pydantic-core",
-      "notes": "MIT root code. Transitive Rust crates/native wheel contents are outside this Python lock inventory.",
+      "notes": "MIT root code. Transitive Rust crates/native wheel contents are outside this Python lock inventory. Requalified 2.50.1 from its exact hash-verified source archive on 2026-10-15; the previously reviewed legal notices remain byte-identical.",
       "status": "reviewed",
-      "version": "2.46.5"
+      "version": "2.50.1"
     },
     {
       "components": [
@@ -3790,35 +3794,70 @@
           ],
           "expression": "Apache-2.0 AND MIT",
           "scope": "Vendored annotate-snippets and typeshed; root LICENSE also enumerates copied permissive code."
+        },
+        {
+          "evidence_sha256": [
+            "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+            "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
+          ],
+          "expression": "Apache-2.0 AND MIT",
+          "scope": "Vendored ruff_unicode_names2 and its generator; retain both complete code notices."
+        },
+        {
+          "evidence_sha256": [
+            "f858d5fab15f87699a92876e78d7699a92bdb116b57bf64bf6778c374b5cb0fe"
+          ],
+          "expression": "Unicode-3.0",
+          "scope": "Unicode name data bundled in ruff_unicode_names2; checked against https://spdx.org/licenses/Unicode-3.0.html, retain its complete notice."
         }
       ],
-      "distribution_fingerprint": "051abbcd33a276543414be6ae4504c5ec379287710cea372475d38d7b3a81419",
+      "distribution_fingerprint": "c6eed393573a69f6a478efee1a37f32392bc3d88d47d2e94b72e4192bba18ae7",
       "evidence_archive": {
-        "hash": "sha256:eff4728c4eaae93f0955cd264d24b2ab348e74bf59986ccf282ba6dc16b3b017",
-        "url": "https://files.pythonhosted.org/packages/c4/49/23802c45f093eb14bde54b141d2b2f058edfa63a06db7beed047308cc08f/ruff-0.16.10.tar.gz"
+        "hash": "sha256:5cd03240d8208a557c2a9655a5cb07ebe36aa6bb35065f97d48c1f6adef5a322",
+        "url": "https://files.pythonhosted.org/packages/e9/a7/70debb024dfacda67b8e560cc7511f52b34b9348a8cc8c1ec23036dcd51d/ruff-0.17.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "ruff-0.16.10/LICENSE",
+          "path": "ruff-0.17.0/LICENSE",
           "sha256": "2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18"
         },
         {
-          "path": "ruff-0.16.10/crates/ruff_annotate_snippets/LICENSE-APACHE",
+          "path": "ruff-0.17.0/crates/ruff_annotate_snippets/LICENSE-APACHE",
           "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
         },
         {
-          "path": "ruff-0.16.10/crates/ruff_annotate_snippets/LICENSE-MIT",
+          "path": "ruff-0.17.0/crates/ruff_annotate_snippets/LICENSE-MIT",
           "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
         },
         {
-          "path": "ruff-0.16.10/crates/ty_vendored/vendor/typeshed/LICENSE",
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2/LICENSE-MIT",
+          "sha256": "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2/data/LICENSE-UNICODE",
+          "sha256": "f858d5fab15f87699a92876e78d7699a92bdb116b57bf64bf6778c374b5cb0fe"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2_generator/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2_generator/LICENSE-MIT",
+          "sha256": "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ty_vendored/vendor/typeshed/LICENSE",
           "sha256": "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe"
         }
       ],
       "name": "ruff",
-      "notes": "Reviewed the exact source archive, root MIT/copy notices and vendored annotate-snippets/typeshed Apache-2.0 and MIT notices. All collected notices are byte-identical to the prior review. Ruff remains validation tooling; preserve complete copied-code notices. Native binary and nested dependency redistribution remains outside this source-notice review.",
+      "notes": "Reviewed the hash-verified source archive, unchanged primary and annotate-snippets/typeshed notices, and the newly bundled unicode_names2 code and Unicode data notices. All license expressions are already allowed by the existing policy. Preserve complete notices; native binary and other nested dependency redistribution remain outside this source-notice review.",
       "status": "reviewed",
-      "version": "0.16.10"
+      "version": "0.17.0"
     },
     {
       "components": [
@@ -4553,7 +4592,7 @@
       "version": "17.1"
     }
   ],
-  "review_date": "2026-09-21",
+  "review_date": "2026-10-15",
   "review_method": "Archive license text and attribution review prepared with Codex; adopted through the protected pull-request process. No legal certification or independent human review is asserted.",
   "schema_version": 1,
   "scope": "locked-dependency-use-with-upstream-notices"
