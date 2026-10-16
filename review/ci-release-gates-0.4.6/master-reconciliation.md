@@ -2,13 +2,38 @@
 
 Development: `0.4.6`; stable source: `b7c576d9b26c3c55027d0efeff253ab7f4aa73aa`.
 
-The read-only merge preview found 54 conflicted paths, mostly overlapping
-documentation refactors and final version text. The attempted local integration
-was rejected by automatic approval review before execution. No merge is active
-and master has not changed. Reconciliation would modify only the development
-branch, preserve its 0.4.6 product and release guards, retain the stable
-documentation improvements, and require architecture, DCO, docs and CI checks
-before pushing. It would not merge PR #346 or authorize publication.
+The maintainer explicitly approved this development-only reconciliation on
+2026-10-16. All 54 overlapping paths are resolved against development source
+`98377601ef1812d0ca3dacb39f5fe35299c25058`. The earlier automatic approval rejection
+was resolved by that authorization; it did not change any branch or file.
+
+The result preserves the 0.4.6 product/metadata/security/CI work and integrates
+the stable reader paths, architecture diagrams, example downloads, publication
+history and isolated documentation environment. Qualification tools remain in
+canonical domains with forwarding entrypoints. All development navigation pages,
+original video IDs, hero bytes and the 759 historical anchors remain available.
+Forty-seven compatibility anchors restore links renamed during 0.4.6 work.
+
+The docs lock reuses only versions, source URLs and archive hashes already
+reviewed in the root lock, including Ruff 0.17.0. Neither root uv.lock nor any
+production implementation under src/, plugin src/ or VS Code src/ changes.
+The site marker remains release-candidate, target 0.4.6, stable 0.4.5; no new
+publication authorization, tag, release or stable-branch update is introduced.
+
+Validation: 170 tests in the isolated documentation environment without Apizr
+installed; 518 affected architecture/packaging/CI/Attest tests; strict construction
+and HTML validation of 160 pages and all baseline anchors. The three actual
+Markdown scenarios pass with an installed candidate outside checkout, including
+REST/MCP, closed inputs, useful refusals and Python compiler parity. The exact
+README, migration, TypedDict and current/historical Quickstarts also pass.
+The source-free quote delivery fixture builds both interfaces and removes its
+original project. Ruff, Pyright, actionlint and pre-commit gates pass. Native
+Mermaid pre/code output and consent-aware GitHub repository metadata are retained.
+The 49 integrated upstream non-merge commits pass the actual DCO validator.
+
+Full exact-source hosted qualification belongs to the PR and development push
+created by this merge. No merge of PR #346 into master or publication is authorized
+by this reconciliation.
 
 Conflicted paths requiring review:
 

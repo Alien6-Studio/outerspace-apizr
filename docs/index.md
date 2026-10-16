@@ -7,14 +7,17 @@ description: Understand and compare Python experiments, then turn selected noteb
 <div class="apizr-home-intro" markdown="1">
 
 <span id="apizr"></span>
+<span id="turn-python-code-into-rest-apis-and-mcp-tools"></span>
 
-# Turn Python code into REST APIs and MCP tools
+# Understand Python work and share what matters
 
-Make your Python functions available to applications and AI assistants.
-Apizr reads your code, lets you choose what to share, and generates a REST API
-or an MCP server. Your business logic stays in Python.
+Inspect scripts and notebooks without running them. Record and compare trusted
+experiments when you need evidence. Make selected existing functions available
+through REST or MCP, directly or from a reviewed experiment.
 
-MCP (Model Context Protocol) lets AI assistants discover and use tools.
+Your calculation stays in Python. You choose the public functions and execution
+boundary; Apizr generates the interface and retains its documented evidence.
+MCP (Model Context Protocol) lets tool clients discover and call those functions.
 
 Working on a training script or notebook? **Apizr 0.4.6** lets you inspect, run and compare experiments, then expose an
 explicitly selected prediction function. Know which data, code, parameters and
@@ -44,9 +47,63 @@ GPL-3.0-or-later.
 
 </div>
 
-Start with two Python functions and make your first calls in the
-[Quickstart](getting-started/quickstart.md). The core is enough: no plugin,
-Docker or AI account is needed for its REST and Python MCP examples.
+## Choose your next step
+
+<div class="apizr-paths" markdown="1">
+<section markdown="1">
+
+### [Start here](start/index.md)
+
+Choose a path, install the right environment and inspect code or make a first call.
+
+</section>
+<section markdown="1">
+
+### [Examples](examples/index.md)
+
+Download complete files for six goals, with requests, results and useful failures.
+
+</section>
+<section markdown="1">
+
+### [User guide](user-guide/index.md)
+
+Work with your script or notebook: inspect, optionally run/compare, then share.
+
+</section>
+<section markdown="1">
+
+### [Developer guide](developer-guide/index.md)
+
+Prepare public functions, compile through Python, call services and validate in CI.
+
+</section>
+<section markdown="1">
+
+### [Operations guide](operations-guide/index.md)
+
+Prepare permissions and runtimes, verify services and hand over delivery evidence.
+
+</section>
+<section markdown="1">
+
+### [Architecture guide](architecture/index.md)
+
+Follow the components, compilation, execution and delivery boundaries with diagrams.
+
+</section>
+<section markdown="1">
+
+### [Reference](reference/index.md)
+
+Find exact commands, APIs, formats and compatibility details.
+
+</section>
+</div>
+
+See [Install Apizr](getting-started/install.md) for package availability and
+optional profiles, or [the current release record](releases/0.4.6.md) for published
+evidence. [Historical releases](releases/0.4.1.md) retain their original context.
 
   <section class="apizr-demo-section md-typeset" aria-labelledby="watch-apizr-in-action">
     <div class="apizr-demo-section__inner">
@@ -79,16 +136,6 @@ Docker or AI account is needed for its REST and Python MCP examples.
       </details>
     </div>
   </section>
-
-## Choose your next step
-
-- **[Compare notebook experiments](getting-started/data-science.md)** — inspect an ordinary scikit-learn notebook, record two Runs and serve its prediction.
-- **[Make your first calls](getting-started/quickstart.md)** — turn Python functions into REST endpoints or MCP tools.
-- **[Explore a project with an AI assistant](reference/apizr-mcp-server.md)** — use Apizr's optional analysis plugin.
-- **[Package a service for deployment](reference/oci-service-plugin.md)** — build a container image and publish it to your registry.
-
-See the [installation guide](getting-started/install.md) for package availability
-and optional plugins.
 
 ## Choose what becomes public
 

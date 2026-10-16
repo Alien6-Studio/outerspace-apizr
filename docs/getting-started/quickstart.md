@@ -12,6 +12,8 @@ Working with a training notebook? Follow the [Data Scientist quickstart](data-sc
 for the 0.4.6 release: inspect, record two Runs, compare and serve a prediction.
 
 
+<span id="inspect-a-training-script-first-045"></span>
+
 ## Inspect a training script first
 
 With Apizr 0.4.6 installed, start with experiment
@@ -32,6 +34,8 @@ Parameters shows a static candidate; Metrics shows a recognized call with its va
 unobserved. Undefined names and an absent sklearn installation are fine because
 inspection does not execute the file. See the [experiment guide](user-guide/experiment-inspection.md)
 for data fingerprints, notebooks and all eight sections.
+
+<span id="run-a-trusted-experiment-045"></span>
 
 ## Run a trusted experiment
 

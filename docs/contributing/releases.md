@@ -563,29 +563,39 @@ branch; edit Markdown and MkDocs configuration, not generated files.
 ### Web-only changes
 
 PRs targeting `master` and pushes to `master` use a shared change classifier.
-The lighter path accepts only regular, non-executable Markdown files under
-`docs/`, supported images/videos and CSS/JavaScript under their respective
-`docs/assets/` directories, and HTML templates under `overrides/`.
-`scripts/ci_scope.py` defines the exact allowlist. Both sides of a rename count;
-the complete PR diff is inspected, not just its latest commit.
+Documentation, site configuration, reviewed site tools, review documents and
+`examples/` use an independent cycle. This includes the root README/CHANGELOG,
+`mkdocs.yml`, regular Markdown pages, supported site assets, example JSON inputs
+and HTML overrides. `scripts/ci_scope.py` defines the exact allowlist. Only regular,
+non-executable files qualify. Both sides of a rename count; the complete PR diff
+is inspected, not just its latest commit.
 
-For these changes, DCO and pre-commit checks, strict MkDocs construction and HTML
-validation remain required. Changes to the introduction, quickstart, development
-guide or operator-policy examples also run the existing installed-package example
-checks, including their local candidate wheel. Coordinated package builds,
-product tests, OCI/MCP/Homebrew qualification and product attestations are omitted.
+The site has its own manifest, lockfile and environment under `tools/docs/`.
+It installs no checkout version of Apizr or its plugins. DCO, generic file-integrity
+hooks, focused tooling lint, routing/publication tests, release wording checks,
+strict MkDocs construction and HTML validation remain required. Example source,
+example tooling, README and applicable guide changes also run the documented
+scenarios against published wheels outside the checkout. No candidate wheel is
+built for documentation-only changes. Coordinated package builds, product tests,
+OCI/MCP/Homebrew qualification and Attest checks are omitted.
 The existing 17 required check names are preserved:
 required matrix contexts use short Linux jobs reporting that product tests are
 not applicable, while other product jobs are skipped. No branch protection is
 removed and a failed scope job blocks the required `quality` and `build` checks.
 
 Mixed changes and anything outside the allowlist take the complete product path.
-This includes the packaged root README/CHANGELOG, source, plugins, dependencies,
-MkDocs configuration, build scripts and workflows. Symlinks, executable files,
+This includes product source, plugins, root dependencies, published JSON contracts,
+distribution/build scripts, the classifier and workflows. Candidate examples also
+run on this path. The separate documentation lock must reuse reviewed dependency
+versions and archive hashes; introducing new dependencies still requires the
+existing source, license and vulnerability review. Symlinks, executable files,
 missing comparison commits and empty diffs also require full qualification.
 Manual runs, scheduled security audits and non-master release-line comparisons
 always use full qualification. A successful web-only run is not release evidence
 and produces no distribution, provenance or release-candidate assets.
+
+For local documentation checks, use the commands in
+[`tools/docs/README.md`](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/tools/docs/README.md).
 
 ### Build once and verify publication
 

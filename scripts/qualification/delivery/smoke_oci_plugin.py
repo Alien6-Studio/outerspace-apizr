@@ -26,6 +26,22 @@ from scripts.qualification.packaging.coordinated_distributions import copy_closu
 from scripts.qualification.repository.smoke_git_source import exercise as git_bundles
 
 REPO = Path(__file__).resolve().parents[3]
+QUOTE_PAYLOAD = {
+    "order": {
+        "lines": [
+            {"sku": "DESK-LAMP", "quantity": 3},
+            {"sku": "NOTEBOOK", "quantity": 2},
+        ],
+        "coupon": "launch",
+    }
+}
+QUOTE_RESULT = {
+    "ok": True,
+    "currency": "EUR",
+    "net_cents": 7650,
+    "tax_cents": 1530,
+    "total_cents": 9180,
+}
 
 
 def run(args, *, cwd, env=None, timeout=600):
@@ -304,6 +320,19 @@ def main():
     plugin = next(house.glob("outerspace_apizr_oci-*.whl"))
     preparation = work / "preparation"
     command("uv", "venv", "--seed", "--python", sys.executable, preparation)
+    # The host client and the service image can use different Python versions.
+    # Resolve its own closure during preparation, then install it offline.
+    client_wheels = work / "mcp-client-wheels"
+    command(
+        preparation / "bin/python",
+        "-m",
+        "pip",
+        "download",
+        "--only-binary=:all:",
+        "--dest",
+        client_wheels,
+        "mcp>=2.2,<3",
+    )
     if not retained:
         command(
             preparation / "bin/python",
@@ -452,6 +481,10 @@ def main():
                 + (
                     (bundle / "application-requirements.txt").read_bytes()
                     if application_bundles is not None
+                    and (
+                        (bundle / "application-requirements.txt").is_file()
+                        or os.environ.get("APIZR_DOCS_QUOTE_EXAMPLE") != "1"
+                    )
                     else b""
                 )
             )
@@ -685,24 +718,46 @@ def main():
                 if time.monotonic() >= deadline:
                     raise
                 time.sleep(0.1)
+        quote_example = os.environ.get("APIZR_DOCS_QUOTE_EXAMPLE") == "1"
         request = urllib.request.Request(
             "http://"
             + address
             + (
-                "/capabilities/formatter.message"
+                "/capabilities/api.quote"
+                if quote_example
+                else "/capabilities/formatter.message"
                 if registry_proof
                 else "/capabilities/calculator.add"
             ),
-            data=b"{}" if registry_proof else b'{"a":2,"b":3}',
+            data=json.dumps(QUOTE_PAYLOAD).encode()
+            if quote_example
+            else b"{}"
+            if registry_proof
+            else b'{"a":2,"b":3}',
             headers={"Content-Type": "application/json"},
         )
         with urllib.request.urlopen(request, timeout=5) as response:
-            assert json.load(response) == ("PORTABLE CAFÉ" if registry_proof else 5)
+            assert json.load(response) == (
+                QUOTE_RESULT
+                if quote_example
+                else "PORTABLE CAFÉ"
+                if registry_proof
+                else 5
+            )
         # MCP client remains outside the minimal core and talks through docker stdio.
         mcp_client = work / "mcp-client"
         command("uv", "venv", "--python", sys.executable, mcp_client)
         command(
-            "uv", "pip", "install", "--python", mcp_client / "bin/python", "mcp>=2.2,<3"
+            "uv",
+            "pip",
+            "install",
+            "--python",
+            mcp_client / "bin/python",
+            "--offline",
+            "--no-index",
+            "--find-links",
+            client_wheels,
+            "mcp>=2.2,<3",
         )
         name = "apizr-mcp-proof-" + uuid.uuid4().hex[:12]
         containers.append(name)
@@ -710,15 +765,16 @@ def main():
             mcp_client / "bin/python",
             "-I",
             "-c",
-            """import asyncio, sys
+            """import asyncio, json, sys
 from mcp import Client, StdioServerParameters
 async def check():
     async with Client(StdioServerParameters(command=sys.argv[1], args=['--host',sys.argv[2],'run','--interactive','--name',sys.argv[3],sys.argv[4]],env={})) as client:
         application = sys.argv[5] == 'application'
-        name = 'formatter.message' if application else 'calculator.add'
+        quote = sys.argv[6] == 'quote'
+        name = 'api.quote' if quote else 'formatter.message' if application else 'calculator.add'
         assert [t.name for t in (await client.list_tools()).tools] == [name]
-        result = await client.call_tool(name, {} if application else {'a':2,'b':3})
-        assert not result.is_error and result.structured_content == {"result": 'PORTABLE CAFÉ' if application else 5}
+        result = await client.call_tool(name, json.loads(sys.argv[7]) if quote else {} if application else {'a':2,'b':3})
+        assert not result.is_error and result.structured_content == (json.loads(sys.argv[8]) if quote else {"result": 'PORTABLE CAFÉ' if application else 5})
 asyncio.run(check())
 """,
             docker,
@@ -726,6 +782,9 @@ asyncio.run(check())
             name,
             service_images[1],
             "application" if registry_proof else "calculator",
+            "quote" if quote_example else "default",
+            json.dumps(QUOTE_PAYLOAD),
+            json.dumps(QUOTE_RESULT),
             timeout=45,
         )
         assert not json.loads(engine("container", "inspect", name))[0]["Mounts"]
@@ -740,8 +799,12 @@ asyncio.run(check())
                         "source_removed": True,
                         "bundles_removed": not application_bundles.exists(),
                         "source_mounts": False,
-                        "rest_result": "PORTABLE CAFÉ",
-                        "mcp_result": {"result": "PORTABLE CAFÉ"},
+                        "rest_result": QUOTE_RESULT
+                        if quote_example
+                        else "PORTABLE CAFÉ",
+                        "mcp_result": QUOTE_RESULT
+                        if quote_example
+                        else {"result": "PORTABLE CAFÉ"},
                         "core_unchanged": True,
                         "builds": [r["result"] for r in results],
                         "pushes": json.loads((work / "push-results.json").read_text()),

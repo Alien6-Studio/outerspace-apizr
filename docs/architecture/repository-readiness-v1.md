@@ -1,5 +1,7 @@
 <span id="repository-agent-readiness-v1"></span>
 
+<span id="explicit-external-import-providers-045"></span>
+
 # Repository / Agent Readiness
 
 The original backend contract described here is unchanged. The 0.3 release

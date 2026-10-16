@@ -191,7 +191,9 @@ jobs:
           version: '0.13.1'
           python-version: '3.14'
           enable-cache: true
-      - run: uv sync --locked
+      # Type-check the site hook with its declared documentation dependencies.
+      - run: uv sync --locked --group docs
+        if: env.PRODUCT_CHECKS != 'false'
       - name: Check DCO declarations for new contributions
         if: github.event_name == 'pull_request' || github.event_name == 'push'
         env:
@@ -208,7 +210,7 @@ jobs:
           elif git merge-base --is-ancestor "$DCO_AUDIT_BASE" "$DCO_BASE"; then
             DCO_BASE="$DCO_AUDIT_BASE"
           fi
-          uv run --locked python -m scripts.qualification.ci.check_dco --base "$DCO_BASE" --head "$DCO_HEAD"
+          python3 -m scripts.qualification.ci.check_dco --base "$DCO_BASE" --head "$DCO_HEAD"
       - if: env.PRODUCT_CHECKS != 'false'
         run: uv run --locked ruff check .
       - if: env.PRODUCT_CHECKS != 'false'
@@ -216,10 +218,13 @@ jobs:
       - if: env.PRODUCT_CHECKS != 'false'
         run: uv run --locked pyright
       - name: Enforce package composition and dependency boundaries
+        if: env.PRODUCT_CHECKS != 'false'
         run: uv run --locked python -m scripts.qualification.ci.check_package_architecture
       - name: Enforce qualification ownership and workflow script references
+        if: env.PRODUCT_CHECKS != 'false'
         run: uv run --locked python -m scripts.qualification.ci.check_script_architecture
       - run: uv run --locked pre-commit run --all-files
+        if: env.PRODUCT_CHECKS != 'false'
       - uses: ./.github/actions/install-attest
         if: env.PRODUCT_CHECKS != 'false'
       - name: Verify managed Attest identity and real offline rejection cases

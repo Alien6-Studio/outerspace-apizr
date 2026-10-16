@@ -1,3 +1,7 @@
+<span id="ambiguous-definitions"></span>
+<span id="classes-and-methods-in-03"></span>
+<span id="code-analyzr"></span>
+
 # Code Analyzr — removed in 0.4.6
 
 The historical notebook/script pipeline and its HTTP generation service were

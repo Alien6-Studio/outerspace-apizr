@@ -58,6 +58,8 @@ uv tool install outerspace-apizr==0.4.6
 
 ![Install Apizr with uv](https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/54e6c13fe8f2bed62f4ac52a0024002df113df19/docs/assets/videos/uv-install.gif)
 
+Installation walkthrough recorded with 0.4.5.
+
 ## Choose your path
 
 Have a training script or notebook? Apizr **0.4.6** provides a
@@ -203,7 +205,7 @@ replaces historical CLI, HTTP and pipeline-plugin flows. Notebook conversion
 remains available through `apizr.notebooks` and the `notebook` extra.
 
 [Watch the demo](https://apizr.outerspace.sh/#watch-apizr-in-action) ·
-[Architecture](https://apizr.outerspace.sh/architecture/overview/) ·
+[Architecture guide](https://apizr.outerspace.sh/architecture/) ·
 [Development and checks](https://apizr.outerspace.sh/getting-started/developer-guide/setup/) ·
 [Report an issue](https://github.com/Alien6-Studio/outerspace-apizr/issues) ·
 [GPL-3.0-or-later](https://apizr.outerspace.sh/about/LICENSE/)

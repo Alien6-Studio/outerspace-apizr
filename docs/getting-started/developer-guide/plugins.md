@@ -1,3 +1,7 @@
+<span id="context-and-failures"></span>
+<span id="legacy-pipeline-plugins"></span>
+<span id="package-an-extension"></span>
+
 # Migrate historical pipeline plugins
 
 The `apizr.pipeline.v1` entrypoint group, `PipelinePlugin`, step engine and

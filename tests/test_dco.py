@@ -2,6 +2,7 @@
 
 import os
 import runpy
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -189,15 +190,16 @@ def test_workflow_audits_branch_creation_without_exempting_contributions(
         git("checkout", "--orphan", "unrelated")
     git("commit", "--allow-empty", "-m", "Contribution", *(["-s"] if signed else []))
     head = git("rev-parse", "HEAD")
-    # Execute the workflow's actual range selection and unchanged DCO validator;
-    # only replace uv's environment launcher with the current test interpreter.
+    # Run the exact workflow command from a checkout containing its validator.
+    validator = tmp_path / "scripts/qualification/ci/check_dco.py"
+    validator.parent.mkdir(parents=True)
+    shutil.copyfile(qualification_script("check_dco"), validator)
     result = subprocess.run(
         [
             "bash",
             "-e",
             "-c",
-            'uv() { shift 3; if test "$1" = -m; then shift 2; else shift; fi; '
-            '"$DCO_TEST_PYTHON" "$DCO_TEST_SCRIPT" "$@"; }\n' + step["run"],
+            step["run"],
         ],
         cwd=tmp_path,
         text=True,
@@ -208,8 +210,7 @@ def test_workflow_audits_branch_creation_without_exempting_contributions(
             "DCO_BASE": "0" * 40 if new_branch else baseline,
             "DCO_HEAD": head,
             "DCO_AUDIT_BASE": baseline,
-            "DCO_TEST_PYTHON": sys.executable,
-            "DCO_TEST_SCRIPT": str(root / "scripts/check_dco.py"),
+            "PATH": str(Path(sys.executable).parent) + os.pathsep + os.environ["PATH"],
         },
     )
     assert (result.returncode == 0) is (signed and anchored), result.stderr

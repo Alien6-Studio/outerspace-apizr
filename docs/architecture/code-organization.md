@@ -1,3 +1,5 @@
+<span id="code-organization-045-development"></span>
+
 # Code organization (0.4.6 development)
 
 ## Accepted package composition rule

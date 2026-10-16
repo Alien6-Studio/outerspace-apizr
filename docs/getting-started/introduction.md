@@ -13,6 +13,8 @@ description: Choose Python functions, create a service and call them through RES
 Prefer a guided learning path? [Apizr Academy](../academy/index.md) orders the
 existing tutorials and explains capabilities, readiness, selection and execution.
 
+<span id="start-with-an-experiment-045"></span>
+
 ## Start with an experiment
 
 The historical `--script`/`--notebook` FastAPI pipeline is removed in

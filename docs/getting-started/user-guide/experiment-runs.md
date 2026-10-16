@@ -199,5 +199,6 @@ JSON does not become Python source or add capabilities to repository analysis.
 This store holds local evidence. See the existing
 [external governance boundary](../../reference/external-governance.md) for the
 handoff to other systems. Artifact repositories, model registries, remote tracking
-and signing stay outside this store. This increment adds no upload, synchronization,
-experiment Docker runner, comparison or exposure command.
+and signing stay outside this store. The store provides no upload, synchronization or experiment Docker runner.
+Continue with [comparison](experiment-comparison.md) or
+[sharing a selected successful Run](experiment-exposure.md).

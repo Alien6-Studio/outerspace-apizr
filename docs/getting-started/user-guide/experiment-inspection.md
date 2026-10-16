@@ -3,6 +3,8 @@ title: Inspect an experiment
 description: Understand Python training scripts and notebooks without running them.
 ---
 
+<span id="inspect-an-experiment-045"></span>
+
 # Inspect an experiment
 
 Have a training script or notebook? `apizr experiment inspect` shows **Code, Data,
@@ -179,5 +181,5 @@ refused.
 **Inspection** asks what evidence is visible. **Readiness** asks whether a callable
 satisfies Apizr's interface/execution contract. An **Experiment Run** records what
 was observed during actual execution. Inspection never means the experiment ran.
-It can feed a later Experiment Plan without inventing execution intent. Run,
-history, comparison and experiment exposure commands are not part of this feature.
+It can feed a later Experiment Plan without inventing execution intent. Continue with [trusted execution and history](experiment-runs.md), then
+[comparison](experiment-comparison.md) or [sharing a selected Run](experiment-exposure.md).

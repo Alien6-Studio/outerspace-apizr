@@ -14,7 +14,7 @@ configuration and historical `apizr.pipeline.v1` plugins.
 [operator policy](operator-policy.md) for `outerspace-apizr-oci build`, `outerspace-apizr-oci push`, `outerspace-apizr-attest publish`
 and `outerspace-apizr-attest attest`, equally from Python and `apizr plugins run`. It retains
 activation and usage protection, then checks the build identity, operation and
-exact build target or repository before invoking the runtime. These development calls now refuse
+exact build target or repository before invoking the runtime. These managed calls refuse
 an absent policy. Signing also requires the exact key reference/identity, expected
 signer and TSA, with separate signing and timestamp rights. Construction needs
 `image.build` and `registry.read` for an exact base, interface/platform, input

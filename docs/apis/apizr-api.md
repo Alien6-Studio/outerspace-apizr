@@ -1,3 +1,5 @@
+<span id="apizr-api"></span>
+
 # Apizr API — removed in 0.4.6
 
 The historical notebook/script pipeline and its HTTP generation service were

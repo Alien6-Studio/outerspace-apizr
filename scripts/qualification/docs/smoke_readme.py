@@ -20,6 +20,7 @@ def main() -> None:
     parser.add_argument("cli", type=Path)
     parser.add_argument("--development", action="store_true")
     parser.add_argument("--expected-version")
+    parser.add_argument("--example-python", type=Path)
     parser.add_argument(
         "--repository-refinement",
         action="store_true",
@@ -75,6 +76,10 @@ def main() -> None:
             subprocess.run(
                 ["/bin/sh", "-c", "set -eu\n" + authority[1]],
                 cwd=root,
+                env={
+                    **os.environ,
+                    "PATH": str(cli.parent) + os.pathsep + os.environ.get("PATH", ""),
+                },
                 check=True,
                 timeout=10,
             )
@@ -127,9 +132,30 @@ def main() -> None:
         migration(cli, repository, historical=args.expected_version == "0.4.4")
         if args.repository_refinement:
             selected_scope(cli, repository)
-            from scripts.qualification.interfaces.typed_dict_proof import proof
+            if args.example_python:
+                with tempfile.TemporaryDirectory(prefix="apizr-readme-proof-") as work:
+                    subprocess.run(
+                        [
+                            str(args.example_python.absolute()),
+                            "-I",
+                            str(repository / "scripts/typed_dict_proof.py"),
+                            str(cli),
+                            "--python",
+                            str(args.example_python.absolute()),
+                        ],
+                        cwd=work,
+                        env={
+                            k: v
+                            for k, v in os.environ.items()
+                            if k not in {"PYTHONPATH", "PYTHONHOME", "VIRTUAL_ENV"}
+                        },
+                        check=True,
+                        timeout=120,
+                    )
+            else:
+                from scripts.qualification.interfaces.typed_dict_proof import proof
 
-            proof(cli, Path(sys.executable))
+                proof(cli, Path(sys.executable))
         quickstart(
             cli, repository, candidate=True, expected_version=args.expected_version
         )

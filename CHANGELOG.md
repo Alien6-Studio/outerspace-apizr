@@ -78,8 +78,10 @@ and final dependency security in #280.
 - Add a synthetic scikit-learn notebook example with identical source across two
   dataset variants, automatic main-guard metric capture and explicit wheel-bound
   external import evidence. Scientific packages remain workload dependencies.
-- Coordinate core, MCP, OCI and Attest candidate metadata and internal pins at
-  0.4.5, with a first-class Data Scientist guide; publication remains separate.
+- Coordinate core, MCP, OCI and Attest metadata and internal pins at
+  0.4.5, with a first-class Data Scientist guide. GitHub and PyPI publication,
+  exact public bytes and fresh installations are verified. MCP distribution qualification is complete in #279; see the
+  [release record](docs/releases/0.4.5.md).
 
 - Bridge a validated successful Experiment Run to existing Repository Readiness
   and Exposure planning with `experiment expose`, explicit capability/interface

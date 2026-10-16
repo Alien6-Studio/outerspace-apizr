@@ -42,6 +42,12 @@ a remediation trailer in the squash message when its target remains in the
 audited history; omit references to replaced branch commits. Never amend or
 force-push an already published commit to repair its declaration.
 
+GitHub's default squash message is the pull request title and description, not
+the branch commits: sign-offs carried only by the replaced commits do not reach
+the published squash. Write the merge message explicitly (for example
+`gh pr merge --squash --subject … --body …`) with the sign-off matching the
+resulting author, as the #283 squash showed.
+
 GitHub may retain the pull request author's identity for a Dependabot squash,
 even when the merge request supplies the maintainer's author email. A maintainer
 sign-off alone then does not match the resulting bot author. Check the published
@@ -64,25 +70,25 @@ resulting author is `Your Name <your-email>`, not the GitHub login.
 
 ## Development workflow
 
-The published **0.4.3** release is integrated into `master`. All new work,
-including product fixes and documentation, branches from and targets protected
-`master`. The completed `release/0.4.2` and `release/0.4.3` branches are retired;
-immutable release tags, source commits and published archives remain unchanged.
-Development builds are previews, not replacement release archives.
-
-A future release line requires an explicit maintainer decision and its own
-qualification policy. Merging a PR into `master` never publishes a release.
+The current development line is the official `0.4.6` branch. Branch from it and
+target it for product fixes and documentation. Stable `master`, immutable release
+tags and published archives stay outside development changes. The maintainer
+must validate the branch and complete its protected integration before separately
+authorizing a release. A merge alone never publishes a package or site.
 See [release governance](docs/contributing/release-branches.md).
 
-Web-only content changes use a lighter CI path: contribution checks, strict site
-construction, HTML validation and installed examples when their pages change.
-Product, dependency, packaging and workflow changes retain full qualification.
+Documentation, site and example changes use an independent CI environment in
+`tools/docs/`: contribution and file-integrity checks, focused tooling tests,
+strict site construction, HTML validation and examples against published wheels.
+Product, root dependency, packaging and workflow changes retain full qualification.
 The [documentation publication guide](docs/contributing/releases.md#web-only-changes)
-defines the boundary and the automatic deployment after merge.
+defines the routing boundary and guarded stable-site deployment. Pushes to the
+pre-release `0.4.6` line retain full product qualification, including candidate
+examples; local documentation checks still use the independent environment.
 
 ```sh
 git fetch origin
-git switch -c feature/my-change origin/master
+git switch -c feature/my-change origin/0.4.6
 ```
 
 Fork the repository if needed. Install uv and run:

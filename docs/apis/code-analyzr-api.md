@@ -1,3 +1,5 @@
+<span id="code-analyzr-api"></span>
+
 # Code Analyzr API — removed in 0.4.6
 
 The historical notebook/script pipeline and its HTTP generation service were

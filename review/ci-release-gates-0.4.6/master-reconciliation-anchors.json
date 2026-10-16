@@ -1,0 +1,237 @@
+[
+  {
+    "page": "docs/apis/apizr-api.md",
+    "anchor": "apizr-api",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/apis/code-analyzr-api.md",
+    "anchor": "code-analyzr-api",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/apis/dockerizr-api.md",
+    "anchor": "dockerizr-api",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/apis/fast-apizr-api.md",
+    "anchor": "fast-apizr-api",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/apis/notebook-transformr-api.md",
+    "anchor": "notebook-transformr-api",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/code-organization.md",
+    "anchor": "code-organization-045-development",
+    "destination": "code-organization-046-development"
+  },
+  {
+    "page": "docs/architecture/experiment-evidence-v1.md",
+    "anchor": "additive-input-evidence-in-045-development",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "annotation-compatibility-matrix",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "discovery-and-signatures",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "explicitly-rejected",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "future-candidate",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "how-to-interpret-the-contract",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "import-inference-and-files",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "legacy-behavior-contract",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "legacy-observed-design-decisions-required",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "property-tests-and-mutation-resistance",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "runtime-behavior",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "small-safetycorrectness-fixes-made-after-reproducing-failures",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "source-notebooks-and-execution-boundary",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "starting-evidence",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "supported",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/legacy-behavior-contract.md",
+    "anchor": "verification-record",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/architecture/repository-readiness-v1.md",
+    "anchor": "explicit-external-import-providers-045",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/getting-started/developer-guide/plugins.md",
+    "anchor": "context-and-failures",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/getting-started/developer-guide/plugins.md",
+    "anchor": "legacy-pipeline-plugins",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/getting-started/developer-guide/plugins.md",
+    "anchor": "package-an-extension",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/getting-started/developer-guide/releases.md",
+    "anchor": "adopt-compiler-workflows-incrementally",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/getting-started/developer-guide/releases.md",
+    "anchor": "from-021-to-030",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/getting-started/introduction.md",
+    "anchor": "start-with-an-experiment-045",
+    "destination": "start-with-an-experiment"
+  },
+  {
+    "page": "docs/getting-started/quickstart.md",
+    "anchor": "inspect-a-training-script-first-045",
+    "destination": "inspect-a-training-script-first"
+  },
+  {
+    "page": "docs/getting-started/quickstart.md",
+    "anchor": "run-a-trusted-experiment-045",
+    "destination": "run-a-trusted-experiment"
+  },
+  {
+    "page": "docs/getting-started/user-guide/apizr.md",
+    "anchor": "using-apizr",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/getting-started/user-guide/code-analyzr.md",
+    "anchor": "using-code-analyzr",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/getting-started/user-guide/dockerizr.md",
+    "anchor": "using-dockerizr",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/getting-started/user-guide/experiment-exposure.md",
+    "anchor": "experiment-serving-045",
+    "destination": "experiment-serving"
+  },
+  {
+    "page": "docs/getting-started/user-guide/experiment-inspection.md",
+    "anchor": "inspect-an-experiment-045",
+    "destination": "inspect-an-experiment"
+  },
+  {
+    "page": "docs/getting-started/user-guide/fast-apizr.md",
+    "anchor": "using-fast-apizr",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/modules/code-analyzr.md",
+    "anchor": "ambiguous-definitions",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/modules/code-analyzr.md",
+    "anchor": "classes-and-methods-in-03",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/modules/code-analyzr.md",
+    "anchor": "code-analyzr",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/modules/dockerizr.md",
+    "anchor": "dockerizr",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/modules/fast-apizr.md",
+    "anchor": "fast-apizr",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/modules/notebook-transformr.md",
+    "anchor": "configure-a-multi-cell-notebook-03",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/modules/notebook-transformr.md",
+    "anchor": "notebook-transformr",
+    "destination": "page introduction / migration notice"
+  },
+  {
+    "page": "docs/reference/apizr-mcp-server.md",
+    "anchor": "start-with-a-small-view-045",
+    "destination": "start-with-a-small-view"
+  },
+  {
+    "page": "docs/reference/apizr-mcp-server.md",
+    "anchor": "start-with-a-small-view-045-development",
+    "destination": "start-with-a-small-view"
+  },
+  {
+    "page": "docs/reference/index.md",
+    "anchor": "legacy-pipeline-compatibility",
+    "destination": "page introduction / migration notice"
+  }
+]

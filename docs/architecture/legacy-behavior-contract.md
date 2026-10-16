@@ -1,3 +1,19 @@
+<span id="annotation-compatibility-matrix"></span>
+<span id="discovery-and-signatures"></span>
+<span id="explicitly-rejected"></span>
+<span id="future-candidate"></span>
+<span id="how-to-interpret-the-contract"></span>
+<span id="import-inference-and-files"></span>
+<span id="legacy-behavior-contract"></span>
+<span id="legacy-observed-design-decisions-required"></span>
+<span id="property-tests-and-mutation-resistance"></span>
+<span id="runtime-behavior"></span>
+<span id="small-safetycorrectness-fixes-made-after-reproducing-failures"></span>
+<span id="source-notebooks-and-execution-boundary"></span>
+<span id="starting-evidence"></span>
+<span id="supported"></span>
+<span id="verification-record"></span>
+
 # Historical pipeline behavior — removed in 0.4.6
 
 This page records retired behavior for migration, not a supported runtime contract.

@@ -1,0 +1,66 @@
+{
+  "descriptor_sha256": "173c3d8eda918b8481424834e11f085f87850dd490f420378a7078a733e9af8d",
+  "discovery_sha256": "fcf2b586e1413ba52b65bc6138f395432b17f5cb30e2d5c9c77a6ecce8fbbef6",
+  "glama": {
+    "reason": "GLAMA_API_KEY is absent; directory indexing is not_verified",
+    "status": "authentication_required",
+    "verification": "not_verified"
+  },
+  "live": true,
+  "mcpfinder": {
+    "published_at": "2026-10-11T06:03:53.220Z",
+    "reason": "No matching repository in the inspected MCPfinder snapshot",
+    "snapshot_sha256": "d3145ad0547dfe292b8e9da48c18486b8b902311c62c1f25f4dcb76487122e62",
+    "status": "missing",
+    "verification": "not_verified"
+  },
+  "observed_at": "2026-10-11T13:02:46.088819+00:00",
+  "official_registry": {
+    "reason": "Exact active namespace, version, package and configuration",
+    "status": "verified",
+    "verification": "verified"
+  },
+  "phase_b_complete": false,
+  "publication_performed": false,
+  "pypi": {
+    "outerspace-apizr": {
+      "artifacts": [
+        {
+          "filename": "outerspace_apizr-0.4.5-py3-none-any.whl",
+          "sha256": "1c8694c6cb6eb394097cf42610946052b3b2a7296ab0c83e0ce65473ebca77ba"
+        },
+        {
+          "filename": "outerspace_apizr-0.4.5.tar.gz",
+          "sha256": "c4dfc1834bdcc885b87dfe0dda58743b41971ac64e58ad74caef7ea369d9b5c7"
+        }
+      ],
+      "reason": "Exact public version and qualified wheel/sdist digests",
+      "status": "verified",
+      "verification": "verified"
+    },
+    "outerspace-apizr-mcp": {
+      "artifacts": [
+        {
+          "filename": "outerspace_apizr_mcp-0.4.5-py3-none-any.whl",
+          "sha256": "06311b46195f38f75ee2f4b39d7ac49c83b9b81da4c4abcc908c8753802ee11d"
+        },
+        {
+          "filename": "outerspace_apizr_mcp-0.4.5.tar.gz",
+          "sha256": "a55c23b782b434f8052577ae76592b33033415c1acd5356c9031bd83b730f3a2"
+        }
+      ],
+      "reason": "Exact public version and qualified wheel/sdist digests",
+      "status": "verified",
+      "verification": "verified"
+    }
+  },
+  "smithery": {
+    "reason": "SMITHERY_API_KEY is absent; listing is not_verified",
+    "status": "authentication_required",
+    "verification": "not_verified"
+  },
+  "source_sha": "da74e6de5800eab9c275e42c5d4c24a59ac4fcbe",
+  "version": "0.4.5",
+  "retained_workflow_report_sha256": "f9c415c8d2f7eba25f8725fbbaffe2d011df25fc2dc8dc3b2f467a5c398f1d66",
+  "documentation_format_note": "Exact provider verdicts retained. Archive filename/hash maps are represented as records with explicit filename and sha256 fields; the original report remains in workflow 38141591120."
+}

@@ -1,3 +1,6 @@
+<span id="configure-a-multi-cell-notebook-03"></span>
+<span id="notebook-transformr"></span>
+
 # Notebook conversion
 
 The supported owner in 0.4.6 is `apizr.notebooks`. Install the `notebook` extra.

@@ -1,0 +1,26 @@
+{
+  "mcp": {
+    "predictions": [
+      [
+        1,
+        0.8127568160788873
+      ]
+    ]
+  },
+  "request": {
+    "transaction": {
+      "account_age_days": 45,
+      "amount": 845.0,
+      "foreign_transaction": true,
+      "transaction_velocity": 11
+    }
+  },
+  "rest": {
+    "predictions": [
+      [
+        1,
+        0.8127568160788873
+      ]
+    ]
+  }
+}
