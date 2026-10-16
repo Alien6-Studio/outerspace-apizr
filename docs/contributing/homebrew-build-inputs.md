@@ -9,7 +9,7 @@ are tracked in [#232](https://github.com/Alien6-Studio/outerspace-apizr/issues/2
 
 ## Runtime provider
 
-The runtime uses Homebrew `python@3.14`, a system-site-packages virtual
+The development runtime uses Homebrew `python@3.15`, an isolated virtual
 environment and the official `pydantic` formula. The first qualification used
 Pydantic **2.13.5** and pydantic-core **2.46.5**. Import locations must resolve into
 that formula's keg. The proof reproduces the dependency `.pth` written by
@@ -19,8 +19,10 @@ This is a different packaging contract from pip/uv: Homebrew owns Pydantic and
 its runtime closure, and may update them. Future qualification must check
 Apizr's public `pydantic>=2.12,<3` constraint and record exact tested versions.
 There is no claim of permanent byte parity with `uv.lock`, and no artificial
-versioned Pydantic formula. Python 3.14 is the Homebrew interpreter selection;
-Apizr's supported Python range remains 3.11–3.14.
+versioned Pydantic formula. Development 0.4.6 selects Homebrew Python 3.15;
+Apizr supports Python 3.11–3.15. Its virtualenv excludes global site-packages
+and admits the declared provider through `homebrew_deps.pth`. Historical
+qualifications retain their original interpreter and provider versions.
 
 The ongoing offline-build preflight checks the active provider against the
 formula's current stable/installed identity and that public version constraint.

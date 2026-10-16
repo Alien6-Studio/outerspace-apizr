@@ -33,7 +33,7 @@ def test_homebrew_boundary_is_explicit_deterministic_and_preserves_build_identit
         {"platform": "linux", "reason": "runtime-not-qualified-in-0.4.3"},
     ]
     assert policy["build_inputs_manifest_sha256"] == (
-        "3e824a9329106bd3405016ec66a8cd24f19afe5104a250c2da801a911f28ef89"
+        "2aa10e9dc029cb6240538f1cb29270d6e29c06cdcea7aa94ee83760e4251c57b"
     )
     reordered = dict(reversed(list(policy.items())))
     assert tool["encoded"](result) == tool["encoded"](

@@ -236,6 +236,22 @@ def quickstart(
     with tempfile.TemporaryDirectory(prefix="apizr-quickstart-proof-") as directory:
         parent = Path(directory).resolve()
         assert not parent.is_relative_to(repository)
+        if not candidate and sys.version_info[:2] >= (3, 15):
+            # Historical releases exclude 3.15. Their real installation proof
+            # keeps a supported host; candidate examples use the new target.
+            find = ["uv", "python", "find", "--no-python-downloads", "3.14"]
+            legacy = subprocess.run(find, capture_output=True, text=True, timeout=30)
+            if legacy.returncode:
+                subprocess.run(
+                    ["uv", "python", "install", "3.14"], check=True, timeout=180
+                )
+                legacy = subprocess.run(
+                    find, capture_output=True, text=True, check=True, timeout=30
+                )
+            bootstrap = parent / "historical-host"
+            bootstrap.mkdir()
+            (bootstrap / "python3").symlink_to(legacy.stdout.strip())
+            env["PATH"] = str(bootstrap) + os.pathsep + env["PATH"]
         script = "set -eu\n" + "\n".join(blocks[name] for name in order[:-2])
         result = subprocess.run(
             ["/bin/sh", "-c", script],

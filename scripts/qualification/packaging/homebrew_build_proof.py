@@ -287,7 +287,6 @@ def prove(candidate, commit, inputs, output):
             "-m",
             "venv",
             "--without-pip",
-            "--system-site-packages",
             runtime,
         ],
         output,

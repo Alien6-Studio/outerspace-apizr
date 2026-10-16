@@ -18,7 +18,7 @@ class Apizr < Formula
     wheelhouse = buildpath/"build-wheelhouse"
     resources.each { |r| r.stage wheelhouse }
     python = formula_opt_bin("python@3.15")/"python3.15"
-    virtualenv_create(libexec, python, system_site_packages: true)
+    virtualenv_create(libexec, python, system_site_packages: false)
 
     ENV.keys.grep(/^PIP_/).each { |key| ENV.delete(key) }
     ENV["PIP_CONFIG_FILE"] = File::NULL

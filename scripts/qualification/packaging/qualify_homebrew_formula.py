@@ -21,7 +21,8 @@ from scripts.qualification.packaging.prepare_homebrew_build_inputs import (
 )
 
 TAP = "apizr-qualification/formula"
-FORMULA = TAP + "/apizr"
+PROBE_NAME = "apizr-qualification-probe"
+FORMULA = TAP + "/" + PROBE_NAME
 
 
 def qualify(candidate, commit, output, host):
@@ -78,12 +79,10 @@ def qualify(candidate, commit, output, host):
 
     taps = run("tap-inventory", ["brew", "tap"]).splitlines()
     installed = run("formula-inventory", ["brew", "list", "--formula"]).splitlines()
-    if TAP in taps or "apizr" in installed:
-        raise ValueError(
-            "Refusing to alter an existing Apizr install or qualification tap"
-        )
+    if TAP in taps or PROBE_NAME in installed:
+        raise ValueError("Refusing to alter an existing qualification probe or tap")
     tap = output / "tap"
-    receipt = render(candidate, commit, tap, mode="qualification")
+    receipt = render(candidate, commit, tap, mode="qualification", isolated_probe=True)
     candidate_version = receipt["version"]
     run("git-init", ["git", "init", tap])
     run("git-add", ["git", "-C", tap, "add", "."])
@@ -117,7 +116,7 @@ def qualify(candidate, commit, output, host):
         info = json.loads(run("info", ["brew", "info", "--json=v2", FORMULA]))[
             "formulae"
         ][0]
-        if info["name"] != "apizr" or not any(
+        if info["name"] != PROBE_NAME or not any(
             x["version"] == candidate_version for x in info["installed"]
         ):
             raise RuntimeError("Installed Formula version mismatch")
@@ -256,7 +255,7 @@ print(json.dumps({'python': sys.version.split()[0], 'pydantic': pydantic.__versi
             current = subprocess.check_output(
                 ["brew", "list", "--formula"], env=env, text=True
             ).splitlines()
-            if "apizr" in current:
+            if PROBE_NAME in current:
                 run("uninstall", ["brew", "uninstall", "--formula", FORMULA])
             run("untrust", ["brew", "untrust", "--formula", FORMULA])
             run("untap", ["brew", "untap", TAP])

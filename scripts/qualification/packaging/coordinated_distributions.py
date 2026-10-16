@@ -50,15 +50,18 @@ def required_targets(candidate: dict) -> tuple[tuple[str, str], ...]:
 
 
 def run(*args, cwd=ROOT, timeout=300, env=None):
-    return subprocess.run(
+    result = subprocess.run(
         list(map(str, args)),
         cwd=cwd,
         env=env,
-        check=True,
+        check=False,
         timeout=timeout,
         capture_output=True,
         text=True,
-    ).stdout
+    )
+    if result.returncode:
+        raise RuntimeError(f"Command failed: {args}\n{result.stdout}\n{result.stderr}")
+    return result.stdout
 
 
 def digest(path: Path) -> str:
@@ -139,7 +142,7 @@ def build(output: Path) -> None:
         if metadata["version"] != version:
             raise ValueError("Uncoordinated package versions")
         with tempfile.TemporaryDirectory(prefix="apizr-package-") as directory:
-            work = Path(directory)
+            work = Path(directory).resolve()
             archives = work / "archives"
             run("uv", "build", project, "--out-dir", archives)
             checksums = check(archives, project)
@@ -283,7 +286,7 @@ def prepare_target(candidate: Path, output: Path) -> None:
         "platform": platform.platform(),
     }
     with tempfile.TemporaryDirectory(prefix="apizr-dependencies-") as directory:
-        work = Path(directory)
+        work = Path(directory).resolve()
         run(
             "uv",
             "venv",

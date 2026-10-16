@@ -72,13 +72,33 @@ def test_renderer_is_deterministic_and_keeps_build_inputs_out_of_runtime(tmp_pat
     formula = (a / "Formula/apizr.rb").read_text()
     assert source.as_uri() in formula and formula.count('  resource "') == 6
     assert 'resource "tomlkit"' in formula
-    assert "virtualenv_create(libexec, python, system_site_packages: true)" in formula
+    assert "virtualenv_create(libexec, python, system_site_packages: false)" in formula
     assert (
         "build_isolation: true" in formula and "deny_network_access! :build" in formula
     )
     assert "pip_install_and_link resources" not in formula
     assert first["build_inputs_manifest_sha256"] == tool["QUALIFICATION_BUILD_MANIFEST"]
     assert str(tmp_path) not in json.dumps(first)
+
+
+def test_isolated_probe_cannot_replace_apizr_or_authorize_publication(tmp_path):
+    root, _, _ = candidate(tmp_path)
+    output = tmp_path / "probe"
+    receipt = tool["render"](
+        root, SHA, output, mode="qualification", isolated_probe=True
+    )
+    formula = output / "Formula/apizr-qualification-probe.rb"
+    assert (
+        'keg_only "Disposable qualification must not replace an installed Apizr"'
+        in formula.read_text()
+    )
+    assert not (output / "Formula/apizr.rb").exists()
+    assert receipt["formula_sha256"] == hashlib.sha256(formula.read_bytes()).hexdigest()
+    with pytest.raises(ValueError, match="cannot authorize publication"):
+        tool["render"](
+            root, SHA, tmp_path / "public", mode="publication", isolated_probe=True
+        )
+    assert not (tmp_path / "public").exists()
 
 
 @pytest.mark.parametrize("change", ["bytes", "commit", "version", "duplicate"])

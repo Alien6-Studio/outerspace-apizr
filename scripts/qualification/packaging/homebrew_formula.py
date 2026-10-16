@@ -20,7 +20,7 @@ REPOSITORY = "Alien6-Studio/outerspace-apizr"
 VERSION = "0.4.5"
 BUILD_MANIFEST = "1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd"
 QUALIFICATION_BUILD_MANIFEST = (
-    "3e824a9329106bd3405016ec66a8cd24f19afe5104a250c2da801a911f28ef89"
+    "2aa10e9dc029cb6240538f1cb29270d6e29c06cdcea7aa94ee83760e4251c57b"
 )
 
 
@@ -93,11 +93,14 @@ def render(
     source_sha256=None,
     signed_evidence=None,
     provenance_bundle=None,
+    isolated_probe=False,
 ):
     if mode not in {"qualification", "publication"} or not re.fullmatch(
         r"[0-9a-f]{40}", commit
     ):
         raise ValueError("Explicit mode and exact source commit required")
+    if isolated_probe and mode != "qualification":
+        raise ValueError("An isolated probe cannot authorize publication")
     source, source_hash = candidate_source(candidate.resolve(), commit)
     candidate_version = json.loads((candidate / "candidate.json").read_text())[
         "version"
@@ -142,9 +145,19 @@ def render(
         "@BUILD_RESOURCES@": "\n".join(resources),
     }.items():
         formula = formula.replace(token, value)
+    formula_name = "apizr"
+    if isolated_probe:
+        formula_name = "apizr-qualification-probe"
+        formula = formula.replace(
+            "class Apizr < Formula", "class ApizrQualificationProbe < Formula"
+        )
+        formula = formula.replace(
+            '  license "GPL-3.0-or-later"',
+            '  license "GPL-3.0-or-later"\n\n  keg_only "Disposable qualification must not replace an installed Apizr"',
+        )
     output.mkdir(parents=True, exist_ok=False)
     (output / "Formula").mkdir()
-    (output / "Formula/apizr.rb").write_text(formula)
+    (output / "Formula" / (formula_name + ".rb")).write_text(formula)
     (output / "README.md").write_text(
         "# Apizr Homebrew tap source\n\n"
         f"Generated in **{mode}** mode for core {candidate_version}. Plugins remain separate.\n\n"
