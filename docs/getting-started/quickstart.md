@@ -5,6 +5,9 @@ description: Generate your first REST API or MCP server from Python, run it loca
 
 # Make your first MCP and REST calls
 
+For 0.4.6 development sessions, decorated calls and Jupyter, use the
+[SDK quickstart](tracking.md).
+
 Working with a training notebook? Follow the [Data Scientist quickstart](data-science.md)
 for the 0.4.5 release: inspect, record two Runs, compare and serve a prediction.
 

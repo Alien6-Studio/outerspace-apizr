@@ -149,7 +149,9 @@ nav:
   - Reference:
       - Commands, parameters and formats: reference/index.md
       - Python compiler API: reference/compiler-api.md
+      - Record your first SDK experiment: getting-started/tracking.md
       - In-process tracking SDK: reference/tracking-sdk.md
+      - Migrate from 0.4.5: releases/migrate-0.4.6.md
       - Select scientific providers: reference/scientific-providers.md
       - Editor engine contract: reference/editor-contract.md
       - VS Code development extension: reference/vscode.md

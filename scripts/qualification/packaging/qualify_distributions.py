@@ -141,6 +141,12 @@ def qualify(candidate: Path, target: Path, output: Path) -> None:
             env=env,
         )
         results["tracking"] = "passed"
+        from scripts.qualification.experiments.journey_security_proof import (
+            prove as prove_journey_security,
+        )
+
+        prove_journey_security(python, output / "journey-security")
+        results["journey_security"] = "passed"
         run(
             python,
             "-I",

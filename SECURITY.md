@@ -2,7 +2,8 @@
 
 ## Supported versions
 
-Security fixes target the current 0.2.x line. Apizr and generated targets support
+Security fixes target the maintained 0.4.x line. The 0.4.6 work described below is
+development qualification, not a published release. Apizr and generated targets currently support
 **Python 3.11–3.14**. Use a supported interpreter and keep dependencies updated.
 See the [compatibility notes](docs/getting-started/developer-guide/releases.md).
 
@@ -35,6 +36,41 @@ execution adds Linux container controls with a trusted Docker host and worker im
 it is not a VM boundary. Both execution backends remain experimental and require
 trusted code. Static `READY` does not mean runtime safe. Upload validation is not
 a substitute for trusted execution.
+
+## SDK, providers, editors and privacy (0.4.6 development)
+
+The tracking SDK observes trusted code already running in your process. It does
+not isolate that workload. Only explicitly selected finite values and files are
+recorded; objects are never pickled or traversed to fabricate evidence. Session
+authority belongs to one thread/async task. Publication binds the complete Plan
+and Run, preserves business exceptions and releases context on interruption.
+
+Static recognition never executes inspected source. Explicitly selected external
+providers are trusted installed code invoked through the bounded extension
+protocol. Their candidates remain subject to core identity, digest, capability,
+location and result-budget validation. Disabled, missing or failed owners yield
+unknown evidence without fallback. History reads retained provenance without
+loading its producer; a provider has no evidence-store publication authority.
+
+VS Code Restricted Mode starts no Apizr engine. Trusted workspaces still require
+explicit engine selection and operator grants before source or history access.
+Unsaved buffers do not silently replace saved evidence. The extension launches
+bounded engine processes and implements no independent scientific inference.
+
+Telemetry and experiment evidence have separate contracts. Parameters, metric
+values/names, paths, source, identifiers and traces never enter usage payloads.
+Collection requires explicit consent and remains process-local; production
+transmission is unavailable even after opt-in. The qualification guard observes
+real CLI/SDK and extension-launched Python processes, denies DNS/INET operations
+and asserts zero attempts with collection disabled. Its positive controls prove
+that attempts are detected. This is Python audit instrumentation for trusted
+qualification workloads; it does not constrain arbitrary native code or VS Code's
+own Electron services.
+
+Original 0.4.5 Plan/Run bytes, canonical show/export and comparison remain
+readable without a store rewrite. New v2 records are not a promise of backward
+reading by 0.4.5. See the [migration guide](docs/releases/migrate-0.4.6.md) and
+[retained trust-boundary evidence](review/journey-trust-0.4.6/README.md).
 
 ## Automated checks
 

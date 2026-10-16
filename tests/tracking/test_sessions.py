@@ -309,3 +309,44 @@ def test_explicit_finalize_reports_publication_failure(tmp_path, monkeypatch):
             capture.finalize()
         assert str(capture.publication_error) == "tracking_publication_failed"
     assert capture.record is None
+
+
+@pytest.mark.parametrize(
+    "interrupted",
+    [KeyboardInterrupt(), asyncio.CancelledError()],
+    ids=("keyboard", "async"),
+)
+def test_interrupted_publication_leaves_no_partial_run_and_releases_context(
+    tmp_path, monkeypatch, interrupted
+):
+    original = store._publish
+    interrupt = True
+
+    def publish(directory, name, payload):
+        nonlocal interrupt
+        if (
+            interrupt
+            and json.loads(payload).get("schema_version") == "apizr.experiment-run/v2"
+        ):
+            interrupt = False
+            raise interrupted
+        original(directory, name, payload)
+
+    monkeypatch.setattr(store, "_publish", publish)
+    with pytest.raises(type(interrupted)) as observed:
+        with tracking.session(root=tmp_path) as capture:
+            tracking.log_metric("first", 1)
+    assert observed.value is interrupted
+    assert (
+        capture.record is None
+        and str(capture.publication_error) == "tracking_publication_failed"
+    )
+    assert tracking.TrackingSession.current() is None
+    history = tmp_path / DEFAULT_STORE
+    assert len(list((history / "plans").glob("*.json"))) == 1
+    assert not list((history / "runs").iterdir())
+    assert list(records(history)) == []
+    with tracking.session(root=tmp_path) as recovered:
+        tracking.log_metric("recovered", 2)
+    assert recovered.record.run.status == "success"
+    assert len(list(records(history))) == 1

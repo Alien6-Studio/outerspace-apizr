@@ -1,0 +1,68 @@
+Experiment diff — A → B
+Run A: 146265ef3ba21e52038975fe6a4c477c77161d9d59f4c8490161aa884eb0ce90
+Run B: 746cc7da91b8180143825f4bc07b3474915ab36ec8f799772f9a3924e0657929
+Plan A: ccb25233d7bc4bf62713a065c2904fd84a1c9571df120d1d5d22be7399553508
+Plan B: ccb25233d7bc4bf62713a065c2904fd84a1c9571df120d1d5d22be7399553508
+Plan identity: SAME
+Counts describe comparison facets; planned and observed evidence are counted separately.
+Timing is excluded. Added/removed describe recorded evidence membership.
+
+Material evidence differences (0 changed, 0 added, 0 removed, 5 unknown)
+No material recorded differences among comparable evidence.
+Code — SAME
+  kind: A python; B python — SAME
+  reference: A train.py; B train.py — SAME
+  digest: A 348a5c11dae5b9360d109f3cfa60f5d778df9339e1a3c34ad4b9fca331d17cbf; B 348a5c11dae5b9360d109f3cfa60f5d778df9339e1a3c34ad4b9fca331d17cbf — SAME
+  executable_digest: A 348a5c11dae5b9360d109f3cfa60f5d778df9339e1a3c34ad4b9fca331d17cbf; B 348a5c11dae5b9360d109f3cfa60f5d778df9339e1a3c34ad4b9fca331d17cbf — SAME
+  module: A train; B train — SAME
+  capability_id: A unknown; B unknown — UNKNOWN
+Data
+Parameters
+  score intended — SAME
+    A {"name": "score", "origin": "static", "value": 0.75}
+    B {"name": "score", "origin": "static", "value": 0.75}
+  score observed — SAME
+    A {"name": "score", "origin": "runtime", "value": 0.75}
+    B {"name": "score", "origin": "runtime", "value": 0.75}
+    observed evidence membership: SAME
+Randomness
+Environment
+  Plan evidence
+  python_implementation — UNKNOWN
+    A not recorded
+    B not recorded
+  python_version — UNKNOWN
+    A not recorded
+    B not recorded
+  platform — UNKNOWN
+    A not recorded
+    B not recorded
+  architecture — UNKNOWN
+    A not recorded
+    B not recorded
+  Run evidence
+  python_implementation — SAME
+    A {"origin": "runtime", "value": "cpython"}
+    B {"origin": "runtime", "value": "cpython"}
+  python_version — SAME
+    A {"origin": "runtime", "value": "3.12.13"}
+    B {"origin": "runtime", "value": "3.12.13"}
+  platform — SAME
+    A {"origin": "runtime", "value": "darwin"}
+    B {"origin": "runtime", "value": "darwin"}
+  architecture — SAME
+    A {"origin": "runtime", "value": "arm64"}
+    B {"origin": "runtime", "value": "arm64"}
+  package outerspace-apizr evidence — SAME
+    A {"name": "outerspace-apizr", "origin": "runtime", "version": "0.4.5"}
+    B {"name": "outerspace-apizr", "origin": "runtime", "version": "0.4.5"}
+Serving — UNKNOWN
+Observed result differences (0 changed, 0 added, 0 removed, 0 unknown)
+Status: A success; B success — SAME
+Metrics
+  score evidence — SAME
+    A {"name": "score", "origin": "runtime", "unit": null, "value": 0.75}
+    B {"name": "score", "origin": "runtime", "unit": null, "value": 0.75}
+    delta B - A: +0
+Outputs
+These are recorded evidence differences. Apizr does not establish which difference caused an observed result change.

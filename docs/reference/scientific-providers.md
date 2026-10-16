@@ -5,6 +5,32 @@ The default is `apizr.builtin` version `1`, shipped in the core wheel. Providers
 recognize static input reads, metric calls, output candidates and randomness
 controls. Recognition does not prove runtime values or reproducibility.
 
+## Built-in recognition
+
+| Evidence | Recognized source forms |
+| --- | --- |
+| Input reads | Literal first positional paths in `pandas.read_csv`, `pandas.read_parquet`, `numpy.load` and `joblib.load`. Remote references retain unknown content. |
+| Metric signals | Calls to `sklearn.metrics.accuracy_score`, `precision_score`, `recall_score`, `f1_score`, `roc_auc_score` and `mean_squared_error`. Static inspection never evaluates their values. |
+| Output candidates | `joblib.dump` with a literal filename and supported arguments. Discovery never opens or deserializes the output. |
+| Randomness controls | Literal arguments to `random.seed`, `numpy.random.seed`, `numpy.random.default_rng`, `torch.manual_seed`, `tensorflow.random.set_seed`, and supported sklearn `random_state` keywords. Dynamic or conflicting values stay unknown; accelerator determinism stays unknown. |
+
+Explicit import bindings and aliases are checked conservatively; shadowing and
+unsupported scopes do not grant callable authority. These are the version `1`
+source rules, not certification of every scientific-library version. Libraries
+remain workload dependencies and are never imported by recognition. Selected
+runtime package versions are separate Run observations.
+
+The alternative example is a separate wheel with its own `pyproject.toml`, Python
+module and `apizr-extension.json` manifest. Its module implements
+`scientific.describe` and `scientific.recognize`; the core uses the existing
+extension installer and protocol. The wheel identity `apizr-literal-accuracy`
+version `0.0.0` is separate from its producer identity `example.literal-accuracy`
+version `1`. See the [package example](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/examples/scientific-provider)
+and [installation workflow](local-extensions.md). No core modification or automatic
+entrypoint discovery is needed.
+
+## List and select providers
+
 ```bash
 apizr providers list
 apizr providers list --format json

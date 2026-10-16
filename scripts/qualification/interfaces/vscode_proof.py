@@ -172,6 +172,21 @@ def main():
         assert fixture["outside_checkout"], (
             "Qualify the installed candidate wheel outside the checkout"
         )
+    from scripts.qualification.interfaces.python_network_guard import guarded_engine
+
+    with guarded_engine(python, root / "engine-network.log") as network:
+        proof = run_host(args, root, python, project, policy)
+    assert (
+        network["apizr_processes"] == 0
+        if args.untrusted
+        else network["apizr_processes"] > 0
+    )
+    proof["offline_python_engine"] = network
+    (root / "proof.json").write_text(json.dumps(proof, indent=2) + "\n")
+    print(json.dumps(proof))
+
+
+def run_host(args, root, python, project, policy):
     profile, extensions = root / "profile", root / "extensions"
     (profile / "User").mkdir(parents=True)
     extensions.mkdir()
@@ -273,7 +288,7 @@ def main():
         proof["uninstalled_without_owned_storage"] = True
         proof["upgraded_qualification_fixture"] = args.previous_vsix is not None
         (root / "proof.json").write_text(json.dumps(proof, indent=2) + "\n")
-    print(json.dumps(proof))
+    return proof
 
 
 if __name__ == "__main__":

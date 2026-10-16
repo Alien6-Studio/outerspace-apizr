@@ -1,0 +1,21 @@
+{
+  "result": "pass",
+  "vscode": "1.140.0",
+  "remote": null,
+  "node": "v24.21.0",
+  "engine": "/private/tmp/apizr-client-engine/bin/python",
+  "engine_origin": "/private/tmp/apizr-client-engine/lib/python3.12/site-packages/apizr/__init__.py",
+  "outside_checkout": true,
+  "cases": [
+    "restricted-workspace-no-engine"
+  ],
+  "installed_vsix": "apizr-0.4.6.vsix",
+  "uninstalled_without_owned_storage": true,
+  "upgraded_qualification_fixture": false,
+  "offline_python_engine": {
+    "positive_controls": 2,
+    "connection_attempts": 0,
+    "guarded_processes": 0,
+    "apizr_processes": 0
+  }
+}

@@ -8,12 +8,12 @@ description: Inspect an ordinary scikit-learn notebook, compare two recorded run
 Know which data, code, parameters and environment produced your result, compare
 experiments, then turn the useful Python capability into MCP or REST.
 
-This guide targets the **0.4.5 release candidate, not yet published**. The public
-stable release remains [0.4.4](../releases/0.4.4.md). Candidate qualification is
-tracked in [#267](https://github.com/Alien6-Studio/outerspace-apizr/issues/267);
-release integration and publication are separate operations.
+This is the workflow without instrumentation introduced in 0.4.5, exercised here
+with the **0.4.6 development candidate**. Candidate metadata still says 0.4.5 until
+coordinated release preparation. For sessions, decorators, Jupyter and editor
+history, start with [your first SDK experiment](tracking.md).
 
-The [fraud detection example](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.5/examples/data-science/fraud-detection)
+The [fraud detection example](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/examples/data-science/fraud-detection)
 is an ordinary notebook: pandas, a small scikit-learn forest, three metrics and
 joblib model serialization. It has no Apizr import, decorator or tracking call.
 Keep the notebook unchanged throughout this guide. Only the active CSV changes

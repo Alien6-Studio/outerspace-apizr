@@ -1,0 +1,1402 @@
+{
+  "cases": {
+    "documented_example": [
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "first-variant",
+              "execution_count": 4,
+              "origin": "runtime",
+              "source_digest": "4d429a1ea010f3ad7bc4d225ebf84099bd2317e79586cad0810c35e527739101"
+            },
+            "function": {
+              "definition_id": "93ffe8234e744be980c59852b6822450",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "evaluate",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "threshold"
+            ]
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "b50e522c4f70a49d556e0e26ac9fc20bc4bc4778c4cb9d61d61c29e3b6bcc651",
+        "run": {
+          "call_parameters": [
+            {
+              "name": "threshold",
+              "origin": "runtime",
+              "value": 0.75,
+              "value_type": null
+            }
+          ],
+          "capture": {
+            "cell": {
+              "cell_id": "first-variant",
+              "execution_count": 4,
+              "origin": "runtime",
+              "source_digest": "4d429a1ea010f3ad7bc4d225ebf84099bd2317e79586cad0810c35e527739101"
+            },
+            "function": {
+              "definition_id": "93ffe8234e744be980c59852b6822450",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "evaluate",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "threshold"
+            ]
+          },
+          "diagnostics": [],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "f0faf9c2a1e44287a46b479ec2669e0f",
+          "metrics": [
+            {
+              "name": "score",
+              "origin": "runtime",
+              "unit": null,
+              "value": 0.6666666666666666
+            }
+          ],
+          "observed_inputs": [
+            {
+              "digest": null,
+              "name": "measurements",
+              "origin": "unknown",
+              "reference": null,
+              "size": null
+            }
+          ],
+          "outputs": [],
+          "plan_digest": "b50e522c4f70a49d556e0e26ac9fc20bc4bc4778c4cb9d61d61c29e3b6bcc651",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 4.924999666400254e-05,
+            "ended_at": "2026-10-16T10:55:53.937565Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:53.937514Z"
+          }
+        },
+        "run_digest": "3d39b5bd41b1b69a0c6ff8a9b209042acc239acb1457bf42c16abd94c10094d8",
+        "schema_version": "apizr.experiment-record/v2"
+      },
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "second-variant",
+              "execution_count": 5,
+              "origin": "runtime",
+              "source_digest": "23816afc36a73fded485d33d917ccdbbe118eadfbc954ccf90da011b4b19847d"
+            },
+            "function": {
+              "definition_id": "93ffe8234e744be980c59852b6822450",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "evaluate",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "threshold"
+            ]
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "1443ea276f3a38f9bb3194d8e6c3065d844225cecc3ac74291930dcfb2ee4c08",
+        "run": {
+          "call_parameters": [
+            {
+              "name": "threshold",
+              "origin": "runtime",
+              "value": 0.85,
+              "value_type": null
+            }
+          ],
+          "capture": {
+            "cell": {
+              "cell_id": "second-variant",
+              "execution_count": 5,
+              "origin": "runtime",
+              "source_digest": "23816afc36a73fded485d33d917ccdbbe118eadfbc954ccf90da011b4b19847d"
+            },
+            "function": {
+              "definition_id": "93ffe8234e744be980c59852b6822450",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "evaluate",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "threshold"
+            ]
+          },
+          "diagnostics": [],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "51889566bb7e4854a1d5aacfcdbac4c6",
+          "metrics": [
+            {
+              "name": "score",
+              "origin": "runtime",
+              "unit": null,
+              "value": 0.3333333333333333
+            }
+          ],
+          "observed_inputs": [
+            {
+              "digest": null,
+              "name": "measurements",
+              "origin": "unknown",
+              "reference": null,
+              "size": null
+            }
+          ],
+          "outputs": [],
+          "plan_digest": "1443ea276f3a38f9bb3194d8e6c3065d844225cecc3ac74291930dcfb2ee4c08",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 4.1332998080179095e-05,
+            "ended_at": "2026-10-16T10:55:53.946311Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:53.946267Z"
+          }
+        },
+        "run_digest": "b6b72943552cbc155d2870b9608fddaf564d7eb89ceb3c2522a7dc0b3e3972b4",
+        "schema_version": "apizr.experiment-record/v2"
+      },
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "session",
+              "execution_count": 2,
+              "origin": "runtime",
+              "source_digest": "4c91981d76cbb3cb70364d1d4f599307da6d62e59185fc816d5423ad4a625b4d"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "3dc3437c2899d88927369e1733e47fbae3c41500564f468c351c583611a869dc",
+        "run": {
+          "call_parameters": [],
+          "capture": {
+            "cell": {
+              "cell_id": "session",
+              "execution_count": 2,
+              "origin": "runtime",
+              "source_digest": "4c91981d76cbb3cb70364d1d4f599307da6d62e59185fc816d5423ad4a625b4d"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "diagnostics": [],
+          "effective_parameters": [
+            {
+              "name": "threshold",
+              "origin": "runtime",
+              "value": 0.5
+            }
+          ],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "c195a3543edf46a9b9217083c3b19504",
+          "metrics": [
+            {
+              "name": "mean",
+              "origin": "runtime",
+              "unit": null,
+              "value": 0.7999999999999999
+            }
+          ],
+          "observed_inputs": [
+            {
+              "digest": null,
+              "name": "measurements",
+              "origin": "unknown",
+              "reference": null,
+              "size": null
+            }
+          ],
+          "outputs": [],
+          "plan_digest": "3dc3437c2899d88927369e1733e47fbae3c41500564f468c351c583611a869dc",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 7.095900946296751e-05,
+            "ended_at": "2026-10-16T10:55:53.925485Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:53.925410Z"
+          }
+        },
+        "run_digest": "ce70651c6966c3e0fed5713218a67864e6ca535a5bc194b50fc62e684a05b957",
+        "schema_version": "apizr.experiment-record/v2"
+      }
+    ],
+    "prove_decorator_rebinding_and_unknown_scientific_values": [
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "call-cell",
+              "execution_count": 3,
+              "origin": "runtime",
+              "source_digest": "9c93d588602f398d747d4b796d6888ffb0966c0481476c37c35087bfa46cbadb"
+            },
+            "function": {
+              "definition_id": "2ef05a61a59a44439c7ff80dcceff263",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "fit",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "model",
+              "rate"
+            ]
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "1a97f1b66f284a9becb4d9d2c23edd08dc900ac4c05f32094b9a697d8ca86f02",
+        "run": {
+          "call_parameters": [
+            {
+              "name": "model",
+              "origin": "unknown",
+              "value": null,
+              "value_type": "__main__.MemoryObject"
+            },
+            {
+              "name": "rate",
+              "origin": "runtime",
+              "value": 0.2,
+              "value_type": null
+            }
+          ],
+          "capture": {
+            "cell": {
+              "cell_id": "call-cell",
+              "execution_count": 3,
+              "origin": "runtime",
+              "source_digest": "9c93d588602f398d747d4b796d6888ffb0966c0481476c37c35087bfa46cbadb"
+            },
+            "function": {
+              "definition_id": "2ef05a61a59a44439c7ff80dcceff263",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "fit",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "model",
+              "rate"
+            ]
+          },
+          "diagnostics": [],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "7f9ddfde787f46b1babfaf327bcfa4d7",
+          "metrics": [
+            {
+              "name": "score",
+              "origin": "runtime",
+              "unit": null,
+              "value": 0.2
+            }
+          ],
+          "observed_inputs": [],
+          "outputs": [],
+          "plan_digest": "1a97f1b66f284a9becb4d9d2c23edd08dc900ac4c05f32094b9a697d8ca86f02",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 2.850001328624785e-05,
+            "ended_at": "2026-10-16T10:55:52.200662Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:52.200633Z"
+          }
+        },
+        "run_digest": "20571523b2d91afa47c60b9a86dd988b519e6268152bc3d8dadc1b210e2a7540",
+        "schema_version": "apizr.experiment-record/v2"
+      },
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "call-cell",
+              "execution_count": 2,
+              "origin": "runtime",
+              "source_digest": "fc615001c2eef1ad1faf8a60cd847476cfff29992cdee324772a81bfa256eff2"
+            },
+            "function": {
+              "definition_id": "2ef05a61a59a44439c7ff80dcceff263",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "fit",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "model",
+              "rate"
+            ]
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "4bd19a3664e921b2f403dac676adfdf1c9a5ea07c4135204c989954d6ce99003",
+        "run": {
+          "call_parameters": [
+            {
+              "name": "model",
+              "origin": "unknown",
+              "value": null,
+              "value_type": "__main__.MemoryObject"
+            },
+            {
+              "name": "rate",
+              "origin": "runtime",
+              "value": 0.1,
+              "value_type": null
+            }
+          ],
+          "capture": {
+            "cell": {
+              "cell_id": "call-cell",
+              "execution_count": 2,
+              "origin": "runtime",
+              "source_digest": "fc615001c2eef1ad1faf8a60cd847476cfff29992cdee324772a81bfa256eff2"
+            },
+            "function": {
+              "definition_id": "2ef05a61a59a44439c7ff80dcceff263",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "fit",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "model",
+              "rate"
+            ]
+          },
+          "diagnostics": [],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "23590981f873425f80f2b59d433c93d9",
+          "metrics": [
+            {
+              "name": "score",
+              "origin": "runtime",
+              "unit": null,
+              "value": 0.1
+            }
+          ],
+          "observed_inputs": [],
+          "outputs": [],
+          "plan_digest": "4bd19a3664e921b2f403dac676adfdf1c9a5ea07c4135204c989954d6ce99003",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 3.0041992431506515e-05,
+            "ended_at": "2026-10-16T10:55:52.192549Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:52.192517Z"
+          }
+        },
+        "run_digest": "aa7aa8ec1647bfaf381d79699c4bed8bdc09316be6ac66b9f4c3c77f62e36c55",
+        "schema_version": "apizr.experiment-record/v2"
+      },
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": null,
+              "execution_count": 5,
+              "origin": "runtime",
+              "source_digest": "ec202808db80bf73b988df338dc76c18f9a567f912006b43ad43bb384baa9801"
+            },
+            "function": {
+              "definition_id": "87388f32b94b41ff93130024b14b6d05",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "fit",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "model",
+              "rate"
+            ]
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "e216d9da5f0b1e561df7e61e5f8b16889ae52776cad8c258ad9a8e6726fdfc70",
+        "run": {
+          "call_parameters": [
+            {
+              "name": "model",
+              "origin": "unknown",
+              "value": null,
+              "value_type": "__main__.MemoryObject"
+            },
+            {
+              "name": "rate",
+              "origin": "runtime",
+              "value": 0.3,
+              "value_type": null
+            }
+          ],
+          "capture": {
+            "cell": {
+              "cell_id": null,
+              "execution_count": 5,
+              "origin": "runtime",
+              "source_digest": "ec202808db80bf73b988df338dc76c18f9a567f912006b43ad43bb384baa9801"
+            },
+            "function": {
+              "definition_id": "87388f32b94b41ff93130024b14b6d05",
+              "module": "__main__",
+              "origin": "runtime",
+              "qualified_name": "fit",
+              "source_digest": null
+            },
+            "mode": "decorated_call",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": [
+              "model",
+              "rate"
+            ]
+          },
+          "diagnostics": [],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "5cb096067e0c4885a080f6f634d5fdb9",
+          "metrics": [
+            {
+              "name": "score",
+              "origin": "runtime",
+              "unit": null,
+              "value": 0.3
+            }
+          ],
+          "observed_inputs": [],
+          "outputs": [],
+          "plan_digest": "e216d9da5f0b1e561df7e61e5f8b16889ae52776cad8c258ad9a8e6726fdfc70",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 2.4334003683179617e-05,
+            "ended_at": "2026-10-16T10:55:52.212622Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:52.212597Z"
+          }
+        },
+        "run_digest": "c235418257191daba15feac905d47eacb62167be813dbd8dcb6f1cc608492751",
+        "schema_version": "apizr.experiment-record/v2"
+      }
+    ],
+    "prove_interrupt_publishes_cancelled_run_and_remains_usable": [
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "recovered-cell",
+              "execution_count": 2,
+              "origin": "runtime",
+              "source_digest": "901332edd6be300287c328a375d6417aabb897f8ac0f47ff928d2b262f020259"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "25385ad66181e50ae229e728df2f4771c66e41093c40c7ddaafd119ca15c850a",
+        "run": {
+          "call_parameters": [],
+          "capture": {
+            "cell": {
+              "cell_id": "recovered-cell",
+              "execution_count": 2,
+              "origin": "runtime",
+              "source_digest": "901332edd6be300287c328a375d6417aabb897f8ac0f47ff928d2b262f020259"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "diagnostics": [],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "6191d7e237ef4d9e8d6d51935982ced5",
+          "metrics": [
+            {
+              "name": "recovered",
+              "origin": "runtime",
+              "unit": null,
+              "value": 1
+            }
+          ],
+          "observed_inputs": [],
+          "outputs": [],
+          "plan_digest": "25385ad66181e50ae229e728df2f4771c66e41093c40c7ddaafd119ca15c850a",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 4.116600030101836e-05,
+            "ended_at": "2026-10-16T10:55:53.088004Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:53.087961Z"
+          }
+        },
+        "run_digest": "69fbacfa7a43f802c671df50d55737f81efb64606fcfb4f91f7f837b96aa1382",
+        "schema_version": "apizr.experiment-record/v2"
+      },
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "interrupted-cell",
+              "execution_count": 1,
+              "origin": "runtime",
+              "source_digest": "2ac96f9d23d6108522814a712ddf6b73f9b7eed05aa88128fb0a664e23d53de3"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "ac197093fc37767136090b4e09b2f2cda84aeb5493578eb468cf7a4e64e6c8b6",
+        "run": {
+          "call_parameters": [],
+          "capture": {
+            "cell": {
+              "cell_id": "interrupted-cell",
+              "execution_count": 1,
+              "origin": "runtime",
+              "source_digest": "2ac96f9d23d6108522814a712ddf6b73f9b7eed05aa88128fb0a664e23d53de3"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "diagnostics": [
+            {
+              "code": "tracking_cancelled",
+              "origin": "runtime"
+            }
+          ],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "77bd556379b444a78f8f48e61461e2bc",
+          "metrics": [],
+          "observed_inputs": [],
+          "outputs": [],
+          "plan_digest": "ac197093fc37767136090b4e09b2f2cda84aeb5493578eb468cf7a4e64e6c8b6",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "cancelled",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 0.0007930830179248005,
+            "ended_at": "2026-10-16T10:55:53.035814Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:53.035018Z"
+          }
+        },
+        "run_digest": "fb9df767290820829dbc06c02e1971519c86c00e41c9b56ca4f7f6bb4932edf9",
+        "schema_version": "apizr.experiment-record/v2"
+      }
+    ],
+    "prove_reexecution_unsaved_cells_and_display_are_preserved": [
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "session-cell",
+              "execution_count": 2,
+              "origin": "runtime",
+              "source_digest": "ff585cfe8b5182c1a5f4eadaf3b2bec8fb48f129f4b402d8eb87e2a6d5804724"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "3702935004c82ff301155bac3555e38ffa3b2941f1b7dbb985737bbda716c004",
+        "run": {
+          "call_parameters": [],
+          "capture": {
+            "cell": {
+              "cell_id": "session-cell",
+              "execution_count": 2,
+              "origin": "runtime",
+              "source_digest": "ff585cfe8b5182c1a5f4eadaf3b2bec8fb48f129f4b402d8eb87e2a6d5804724"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "diagnostics": [],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "e528d21c7f7e44259a00b5ace2d3efc8",
+          "metrics": [
+            {
+              "name": "score",
+              "origin": "runtime",
+              "unit": null,
+              "value": 0.75
+            }
+          ],
+          "observed_inputs": [
+            {
+              "digest": null,
+              "name": "in-memory",
+              "origin": "unknown",
+              "reference": null,
+              "size": null
+            }
+          ],
+          "outputs": [],
+          "plan_digest": "3702935004c82ff301155bac3555e38ffa3b2941f1b7dbb985737bbda716c004",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 0.0009585829975549132,
+            "ended_at": "2026-10-16T10:55:51.349829Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:51.348869Z"
+          }
+        },
+        "run_digest": "2978fee1d3b8b294dfc824b0c0ce776d8fa90da5278c2cdac5b6914fdcf44858",
+        "schema_version": "apizr.experiment-record/v2"
+      },
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "reexecuted-cell",
+              "execution_count": 4,
+              "origin": "runtime",
+              "source_digest": "d951449dc9bc7ed47b39c77f25662750c7f6467a282bf46750f9e9158cf0acfc"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "6ef82b612234e4f7edb43dc131a5fe00dbb134ba8d4df6c673287afe87514d42",
+        "run": {
+          "call_parameters": [],
+          "capture": {
+            "cell": {
+              "cell_id": "reexecuted-cell",
+              "execution_count": 4,
+              "origin": "runtime",
+              "source_digest": "d951449dc9bc7ed47b39c77f25662750c7f6467a282bf46750f9e9158cf0acfc"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "diagnostics": [],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "29700a498d474db189fe44dcfd737b6f",
+          "metrics": [
+            {
+              "name": "score",
+              "origin": "runtime",
+              "unit": null,
+              "value": 0.8
+            }
+          ],
+          "observed_inputs": [],
+          "outputs": [],
+          "plan_digest": "6ef82b612234e4f7edb43dc131a5fe00dbb134ba8d4df6c673287afe87514d42",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 3.3917021937668324e-05,
+            "ended_at": "2026-10-16T10:55:51.366722Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:51.366687Z"
+          }
+        },
+        "run_digest": "2b1a5843c5cdd827fd72ab486d19defe6741eb9399bc1494922a3324c2c260cd",
+        "schema_version": "apizr.experiment-record/v2"
+      },
+      {
+        "plan": {
+          "capture": {
+            "cell": {
+              "cell_id": "reexecuted-cell",
+              "execution_count": 3,
+              "origin": "runtime",
+              "source_digest": "d951449dc9bc7ed47b39c77f25662750c7f6467a282bf46750f9e9158cf0acfc"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "environment": null,
+          "execution": {
+            "controls": [],
+            "kind": "in-process",
+            "policy_digest": null
+          },
+          "inputs": [],
+          "parameters": [],
+          "randomness": [],
+          "schema_version": "apizr.experiment-plan/v2",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          }
+        },
+        "plan_digest": "9289588d2b79b14703f8e0f85eb645c4ac6527d4350fd0fc1e71461f72b3c9e9",
+        "run": {
+          "call_parameters": [],
+          "capture": {
+            "cell": {
+              "cell_id": "reexecuted-cell",
+              "execution_count": 3,
+              "origin": "runtime",
+              "source_digest": "d951449dc9bc7ed47b39c77f25662750c7f6467a282bf46750f9e9158cf0acfc"
+            },
+            "function": {
+              "definition_id": null,
+              "module": null,
+              "origin": "unknown",
+              "qualified_name": null,
+              "source_digest": null
+            },
+            "mode": "jupyter_cell",
+            "producer": "apizr.tracking",
+            "producer_version": "0.4.5",
+            "selected_parameters": []
+          },
+          "diagnostics": [],
+          "effective_parameters": [],
+          "environment": {
+            "architecture": {
+              "origin": "runtime",
+              "value": "arm64"
+            },
+            "artifacts": [],
+            "packages": [
+              {
+                "name": "outerspace-apizr",
+                "origin": "runtime",
+                "version": "0.4.5"
+              }
+            ],
+            "platform": {
+              "origin": "runtime",
+              "value": "darwin"
+            },
+            "python_implementation": {
+              "origin": "runtime",
+              "value": "cpython"
+            },
+            "python_version": {
+              "origin": "runtime",
+              "value": "3.12.13"
+            }
+          },
+          "execution_id": "b58cb6500b9940d19d169a0d6616f6a5",
+          "metrics": [
+            {
+              "name": "score",
+              "origin": "runtime",
+              "unit": null,
+              "value": 0.8
+            }
+          ],
+          "observed_inputs": [],
+          "outputs": [],
+          "plan_digest": "9289588d2b79b14703f8e0f85eb645c4ac6527d4350fd0fc1e71461f72b3c9e9",
+          "randomness": [],
+          "schema_version": "apizr.experiment-run/v2",
+          "status": "success",
+          "subject": {
+            "identity": null,
+            "origin": "unknown"
+          },
+          "timing": {
+            "duration_seconds": 3.462500171735883e-05,
+            "ended_at": "2026-10-16T10:55:51.359762Z",
+            "origin": "runtime",
+            "started_at": "2026-10-16T10:55:51.359727Z"
+          }
+        },
+        "run_digest": "2d7d314d3f50c2db9b017728733d09327f59dea81cbedc9f041c2ee4307bf304",
+        "schema_version": "apizr.experiment-record/v2"
+      }
+    ]
+  },
+  "example_sha256": "5620e219510b4be9a104a2fbc1e131d39d0b2a06d0b0eb1f13ecbf543435a00c",
+  "python": "3.12.13 (main, Jul 23 2026, 14:33:47) [Clang 22.1.3 ]",
+  "result": "pass",
+  "sdk_path": "/private/tmp/apizr-client-engine/lib/python3.12/site-packages/apizr/__init__.py",
+  "versions": {
+    "ipykernel": "7.4.0",
+    "ipython": "9.17.1",
+    "jupyter-client": "8.10.0",
+    "outerspace-apizr": "0.4.5"
+  }
+}

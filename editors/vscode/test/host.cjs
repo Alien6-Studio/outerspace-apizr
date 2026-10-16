@@ -24,6 +24,7 @@ async function suite() {
         const status = await api.telemetry('preview');
         assert.equal(status.collection_enabled, false);
         assert.equal(status.transmission_available, false);
+        assert.equal(engineStarts, 0, 'Restricted Mode controls cannot launch an engine');
         proof.cases.push('restricted-workspace-no-engine');
     } else {
         assert.equal(vscode.workspace.isTrusted, true);

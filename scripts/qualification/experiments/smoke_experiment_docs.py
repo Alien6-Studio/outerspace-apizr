@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import math
 import os
 import re
 import shutil
@@ -17,6 +18,78 @@ PAGES = (
     "docs/getting-started/quickstart.md",
     "docs/getting-started/user-guide/experiment-inspection.md",
 )
+
+
+def tracking_examples(cli: Path, root: Path, env: dict[str, str]) -> dict:
+    """Run the public SDK guide verbatim with the installed candidate interpreter."""
+    page = ROOT / "docs/getting-started/tracking.md"
+    blocks = dict(
+        re.findall(
+            r"<!-- tracking-journey:([a-z-]+) -->\s*```sh\n(.*?)\n```",
+            page.read_text(),
+            re.S,
+        )
+    )
+    assert set(blocks) == {"session", "decorator", "history", "providers", "telemetry"}
+    root.mkdir()
+    outputs = {}
+    for name, block in blocks.items():
+        result = subprocess.run(
+            ["bash", "-euo", "pipefail", "-c", block],
+            cwd=root,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        assert result.returncode == 0, (name, result.stdout, result.stderr)
+        outputs[name] = result.stdout
+
+    def command(*arguments):
+        return json.loads(
+            subprocess.run(
+                [str(cli), "experiment", *arguments, "--format", "json"],
+                cwd=root,
+                env=env,
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=30,
+            ).stdout
+        )
+
+    history = command("list")
+    assert history["total"] == 3
+    records = [command("show", run["run_digest"]) for run in history["runs"]]
+    sessions = [r for r in records if r["run"]["capture"]["mode"] == "sdk_session"]
+    calls = [r for r in records if r["run"]["capture"]["mode"] == "decorated_call"]
+    assert len(sessions) == 1 and len(calls) == 2
+    assert math.isclose(sessions[0]["run"]["metrics"][0]["value"], 0.8)
+    calls.sort(key=lambda r: r["run"]["call_parameters"][0]["value"])
+    assert [r["run"]["call_parameters"][0]["value"] for r in calls] == [0.75, 0.85]
+    assert [r["run"]["metrics"][0]["value"] for r in calls] == [2 / 3, 1 / 3]
+    difference = command("diff", calls[0]["run_digest"], calls[1]["run_digest"])
+    assert difference["schema_version"] == "apizr.experiment-diff/v2"
+    assert difference["metrics"][0]["state"] == "changed"
+    providers = json.loads((root / "providers.json").read_text())
+    assert providers["active"] == [{"name": "apizr.builtin", "version": "1"}]
+    inspection = json.loads((root / "inspection.json").read_text())
+    assert inspection["providers"]["providers"][0]["diagnostic"] == "provider_disabled"
+    assert all(
+        owner["state"] == "unknown" for owner in inspection["providers"]["owners"]
+    )
+    preview = json.loads(outputs["telemetry"])
+    assert not preview["collection_enabled"] and not preview["transmission_available"]
+    assert json.loads(preview["payload"])["events"] == []
+    return {
+        "status": "passed",
+        "blocks": len(blocks),
+        "records": 3,
+        "sdk_comparison": "passed",
+        "disabled_provider": "unknown",
+        "telemetry": "disabled without transmission",
+        "page_sha256": sha256(page.read_bytes()).hexdigest(),
+    }
 
 
 def main() -> None:
@@ -189,6 +262,9 @@ def main() -> None:
             "blocks": len(blocks),
             "example_sha256": sha256(blocks[0].encode()).hexdigest(),
         }
+        results["docs/getting-started/tracking.md"] = tracking_examples(
+            cli, Path(directory) / "tracking", env
+        )
     args.output.write_text(json.dumps(results, indent=2) + "\n")
 
 

@@ -1,5 +1,40 @@
 # Supported-runtime security baseline
 
+## 0.4.6 development journey qualification
+
+The current journey adds explicit SDK sessions, static provider selection and a
+thin VS Code client. The retained
+[trust-boundary qualification](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/review/journey-trust-0.4.6)
+records installed-candidate paths, historical source identities, positive controls,
+network counts, executable documentation and the security mutation results.
+
+| Boundary | Enforced behavior and proof |
+| --- | --- |
+| In-process tracking | Trusted workload; one thread/task owns its session. Malformed or oversized values are refused. Interrupting publication after the Plan leaves no partial Run and releases the context; a following capture succeeds. |
+| Static providers | Explicit first-owner precedence, bounded trusted extension invocation, strict source/result admission. Failure and disablement retain diagnostics and unknown evidence. Reading history loads no producer. |
+| Editor and source access | Real Restricted Mode starts no engine, including telemetry controls. A valid inspection request with no operator grant refuses before opening project Python source. |
+| Local store | Every retained record is validated with its Plan/digest binding. Tampering yields `store_corrupt`; display never repairs or rewrites evidence. |
+| Privacy | Payloads contain only approved coarse operation/outcome counters; explicit private parameters, metrics, artifact paths, remote references and exception text are absent. Usage fields do not enter scientific records. |
+| Offline operation | Temporary audit hooks in disposable engine venvs survive isolated child interpreters. Actual DNS and connection probes are denied as positive controls; subsequent CLI/SDK/editor engine workloads must have zero attempts. |
+| 0.4.5 compatibility | Canonical show/export and JSON/text diff are byte-identical to independent outputs from the `v0.4.5` source over real frozen Runs. New v2 records retain their own contract; older engines need not read them. |
+
+The guard records process identities and fixed event names, with no user values.
+It is installed only in explicitly selected qualification virtual environments
+and removed in `finally`. Each environment is used exclusively during its guarded
+phase; UI preparation precedes measurement. The guard concerns Python DNS/INET
+calls, not native-library networking or Electron's own services. Existing Linux
+container and governed-runtime qualifications retain their separate contracts.
+
+Production telemetry transmission remains unavailable. Neither this proof nor
+the public conformance stub qualifies the deferred private collector (#335).
+Candidate qualification does not authorize publication. Python 3.15 qualification
+remains the separate #330 release requirement.
+
+The following dated foundation record is retained for historical dependency and
+runtime decisions; its counts and version floors describe that earlier audit.
+
+## Foundation record — 20 September 2026
+
 Recorded 2026-09-20, against foundation commit
 `d07222800f63f5bc17516878583e69810dc7330e`. This record concerns the historical
 notebook/script → AST metadata → FastAPI → container pipeline.

@@ -2452,3 +2452,21 @@ standalone = false
 workflows = ["ci.yml#vscode"]
 ci_blocking = true
 evidence = ["${{ runner.temp }}/vscode-dist/", "${{ runner.temp }}/vscode-engine.lock", "${{ runner.temp }}/vscode-installed/*.json", "${{ runner.temp }}/vscode-installed/*.log", "${{ runner.temp }}/vscode-node-audit.json", "${{ runner.temp }}/vscode-restricted/*.json", "${{ runner.temp }}/vscode-restricted/*.log", "${{ runner.temp }}/vscode-ssh/*.log", "${{ runner.temp }}/vscode-ssh/proof/*.json", "${{ runner.temp }}/vscode-ssh/remote-proof.json", "stdout/stderr (workflow step log)"]
+
+[files."scripts/qualification/experiments/journey_security_proof.py"]
+group = "experiments"
+role = "proof"
+kind = "implementation"
+gate = "Qualify offline CLI/SDK privacy and tagged history with an installed candidate."
+workflows = []
+ci_blocking = true
+evidence = ["${{ runner.temp }}/data-science/*.json", "${{ runner.temp }}/data-science/*.log", "${{ runner.temp }}/data-science/bundles/", "${{ runner.temp }}/data-science/science-audit-requirements.txt", "${{ runner.temp }}/mcp-candidate/*.json", "${{ runner.temp }}/mcp-candidate/*.log", "${{ runner.temp }}/qualification/", "${{ runner.temp }}/science-wheels.tar.gz", "${{ runner.temp }}/target-export.tar.gz", "stdout/stderr (workflow step log)"]
+
+[files."scripts/qualification/interfaces/python_network_guard.py"]
+group = "interfaces"
+role = "fixture"
+kind = "implementation"
+gate = "Temporary Python audit instrumentation for explicitly selected qualification venvs."
+workflows = []
+ci_blocking = true
+evidence = ["${{ runner.temp }}/data-science/*.json", "${{ runner.temp }}/data-science/*.log", "${{ runner.temp }}/data-science/bundles/", "${{ runner.temp }}/data-science/science-audit-requirements.txt", "${{ runner.temp }}/mcp-candidate/*.json", "${{ runner.temp }}/mcp-candidate/*.log", "${{ runner.temp }}/qualification/", "${{ runner.temp }}/science-wheels.tar.gz", "${{ runner.temp }}/target-export.tar.gz", "${{ runner.temp }}/vscode-dist/", "${{ runner.temp }}/vscode-engine.lock", "${{ runner.temp }}/vscode-installed/*.json", "${{ runner.temp }}/vscode-installed/*.log", "${{ runner.temp }}/vscode-node-audit.json", "${{ runner.temp }}/vscode-restricted/*.json", "${{ runner.temp }}/vscode-restricted/*.log", "${{ runner.temp }}/vscode-ssh/*.log", "${{ runner.temp }}/vscode-ssh/proof/*.json", "${{ runner.temp }}/vscode-ssh/remote-proof.json", "stdout/stderr (workflow step log)"]

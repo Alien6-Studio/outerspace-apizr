@@ -139,9 +139,9 @@ written guides while the videos are being prepared.
 | Part VII — Run an experiment and read its history | Coming later | [Runs and history](../getting-started/user-guide/experiment-runs.md) |
 | Part VIII — Compare experiment Runs | Coming later | [Comparison](../getting-started/user-guide/experiment-comparison.md) |
 | Part IX — Expose a selected prediction | Coming later | [Experiment → serving](../getting-started/user-guide/experiment-exposure.md) |
-| Part X — Capture a Python call with SDK sessions and decorators | Coming later | [Development SDK reference](../reference/tracking-sdk.md) |
-| Part XI — Capture real Jupyter cells | Coming later | Written lesson planned |
-| Part XII — Inspect and compare Runs in VS Code | Coming later | Written lesson planned |
+| Part X — Capture a Python call with SDK sessions and decorators | Planned after 0.4.6 (#334) | [Runnable SDK quickstart](../getting-started/tracking.md) |
+| Part XI — Capture real Jupyter cells | Planned after 0.4.6 (#334) | [Live-kernel steps](../getting-started/tracking.md#3-use-the-same-calls-in-jupyter) |
+| Part XII — Inspect and compare Runs in VS Code | Planned after 0.4.6 (#334) | [VS Code guide](../reference/vscode.md) |
 
 A planned lesson does not establish that its feature has been qualified. The
 linked guides state their current scope and limits.
