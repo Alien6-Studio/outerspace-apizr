@@ -19,7 +19,13 @@ The [0.4.0rc1 record](../../releases/0.4.0.md) retains the earlier coordinated R
 
 Keep the historical instructions below for the versions they describe.
 
-## From 0.2.1 to 0.3.0
+## 0.4.6 development
+
+The legacy generation pipeline, HTTP upload service, step hooks and `legacy`
+extra are removed. Follow the [migration table](../../releases/migrate-0.4.6.md#removed-generation-pipeline).
+Notebook export remains supported under `apizr.notebooks`.
+
+## From 0.2.1 to 0.3.0 (historical)
 
 **0.3.0** was released on 22 September 2026.
 Existing single-source and legacy commands remain available,
@@ -50,9 +56,9 @@ they are not additional breaking changes introduced by 0.3.
 - HTTP generation returns a ZIP instead of writing to caller-selected paths. Directory scanning and the old `/dockerize_file/` endpoint are removed. The notebook endpoint returns script text. Docker endpoints return generated content.
 - Non-empty output directories are rejected. Choose a new directory when regenerating.
 
-## Adopt compiler workflows incrementally
+## Compiler adoption before 0.4.6 (historical)
 
-The `--script` / `--notebook` legacy pipeline remains supported. Its discovery,
+Before 0.4.6, the `--script` / `--notebook` legacy pipeline remained supported. Its discovery,
 routes and configuration are independent of the Capability Compiler; existing
 projects do not automatically switch to the new generators.
 

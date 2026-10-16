@@ -115,6 +115,7 @@ nav:
           - Where does execution happen?: academy/execution.md
           - What do REST and MCP expose?: academy/interfaces.md
   - Guides:
+      - Convert notebook cells: modules/notebook-transformr.md
       - Inspect an experiment: getting-started/user-guide/experiment-inspection.md
       - Run and inspect local history: getting-started/user-guide/experiment-runs.md
       - Compare experiment runs: getting-started/user-guide/experiment-comparison.md
@@ -188,18 +189,17 @@ nav:
       - Delivery identities: architecture/delivery-identities.md
       - Artifact principles: architecture/artifact-principles.md
       - Security baseline: architecture/security-baseline.md
-  - Legacy pipeline — compatibility:
-      - Generate a legacy API and container: getting-started/user-guide/apizr.md
-      - Legacy standalone commands:
+  - Removed legacy pipeline — migration:
+      - Migrate the former pipeline: getting-started/user-guide/apizr.md
+      - Former standalone commands:
           - Analyze Python: getting-started/user-guide/code-analyzr.md
           - Generate FastAPI: getting-started/user-guide/fast-apizr.md
           - Generate Docker files: getting-started/user-guide/dockerizr.md
-      - Legacy pipeline components:
-          - Notebook conversion: modules/notebook-transformr.md
+      - Former pipeline components:
           - Python analysis: modules/code-analyzr.md
           - FastAPI generation: modules/fast-apizr.md
           - Docker generation: modules/dockerizr.md
-      - Legacy HTTP generation service:
+      - Former HTTP generation service:
           - Service and project upload: apis/apizr-api.md
           - Python analysis endpoint: apis/code-analyzr-api.md
           - FastAPI generation endpoint: apis/fast-apizr-api.md

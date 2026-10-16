@@ -15,8 +15,8 @@ existing tutorials and explains capabilities, readiness, selection and execution
 
 ## Start with an experiment
 
-The historical `--script`/`--notebook` FastAPI pipeline is deprecated during
-0.4.6 development and removed before publication. Migrate to `apizr inspect`,
+The historical `--script`/`--notebook` FastAPI pipeline is removed in
+0.4.6 development. Migrate to `apizr inspect`,
 explicit exposure selection, and `apizr generate rest` or `apizr generate mcp`.
 
 For a training script or notebook, begin by inspecting the evidence. With the

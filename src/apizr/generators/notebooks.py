@@ -7,7 +7,7 @@ from typing import NamedTuple
 from apizr.capabilities import CapabilityDocument, inspect_source
 from apizr.capabilities.model import Digest, Source
 from apizr.capabilities.source import notebook_text, read_source
-from apizr.modules.notebook_transformr.transformr.nbTransformr import NotebookTransformr
+from apizr.notebooks.exporter import NotebookTransformr
 
 
 class NotebookAnalysis(NamedTuple):

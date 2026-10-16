@@ -152,7 +152,7 @@ def main():
             '{"selection":{"include":["python:sample:add"]},"interfaces":["rest","mcp"],"execution":{"allowed":["direct"]}}'
         )
         authority = write_analysis_policy(root / "operator-local.json", source)
-        for extra in ("base", "clients", "notebook", "http", "mcp", "legacy"):
+        for extra in ("base", "clients", "notebook", "http", "mcp"):
             env = root / ("env-" + extra)
             subprocess.run(
                 ["uv", "venv", "--python", args.python, str(env)],
@@ -303,7 +303,8 @@ print("PASS documented compiler API: base wheel, outside checkout, exact CLI par
                 )
                 missing = command("--script", source / "sample.py", code=2)
                 assert (
-                    "[legacy]" in missing.stderr and "Traceback" not in missing.stderr
+                    "removed in 0.4.6" in missing.stderr
+                    and "Traceback" not in missing.stderr
                 )
             elif extra == "clients":
                 probe(
@@ -400,18 +401,6 @@ print("PASS documented compiler API: base wheel, outside checkout, exact CLI par
             elif extra == "mcp":
                 probe(
                     "import mcp, uvicorn; from apizr.governed_repository.mcp import create_server; from importlib.util import find_spec; assert find_spec('nbconvert') is None"
-                )
-            else:
-                result = json.loads(
-                    command(
-                        "--notebook", notebook, "--output-dir", root / "legacy"
-                    ).stdout
-                )
-                assert {"Dockerfile", "requirements.txt", "sample_api.py"} <= set(
-                    result["files"]
-                )
-                probe(
-                    "from apizr.app import app; assert app.title == 'OuterSpace Apizr'"
                 )
             print(f"PASS isolated installation: {extra}")
 

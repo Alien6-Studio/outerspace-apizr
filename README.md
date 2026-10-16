@@ -191,8 +191,8 @@ for their guarantees and limits.
 
 ## Existing workflows and limits
 
-The historical `--script`/`--notebook` FastAPI pipeline is deprecated during
-0.4.6 development and removed before publication. Migrate to `apizr inspect`,
+The historical `--script`/`--notebook` FastAPI pipeline is removed in
+0.4.6 development. Migrate to `apizr inspect`,
 explicit exposure selection, and `apizr generate rest` or `apizr generate mcp`.
 
 Single-source `inspect`, `generate rest/mcp` and `execute` remain supported.
@@ -200,10 +200,9 @@ Apizr 0.4.2 also exports verified REST bundles to
 [Postman, Bruno and Insomnia collections](https://apizr.outerspace.sh/getting-started/user-guide/client-collections/),
 with deterministic files and safe local regeneration.
 
-The [historical pipeline](https://apizr.outerspace.sh/getting-started/user-guide/apizr/)
-is a separate compatibility path. See
-[the full journey](https://apizr.outerspace.sh/getting-started/introduction/#compatibility-and-limits)
-for dependency, resource and exposure limits.
+The [0.4.6 migration guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.6/docs/releases/migrate-0.4.6.md#removed-generation-pipeline)
+replaces historical CLI, HTTP and pipeline-plugin flows. Notebook conversion
+remains available through `apizr.notebooks` and the `notebook` extra.
 
 [Watch the demo](https://apizr.outerspace.sh/#watch-apizr-in-action) ·
 [Architecture](https://apizr.outerspace.sh/architecture/overview/) ·

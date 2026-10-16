@@ -74,8 +74,8 @@ No RBAC, approvals, identity service or enterprise control plane is included.
 
 The [single-source REST](rest-generator-v1.md), [MCP](mcp-generator-v1.md),
 [local execution](execution-policy-v1.md) and [OCI](oci-container-runtime-v1.md)
-workflows remain supported. The [legacy pipeline](../getting-started/user-guide/apizr.md)
-is independent and retains its [documented limitations](legacy-behavior-contract.md).
+workflows remain supported. The legacy generation pipeline is removed in 0.4.6;
+see its [migration paths](../releases/migrate-0.4.6.md#removed-generation-pipeline).
 Canonical artifacts retain their versioned contracts.
 
 See the [release notes and known limitations](../releases/0.4.1.md).

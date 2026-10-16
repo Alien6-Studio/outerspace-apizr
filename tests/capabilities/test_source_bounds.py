@@ -16,7 +16,7 @@ from apizr.capabilities.source import MAX_SOURCE_BYTES, read_source
 from apizr.contracts.json_budget import preflight_json
 from apizr.experiments.notebook_source import code_cells
 from apizr.generators.notebooks import inspect_notebook_bytes
-from apizr.modules.notebook_transformr.transformr.nbTransformr import NotebookTransformr
+from apizr.notebooks.exporter import NotebookTransformr
 
 
 def forbidden(*args, **kwargs):
@@ -209,7 +209,7 @@ def test_bounded_notebook_snapshot_preserves_filename_resources(tmp_path):
 def test_notebook_export_uses_admitted_snapshot_after_file_changes(
     tmp_path, monkeypatch
 ):
-    from apizr.modules.notebook_transformr.transformr import nbTransformr as module
+    from apizr.notebooks import exporter as module
 
     path = tmp_path / "snapshot.ipynb"
     raw = json.dumps(

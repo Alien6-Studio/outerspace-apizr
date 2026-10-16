@@ -1,9 +1,16 @@
-# Dockerizr API
+# Dockerizr API — removed in 0.4.6
 
-`POST /docker/generate_dockerfile/` accepts a JSON body with `conf` (DockerizrConfiguration) and `requirements` (requirements-file text). It returns a mapping of generated filenames to content, including `Dockerfile`, `start.sh` and `.dockerignore`.
+The historical notebook/script pipeline and its HTTP generation service were
+removed during 0.4.6 development. This URL is retained for migration. Existing
+0.4.5 generated applications are independent artifacts; upgrading Apizr does not
+rewrite them.
 
-`POST /docker/generate_gunicorn_files/` accepts a DockerizrConfiguration and returns legacy Gunicorn configuration text. The main pipeline uses Uvicorn directly.
+Use the [migration table](../releases/migrate-0.4.6.md#removed-generation-pipeline)
+for the replacement of each CLI, Python, HTTP and plugin entrypoint. Start with
+[inspection](../getting-started/user-guide/inspect.md), select public functions
+explicitly, then [generate REST](../getting-started/user-guide/rest.md) or
+[MCP](../getting-started/user-guide/mcp.md). For a repository, use the
+[exposure workflow](../getting-started/user-guide/exposure.md).
 
-The service does not write to `conf.project_path`: filesystem generation is isolated in a temporary directory. The former server-directory requirements endpoint is removed.
-
-Alternatively run `uv run uvicorn apizr.modules.dockerizr.app:app` and use the routes without the `/docker` prefix. See `/docs` for schemas.
+Notebook conversion remains available through the supported
+[notebook exporter](../modules/notebook-transformr.md), without executing cells.

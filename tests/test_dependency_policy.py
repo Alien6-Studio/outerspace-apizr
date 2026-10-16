@@ -36,7 +36,16 @@ def test_audit_scopes_cover_every_locked_dependency_variant(tmp_path):
     }
     assert any(name == "fastapi" for name, _ in by_scope["runtime-http"])
     assert any(name == "nbconvert" for name, _ in by_scope["runtime-notebook"])
-    assert any(name == "questionary" for name, _ in by_scope["runtime-legacy"])
+    assert {name for name, _ in by_scope["runtime-clients"]} == {
+        "pydantic",
+        "pydantic-core",
+        "annotated-types",
+        "typing-extensions",
+        "typing-inspection",
+        "pyyaml",
+    }
+    assert "runtime-legacy" not in by_scope
+    assert not any(name == "questionary" for name, _ in covered)
     assert any(name == "mcp" for name, _ in by_scope["runtime-mcp"])
     assert not any(
         name in {"pytest", "mkdocs", "pip-audit"} for name, _ in by_scope["runtime"]

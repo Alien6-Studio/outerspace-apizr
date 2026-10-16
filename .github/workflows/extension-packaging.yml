@@ -50,7 +50,7 @@ jobs:
           version: '0.13.1'
           python-version: ${{ matrix.python }}
       - run: uv sync --locked
-      - run: uv run --locked pytest tests/test_extension_probe.py tests/extension_runtime tests/local_plugins tests/test_pipeline_plugins.py tests/test_optional.py --timeout=30
+      - run: uv run --locked pytest tests/test_extension_probe.py tests/extension_runtime tests/local_plugins tests/test_optional.py --timeout=30
       - run: uv run --locked python -m scripts.qualification.extensions.smoke_extension_packaging --work-dir "$RUNNER_TEMP/apizr-extension-proof"
       - name: Sync, update and uninstall installed plugins with OS network isolation
         run: uv run --locked python -m scripts.qualification.extensions.run_plugin_sync_proof "$RUNNER_TEMP/apizr-extension-proof"

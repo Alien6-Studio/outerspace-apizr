@@ -2,9 +2,11 @@
 
 ## 0.4.6 — development, not published
 
-- Deprecate the historical FastAPI pipeline before its 0.4.6 removal; use
-  inspect → explicit exposure → generate rest/mcp. Its renderer emits a warning
-  and CLI notice for pipeline, standalone and HTTP callers (#284, #331).
+- Deprecate then remove the complete historical FastAPI/Docker pipeline, upload
+  service, step hooks and `legacy` extra. Unknown commands exit 2; the removed
+  flags explain migration to inspect → explicit exposure → generate rest/mcp.
+  Move non-executing notebook export to `apizr.notebooks`, preserving golden
+  exported/formatted bytes and admission controls (#284, #331).
 
 - Define separate bounded static scientific provider and in-process SDK adapter
   contracts, with core admission over existing evidence types and reuse of the

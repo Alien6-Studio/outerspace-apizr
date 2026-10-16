@@ -39,9 +39,11 @@ def main():
         assert "apizr/generators/mcp/runtime.py" in names
         assert not any(name == "src.py" or name.startswith("src/") for name in names)
         assert any(name.endswith(".dist-info/licenses/LICENSE") for name in names)
-        assert "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2" in names
-        assert "apizr/legacy/i18n/en/messages.json" in names
-    notebook = Path(__file__).resolve().parents[3] / "examples/pricing.ipynb"
+        assert "apizr/notebooks/exporter.py" in names
+        assert not any(
+            name.startswith(("apizr/modules/", "apizr/legacy/", "apizr/extensions/"))
+            for name in names
+        )
     with tempfile.TemporaryDirectory(prefix="apizr-wheel-") as directory:
         root = Path(directory).resolve()
         env = root / "env"
@@ -50,7 +52,14 @@ def main():
         python = bin_dir / "python"
         cli = bin_dir / "apizr"
         subprocess.run(
-            ["uv", "pip", "install", "--python", str(python), str(wheel) + "[legacy]"],
+            [
+                "uv",
+                "pip",
+                "install",
+                "--python",
+                str(python),
+                str(wheel) + "[notebook,http]",
+            ],
             check=True,
         )
         subprocess.run(
@@ -144,37 +153,6 @@ print(apizr.__file__)
         # Both inputs live outside the repository; the installed CLI must be sufficient.
         source = root / "sample.py"
         source.write_text("def total(values: list[int]) -> int: return sum(values)\n")
-        complex_root = root / "complex-notebook"
-        shutil.copytree(notebook.parent / "complex-notebook", complex_root)
-        complex_output = root / "complex-output"
-        subprocess.run(
-            [
-                str(cli),
-                "--notebook",
-                str(complex_root / "pricing.ipynb"),
-                "--configuration",
-                str(complex_root / "configuration.yaml"),
-                "--output-dir",
-                str(complex_output),
-            ],
-            cwd=root,
-            check=True,
-            stdout=subprocess.DEVNULL,
-        )
-        assert (complex_output / "data/prices.json").read_bytes() == (
-            complex_root / "data/prices.json"
-        ).read_bytes()
-        subprocess.run(
-            [
-                str(python),
-                "-I",
-                "-c",
-                "import sys; sys.path.insert(0, sys.argv[1]); from pricing import quote; assert quote('coffee', 2) == 7.0",
-                str(complex_output),
-            ],
-            cwd=root,
-            check=True,
-        )
         local_notebook = root / "sample.ipynb"
         local_notebook.write_text(
             json.dumps(
@@ -963,79 +941,10 @@ asyncio.run(check())
             print(
                 "Installed-wheel OCI execution and standalone REST/MCP (Python/notebook) passed outside checkout."
             )
-        result = subprocess.run(
-            [
-                str(cli),
-                "--notebook",
-                str(notebook),
-                "--output-dir",
-                str(root / "project"),
-                "--force",
-            ],
-            cwd=root,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        manifest = json.loads(result.stdout)
-        assert manifest["api_module"] == "pricing_api"
-        assert {
-            "pricing.py",
-            "pricing.json",
-            "pricing_api.py",
-            "requirements.txt",
-            "Dockerfile",
-            "start.sh",
-        } <= set(manifest["files"])
-        for name in manifest["files"]:
-            assert (root / "project" / name).is_file()
-        # Install a separate distribution and activate its versioned entry point.
-        # The CLI and Apizr imports still come exclusively from the candidate wheel.
-        subprocess.run(
-            [
-                "uv",
-                "pip",
-                "install",
-                "--python",
-                str(python),
-                "--no-deps",
-                str(Path(__file__).resolve().parents[3] / "examples/pipeline-plugin"),
-            ],
-            cwd=root,
-            check=True,
-        )
-        config = root / "plugin.yaml"
-        config.write_text(
-            "plugin_options:\n  delivery-note:\n    project: installed-wheel\n"
-        )
-        (root / "settings.json").write_text('{"value": 5}')
-        for enabled in (False, True):
-            output = root / ("plugin-on" if enabled else "plugin-off")
-            command = [
-                str(cli),
-                "--notebook",
-                str(local_notebook),
-                "--output-dir",
-                str(output),
-                "--configuration",
-                str(config),
-                "--include",
-                "settings.json",
-            ]
-            if enabled:
-                command += ["--plugin", "delivery-note"]
-            subprocess.run(command, cwd=root, check=True, stdout=subprocess.DEVNULL)
-            assert (output / "settings.json").read_text() == '{"value": 5}'
-            assert (output / "delivery.json").exists() == enabled
-        assert json.loads((root / "plugin-on/delivery.json").read_text()) == {
-            "api_module": "sample_api",
-            "project": "installed-wheel",
-        }
         print(
-            "Installed external pipeline plugin: explicit activation/options and resource delivery passed."
-        )
-        print(
-            "Wheel namespace, IR/readiness, governed execution, inspection and direct/governed standalone REST/MCP generation/runtime (Python/notebook), resources, license, CLI help and legacy notebook generation passed."
+            "Wheel namespace, IR/readiness, governed execution, inspection and "
+            "direct/governed standalone REST/MCP generation/runtime "
+            "(Python/notebook), resources, license and CLI help passed."
         )
 
 

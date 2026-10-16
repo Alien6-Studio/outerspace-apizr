@@ -296,9 +296,8 @@ Conditional is not an execution approval: it is nonblocking for inspection but
 not eligible for adapter generation under this policy. Empty sources report zero
 capabilities and exit 0. Ordinary user errors use stderr without a traceback.
 
-A small CLI router recognizes `inspect` and delegates all historical arguments to
-the unchanged generation CLI. `apizr --script ...` and `apizr --notebook ...` retain
-their behavior; there is no mandatory `generate` subcommand.
+The CLI dispatches supported commands explicitly. The historical generation
+fallback is removed in 0.4.6; unknown commands exit 2 without opening source.
 
 ## Limits
 
@@ -306,6 +305,5 @@ This is not Python abstract interpretation, import resolution, a resource
 sandbox, full effect inference or a guarantee of runtime safety. Reflection,
 indirect aliases and arbitrary mutation cannot be resolved completely. The
 explicit bounded allowances and unknown effects remain visible to consumers.
-The REST v1 generator consumes this report without redefining eligibility. Historical issue #28
-remains open for the unchanged legacy pipeline; this policy addresses the
-separate static-evidence problem in issue #31.
+The REST v1 generator consumes this report without redefining eligibility.
+The legacy generator is removed in 0.4.6; this evidence policy remains independent.

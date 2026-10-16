@@ -80,7 +80,7 @@ def coverage_gates() -> list[list[str]]:
             or command[4:6] == ["-m", "scripts.qualification.ci.check_scope_coverage"]
         ):
             commands.append([sys.executable, *command[4:]])
-    if len(commands) < 23:
+    if len(commands) < 22:
         raise ValueError("Missing compatibility coverage gates")
     return commands
 

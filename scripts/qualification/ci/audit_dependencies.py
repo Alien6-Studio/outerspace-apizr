@@ -9,11 +9,11 @@ from pathlib import Path
 
 SCOPES = {
     "runtime": ["--no-default-groups"],
+    "runtime-clients": ["--no-default-groups", "--extra", "clients"],
     "runtime-preparation": ["--no-default-groups", "--extra", "preparation"],
     "runtime-notebook": ["--no-default-groups", "--extra", "notebook"],
     "runtime-http": ["--no-default-groups", "--extra", "http"],
     "runtime-mcp": ["--no-default-groups", "--extra", "mcp"],
-    "runtime-legacy": ["--no-default-groups", "--extra", "legacy"],
     "development": ["--only-group", "dev"],
     "documentation": ["--only-group", "docs"],
     "security-tooling": ["--only-group", "security"],

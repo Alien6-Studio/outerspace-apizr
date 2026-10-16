@@ -71,11 +71,11 @@ def test_junit_refuses_empty_skipped_incomplete_or_failed_evidence(
 
 def test_benchmark_uses_every_current_compatibility_coverage_floor():
     gates = TOOL["coverage_gates"]()
-    assert len(gates) >= 23
+    assert len(gates) >= 22
     assert any(
         "scripts.qualification.ci.check_scope_coverage" in gate for gate in gates
     )
-    assert any("--fail-under=59.5" in gate for gate in gates)
+    assert not any("src/apizr/modules/" in gate for gate in gates)
     assert sum("--fail-under=90" in gate for gate in gates) >= 21
 
 

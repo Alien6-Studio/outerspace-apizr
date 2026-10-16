@@ -1575,19 +1575,6 @@ http = [
     { name = "starlette" },
     { name = "uvicorn", extra = ["standard"] },
 ]
-legacy = [
-    { name = "black" },
-    { name = "fastapi" },
-    { name = "ipython" },
-    { name = "jinja2" },
-    { name = "nbconvert" },
-    { name = "packaging" },
-    { name = "python-multipart" },
-    { name = "pyyaml" },
-    { name = "questionary" },
-    { name = "starlette" },
-    { name = "uvicorn", extra = ["standard"] },
-]
 mcp = [
     { name = "mcp" },
     { name = "starlette" },
@@ -1624,7 +1611,6 @@ dev = [
     { name = "pytest-xdist" },
     { name = "python-multipart" },
     { name = "pyyaml" },
-    { name = "questionary" },
     { name = "ruff" },
     { name = "starlette" },
     { name = "uvicorn", extra = ["standard"] },
@@ -1647,32 +1633,21 @@ security = [
 
 [package.metadata]
 requires-dist = [
-    { name = "black", marker = "extra == 'legacy'", specifier = ">=26.3.1,<27" },
     { name = "black", marker = "extra == 'notebook'", specifier = ">=26.3.1,<27" },
     { name = "fastapi", marker = "extra == 'http'", specifier = ">=0.141,<1" },
-    { name = "fastapi", marker = "extra == 'legacy'", specifier = ">=0.141,<1" },
-    { name = "ipython", marker = "extra == 'legacy'", specifier = ">=9,<10" },
     { name = "ipython", marker = "extra == 'notebook'", specifier = ">=9,<10" },
-    { name = "jinja2", marker = "extra == 'legacy'", specifier = ">=3.1.6,<4" },
     { name = "mcp", marker = "extra == 'mcp'", specifier = ">=2.2,<3" },
-    { name = "nbconvert", marker = "extra == 'legacy'", specifier = ">=7.17.1,<8" },
     { name = "nbconvert", marker = "extra == 'notebook'", specifier = ">=7.17.1,<8" },
-    { name = "packaging", marker = "extra == 'legacy'", specifier = ">=26.3,<27" },
     { name = "packaging", marker = "extra == 'preparation'", specifier = ">=26.3,<27" },
     { name = "pydantic", specifier = ">=2.12,<3" },
     { name = "python-multipart", marker = "extra == 'http'", specifier = ">=0.0.31,<1" },
-    { name = "python-multipart", marker = "extra == 'legacy'", specifier = ">=0.0.31,<1" },
     { name = "pyyaml", marker = "extra == 'clients'", specifier = ">=6.0.2,<7" },
-    { name = "pyyaml", marker = "extra == 'legacy'", specifier = ">=6.0.2,<7" },
-    { name = "questionary", marker = "extra == 'legacy'", specifier = ">=2.0.1,<3" },
     { name = "starlette", marker = "extra == 'http'", specifier = ">=1.3.1" },
-    { name = "starlette", marker = "extra == 'legacy'", specifier = ">=1.3.1" },
     { name = "starlette", marker = "extra == 'mcp'", specifier = ">=1.3.1" },
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'http'", specifier = ">=0.30,<1" },
-    { name = "uvicorn", extras = ["standard"], marker = "extra == 'legacy'", specifier = ">=0.30,<1" },
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'mcp'", specifier = ">=0.30,<1" },
 ]
-provides-extras = ["preparation", "clients", "notebook", "http", "mcp", "legacy"]
+provides-extras = ["preparation", "clients", "notebook", "http", "mcp"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1696,7 +1671,6 @@ dev = [
     { name = "pytest-xdist", specifier = ">=3.8,<4" },
     { name = "python-multipart", specifier = ">=0.0.31,<1" },
     { name = "pyyaml", specifier = ">=6.0.2,<7" },
-    { name = "questionary", specifier = ">=2.0.1,<3" },
     { name = "ruff", specifier = ">=0.11,<1" },
     { name = "starlette", specifier = ">=1.3.1" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30,<1" },
@@ -2405,18 +2379,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/97/64/e22094c5555e550b6450ecfcceb6a1205d893d9a18ae27764c8c45acfb16/pyzmq-27.2.0-pp311-pypy311_pp73-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:679b5b1dde326a921ea2c9ec1f9ea3115bfe1b4735779bbc6eb0473a0ed93f71", size = 614492, upload-time = "2026-08-20T19:08:06.487Z" },
     { url = "https://files.pythonhosted.org/packages/d2/28/5b1042899caed18278c56d54a502f5254d463afe8aea1acbecc98e053391/pyzmq-27.2.0-pp311-pypy311_pp73-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:f5c6d8744d10b5e1eadd90a7c58f8546acf6bf680ee463f7e6ada09ad6c9f802", size = 780574, upload-time = "2026-08-20T19:08:07.987Z" },
     { url = "https://files.pythonhosted.org/packages/77/a3/f134603a671c114c6b56eb912bba890f09e2d43b8a28d243be5a5507cf2f/pyzmq-27.2.0-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:3ee8dd7031d5e23f632e0e7eee67183ca7d2536e0de35dc1e5d69f3471a791e8", size = 553961, upload-time = "2026-08-20T19:08:09.651Z" },
-]
-
-[[package]]
-name = "questionary"
-version = "2.1.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "prompt-toolkit" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/f6/45/eafb0bba0f9988f6a2520f9ca2df2c82ddfa8d67c95d6625452e97b204a5/questionary-2.1.1.tar.gz", hash = "sha256:3d7e980292bb0107abaa79c68dd3eee3c561b83a0f89ae482860b181c8bd412d", size = 25845, upload-time = "2025-08-28T19:00:20.851Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3c/26/1062c7ec1b053db9e499b4d2d5bc231743201b74051c973dadeac80a8f43/questionary-2.1.1-py3-none-any.whl", hash = "sha256:a51af13f345f1cdea62347589fbb6df3b290306ab8930713bfae4d475a7d4a59", size = 36753, upload-time = "2025-08-28T19:00:19.56Z" },
 ]
 
 [[package]]

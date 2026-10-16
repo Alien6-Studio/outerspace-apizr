@@ -3699,36 +3699,6 @@
       "components": [
         {
           "evidence_sha256": [
-            "3a492ab6d436c5e75f54a9a556de91c4322c8ad408fe849c7da1f7352721c63a"
-          ],
-          "expression": "MIT",
-          "scope": "Primary project code in the reviewed archive."
-        }
-      ],
-      "distribution_fingerprint": "5fe08be3e94174829314559309edbf65f733565b8a44636610d1a1dcfebd9913",
-      "evidence_archive": {
-        "hash": "sha256:3d7e980292bb0107abaa79c68dd3eee3c561b83a0f89ae482860b181c8bd412d",
-        "url": "https://files.pythonhosted.org/packages/f6/45/eafb0bba0f9988f6a2520f9ca2df2c82ddfa8d67c95d6625452e97b204a5/questionary-2.1.1.tar.gz"
-      },
-      "license_files": [
-        {
-          "path": "questionary-2.1.1/LICENSE",
-          "sha256": "3a492ab6d436c5e75f54a9a556de91c4322c8ad408fe849c7da1f7352721c63a"
-        },
-        {
-          "path": "questionary-2.1.1/NOTICE",
-          "sha256": "1018494513f932a205f189a61e63292d67657904789ec7175b12054b33d735f7"
-        }
-      ],
-      "name": "questionary",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
-      "status": "reviewed",
-      "version": "2.1.1"
-    },
-    {
-      "components": [
-        {
-          "evidence_sha256": [
             "42dcd63495f87b4eb7c7757afa379bb55a53f94afd7a5f657d9adf57236e515c"
           ],
           "expression": "MIT",

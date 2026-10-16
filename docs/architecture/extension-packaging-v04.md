@@ -98,10 +98,9 @@ Interpreter removal/upgrades can break a plugin venv: report it and require an
 explicit rebuild, never repair or download during invocation. The current
 experiment is POSIX-only; Windows paths and process behavior remain unqualified.
 
-`apizr.pipeline.v1` keeps its existing trusted, explicitly selected, in-process
-contract and same-environment installation. Existing `notebook`, `http`, `mcp` and
-`legacy` extras and public commands remain unchanged. Moving optional functionality
-in future tickets requires compatibility decisions; this ADR does not remove extras.
+The earlier `apizr.pipeline.v1` step hooks and the `legacy` extra were removed in
+0.4.6. Existing `notebook`, `http`, `mcp`, `clients` and `preparation` extras keep
+their explicit roles. See the [migration table](../releases/migrate-0.4.6.md#removed-generation-pipeline).
 Dependencies of generated applications remain distinct from compiler/extension
 dependencies. Static analysis never installs application dependencies.
 

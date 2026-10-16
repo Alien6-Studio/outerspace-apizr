@@ -1,9 +1,16 @@
-# Fast Apizr
+# Fast Apizr — removed in 0.4.6
 
-`FastApiAppGenerator` renders a self-contained FastAPI module from AST metadata. Each selected function becomes a POST route with a Pydantic request model. A `/health` endpoint is added.
+The historical notebook/script pipeline and its HTTP generation service were
+removed during 0.4.6 development. This URL is retained for migration. Existing
+0.4.5 generated applications are independent artifacts; upgrading Apizr does not
+rewrite them.
 
-The generated module imports the original business module at startup. It resolves annotations with `typing.get_type_hints`, preserving supported Pydantic types, forward references, annotated constraints and user models. Defaults are read from the original function signature. Async functions are awaited.
+Use the [migration table](../releases/migrate-0.4.6.md#removed-generation-pipeline)
+for the replacement of each CLI, Python, HTTP and plugin entrypoint. Start with
+[inspection](../getting-started/user-guide/inspect.md), select public functions
+explicitly, then [generate REST](../getting-started/user-guide/rest.md) or
+[MCP](../getting-started/user-guide/mcp.md). For a repository, use the
+[exposure workflow](../getting-started/user-guide/exposure.md).
 
-Invalid input returns HTTP 422. Unexpected function failures are logged and return HTTP 500 with a generic message; explicitly raised FastAPI HTTP exceptions are preserved.
-
-Only start generated applications from trusted source code: importing the business module executes its top-level statements.
+Notebook conversion remains available through the supported
+[notebook exporter](../modules/notebook-transformr.md), without executing cells.

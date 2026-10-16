@@ -233,3 +233,19 @@ def test_allowed_plugin_dependencies_cannot_introduce_a_cycle(tmp_path):
     assert any(
         "contains a cycle" in error for error in check(ROOT / "src/apizr", manifest)
     )
+
+
+def test_removed_legacy_kind_cannot_restore_naming_or_dependency_exceptions(tmp_path):
+    manifest = tmp_path / "packages.toml"
+    manifest.write_text(
+        (ROOT / "architecture/packages.toml")
+        .read_text()
+        .replace(
+            '[packages."notebooks"]\nkind = "domain"',
+            '[packages."notebooks"]\nkind = "legacy"',
+        )
+    )
+    assert any(
+        "notebooks: unknown package kind" in error
+        for error in check(ROOT / "src/apizr", manifest)
+    )

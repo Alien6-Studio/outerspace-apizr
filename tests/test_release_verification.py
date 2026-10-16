@@ -53,7 +53,6 @@ def test_release_rejects_unverified_source(field, value):
 def test_installed_version_and_current_help(capsys):
     from importlib.metadata import version
 
-    from apizr.app import app
     from apizr.cli import main
 
     assert main(["--version"]) == 0
@@ -61,11 +60,11 @@ def test_installed_version_and_current_help(capsys):
         capsys.readouterr().out.strip()
         == f"outerspace-apizr {version('outerspace-apizr')}"
     )
-    assert app.version == version("outerspace-apizr")
     assert main(["--help"]) == 0
     text = capsys.readouterr().out
-    assert text.index("capability compiler") < text.index("Legacy generation pipeline")
-    assert "--notebook" in text and "--script" in text
+    assert "capability compiler" in text
+    assert "Legacy generation pipeline" not in text
+    assert "--notebook" not in text and "--script" not in text
 
 
 @pytest.mark.parametrize(
@@ -899,6 +898,7 @@ def test_current_tracked_tree_keeps_oss_product_scope():
         for name in tracked.split(b"\0")
         if name
         and name.decode() not in documented_boundary
+        and (root / name.decode()).is_file()
         and excluded in (root / name.decode()).read_bytes().lower()
     ]
     assert not matches, f"Out-of-scope product references in tracked files: {matches}"

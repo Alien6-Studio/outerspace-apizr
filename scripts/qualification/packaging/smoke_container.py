@@ -28,54 +28,59 @@ def main():
     container = None
     try:
         with tempfile.TemporaryDirectory(prefix="apizr-smoke-") as directory:
-            project = Path(directory) / "project"
-            inputs = Path(directory) / "inputs"
+            project = Path(directory).resolve() / "project"
+            inputs = Path(directory).resolve() / "inputs"
             inputs.mkdir()
-            notebook = json.loads((root / "examples/pricing.ipynb").read_text())
-            notebook["cells"].append(
-                {
-                    "cell_type": "code",
-                    "id": "delivery",
-                    "metadata": {},
-                    "execution_count": None,
-                    "outputs": [],
-                    "source": "def configuration_value() -> int:\n    from pathlib import Path\n    import json\n    from packaging.version import Version\n    return json.loads(Path('settings.json').read_text())['value'] + Version('2.0').major\n",
-                }
-            )
             source = inputs / "pricing.ipynb"
-            source.write_text(json.dumps(notebook))
-            (inputs / "settings.json").write_text('{"value": 5}')
-            requirements = inputs / "requirements.txt"
-            requirements.write_text("packaging>=24,<27\n")
-            configuration = inputs / "config.yaml"
-            configuration.write_text(
-                "dockerizr:\n  server:\n    port: 5017\n  entrypoint: test -f settings.json\n"
-            )
+            source.write_bytes((root / "examples/pricing.ipynb").read_bytes())
             command = [
                 sys.executable,
                 "-m",
                 "apizr.cli",
-                "--notebook",
+                "generate",
+                "rest",
                 str(source),
+                "--select",
+                "total",
                 "--output-dir",
                 str(project),
-                "--configuration",
-                str(configuration),
-                "--requirements",
-                str(requirements),
-                "--include",
-                "settings.json",
-                "--build-image",
-                image,
             ]
-            if args.python_version:
-                command += ["--python-version", args.python_version]
             result = json.loads(subprocess.check_output(command, text=True))
-            assert result["image"]["tag"] == image
-            assert result["image"]["id"] == run(
+            assert {"app.py", "requirements.txt", "notebook.ipynb"} <= set(
+                result["files"]
+            )
+            # This explicit test fixture builds an ordinary modern bundle. It is
+            # qualification tooling, not a second application generator.
+            version = args.python_version or "{}.{}".format(*sys.version_info[:2])
+            from apizr.environment.python_target import parse_python_target
+
+            parse_python_target(version)
+            (project / "Dockerfile").write_text(
+                f"FROM python:{version}-slim\n"
+                "RUN python -m venv /opt/service\n"
+                "COPY requirements.txt /service/requirements.txt\n"
+                "RUN /opt/service/bin/pip install --no-cache-dir -r /service/requirements.txt\n"
+                "COPY . /service\n"
+                "WORKDIR /service\n"
+                "USER 65532:65532\n"
+                'CMD ["/opt/service/bin/python", "-B", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5017"]\n'
+            )
+            identity = inputs / "image-id"
+            subprocess.run(
+                [
+                    "docker",
+                    "build",
+                    "--tag",
+                    image,
+                    "--iidfile",
+                    str(identity),
+                    str(project),
+                ],
+                check=True,
+            )
+            assert identity.read_text().strip() == run(
                 "docker", "image", "inspect", "--format", "{{.Id}}", image
             )
-            assert "settings.json" in result["files"]
             container = run(
                 "docker", "run", "--detach", "--publish", "127.0.0.1::5017", image
             )
@@ -92,25 +97,16 @@ def main():
                         raise RuntimeError("Container did not become healthy") from exc
                     time.sleep(0.5)
             request = urllib.request.Request(
-                url + "/total",
+                url + "/capabilities/total",
                 data=json.dumps({"prices": [10, 20]}).encode(),
                 headers={"Content-Type": "application/json"},
             )
             with urllib.request.urlopen(request, timeout=5) as response:
                 assert response.status == 200
                 assert json.load(response) == 36
-            with urllib.request.urlopen(
-                urllib.request.Request(
-                    url + "/configuration_value",
-                    data=b"{}",
-                    headers={"Content-Type": "application/json"},
-                ),
-                timeout=5,
-            ) as response:
-                assert json.load(response) == 7
             assert run("docker", "exec", container, "id", "-u") != "0"
             print(
-                "Container smoke test passed: one-command build, exact image identity, custom port/startup, explicit dependency/resource, POST /total = 36, non-root user."
+                "Container smoke test passed: modern notebook REST bundle, explicit target build, exact image identity, health, POST /capabilities/total = 36, non-root user."
             )
     finally:
         if container:

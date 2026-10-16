@@ -135,20 +135,16 @@ def check(source: Path, manifest: Path) -> list[str]:
         entry = packages[directory]
         if not entry.get("responsibility"):
             errors.append(f"{directory}: empty package responsibility")
-        if entry["kind"] not in {"composition", "domain", "legacy"}:
+        if entry["kind"] not in {"composition", "domain"}:
             errors.append(f"{directory}: unknown package kind")
         if entry["kind"] == "composition" and Path(path).name not in entry["modules"]:
             if directory or path not in debt:
                 errors.append(
                     f"{path}: implementation added to a composition namespace"
                 )
-        if entry["kind"] != "legacy" and any(
-            part in GENERIC_BUCKETS for part in Path(path).parts
-        ):
+        if any(part in GENERIC_BUCKETS for part in Path(path).parts):
             errors.append(f"{path}: generic responsibility bucket")
-        if entry["kind"] != "legacy" and not re.fullmatch(
-            r"_?[a-z][a-z0-9_]*|__init__|__main__", Path(path).stem
-        ):
+        if not re.fullmatch(r"_?[a-z][a-z0-9_]*|__init__|__main__", Path(path).stem):
             errors.append(f"{path}: module name must describe its role in snake_case")
         names = imports(ast.parse(files[path].read_text()), path)
         if entry["kind"] == "composition" and Path(path).name == "__init__.py":

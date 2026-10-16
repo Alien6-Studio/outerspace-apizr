@@ -93,18 +93,6 @@ responsibility = "Exposure Plan v1: explicit publication decisions over static e
 kind = "domain"
 responsibility = "Explicit invocation of trusted extensions installed outside the core."
 
-[packages."extensions"]
-kind = "legacy"
-responsibility = "Historical generation step engine and its adapter registrations. Scope: extensions."
-
-[packages."extensions/core"]
-kind = "legacy"
-responsibility = "Historical generation step engine and its adapter registrations. Scope: extensions/core."
-
-[packages."extensions/plugins"]
-kind = "legacy"
-responsibility = "Historical generation step engine and its adapter registrations. Scope: extensions/plugins."
-
 [packages."generators"]
 kind = "composition"
 responsibility = "Compose static REST and MCP interface generators."
@@ -142,49 +130,9 @@ responsibility = "Conservative static relationships over a digest-bound Capabili
 kind = "domain"
 responsibility = "Framework-independent interface contracts shared by generated backends."
 
-[packages."modules"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules."
-
-[packages."modules/code_analyzr"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/code_analyzr."
-
-[packages."modules/code_analyzr/analyzr"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/code_analyzr/analyzr."
-
-[packages."modules/code_analyzr/analyzr/ast_node"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/code_analyzr/analyzr/ast_node."
-
-[packages."modules/dockerizr"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/dockerizr."
-
-[packages."modules/dockerizr/generator"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/dockerizr/generator."
-
-[packages."modules/fast_apizr"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/fast_apizr."
-
-[packages."modules/fast_apizr/generator"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/fast_apizr/generator."
-
-[packages."modules/fast_apizr/generator/analyzr"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/fast_apizr/generator/analyzr."
-
-[packages."modules/notebook_transformr"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/notebook_transformr."
-
-[packages."modules/notebook_transformr/transformr"]
-kind = "legacy"
-responsibility = "Historical notebook/script transformation pipeline. Scope: modules/notebook_transformr/transformr."
+[packages."notebooks"]
+kind = "domain"
+responsibility = "Bounded non-executing notebook export, cell selection and explicit script formatting."
 
 [packages."oci"]
 kind = "domain"
@@ -258,10 +206,6 @@ responsibility = "Portable validated source, interface and delivery contracts."
 [packages."environment"]
 kind = "domain"
 responsibility = "Interpreter targets and explicit optional workflow requirements."
-
-[packages."legacy"]
-kind = "legacy"
-responsibility = "Historical generation entrypoints, configuration and prompt resources."
 
 [root_debt]
 
@@ -554,31 +498,6 @@ kind = "module"
 
 [compatibility."output.py"]
 target = "apizr.interfaces.files"
-kind = "module"
-
-[compatibility."app.py"]
-target = "apizr.legacy.app"
-kind = "module"
-
-[compatibility."configuration.py"]
-target = "apizr.legacy.configuration"
-kind = "module"
-
-[compatibility."http.py"]
-target = "apizr.legacy.http"
-kind = "module"
-
-[compatibility."legacy_delivery.py"]
-target = "apizr.legacy.legacy_delivery"
-kind = "module"
-
-[compatibility."main.py"]
-target = "apizr.legacy.main"
-kind = "module"
-entrypoint = "main"
-
-[compatibility."prompt.py"]
-target = "apizr.legacy.prompt"
 kind = "module"
 
 # Frozen autonomous source imports; public facades preserve their runtime namespace.

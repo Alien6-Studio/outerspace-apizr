@@ -1,13 +1,16 @@
-# Apizr API
+# Apizr API — removed in 0.4.6
 
-Run `uv run uvicorn apizr.app:app --host 127.0.0.1 --port 8000` and open `/docs`.
+The historical notebook/script pipeline and its HTTP generation service were
+removed during 0.4.6 development. This URL is retained for migration. Existing
+0.4.5 generated applications are independent artifacts; upgrading Apizr does not
+rewrite them.
 
-`POST /process_file/` accepts a multipart `file` ending in `.py` or `.ipynb` and returns an `application/zip` project. The filename cannot contain directory components. Uploads are limited to 10 MiB. Temporary files are isolated per request and removed after the response.
+Use the [migration table](../releases/migrate-0.4.6.md#removed-generation-pipeline)
+for the replacement of each CLI, Python, HTTP and plugin entrypoint. Start with
+[inspection](../getting-started/user-guide/inspect.md), select public functions
+explicitly, then [generate REST](../getting-started/user-guide/rest.md) or
+[MCP](../getting-started/user-guide/mcp.md). For a repository, use the
+[exposure workflow](../getting-started/user-guide/exposure.md).
 
-```sh
-curl -f -F 'file=@examples/pricing.ipynb' http://127.0.0.1:8000/process_file/ -o pricing-api.zip
-```
-
-The API generates code without executing it. It does not accept server-side output directories. The old `/dockerize_file/` endpoint is removed; Docker files are included in the project archive.
-
-Module APIs are mounted at `/code`, `/fastapi`, `/notebook` and `/docker`, with separate `/docs`. This unauthenticated service is intended for local use.
+Notebook conversion remains available through the supported
+[notebook exporter](../modules/notebook-transformr.md), without executing cells.

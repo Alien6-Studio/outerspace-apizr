@@ -46,10 +46,6 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
             assert any(n.endswith("/licenses/LICENSE") for n in files)
             if core:
                 assert "apizr/generators/rest/templates/preamble.txt" in files
-                assert (
-                    "apizr/modules/fast_apizr/generator/templates/fastApiApp.j2"
-                    in files
-                )
             else:
                 assert json.loads(files["apizr-extension.json"]) == json.loads(
                     (project_root / "apizr-extension.json").read_bytes()
@@ -172,20 +168,25 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
                 "apizr/workspace/verification.py",
                 "apizr/workspace/source_access.py",
                 "apizr/generators/notebooks.py",
+                "apizr/notebooks/exporter.py",
+                "apizr/notebooks/configuration.py",
                 "apizr/capabilities/inspection.py",
                 "apizr/interfaces/files.py",
-                "apizr/legacy/app.py",
-                "apizr/legacy/configuration.py",
-                "apizr/legacy/http.py",
-                "apizr/legacy/legacy_delivery.py",
-                "apizr/legacy/main.py",
-                "apizr/legacy/prompt.py",
-                "apizr/extensions/plugins/api.py",
             )
             if core
             else (package + "/__init__.py",)
         ):
             assert prefix + required in files, required
+        if core:
+            assert not any(
+                name.startswith(
+                    tuple(
+                        prefix + "apizr/" + retired + "/"
+                        for retired in ("modules", "legacy", "extensions")
+                    )
+                )
+                for name in files
+            )
         for name, data in files.items():
             assert not any(
                 part in {"..", "__pycache__", ".env", ".git", "tests"}

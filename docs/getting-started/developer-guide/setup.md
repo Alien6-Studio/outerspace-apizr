@@ -49,10 +49,10 @@ uv run --group security python scripts/audit_dependencies.py
 Ruff is the repository linter and formatter. Black remains a runtime dependency
 of notebook conversion. Pyright uses standard mode on production/tooling code and
 strict mode for `apizr.capabilities`, `apizr.readiness` and `apizr.generators.rest`, targeting Python 3.11 syntax and APIs.
-Dynamic legacy metadata and pipeline state still have incomplete inferred types.
+The legacy metadata and pipeline engine were removed in 0.4.6.
 
-Coverage has a global 90% branch-aware floor, a separate 59.5% measured legacy
-floor, and 90% floors for modern packages including Exposure (see CI for the full
+Coverage has a global 90% branch-aware floor and independent 90% domain floors,
+including Exposure (see CI for the full
 list). Exposure also uses strict Pyright. Generated applications are tested functionally; their temporary
 files and subprocess execution are not included in the package coverage metric.
 
@@ -82,23 +82,12 @@ directories and FastAPI's test client.
 
 ## Characterization and fixtures
 
-The [legacy behavior contract](../../architecture/legacy-behavior-contract.md)
-records intentional support, explicit rejections, observed behavior and future
-candidates. Its corpus lives in `tests/fixtures/characterization/`, with tests in
-`tests/characterization/`. Capability IR uses separate expectations under
-`tests/capabilities/`; static readiness and inspection tests live in `tests/readiness/`.
-
-```sh
-uv run pytest tests/characterization tests/capabilities tests/readiness tests/rest tests/mcp_generator
-```
-
-Hypothesis retains its failure database in `.hypothesis/` and prints replay
-information. Preserve failing examples when reporting defects. Generated-application
-imports in tests execute trusted fixtures only.
-
-Historical fixtures remain unchanged under `tests/fixtures/legacy/`; the Python
-3.11 golden set runs on all supported interpreters. Do not update historical
-expectations merely to make a changed implementation pass.
+The [historical pipeline note](../../architecture/legacy-behavior-contract.md)
+records its removal. Shared compiler JSON fixtures remain under
+`tests/fixtures/characterization/`. Immutable notebook input/export/script goldens
+live in `tests/fixtures/notebooks/exporter/`; modern source admission, non-execution
+and mutation controls remain active. Do not regenerate goldens simply to make a
+changed implementation pass.
 
 ## Work on the documentation
 
@@ -147,7 +136,7 @@ are under `tests/fixtures/catalog/` and `docs/specs/`. See the
 ## Operating-system validation
 
 Linux CI runs the complete ordinary suite on Python 3.11–3.14, plus the separate
-Docker/OCI boundary suite and legacy containers. macOS CI runs the ordinary suite
+Docker/OCI boundary suite. macOS CI runs the ordinary suite
 on Python 3.11 and 3.14. OCI isolation is qualified against a Linux Docker host,
 not a macOS container engine. Windows is outside the validated support matrix;
 local-process supervision and safe output creation depend on POSIX facilities.
@@ -158,10 +147,9 @@ CI retains JUnit, branch-coverage and mutation reports. See
 
 ## Optional installation paths (0.3)
 
-The base wheel depends only on Pydantic. Select `notebook`, `http`, `mcp`, or
-`legacy` extras for their respective workflows; extras can be combined.
-For example, `python -m pip install ".[legacy]"` retains the full historical
-0.2.1 pipeline dependency stack from this checkout. `uv sync --locked` installs
+The base wheel depends only on Pydantic. Select `notebook`, `http`, `mcp`,
+`clients` or `preparation` explicitly; extras can be combined. The `legacy` extra
+is removed. `uv sync --locked` installs
 the development group, which includes all optional dependencies for validation.
 
 The package job tests the base wheel and each extra in separate environments on

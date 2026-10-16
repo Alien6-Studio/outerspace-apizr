@@ -532,28 +532,3 @@ def test_absolute_paths_and_literal_environment_names(tmp_path, monkeypatch):
     assert config.root == path.parent
     assert config.readiness_policy == path.parent / "policies/readiness.json"
     assert config.exposure_policy == path.parent / "$POLICY.json"
-
-
-def test_legacy_yaml_configuration_ignores_project_file(tmp_path, monkeypatch, capfd):
-    monkeypatch.chdir(tmp_path)
-    (tmp_path / "apizr.toml").write_text("INVALID PROJECT FILE")
-    (tmp_path / "sample.py").write_text("def f(x: int) -> int: return x + 1\n")
-    (tmp_path / "config.yaml").write_text(
-        "dockerizr:\n  server:\n    port: 5017\n    workers: 2\n"
-    )
-    assert (
-        main(
-            [
-                "--script",
-                "sample.py",
-                "--configuration",
-                "config.yaml",
-                "--output-dir",
-                "legacy",
-            ]
-        )
-        == 0
-    )
-    result = json.loads(capfd.readouterr().out)
-    assert "Dockerfile" in result["files"]
-    assert "--port 5017 --workers 2" in (tmp_path / "legacy/start.sh").read_text()

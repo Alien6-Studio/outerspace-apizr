@@ -205,9 +205,10 @@ Do not count the repeated OCI samples as additional distinct test cases.
 The 0.2.0 release measured global branch-aware coverage of 90.87%, 90.99%, 90.99%
 and 90.65% on Python 3.11, 3.12, 3.13 and 3.14 respectively. The global floor is
 now **90%**, in addition to the modern packages' individual 90% floors.
-The legacy `src/apizr/modules/` aggregate measured 59.91%, 59.91%, 59.91% and
-59.56%; its separate **59.5%** floor prevents modern coverage from hiding a legacy
-regression. This is a regression floor, not a claim of sufficient legacy coverage.
+The historical `src/apizr/modules/` tree and its separate 59.5% floor were
+removed in 0.4.6. The global and every modern domain/security floor remain.
+The notebook exporter moved to `apizr.notebooks` with byte-identical golden
+exports and its existing source-admission mutation targets.
 
 The security mutation job first runs designated tests on unchanged code, then
 removes one protection at a time in a disposable copy. Each mutant must fail its

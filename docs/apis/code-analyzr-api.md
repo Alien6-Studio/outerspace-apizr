@@ -1,12 +1,16 @@
-# Code Analyzr API
+# Code Analyzr API — removed in 0.4.6
 
-On the main service, `POST /code/analyze_file/` accepts a multipart Python `file`. Optional query parameters `functions_to_analyze` and `ignore` select functions by comma-separated names. The response is JSON metadata.
+The historical notebook/script pipeline and its HTTP generation service were
+removed during 0.4.6 development. This URL is retained for migration. Existing
+0.4.5 generated applications are independent artifacts; upgrading Apizr does not
+rewrite them.
 
-Alternatively run `uv run uvicorn apizr.modules.code_analyzr.app:app`; the standalone route is `/analyze_file/`.
+Use the [migration table](../releases/migrate-0.4.6.md#removed-generation-pipeline)
+for the replacement of each CLI, Python, HTTP and plugin entrypoint. Start with
+[inspection](../getting-started/user-guide/inspect.md), select public functions
+explicitly, then [generate REST](../getting-started/user-guide/rest.md) or
+[MCP](../getting-started/user-guide/mcp.md). For a repository, use the
+[exposure workflow](../getting-started/user-guide/exposure.md).
 
-The former directory-scanning endpoint is removed. Upload the file to analyze instead of granting callers access to server paths.
-
-In 0.3, class declarations appear in an optional `classes` array, separate from
-exposed functions. See the [inventory fields and boundaries](../modules/code-analyzr.md#classes-and-methods-in-03).
-Ambiguous selected function definitions (including overload sets) return HTTP 400
-before any generated application is imported.
+Notebook conversion remains available through the supported
+[notebook exporter](../modules/notebook-transformr.md), without executing cells.

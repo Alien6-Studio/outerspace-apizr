@@ -357,3 +357,10 @@ public-tap receipts retain their original identities.
 The optional preparation environment uses PyPA `packaging` for runtime wheel-tag
 selection. Homebrew's minimal application runtime remains Pydantic-only, and its
 isolated build tools still do not enter that environment.
+
+## 0.4.6 legacy removal
+
+Removing the retired `legacy` extra and `questionary` refreshes only the universal
+lock identity in the development manifest: `b4a97eda9c73b487a42d7c7cb8f0afb0b92d185d670065eeef9a7c1d15d89357`. The six reviewed build
+wheels, their hashes, roots and build policy remain unchanged. Frozen publication
+inputs and physical-host evidence remain historical identities.

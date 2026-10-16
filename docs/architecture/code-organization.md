@@ -14,7 +14,6 @@ Each Python package has one declared owner and exactly one composition role in
 | --- | --- | --- |
 | Domain leaf | Cohesive implementation modules; no child Python packages | `plugins/lock`, `workspace`, `repository_views` |
 | Composition | Declared subdomains, exports, explicit entrypoints and named shared adapter support; no business implementation in its initializer | `plugins`, `generators`, `cli` |
-| Historical | Existing generation pipeline, explicitly inventoried; no precedent for new layout | `modules`, `extensions` |
 | Compatibility facade | Exact forwarding shape to one canonical implementation; no business code | `project.py`, `local_plugins/` |
 
 The package name answers **what responsibility lives here**. Its module names
@@ -98,7 +97,7 @@ src/apizr/
 │   └── analysis_session.py, mcp_session.py  captured session authority
 ├── contracts/                whole shared source/interface/delivery modules
 ├── environment/              interpreter targets and optional extra requirements
-├── legacy/                   historical app, parser, configuration and prompts
+├── notebooks/                bounded non-executing notebook export and formatting
 ├── capabilities/             source-local capability IR
 ├── repository/               bounded discovery and complete Catalog
 ├── graph/                    imports, bindings and dependency evidence
@@ -121,7 +120,7 @@ src/apizr/
 ├── repository_execution/     retained-repository local/OCI worker contracts
 ├── subprocess_guard/         restrictions installed before project imports
 ├── governed*/                REST/MCP adapters for those execution contracts
-└── modules/, extensions/     historical generation pipeline
+└── telemetry/                explicit identifier-free local counters
 
 plugins/{mcp,oci,attest}/      separately packaged optional distributions
 ```
@@ -441,7 +440,10 @@ from apizr.plugins.sync import sync_plugins
 from apizr.plugins.update import update_plugin
 ```
 
-The following previous paths remain supported:
+The following previous paths remain supported, pending their separate removal in
+#291. Legacy app/main/configuration/HTTP/prompt/delivery paths and the complete
+`modules`, `legacy`, `extensions` trees were removed with #284/#331; see the
+[migration table](../releases/migrate-0.4.6.md#removed-generation-pipeline).
 
 | Previous path | Implementation |
 | --- | --- |
@@ -460,8 +462,9 @@ the same public objects and delegate access to loaded submodules. They contain
 no duplicated business implementation or global import hook.
 
 The console entrypoint stays `apizr.cli:main`, and `python -m apizr.cli` remains
-supported. CLI arguments, completion grammar, package versions, dependencies,
-canonical JSON and generated business runtime contracts are unchanged.
+supported. Modern command arguments, completion grammar, canonical JSON and generated
+business runtime contracts are unchanged by the namespace moves. The separate
+legacy removal retires its commands and dependencies as documented above.
 
 ## Maintaining the boundaries
 
@@ -499,7 +502,9 @@ imports, module identity and lazy namespace imports. CLI parsers remain covered
 by the captured grammar test. Passing compatibility tests alone does not establish
 that a domain composition is appropriate.
 
-The remaining root debt and historical pipelines are recorded explicitly. Runtime
+The remaining facade debt is recorded explicitly. The historical pipeline and
+its architecture exceptions have been removed. Notebook export has one canonical
+owner in `notebooks`; its pre-move output goldens and mutation targets are retained. Runtime
 source embedding in `governed*/embedding.py` and generator resource reads must
 keep using real implementation sources, never compatibility facade source text.
 Keep the three execution contract identities separate during any later migration.

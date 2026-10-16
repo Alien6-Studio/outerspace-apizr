@@ -246,7 +246,7 @@ MUTATIONS = (
     ),
     Mutation(
         "notebook-admitted-snapshot-export",
-        "src/apizr/modules/notebook_transformr/transformr/nbTransformr.py",
+        "src/apizr/notebooks/exporter.py",
         "                source, resources = self.exporter.from_file(\n                    content, resources=resources\n                )",
         "                source, resources = self.exporter.from_filename(\n                    filename, resources=resources\n                )",
         "tests/capabilities/test_source_bounds.py::test_notebook_export_uses_admitted_snapshot_after_file_changes",
@@ -295,7 +295,7 @@ MUTATIONS = (
     ),
     Mutation(
         "notebook-export-before-materialization",
-        "src/apizr/modules/notebook_transformr/transformr/nbTransformr.py",
+        "src/apizr/notebooks/exporter.py",
         "            raw = notebook_text(content.read(MAX_NOTEBOOK_BYTES + 1))",
         '            raw = content.read(MAX_NOTEBOOK_BYTES + 1).decode("utf-8")',
         "tests/capabilities/test_source_bounds.py::test_notebook_budget_precedes_json_decoder[depth-exporter]",

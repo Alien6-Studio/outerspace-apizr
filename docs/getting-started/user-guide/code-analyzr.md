@@ -1,23 +1,16 @@
-# Using Code Analyzr
+# Using Code Analyzr — removed in 0.4.6
 
-!!! warning "Removed in 0.4.6"
+The historical notebook/script pipeline and its HTTP generation service were
+removed during 0.4.6 development. This URL is retained for migration. Existing
+0.4.5 generated applications are independent artifacts; upgrading Apizr does not
+rewrite them.
 
-    This historical pipeline is deprecated during 0.4.6 development and will be
-    removed before publication. Use `apizr inspect`, explicit exposure selection,
-    and `apizr generate rest` or `apizr generate mcp`. See the
-    [migration guide](../../releases/migrate-0.4.6.md).
+Use the [migration table](../../releases/migrate-0.4.6.md#removed-generation-pipeline)
+for the replacement of each CLI, Python, HTTP and plugin entrypoint. Start with
+[inspection](../../getting-started/user-guide/inspect.md), select public functions
+explicitly, then [generate REST](../../getting-started/user-guide/rest.md) or
+[MCP](../../getting-started/user-guide/mcp.md). For a repository, use the
+[exposure workflow](../../getting-started/user-guide/exposure.md).
 
-Analyze a script without generating an API:
-
-```sh
-uv run python -m apizr.modules.code_analyzr.main path/to/business.py --force --output metadata.json
-```
-
-The file is a positional argument. Options include `--analyze function1,function2`, `--ignore helper`, `--configuration config.yaml`, `--version 3.11`, and `--encoding utf-8`. The standalone module prompts when neither `--force` nor a configuration is provided.
-
-For the complete pipeline, use `uv run apizr --script path/to/business.py`.
-
-0.3 adds a [class/method inventory](../../modules/code-analyzr.md#classes-and-methods-in-03)
-without exposing those methods automatically. Duplicate selected function names
-and overload sets are rejected before API generation; use an explicit unambiguous
-wrapper or exclude the name with `--ignore`.
+Notebook conversion remains available through the supported
+[notebook exporter](../../modules/notebook-transformr.md), without executing cells.

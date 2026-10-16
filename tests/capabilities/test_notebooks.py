@@ -7,7 +7,7 @@ import pytest
 from apizr.capabilities import canonical_bytes, inspect_source
 from apizr.capabilities.model import Digest
 from apizr.capability_notebooks import inspect_notebook
-from apizr.modules.notebook_transformr.transformr.nbTransformr import NotebookTransformr
+from apizr.notebooks.exporter import NotebookTransformr
 
 
 def notebook(source):

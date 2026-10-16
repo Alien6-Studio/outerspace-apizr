@@ -1,4 +1,4 @@
-"""Static and runtime commands, separate from the historical generation parser."""
+"""Lazy dispatch for supported static analysis and explicit runtime commands."""
 
 import sys
 from functools import partial
@@ -6,7 +6,7 @@ from importlib import import_module
 from importlib.metadata import version
 from typing import Sequence
 
-from apizr.environment.extras import MissingExtra, available, require
+from apizr.environment.extras import MissingExtra
 
 # Only the selected adapter is imported. Completion and onboarding have distinct
 # call signatures and remain explicit in _main alongside the top-level help.
@@ -127,31 +127,16 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print(
             "Artifact-first readiness: apizr repository-readiness CATALOG GRAPH --policy FILE"
         )
-        print("\nLegacy generation pipeline (retained for compatibility):")
-        if not available(
-            "yaml", "questionary", "jinja2", "packaging", "nbconvert", "black"
-        ):
-            print("  apizr --script FILE | --notebook FILE --output-dir DIR")
-            print(
-                "  Install outerspace-apizr[legacy] for legacy generation and its full help."
-            )
-            return 0
-        from apizr.legacy.main import main as generate
-
-        try:
-            generate(arguments)
-        except SystemExit as exc:
-            if exc.code != 0:
-                raise
         return 0
-    # The remaining historical generation fallback is retired by #284/#331.
-    require(
-        "legacy", "yaml", "questionary", "jinja2", "packaging", "nbconvert", "black"
-    )
-    from apizr.legacy.main import main as generate
-
-    generate(arguments)
-    return 0
+    command = arguments[0] if arguments else ""
+    print(f"apizr: unknown command: {command!r}. Use apizr --help.", file=sys.stderr)
+    if command in {"--script", "--notebook"}:
+        print(
+            "The legacy pipeline was removed in 0.4.6. Use apizr inspect, "
+            "explicit exposure, and apizr generate rest/mcp.",
+            file=sys.stderr,
+        )
+    return 2
 
 
 if __name__ == "__main__":
