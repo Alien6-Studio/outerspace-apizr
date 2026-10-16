@@ -1,4 +1,6 @@
 import keyword
+import sys
+import warnings
 from pathlib import Path
 
 from jinja2 import Environment, StrictUndefined
@@ -12,6 +14,12 @@ class FastApiAppGenerator:
         self.analyse = analyse
 
     def gen_fastapi_app(self):
+        notice = (
+            "The legacy FastAPI pipeline is deprecated and removed in 0.4.6. "
+            "Migrate to apizr inspect, explicit exposure, and apizr generate rest/mcp."
+        )
+        warnings.warn(notice, DeprecationWarning, stacklevel=2)
+        print("apizr: " + notice, file=sys.stderr)
         for name in self.conf.module_name.split("."):
             if not name.isidentifier() or keyword.iskeyword(name):
                 raise ValueError("module_name must be a valid Python module path")

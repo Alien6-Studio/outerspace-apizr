@@ -2,6 +2,10 @@
 
 ## 0.4.6 — development, not published
 
+- Deprecate the historical FastAPI pipeline before its 0.4.6 removal; use
+  inspect → explicit exposure → generate rest/mcp. Its renderer emits a warning
+  and CLI notice for pipeline, standalone and HTTP callers (#284, #331).
+
 - Define separate bounded static scientific provider and in-process SDK adapter
   contracts, with core admission over existing evidence types and reuse of the
   current extension protocol and ordinary SDK validation (#308).

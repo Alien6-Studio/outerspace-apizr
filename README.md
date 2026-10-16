@@ -191,6 +191,10 @@ for their guarantees and limits.
 
 ## Existing workflows and limits
 
+The historical `--script`/`--notebook` FastAPI pipeline is deprecated during
+0.4.6 development and removed before publication. Migrate to `apizr inspect`,
+explicit exposure selection, and `apizr generate rest` or `apizr generate mcp`.
+
 Single-source `inspect`, `generate rest/mcp` and `execute` remain supported.
 Apizr 0.4.2 also exports verified REST bundles to
 [Postman, Bruno and Insomnia collections](https://apizr.outerspace.sh/getting-started/user-guide/client-collections/),
