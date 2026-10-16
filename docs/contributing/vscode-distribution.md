@@ -33,6 +33,34 @@ checked for extension-owned storage. VS Code retains user-owned settings accordi
 to its normal behaviour; the extension creates no persistent application storage.
 Its local history remains owned by the engine/user and is never removed on uninstall.
 
+The separate remote proof creates an SSH server in a disposable Docker container,
+binds its random port to loopback only and opens the real Remote SSH workspace
+extension host. It uses the candidate wheel, hash-locked notebook dependencies,
+the same VSIX and the same canonical journey assertions. The repository mount is
+read-only; only the temporary proof directory is writable. The extension is
+extracted from the qualified VSIX into the disposable server, alongside a distinct
+qualification driver. Native installation/update/uninstall remains the proof above.
+
+```sh
+python -m scripts.qualification.interfaces.vscode_ssh_proof \
+  --wheel /absolute/candidate/outerspace_apizr-0.4.5-py3-none-any.whl \
+  --requirements /absolute/engine.lock --vsix /absolute/apizr-0.4.6.vsix \
+  --code /absolute/code --output /absolute/fresh-ssh-proof
+```
+
+The core wheel retains development metadata until the coordinated version change.
+Use the hash-bearing `uv export --locked --no-default-groups --group
+jupyter-qualification --extra notebook --no-emit-project` output as `engine.lock`.
+`policy/vscode-distribution.json` pins the Remote SSH tool version and container
+base digest. The proof records actual extension versions and artifact hashes,
+requires `remoteName == ssh-remote` and an engine outside the checkout, and removes
+its desktop process group, container, image tag and client private key afterwards.
+Retained qualification requires a clean checkout; `--allow-dirty` is reserved for
+explicit local development and is recorded with the qualifier's source hash.
+Retain `remote-proof.json`, synthetic fixture/results and top-level proof logs.
+Do not publish the raw VS Code profile: its transport logs contain session tokens.
+Dev Containers and other remote transports remain unqualified.
+
 The existing required `build` and `dependencies` checks also require this job for
 product changes. Web-only routing skips it and still builds documentation. The
 existing `codeql` context retains Python and JavaScript/TypeScript SARIF; GitHub's
@@ -44,8 +72,8 @@ default Python/Actions alerts remain enabled without duplicate SARIF uploads.
 not a claim that a Marketplace/Open VSX publisher has been reserved or verified.
 Before any publication, a maintainer must separately authorize the release, verify
 publisher ownership on each registry, approve the exact clean-source VSIX/hash and
-complete the remaining milestone qualification, including the remote-host case in
-#312. Registry credentials belong outside the repository and CI artifacts.
+complete the remaining milestone qualification. Registry credentials belong
+outside the repository and CI artifacts.
 
 Marketplace and Open VSX can use the same manifest/VSIX; their publisher setup,
 authentication and publication are independent decisions. No `vsce publish`,

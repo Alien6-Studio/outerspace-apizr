@@ -18,7 +18,10 @@ Use a Python interpreter/venv containing the engine, or select the absolute
 `apizr` executable of an existing `uv tool` installation. The extension never runs
 `uvx`, downloads an engine or installs a dependency. Paths refer to the workspace
 extension host, including in an SSH/Dev Container window, not to the UI computer.
-Native Linux/macOS hosts are supported. Windows-native engines, browser/virtual
+Native Linux/macOS hosts and Remote SSH to Linux are qualified. The retained
+SSH case uses a macOS UI, Linux ARM64, Python 3.14 and the installed candidate
+wheel in the real workspace extension host. Dev Containers and other remote
+transports are unqualified. Windows-native engines, browser/virtual
 workspaces and ambiguous multi-root commands are refused with an actionable
 message; select a source in the intended native workspace folder.
 

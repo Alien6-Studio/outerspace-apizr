@@ -787,6 +787,8 @@ jobs:
         run: |
           xvfb-run -a uv run --locked python -m scripts.qualification.interfaces.vscode_proof --engine-python "$RUNNER_TEMP/vscode-engine/bin/python" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --previous-vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.5.vsix" --output "$RUNNER_TEMP/vscode-installed"
           xvfb-run -a uv run --locked python -m scripts.qualification.interfaces.vscode_proof --engine-python "$RUNNER_TEMP/vscode-engine/bin/python" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --output "$RUNNER_TEMP/vscode-restricted" --untrusted
+      - name: Real workspace extension host over isolated loopback SSH
+        run: xvfb-run -a uv run --locked python -m scripts.qualification.interfaces.vscode_ssh_proof --wheel "$RUNNER_TEMP"/vscode-candidate/dist/outerspace_apizr-*.whl --requirements "$RUNNER_TEMP/vscode-engine.lock" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --output "$RUNNER_TEMP/vscode-ssh"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -798,6 +800,9 @@ jobs:
             ${{ runner.temp }}/vscode-installed/*.log
             ${{ runner.temp }}/vscode-restricted/*.json
             ${{ runner.temp }}/vscode-restricted/*.log
+            ${{ runner.temp }}/vscode-ssh/remote-proof.json
+            ${{ runner.temp }}/vscode-ssh/proof/*.json
+            ${{ runner.temp }}/vscode-ssh/*.log
             ${{ runner.temp }}/vscode-engine.lock
           if-no-files-found: error
           retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

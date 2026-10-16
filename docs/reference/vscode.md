@@ -73,9 +73,11 @@ No source, path, metric or Run identity is included in a usage report.
 Native macOS qualification runs the real installed extension in clean trusted
 and untrusted profiles; the CI job qualifies native Linux with the same candidate
 wheel. An interpreter/venv and an installed `uv tool` executable are explicit
-engine modes. The extension declares `extensionKind: workspace`, so remote paths
-refer to the remote extension host. **A real SSH/Dev Container session remains
-to be qualified in #312**; declaration alone is not remote qualification.
+engine modes. A real Remote SSH session from macOS to a temporary Linux ARM64
+host also passes the same journeys with Python 3.14 and the candidate wheel;
+the proof requires `remoteName: ssh-remote`. The extension declares
+`extensionKind: workspace`, so engine, project and policy paths refer to that
+remote host. Dev Containers and other remote transports have not been qualified.
 Windows-native engines, virtual/browser workspaces and multi-root commands with
 no selected project are currently unsupported and refused explicitly.
 

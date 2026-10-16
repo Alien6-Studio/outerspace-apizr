@@ -9,7 +9,7 @@ The [VSIX build and qualification procedure](vscode-distribution.md) prepares
 the proposed `alien6-studio.apizr` identity and a source-including, reproducible
 archive. Marketplace/Open VSX publisher ownership must be verified separately.
 Publication requires explicit maintainer authorization of the exact qualified
-VSIX/hash and completion of the remaining remote-host qualification in #312.
+VSIX/hash and completion of the remaining milestone qualification.
 No registry publication, credential or Python release change is authorized by
 the development build.
 
