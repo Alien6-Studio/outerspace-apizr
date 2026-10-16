@@ -80,7 +80,9 @@ analyses: it requires all three successful analyses for the exact commit/ref,
 rejects stale or failed evidence, and retains their source-bound SARIF reports.
 It starts no duplicate scan on those refs. Unprotected development branches and
 tags keep an explicit three-language scan with retained SARIF and no second
-public upload. Disabling native setup or removing a language fails the gate.
+public upload. Missing native analysis for any required language fails the gate.
+CI reads analysis evidence with `security-events: read`; it does not request
+administration access to inspect default-setup settings.
 The dependency job exports the resolved `uv.lock` graph
 to temporary PEP 751 lockfiles and audits each with pip-audit. Output distinguishes
 runtime, development, documentation and security-tooling dependencies. Every

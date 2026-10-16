@@ -41,8 +41,6 @@ def test_default_and_protected_refs_reuse_native_all_other_refs_retain_scan(
 ):
     def github(repository, path):
         assert repository == REPO
-        if path == "code-scanning/default-setup":
-            return {"state": "configured", "languages": list(gate.LANGUAGES)}
         if not path:
             return {"default_branch": "master"}
         assert path.startswith("branches/")
@@ -55,17 +53,13 @@ def test_default_and_protected_refs_reuse_native_all_other_refs_retain_scan(
     assert set(selected["languages"]) == gate.LANGUAGES
 
 
-@pytest.mark.parametrize(
-    "setup",
-    [
-        {"state": "not-configured", "languages": list(gate.LANGUAGES)},
-        {"state": "configured", "languages": ["python", "actions"]},
-    ],
-)
-def test_disabled_or_partial_native_setup_fails_closed(monkeypatch, setup):
-    monkeypatch.setattr(gate, "github", lambda *a, **kw: setup)
-    with pytest.raises(ValueError, match="must remain enabled"):
-        gate.selection(environment())
+@pytest.mark.parametrize("key", ["GITHUB_REPOSITORY", "GITHUB_SHA"])
+def test_invalid_identity_fails_before_any_api_request(monkeypatch, key):
+    monkeypatch.setattr(gate, "github", lambda *a, **kw: pytest.fail("invalid source"))
+    env = environment()
+    env[key] = "invalid"
+    with pytest.raises(ValueError, match="Exact GitHub"):
+        gate.selection(env)
 
 
 def records():

@@ -31,16 +31,9 @@ def selection(environment):
         r"[0-9a-f]{40}", commit
     ):
         raise ValueError("Exact GitHub repository and source commit required")
-    setup = github(repository, "code-scanning/default-setup")
-    aliases = {
-        "javascript": "javascript-typescript",
-        "typescript": "javascript-typescript",
-    }
-    configured = {aliases.get(name, name) for name in setup.get("languages", [])}
-    if setup.get("state") != "configured" or not LANGUAGES <= configured:
-        raise ValueError(
-            "Native CodeQL must remain enabled for Python, Actions and TypeScript"
-        )
+    # Default-setup configuration requires administration:read, unavailable to
+    # GITHUB_TOKEN. Coverage is selected from public branch metadata; covered refs
+    # must then supply exact successful native analyses for all three languages.
     default = github(repository, "")["default_branch"]
     event = environment["GITHUB_EVENT_NAME"]
     branch = (
