@@ -35,18 +35,20 @@ The planned destination is `https://telemetry.outerspace.sh`, operated by Alien6
 Studio, with intended EU hosting and no third-party processor. **That infrastructure
 is not represented as deployed or qualified.** Production transmission is unavailable
 until the private collector, retention, access and deletion procedures have been
-qualified in [#335](https://github.com/Alien6-Studio/outerspace-apizr/issues/335),
-the policy is reviewed, and a subsequent release enables it. There is no client
+qualified in [#335](https://github.com/Alien6-Studio/outerspace-apizr/issues/335)
+and a subsequent release enables it. There is no client
 credential or token in this public contract.
 
-## Proposed policy for maintainer review
+## Approved policy
 
-The off-by-default decision is approved. The event list below is a proposal for
-[#316](https://github.com/Alien6-Studio/outerspace-apizr/issues/316); publishing
-the schema does not approve collection or transmission. No sending code may be
-merged before that issue records the maintainer's review.
+The maintainer approved this policy on **2026-10-16**, recorded in
+[#316](https://github.com/Alien6-Studio/outerspace-apizr/issues/316). It defines
+the allowed events and privacy boundaries for the remaining client work in #317.
+This approval does not enable collection or transmission. The current release
+still has no sending code, and production activation requires #335 and a
+subsequent release.
 
-| Candidate operation | Product decision informed |
+| Allowed operation | Product decision informed |
 | --- | --- |
 | `inspect` | Prioritize the first static inspection journey and refusal guidance. |
 | `history_list`, `history_show`, `history_diff` | Prioritize history navigation and comparison usability. |
