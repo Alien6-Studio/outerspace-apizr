@@ -163,15 +163,17 @@ Homebrew tap from the immutable final core sdist and signed master provenance;
 complete its own reviewed audit and real Apple Silicon installation before
 merging the tap update.
 
-## Current published baseline
+<span id="current-published-baseline"></span>
 
-The current stable release is **0.4.4** for the core and all three plugins,
+## Historical 0.4.4 published baseline
+
+The historical stable release was **0.4.4** for the core and all three plugins,
 source `46c573d7f808f8d491cde1062d474b145288697f`. Publication is complete.
 The original archives from protected master CI `37222486067` were published
 by workflow `37223902790`; all eight public files match the qualified bytes.
 See the [release record](../releases/0.4.4.md). Master integration and documentation
 commits preserve the released product but never replace its immutable source.
-Documentation maintenance targets `master`.
+That integration targeted `master`; current development uses `0.4.6`.
 
 The **0.4.1rc1** and **0.4.0rc1** prereleases remain immutable history. The earlier
 core-only 0.4.0 upload was incomplete and removed; no coordinated final 0.4.0

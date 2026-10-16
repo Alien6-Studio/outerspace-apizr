@@ -1,0 +1,48 @@
+{
+  "schema": "apizr.release-preparation/v1",
+  "date": "2026-10-16",
+  "branch": "0.4.6",
+  "candidate_commit": "745bae6ab3f04402f8dff764f9e4fd7f356801c0",
+  "version": "0.4.6",
+  "publication_performed": false,
+  "publication_authorization": "Await explicit maintainer branch validation and protected merge into main/master.",
+  "common_suite": {
+    "tests": "7788",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "74",
+    "time": "276.521"
+  },
+  "cleanup_requalification": {
+    "tests": "24",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "5.528"
+  },
+  "minimum_python_metadata_tests": 73,
+  "targeted_requalification_tests": 307,
+  "coverage": {
+    "covered_lines": 19273,
+    "num_statements": 19655,
+    "percent_covered": 97.44019978928473,
+    "percent_covered_display": "97.44",
+    "missing_lines": 382,
+    "excluded_lines": 129,
+    "percent_statements_covered": 98.05647417959807,
+    "percent_statements_covered_display": "98.06",
+    "num_branches": 5972,
+    "num_partial_branches": 242,
+    "covered_branches": 5698,
+    "missing_branches": 274,
+    "percent_branches_covered": 95.41192230408573,
+    "percent_branches_covered_display": "95.41"
+  },
+  "package_coverage_checks": 21,
+  "selected_scope_coverage_gate": "passed",
+  "python_registry_lock_entries_unchanged": 146,
+  "html_pages_checked": 128,
+  "pyright_errors": 0,
+  "pre_commit": "passed",
+  "core_source_changed": false
+}

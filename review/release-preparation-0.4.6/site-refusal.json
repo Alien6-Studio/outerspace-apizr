@@ -1,0 +1,10 @@
+{
+  "schema": "apizr.release-preparation-refusal/v1",
+  "commit": "745bae6ab3f04402f8dff764f9e4fd7f356801c0",
+  "target_version": "0.4.6",
+  "site_status": "release-candidate",
+  "publishable": false,
+  "publication_attempted": false,
+  "local_preflight_exit_code": 1,
+  "reason": "Documentation verification failed: Candidate documentation is not authorized for deployment"
+}
