@@ -77,21 +77,33 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      security-events: read
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Choose native evidence or an uncovered-ref scan
+        id: source
+        run: python3 -m scripts.qualification.ci.codeql_evidence select --output codeql-results --github-output "$GITHUB_OUTPUT"
+      - name: Require exact native CodeQL analyses and retain their SARIF
+        if: steps.source.outputs.mode == 'native'
+        run: python3 -m scripts.qualification.ci.codeql_evidence native --output codeql-results
       - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        if: steps.source.outputs.mode == 'retained'
         with:
-          languages: python,javascript-typescript
+          languages: python,javascript-typescript,actions
           build-mode: none
       - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        if: steps.source.outputs.mode == 'retained'
         with:
-          # GitHub default setup already publishes Python/Actions alerts for this repo.
-          # Keep it enabled; a second CodeQL SARIF upload would be rejected.
+          # Native setup owns public alerts. Uncovered development/tag refs retain
+          # exact-source analysis without a duplicate or conflicting upload.
           upload: never
           output: codeql-results
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
         with:
           name: codeql-python-and-typescript-sarif
-          path: codeql-results/*.sarif
+          path: codeql-results/
           if-no-files-found: error
           retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

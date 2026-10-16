@@ -290,6 +290,88 @@ def verify_archives(root, dist):
                 )
 
 
+def verify_candidate(root, candidate, dist):
+    """Bind final tagged text to the original CI snapshot and eight archives."""
+    root, candidate = root.resolve(), candidate.resolve()
+    manifest = json.loads((candidate / "candidate.json").read_text())
+    commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=root, text=True, timeout=10
+    ).strip()
+    report = check(root, release=True)
+    if (
+        manifest.get("schema") != "apizr.release-candidate/v1"
+        or manifest.get("repository") != "Alien6-Studio/outerspace-apizr"
+        or manifest.get("commit") != commit
+        or manifest.get("version") != report["version"]
+    ):
+        raise ValueError("Release metadata candidate source/version mismatch")
+    item = manifest.get("release_metadata", {})
+    snapshot = candidate / "release-metadata.json"
+    if (
+        item.get("file") != snapshot.name
+        or snapshot.is_symlink()
+        or not snapshot.is_file()
+        or snapshot.stat().st_size != item.get("bytes")
+        or sha(snapshot.read_bytes()) != item.get("sha256")
+    ):
+        raise ValueError("Missing or changed pre-build release metadata snapshot")
+    verify_snapshot(root, json.loads(snapshot.read_text()), release=True)
+    expected = {
+        "dist/"
+        + tomllib.loads((root / directory / "pyproject.toml").read_text())["project"][
+            "name"
+        ].replace("-", "_")
+        + "-"
+        + report["version"]
+        + suffix
+        for directory in PROJECTS
+        for suffix in ("-py3-none-any.whl", ".tar.gz")
+    }
+    artifacts = manifest.get("artifacts", [])
+    if len(artifacts) != 8 or {item["file"] for item in artifacts} != expected:
+        raise ValueError("Expected eight qualified metadata archives")
+    if {p.name for p in dist.iterdir()} != {Path(n).name for n in expected}:
+        raise ValueError("Unexpected release metadata archives")
+    for item in artifacts:
+        path = dist / Path(item["file"]).name
+        if (
+            path.is_symlink()
+            or not path.is_file()
+            or path.stat().st_size != item["bytes"]
+            or sha(path.read_bytes()) != item["sha256"]
+        ):
+            raise ValueError("Release archive differs from qualified candidate")
+    verify_archives(root, dist)
+    return {**report, "candidate_commit": commit, "qualified_archives": 8}
+
+
+def verify_public(root, candidate, dist):
+    """Download public bytes and prove the already-checked tagged README equality."""
+    from scripts.qualification.packaging.prepare_publication import (
+        matches,
+        public_files,
+    )
+
+    report = verify_candidate(root, candidate, dist)
+    for directory in PROJECTS:
+        project = tomllib.loads((root / directory / "pyproject.toml").read_text())[
+            "project"
+        ]
+        public = public_files(project["name"], report["version"])
+        prefix = project["name"].replace("-", "_") + "-" + report["version"]
+        expected = {prefix + suffix for suffix in ("-py3-none-any.whl", ".tar.gz")}
+        if set(public) != expected:
+            raise ValueError(
+                "Public release metadata archives are missing or unexpected"
+            )
+        for name in expected:
+            if not matches(dist / name, public[name]):
+                raise ValueError(
+                    "Public archive differs from the tagged README/metadata"
+                )
+    return {**report, "public_archive_bytes_equal": True}
+
+
 def render(root, output):
     """Produce retained previews with the existing documentation renderer."""
     import markdown
@@ -327,20 +409,35 @@ def main():
         "--dist", type=Path, help="Compare frozen archive README/metadata to source"
     )
     parser.add_argument(
+        "--candidate", type=Path, help="Original CI candidate inventory and snapshot"
+    )
+    parser.add_argument(
+        "--public",
+        action="store_true",
+        help="Read-only download/comparison after publication",
+    )
+    parser.add_argument(
         "--render",
         type=Path,
         help="Render the four README previews using the docs environment",
     )
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
+    if args.candidate and (not args.dist or args.snapshot):
+        parser.error("--candidate requires --dist and replaces --snapshot")
+    if args.public and not args.candidate:
+        parser.error("--public requires --candidate and --dist")
     report = check(args.source_root, release=args.release)
+    if args.candidate:
+        verify = verify_public if args.public else verify_candidate
+        report = verify(args.source_root, args.candidate, args.dist)
     if args.snapshot:
         verify_snapshot(
             args.source_root,
             json.loads(args.snapshot.read_text()),
             release=args.release,
         )
-    if args.dist:
+    if args.dist and not args.candidate:
         verify_archives(args.source_root, args.dist)
     if args.render:
         render(args.source_root, args.render)

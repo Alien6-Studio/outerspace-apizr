@@ -1,0 +1,120 @@
+{
+  "schema": "apizr.release-metadata/v1",
+  "version": "0.4.6",
+  "target_version": "0.4.6",
+  "mode": "release",
+  "release_metadata_ready": true,
+  "publication_performed": false,
+  "files": [
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "424d2167b0a171ba38f1595fe3673265be7c1639ee01659795ac429bd341e62c"
+    },
+    {
+      "path": "Dockerfile",
+      "sha256": "943a4e030978d4b8c1d94234c7d08449fc54d485ce2976549bde730712962a6d"
+    },
+    {
+      "path": "README.md",
+      "sha256": "e4064c8195861823c4305ef689293b999d16e1bca6b31b6011216ededaab560a"
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "e8b145ca84d464a6951513162f9e70eb3e017861443564f5ed3cd2efcdf54fdb"
+    },
+    {
+      "path": "action.yml",
+      "sha256": "69c3440061fa8481600ccb304ebe75df9f0b9f3ccbdfba077fc2b311a87897a7"
+    },
+    {
+      "path": "docs/getting-started/install.md",
+      "sha256": "743b0df75a32079ec1726058543a5e7a632060e8b99c38caf3121bdee1f59f4e"
+    },
+    {
+      "path": "docs/index.md",
+      "sha256": "71fcfd8ae3a886665f9d11effe98717b045e67bf4202b07365110228372b2251"
+    },
+    {
+      "path": "docs/releases/0.4.6.md",
+      "sha256": "8cb5a0df59c39af14976b49fa13118369c51239050b28dc11a380a41659cc2e9"
+    },
+    {
+      "path": "examples/data-science/fraud-detection/README.md",
+      "sha256": "9b920d894bfd2193f47c3edfa1dbc44f8d3c4e22d2780b3e88371935cc8fec2f"
+    },
+    {
+      "path": "examples/governance/README.md",
+      "sha256": "ce8bc275036b961bb9a7e7be6153c73492dbbbbb7e6c0a00fd20d6d9ef812c58"
+    },
+    {
+      "path": "glama.json",
+      "sha256": "e64133a2dca391a9694e6b086bc4e71e767801190a0d7760eb5af61d6f9c157e"
+    },
+    {
+      "path": "mkdocs.yml",
+      "sha256": "590a6b84513966cdd1224d3c0860dd2311026b847b294f96483b4b1890568599"
+    },
+    {
+      "path": "plugins/attest/README.md",
+      "sha256": "b01e960ada348818cd0831c942e59f3feefb6c7104dcb895a61ff56dd9813836"
+    },
+    {
+      "path": "plugins/attest/apizr-extension.json",
+      "sha256": "e2271087bf884bfaef7a7df03b8a770c4a47f8ac3920481c779f8a7f5a62d0c9"
+    },
+    {
+      "path": "plugins/attest/pyproject.toml",
+      "sha256": "cc5102b77448a17581b6d10117ad8ecb7378c50f3d3d7bcc5e48e393819a1194"
+    },
+    {
+      "path": "plugins/mcp/README.md",
+      "sha256": "bfeaa819ae41c6580e4a30edc2e1f3cde5a58a92bf46553cb313eb3394cde4b7"
+    },
+    {
+      "path": "plugins/mcp/apizr-extension.json",
+      "sha256": "00e6365da3555727c7507a2200872ded9c69590baa2f284fa62ba4352495e2ac"
+    },
+    {
+      "path": "plugins/mcp/distribution/manifest.json",
+      "sha256": "ab1d556f1b02c40a96b75802ad805768bebc9403bf10dea2fe41a42908d85859"
+    },
+    {
+      "path": "plugins/mcp/distribution/pyproject.toml",
+      "sha256": "6388704e9125b1ef2a2dcad4f729389683e984813a4db41e7da88fc6d9d619e5"
+    },
+    {
+      "path": "plugins/mcp/pyproject.toml",
+      "sha256": "645ef1185c8b9c81224d6c6d609b193eddf4e0a814e6515e241caa3cd3c3346e"
+    },
+    {
+      "path": "plugins/oci/README.md",
+      "sha256": "b04742a42df75c2cbabcf5136a682f14b4cb628d1cb0131e1fb1bf4efd6ca38c"
+    },
+    {
+      "path": "plugins/oci/apizr-extension.json",
+      "sha256": "f7dce433f87a84dc71776651257f6c628b7615887be0635f79e84549585757c1"
+    },
+    {
+      "path": "plugins/oci/pyproject.toml",
+      "sha256": "d3700e25aa5fe62716263eda6467663fdeff3eb3114e0b26c8556442ad699098"
+    },
+    {
+      "path": "policy/release-metadata.toml",
+      "sha256": "7c16f5bd71cf82ee81f0b62890aaac2cb89e819caa9a89a55b2991b65ae2adc9"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "bc44294f3d6c745bac38ff6f0ce7dcf1afde4db612e1fc8d47e9f34ff2d95349"
+    },
+    {
+      "path": "server.json",
+      "sha256": "8224cf7e021c1887544b4d59cf6b39d5732ddd04e67126e153983b2dcf5570a7"
+    },
+    {
+      "path": "templates/apizr.yml",
+      "sha256": "19531023ab36ee930eeadb3073e5caa58669bc8a228f34952355af7c186a956a"
+    }
+  ],
+  "candidate_commit": "745bae6ab3f04402f8dff764f9e4fd7f356801c0",
+  "qualified_archives": 8
+}

@@ -38,12 +38,25 @@ subsequent change to the inventoried files, including same-version editorial
 changes. Such a change requires a new candidate and renewed qualification.
 
 Before any later, explicitly authorized publication dispatch or Glama re-index,
-repeat `--release --snapshot <candidate>/release-metadata.json --dist <candidate>/dist`
-from the exact tagged source. `--dist` compares each wheel/sdist's frozen README
-and package URLs to the tagged files and can also inspect downloaded public
-archives. Review the already-frozen rendered README before candidate build;
-post-publication checks compare those bytes rather than correcting source after
-upload. Publication preflight wiring and authorization are separate release work.
+use the original CI candidate inventory against the exact tagged source:
+
+```sh
+python3 -m scripts.qualification.packaging.check_release_metadata --release \
+  --source-root release-source --candidate metadata-candidate --dist dist
+```
+
+This binds the source commit, original pre-build snapshot, all eight archive
+identities, frozen README bytes and package URLs. PyPI preflight runs it before
+any upload. MCP publication and the Glama/Smithery verification path require the
+already-published protected release, download its original snapshot and archives,
+and compare actual public PyPI bytes before any registry/re-index action.
+The PyPI post-publication job also runs the checker with `--public` and retains
+`public-release-metadata.json`. Only historical 0.4.4/0.4.5 releases predate this
+snapshot contract; a missing policy or snapshot on later versions fails closed.
+Review the four retained rendered READMEs before building. An editorial change
+requires a new candidate; public verification checks the frozen bytes. Executing
+these publication paths still requires the maintainer's authorization and the
+protected release source described above.
 
 ## VS Code distribution preparation for 0.4.6
 

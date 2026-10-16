@@ -728,6 +728,9 @@ jobs:
   security-qualification:
     needs: [scope]
     if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    permissions:
+      contents: read
+      security-events: read
     uses: ./.github/workflows/security.yml
     with:
       scope_ready: ${{ inputs.qualification_layout != 'independent' }}

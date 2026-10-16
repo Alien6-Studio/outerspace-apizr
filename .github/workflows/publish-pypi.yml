@@ -103,6 +103,27 @@ jobs:
               --signer-workflow Alien6-Studio/outerspace-apizr/.github/workflows/ci.yml \
               --source-digest "$RELEASE_SHA" --source-ref "$SOURCE_REF"
           done
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: steps.gates.outputs.release_version != '0.4.4' && steps.gates.outputs.release_version != '0.4.5'
+        with:
+          name: release-candidate
+          path: metadata-candidate
+          run-id: ${{ inputs.ci_run_id }}
+          github-token: ${{ github.token }}
+      - name: Require final tagged README and original pre-build metadata
+        if: steps.gates.outputs.release_version != '0.4.4' && steps.gates.outputs.release_version != '0.4.5'
+        run: >-
+          python3 -m scripts.qualification.packaging.check_release_metadata
+          --release --source-root release-source --candidate metadata-candidate --dist dist
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: steps.gates.outputs.release_version != '0.4.4' && steps.gates.outputs.release_version != '0.4.5'
+        with:
+          name: verified-metadata-candidate
+          path: |
+            metadata-candidate/candidate.json
+            metadata-candidate/release-metadata.json
+          if-no-files-found: error
+          retention-days: 90
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: verified-release-evidence
@@ -220,6 +241,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.verify.outputs.release_sha }}
+          path: release-source
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: needs.verify.outputs.release_version != '0.4.4' && needs.verify.outputs.release_version != '0.4.5'
+        with:
+          name: verified-metadata-candidate
+          path: metadata-candidate
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: verified-distributions
@@ -234,11 +265,19 @@ jobs:
           else
             python3 scripts/prepare_publication.py --dist dist --version "$RELEASE_VERSION" --output public-verification --require-package "$PACKAGE"
           fi
+      - name: Compare downloaded public bytes with the tagged README and metadata
+        if: needs.verify.outputs.release_version != '0.4.4' && needs.verify.outputs.release_version != '0.4.5' && inputs.package == 'all'
+        run: >-
+          python3 -m scripts.qualification.packaging.check_release_metadata
+          --release --source-root release-source --candidate metadata-candidate --dist dist
+          --public --output public-verification/public-release-metadata.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: public-package-comparison
-          path: public-verification/public-comparison.json
+          path: |
+            public-verification/public-comparison.json
+            public-verification/public-release-metadata.json
           if-no-files-found: error
 
 

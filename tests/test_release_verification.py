@@ -488,7 +488,7 @@ def test_resume_refuses_unrelated_or_unprotected_dispatch(
         release.main()
 
 
-def test_public_archive_check_does_not_checkout_artifact_source():
+def test_public_archive_check_executes_workflow_tools_and_reads_exact_tagged_source():
     import yaml
 
     root = Path(__file__).resolve().parents[1]
@@ -500,8 +500,17 @@ def test_public_archive_check_does_not_checkout_artifact_source():
     checkouts = [
         step for step in steps if step.get("uses", "").startswith("actions/checkout@")
     ]
-    assert len(checkouts) == 1
+    assert len(checkouts) == 2
     assert checkouts[0]["with"] == {"persist-credentials": "false"}
+    assert checkouts[1]["with"] == {
+        "ref": "${{ needs.verify.outputs.release_sha }}",
+        "path": "release-source",
+        "persist-credentials": "false",
+    }
+    # Tagged package content is comparison input; it cannot replace the verifier.
+    for step in steps:
+        assert step.get("working-directory") != "release-source"
+        assert "release-source/scripts/" not in step.get("run", "")
     public = next(
         step
         for step in steps

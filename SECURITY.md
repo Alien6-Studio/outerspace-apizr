@@ -73,10 +73,15 @@ reading by 0.4.5. See the [migration guide](docs/releases/migrate-0.4.6.md) and
 
 ## Automated checks
 
-GitHub default CodeQL setup analyzes Python and Actions and publishes alerts.
-The explicit workflow analyzes Python and JavaScript/TypeScript, including the
-VS Code extension, and retains its SARIF reports as artifacts; it
-does not upload a second copy while default setup is enabled. The dependency job exports the resolved `uv.lock` graph
+GitHub default CodeQL setup analyzes Python, JavaScript/TypeScript (including the
+VS Code extension) and Actions and publishes alerts on the default and protected
+branches and their pull requests. The required `codeql` check reuses those native
+analyses: it requires all three successful analyses for the exact commit/ref,
+rejects stale or failed evidence, and retains their source-bound SARIF reports.
+It starts no duplicate scan on those refs. Unprotected development branches and
+tags keep an explicit three-language scan with retained SARIF and no second
+public upload. Disabling native setup or removing a language fails the gate.
+The dependency job exports the resolved `uv.lock` graph
 to temporary PEP 751 lockfiles and audits each with pip-audit. Output distinguishes
 runtime, development, documentation and security-tooling dependencies. Every
 scope is blocking; all locked variants remain covered.

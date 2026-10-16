@@ -15,6 +15,7 @@ from scripts.mcp_distribution.metadata import (
     validate_metadata,
 )
 from scripts.mcp_distribution.providers import pypi
+from scripts.qualification.packaging.check_release_metadata import verify_public
 
 
 def gh(path: str) -> dict:
@@ -85,6 +86,7 @@ def main(argv=None) -> int:
     if head != args.source_sha or dirty:
         raise ValueError("Require an exact clean release checkout")
     release = gh(f"releases/tags/{args.release_tag}")
+    metadata = None
     with tempfile.TemporaryDirectory(prefix="apizr-registry-preflight-") as directory:
         subprocess.run(
             [
@@ -115,6 +117,43 @@ def main(argv=None) -> int:
             gh(f"compare/{args.source_sha}...master"),
             read(Path(directory) / "candidate.json"),
         )
+        if descriptor["version"] not in {"0.4.4", "0.4.5"}:
+            subprocess.run(
+                [
+                    "gh",
+                    "release",
+                    "download",
+                    args.release_tag,
+                    "--repo",
+                    REPOSITORY,
+                    "--pattern",
+                    "release-metadata.json",
+                    "--dir",
+                    directory,
+                ],
+                check=True,
+                capture_output=True,
+                timeout=60,
+            )
+            dist = Path(directory) / "dist"
+            subprocess.run(
+                [
+                    "gh",
+                    "release",
+                    "download",
+                    args.release_tag,
+                    "--repo",
+                    REPOSITORY,
+                    "--pattern",
+                    "outerspace_apizr*",
+                    "--dir",
+                    str(dist),
+                ],
+                check=True,
+                capture_output=True,
+                timeout=120,
+            )
+            metadata = verify_public(Path.cwd(), Path(directory), dist)
     results = {}
     for name, hashes in expected.items():
         payload, error = fetch_json(
@@ -136,6 +175,7 @@ def main(argv=None) -> int:
                 "tag": args.release_tag,
                 "namespace": descriptor["name"],
                 "pypi": results,
+                "release_metadata": metadata,
                 "preflight": "passed",
                 "publication_performed": False,
             },

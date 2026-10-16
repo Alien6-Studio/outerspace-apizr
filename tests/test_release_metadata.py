@@ -1,9 +1,11 @@
 """Stale public text must fail before building and after a candidate is frozen."""
 
 import io
+import json
 import shutil
 import tarfile
 import zipfile
+from pathlib import Path
 
 import pytest
 
@@ -247,3 +249,142 @@ def test_stale_text_refuses_before_any_build_or_output(release, tmp_path, monkey
     with pytest.raises(ValueError, match="stale Apizr statements"):
         packaging.build(output)
     assert len(calls) == 1 and not output.exists()
+
+
+@pytest.fixture
+def qualified(release, tmp_path, monkeypatch):
+    candidate, dist = tmp_path / "candidate", tmp_path / "dist"
+    candidate.mkdir()
+    archives(release, dist)
+    snapshot = candidate / "release-metadata.json"
+    snapshot.write_text(json.dumps(gate.check(release, release=True)))
+    manifest = {
+        "schema": "apizr.release-candidate/v1",
+        "repository": "Alien6-Studio/outerspace-apizr",
+        "commit": "a" * 40,
+        "version": "0.4.6",
+        "release_metadata": {
+            "file": snapshot.name,
+            "bytes": snapshot.stat().st_size,
+            "sha256": gate.sha(snapshot.read_bytes()),
+        },
+        "artifacts": [
+            {
+                "file": "dist/" + p.name,
+                "bytes": p.stat().st_size,
+                "sha256": gate.sha(p.read_bytes()),
+            }
+            for p in sorted(dist.iterdir())
+        ],
+    }
+    (candidate / "candidate.json").write_text(json.dumps(manifest))
+    monkeypatch.setattr(gate.subprocess, "check_output", lambda *a, **kw: "a" * 40)
+    return release, candidate, dist
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        None,
+        "commit",
+        "version",
+        "repository",
+        "schema",
+        "snapshot",
+        "snapshot-path",
+        "duplicate",
+        "extra",
+        "archive",
+        "editorial",
+    ],
+)
+def test_publication_requires_original_candidate_and_exact_tagged_text(
+    qualified, fault
+):
+    root, candidate, dist = qualified
+    path = candidate / "candidate.json"
+    manifest = json.loads(path.read_text())
+    if fault in {"commit", "version", "repository", "schema"}:
+        manifest[fault] = "wrong"
+    elif fault == "snapshot":
+        (candidate / "release-metadata.json").write_text("{}")
+    elif fault == "snapshot-path":
+        manifest["release_metadata"]["file"] = "../release-metadata.json"
+    elif fault == "duplicate":
+        manifest["artifacts"][-1] = manifest["artifacts"][0]
+    elif fault == "extra":
+        (dist / "extra.whl").write_bytes(b"extra")
+    elif fault == "archive":
+        (dist / Path(manifest["artifacts"][0]["file"]).name).write_bytes(b"tampered")
+    elif fault == "editorial":
+        readme = root / "README.md"
+        readme.write_text(readme.read_text() + "\nSame-version editorial update.\n")
+    path.write_text(json.dumps(manifest))
+    if fault:
+        with pytest.raises(ValueError):
+            gate.verify_candidate(root, candidate, dist)
+    else:
+        report = gate.verify_candidate(root, candidate, dist)
+        assert report["qualified_archives"] == 8
+        assert report["candidate_commit"] == "a" * 40
+        assert report["publication_performed"] is False
+
+
+@pytest.mark.parametrize("fault", [None, "missing", "digest", "downloaded-bytes"])
+def test_postpublication_compares_actual_downloaded_bytes(
+    qualified, monkeypatch, fault
+):
+    from scripts.qualification.packaging import prepare_publication as public
+
+    root, candidate, dist = qualified
+    downloads = []
+
+    def metadata(name, version):
+        records = {}
+        for p in dist.glob(name.replace("-", "_") + "-" + version + "*"):
+            records[p.name] = {
+                "digests": {"sha256": gate.sha(p.read_bytes())},
+                "size": p.stat().st_size,
+                "url": "https://files.pythonhosted.org/" + p.name,
+            }
+        if fault == "missing":
+            records.pop(next(iter(records)))
+        elif fault == "digest":
+            records[next(iter(records))]["digests"]["sha256"] = "b" * 64
+        return records
+
+    def download(url, **kwargs):
+        downloads.append(url)
+        content = (dist / url.rsplit("/", 1)[-1]).read_bytes()
+        return io.BytesIO(content if fault != "downloaded-bytes" else b"different")
+
+    monkeypatch.setattr(public, "public_files", metadata)
+    monkeypatch.setattr(public.urllib.request, "urlopen", download)
+    if fault:
+        with pytest.raises(ValueError, match="Public"):
+            gate.verify_public(root, candidate, dist)
+    else:
+        report = gate.verify_public(root, candidate, dist)
+        assert report["public_archive_bytes_equal"] is True and len(downloads) == 8
+        assert report["publication_performed"] is False
+
+
+def test_publication_workflows_cannot_skip_metadata_before_side_effects():
+    import yaml
+
+    workflow = yaml.safe_load(
+        (gate.ROOT / ".github/workflows/publish-pypi.yml").read_text()
+    )
+    jobs = workflow["jobs"]
+    preflight = next(
+        s
+        for s in jobs["verify"]["steps"]
+        if "--candidate metadata-candidate" in s.get("run", "")
+    )
+    assert "--source-root release-source" in preflight["run"]
+    assert "--release" in preflight["run"]
+    assert "verify" in jobs["publish"]["needs"]
+    assert any("--public" in s.get("run", "") for s in jobs["verify-public"]["steps"])
+    for name in ("publish-mcp.yml", "verify-mcp-distribution.yml"):
+        text = (gate.ROOT / ".github/workflows" / name).read_text()
+        assert "verify_mcp_publication.py" in text

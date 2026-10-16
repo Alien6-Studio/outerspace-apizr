@@ -151,3 +151,60 @@ def test_registry_preflight_binds_all_release_identities(candidate, fault):
             validate_release(*args)
     else:
         assert validate_release(*args) == hashes
+
+
+@pytest.mark.parametrize("version", ["0.4.5", "0.4.6"])
+def test_registry_and_glama_preflight_require_frozen_public_text_for_new_releases(
+    tmp_path, monkeypatch, version
+):
+    from pathlib import Path
+
+    from scripts.qualification.packaging import verify_mcp_publication as preflight
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        preflight,
+        "validate_metadata",
+        lambda: {"version": version, "name": "test-namespace"},
+    )
+    monkeypatch.setattr(
+        preflight.subprocess,
+        "check_output",
+        lambda args, **kw: SHA if "rev-parse" in args else "",
+    )
+    monkeypatch.setattr(preflight, "gh", lambda path: {})
+    monkeypatch.setattr(preflight, "validate_release", lambda *args: {})
+    downloads = []
+
+    def download(args, **kwargs):
+        pattern = args[args.index("--pattern") + 1]
+        downloads.append(pattern)
+        target = Path(args[args.index("--dir") + 1])
+        target.mkdir(parents=True, exist_ok=True)
+        if pattern == "candidate.json":
+            (target / pattern).write_text("{}")
+
+    monkeypatch.setattr(preflight.subprocess, "run", download)
+    report = tmp_path / "report.json"
+    args = [
+        "--release-tag",
+        "v" + version,
+        "--source-sha",
+        SHA,
+        "--report",
+        str(report),
+    ]
+    if version == "0.4.6":
+        # Even deleting the policy cannot turn this mandatory gate into a skip.
+        with pytest.raises(FileNotFoundError):
+            preflight.main(args)
+        assert downloads == [
+            "candidate.json",
+            "release-metadata.json",
+            "outerspace_apizr*",
+        ]
+        assert not report.exists()
+    else:
+        assert preflight.main(args) == 0
+        assert downloads == ["candidate.json"]
+        assert json.loads(report.read_text())["publication_performed"] is False
