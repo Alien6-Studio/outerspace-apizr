@@ -1,0 +1,5 @@
+{
+  "content": "# Workload dependencies, separate from Apizr and its optional transport packages.\n# Exact binary-wheel sets; preserve the established 3.11\u20133.14 numerical stack.\n# Python 3.15 needs the newer NumPy/SciPy wheel series.\npandas==3.0.6\nnumpy==2.4.6; python_version < \"3.15\"\nnumpy==2.5.4; python_version >= \"3.15\"\nscipy==1.17.1; python_version < \"3.15\"\nscipy==1.18.1; python_version >= \"3.15\"\nscikit-learn==1.9.1\njoblib==1.6.0\ncloudpickle==3.1.2\nnarwhals==2.27.1\npython-dateutil==2.9.0.post0\nsix==1.17.0\nthreadpoolctl==3.7.0\n",
+  "path": "examples/data-science/fraud-detection/requirements.txt",
+  "sha256": "e83ce419a49396f0c38e6f1db0fccc881f1cfd63f38447f37a480a10f375dae1"
+}

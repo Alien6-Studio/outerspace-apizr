@@ -153,7 +153,7 @@ def render(
         )
         formula = formula.replace(
             '  license "GPL-3.0-or-later"',
-            '  license "GPL-3.0-or-later"\n\n  keg_only "Disposable qualification must not replace an installed Apizr"',
+            '  license "GPL-3.0-or-later"\n\n  keg_only "disposable qualification must not replace an installed Apizr"',
         )
     output.mkdir(parents=True, exist_ok=False)
     (output / "Formula").mkdir()

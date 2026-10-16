@@ -1,0 +1,199 @@
+{
+  "candidate_commit": "2fa3eb161a9f8437256ba13096bbe6cda78206fd",
+  "candidate_manifest_sha256": "c3af7447664509192dc8c2fc3119710b7d3755d4020d0a790ed637dec25c3d37",
+  "changed_files": [
+    ".apizr/experiments/v1/plans/edf174955c5ba652e5ad8078903ed0c474765c9c36753328429ca43d945e1df7.json",
+    ".apizr/experiments/v1/runs/affc441c16e039fdbef4efd501f520d5cf7de0c61046218da841da8f218fb936.json",
+    "artifacts/model.joblib",
+    "data/transactions.csv",
+    "run-b.json"
+  ],
+  "data_a": "f82f5bb6e0723b2166ab5eae8566ceabc913d55522fe2adbfcb638c523cc2dae",
+  "data_b": "16b8f77575bd5374ad4435c04b3e9749bdaac63260d770818ed33f320c1477b0",
+  "download_seconds": 8.51785633401596,
+  "inspection_did_not_execute": true,
+  "install_seconds": 11.212655374984024,
+  "journey_seconds": 34.51057016701088,
+  "offline_python_guard": true,
+  "reproduction": {
+    "fixed_run_bundle_bytes_identical": true,
+    "required_helper_defect_refused": true,
+    "same_inspection": true,
+    "same_plan": true,
+    "second_run": {
+      "metrics": 3,
+      "outputs": 2,
+      "plan_digest": "0b2b0248e3628118b809772be16d192fa0c2ccea53b96e48924949f4e829707a",
+      "run_digest": "d60d713b1e4a6069db63111d4cbb55e2ca56630beef70558e489d307b4cea24c",
+      "schema_version": "apizr.experiment-run-result/v1",
+      "source": {
+        "capability_id": null,
+        "digest": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+        "executable_digest": "18269caab85610eb3ad17338f4264bfb10af1319f60f9a53f85fed945e23e9b3",
+        "kind": "notebook",
+        "module": "fraud_detection",
+        "reference": "fraud_detection.ipynb"
+      },
+      "started_at": "2026-10-16T12:24:56.028493Z",
+      "status": "success"
+    },
+    "second_setup_seconds": 13.678831791999983,
+    "serving_without_apizr_or_pandas": true,
+    "transports": {
+      "invalid_typeddict_requests_refused": 3,
+      "rest": {
+        "predictions": [
+          [
+            1,
+            0.8127568160788873
+          ]
+        ]
+      },
+      "structuredContent": {
+        "predictions": [
+          [
+            1,
+            0.8127568160788873
+          ]
+        ]
+      },
+      "timings_seconds": {
+        "mcp_call": 0.09041616600006819,
+        "mcp_startup_and_list": 0.7359563329955563,
+        "rest_call": 0.13166549999732524,
+        "rest_startup": 0.7492133750056382
+      },
+      "tools": [
+        "fraud_detection.predict"
+      ]
+    },
+    "unrelated_ambiguity_retained": true,
+    "without_original_projects": true
+  },
+  "rest_mcp_parity": true,
+  "rest_typeddict_refusals": 3,
+  "run_a": {
+    "metrics": 3,
+    "outputs": 2,
+    "plan_digest": "0b2b0248e3628118b809772be16d192fa0c2ccea53b96e48924949f4e829707a",
+    "run_digest": "e1c606ccf3299024260e4a26eec63d285a0ff6aa3e9ac53bade5d362dd805bd1",
+    "schema_version": "apizr.experiment-run-result/v1",
+    "source": {
+      "capability_id": null,
+      "digest": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "executable_digest": "18269caab85610eb3ad17338f4264bfb10af1319f60f9a53f85fed945e23e9b3",
+      "kind": "notebook",
+      "module": "fraud_detection",
+      "reference": "fraud_detection.ipynb"
+    },
+    "started_at": "2026-10-16T12:24:06.261974Z",
+    "status": "success"
+  },
+  "run_b": {
+    "metrics": 3,
+    "outputs": 2,
+    "plan_digest": "edf174955c5ba652e5ad8078903ed0c474765c9c36753328429ca43d945e1df7",
+    "run_digest": "affc441c16e039fdbef4efd501f520d5cf7de0c61046218da841da8f218fb936",
+    "schema_version": "apizr.experiment-run-result/v1",
+    "source": {
+      "capability_id": null,
+      "digest": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "executable_digest": "18269caab85610eb3ad17338f4264bfb10af1319f60f9a53f85fed945e23e9b3",
+      "kind": "notebook",
+      "module": "fraud_detection",
+      "reference": "fraud_detection.ipynb"
+    },
+    "started_at": "2026-10-16T12:24:20.300010Z",
+    "status": "success"
+  },
+  "runtime": {
+    "packages": {
+      "joblib": "1.6.0",
+      "numpy": "2.5.4",
+      "outerspace-apizr": "0.4.5",
+      "pandas": "3.0.6",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1"
+    },
+    "path": "$PROOF_ROOT/apizr-330-science315/work/science/lib/python3.15/site-packages/apizr/__init__.py",
+    "python": "3.15.0"
+  },
+  "setup_seconds": 22.799961208977038,
+  "source_hashes": [
+    {
+      "name": "authority",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "completed",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "diff",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "inspect",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "list",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "mcp-call",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "mcp-expose",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "rest-call",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "rest-expose",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "rest-install",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "rest-start",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "run-a",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "run-b",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    {
+      "name": "show",
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    }
+  ],
+  "stale_model_refused": true,
+  "status": "passed",
+  "synthetic_data_reproduced": true,
+  "time_to_first_value_seconds": 1.1559027910116129,
+  "timings_seconds": {
+    "authority": 0.02971558301942423,
+    "diff": 0.17714762498508207,
+    "inspect": 0.825356333021773,
+    "list": 0.15498304198263213,
+    "mcp-call": 1.7338380840083119,
+    "mcp-expose": 1.5555781250004657,
+    "rest-call": 5.866446375002852,
+    "rest-expose": 0.592605125013506,
+    "rest-install": 6.632281875004992,
+    "rest-start": 0.008568874996853992,
+    "run-a": 14.040516792010749,
+    "run-b": 1.6636854170064908,
+    "show": 0.1587016669800505
+  }
+}

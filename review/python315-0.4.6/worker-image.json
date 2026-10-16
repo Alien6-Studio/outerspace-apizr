@@ -1,0 +1,11 @@
+{
+  "config_digest": "sha256:4e5f39b6a2e94980ba77037de4f62aedcedc2505ce7187a64d7292fff5932be1",
+  "core_sha256": "4fbce65d062ade543171566661f10af4fce430210a3befc85e4749ef2354e8d5",
+  "core_wheel": "outerspace_apizr-0.4.5-py3-none-any.whl",
+  "local_image_id": "sha256:4e5f39b6a2e94980ba77037de4f62aedcedc2505ce7187a64d7292fff5932be1",
+  "platform": "linux/arm64",
+  "published": false,
+  "registry_manifest_digest": null,
+  "role": "governed execution worker; disposable qualification image",
+  "schema": "apizr.release-image/v1"
+}

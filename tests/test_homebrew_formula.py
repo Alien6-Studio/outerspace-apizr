@@ -89,7 +89,7 @@ def test_isolated_probe_cannot_replace_apizr_or_authorize_publication(tmp_path):
     )
     formula = output / "Formula/apizr-qualification-probe.rb"
     assert (
-        'keg_only "Disposable qualification must not replace an installed Apizr"'
+        'keg_only "disposable qualification must not replace an installed Apizr"'
         in formula.read_text()
     )
     assert not (output / "Formula/apizr.rb").exists()

@@ -1,0 +1,114 @@
+{
+  "candidate_sha256": "c3af7447664509192dc8c2fc3119710b7d3755d4020d0a790ed637dec25c3d37",
+  "catalog_resolve_lock_sync": "passed",
+  "commit": "2fa3eb161a9f8437256ba13096bbe6cda78206fd",
+  "core_unchanged": true,
+  "download_definition": "sum of unique compressed wheel bytes; excludes tools and caches",
+  "experiment_contracts": "passed",
+  "experiment_diff": "passed",
+  "experiment_docs": "passed",
+  "experiment_exposure": "passed",
+  "experiment_exposure_sdk": "passed",
+  "experiment_inspection": "passed",
+  "experiment_run": "passed",
+  "extras_local_https_ssh": "passed",
+  "governance_evidence": "passed",
+  "installed_definition": "regular file byte lengths, not allocated filesystem blocks",
+  "journey_security": "passed",
+  "measurements": {
+    "core": {
+      "installed_bytes": 25836051,
+      "version_seconds": [
+        0.03856762501527555,
+        0.03712649998487905,
+        0.0371281249972526,
+        0.039374083979055285,
+        0.03898562499671243
+      ],
+      "wheel_bytes": 3115953
+    },
+    "delivery": {
+      "installed_bytes": 17462978,
+      "inventory_seconds": [
+        0.15425245798542164,
+        0.14544262501294725,
+        0.1444195829972159,
+        0.146651541988831,
+        0.15076812502229586
+      ],
+      "invocation": "qualified separately by real MCP/OCI/Attest proof; inventory timing is not invocation latency",
+      "module_startup_seconds": {
+        "outerspace-apizr-attest": [
+          0.37539458298124373,
+          0.3014547920029145,
+          0.304196665994823,
+          0.3069306660036091,
+          0.2993941249733325
+        ],
+        "outerspace-apizr-oci": [
+          0.3583202500012703,
+          0.2771521669928916,
+          0.27490604200283997,
+          0.27786241698777303,
+          0.28218874998856336
+        ]
+      },
+      "wheel_bytes": 3177640
+    },
+    "mcp": {
+      "installed_bytes": 34237119,
+      "inventory_seconds": [
+        0.14246233401354402,
+        0.1457220840093214,
+        0.14018783302162774,
+        0.14292370801558718,
+        0.14275912498123944
+      ],
+      "invocation": "qualified separately by real MCP/OCI/Attest proof; inventory timing is not invocation latency",
+      "module_startup_seconds": {
+        "outerspace-apizr-mcp": [
+          0.016019208007492125,
+          0.014950042008422315,
+          0.01608533301623538,
+          0.015607375011313707,
+          0.01542124999104999
+        ]
+      },
+      "wheel_bytes": 11250510
+    },
+    "oci": {
+      "installed_bytes": 8693366,
+      "inventory_seconds": [
+        0.19303974998183548,
+        0.20908095900085755,
+        0.22700216600787826,
+        0.20204883298720233,
+        0.17519808301585726
+      ],
+      "invocation": "qualified separately by real MCP/OCI/Attest proof; inventory timing is not invocation latency",
+      "module_startup_seconds": {
+        "outerspace-apizr-oci": [
+          0.3637799159914721,
+          0.27909249998629093,
+          0.2753116660169326,
+          0.2741931249911431,
+          0.33741029098746367
+        ]
+      },
+      "wheel_bytes": 3150938
+    }
+  },
+  "migration": "passed",
+  "pip": "passed",
+  "pipx": "passed",
+  "target": {
+    "implementation": "CPython",
+    "machine": "arm64",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "python": "3.15.0",
+    "system": "Darwin"
+  },
+  "timing_definition": "five wall-clock subprocess samples; no extrapolation; includes interpreter startup",
+  "tracking": "passed",
+  "uv_tool": "passed"
+}
