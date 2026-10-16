@@ -64,6 +64,11 @@ def _environment(label: str, value: EnvironmentChange) -> Iterable[str]:
 
 
 def _sections(value: Diff) -> Iterable[str]:
+    if value.providers is not None:
+        yield "Scientific provider provenance (static context, not a causal facet)\n"
+        yield _pair(
+            "providers", value.providers.state, value.providers.a, value.providers.b
+        )
     yield f"Material evidence differences ({_counts(value.material_counts)})\n"
     if not (
         value.material_counts.changed

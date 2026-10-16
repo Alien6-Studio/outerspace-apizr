@@ -1,11 +1,10 @@
 """Public bounded source/lexical input for static scientific recognition."""
 
 import ast
-import hashlib
 from collections.abc import Callable
 from typing import Annotated, Literal, Self
 
-from pydantic import Field, model_validator
+from pydantic import Field, ModelWrapValidatorHandler, PrivateAttr, model_validator
 
 from apizr.contracts.distribution import Digest
 from apizr.experiments._lexical import (
@@ -17,6 +16,7 @@ from apizr.experiments._lexical import (
     bounded_tree,
 )
 from apizr.experiments.model import ExperimentValue, Reference
+from apizr.experiments.source_analysis import SourceAnalysis
 
 __all__ = [
     "MAX_DEPTH",
@@ -35,16 +35,46 @@ class SourceView(ExperimentValue):
     schema_version: Literal["apizr.scientific-source/v1"] = "apizr.scientific-source/v1"
     reference: Reference
     text: Annotated[str, Field(max_length=MAX_SOURCE_BYTES)]
+    _analysis: SourceAnalysis = PrivateAttr()
 
-    @model_validator(mode="after")
-    def bounded_source(self) -> Self:
-        self.tree()
-        return self
+    @model_validator(mode="wrap")
+    @classmethod
+    def bounded_source(
+        cls, value: object, handler: ModelWrapValidatorHandler[Self]
+    ) -> Self:
+        result = handler(value)
+        analysis = getattr(value, "_analysis", None) if type(value) is cls else None
+        if type(analysis) is SourceAnalysis and analysis.source == result.text:
+            result._analysis = analysis
+        else:
+            try:
+                result._analysis = SourceAnalysis(result.text)
+            except (SourceLimit, ValueError, UnicodeError, SyntaxError, RecursionError):
+                raise ValueError("provider_source_invalid_or_limit") from None
+        return result
+
+    @property
+    def analysis(self) -> SourceAnalysis:
+        return self._analysis
 
     @property
     def digest(self) -> Digest:
         """Computed by the core from admitted bytes, never supplied by a provider."""
-        return hashlib.sha256(self.text.encode("utf-8")).hexdigest()
+        return self._analysis.digest
+
+    def validate_bounds(
+        self,
+        *,
+        max_bytes: int = MAX_SOURCE_BYTES,
+        max_nodes: int = MAX_NODES,
+        max_depth: int = MAX_DEPTH,
+    ) -> None:
+        try:
+            self._analysis.check(
+                max_bytes=max_bytes, max_nodes=max_nodes, max_depth=max_depth
+            )
+        except (SourceLimit, ValueError):
+            raise ValueError("provider_source_invalid_or_limit") from None
 
     def tree(
         self,
@@ -55,12 +85,9 @@ class SourceView(ExperimentValue):
     ) -> ast.Module:
         """Providers may lower the core's bounds, never raise them."""
         try:
-            if not (
-                1 <= max_bytes <= MAX_SOURCE_BYTES
-                and 1 <= max_nodes <= MAX_NODES
-                and 1 <= max_depth <= MAX_DEPTH
-            ):
-                raise ValueError("source_view_bounds")
+            self.validate_bounds(
+                max_bytes=max_bytes, max_nodes=max_nodes, max_depth=max_depth
+            )
             return bounded_tree(
                 self.text,
                 max_bytes=max_bytes,
@@ -74,12 +101,8 @@ class SourceView(ExperimentValue):
         """AST columns are UTF-8 byte offsets, with a zero-based column."""
         # Python physical lines use LF, CRLF or CR. Other Unicode separators
         # remain bytes inside strings/comments and must not invent source lines.
-        lines = self.text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
-        if lines[-1] == "":
-            lines.pop()
-        return 1 <= line <= len(lines) and 0 <= column <= len(
-            lines[line - 1].encode("utf-8")
-        )
+        lines = self._analysis.line_bytes
+        return 1 <= line <= len(lines) and 0 <= column <= lines[line - 1]
 
 
 class SourceLexicalVisitor(LexicalVisitor):

@@ -113,11 +113,15 @@ def discover_outputs(
         )
     discovery = Discovery(source_reference)
     discovery.visit(tree)
+    return discovery_result(discovery)
+
+
+def discovery_result(discovery: Discovery) -> OutputDiscoveryResult:
     if len(discovery.signals) > 256 or len(discovery.diagnostics) > 512:
         return OutputDiscoveryResult(
             diagnostics=(
                 OutputDiagnostic(
-                    code="output_discovery_limit", source=source_reference
+                    code="output_discovery_limit", source=discovery.source
                 ),
             )
         )

@@ -1,0 +1,835 @@
+{
+  "baseline": "passed",
+  "mutations": [
+    {
+      "name": "telemetry-context-opt-out",
+      "test": "tests/telemetry/test_controls.py::test_preference_byte_boundary_and_disabled_context_does_not_read",
+      "result": "killed"
+    },
+    {
+      "name": "telemetry-memory-count-bound",
+      "test": "tests/telemetry/test_controls.py::test_bounded_memory_and_disable_discard_all_scopes",
+      "result": "killed"
+    },
+    {
+      "name": "telemetry-disable-discards-counters",
+      "test": "tests/telemetry/test_controls.py::test_bounded_memory_and_disable_discard_all_scopes",
+      "result": "killed"
+    },
+    {
+      "name": "telemetry-report-byte-limit",
+      "test": "tests/telemetry/test_contract.py::test_byte_boundary_encoding_and_forged_models",
+      "result": "killed"
+    },
+    {
+      "name": "telemetry-unknown-report-field",
+      "test": "tests/telemetry/test_contract.py::test_reusable_contract_fixtures[invalid-path]",
+      "result": "killed"
+    },
+    {
+      "name": "telemetry-loopback-only-override",
+      "test": "tests/telemetry/test_contract.py::test_external_or_unsafe_override_refused[http://192.0.2.1:1234]",
+      "result": "killed"
+    },
+    {
+      "name": "transport-http-cumulative-bytes",
+      "test": "tests/interfaces/test_http_admission.py::test_chunked_byte_limit_rejects_before_decoder[headers0]",
+      "result": "killed"
+    },
+    {
+      "name": "transport-http-predecode-structure",
+      "test": "tests/interfaces/test_http_admission.py::test_structure_and_encoding_refused_before_decoder[depth]",
+      "result": "killed"
+    },
+    {
+      "name": "transport-graph-wide-before-copy",
+      "test": "tests/interfaces/test_json_budget.py::test_broad_containers_refused_without_iteration[False]",
+      "result": "killed"
+    },
+    {
+      "name": "transport-graph-depth",
+      "test": "tests/interfaces/test_json_budget.py::test_depth_boundary_matches_raw_admission_and_precedes_decoder",
+      "result": "killed"
+    },
+    {
+      "name": "transport-graph-encoded-bytes",
+      "test": "tests/interfaces/test_json_budget.py::test_exact_compact_utf8_budget[None]",
+      "result": "killed"
+    },
+    {
+      "name": "transport-string-escape-cost",
+      "test": "tests/interfaces/test_json_budget.py::test_string_escape_amplification_is_counted_in_small_chunks",
+      "result": "killed"
+    },
+    {
+      "name": "transport-stdio-bounded-binary-read",
+      "test": "tests/mcp_generator/test_admission.py::test_production_line_read_is_bounded_without_allocating_large_input",
+      "result": "killed"
+    },
+    {
+      "name": "transport-stdio-predecode-structure",
+      "test": "tests/mcp_generator/test_admission.py::test_structural_refusal_is_small_and_next_frame_survives[depth]",
+      "result": "killed"
+    },
+    {
+      "name": "transport-stdio-byte-refusal",
+      "test": "tests/mcp_generator/test_admission.py::test_binary_byte_limit_precedes_decoding_and_ends_oversized_stream",
+      "result": "killed"
+    },
+    {
+      "name": "transport-mcp-result-representations",
+      "test": "tests/mcp_generator/test_admission.py::test_mcp_dual_representation_is_admitted_before_sdk_models",
+      "result": "killed"
+    },
+    {
+      "name": "transport-rest-predecode-middleware",
+      "test": "tests/interfaces/test_transport_admission.py::test_all_transports_refuse_structure_before_decoder_and_recover[rest-single-direct]",
+      "result": "killed"
+    },
+    {
+      "name": "transport-mcp-predecode-middleware",
+      "test": "tests/interfaces/test_transport_admission.py::test_all_transports_refuse_structure_before_decoder_and_recover[mcp-single-direct]",
+      "result": "killed"
+    },
+    {
+      "name": "transport-oci-complete-closure",
+      "test": "tests/oci_plugin/test_build.py::test_transport_admission_closure_is_complete_and_verified[partial-rest-apizr_http_admission.py]",
+      "result": "killed"
+    },
+    {
+      "name": "oci-bundle-admission-complete-closure",
+      "test": "tests/oci_plugin/test_build.py::test_portable_admission_closure_is_copied_verified_and_closed[legacy-partial-reader-rest]",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-bounded-read",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_file_growth_still_uses_a_bounded_read",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-stat-admission",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_sparse_oversized_file_is_refused_without_reading",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-remaining-aggregate",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_total_allowance_includes_manifest_and_precedes_next_read",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-count-before-read",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_count_checked_before_opening_any_member",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-json-before-decoding",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_manifest_structure_refused_before_any_decoder[nodes-direct]",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-direct-aggregate",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_all_runtime_contracts_charge_the_whole_retained_set[bytes-direct]",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-governed-aggregate",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_all_runtime_contracts_charge_the_whole_retained_set[bytes-governed]",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-worker-aggregate",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_all_runtime_contracts_charge_the_whole_retained_set[bytes-worker]",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-source-reread-limit",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_changed_source_size_is_bounded_again_before_compile",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-generation-admission",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_renderer_refuses_unloadable_bundle[False]",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-governed-generation-admission",
+      "test": "tests/repository_interfaces/test_artifact_bounds.py::test_renderer_refuses_unloadable_bundle[True]",
+      "result": "killed"
+    },
+    {
+      "name": "notebook-admitted-snapshot-export",
+      "test": "tests/capabilities/test_source_bounds.py::test_notebook_export_uses_admitted_snapshot_after_file_changes",
+      "result": "killed"
+    },
+    {
+      "name": "wheel-zip64-directory-selection",
+      "test": "tests/local_plugins/test_central_directory_bounds.py::test_zip64_extensible_record_cannot_hide_a_second_directory",
+      "result": "killed"
+    },
+    {
+      "name": "wheel-central-directory-before-index",
+      "test": "tests/local_plugins/test_central_directory_bounds.py::test_entry_budget_precedes_zipfile_even_with_forged_counts[0]",
+      "result": "killed"
+    },
+    {
+      "name": "source-regular-read-budget",
+      "test": "tests/capabilities/test_source_bounds.py::test_large_regular_source_is_bounded_before_parsing[read_source]",
+      "result": "killed"
+    },
+    {
+      "name": "source-encoded-byte-budget",
+      "test": "tests/capabilities/test_source_bounds.py::test_inmemory_source_limit_precedes_parser[unicode]",
+      "result": "killed"
+    },
+    {
+      "name": "source-analysis-structure-budget",
+      "test": "tests/capabilities/test_source_bounds.py::test_broad_and_deep_asts_are_refused_before_recursive_analysis[nodes]",
+      "result": "killed"
+    },
+    {
+      "name": "notebook-json-before-materialization",
+      "test": "tests/capabilities/test_source_bounds.py::test_notebook_budget_precedes_json_decoder[nodes-code_cells]",
+      "result": "killed"
+    },
+    {
+      "name": "notebook-export-before-materialization",
+      "test": "tests/capabilities/test_source_bounds.py::test_notebook_budget_precedes_json_decoder[depth-exporter]",
+      "result": "killed"
+    },
+    {
+      "name": "signing-verification-authority",
+      "test": "tests/local_plugins/test_verification_policy.py::test_verification_authority_is_exact_and_pure[tool_hash-attest]",
+      "result": "killed"
+    },
+    {
+      "name": "publication-verification-authority",
+      "test": "tests/local_plugins/test_verification_policy.py::test_verification_authority_is_exact_and_pure[signer-publish]",
+      "result": "killed"
+    },
+    {
+      "name": "admission-verification-authority",
+      "test": "tests/local_plugins/test_verification_policy.py::test_verification_authority_is_exact_and_pure[trust_path-admit]",
+      "result": "killed"
+    },
+    {
+      "name": "attest-trust-snapshot-identity",
+      "test": "tests/attest_plugin/test_delivery.py::test_changed_trust_refused_before_verifier_or_key_access",
+      "result": "killed"
+    },
+    {
+      "name": "builtin-provider-identity",
+      "test": "tests/scientific_providers/test_builtin.py::test_reference_provider_rejects_other_identity_and_aggregate_limits",
+      "result": "killed"
+    },
+    {
+      "name": "builtin-provider-admission",
+      "test": "tests/scientific_providers/test_builtin.py::test_reference_provider_rejects_other_identity_and_aggregate_limits",
+      "result": "killed"
+    },
+    {
+      "name": "scientific-provider-python-line-boundary",
+      "test": "tests/scientific_providers/test_contracts.py::test_python_line_positions_ignore_unicode_separators",
+      "result": "killed"
+    },
+    {
+      "name": "scientific-provider-source-facts-binding",
+      "test": "tests/scientific_providers/test_analysis.py::test_revalidation_reuses_only_matching_immutable_facts",
+      "result": "killed"
+    },
+    {
+      "name": "scientific-provider-retained-identity",
+      "test": "tests/scientific_providers/test_selection.py::test_retained_provider_identity_cannot_change",
+      "result": "killed"
+    },
+    {
+      "name": "scientific-provider-selection-readmission",
+      "test": "tests/scientific_providers/test_selection.py::test_refusal_is_unknown_no_exception_or_fallback[invalid-True-provider_result_invalid]",
+      "result": "killed"
+    },
+    {
+      "name": "scientific-provider-source-digest",
+      "test": "tests/scientific_providers/test_contracts.py::test_identity_source_schema_and_unknown_fields_are_rejected[source_digest]",
+      "result": "killed"
+    },
+    {
+      "name": "scientific-provider-static-input",
+      "test": "tests/scientific_providers/test_contracts.py::test_static_provider_cannot_assert_input_content_observations[digest]",
+      "result": "killed"
+    },
+    {
+      "name": "scientific-adapter-finite-value",
+      "test": "tests/tracking/test_adapters.py::test_adapter_never_bypasses_experiment_value_validation[nonfinite]",
+      "result": "killed"
+    },
+    {
+      "name": "preparation-qualified-uv-series",
+      "test": "tests/local_plugins/test_preparation_resolver_versions.py::test_only_qualified_stable_series_are_measured",
+      "result": "killed"
+    },
+    {
+      "name": "preparation-glibc-native-host",
+      "test": "tests/local_plugins/test_preparation_target.py::test_glibc_241_native_resolution_refuses_a_foreign_host",
+      "result": "killed"
+    },
+    {
+      "name": "preparation-glibc-native-resolution",
+      "test": "tests/local_plugins/test_preparation_resolver_versions.py::test_native_glibc_resolution_never_substitutes_an_older_platform",
+      "result": "killed"
+    },
+    {
+      "name": "single-worker-restores-capture-context",
+      "test": "tests/execution/test_serving_context.py::test_worker_restores_callers_serving_marker",
+      "result": "killed"
+    },
+    {
+      "name": "repository-worker-restores-capture-context",
+      "test": "tests/execution/test_serving_context.py::test_worker_restores_callers_serving_marker",
+      "result": "killed"
+    },
+    {
+      "name": "sdk-binding-is-not-name-matching",
+      "test": "tests/readiness/test_tracking_decorators.py::test_unproven_or_stacked_decorator_remains_unknown",
+      "result": "killed"
+    },
+    {
+      "name": "sdk-import-binding-must-be-unique",
+      "test": "tests/readiness/test_tracking_decorators.py::test_unproven_or_stacked_decorator_remains_unknown",
+      "result": "killed"
+    },
+    {
+      "name": "sdk-local-lookalike-is-not-official",
+      "test": "tests/readiness/test_tracking_decorators.py::test_repository_local_sdk_lookalike_cannot_discharge_dependency",
+      "result": "killed"
+    },
+    {
+      "name": "sdk-serving-disables-capture",
+      "test": "tests/tracking/test_served.py::test_served_decorator_never_constructs_a_session",
+      "result": "killed"
+    },
+    {
+      "name": "sdk-service-marker-precedes-project-import",
+      "test": "tests/experiments/test_capture_exposure.py::test_instrumented_service_suppresses_capture_before_source_import",
+      "result": "killed"
+    },
+    {
+      "name": "sdk-exposure-retains-capture-binding",
+      "test": "tests/experiments/test_capture_exposure.py::test_portable_binding_cannot_swap_capture_or_observed_source",
+      "result": "killed"
+    },
+    {
+      "name": "tracking-preserve-business-exception",
+      "test": "tests/tracking/test_sessions.py::test_business_exception_identity_is_preserved",
+      "result": "killed"
+    },
+    {
+      "name": "tracking-kernel-source-byte-bound",
+      "test": "tests/tracking/test_kernel.py::test_invalid_observations_refuse_before_business_code_or_store",
+      "result": "killed"
+    },
+    {
+      "name": "tracking-kernel-execute-request-only",
+      "test": "tests/tracking/test_kernel.py::test_non_execution_request_is_not_presented_as_a_cell[completion]",
+      "result": "killed"
+    },
+    {
+      "name": "development-license-cannot-reach-runtime",
+      "test": "tests/test_dependency_licenses.py::test_development_license_exception_cannot_enter_runtime",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-history-requires-explicit-read-authority",
+      "test": "tests/test_editor_contract.py::test_history_requires_its_own_exact_grant_before_store_io",
+      "result": "killed"
+    },
+    {
+      "name": "tracking-duplicate-key-refusal",
+      "test": "tests/tracking/test_sessions.py::test_duplicate_names_are_refused_before_repeated_file_reads",
+      "result": "killed"
+    },
+    {
+      "name": "tracking-aggregate-byte-refusal",
+      "test": "tests/tracking/test_collection_cost.py::test_capture_boundary_accepts_exact_bytes_and_refuses_next_item",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-value-byte-accounting",
+      "test": "tests/experiments/test_value_budget.py::test_exact_value_boundary_and_one_byte_over",
+      "result": "killed"
+    },
+    {
+      "name": "tracking-cross-context-refusal",
+      "test": "tests/tracking/test_sessions.py::test_independent_thread_contexts_and_cross_thread_refusal",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-v2-capture-binding",
+      "test": "tests/experiments/test_capture_contract.py::test_binding_refuses_changed_capture_or_subject",
+      "result": "killed"
+    },
+    {
+      "name": "application-import-exact-provider",
+      "test": "tests/test_application_dependencies.py::test_wheels_do_not_hide_required_dependency_defects",
+      "result": "killed"
+    },
+    {
+      "name": "application-wheel-snapshot-binding",
+      "test": "tests/test_application_dependencies.py::test_render_revalidates_provider_evidence_from_exact_retained_wheels",
+      "result": "killed"
+    },
+    {
+      "name": "readiness-main-module-context",
+      "test": "tests/readiness/test_main_guard.py::test_main_module_context_is_not_an_import",
+      "result": "killed"
+    },
+    {
+      "name": "readiness-main-guard-shadowing",
+      "test": "tests/readiness/test_main_guard.py::test_shadowed_or_mutated_namespace_never_proves_main_guard",
+      "result": "killed"
+    },
+    {
+      "name": "readiness-main-guard-else",
+      "test": "tests/readiness/test_main_guard.py::test_only_exact_supported_guard_is_recognized",
+      "result": "killed"
+    },
+    {
+      "name": "readiness-main-guard-indirect-write",
+      "test": "tests/readiness/test_main_guard.py::test_shadowed_or_mutated_namespace_never_proves_main_guard",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-exposure-success-required",
+      "test": "tests/experiments/test_exposure.py::test_unsuccessful_run_refused_before_io",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-exposure-explicit-output-selection",
+      "test": "tests/experiments/test_exposure.py::test_existing_pipeline_binding_and_selection",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-exposure-source-admission",
+      "test": "tests/experiments/test_exposure_security.py::test_changed_source_refuses_before_repository_planning",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-exposure-source-membership",
+      "test": "tests/experiments/test_exposure_security.py::test_unrelated_capability_refuses_before_repository_planning",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-exposure-observed-dependency-version",
+      "test": "tests/experiments/test_exposure.py::test_existing_pipeline_binding_and_selection",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-exposure-run-identity",
+      "test": "tests/experiments/test_exposure_security.py::test_pure_cross_binding_verifier_rejects_swaps",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-exposure-plan-identity",
+      "test": "tests/experiments/test_exposure_security.py::test_pure_cross_binding_verifier_rejects_swaps",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-exposure-artifact-binding",
+      "test": "tests/experiments/test_exposure_security.py::test_binding_presence_and_independent_application_checks",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-exposure-export-preserves-attachment",
+      "test": "tests/experiments/test_exposure.py::test_existing_pipeline_binding_and_selection",
+      "result": "killed"
+    },
+    {
+      "name": "diff-unknown-is-not-same",
+      "test": "tests/experiments/test_comparison.py::test_parameter_unknown_and_membership",
+      "result": "killed"
+    },
+    {
+      "name": "diff-membership-direction",
+      "test": "tests/experiments/test_comparison.py::test_remote_reference_and_selection_membership",
+      "result": "killed"
+    },
+    {
+      "name": "diff-delta-direction",
+      "test": "tests/experiments/test_comparison.py::test_metric_rules",
+      "result": "killed"
+    },
+    {
+      "name": "diff-delta-unit-binding",
+      "test": "tests/experiments/test_comparison.py::test_metric_rules",
+      "result": "killed"
+    },
+    {
+      "name": "diff-intent-is-not-observation",
+      "test": "tests/experiments/test_comparison.py::test_dataset_only_change_and_missing_observation",
+      "result": "killed"
+    },
+    {
+      "name": "diff-record-binding",
+      "test": "tests/experiments/test_comparison.py::test_revalidates_records_and_nested_binding",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-worker-source-recheck",
+      "test": "tests/experiments/test_worker_protocol.py::test_worker_rechecks_source_before_exec[False]",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-static-randomness-promoted",
+      "test": "tests/experiments/test_runner_process.py::test_real_process_bindings_environment_data_outputs_and_history",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-stale-failed-output",
+      "test": "tests/experiments/test_runner_process.py::test_status_sanitized_and_failed_outputs_never_captured",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-store-binding-bypass",
+      "test": "tests/experiments/test_store_history.py::test_corruption_not_hidden_by_filters_or_limits[wrong_binding]",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-store-publication-binding-bypass",
+      "test": "tests/experiments/test_store_history.py::test_wrong_binding_cannot_publish_anything",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-store-plan-canonical-bypass",
+      "test": "tests/experiments/test_store_history.py::test_noncanonical_plan_refused",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-store-run-canonical-bypass",
+      "test": "tests/experiments/test_store_history.py::test_corruption_not_hidden_by_filters_or_limits[noncanonical]",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-store-digest-bypass",
+      "test": "tests/experiments/test_store_history.py::test_orphan_plan_digest_refused",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-store-overwrite",
+      "test": "tests/experiments/test_store_history.py::test_exclusive_publication_failures_leave_original_and_no_stage[conflict]",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-unrequested-retry",
+      "test": "tests/experiments/test_runner_process.py::test_status_sanitized_and_failed_outputs_never_captured",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-timeout-group-survives",
+      "test": "tests/experiments/test_runner_cleanup.py::test_synchronized_descendant_group_cleanup[timeout]",
+      "result": "killed"
+    },
+    {
+      "name": "inspection-static-metric-captured",
+      "test": "tests/experiments/test_inspection.py::test_realistic_python_composes_existing_evidence",
+      "result": "killed"
+    },
+    {
+      "name": "inspection-dynamic-data-captured",
+      "test": "tests/experiments/test_inspection.py::test_explicit_inputs_and_bounded_reads",
+      "result": "killed"
+    },
+    {
+      "name": "inspection-unseeded-captured",
+      "test": "tests/experiments/test_inspection.py::test_realistic_python_composes_existing_evidence",
+      "result": "killed"
+    },
+    {
+      "name": "inspection-source-execution",
+      "test": "tests/experiments/test_inspection_security.py::test_hostile_python_is_parsed_without_execution",
+      "result": "killed"
+    },
+    {
+      "name": "inspection-fabricated-capability",
+      "test": "tests/experiments/test_inspection.py::test_canonical_identity_is_preserved_for_valid_source",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-static-metric-runtime",
+      "test": "tests/experiments/test_metrics.py::test_six_callables_and_safe_aliases",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-metric-validation",
+      "test": "tests/experiments/test_metrics.py::test_rejected_values_are_not_stringified",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-output-no-follow",
+      "test": "tests/experiments/test_outputs_fingerprint.py::test_symlink_swap_after_admission_never_reads",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-output-mutation",
+      "test": "tests/experiments/test_outputs_fingerprint.py::test_changed_during_read_discards_digest",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-output-deserialization",
+      "test": "tests/experiments/test_results_security.py::test_output_bytes_are_not_deserialized_or_uploaded",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-randomness-shadowing",
+      "test": "tests/experiments/test_randomness.py::test_untrusted_bindings_do_not_grant_framework_authority",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-randomness-dynamic",
+      "test": "tests/experiments/test_randomness.py::test_unknown_values",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-accelerator-uncertainty",
+      "test": "tests/experiments/test_randomness.py::test_fixed_literals",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-environment-content",
+      "test": "tests/experiments/test_environment.py::test_spec_exact_identity",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-input-mutation",
+      "test": "tests/experiments/test_inputs_fingerprint.py::test_changed_during_read_discards_digest[st_mtime_ns]",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-input-no-follow",
+      "test": "tests/experiments/test_inputs_security.py::test_symlink_swap_after_admission_is_never_read",
+      "result": "killed"
+    },
+    {
+      "name": "experiment-plan-binding",
+      "test": "tests/experiments/test_identity.py::test_binding_rejects_wrong_plan_digest",
+      "result": "killed"
+    },
+    {
+      "name": "preparation-admitted-hash",
+      "test": "tests/local_plugins/test_preparation_selection.py::test_best_wheel_with_unadmitted_hash_does_not_fallback_to_weaker_match",
+      "result": "killed"
+    },
+    {
+      "name": "preparation-retained-bytes",
+      "test": "tests/local_plugins/test_preparation_selection.py::test_real_download_checks_retained_bytes_and_admitted_hashes[post_transfer_tamper]",
+      "result": "killed"
+    },
+    {
+      "name": "preparation-ambiguous-selection",
+      "test": "tests/local_plugins/test_preparation.py::test_refusal_never_publishes_partial_output[ambiguous-wheel_selection_ambiguous]",
+      "result": "killed"
+    },
+    {
+      "name": "preparation-offline-closure",
+      "test": "tests/local_plugins/test_preparation_boundaries.py::test_failed_transaction_has_no_partial_publication[closure_changed-resolver_lock_mismatch]",
+      "result": "killed"
+    },
+    {
+      "name": "mcp-view-repository-identity",
+      "test": "tests/mcp_plugin/test_views.py::test_every_view_enforces_complete_repository_digest",
+      "result": "killed"
+    },
+    {
+      "name": "structured-stdlib-authority",
+      "test": "tests/structured_contracts/test_static.py::test_authority_failures",
+      "result": "killed"
+    },
+    {
+      "name": "object-required-fields",
+      "test": "tests/structured_contracts/test_runtime.py::test_required_extra_fields_and_mapping_order",
+      "result": "killed"
+    },
+    {
+      "name": "object-extra-fields",
+      "test": "tests/structured_contracts/test_runtime.py::test_required_extra_fields_and_mapping_order",
+      "result": "killed"
+    },
+    {
+      "name": "selected-scope-required-initialization",
+      "test": "tests/exposure/test_scope.py::test_required_module_initialization_without_any_callable_is_not_guessed",
+      "result": "killed"
+    },
+    {
+      "name": "repository-unproven-dependency-eligibility",
+      "test": "tests/repository_interfaces/test_local_imports.py::test_external_dependency_is_not_admitted_even_with_complete_graph",
+      "result": "killed"
+    },
+    {
+      "name": "oci-absence-http-status",
+      "test": "tests/oci_plugin/test_absence.py::test_ambiguous_or_failed_observation_never_means_absent[auth]",
+      "result": "killed"
+    },
+    {
+      "name": "governance-selected-bundle-digest",
+      "test": "tests/repository_interfaces/test_evidence.py::test_export_verify_after_removing_business_code[rest]",
+      "result": "killed"
+    },
+    {
+      "name": "attest-verdict-receipt-binding",
+      "test": "tests/attest_plugin/test_admission.py::test_substitution_never_promotes[receipt]",
+      "result": "killed"
+    },
+    {
+      "name": "attest-verdict-fields",
+      "test": "tests/attest_plugin/test_verdict.py::test_unknown_field_refused",
+      "result": "killed"
+    },
+    {
+      "name": "attest-verdict-check-fields",
+      "test": "tests/attest_plugin/test_verdict.py::test_malformed_check_refused[extra-value]",
+      "result": "killed"
+    },
+    {
+      "name": "source-analysis-admission",
+      "test": "tests/source_analysis/test_authorization.py::test_all_public_filesystem_apis_refuse_before_traversal[missing-operator_policy_required-scan]",
+      "result": "killed"
+    },
+    {
+      "name": "git-operator-admission",
+      "test": "tests/git_source/test_operator_policy.py::test_cli_and_api_refuse_before_effect[command0-missing-https]",
+      "result": "killed"
+    },
+    {
+      "name": "git-exact-source",
+      "test": "tests/git_source/test_operator_policy.py::test_pure_exact_decision[https-prefix]",
+      "result": "killed"
+    },
+    {
+      "name": "build-operator-admission",
+      "test": "tests/local_plugins/test_build_policy.py::test_build_cli_and_api_refuse_before_effect[missing-operator_policy_required-build]",
+      "result": "killed"
+    },
+    {
+      "name": "build-exact-target",
+      "test": "tests/local_plugins/test_build_policy.py::test_build_decision_is_pure[prefix-operator_build_denied]",
+      "result": "killed"
+    },
+    {
+      "name": "signing-operator-admission",
+      "test": "tests/local_plugins/test_signing_policy.py::test_signing_cli_and_api_refuse_before_effect[missing-operator_policy_required-attest]",
+      "result": "killed"
+    },
+    {
+      "name": "signing-timestamp-authority",
+      "test": "tests/local_plugins/test_signing_policy.py::test_signing_decision_is_pure[tsa_prefix-operator_tsa_denied]",
+      "result": "killed"
+    },
+    {
+      "name": "publication-operator-admission",
+      "test": "tests/local_plugins/test_operator_policy.py::test_managed_cli_and_api_refuse_before_effect[push]",
+      "result": "killed"
+    },
+    {
+      "name": "publication-repository-prefix",
+      "test": "tests/local_plugins/test_operator_policy.py::test_exact_grants_without_external_io[prefix-operator_repository_denied-push]",
+      "result": "killed"
+    },
+    {
+      "name": "subprocess-deny-kernel-action",
+      "test": "tests/subprocess_guard/test_contract.py::test_bpf_denies_native_creation_compat_abis_and_x32_aliases",
+      "result": "killed"
+    },
+    {
+      "name": "subprocess-deny-worker-protocol",
+      "test": "tests/subprocess_guard/test_contract.py::test_provider_requires_independent_protocol_label",
+      "result": "killed"
+    },
+    {
+      "name": "analysis-executes-source",
+      "test": "tests/capabilities/test_properties.py::test_hostile_source_never_executes_any_phase",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-symlink-escape",
+      "test": "tests/governed/test_artifacts.py::test_startup_refuses_unavailable_host_and_path_escape",
+      "result": "killed"
+    },
+    {
+      "name": "bundle-artifact-integrity",
+      "test": "tests/governed/test_artifacts.py::test_startup_rejects_missing_or_modified_artifacts[execution/worker.py-rest]",
+      "result": "killed"
+    },
+    {
+      "name": "policy-unsupported-control",
+      "test": "tests/execution/test_policy.py::test_backend_capability_availability_and_required_support",
+      "result": "killed"
+    },
+    {
+      "name": "output-follows-symlink",
+      "test": "tests/rest/test_output.py::test_output_symlink_and_symlink_parent_are_rejected",
+      "result": "killed"
+    },
+    {
+      "name": "local-process-group-kill",
+      "test": "tests/execution/test_process.py::test_ordinary_descendant_is_stopped_with_worker",
+      "result": "killed"
+    },
+    {
+      "name": "oci-pull",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-network",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-read-only",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-cap-drop",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-security-opt",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-user",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-ipc",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-cgroupns",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-pids-limit",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-memory",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-memory-swap",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    },
+    {
+      "name": "oci-cpu-quota",
+      "test": "tests/oci/test_provider.py::test_create_has_no_escape_hatches_or_environment_values",
+      "result": "killed"
+    }
+  ]
+}

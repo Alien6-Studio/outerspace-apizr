@@ -11,6 +11,7 @@ from apizr.environment.extras import MissingExtra, available, require
 # Only the selected adapter is imported. Completion and onboarding have distinct
 # call signatures and remain explicit in _main alongside the top-level help.
 COMMAND_TARGETS: dict[str, tuple[str, str]] = {
+    "providers": ("apizr.cli.commands.providers", "main"),
     "telemetry": ("apizr.cli.commands.telemetry", "main"),
     "editor": ("apizr.cli.commands.editor", "main"),
     "ci": ("apizr.cli.commands.ci", "main"),
@@ -88,6 +89,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
         print("  apizr experiment run SOURCE — execute trusted code with host access.")
         print("  apizr experiment list | apizr experiment show RUN — local history.")
         print("  apizr experiment diff RUN_A RUN_B — compare recorded evidence.")
+        print("  apizr providers list — scientific providers, versions and limits.")
         print(
             "  apizr experiment expose RUN --capability ID --interface rest|mcp --output-dir DIR"
         )

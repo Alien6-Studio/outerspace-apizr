@@ -230,19 +230,26 @@ def check(source: Path, manifest: Path) -> list[str]:
                         "apizr.generators.notebooks",
                     ),
                     "experiments/runner.py": (
+                        "apizr.scientific_providers.contracts.model",
+                        "apizr.scientific_providers.contracts.selection",
                         "apizr.execution.supervisor",
                         "apizr.execution.protocol",
                         "apizr.generators.notebooks",
                     ),
                     "experiments/worker.py": ("apizr.execution.protocol",),
                     "experiments/inspection_model.py": (
+                        "apizr.scientific_providers.contracts.selection",
                         "apizr.capabilities.model",
                         "apizr.readiness",
                         "apizr.repository.model",
                         "apizr.repository_views.model",
                     ),
                     "experiments/inspection.py": (
+                        "apizr.scientific_providers.contracts.model",
+                        "apizr.scientific_providers.contracts.selection",
+                        "apizr.scientific_providers.selection",
                         "apizr.scientific_providers.builtin.locations",
+                        "apizr.scientific_providers.builtin.recognition",
                         "apizr.capabilities",
                         "apizr.readiness",
                         "apizr.repository.model",
@@ -250,6 +257,12 @@ def check(source: Path, manifest: Path) -> list[str]:
                         "apizr.repository_readiness",
                         "apizr.repository_views",
                         "apizr.generators.notebooks",
+                    ),
+                    "experiments/history.py": (
+                        "apizr.scientific_providers.contracts.selection",
+                    ),
+                    "experiments/comparison.py": (
+                        "apizr.scientific_providers.contracts.selection",
                     ),
                 }
                 primitives += composition_dependencies.get(path, ())

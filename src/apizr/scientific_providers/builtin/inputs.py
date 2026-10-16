@@ -132,10 +132,14 @@ def discover_inputs(source: str | bytes, *, source_reference: str) -> InputResul
         return InputResult(diagnostics=(InputDiagnostic(code="input_source_invalid"),))
     discovery = Discovery(source_reference)
     discovery.visit(tree)
+    return discovery_result(discovery)
+
+
+def discovery_result(discovery: Discovery) -> InputResult:
     if len(discovery.artifacts) > 256 or len(discovery.diagnostics) > 512:
         return InputResult(
             diagnostics=(
-                InputDiagnostic(code="input_discovery_limit", source=source_reference),
+                InputDiagnostic(code="input_discovery_limit", source=discovery.source),
             )
         )
     return InputResult(

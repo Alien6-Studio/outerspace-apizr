@@ -38,6 +38,10 @@ from apizr.experiments.store import (
     record_source,
     validate_record,
 )
+from apizr.scientific_providers.contracts.selection import (
+    ProviderReport,
+    read_provenance,
+)
 
 MAX_DIFF_BYTES = 32 * 1024 * 1024
 
@@ -168,6 +172,12 @@ class DifferenceCounts(ExperimentValue):
     unknown: Count
 
 
+class ProviderChange(ExperimentValue):
+    a: ProviderReport | None
+    b: ProviderReport | None
+    state: ChangeState
+
+
 class ExperimentDiff(ExperimentValue):
     schema_version: Literal["apizr.experiment-diff/v1"] = "apizr.experiment-diff/v1"
     run_a_digest: Digest
@@ -187,6 +197,9 @@ class ExperimentDiff(ExperimentValue):
     outputs: Annotated[tuple[OutputChange, ...], Field(max_length=512)]
     material_counts: DifferenceCounts
     result_counts: DifferenceCounts
+    providers: ProviderChange | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
 
 class CaptureChange(ExperimentValue):
@@ -225,6 +238,9 @@ class ExperimentDiffV2(ExperimentValue):
     outputs: Annotated[tuple[OutputChange, ...], Field(max_length=512)]
     material_counts: DifferenceCounts
     result_counts: DifferenceCounts
+    providers: ProviderChange | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
     capture: CaptureChange
     call_parameters: Annotated[tuple[CallParameterChange, ...], Field(max_length=512)]
@@ -596,6 +612,16 @@ def _compare_runs(a: Record, b: Record) -> Diff:
                     *(item.state for item in calls),
                 )
             ),
+        )
+    providers_a = read_provenance(a.plan.execution.controls)
+    providers_b = read_provenance(b.plan.execution.controls)
+    if providers_a is not None or providers_b is not None:
+        fields["providers"] = ProviderChange(
+            a=providers_a,
+            b=providers_b,
+            state=ChangeState.UNKNOWN
+            if providers_a is None or providers_b is None
+            else _evidence(providers_a, providers_b),
         )
     result = _DIFF.validate_python(fields)
     diff_bytes(result)  # Bound the derived view even when each input is bounded.

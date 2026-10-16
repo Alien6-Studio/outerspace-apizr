@@ -26,6 +26,7 @@ ENTRYPOINTS = {
             "delivery",
             "mcp",
             "plugins",
+            "providers",
         )
     },
     "init": ("apizr.cli.commands.onboarding", "init"),

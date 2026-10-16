@@ -107,9 +107,10 @@ src/apizr/
 ├── repository_views/         pure bounded projections of complete evidence
 ├── experiments/              intended experiment controls and observed-run evidence
 ├── tracking/                 in-process SDK; consumes canonical experiment evidence
-├── scientific_providers/     composes contracts and built-in lexical recognition
+├── scientific_providers/     composes contracts, selection and lexical recognition
 │   ├── contracts/            bounded provider/adapter values and result admission
-│   └── builtin/              official default scientific rules and occurrence locations
+│   ├── builtin/              official default scientific rules and occurrence locations
+│   └── selection/            explicit precedence and trusted extension invocation
 ├── editor_contracts/         versioned editor-facing engine contracts
 ├── exposure/                 explicit selection and required-evidence planning
 ├── interfaces/               shared interface contracts and runtime validation
@@ -196,6 +197,39 @@ It ships in the core wheel and is selected by default. The four existing
 `experiments.discover_*` operations dispatch lazily to their canonical built-in
 implementation, preserving their public imports and historical bounds. Inspection
 uses the built-in location tracer; neither path imports a scientific library.
+
+`scientific_providers/selection` owns explicit ordered selection and bounded
+descriptor/result admission through the existing plugin lifecycle. Contracts own
+the portable selection and provenance reports; `workspace/provider_selection`
+admits an explicit bounded configuration file and CLI adapters present it.
+Only inspection and execution composition invoke selection. Plan construction
+retains the report as a finite execution control; history and comparison consume
+the portable contract without loading providers. The architecture gate declares
+these narrow composition edges; primitive Plan/Run values remain independent of
+provider invocation and plugin lifecycle.
+
+`experiments/source_analysis` owns immutable source digest, physical-line byte
+lengths and AST budget facts. `SourceView` revalidation shares these facts only
+for identical admitted source. A changed source is parsed again, and `tree()`
+always creates a fresh caller-owned AST. No mutable tree crosses a provider
+boundary and no global analysis cache exists. Built-in recognition privately
+visits one tree with its four rules, returning immutable evidence and occurrence
+tuples. Readiness computes module initialization reasons and annotation
+classifications once within a matching-source assessment; structured declaration
+ordering stays part of each annotation cache key.
+
+```mermaid
+flowchart LR
+    Source[Explicit source] --> Facts[Immutable bounded source facts]
+    Facts --> Selection[Explicit provider selection]
+    Selection --> Builtin[Built-in private AST and rules]
+    Selection --> Extension[Trusted extension protocol]
+    Builtin --> Admission[Core result admission]
+    Extension --> Admission
+    Admission --> Plan[Plan and retained provenance]
+    Plan --> Run[Run bound by Plan digest]
+    Run --> History[Show and diff without producers]
+```
 
 Canonical result models, closed v1 schema refinements, explicit input/output
 selection and fingerprinting, explicit metric capture, literal parameters and

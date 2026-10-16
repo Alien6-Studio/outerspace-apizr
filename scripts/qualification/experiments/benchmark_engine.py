@@ -238,6 +238,12 @@ def run(output: Path, *, repeats: int, sizes: list[int]) -> dict[str, Any]:
             name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
             for name in (
                 "src/apizr/experiments/store.py",
+                "src/apizr/experiments/inspection.py",
+                "src/apizr/experiments/provider_source.py",
+                "src/apizr/experiments/source_analysis.py",
+                "src/apizr/scientific_providers/builtin/recognition.py",
+                "src/apizr/readiness/analysis.py",
+                "src/apizr/readiness/analyzer.py",
                 "src/apizr/experiments/history.py",
                 "src/apizr/experiments/serialization.py",
                 "src/apizr/experiments/comparison.py",

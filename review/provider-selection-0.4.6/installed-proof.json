@@ -1,0 +1,31 @@
+{
+  "alternative_provider": {
+    "core_environment_unchanged": true,
+    "disabled": "unknown",
+    "explicit_protocol": "apizr.extension/v1",
+    "isolated_python": "/private/tmp/apizr-providers-installed-complete-final/external-provider-proof/plugins/environments/c10eab68e26941d2a4419041f6eb8ea9/venv/bin/python",
+    "negative_recognition": "passed",
+    "positive_recognition": "passed",
+    "removed_provider_history": "passed",
+    "wheel_sha256": "edae03fffc368f6e5ee68348f418e82c4a15aba2c5852ac7a25ccfabb67519c3"
+  },
+  "builtin_capabilities": [
+    "input_reads",
+    "metric_signals",
+    "output_candidates",
+    "randomness_controls"
+  ],
+  "builtin_default_inspection": "passed",
+  "builtin_identity": {
+    "name": "apizr.builtin",
+    "version": "1"
+  },
+  "candidate_core_wheel_sha256": "4760cfbff6353abd24d4016f5834b74e98f516c9b28bfc2dcab13fcad292672f",
+  "installed_package": "/private/tmp/apizr-client-engine/lib/python3.12/site-packages/apizr/__init__.py",
+  "non_finite_adapter_value": "refused",
+  "sdk_run_schema": "apizr.experiment-run/v2",
+  "source_digest": "fd0f1f9ba9710ae0e9a29943b964540481d74c9d7635c6ac8d3aaf7429c9cafd",
+  "source_mismatch": "refused",
+  "static_result_schema": "apizr.scientific-result/v1",
+  "status": "passed"
+}

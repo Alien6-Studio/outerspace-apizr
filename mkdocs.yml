@@ -150,6 +150,7 @@ nav:
       - Commands, parameters and formats: reference/index.md
       - Python compiler API: reference/compiler-api.md
       - In-process tracking SDK: reference/tracking-sdk.md
+      - Select scientific providers: reference/scientific-providers.md
       - Editor engine contract: reference/editor-contract.md
       - VS Code development extension: reference/vscode.md
       - Telemetry policy and contract: about/telemetry.md

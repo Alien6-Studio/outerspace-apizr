@@ -101,3 +101,12 @@ That evidence records the actual local interpreter and machine, every timing
 sample, source/fixture hashes and profile counts. Startup-heavy editor results
 are reported separately from in-process history gains; they are not inferred
 from those gains.
+
+The [shared-analysis qualification for #321](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/review/shared-analysis-0.4.6)
+retains the same benchmark and parse inventories. It reduces AST parses from
+16 to 12 for the fraud notebook and from 1,010 to 7 for the 500-function script,
+with byte-identical canonical inspections. The script's observed CLI median is
+1.219 → 0.483 s. The notebook sample is slower and variable (0.413 → 0.524 s);
+only its deterministic reduction in analysis work is claimed. Immutable source
+facts and readiness classifications live for one inspection; mutable provider
+ASTs and global caches are not shared.

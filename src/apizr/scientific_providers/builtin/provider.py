@@ -4,10 +4,7 @@ from apizr.experiments.inputs import InputResult
 from apizr.experiments.metrics import MetricDiscoveryResult
 from apizr.experiments.outputs import OutputDiscoveryResult
 from apizr.experiments.randomness import RandomnessResult
-from apizr.scientific_providers.builtin.inputs import discover_inputs
-from apizr.scientific_providers.builtin.metrics import discover_metrics
-from apizr.scientific_providers.builtin.outputs import discover_outputs
-from apizr.scientific_providers.builtin.randomness import discover_randomness
+from apizr.scientific_providers.builtin.recognition import recognize_source
 from apizr.scientific_providers.contracts import (
     ProducerIdentity,
     ProviderDescriptor,
@@ -43,20 +40,21 @@ class BuiltinProvider:
         source = request.source.text
         reference = request.source.reference
         capabilities = request.provider.capabilities
+        evidence = recognize_source(source, reference)
         result = ProviderResult(
             identity=self.descriptor.identity,
             source=reference,
             source_digest=request.source.digest,
-            metric_signals=discover_metrics(source, source_reference=reference)
+            metric_signals=evidence.metric_signals
             if "metric_signals" in capabilities
             else MetricDiscoveryResult(),
-            output_candidates=discover_outputs(source, source_reference=reference)
+            output_candidates=evidence.output_candidates
             if "output_candidates" in capabilities
             else OutputDiscoveryResult(),
-            randomness_controls=discover_randomness(source, source_reference=reference)
+            randomness_controls=evidence.randomness_controls
             if "randomness_controls" in capabilities
             else RandomnessResult(),
-            input_reads=discover_inputs(source, source_reference=reference)
+            input_reads=evidence.input_reads
             if "input_reads" in capabilities
             else InputResult(),
         )

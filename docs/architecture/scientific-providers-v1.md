@@ -4,8 +4,9 @@
 
     These contracts are implemented on `0.4.6` and are not yet published.
     The official built-in recognizers ship in the core and remain active by default.
-    Provider selection and stored producer inventory remain separate milestone work.
-    Existing inspection behavior and stored evidence stay unchanged.
+    [Explicit selection](../reference/scientific-providers.md) reports exact versions,
+    ownership, limits and diagnostics. Runs retain that inventory through their
+    digest-bound Plans; historical records remain readable without a provider.
 
 Static recognition and in-process observation have different authority. A static
 provider sees bounded source and returns candidates. An SDK adapter receives an

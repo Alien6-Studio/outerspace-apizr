@@ -344,9 +344,12 @@ def _value(value: object) -> str:
 def show_text(record: Record) -> str:
     record = validate_record(record)
     if isinstance(record, RunRecordV2):
-        return _capture_text(record)
+        return _capture_text(record) + _provider_text(record)
     plan, run = record.plan, record.run
     lines = [summary_text(_summary(record)).rstrip()]
+    providers = _provider_text(record)
+    if providers:
+        lines.append(providers.rstrip())
     mode = "cli_run" if plan.execution.kind == "trusted-local-process" else "unknown"
     lines.append(f"Capture: {mode}; producer: unknown (v1 evidence)")
     if run.timing is not None:
@@ -516,3 +519,20 @@ def _capture_text(record: RunRecordV2) -> str:
         "Bounded display; --format json contains complete intended and observed evidence."
     )
     return "\n".join(lines) + "\n"
+
+
+def _provider_text(record: Record) -> str:
+    from apizr.scientific_providers.contracts.selection import read_provenance
+
+    report = read_provenance(record.plan.execution.controls)
+    if report is None:
+        return ""
+    return (
+        "Scientific providers (recorded static recognition)\n"
+        + "\n".join(
+            f"  {p.choice.identity.name} {p.choice.identity.version}: {p.diagnostic or 'active'}; "
+            + (", ".join(p.selected_capabilities) or "no selected capability")
+            for p in report.providers
+        )
+        + "\n"
+    )

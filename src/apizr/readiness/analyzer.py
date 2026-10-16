@@ -9,7 +9,7 @@ from apizr.capabilities import CapabilityDocument, document_digest, inspect_sour
 from apizr.capabilities.instrumentation import TrackingBindings
 from apizr.capabilities.model import Capability, DiagnosticCode, Effects, SourceSpan
 
-from .contracts import classify
+from .analysis import ReadinessAnalysis, analyze
 from .model import (
     Assessment,
     Code,
@@ -18,9 +18,8 @@ from .model import (
     ReadinessReport,
     Reason,
     State,
-    StructuredDeclaration,
 )
-from .source import SourceFacts, initialization_risk, unresolved_import
+from .source import SourceFacts, unresolved_import
 from .structured import declarations
 
 
@@ -48,26 +47,14 @@ def _assessment(
 def _capability(
     capability: Capability,
     facts: SourceFacts,
-    stub_lines: set[int],
-    structured_types: tuple[StructuredDeclaration, ...],
+    analysis: ReadinessAnalysis,
     tracking: TrackingBindings,
 ) -> Assessment:
     source = capability.source
     function = facts.functions[source.symbol, source.line]
     order = facts.function_orders[source.symbol, source.line]
     binding: list[Reason] = []
-    execution: list[Reason] = []
-    safe_classes = {
-        declaration.source.line
-        for declaration in structured_types
-        if declaration.type is not None
-    }
-    shapes = {
-        declaration.name: declaration.type
-        if declaration.source.line < source.line
-        else None
-        for declaration in structured_types
-    }
+    execution: list[Reason] = list(analysis.initialization)
     if capability.availability.value == "unknown" and function not in facts.tree.body:
         binding.extend(_reasons((Code.CONDITIONAL,), source.line))
     if capability.decorators and not tracking.inert_decorator(function):
@@ -77,13 +64,6 @@ def _capability(
             binding.extend(_reasons((Code.REBOUND,), event.line))
     for line in facts.namespace_lines:
         binding.extend(_reasons((Code.NAMESPACE,), line))
-    for statement in facts.tree.body:
-        if (
-            statement.lineno not in stub_lines | safe_classes
-            and initialization_risk(statement, tracking=tracking)
-            and not facts.import_only_main_guard(statement, source.module)
-        ):
-            execution.extend(_reasons((Code.INITIALIZATION,), statement.lineno))
     if capability.execution == "generator":
         execution.extend(_reasons((Code.GENERATOR,), source.line))
     elif capability.execution == "async_generator":
@@ -104,22 +84,17 @@ def _capability(
         for signature, line in signatures
         for parameter in signature.parameters
         for reason in _reasons(
-            classify(
-                ast.parse(parameter.annotation.declared, mode="eval").body
-                if parameter.annotation
-                else None,
-                facts,
-                shapes,
+            analysis.codes(
+                parameter.annotation.declared if parameter.annotation else None,
+                source.line,
             ),
             line,
             parameter.name,
         )
     )
     output_type = capability.signature.returns.annotation
-    output_codes = classify(
-        ast.parse(output_type.declared, mode="eval").body if output_type else None,
-        facts,
-        shapes,
+    output_codes = analysis.codes(
+        output_type.declared if output_type else None, source.line
     )
     output = _reasons((Code.OUTPUT,), source.line) if output_codes else ()
     return _assessment(
@@ -152,9 +127,16 @@ def assess(document: CapabilityDocument, source: str | bytes) -> ReadinessReport
     tracking = TrackingBindings(facts.tree)
     stubs = {o.source.line for c in document.capabilities for o in c.overloads}
     structured_types = declarations(facts, document.source.module)
+    analysis = analyze(
+        document.capabilities,
+        facts,
+        stubs,
+        structured_types,
+        tracking,
+        document.source.module,
+    )
     assessments = [
-        _capability(c, facts, stubs, structured_types, tracking)
-        for c in document.capabilities
+        _capability(c, facts, analysis, tracking) for c in document.capabilities
     ]
     present = {c.name for c in document.capabilities}
     rejected: dict[str, list[Reason]] = defaultdict(list)

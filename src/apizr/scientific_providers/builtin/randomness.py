@@ -225,6 +225,10 @@ def discover_randomness(
         return RandomnessResult(
             diagnostics=(RandomnessDiagnostic(code="randomness_source_invalid"),)
         )
+    return discovery_result(discovery, tree)
+
+
+def discovery_result(discovery: Discovery, tree: ast.Module) -> RandomnessResult:
     candidates: set[str] = set()
     for node in ast.walk(tree):
         imports: list[str] = []

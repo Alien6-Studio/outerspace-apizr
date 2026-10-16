@@ -344,10 +344,31 @@ MUTATIONS = (
     ),
     Mutation(
         "scientific-provider-python-line-boundary",
-        "src/apizr/experiments/provider_source.py",
+        "src/apizr/experiments/source_analysis.py",
         '.split("\\n")',
         ".splitlines()",
         "tests/scientific_providers/test_contracts.py::test_python_line_positions_ignore_unicode_separators",
+    ),
+    Mutation(
+        "scientific-provider-source-facts-binding",
+        "src/apizr/experiments/provider_source.py",
+        "type(analysis) is SourceAnalysis and analysis.source == result.text",
+        "type(analysis) is SourceAnalysis",
+        "tests/scientific_providers/test_analysis.py::test_revalidation_reuses_only_matching_immutable_facts",
+    ),
+    Mutation(
+        "scientific-provider-retained-identity",
+        "src/apizr/scientific_providers/contracts/selection.py",
+        "and self.descriptor.identity != self.choice.identity",
+        "and False",
+        "tests/scientific_providers/test_selection.py::test_retained_provider_identity_cannot_change",
+    ),
+    Mutation(
+        "scientific-provider-selection-readmission",
+        "src/apizr/scientific_providers/selection/operations.py",
+        "admitted = admit_result(candidate, request=request)",
+        "admitted = candidate",
+        "tests/scientific_providers/test_selection.py::test_refusal_is_unknown_no_exception_or_fallback[invalid-True-provider_result_invalid]",
     ),
     Mutation(
         "scientific-provider-source-digest",

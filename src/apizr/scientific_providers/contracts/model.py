@@ -66,7 +66,7 @@ class ProviderRequest(ExperimentValue):
     @model_validator(mode="after")
     def lowered_bounds(self) -> Self:
         limits = self.provider.limits
-        self.source.tree(
+        self.source.validate_bounds(
             max_bytes=limits.max_source_bytes,
             max_nodes=limits.max_ast_nodes,
             max_depth=limits.max_ast_depth,

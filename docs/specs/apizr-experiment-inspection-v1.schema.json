@@ -164,6 +164,46 @@
       "title": "CapabilityFocus",
       "type": "object"
     },
+    "CapabilityOwner": {
+      "additionalProperties": false,
+      "properties": {
+        "capability": {
+          "enum": [
+            "metric_signals",
+            "output_candidates",
+            "randomness_controls",
+            "input_reads"
+          ],
+          "title": "Capability",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProducerIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "static",
+            "unknown"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capability",
+        "provider",
+        "state"
+      ],
+      "title": "CapabilityOwner",
+      "type": "object"
+    },
     "CodeEvidence": {
       "additionalProperties": false,
       "properties": {
@@ -1463,6 +1503,297 @@
       "title": "ParameterSignal",
       "type": "object"
     },
+    "ProducerIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "ProducerIdentity",
+      "type": "object"
+    },
+    "ProviderChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/ProducerIdentity"
+        },
+        "capabilities": {
+          "default": [
+            "input_reads",
+            "metric_signals",
+            "output_candidates",
+            "randomness_controls"
+          ],
+          "items": {
+            "enum": [
+              "metric_signals",
+              "output_candidates",
+              "randomness_controls",
+              "input_reads"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extension"
+        }
+      },
+      "required": [
+        "identity"
+      ],
+      "title": "ProviderChoice",
+      "type": "object"
+    },
+    "ProviderDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "apizr.scientific-provider/v1",
+          "default": "apizr.scientific-provider/v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "identity": {
+          "$ref": "#/$defs/ProducerIdentity"
+        },
+        "capabilities": {
+          "items": {
+            "enum": [
+              "metric_signals",
+              "output_candidates",
+              "randomness_controls",
+              "input_reads"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "limits": {
+          "$ref": "#/$defs/ProviderLimits",
+          "default": {
+            "max_source_bytes": 1048576,
+            "max_ast_nodes": 100000,
+            "max_ast_depth": 128,
+            "max_evidence": 256,
+            "max_diagnostics": 512,
+            "max_result_bytes": 1048576
+          }
+        },
+        "observation": {
+          "const": "static-only",
+          "default": "static-only",
+          "title": "Observation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identity",
+        "capabilities"
+      ],
+      "title": "ProviderDescriptor",
+      "type": "object"
+    },
+    "ProviderLimits": {
+      "additionalProperties": false,
+      "description": "Declarative ceilings, always at or below core hard bounds.",
+      "properties": {
+        "max_source_bytes": {
+          "default": 1048576,
+          "maximum": 1048576,
+          "minimum": 1,
+          "title": "Max Source Bytes",
+          "type": "integer"
+        },
+        "max_ast_nodes": {
+          "default": 100000,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Max Ast Nodes",
+          "type": "integer"
+        },
+        "max_ast_depth": {
+          "default": 128,
+          "maximum": 128,
+          "minimum": 1,
+          "title": "Max Ast Depth",
+          "type": "integer"
+        },
+        "max_evidence": {
+          "default": 256,
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Max Evidence",
+          "type": "integer"
+        },
+        "max_diagnostics": {
+          "default": 512,
+          "maximum": 512,
+          "minimum": 1,
+          "title": "Max Diagnostics",
+          "type": "integer"
+        },
+        "max_result_bytes": {
+          "default": 1048576,
+          "maximum": 1048576,
+          "minimum": 1,
+          "title": "Max Result Bytes",
+          "type": "integer"
+        }
+      },
+      "title": "ProviderLimits",
+      "type": "object"
+    },
+    "ProviderObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "choice": {
+          "$ref": "#/$defs/ProviderChoice"
+        },
+        "descriptor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProviderDescriptor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "selected_capabilities": {
+          "default": [],
+          "items": {
+            "enum": [
+              "metric_signals",
+              "output_candidates",
+              "randomness_controls",
+              "input_reads"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Selected Capabilities",
+          "type": "array"
+        },
+        "diagnostic": {
+          "anyOf": [
+            {
+              "enum": [
+                "provider_disabled",
+                "provider_unavailable",
+                "provider_incompatible",
+                "provider_failed",
+                "provider_result_invalid",
+                "provider_limit",
+                "provider_unsupported",
+                "provider_shadowed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Diagnostic"
+        }
+      },
+      "required": [
+        "choice"
+      ],
+      "title": "ProviderObservation",
+      "type": "object"
+    },
+    "ProviderReport": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "apizr.scientific-providers/v1",
+          "default": "apizr.scientific-providers/v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "providers": {
+          "items": {
+            "$ref": "#/$defs/ProviderObservation"
+          },
+          "maxItems": 16,
+          "title": "Providers",
+          "type": "array"
+        },
+        "available": {
+          "items": {
+            "$ref": "#/$defs/ProducerIdentity"
+          },
+          "maxItems": 16,
+          "title": "Available",
+          "type": "array"
+        },
+        "active": {
+          "items": {
+            "$ref": "#/$defs/ProducerIdentity"
+          },
+          "maxItems": 16,
+          "title": "Active",
+          "type": "array"
+        },
+        "owners": {
+          "items": {
+            "$ref": "#/$defs/CapabilityOwner"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "title": "Owners",
+          "type": "array"
+        }
+      },
+      "required": [
+        "providers",
+        "available",
+        "active",
+        "owners"
+      ],
+      "title": "ProviderReport",
+      "type": "object"
+    },
     "RandomnessControl": {
       "additionalProperties": false,
       "properties": {
@@ -2176,6 +2507,17 @@
     },
     "states": {
       "$ref": "#/$defs/InspectionStates"
+    },
+    "providers": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProviderReport"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [

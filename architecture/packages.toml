@@ -58,7 +58,7 @@ allowed_external_imports = ["pydantic"]
 
 [packages."scientific_providers"]
 kind = "composition"
-responsibility = "Compose scientific provider contracts and the official built-in source recognizers; retain admission compatibility exports."
+responsibility = "Compose scientific provider contracts, explicit selection and the official built-in source recognizers; retain admission compatibility exports."
 modules = ["__init__.py", "admission.py"]
 
 [packages."scientific_providers/contracts"]
@@ -71,6 +71,12 @@ allowed_external_imports = ["pydantic"]
 kind = "domain"
 responsibility = "Official default source-only scientific API recognition and occurrence locations, shipped in the core wheel; no scientific imports, file observations, workload execution or store publication."
 allowed_internal_imports = ["apizr.experiments.model", "apizr.experiments.inputs", "apizr.experiments.metrics", "apizr.experiments.outputs", "apizr.experiments.randomness", "apizr.experiments.provider_source", "apizr.scientific_providers.contracts"]
+allowed_external_imports = ["pydantic"]
+
+[packages."scientific_providers/selection"]
+kind = "domain"
+responsibility = "Explicit ordered scientific provider selection, descriptor/version admission and bounded invocation of trusted installed extensions; no automatic discovery, scientific imports, store publication or evidence comparison."
+allowed_internal_imports = ["apizr.contracts.json", "apizr.experiments.provider_source", "apizr.extension_runtime", "apizr.plugins.artifacts.models", "apizr.plugins.local.activation", "apizr.scientific_providers.contracts", "apizr.scientific_providers.builtin"]
 allowed_external_imports = ["pydantic"]
 
 [packages."editor_contracts"]

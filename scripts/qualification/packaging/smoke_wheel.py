@@ -74,6 +74,11 @@ print(apizr.__file__)
             check=True,
         )
         scientific_probe = root / "scientific_contract_proof.py"
+        shutil.copytree(
+            Path(__file__).resolve().parents[3] / "examples/scientific-provider",
+            root / "alternative-provider",
+            ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "dist", ".venv"),
+        )
         shutil.copyfile(
             (
                 Path(__file__).resolve().parents[3]
@@ -96,7 +101,7 @@ print(apizr.__file__)
             ],
             cwd=root,
             check=True,
-            timeout=20,
+            timeout=90,
         )
         subprocess.run(
             [str(cli), "--help"], cwd=root, check=True, stdout=subprocess.DEVNULL

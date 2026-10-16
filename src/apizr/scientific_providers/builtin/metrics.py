@@ -83,11 +83,15 @@ def discover_metrics(
         )
     discovery = Discovery(source_reference)
     discovery.visit(tree)
+    return discovery_result(discovery)
+
+
+def discovery_result(discovery: Discovery) -> MetricDiscoveryResult:
     if len(discovery.signals) > 256:
         return MetricDiscoveryResult(
             diagnostics=(
                 MetricDiagnostic(
-                    code="metric_discovery_limit", source=source_reference
+                    code="metric_discovery_limit", source=discovery.source
                 ),
             )
         )
