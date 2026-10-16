@@ -29,6 +29,32 @@ build = load("docs_build")
 https = load("https_fixture")
 
 
+@pytest.mark.parametrize("available", [True, False])
+def test_historical_python_preparation_preserves_offline_consumer_policy(
+    monkeypatch, available
+):
+    smoke = load("smoke_readme")
+    environment = {"PATH": "/tools", "UV_PYTHON_DOWNLOADS": "never"}
+    calls = []
+
+    def run(command, **kwargs):
+        calls.append((command, kwargs))
+        if command[2] == "install":
+            assert kwargs["env"]["UV_PYTHON_DOWNLOADS"] == "manual"
+            return SimpleNamespace(returncode=0)
+        assert "--no-python-downloads" in command
+        assert kwargs["env"]["UV_PYTHON_DOWNLOADS"] == "never"
+        return SimpleNamespace(
+            returncode=0 if available or len(calls) == 3 else 1,
+            stdout="/tools/python3.14\n",
+        )
+
+    monkeypatch.setattr(smoke.subprocess, "run", run)
+    assert smoke.historical_python(environment) == Path("/tools/python3.14")
+    assert len(calls) == (1 if available else 3)
+    assert environment["UV_PYTHON_DOWNLOADS"] == "never"
+
+
 @pytest.fixture(scope="module")
 def tls(tmp_path_factory):
     return https.certificate(tmp_path_factory.mktemp("docs-cert"))

@@ -196,6 +196,30 @@ def selected_scope(cli: Path, repository: Path) -> None:
         print("PASS documented serving selection; full ambiguous audit retained")
 
 
+def historical_python(environment):
+    """Explicitly prepare an old supported host; keep consumer downloads disabled."""
+    find = ["uv", "python", "find", "--no-python-downloads", "3.14"]
+    legacy = subprocess.run(
+        find, env=environment, capture_output=True, text=True, timeout=30
+    )
+    if legacy.returncode:
+        subprocess.run(
+            ["uv", "python", "install", "3.14"],
+            env={**environment, "UV_PYTHON_DOWNLOADS": "manual"},
+            check=True,
+            timeout=180,
+        )
+        legacy = subprocess.run(
+            find,
+            env=environment,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=30,
+        )
+    return Path(legacy.stdout.strip())
+
+
 def quickstart(
     cli: Path,
     repository: Path,
@@ -239,18 +263,9 @@ def quickstart(
         if not candidate and sys.version_info[:2] >= (3, 15):
             # Historical releases exclude 3.15. Their real installation proof
             # keeps a supported host; candidate examples use the new target.
-            find = ["uv", "python", "find", "--no-python-downloads", "3.14"]
-            legacy = subprocess.run(find, capture_output=True, text=True, timeout=30)
-            if legacy.returncode:
-                subprocess.run(
-                    ["uv", "python", "install", "3.14"], check=True, timeout=180
-                )
-                legacy = subprocess.run(
-                    find, capture_output=True, text=True, check=True, timeout=30
-                )
             bootstrap = parent / "historical-host"
             bootstrap.mkdir()
-            (bootstrap / "python3").symlink_to(legacy.stdout.strip())
+            (bootstrap / "python3").symlink_to(historical_python(env))
             env["PATH"] = str(bootstrap) + os.pathsep + env["PATH"]
         script = "set -eu\n" + "\n".join(blocks[name] for name in order[:-2])
         result = subprocess.run(

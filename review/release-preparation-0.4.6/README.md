@@ -43,3 +43,21 @@ a historical label correction in the maintainer procedure. It changes none of
 the candidate's frozen README/metadata inputs or production sources. Publication
 preflight workflow wiring and post-publication verification in #328/#326 remain
 pending; no release completion is claimed.
+
+## Hosted Linux 3.15 follow-up
+
+The superseded run [38905012209, job 116990841541](https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/38905012209/job/116990841541)
+failed while preparing the historical 0.3.0 Quickstart. That release excludes
+Python 3.15. Its explicit `uv python install 3.14` inherited the consumer's
+`UV_PYTHON_DOWNLOADS=never`, so the runner without an existing 3.14 installation
+refused acquisition. The retained `migration.log` identifies that cause.
+
+The helper now grants `manual` downloads only to that explicit preparation
+command, then finds and runs the old host with downloads still disabled.
+Two regression cases cover an existing and an absent historical host without
+mutating the consumer environment. All 55 documentation/qualification tests pass.
+A real isolated acquisition with `only-managed` selection and the original
+`never` policy prepared Python 3.14.8 under `/private/tmp`; the original 0.3.0
+Quickstart then passed its real MCP and REST calls. `historical-host.json` records
+that local observation. No user interpreter or executable was replaced. The new
+hosted matrix must still confirm Linux; no successful Linux result is inferred.
