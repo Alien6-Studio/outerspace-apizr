@@ -78,3 +78,18 @@ protected-master ancestry and successful exact-source qualification before the
 SHA is exported. The regression test requires that source to remain data only.
 These two potential cache-poisoning reports are retained as reviewed data-flow
 warnings, without suppressing a query or changing a scanner threshold.
+
+The first real default-branch PR qualification exposed GitHub's native identity:
+its dynamic scanner analyzes `refs/pull/346/head`, not the CI's virtual merge
+commit. The gate now binds that exact head analysis to the tested merge only
+when both complete Git trees are identical. A different merged tree retains an
+explicit scan of the merge commit; no different source is accepted. A malformed
+head/commit/tree response fails closed. The PR head comes from the immutable
+GitHub event, so a later push cannot substitute a newer head into an older run.
+
+`native-pr-tree-readback.json` records a real successful readback of all three
+native analyses/SARIF exports for head `c67567d7`, tested merge `f1eed8d9`, and
+identical tree `24c1fc70`. The added regression cases cover changed merge content,
+wrong commit identity, missing trees and absent PR heads. All 158 focused
+CodeQL/lifecycle/routing tests pass. This follow-up changes qualification only;
+no product source, master, release tag or publication is changed.

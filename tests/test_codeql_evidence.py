@@ -10,6 +10,8 @@ from scripts.qualification.ci import codeql_evidence as gate
 
 NOW = datetime(2026, 10, 16, 12, tzinfo=timezone.utc)
 SOURCE = "a" * 40
+HEAD = "b" * 40
+TREE = "c" * 40
 REPO = "Alien6-Studio/outerspace-apizr"
 
 
@@ -20,6 +22,7 @@ def environment(ref="refs/heads/master", event="push", base=""):
         "GITHUB_REF": ref,
         "GITHUB_EVENT_NAME": event,
         "GITHUB_BASE_REF": base,
+        "APIZR_PR_HEAD_SHA": HEAD,
     }
 
 
@@ -43,14 +46,53 @@ def test_default_and_protected_refs_reuse_native_all_other_refs_retain_scan(
         assert repository == REPO
         if not path:
             return {"default_branch": "master"}
+        if path.startswith("git/commits/"):
+            return {"sha": path.rsplit("/", 1)[-1], "tree": {"sha": TREE}}
         assert path.startswith("branches/")
         return {"protected": protected}
 
     monkeypatch.setattr(gate, "github", github)
     selected = gate.selection(environment(ref, event, base))
     assert selected["mode"] == expected
-    assert selected["commit"] == SOURCE and selected["ref"] == ref
+    if event == "pull_request" and expected == "native":
+        assert selected["commit"] == HEAD and selected["ref"] == "refs/pull/42/head"
+        assert selected["checked_commit"] == SOURCE and selected["checked_ref"] == ref
+        assert selected["source_tree"] == TREE
+    else:
+        assert selected["commit"] == SOURCE and selected["ref"] == ref
     assert set(selected["languages"]) == gate.LANGUAGES
+
+
+@pytest.mark.parametrize(
+    "fault", ["changed-base", "wrong-commit", "missing-tree", "missing-head"]
+)
+def test_native_head_cannot_qualify_different_merged_content(monkeypatch, fault):
+    def github(repository, path):
+        if not path:
+            return {"default_branch": "master"}
+        commit = path.rsplit("/", 1)[-1]
+        return {
+            "sha": "d" * 40 if fault == "wrong-commit" else commit,
+            "tree": {
+                "sha": ""
+                if fault == "missing-tree"
+                else "e" * 40
+                if fault == "changed-base" and commit == HEAD
+                else TREE
+            },
+        }
+
+    monkeypatch.setattr(gate, "github", github)
+    env = environment("refs/pull/42/merge", "pull_request", "master")
+    if fault == "missing-head":
+        env.pop("APIZR_PR_HEAD_SHA")
+    if fault == "changed-base":
+        result = gate.selection(env)
+        assert result["mode"] == "retained"
+        assert result["commit"] == SOURCE and result["ref"] == env["GITHUB_REF"]
+    else:
+        with pytest.raises(ValueError):
+            gate.selection(env)
 
 
 @pytest.mark.parametrize("key", ["GITHUB_REPOSITORY", "GITHUB_SHA"])

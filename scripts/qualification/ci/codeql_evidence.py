@@ -24,6 +24,14 @@ def github(repository, path, *, pages=False, sarif=False):
     return json.loads(subprocess.check_output(command, text=True, timeout=60))
 
 
+def source_tree(repository, commit):
+    payload = github(repository, "git/commits/" + commit)
+    tree = payload.get("tree", {}).get("sha", "")
+    if payload.get("sha") != commit or not re.fullmatch(r"[0-9a-f]{40}", tree):
+        raise ValueError("GitHub commit/tree identity mismatch")
+    return tree
+
+
 def selection(environment):
     repository = environment["GITHUB_REPOSITORY"]
     commit, ref = environment["GITHUB_SHA"], environment["GITHUB_REF"]
@@ -53,13 +61,28 @@ def selection(environment):
         )
     if event == "pull_request" and not re.fullmatch(r"refs/pull/[1-9]\d*/merge", ref):
         raise ValueError("Require the exact pull-request merge ref")
-    return {
+    selected = {
         "repository": repository,
         "commit": commit,
         "ref": ref,
         "mode": "native" if native else "retained",
         "languages": sorted(LANGUAGES),
     }
+    if native and event == "pull_request":
+        # Default setup scans refs/pull/N/head. Reuse that exact analysis only
+        # when the tested merge commit has the identical complete Git tree.
+        # A changed base that changes merged content needs its own retained scan.
+        head = environment.get("APIZR_PR_HEAD_SHA", "")
+        if not re.fullmatch(r"[0-9a-f]{40}", head):
+            raise ValueError("Require the exact pull-request head commit")
+        merged_tree = source_tree(repository, commit)
+        head_tree = source_tree(repository, head)
+        selected.update(checked_commit=commit, checked_ref=ref, source_tree=merged_tree)
+        if merged_tree == head_tree:
+            selected.update(commit=head, ref=ref.removesuffix("merge") + "head")
+        else:
+            selected["mode"] = "retained"
+    return selected
 
 
 def native_records(records, selected, now):

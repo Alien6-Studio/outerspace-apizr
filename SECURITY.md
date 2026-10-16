@@ -78,6 +78,9 @@ VS Code extension) and Actions and publishes alerts on the default and protected
 branches and their pull requests. The required `codeql` check reuses those native
 analyses: it requires all three successful analyses for the exact commit/ref,
 rejects stale or failed evidence, and retains their source-bound SARIF reports.
+For pull requests, GitHub scans the exact PR head. The gate reuses that evidence
+for the tested merge commit only after verifying identical complete Git trees;
+different merged content receives its own explicit scan.
 It starts no duplicate scan on those refs. Unprotected development branches and
 tags keep an explicit three-language scan with retained SARIF and no second
 public upload. Missing native analysis for any required language fails the gate.
