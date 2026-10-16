@@ -156,7 +156,7 @@ def journey(python, project, wheelhouse, target, output, *, serving_python):
             env=env,
         )
     )
-    assert imported["packages"]["outerspace-apizr"] == "0.4.5"
+    assert imported["packages"]["outerspace-apizr"] == "0.4.6"
     assert Path(imported["path"]).is_relative_to(python.parent.parent)
     assert not Path(imported["path"]).is_relative_to(ROOT)
     notebook = project / "fraud_detection.ipynb"
@@ -715,7 +715,7 @@ def main():
     args.candidate = args.candidate.resolve()
     args.target = args.target.resolve()
     candidate = load(args.candidate)
-    assert candidate["version"] == "0.4.5"
+    assert candidate["version"] == "0.4.6"
     if args.vsix:
         build = json.loads(args.vsix.with_suffix(".json").read_text())
         assert build["source_commit"] == candidate["commit"]
@@ -776,7 +776,7 @@ def main():
         args.target / "extras",
         "--find-links",
         wheels,
-        str(args.candidate.resolve() / "dist/outerspace_apizr-0.4.5-py3-none-any.whl")
+        str(args.candidate.resolve() / "dist/outerspace_apizr-0.4.6-py3-none-any.whl")
         + "[notebook,http,mcp]",
         "-r",
         EXAMPLE / "requirements.txt",

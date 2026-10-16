@@ -63,22 +63,22 @@ uv build --wheel plugins/oci --out-dir "$work/plugin-wheels"
 cd "$work"
 uv venv --seed --python 3.14 prepare
 prepare/bin/python -m pip download --only-binary=:all: --dest plugin-wheels \
-  plugin-wheels/outerspace_apizr-0.4.4-py3-none-any.whl \
-  plugin-wheels/outerspace_apizr_oci-0.4.4-py3-none-any.whl
+  plugin-wheels/outerspace_apizr-0.4.6-py3-none-any.whl \
+  plugin-wheels/outerspace_apizr_oci-0.4.6-py3-none-any.whl
 uv venv --python 3.14 core
 uv pip install --python core/bin/python --offline --no-index \
-  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.4-py3-none-any.whl
+  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.6-py3-none-any.whl
 ```
 
 Create `lock_wheels.py` using the [shared wheel-lock recipe](#prepare-server-dependency-locks) below before continuing.
 
 ```sh
 prepare/bin/python lock_wheels.py plugin-wheels plugin.lock
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/outerspace_apizr_oci-0.4.4-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.4-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/outerspace_apizr_oci-0.4.6-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.6-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse plugin-wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-oci --version 0.4.4 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-oci --version 0.4.6 --plugins-dir "$work/plugins"
 ```
 
 The lock uses the existing restricted requirements syntax: `name==version
@@ -270,7 +270,7 @@ runners for build tests and inspect the explicitly chosen tag before retrying.
 This mechanism is not a sandbox or a daemon resource quota. Operator authorization
 also does not constrain daemon mirrors or redirects.
 
-The [proof script](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/scripts/smoke_oci_plugin.py)
+The [proof script](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/scripts/smoke_oci_plugin.py)
 installs both packages outside the checkout, acquires a real HTTPS Git fixture,
 builds and calls REST/MCP after removing sources and bundles, interrupts after an
 explicit Docker progress handshake, and compares all core files/distributions.

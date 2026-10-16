@@ -9,9 +9,9 @@
     `--operator-policy`. An installed, active plugin alone does not permit
     building, publication or signing.
 
-The verification binding described below is part of **0.4.6 development**.
+The verification binding described below is part of **Apizr 0.4.6**.
 Older installed versions do not implement this additional grant field; use the
-coordinated development core and plugin when qualifying it.
+matching core and plugin versions when qualifying it.
 
 Installation puts verified wheel bytes in an isolated environment. Activation
 chooses one installed version. **Authorization** permits a particular installed
@@ -87,7 +87,7 @@ exec and workers. Policy edits require a **restart**; there is no dynamic
 revocation. Clients cannot choose roots or new authority. See the
 [complete MCP example](apizr-mcp-server.md#choose-one-local-project).
 
-## Authorize experiment-history reading (0.4.6 development)
+## Authorize experiment-history reading (Apizr 0.4.6)
 
 Editor and MCP history tools also require an exact `adapter: experiments`,
 `operation: history.read` grant with `permissions: [experiments.read]`, a local

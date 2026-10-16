@@ -278,7 +278,7 @@ repository writes, network, subprocesses and unwanted framework imports.
 
 ## Outside Graph v1
 
-In the 0.4.5 candidate, Exposure consumes this entire Graph to derive a
+In Apizr 0.4.6, Exposure consumes this entire Graph to derive a
 [selected execution proof](exposure-plan-v1.md#complete-evidence-and-fail-closed-behavior).
 Graph v1 still retains all nodes, relationships, diagnostics and completeness.
 It neither stores transitive edges nor hides unrelated failures. The consumer

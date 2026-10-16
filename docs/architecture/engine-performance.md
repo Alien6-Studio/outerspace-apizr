@@ -5,7 +5,7 @@ description: Reproducible 0.4.6 development baselines, history admission costs a
 
 # Measure engine costs
 
-The **0.4.6 development** benchmark records elapsed time and actual function-call
+The **Apizr 0.4.6** benchmark records elapsed time and actual function-call
 profiles. Timings describe a recorded environment and fixture, rather than a
 cross-platform latency promise. No dependency or security gate is disabled.
 

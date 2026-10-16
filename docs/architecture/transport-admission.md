@@ -1,6 +1,6 @@
 # REST and MCP admission budgets
 
-The 0.4.6 development runtimes admit transport data before framework decoding,
+The Apizr 0.4.6 runtimes admit transport data before framework decoding,
 recursive normalization and serialization. This applies to direct single-source
 and repository interfaces, local governed execution, and both OCI bridges.
 

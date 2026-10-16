@@ -316,7 +316,7 @@ new experiment execution, history, metrics or comparison orchestration.
 
 ## Metric signals and observed results (#263)
 
-On the 0.4.6 development branch, library-specific metric, output, input and
+In Apizr 0.4.6, library-specific metric, output, input and
 randomness recognition lives in the official `scientific_providers/builtin`
 package, shipped in the core wheel and active by default. The existing
 `experiments.discover_*` imports dispatch to that implementation. Canonical

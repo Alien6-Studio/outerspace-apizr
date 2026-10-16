@@ -1,8 +1,8 @@
 # Scientific providers and SDK adapters v1
 
-!!! note "0.4.6 development"
+!!! note "Apizr 0.4.6"
 
-    These contracts are implemented on `0.4.6` and are not yet published.
+    These contracts are implemented in Apizr `0.4.6`.
     The official built-in recognizers ship in the core and remain active by default.
     [Explicit selection](../reference/scientific-providers.md) reports exact versions,
     ownership, limits and diagnostics. Runs retain that inventory through their

@@ -20,6 +20,13 @@ from email.parser import BytesParser
 from pathlib import Path
 
 from scripts.qualification.packaging.check_distribution import check
+from scripts.qualification.packaging.check_release_metadata import (
+    check as check_release_metadata,
+)
+from scripts.qualification.packaging.check_release_metadata import (
+    verify_archives,
+    verify_snapshot,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
 PROJECTS = {
@@ -126,12 +133,23 @@ def load(root: Path) -> dict:
     }:
         raise ValueError("Unexpected distribution paths")
     verify_records(root, manifest["artifacts"])
+    if "release_metadata" in manifest:
+        verify_records(root, [manifest["release_metadata"]])
+        if manifest["release_metadata"]["file"] != "release-metadata.json":
+            raise ValueError("Unexpected release metadata snapshot path")
+        snapshot = json.loads((root / "release-metadata.json").read_text())
+        if snapshot["version"] != manifest["version"]:
+            raise ValueError("Candidate metadata snapshot version mismatch")
+        verify_snapshot(ROOT, snapshot)
+    elif tuple(map(int, manifest["version"].split("rc")[0].split("."))) >= (0, 4, 6):
+        raise ValueError("Missing pre-build release metadata snapshot")
     return manifest
 
 
 def build(output: Path) -> None:
     if run("git", "status", "--porcelain").strip():
         raise ValueError("Candidates require a clean identified commit")
+    metadata_snapshot = check_release_metadata(ROOT)
     output.mkdir(parents=True, exist_ok=False)
     dist = output / "dist"
     dist.mkdir()
@@ -177,6 +195,9 @@ def build(output: Path) -> None:
                     "reconstruction_is_candidate": False,
                 }
             )
+    verify_snapshot(ROOT, metadata_snapshot)
+    verify_archives(ROOT, dist)
+    write(output / "release-metadata.json", metadata_snapshot)
     write(
         output / "candidate.json",
         {
@@ -185,6 +206,7 @@ def build(output: Path) -> None:
             "commit": source_commit(),
             "repository": "Alien6-Studio/outerspace-apizr",
             "qualification_targets": QUALIFICATION_TARGETS,
+            "release_metadata": record(output / "release-metadata.json", output),
             "artifacts": [record(path, output) for path in sorted(dist.iterdir())],
         },
     )

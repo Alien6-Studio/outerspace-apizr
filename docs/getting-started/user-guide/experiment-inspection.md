@@ -11,10 +11,9 @@ executing it. It reads the selected source, recognized local input files and
 root-level environment specifications. It never imports your project or its
 science frameworks, downloads data, installs packages or starts a worker.
 
-This command is available in the published 0.4.5 release and the 0.4.6 development
-checkout. Install the checkout into an isolated environment with
-`python -m pip install .`. Python inspection needs only the core. For notebooks,
-use `python -m pip install '.[notebook]'` in the same checkout. The existing
+This command is available in **Apizr 0.4.6**. Python inspection needs only the
+core. For notebooks, install `outerspace-apizr[notebook]==0.4.6` into your
+chosen environment. The existing
 `outerspace-apizr[notebook]` extra provides notebook conversion; pandas, NumPy and
 scikit-learn are not required for lexical recognition.
 
@@ -62,7 +61,7 @@ Exit **0** means inspection completed, including partial, unknown or uncontrolle
 evidence. Exit **2** means invalid arguments or a source that cannot be inspected.
 Interface readiness does not change this exit policy.
 
-In **0.4.6 development**, notebook JSON is checked before decoding: **16 MiB**,
+In **Apizr 0.4.6**, notebook JSON is checked before decoding: **16 MiB**,
 **100,000 values and keys**, and container depth **64**. These budgets include
 outputs and metadata, even though they do not become experiment evidence. The
 existing limits of **1 MiB** of Python source and **1,024 notebook cells** remain.

@@ -39,7 +39,7 @@ def review(metadata: dict, *, delivery: bool = False) -> list[dict]:
     assert [t["name"] for t in metadata["tools"]] == expected
     assert metadata["server"]["name"] == "apizr"
     assert metadata["server"]["title"] == "OuterSpace Apizr"
-    assert metadata["server"]["version"] == "0.4.5"
+    assert metadata["server"]["version"] == "0.4.6"
     rows = []
     for tool in metadata["tools"]:
         name = tool["name"]
@@ -95,6 +95,10 @@ def before_distribution_metadata(metadata: dict) -> dict:
         for tool in prior["tools"]
         if not tool["name"].startswith("apizr_experiment_")
     ]
+    # The frozen 0.4.5 fingerprint includes server identity. Check the real
+    # coordinated identity first; project only that version to the old baseline.
+    assert prior["server"]["version"] == "0.4.6"
+    prior["server"]["version"] = "0.4.5"
     prior["server"]["title"] = None
     for tool in prior["tools"]:
         tool["title"] = None
@@ -111,6 +115,9 @@ def before_distribution_responses(responses: dict) -> dict:
     prior = deepcopy(responses)
     for response in prior.values():
         info = (response.get("_meta") or {}).get("io.modelcontextprotocol/serverInfo")
+        if info is not None:
+            assert info["version"] == "0.4.6"
+            info["version"] = "0.4.5"
         if info is not None and "title" in info:
             assert info["title"] == "OuterSpace Apizr"
             del info["title"]

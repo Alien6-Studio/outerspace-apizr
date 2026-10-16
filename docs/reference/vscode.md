@@ -1,14 +1,14 @@
 # Inspect and compare in VS Code
 
-The **0.4.6 development extension** lives in `editors/vscode/` under the repository's
+The **Apizr 0.4.6 extension** lives in `editors/vscode/` under the repository's
 GPL-3.0-or-later licence. VS Code 1.140 or newer is required for lossless
-numeric-token rendering; 64-bit integers and original float tokens are preserved. It uses an installed development engine supporting
-`apizr.editor/v1`; the published 0.4.5 engine does not provide this editor contract.
+numeric-token rendering; 64-bit integers and original float tokens are preserved. It uses an installed Apizr 0.4.6 engine supporting
+`apizr.editor/v1`.
 The extension is not automatically published to Marketplace or Open VSX.
 
 Install the qualified VSIX using **Extensions → Install from VSIX**, open your
 trusted native project folder, then run **Apizr: Select engine**. Select either
-the Python interpreter of a venv containing the candidate engine and its notebook
+the Python interpreter of a venv containing the Apizr 0.4.6 engine and its notebook
 extra, or an existing `apizr` executable installed through `uv tool`. Nothing is
 downloaded or installed when a window opens.
 

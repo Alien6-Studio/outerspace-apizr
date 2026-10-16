@@ -1,6 +1,6 @@
 # Select scientific providers
 
-The 0.4.6 development engine exposes explicit scientific-provider selection.
+The Apizr 0.4.6 engine exposes explicit scientific-provider selection.
 The default is `apizr.builtin` version `1`, shipped in the core wheel. Providers
 recognize static input reads, metric calls, output candidates and randomness
 controls. Recognition does not prove runtime values or reproducibility.

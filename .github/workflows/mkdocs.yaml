@@ -64,6 +64,14 @@ jobs:
         run: uv run --locked pytest tests/test_ci_scope.py tests/test_docs_publication.py
       - run: uv run --locked --group docs mkdocs build --strict
       - run: uv run --locked python -m scripts.qualification.docs.check_docs_html
+      - name: Validate release text and render the four frozen package descriptions
+        run: uv run --locked --group docs python -m scripts.qualification.packaging.check_release_metadata --render "$RUNNER_TEMP/readme-previews"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package-readme-previews
+          path: ${{ runner.temp }}/readme-previews/
+          if-no-files-found: error
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         if: inputs.candidate_artifact != '' && (inputs.scope_ready && format('{0}', inputs.examples) || needs.scope.outputs.examples) != 'false'
         with:

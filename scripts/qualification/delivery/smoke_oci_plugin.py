@@ -390,7 +390,7 @@ def main():
         "enable",
         "outerspace-apizr-oci",
         "--version",
-        "0.4.5",
+        "0.4.6",
         "--plugins-dir",
         store,
     )

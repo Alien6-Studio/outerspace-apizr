@@ -1,7 +1,6 @@
 # Tracking SDK v1
 
-This is the target public contract for the 0.4.6 development line; the SDK is
-not part of the published 0.4.5 release yet.
+This is the public tracking SDK contract for Apizr 0.4.6.
 
 The tracking SDK records explicit observations from code already running in the
 user's process. It does not execute workloads, isolate them, inspect arbitrary

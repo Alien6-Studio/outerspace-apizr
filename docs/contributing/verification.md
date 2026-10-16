@@ -6,7 +6,7 @@ with [Install Apizr](../getting-started/install.md).
 
 ## Prepare a verified installation workspace
 
-These commands download the published 0.4.4 packages and a complete dependency
+These commands download the published 0.4.6 packages and a complete dependency
 export. They do not build or publish anything. Use this workspace for the
 [offline installation and plugin profiles](../getting-started/install.md#choose-a-plugin-profile).
 
@@ -20,8 +20,8 @@ This selection uses Linux x86-64 / Python 3.11. The published inventory supplies
 the exact patch-level export and source commit. Keep all files from the same release:
 
 ```sh
-export APIZR_VERSION=0.4.4
-export RELEASE_TAG=v0.4.4
+export APIZR_VERSION=0.4.6
+export RELEASE_TAG=v0.4.6
 export PYTHON=python3.11
 export TARGET_PATTERN="apizr-${APIZR_VERSION}-linux-x86_64-cpython-3.11.*.tar.gz"
 mkdir -p release/assets release/candidate/dist release/target-download

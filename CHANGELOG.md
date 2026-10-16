@@ -1,6 +1,15 @@
 # Changelog
 
-## 0.4.6 — development, not published
+## 0.4.6
+
+- Add the VS Code extension for saved-source inspection, shared CLI/SDK/Jupyter
+  history, canonical comparison, notebook navigation and explicit engine selection.
+- Qualify Python 3.11–3.15, uv 0.13.x and native glibc 2.41 preparation; keep
+  scientific libraries as workload dependencies and core runtime dependencies minimal.
+- Qualify the integrated notebook → Runs → prediction journey from the same
+  installed wheel and VSIX, with real REST/MCP calls and no retraining (#325).
+- Gate candidate construction on current release-facing documentation and metadata;
+  bind frozen README bytes and package URLs to the qualified source (#328).
 
 - Remove the remaining 73 Python compatibility facades and 11 embedded historical
   import exceptions. Use canonical owning namespaces; generated governed bundles

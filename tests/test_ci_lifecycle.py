@@ -48,7 +48,7 @@ def test_pr_artifact_retention_preserves_qualification_evidence(name, workflow):
         for step in job.get("steps", []):
             if not step.get("uses", "").startswith("actions/upload-artifact@"):
                 continue
-            if name == "mkdocs.yaml":
+            if name == "mkdocs.yaml" and step["with"]["name"] == "documentation-site":
                 # This artifact is only a master deployment input, never a PR
                 # proof; retain the existing publication policy unchanged.
                 assert (

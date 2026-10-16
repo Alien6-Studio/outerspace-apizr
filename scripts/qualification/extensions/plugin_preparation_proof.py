@@ -37,7 +37,7 @@ def prepare_profile(
                 "prepare",
                 "outerspace-apizr-mcp",
                 "--version",
-                "0.4.5",
+                "0.4.6",
                 "--python",
                 python,
                 "--platform",

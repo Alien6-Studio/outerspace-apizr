@@ -36,7 +36,7 @@ async def exercise(root: Path, capture_only: bool = False):
         ],
         text=True,
     ).strip()
-    assert installed_version == "0.4.5"
+    assert installed_version == "0.4.6"
     results = []
     for mode in ("auto", "legacy"):
         batch = request(root / ("delivery-" + mode), required=False)

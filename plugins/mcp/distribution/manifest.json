@@ -2,7 +2,7 @@
   "manifest_version": "0.4",
   "name": "outerspace-apizr",
   "display_name": "OuterSpace Apizr",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Read-only Python analysis and exposure planning with explicit project authorization and a separately activated MCP plugin.",
   "author": {"name": "Alien6 Studio", "url": "https://github.com/Alien6-Studio"},
   "homepage": "https://apizr.outerspace.sh/reference/apizr-mcp-server/",

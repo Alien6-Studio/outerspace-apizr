@@ -3,6 +3,48 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
+## 0.4.6 preparation and publication boundary
+
+Prepare the README, site, installation commands and distribution metadata in
+final 0.4.6 form before building the candidates. This presentation does not
+establish that packages, tags, documentation or listings have been published.
+The maintainer requires review and validation of the GitHub branch, followed by
+its normal protected merge into `main`/`master`, before any publication to PyPI,
+Homebrew, MCP Registry, extension registries, Glama or the public documentation
+site. A successful development build is not publication authorization.
+
+Before candidate construction, run:
+
+```sh
+uv run --locked python -m scripts.qualification.packaging.check_release_metadata --release
+```
+
+The version source is `pyproject.toml`. Review the inventory:
+
+| Surface | Files and statements |
+| --- | --- |
+| Frozen package descriptions | Root and three plugin `README.md` files; current feature prose, package pins and immutable `v<version>` source links |
+| Package metadata | Root and plugin `pyproject.toml`: version, internal pins, Repository, Documentation, Issues and Changelog URLs |
+| Plugin/launcher descriptors | Three `apizr-extension.json` files; `plugins/mcp/distribution/{pyproject.toml,manifest.json}` |
+| Installation and site | `docs/getting-started/install.md`, `docs/index.md`, `mkdocs.yml`, `docs/releases/<version>.md`, `CHANGELOG.md` |
+| Forge and directories | `action.yml` and `templates/apizr.yml` defaults, `server.json` package versions, Dockerfile `SOURCE_REF=v<version>` and qualified `glama.json` ownership bytes |
+
+The retained Glama descriptor schema has no version field; bind its exact bytes
+and the tagged Dockerfile to the qualified source instead of inventing a field.
+Render and inspect all four package READMEs in the docs environment with
+`--render <new-directory>`. Candidate construction records a SHA-256 snapshot
+before building. Rechecking the retained snapshot with `--snapshot` refuses any
+subsequent change to the inventoried files, including same-version editorial
+changes. Such a change requires a new candidate and renewed qualification.
+
+Before any later, explicitly authorized publication dispatch or Glama re-index,
+repeat `--release --snapshot <candidate>/release-metadata.json --dist <candidate>/dist`
+from the exact tagged source. `--dist` compares each wheel/sdist's frozen README
+and package URLs to the tagged files and can also inspect downloaded public
+archives. Review the already-frozen rendered README before candidate build;
+post-publication checks compare those bytes rather than correcting source after
+upload. Publication preflight wiring and authorization are separate release work.
+
 ## VS Code distribution preparation for 0.4.6
 
 The [VSIX build and qualification procedure](vscode-distribution.md) prepares
@@ -345,7 +387,8 @@ must be present on the default branch before its first manual dispatch.
 Complete against the final commit; historical green runs are not sufficient.
 
 - [ ] All four versions, tag and built metadata agree; public files are absent or byte-identical to the approved set.
-- [ ] README renders, public URLs work and current/legacy documentation is accurate.
+- [ ] README and installation guide are final before candidate build; rendered previews and frozen archive metadata match the reviewed source.
+- [ ] The retained metadata snapshot passes again before each authorized publication dispatch; no README or metadata changed after candidate construction.
 - [ ] Ruff, Pyright and pre-commit pass.
 - [ ] Python 3.11–3.15 tests and every package coverage floor pass.
 - [ ] Wheel/sdist content and hashes are reviewed; installed-wheel smoke passes.

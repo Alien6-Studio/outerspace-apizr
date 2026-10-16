@@ -77,8 +77,8 @@ def test_python_support_cannot_drift_between_metadata_runtime_and_ci():
         if 'case "$APIZR_PYTHON_VERSION"' in step.get("run", "")
     )
     assert set(re.findall(r"3\.\d+", case)) == set(SUPPORTED_PYTHONS)
-    # The public Action default stays usable with its still-published core default.
-    assert action["inputs"]["python-version"]["default"] == "3.14"
+    # The prepared Action defaults match the coordinated 0.4.6 interpreter.
+    assert action["inputs"]["python-version"]["default"] == "3.15"
     for version in SUPPORTED_PYTHONS:
         assert parse_python_target(version) == tuple(map(int, version.split(".")))
     for version in ("3.10", "3.16", "4.0"):

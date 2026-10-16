@@ -59,7 +59,7 @@ files and subprocess execution are not included in the package coverage metric.
 The security audit exports the resolved `uv.lock` graph for runtime, development,
 documentation and security-tooling scopes, then runs `pip-audit --locked`. Findings
 and collection failures block the check. No advisories are automatically ignored.
-See [SECURITY.md](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/SECURITY.md)
+See [SECURITY.md](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/SECURITY.md)
 for private reporting and execution boundaries.
 
 ## Compatibility and packaging
@@ -157,9 +157,10 @@ The package job tests the base wheel and each extra in separate environments on
 Python 3.11 and 3.14. Security audits cover the base, each extra, and validation
 groups; archived SBOMs distinguish the base and combined optional runtime.
 
-The published 0.4.4 release comes from protected `master`. New product
-changes and documentation branches target `master`; the completed 0.4.2 and
-0.4.3 release branches are retired. See
+The coordinated 0.4.6 packages are prepared on the official `0.4.6` development
+branch. Contributor changes target that branch until the maintainer validates
+it and merges through the protected stable branch. Publication follows that
+separate approval. See
 [release governance](../../contributing/release-branches.md) for the active rules.
-All four packages are 0.4.4. Integration and contributor builds do not replace
-the immutable published archives.
+All four packages declare 0.4.6. Integration and contributor builds do not replace
+immutable published archives.

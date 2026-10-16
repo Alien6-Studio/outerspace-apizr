@@ -155,7 +155,7 @@ async def main(root: Path):
         assert result.returncode == 2 and not result.stdout, result
         assert expected.encode() in result.stderr, result.stderr
     assert not (root / "registry-absent-store").exists()
-    bundle = root / "outerspace-apizr-0.4.5.mcpb"
+    bundle = root / "outerspace-apizr-0.4.6.mcpb"
     bundle_report = build(bundle)
     extracted = root / "registry-bundle"
     extracted.mkdir(exist_ok=True)
@@ -236,7 +236,7 @@ async def main(root: Path):
     write(root / "mcpb-proof.json", bundle_report)
     report = {
         "success": True,
-        "source": "local 0.4.5 candidate wheels; no public package or directory mutation",
+        "source": "local 0.4.6 candidate wheels; no public package or directory mutation",
         "protocol_modes": ["auto", "legacy"],
         "read_only_tools": 6,
         "history_requires_explicit_authority": True,

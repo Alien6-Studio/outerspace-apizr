@@ -5,13 +5,12 @@ description: Capture a Python block, compare decorated calls, then use the same 
 
 # Record your first SDK experiment
 
-This is the **0.4.6 development** path. Install a qualified candidate core wheel
-in your existing Python environment; no tracking server or scientific extra is
-needed. Candidate metadata still says 0.4.5 until coordinated release preparation.
+Apizr **0.4.6** records experiments in your existing Python environment;
+no tracking server or scientific extra is needed.
 Use a fresh working directory outside the Apizr checkout:
 
 ```sh
-python -m pip install /absolute/path/to/candidate/dist/outerspace_apizr-*.whl
+python -m pip install outerspace-apizr==0.4.6
 apizr --version
 ```
 
@@ -88,7 +87,7 @@ without saving exception messages, stdout or display output.
 
 ## 3. Use the same calls in Jupyter
 
-Install the candidate in your existing kernel environment and open the
+Install Apizr 0.4.6 in your existing kernel environment and open the
 [runnable live-capture notebook](https://github.com/Alien6-Studio/outerspace-apizr/blob/0.4.6/examples/tracking/jupyter-capture.ipynb).
 It contains the block and the two decorated variants above. Run its cells in order,
 then use `apizr experiment list` from the notebook's working directory and the
@@ -144,7 +143,7 @@ production sender in 0.4.6. See the [approved telemetry policy](../about/telemet
 ## 5. Open the history in VS Code
 
 Install the qualified VSIX, trust your workspace and explicitly select the
-candidate engine and the repository/history permissions described in the
+Apizr 0.4.6 engine and the repository/history permissions described in the
 [VS Code guide](../reference/vscode.md). **Apizr: Refresh Experiment Runs** reads
 the same store; select a Run to show it and two to compare them. Restricted Mode
 starts no engine. Inspection reads saved source; unsaved changes mark the result

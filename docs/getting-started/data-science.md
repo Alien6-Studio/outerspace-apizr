@@ -8,12 +8,10 @@ description: Inspect an ordinary scikit-learn notebook, compare two recorded run
 Know which data, code, parameters and environment produced your result, compare
 experiments, then turn the useful Python capability into MCP or REST.
 
-This is the workflow without instrumentation introduced in 0.4.5, exercised here
-with the **0.4.6 development candidate**. Candidate metadata still says 0.4.5 until
-coordinated release preparation. For sessions, decorators, Jupyter and editor
-history, start with [your first SDK experiment](tracking.md).
+Apizr **0.4.6** supports this workflow without instrumentation. For sessions,
+decorators, Jupyter and editor history, start with [your first SDK experiment](tracking.md).
 
-The [fraud detection example](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/examples/data-science/fraud-detection)
+The [fraud detection example](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.4.6/examples/data-science/fraud-detection)
 is an ordinary notebook: pandas, a small scikit-learn forest, three metrics and
 joblib model serialization. It has no Apizr import, decorator or tracking call.
 Keep the notebook unchanged throughout this guide. Only the active CSV changes
@@ -21,14 +19,14 @@ between the two runs.
 
 ## Prepare your environment
 
-Already using pandas and scikit-learn? Install the candidate's notebook support
+Already using pandas and scikit-learn? Install Apizr's notebook support
 into that same Python environment. Apizr does not provide a science extra or
 install scientific packages as core dependencies.
 
 For this exact reference example, use Python 3.11–3.15 on macOS or Linux and a
 fresh virtual environment. Copy the example outside the Apizr checkout. Obtain
-the retained `release-candidate` and matching `release-target` artifacts from
-the candidate's [CI run](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml).
+the verified packages and matching target export from the
+[0.4.6 release assets](https://github.com/Alien6-Studio/outerspace-apizr/releases/tag/v0.4.6).
 Extract them as `candidate/` and `target/` beside the example, then open a shell
 in `fraud-detection/`. The target must match your Python and platform.
 
@@ -41,7 +39,7 @@ export SCIENCE_WHEELHOUSE="$PWD/../science-wheels"
 python -m pip download --only-binary=:all: -r requirements.txt -d "$SCIENCE_WHEELHOUSE"
 python -m pip install --no-index \
   --find-links "$TARGET/base" --find-links "$TARGET/extras" \
-  "$CANDIDATE/dist/outerspace_apizr-0.4.5-py3-none-any.whl[notebook,http,mcp]"
+  "$CANDIDATE/dist/outerspace_apizr-0.4.6-py3-none-any.whl[notebook,http,mcp]"
 python -m pip install --no-index --find-links "$SCIENCE_WHEELHOUSE" -r requirements.txt
 cp data/transactions-a.csv data/transactions.csv
 export BUNDLES="$PWD/../prediction-bundles"

@@ -1,12 +1,19 @@
 [project]
 name = "outerspace-apizr-attest"
-version = "0.4.5"
+version = "0.4.6"
 description = "Optional Continuum Attest receipts for verified Apizr OCI deliveries"
 requires-python = ">=3.11,<3.16"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
-dependencies = ["outerspace-apizr-oci==0.4.5"]
+dependencies = ["outerspace-apizr-oci==0.4.6"]
+
+
+[project.urls]
+Repository = "https://github.com/Alien6-Studio/outerspace-apizr"
+Documentation = "https://apizr.outerspace.sh/"
+Issues = "https://github.com/Alien6-Studio/outerspace-apizr/issues"
+Changelog = "https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/CHANGELOG.md"
 
 [build-system]
 requires = ["hatchling>=1.27,<2"]

@@ -1,4 +1,4 @@
-# In-process experiment evidence v2 (0.4.6 development)
+# In-process experiment evidence v2 (Apizr 0.4.6)
 
 The new `apizr.experiment-plan/v2` and `apizr.experiment-run/v2` contracts
 describe explicit captures inside an existing process. The original v1 contracts

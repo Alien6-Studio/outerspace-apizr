@@ -1,4 +1,4 @@
-# In-process tracking SDK (0.4.6 development)
+# In-process tracking SDK (Apizr 0.4.6)
 
 `apizr.tracking` ships in the core wheel. It requires no optional extra,
 scientific library or tracking server. It records explicit observations from
@@ -86,7 +86,9 @@ unknown values with a bounded type name where safely available. They are never
 pickled, converted, traversed or represented with `repr()`. Use an explicit
 `log_artifact` call for a serialized file you want to identify by content.
 
-## Live Jupyter captures (0.4.6 development)
+<span id="live-jupyter-captures-046-development"></span>
+
+## Live Jupyter captures (Apizr 0.4.6)
 
 Run the ordinary session or decorator inside an existing IPython kernel:
 

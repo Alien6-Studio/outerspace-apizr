@@ -43,12 +43,12 @@ qualification driver. Native installation/update/uninstall remains the proof abo
 
 ```sh
 python -m scripts.qualification.interfaces.vscode_ssh_proof \
-  --wheel /absolute/candidate/outerspace_apizr-0.4.5-py3-none-any.whl \
+  --wheel /absolute/candidate/outerspace_apizr-0.4.6-py3-none-any.whl \
   --requirements /absolute/engine.lock --vsix /absolute/apizr-0.4.6.vsix \
   --code /absolute/code --output /absolute/fresh-ssh-proof
 ```
 
-The core wheel retains development metadata until the coordinated version change.
+The core wheel and VSIX both declare 0.4.6; retain their exact hashes and source commit.
 Use the hash-bearing `uv export --locked --no-default-groups --group
 jupyter-qualification --extra notebook --no-emit-project` output as `engine.lock`.
 `policy/vscode-distribution.json` pins the Remote SSH tool version and container

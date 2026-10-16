@@ -18,10 +18,10 @@ inputs:
     default: .apizr-ci
   python-version:
     description: 'Supported Python minor: 3.11, 3.12, 3.13, 3.14 or 3.15.'
-    default: '3.14'
+    default: '3.15'
   apizr-version:
     description: Exact Apizr version. Final publication must complete before public installation.
-    default: 0.4.4
+    default: 0.4.6
   wheel-path:
     description: Qualification only; local original qualified wheel, paired with wheel-sha256.
     default: ''

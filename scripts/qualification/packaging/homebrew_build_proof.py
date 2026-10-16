@@ -45,7 +45,7 @@ def candidate_source(candidate, commit):
         evidence["schema"] != "apizr.release-candidate/v1"
         or evidence["repository"] != "Alien6-Studio/outerspace-apizr"
         or evidence["commit"] != commit
-        or evidence["version"] not in {"0.4.3", "0.4.4", "0.4.5"}
+        or evidence["version"] not in {"0.4.3", "0.4.4", "0.4.5", "0.4.6"}
     ):
         raise ValueError("Unexpected coordinated candidate identity")
     filename = f"outerspace_apizr-{evidence['version']}.tar.gz"

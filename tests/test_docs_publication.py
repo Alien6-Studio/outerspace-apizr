@@ -48,7 +48,9 @@ def site(tmp_path):
     build.on_config(config)
     # This test builds fixture content, not a deployable checkout.
     config.extra["docs_build"]["source_dirty"] = False
-    config.extra["docs_build"].update(status="stable", target_version="0.4.4")
+    config.extra["docs_build"].update(
+        status="stable", target_version="0.4.4", stable_release="0.4.4"
+    )
     build.on_post_build(config)
     return tmp_path
 
@@ -376,10 +378,12 @@ def test_candidate_docs_can_be_verified_locally_but_not_deployed(site):
     config = SimpleNamespace(extra={})
     build.on_config(config)
     assert config.extra["docs_build"]["status"] == "release-candidate"
-    assert config.extra["docs_build"]["target_version"] == "0.4.5"
+    assert config.extra["docs_build"]["target_version"] == "0.4.6"
     path = site / "build-info.json"
     marker = json.loads(path.read_text())
-    marker.update(status="release-candidate", target_version="0.4.5")
+    marker.update(
+        status="release-candidate", target_version="0.4.6", stable_release="0.4.5"
+    )
     path.write_text(json.dumps(marker))
     assert checker.marker_at(site)["status"] == "release-candidate"
     with pytest.raises(ValueError, match="not authorized for deployment"):
@@ -461,3 +465,12 @@ def test_workflow_qualifies_candidates_without_deploying_or_forcing_pages():
     )
     assert "--force" not in publication["run"]
     assert "--no-history" not in publication["run"]
+
+
+def test_prepared_046_text_cannot_authorize_stable_deployment(site):
+    path = site / "build-info.json"
+    marker = json.loads(path.read_text())
+    marker.update(status="stable", target_version="0.4.6", stable_release="0.4.6")
+    path.write_text(json.dumps(marker))
+    with pytest.raises(ValueError, match="Invalid documentation build marker"):
+        checker.publication_marker(site)

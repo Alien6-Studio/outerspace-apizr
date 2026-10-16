@@ -26,7 +26,7 @@ def test_workflow_admits_source_before_candidate_code_can_execute(workflow, faul
     )
     assert block is not None
     source = "\n".join(line[10:] for line in block[1].splitlines())
-    tag = "v0.4.5"
+    tag = "v0.4.6"
     responses = {
         f"releases/tags/{tag}": {
             "tag_name": tag,
@@ -81,9 +81,9 @@ def test_workflow_admits_source_before_candidate_code_can_execute(workflow, faul
 )
 def test_registry_preflight_binds_all_release_identities(candidate, fault):
     descriptor = validate_metadata()
-    hashes = candidate_artifacts(candidate, "0.4.5", SHA)
+    hashes = candidate_artifacts(candidate, "0.4.6", SHA)
     release = {
-        "tag_name": "v0.4.5",
+        "tag_name": "v0.4.6",
         "draft": False,
         "prerelease": False,
         "published_at": "2026-10-11T00:00:00Z",
@@ -107,7 +107,7 @@ def test_registry_preflight_binds_all_release_identities(candidate, fault):
         {"protected": True},
         {"status": "ahead", "merge_base_commit": {"sha": SHA}},
     )
-    source, tag, head, dirty = SHA, "v0.4.5", SHA, ""
+    source, tag, head, dirty = SHA, "v0.4.6", SHA, ""
     if fault == "dirty":
         dirty = " M server.json"
     elif fault == "head":

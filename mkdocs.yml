@@ -155,7 +155,7 @@ nav:
       - Migrate from 0.4.5: releases/migrate-0.4.6.md
       - Select scientific providers: reference/scientific-providers.md
       - Editor engine contract: reference/editor-contract.md
-      - VS Code development extension: reference/vscode.md
+      - VS Code extension: reference/vscode.md
       - Telemetry policy and contract: about/telemetry.md
       - Extension invocation API: reference/extension-invocation.md
       - Operator permissions: reference/operator-policy.md
@@ -208,10 +208,10 @@ nav:
       - Pipeline plugins: getting-started/developer-guide/plugins.md
       - Behavior contract: architecture/legacy-behavior-contract.md
   - Releases:
-      - 0.4.6 development: releases/0.4.6.md
+      - 0.4.6: releases/0.4.6.md
       - Migrate to 0.4.6: releases/migrate-0.4.6.md
       - Python import migration: releases/removed-imports-0.4.6.md
-      - 0.4.5 candidate: releases/0.4.5.md
+      - 0.4.5: releases/0.4.5.md
       - 0.4.4: releases/0.4.4.md
       - 0.4.3: releases/0.4.3.md
       - 0.4.2: releases/0.4.2.md

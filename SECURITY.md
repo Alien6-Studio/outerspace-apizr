@@ -2,10 +2,8 @@
 
 ## Supported versions
 
-Security fixes target the maintained 0.4.x line. The 0.4.6 work described below is
-development qualification, not a published release. Apizr and generated targets currently support
-**Python 3.11–3.14**. The 0.4.6 development line extends this range through
-**Python 3.15**. Use a supported interpreter and keep dependencies updated.
+Security fixes target the maintained 0.4.x line. Apizr 0.4.6 and generated targets
+support **Python 3.11–3.15**. Use a supported interpreter and keep dependencies updated.
 See the [compatibility notes](docs/getting-started/developer-guide/releases.md).
 
 The current resolved runtime and tooling graphs pass the vulnerability audit.
@@ -38,7 +36,7 @@ it is not a VM boundary. Both execution backends remain experimental and require
 trusted code. Static `READY` does not mean runtime safe. Upload validation is not
 a substitute for trusted execution.
 
-## SDK, providers, editors and privacy (0.4.6 development)
+## SDK, providers, editors and privacy (Apizr 0.4.6)
 
 The tracking SDK observes trusted code already running in your process. It does
 not isolate that workload. Only explicitly selected finite values and files are

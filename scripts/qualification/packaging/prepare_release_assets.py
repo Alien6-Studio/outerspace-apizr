@@ -134,6 +134,19 @@ def prepare(
     ) != 8:
         raise ValueError("Expected eight candidate distributions")
     verify_records(candidate_dir, candidate["artifacts"])
+    metadata = candidate.get("release_metadata")
+    if metadata:
+        if metadata["file"] != "release-metadata.json":
+            raise ValueError("Unexpected release metadata snapshot path")
+        verify_records(candidate_dir, [metadata])
+        snapshot = json.loads((candidate_dir / metadata["file"]).read_text())
+        if (
+            snapshot.get("schema") != "apizr.release-metadata/v1"
+            or snapshot.get("version") != version
+        ):
+            raise ValueError("Candidate release metadata snapshot mismatch")
+    elif tuple(map(int, version.split("rc")[0].split("."))) >= (0, 4, 6):
+        raise ValueError("Missing pre-build release metadata snapshot")
     evidence = downloads / "build-attestations"
     signed = evidence / "ci-evidence.tar.gz"
     if not preview:
@@ -219,6 +232,13 @@ def prepare(
                 "source and package inventory",
                 "coordinated/release-candidate/candidate.json",
             )
+            if metadata:
+                name = metadata["file"]
+                source = candidate_dir / name
+                member = "coordinated/release-candidate/" + name
+                if not preview:
+                    bound_file(proof, member, source)
+                copy(source, name, "pre-build release metadata snapshot", member)
             verify_records(candidate_dir, candidate["artifacts"])
             for directory in targets:
                 source = directory / "target-export.tar.gz"

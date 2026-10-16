@@ -218,7 +218,7 @@ def test_publication_binds_verified_evidence_and_immutable_asset(
     ]
 
 
-@pytest.mark.parametrize("version", ["0.4.3", "0.4.4", "0.4.6"])
+@pytest.mark.parametrize("version", ["0.4.3", "0.4.4", "0.4.6", "0.4.7"])
 def test_retired_or_future_candidate_does_not_reopen_publication(tmp_path, version):
     root, old_source, _ = candidate(tmp_path)
     source = old_source.with_name(f"outerspace_apizr-{version}.tar.gz")
@@ -228,7 +228,7 @@ def test_retired_or_future_candidate_does_not_reopen_publication(tmp_path, versi
     record["version"] = version
     record["artifacts"][0]["file"] = "dist/" + source.name
     path.write_text(json.dumps(record))
-    if version == "0.4.6":
+    if version == "0.4.7":
         with pytest.raises(ValueError):
             tool["render"](root, SHA, tmp_path / "qualification", mode="qualification")
         with pytest.raises(ValueError):

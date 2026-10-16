@@ -5,8 +5,8 @@ description: Explore Python projects from your AI assistant with Apizr's MCP plu
 
 # Apizr as a local MCP server
 
-!!! note "0.4.6 development: experiment history"
-    Matching development core/plugin candidates add `apizr_experiment_list`,
+!!! note "Apizr 0.4.6: experiment history"
+    Matching core/plugin versions provide `apizr_experiment_list`,
     `apizr_experiment_show` and `apizr_experiment_diff`. These read the configured
     project's `.apizr/experiments/v1` store, using the same argument contracts and
     canonical history/comparison as the [editor engine](editor-contract.md).
@@ -16,8 +16,7 @@ description: Explore Python projects from your AI assistant with Apizr's MCP plu
     Every read validates the complete bounded history; a display filter or limit
     never hides corruption. Producers/capture modes are retained, unknowns stay
     unknown, and comparison does not infer causality. No new tool executes,
-    retrains, exposes, mutates evidence or loads the producing provider. These
-    additions are development features, not a claim about existing public packages.
+    retrains, exposes, mutates evidence or loads the producing provider. Use matching Apizr 0.4.6 core/plugin versions for these tools.
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
@@ -140,20 +139,17 @@ as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
 
 ## Registry installation {#registry-installation}
 
-This is the canonical installation path linked by `server.json`. **0.4.5 is a
-qualified development candidate, not a public release.** The command below is
-for use after its separately authorized publication. Existing public installations
-remain on 0.4.4 with matching core and plugin versions. Contributors qualify the
-same launcher using candidate wheels outside the checkout, without contacting PyPI.
+This is the canonical installation path for Apizr 0.4.6 linked by `server.json`.
+Use matching core and plugin versions in the separate environments below.
 
 The [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Alien6-Studio%2Fouterspace-apizr)
 lists Apizr as `io.github.Alien6-Studio/outerspace-apizr`.
 [Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr) also lists its
 three analysis tools and their inputs.
 
-1. After 0.4.5 is public, install its core and prepare an explicit MCP profile
+1. Install its core and prepare an explicit MCP profile
    with the commands below. Use an absolute path to your installed CPython
-   3.11–3.15 interpreter and uv 0.12.x. Run each command in order, stopping on
+   3.11–3.15 interpreter and stable uv 0.12.x or 0.13.x. Run each command in order, stopping on
    any failure. Keep this temporary directory while using the server.
 
 ```sh
@@ -161,18 +157,18 @@ python=/absolute/path/to/python3.14
 setup=$(mktemp -d)
 setup=$(cd "$setup" && pwd -P)
 uv venv --python "$python" "$setup/core"
-uv pip install --python "$setup/core/bin/python" 'outerspace-apizr[preparation]==0.4.5'
+uv pip install --python "$setup/core/bin/python" 'outerspace-apizr[preparation]==0.4.6'
 apizr="$setup/core/bin/apizr"
-"$apizr" plugins prepare outerspace-apizr-mcp --version 0.4.5 \
+"$apizr" plugins prepare outerspace-apizr-mcp --version 0.4.6 \
   --python "$python" --platform native \
   --index-url https://pypi.org/simple --output-dir "$setup/prepared" --json
-plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.5" {sub("--hash=sha256:", "", $2); print $2}' \
+plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.6" {sub("--hash=sha256:", "", $2); print $2}' \
   "$setup/prepared/requirements.lock")
-"$apizr" plugins install "$setup/prepared/wheelhouse/outerspace_apizr_mcp-0.4.5-py3-none-any.whl" \
+"$apizr" plugins install "$setup/prepared/wheelhouse/outerspace_apizr_mcp-0.4.6-py3-none-any.whl" \
   --sha256 "$plugin_sha" --python "$python" \
   --requirements "$setup/prepared/requirements.lock" \
   --wheelhouse "$setup/prepared/wheelhouse" --plugins-dir "$setup/profile"
-"$apizr" plugins enable outerspace-apizr-mcp --version 0.4.5 \
+"$apizr" plugins enable outerspace-apizr-mcp --version 0.4.6 \
   --plugins-dir "$setup/profile"
 ```
 
@@ -182,7 +178,7 @@ plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.5" {sub("--hash=sha256:", "",
    The [preparation guide](plugin-preparation.md#targets-and-integrity) explains
    supported platforms, including the reviewed dependency's macOS Intel refusal.
    For unpublished contributor candidates, use the qualified local wheelhouse
-   without `--index-url`; do not mix public 0.4.4 artifacts with this profile.
+   without `--index-url`; do not mix different core/plugin versions in this profile.
 2. Create the four project files in [Choose one local project](#choose-one-local-project),
    or select your existing `apizr.toml`. It selects a source root and analysis
    policies; it does not grant access to that root.
@@ -207,7 +203,7 @@ plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.5" {sub("--hash=sha256:", "",
    Replace each angle-bracket placeholder with an absolute path you selected:
 
 ```sh
-uvx outerspace-apizr-mcp@0.4.5 \
+uvx outerspace-apizr-mcp@0.4.6 \
   --project "<ABSOLUTE_APIZR_TOML>" \
   --operator-policy "<ABSOLUTE_OPERATOR_JSON>" \
   --plugins-dir "<ABSOLUTE_MANAGED_PLUGIN_DIRECTORY>"

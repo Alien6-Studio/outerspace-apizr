@@ -49,6 +49,14 @@ def inputs(root, assets, version="0.4.0", *, development=False):
         )
 
         manifest["qualification_targets"] = [list(t) for t in QUALIFICATION_TARGETS]
+    if version == "0.4.6":
+        assets.write(
+            candidate / "release-metadata.json",
+            {"schema": "apizr.release-metadata/v1", "version": version, "files": []},
+        )
+        manifest["release_metadata"] = assets.record(
+            candidate / "release-metadata.json", candidate
+        )
     assets.write(candidate / "candidate.json", manifest)
     targets = []
     for system, machine, versions in [
@@ -348,3 +356,40 @@ def test_inherited_version_on_release_line_is_only_verification_evidence(
     manifest = json.loads((output / "release-assets.json").read_text())
     assert manifest["source_ref"] == "refs/heads/release/0.4.1"
     assert "human publication approval still required" in manifest["status"]
+
+
+@pytest.mark.parametrize("tamper", [False, True])
+def test_prebuild_metadata_is_retained_or_refused(assets, tmp_path, tamper):
+    downloads = tmp_path / "downloads"
+    inputs(downloads, assets, "0.4.6", development=True)
+    snapshot = downloads / "release-candidate/release-metadata.json"
+    original = snapshot.read_bytes()
+    if tamper:
+        snapshot.write_bytes(original + b" ")
+    output = tmp_path / "assets"
+    if tamper:
+        with pytest.raises(ValueError, match="Artifact identity mismatch"):
+            assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+        assert not output.exists()
+    else:
+        assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+        assert (output / snapshot.name).read_bytes() == original
+        manifest = json.loads((output / "release-assets.json").read_text())
+        entry = next(a for a in manifest["artifacts"] if a["file"] == snapshot.name)
+        assert (
+            entry["evidence_member"]
+            == "coordinated/release-candidate/release-metadata.json"
+        )
+
+
+def test_current_assets_require_prebuild_metadata(assets, tmp_path):
+    downloads = tmp_path / "downloads"
+    inputs(downloads, assets, "0.4.6", development=True)
+    path = downloads / "release-candidate/candidate.json"
+    candidate = json.loads(path.read_text())
+    del candidate["release_metadata"]
+    assets.write(path, candidate)
+    output = tmp_path / "assets"
+    with pytest.raises(ValueError, match="Missing pre-build"):
+        assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+    assert not output.exists()

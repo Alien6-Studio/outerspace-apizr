@@ -1,8 +1,8 @@
 [project]
 name = "outerspace-apizr-mcp-launcher-bundle"
-version = "0.4.5"
+version = "0.4.6"
 requires-python = ">=3.11,<3.16"
-dependencies = ["outerspace-apizr-mcp==0.4.5"]
+dependencies = ["outerspace-apizr-mcp==0.4.6"]
 
 [tool.uv]
 package = false

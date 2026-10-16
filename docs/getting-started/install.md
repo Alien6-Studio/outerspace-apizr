@@ -5,36 +5,34 @@ description: Install Apizr with pip, uv, pipx or Homebrew, then add optional plu
 
 # Install Apizr
 
-Install **Apizr 0.4.4**, then follow the [Quickstart](quickstart.md) to make your
+Install **Apizr 0.4.6**, then follow the [Quickstart](quickstart.md) to make your
 first REST or MCP calls. The core is enough for that example; plugins are optional.
 
 ## Data scientist
 
 Already have a Python environment with pandas and scikit-learn? Install Apizr's
 notebook support into that environment, then start with `apizr experiment inspect`.
-The [Data Scientist quickstart](data-science.md) explains installation from the
-**0.4.5 candidate wheel (not yet published)** and walks through an unchanged
+The [Data Scientist quickstart](data-science.md) explains installation of
+**Apizr 0.4.6** and walks through an unchanged
 notebook, two datasets, comparison and real REST/MCP prediction calls.
 Scientific libraries are your workload dependencies; no analysis plugin is needed.
-The stable installation commands below remain for published 0.4.4.
+The installation commands below use version 0.4.6.
 
 ## Install the core
 
-Use Python 3.11–3.14 for the published installation commands below, on macOS
-or Linux with a POSIX shell and pip. The development 0.4.6 candidate extends
-support through Python 3.15; it is not published yet.
-Choose **one** installation method. For a first try, create a virtual environment:
+Use Python 3.11–3.15 on macOS
+or Linux with a POSIX shell and pip. Choose **one** installation method. For a first try, create a virtual environment:
 
 ```sh
 mkdir apizr-workspace
 cd apizr-workspace
 python3 -m venv core
 . core/bin/activate
-python -m pip install outerspace-apizr==0.4.4
+python -m pip install outerspace-apizr==0.4.6
 apizr --version
 ```
 
-You should see `outerspace-apizr 0.4.4`. Keep this terminal open and continue with
+You should see `outerspace-apizr 0.4.6`. Keep this terminal open and continue with
 [the Quickstart](quickstart.md). For an existing project, you can also
 [initialize its configuration](onboarding.md).
 
@@ -44,11 +42,11 @@ You should see `outerspace-apizr 0.4.4`. Keep this terminal open and continue wi
 Install Apizr as an isolated command-line tool with **one** of:
 
 ```sh
-uv tool install outerspace-apizr==0.4.4
+uv tool install outerspace-apizr==0.4.6
 ```
 
 ```sh
-pipx install outerspace-apizr==0.4.4
+pipx install outerspace-apizr==0.4.6
 ```
 
 Use the executable path reported by your tool. The Quickstart's pip path is
@@ -84,10 +82,10 @@ brew install alien6-studio/tap/apizr
 apizr --version
 ```
 
-You should see `outerspace-apizr 0.4.4`. The Formula uses Homebrew Python 3.14.
+You should see `outerspace-apizr 0.4.6`. The Formula uses Homebrew Python 3.15.
 Its installation is tested on hosted Apple Silicon; Intel macOS and Linux
 Homebrew runtime are not qualified. See the
-[release record](../releases/0.4.4.md#validation) for details.
+[release record](../releases/0.4.6.md#validation) for details.
 
 ## Add optional plugin profiles
 
@@ -99,13 +97,11 @@ Homebrew runtime are not qualified. See the
 | Deliver an image with an Attest receipt | `delivery` profile |
 
 Plugins live in their own environments. Keep all selected core/plugin versions
-at **0.4.4**. Install **uv 0.12.0** separately and check `uv --version` before
+at **0.4.6**. Install **uv 0.13.1** separately and check `uv --version` before
 installing or syncing plugins. This also applies to Homebrew installations.
 
-For the **0.4.6 development candidate**, preparation accepts stable uv 0.12.x
-and 0.13.x; CI qualifies with **0.13.1**. See the
-[native preparation policy](../contributing/preparation-qualification.md).
-Published 0.4.5 preparation continues to require uv 0.12.x.
+Plugin preparation accepts stable uv 0.12.x and 0.13.x; CI qualifies with
+**0.13.1**. See the [native preparation policy](../contributing/preparation-qualification.md).
 
 <span id="install-the-published-release"></span>
 <span id="evaluate-the-040-candidate"></span>
@@ -157,7 +153,7 @@ On this fresh store, the active inventory is empty. Activate only what you selec
 
 ```sh
 # mcp profile
-"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version "${APIZR_VERSION:-0.4.4}" --plugins-dir "$PLUGINS_DIR"
+"$CORE_DIR/bin/apizr" plugins enable outerspace-apizr-mcp --version "${APIZR_VERSION:-0.4.6}" --plugins-dir "$PLUGINS_DIR"
 # oci profile: enable outerspace-apizr-oci instead
 # delivery profile: enable both outerspace-apizr-oci and outerspace-apizr-attest
 ```
@@ -185,11 +181,11 @@ The interpreter must match the target export's Python minor version.
 <!-- install:pip -->
 ```sh
 "$PYTHON" -m venv "$CORE_DIR"
-"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.4}-py3-none-any.whl"
+"$CORE_DIR/bin/python" -m pip install --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.6}-py3-none-any.whl"
 "$CORE_DIR/bin/apizr" --version
 ```
 
-Observe `outerspace-apizr 0.4.4`, then activate it with `. "$CORE_DIR/bin/activate"`
+Observe `outerspace-apizr 0.4.6`, then activate it with `. "$CORE_DIR/bin/activate"`
 and follow the [Quickstart](quickstart.md).
 
 ### Alternatively, install as a tool
@@ -198,14 +194,14 @@ With uv already installed, use this **instead of** pip:
 
 <!-- install:uv -->
 ```sh
-uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.4}-py3-none-any.whl"
+uv tool install --python "$PYTHON" --offline --no-index --find-links "$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.6}-py3-none-any.whl"
 ```
 
 Or, with pipx already installed, use:
 
 <!-- install:pipx -->
 ```sh
-pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.4}-py3-none-any.whl"
+pipx install --python "$PYTHON" --pip-args="--no-index --find-links=$TARGET/base" "$CANDIDATE/dist/outerspace_apizr-${APIZR_VERSION:-0.4.6}-py3-none-any.whl"
 ```
 
 Use the executable path reported by that tool, then check `apizr --version`.
@@ -217,19 +213,21 @@ for tool installations use that reported Apizr executable instead.
 
 ## Supported targets
 
-The published 0.4.4 release includes the following dependency exports for offline
+Apizr 0.4.6 uses the following dependency exports for offline
 and plugin installation. Each records the exact Python patch version it supports.
 Choose the matching interpreter and export; the table is not a Windows or Intel
 macOS compatibility claim.
 
 | System / architecture | Python | Release export pattern |
 | --- | --- | --- |
-| Linux x86-64 | 3.11 | `apizr-0.4.4-linux-x86_64-cpython-3.11.*.tar.gz` |
-| Linux x86-64 | 3.12 | `apizr-0.4.4-linux-x86_64-cpython-3.12.*.tar.gz` |
-| Linux x86-64 | 3.13 | `apizr-0.4.4-linux-x86_64-cpython-3.13.*.tar.gz` |
-| Linux x86-64 | 3.14 | `apizr-0.4.4-linux-x86_64-cpython-3.14.*.tar.gz` |
-| macOS arm64 | 3.11 | `apizr-0.4.4-macos-arm64-cpython-3.11.*.tar.gz` |
-| macOS arm64 | 3.14 | `apizr-0.4.4-macos-arm64-cpython-3.14.*.tar.gz` |
+| Linux x86-64 | 3.11 | `apizr-0.4.6-linux-x86_64-cpython-3.11.*.tar.gz` |
+| Linux x86-64 | 3.12 | `apizr-0.4.6-linux-x86_64-cpython-3.12.*.tar.gz` |
+| Linux x86-64 | 3.13 | `apizr-0.4.6-linux-x86_64-cpython-3.13.*.tar.gz` |
+| Linux x86-64 | 3.14 | `apizr-0.4.6-linux-x86_64-cpython-3.14.*.tar.gz` |
+| Linux x86-64 | 3.15 | `apizr-0.4.6-linux-x86_64-cpython-3.15.*.tar.gz` |
+| macOS arm64 | 3.11 | `apizr-0.4.6-macos-arm64-cpython-3.11.*.tar.gz` |
+| macOS arm64 | 3.14 | `apizr-0.4.6-macos-arm64-cpython-3.14.*.tar.gz` |
+| macOS arm64 | 3.15 | `apizr-0.4.6-macos-arm64-cpython-3.15.*.tar.gz` |
 
 ## Develop from source
 
@@ -242,4 +240,4 @@ Review [plugin locks](../reference/project-plugin-locks.md) and
 development locks, grants or activations.
 
 For publication status and changes in this version, see the
-[0.4.4 release notes](../releases/0.4.4.md).
+[0.4.6 release notes](../releases/0.4.6.md).

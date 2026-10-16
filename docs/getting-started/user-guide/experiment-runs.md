@@ -5,8 +5,7 @@ description: Execute a trusted script or supported notebook and distinguish inte
 
 # Run experiments and inspect local history
 
-Available in the published **0.4.5** release and the **0.4.6** development
-checkout. Start with [experiment inspection](experiment-inspection.md).
+Available in **Apizr 0.4.6**. Start with [experiment inspection](experiment-inspection.md).
 
 **`experiment inspect` never executes user code. `experiment run` explicitly
 executes trusted user code in a fresh process. The local process is not a filesystem

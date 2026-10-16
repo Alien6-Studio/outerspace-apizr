@@ -208,10 +208,10 @@ or OCI container per invocation, as described below.
 
 ## Use private helpers from the same repository
 
-In the 0.4.5 candidate, you can organize your Python code into modules
+In Apizr 0.4.6, you can organize your Python code into modules
 and expose the function you choose when its local dependencies can be resolved
 statically. Helpers are packaged as implementation support and stay private
-unless you select them too. Published 0.4.4 retains the earlier import restriction.
+unless you select them too. Earlier 0.4.4 releases retain the original import restriction.
 
 For example, create this small project:
 
@@ -272,14 +272,13 @@ their own public JSON input contract. Their effects are not inferred or propagat
 
 Single-file generation remains conservative because it has no repository evidence.
 `--allow-conditional` does not waive unresolved interface contracts. Repository
-bundles still copy the complete inspected source universe. The 0.4.5 candidate
-release checks the selected function's required helpers and imports as described below.
+bundles still copy the complete inspected source universe. Apizr 0.4.6 checks the selected function's required helpers and imports as described below.
 See [Repository Readiness](../../architecture/repository-readiness-v1.md#resolved-local-import-refinement)
 for the retained import evidence and its limits.
 
 ## Work with unfinished research code
 
-In the 0.4.5 candidate, you can expose a serving function without first
+In Apizr 0.4.6, you can expose a serving function without first
 cleaning up every old experiment or notebook in your research repository.
 Apizr checks the function you select and the code it needs. A problem in a
 required feature helper or import still blocks generation.
@@ -295,8 +294,7 @@ project/
 ```
 
 Copy that directory to `project`. Save an analysis grant for its exact root
-in `operator.json` and use the `direct-readiness.json` policy above. With the
-development candidate, run:
+in `operator.json` and use the `direct-readiness.json` policy above. With Apizr 0.4.6, run:
 
 <!-- smoke:selected-scope -->
 ```sh
@@ -326,7 +324,7 @@ If `predict` starts depending on that ambiguous import, Apizr refuses the
 request and shows the dependency path to the problem. Repository-wide limits
 or corrupt evidence also block generation. This helps you separate serving
 code from unfinished training experiments; it does not establish runtime safety.
-Published 0.4.4 keeps the earlier repository-wide completeness requirement.
+Earlier 0.4.4 releases keep the repository-wide completeness requirement.
 
 Build exits 0 on success, 1 on exposure/bundle refusal, and 2 on invalid or
 operational input. A valid empty Exposure Plan is refused for a server build.

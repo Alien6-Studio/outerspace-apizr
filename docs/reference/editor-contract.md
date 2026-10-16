@@ -1,14 +1,13 @@
 ---
 title: Editor engine contract
-description: Versioned, read-only JSON operations shared by editors and experiment-history MCP tools in 0.4.6 development.
+description: Versioned, read-only JSON operations shared by editors and experiment-history MCP tools in Apizr 0.4.6.
 ---
 
 # Read engine evidence from an editor
 
-The **0.4.6 development engine** provides `apizr editor`: one JSON request on
+The **Apizr 0.4.6 engine** provides `apizr editor`: one JSON request on
 stdin, closed with EOF, and one JSON response on stdout. It uses the installed
-engine and never embeds an engine in the client. This contract prepares editor
-integrations; it does not claim the VS Code extension is already released.
+engine and never embeds an engine in the client. This contract is shared by the CLI, VS Code extension and MCP history tools.
 
 Start with discovery, without selecting or opening a project:
 

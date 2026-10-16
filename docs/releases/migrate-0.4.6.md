@@ -1,9 +1,9 @@
-# Migrate from 0.4.5 to the 0.4.6 development engine
+# Migrate from 0.4.5 to Apizr 0.4.6
 
-0.4.6 is under development. Use retained candidate wheels and the qualified VSIX;
-publication and coordinated version promotion remain separate release gates.
+Install matching 0.4.6 core and plugin versions, and select the qualified VSIX.
+The following changes preserve existing history without rewriting stored evidence.
 
-| Your workflow | Development behavior |
+| Your workflow | Apizr 0.4.6 behavior |
 | --- | --- |
 | Ordinary `experiment inspect/run` | Existing no-instrumentation commands remain available. Runs now retain selected scientific-provider provenance in their digest-bound Plan. |
 | Existing v1 history | Original Plan/Run bytes and digests remain authoritative. Read, show and diff do not require an installed provider. No store rewrite or migration command is needed. |
@@ -19,7 +19,7 @@ both record versions. Do not edit stored JSON to change a schema number or diges
 Corrupted, mismatched or incomplete records are refused. Back up the complete
 store before any manual filesystem maintenance.
 
-The [retained compatibility proof](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/review/journey-trust-0.4.6)
+The [retained compatibility proof](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.4.6/review/journey-trust-0.4.6)
 uses real v1 Runs captured by 0.4.5 and canonical show/diff reference outputs
 produced by the exact `v0.4.5` tagged source. It checks
 Plan/Run admission, canonical show/export and diff, without producer invocation.

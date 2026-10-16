@@ -1,6 +1,6 @@
 # Telemetry: local preview and public contract
 
-Apizr 0.4.6 development keeps telemetry **off by default** in the CLI, Python SDK,
+Apizr 0.4.6 keeps telemetry **off by default** in the CLI, Python SDK,
 VS Code and CI. This implementation contains a public receiving contract and an
 explicit local preview. After explicit consent, clients count only the approved
 operations in bounded process-local memory. There is no event spool, installation

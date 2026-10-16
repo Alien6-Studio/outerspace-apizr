@@ -7,18 +7,17 @@ description: Select compatible prebuilt wheels, verify resolver-admitted hashes 
 
 `apizr plugins prepare` prepares wheels and a strict installer lock for an
 explicit interpreter. It installs nothing and leaves activation to `plugins enable`.
-This command is available in the published **0.4.5** release and the **0.4.6**
-development line.
+This command prepares explicit plugin dependencies for Apizr **0.4.6**.
 
 Use a build containing this command with the **`[preparation]` extra**, which
 provides PyPA's wheel compatibility rules. For example, install the verified core
 candidate into your existing tool environment with
-`uv tool install '/absolute/path/outerspace_apizr-0.4.4-py3-none-any.whl[preparation]'`.
-The minimal core still requires only Pydantic. In the **0.4.6 development line**,
+`uv tool install '/absolute/path/outerspace_apizr-0.4.6-py3-none-any.whl[preparation]'`.
+The minimal core still requires only Pydantic. In **Apizr 0.4.6**,
 preparation accepts stable **uv 0.12.x or 0.13.x**. Development CI uses **0.13.1**;
 the preparation matrix also checks 0.13.0 and the 0.12.0 Linux baseline.
 `--uv /absolute/path/to/uv` selects a specific executable, whose measured version
-is recorded in the result. Published 0.4.5 retains its uv 0.12.x requirement.
+is recorded in the result. Apizr 0.4.6 accepts stable uv 0.12.x and 0.13.x.
 See the [qualification policy](../contributing/preparation-qualification.md).
 
 ## Prepare, install, activate, serve
@@ -34,17 +33,17 @@ authority=/absolute/operator.json
 tmp=$(mktemp -d)
 tmp=$(cd "$tmp" && pwd -P)
 
-apizr plugins prepare outerspace-apizr-mcp --version 0.4.4 \
+apizr plugins prepare outerspace-apizr-mcp --version 0.4.6 \
   --python "$python" --platform native \
   --index-url https://pypi.org/simple --output-dir "$tmp/prepared" --json
 
-plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.4" {sub("--hash=sha256:", "", $2); print $2}' \
+plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.6" {sub("--hash=sha256:", "", $2); print $2}' \
   "$tmp/prepared/requirements.lock")
-apizr plugins install "$tmp/prepared/wheelhouse/outerspace_apizr_mcp-0.4.4-py3-none-any.whl" \
+apizr plugins install "$tmp/prepared/wheelhouse/outerspace_apizr_mcp-0.4.6-py3-none-any.whl" \
   --sha256 "$plugin_sha" --python "$python" \
   --requirements "$tmp/prepared/requirements.lock" \
   --wheelhouse "$tmp/prepared/wheelhouse" --plugins-dir "$tmp/prepared/profile"
-apizr plugins enable outerspace-apizr-mcp --version 0.4.4 \
+apizr plugins enable outerspace-apizr-mcp --version 0.4.6 \
   --plugins-dir "$tmp/prepared/profile"
 apizr mcp serve --project "$project" --operator-policy "$authority" \
   --plugins-dir "$tmp/prepared/profile"
@@ -77,7 +76,7 @@ For a reviewed local wheelhouse, replace `--index-url` with
 `--wheelhouse /absolute/candidate-wheels`. With no index option the entire
 preparation stays offline. Local sdists are ignored and cannot run a build.
 
-In **0.4.6 development**, wheel admission checks the actual central-directory
+In **Apizr 0.4.6**, wheel admission checks the actual central-directory
 records before creating the ZIP index. The existing **10,000-entry** limit applies
 even when archive count fields are forged. Ordinary ZIPs, archive comments,
 prepended archives and fixed ZIP64 records are supported. Multi-disk archives and
@@ -113,7 +112,7 @@ explicit platform triples. For 2.41, uv 0.12/0.13 have no explicit triple:
 Apizr verifies the native host and resolves without `--python-platform`, retaining
 `native-<machine>-glibc-2.41` as the resolver mode. Wheel selection still uses
 the measured interpreter's PyPA tags, including `manylinux_2_41`; it never
-substitutes an older glibc target. Published 0.4.5 stops at glibc 2.40.
+substitutes an older glibc target. Earlier releases stop at glibc 2.40.
 `--platform native`, the measured platform, or its corresponding uv platform
 triple must agree with the explicit interpreter. macOS records the running OS,
 not the interpreter's build deployment minimum. Other targets fail closed;

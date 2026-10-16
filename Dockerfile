@@ -1,4 +1,4 @@
-# Glama hosts the analysis MCP server from the official development branch.
+# Glama hosts the analysis MCP server from the immutable release tag.
 # Qualification uses Debian 13's measured glibc 2.41 native resolver mode.
 FROM ghcr.io/astral-sh/uv:0.13.1 AS uv
 FROM node:24-trixie-slim
@@ -16,7 +16,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-ARG SOURCE_REF=0.4.6
+ARG SOURCE_REF=v0.4.6
 ARG SOURCE_COMMIT
 RUN git clone --depth 1 --branch "$SOURCE_REF" https://github.com/Alien6-Studio/outerspace-apizr . \
     && if [ -n "$SOURCE_COMMIT" ]; then test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"; fi
