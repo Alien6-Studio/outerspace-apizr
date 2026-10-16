@@ -111,7 +111,9 @@ markers = ["serial: real shared Docker worker boundary; requires -n 0 when confi
 
 [tool.ruff]
 target-version = "py311"
-extend-exclude = ["tests/fixtures", "overrides"]
+# Executed CI notebooks are immutable evidence; their source bytes bind Runs.
+# They are validated with nbformat and canonical record/digest checks on intake.
+extend-exclude = ["tests/fixtures", "overrides", "review/hosted-journey-0.4.6/*/executed.ipynb"]
 force-exclude = true
 
 [tool.ruff.lint]

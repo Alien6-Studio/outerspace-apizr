@@ -1,0 +1,351 @@
+{
+  "call_parameters": [],
+  "capture": {
+    "a": {
+      "cell": {
+        "cell_id": "variant-a",
+        "execution_count": 2,
+        "origin": "runtime",
+        "source_digest": "eafe7e380cbff4981ed41e8ce7fc3efdb02c7f1727d1d853fbde759654d73903"
+      },
+      "function": {
+        "definition_id": null,
+        "module": null,
+        "origin": "unknown",
+        "qualified_name": null,
+        "source_digest": null
+      },
+      "mode": "jupyter_cell",
+      "producer": "apizr.tracking",
+      "producer_version": "0.4.6",
+      "selected_parameters": []
+    },
+    "b": {
+      "cell": {
+        "cell_id": "variant-b",
+        "execution_count": 3,
+        "origin": "runtime",
+        "source_digest": "7def2770270cdd6d57e4c63abe19bdc384fb0faa7c6024d38b92025cd473692c"
+      },
+      "function": {
+        "definition_id": null,
+        "module": null,
+        "origin": "unknown",
+        "qualified_name": null,
+        "source_digest": null
+      },
+      "mode": "jupyter_cell",
+      "producer": "apizr.tracking",
+      "producer_version": "0.4.6",
+      "selected_parameters": []
+    },
+    "identity_state": "changed",
+    "mode_a": "jupyter_cell",
+    "mode_b": "jupyter_cell",
+    "mode_state": "same"
+  },
+  "data": [
+    {
+      "content_state": "changed",
+      "name": "transactions",
+      "observed_a": {
+        "content_origin": "runtime",
+        "digest": "f82f5bb6e0723b2166ab5eae8566ceabc913d55522fe2adbfcb638c523cc2dae",
+        "format_hint": "csv",
+        "name": "transactions",
+        "origin": "runtime",
+        "reference": "data/transactions.csv",
+        "size": 8556
+      },
+      "observed_b": {
+        "content_origin": "runtime",
+        "digest": "16b8f77575bd5374ad4435c04b3e9749bdaac63260d770818ed33f320c1477b0",
+        "format_hint": "csv",
+        "name": "transactions",
+        "origin": "runtime",
+        "reference": "data/transactions.csv",
+        "size": 8556
+      },
+      "planned_a": null,
+      "planned_b": null,
+      "reference_state": "unknown",
+      "selection_state": "unknown"
+    }
+  ],
+  "material_counts": {
+    "added": 0,
+    "changed": 3,
+    "removed": 0,
+    "unknown": 7
+  },
+  "metrics": [
+    {
+      "a": {
+        "name": "roc_auc",
+        "origin": "runtime",
+        "unit": null,
+        "value": 0.6850405092592593
+      },
+      "b": {
+        "name": "roc_auc",
+        "origin": "runtime",
+        "unit": null,
+        "value": 0.6548549107142857
+      },
+      "delta": -0.030185598544973602,
+      "name": "roc_auc",
+      "state": "changed"
+    }
+  ],
+  "observed_environment": {
+    "architecture": {
+      "a": {
+        "origin": "runtime",
+        "value": "x86_64"
+      },
+      "b": {
+        "origin": "runtime",
+        "value": "x86_64"
+      },
+      "state": "same"
+    },
+    "artifacts": [
+      {
+        "a": {
+          "content_origin": "runtime",
+          "digest": "e83ce419a49396f0c38e6f1db0fccc881f1cfd63f38447f37a480a10f375dae1",
+          "name": "requirements.txt",
+          "origin": "runtime",
+          "reference": "requirements.txt",
+          "size": 521
+        },
+        "b": {
+          "content_origin": "runtime",
+          "digest": "e83ce419a49396f0c38e6f1db0fccc881f1cfd63f38447f37a480a10f375dae1",
+          "name": "requirements.txt",
+          "origin": "runtime",
+          "reference": "requirements.txt",
+          "size": 521
+        },
+        "name": "requirements.txt",
+        "state": "same"
+      }
+    ],
+    "packages": [
+      {
+        "a": {
+          "name": "joblib",
+          "origin": "runtime",
+          "version": "1.6.0"
+        },
+        "b": {
+          "name": "joblib",
+          "origin": "runtime",
+          "version": "1.6.0"
+        },
+        "name": "joblib",
+        "state": "same"
+      },
+      {
+        "a": {
+          "name": "numpy",
+          "origin": "runtime",
+          "version": "2.4.6"
+        },
+        "b": {
+          "name": "numpy",
+          "origin": "runtime",
+          "version": "2.4.6"
+        },
+        "name": "numpy",
+        "state": "same"
+      },
+      {
+        "a": {
+          "name": "outerspace-apizr",
+          "origin": "runtime",
+          "version": "0.4.6"
+        },
+        "b": {
+          "name": "outerspace-apizr",
+          "origin": "runtime",
+          "version": "0.4.6"
+        },
+        "name": "outerspace-apizr",
+        "state": "same"
+      },
+      {
+        "a": {
+          "name": "scikit-learn",
+          "origin": "runtime",
+          "version": "1.9.1"
+        },
+        "b": {
+          "name": "scikit-learn",
+          "origin": "runtime",
+          "version": "1.9.1"
+        },
+        "name": "scikit-learn",
+        "state": "same"
+      },
+      {
+        "a": {
+          "name": "scipy",
+          "origin": "runtime",
+          "version": "1.17.1"
+        },
+        "b": {
+          "name": "scipy",
+          "origin": "runtime",
+          "version": "1.17.1"
+        },
+        "name": "scipy",
+        "state": "same"
+      }
+    ],
+    "platform": {
+      "a": {
+        "origin": "runtime",
+        "value": "linux"
+      },
+      "b": {
+        "origin": "runtime",
+        "value": "linux"
+      },
+      "state": "same"
+    },
+    "python_implementation": {
+      "a": {
+        "origin": "runtime",
+        "value": "cpython"
+      },
+      "b": {
+        "origin": "runtime",
+        "value": "cpython"
+      },
+      "state": "same"
+    },
+    "python_version": {
+      "a": {
+        "origin": "runtime",
+        "value": "3.13.16"
+      },
+      "b": {
+        "origin": "runtime",
+        "value": "3.13.16"
+      },
+      "state": "same"
+    }
+  },
+  "outputs": [
+    {
+      "a": {
+        "digest": "ec2fc48472d34efb8524dde135a976072583bf2a732166c91cda536b30b15ce3",
+        "media_type": null,
+        "name": "model",
+        "origin": "runtime",
+        "reference": "artifacts/model.joblib",
+        "size": 22748
+      },
+      "b": {
+        "digest": "0bc897b35a4c8aa18bbe9d1586ac9dbaba9c7b81317d62418d2f82b184ecae44",
+        "media_type": null,
+        "name": "model",
+        "origin": "runtime",
+        "reference": "artifacts/model.joblib",
+        "size": 22722
+      },
+      "content_state": "changed",
+      "name": "model",
+      "state": "changed"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "cohort",
+      "observed_a": {
+        "name": "cohort",
+        "origin": "runtime",
+        "value": "a"
+      },
+      "observed_b": {
+        "name": "cohort",
+        "origin": "runtime",
+        "value": "b"
+      },
+      "observed_membership": "same",
+      "observed_state": "changed",
+      "planned_a": null,
+      "planned_b": null,
+      "planned_state": "unknown"
+    }
+  ],
+  "plan_a_digest": "c35b7c3b6ec394b7cfc9f922a948974b45838a98d22e13464d1523ca9a6eb334",
+  "plan_b_digest": "298f27a1252b6e8426627cadf358debd8787c2e5e032c4e01fff120945928d99",
+  "plan_state": "changed",
+  "planned_environment": {
+    "architecture": {
+      "a": null,
+      "b": null,
+      "state": "unknown"
+    },
+    "artifacts": [],
+    "packages": [],
+    "platform": {
+      "a": null,
+      "b": null,
+      "state": "unknown"
+    },
+    "python_implementation": {
+      "a": null,
+      "b": null,
+      "state": "unknown"
+    },
+    "python_version": {
+      "a": null,
+      "b": null,
+      "state": "unknown"
+    }
+  },
+  "randomness": [],
+  "result_counts": {
+    "added": 0,
+    "changed": 2,
+    "removed": 0,
+    "unknown": 0
+  },
+  "run_a_digest": "9a176568f38f58dcfbbfbeb7cc2107576d42772450dc15ffbb8a788e61611026",
+  "run_b_digest": "bb493065a8baea4efc1e41928338b5d5cd3b8c6dd07fb228292e10fad453b73e",
+  "schema_version": "apizr.experiment-diff/v2",
+  "serving": "unknown",
+  "source": {
+    "a": {
+      "capability_id": null,
+      "digest": "4d34a5c1b94354d74205a6818df235dbc4659a3c552532714c829a486c188a97",
+      "executable_digest": null,
+      "kind": "python",
+      "module": null,
+      "reference": "fraud_detection.py"
+    },
+    "b": {
+      "capability_id": null,
+      "digest": "4d34a5c1b94354d74205a6818df235dbc4659a3c552532714c829a486c188a97",
+      "executable_digest": null,
+      "kind": "python",
+      "module": null,
+      "reference": "fraud_detection.py"
+    },
+    "capability_id": "unknown",
+    "digest": "same",
+    "executable_digest": "unknown",
+    "kind": "same",
+    "module": "unknown",
+    "reference": "same",
+    "state": "same"
+  },
+  "status": {
+    "a": "success",
+    "b": "success",
+    "state": "same"
+  }
+}

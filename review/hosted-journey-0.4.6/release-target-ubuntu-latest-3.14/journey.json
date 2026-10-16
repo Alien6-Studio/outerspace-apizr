@@ -1,0 +1,70 @@
+{
+  "cli_same_records": true,
+  "editor": null,
+  "elapsed_seconds": 26.272790110000074,
+  "provider_disabled_history": true,
+  "provider_unavailable_history": true,
+  "runs": [
+    {
+      "cell": "failed-cell",
+      "run_digest": "4ec7869f3268ed0e77e699d49a0060033a7316776606ec19218a7591de7c2965",
+      "status": "failed"
+    },
+    {
+      "cell": "variant-b",
+      "run_digest": "b50a28052c2a4fd28f959c9dc9fadeb38c771ada6e9c21b2c99d52c89846ded5",
+      "status": "success"
+    },
+    {
+      "cell": "variant-a",
+      "run_digest": "0c9a77a32a2e2b54170d0f74a1c1f7c8182dfd912f0985dc49d8cfa2718c40e8",
+      "status": "success"
+    }
+  ],
+  "runtime": {
+    "kernel": "7.4.0",
+    "module": "/home/runner/work/_temp/data-science/work/science/lib/python3.14/site-packages/apizr/__init__.py",
+    "prefix": "/home/runner/work/_temp/data-science/work/science",
+    "python": "3.14.8 (main, Oct 14 2026, 01:04:34) [Clang 23.1.3 ]"
+  },
+  "serving_training_observer": {
+    "positive_controls": 2,
+    "serving_pids": [
+      5502,
+      5510
+    ],
+    "training_calls": 0
+  },
+  "status": "passed",
+  "tampered_artifact": "run_artifact_changed",
+  "training_calls_during_serving": 0,
+  "training_marker_unchanged": true,
+  "transports": {
+    "invalid_typeddict_requests_refused": 3,
+    "rest": {
+      "predictions": [
+        [
+          1,
+          0.8127568160788873
+        ]
+      ]
+    },
+    "structuredContent": {
+      "predictions": [
+        [
+          1,
+          0.8127568160788873
+        ]
+      ]
+    },
+    "timings_seconds": {
+      "mcp_call": 0.09681580500000564,
+      "mcp_startup_and_list": 2.7961088670000436,
+      "rest_call": 0.10315698599993084,
+      "rest_startup": 2.1180929100000867
+    },
+    "tools": [
+      "fraud_detection.predict"
+    ]
+  }
+}

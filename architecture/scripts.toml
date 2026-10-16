@@ -2496,4 +2496,4 @@ kind = "implementation"
 gate = "Require exact native CodeQL evidence on covered refs and retain scans elsewhere."
 workflows = ["security.yml#codeql"]
 ci_blocking = true
-evidence = ["codeql-results/", "stdout/stderr (workflow step log)"]
+evidence = ["codeql-results/", "codeql-selection/", "stdout/stderr (workflow step log)"]

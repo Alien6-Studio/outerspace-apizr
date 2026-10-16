@@ -55,3 +55,26 @@ PRs as superseded does not claim these changes are already in master; review and
 protected integration remain PR #346.
 No branch merge, tag, release, package, registry, extension or site publication
 was performed.
+
+The corrected hosted CodeQL job 117029415228 in run 38917596171 passes and
+retains Python, JavaScript and Actions SARIF. The report records exact identities
+and findings; a successful scan is not a zero-findings claim. CodeQL recreates
+its output directory, so selection metadata is retained in a separate directory
+with a regression test. Native exports already carry exact revision provenance;
+uncovered-ref exports are additionally bound by the exact CI run/job identity.
+
+Two JavaScript findings concern JSON embedded into generated test fixture code.
+The fixtures now pass that data through a dedicated child environment variable
+and parse it as JSON, avoiding code construction from serialized data. This only
+changes tests; VSIX production contents are unchanged. The complete Node test
+suite is run after the change; a fresh hosted scan remains the confirmation.
+
+Two Actions findings trace the already-verified protected release SHA into the
+secondary checkout used solely as metadata input in the read-only public-byte
+comparison job. This job has only contents read, no registry credentials/cache
+step, executes reviewed workflow tools from the first checkout, and never runs
+code/imports from `release-source`. Admission validates immutable tag identity,
+protected-master ancestry and successful exact-source qualification before the
+SHA is exported. The regression test requires that source to remain data only.
+These two potential cache-poisoning reports are retained as reviewed data-flow
+warnings, without suppressing a query or changing a scanner threshold.

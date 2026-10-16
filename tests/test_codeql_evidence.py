@@ -168,3 +168,25 @@ def test_github_repository_endpoint_has_no_trailing_slash(monkeypatch):
     )
     gate.github(REPO, "")
     assert commands == [["gh", "api", "repos/" + REPO]]
+
+
+def test_selection_survives_codeql_recreating_its_output_directory():
+    from pathlib import Path
+
+    import yaml
+
+    workflow = yaml.safe_load(
+        (
+            Path(__file__).resolve().parents[1] / ".github/workflows/security.yml"
+        ).read_text()
+    )
+    steps = workflow["jobs"]["codeql"]["steps"]
+    selection = next(s for s in steps if s.get("id") == "source")
+    analyze = next(s for s in steps if "codeql-action/analyze@" in s.get("uses", ""))
+    assert "--output codeql-selection " in selection["run"]
+    assert analyze["with"]["output"] == "codeql-results"
+    upload = next(s for s in steps if "upload-artifact@" in s.get("uses", ""))
+    assert upload["with"]["path"].splitlines() == [
+        "codeql-selection/",
+        "codeql-results/",
+    ]
