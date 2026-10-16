@@ -13,6 +13,7 @@ ENTRYPOINTS = {
         for name in (
             "experiment",
             "editor",
+            "telemetry",
             "scan",
             "ci",
             "graph",

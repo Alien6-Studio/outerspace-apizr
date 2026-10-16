@@ -1,0 +1,162 @@
+[
+  {
+    "name": "empty-cli",
+    "accepted": true,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[]}"
+  },
+  {
+    "name": "sdk",
+    "accepted": true,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"sdk\",\"events\":[{\"operation\":\"capture_session\",\"outcome\":\"success\",\"count\":1}]}"
+  },
+  {
+    "name": "vscode",
+    "accepted": true,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"vscode\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1}]}"
+  },
+  {
+    "name": "aggregate-boundary",
+    "accepted": true,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":600},{\"operation\":\"inspect\",\"outcome\":\"refused\",\"count\":400}]}"
+  },
+  {
+    "name": "invalid-schema_version",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v2\",\"context\":\"cli\",\"events\":[]}"
+  },
+  {
+    "name": "invalid-context",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"rest\",\"events\":[]}"
+  },
+  {
+    "name": "invalid-events",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":{}}"
+  },
+  {
+    "name": "invalid-path",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[],\"path\":\"sensitive/path\"}"
+  },
+  {
+    "name": "invalid-installation_id",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[],\"installation_id\":\"private\"}"
+  },
+  {
+    "name": "invalid-timestamp",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[],\"timestamp\":\"2026-10-16\"}"
+  },
+  {
+    "name": "missing-schema_version",
+    "accepted": false,
+    "body": "{\"context\":\"cli\",\"events\":[]}"
+  },
+  {
+    "name": "missing-context",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"events\":[]}"
+  },
+  {
+    "name": "missing-events",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\"}"
+  },
+  {
+    "name": "row-operation-13",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"arbitrary_secret\",\"outcome\":\"success\",\"count\":1}]}"
+  },
+  {
+    "name": "row-outcome-14",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"traceback\",\"count\":1}]}"
+  },
+  {
+    "name": "row-count-15",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":true}]}"
+  },
+  {
+    "name": "row-count-16",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":0}]}"
+  },
+  {
+    "name": "row-count-17",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1001}]}"
+  },
+  {
+    "name": "row-count-18",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1.5}]}"
+  },
+  {
+    "name": "row-count-19",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":\"1\"}]}"
+  },
+  {
+    "name": "row-count-20",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":NaN}]}"
+  },
+  {
+    "name": "row-source-21",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1,\"source\":\"secret\"}]}"
+  },
+  {
+    "name": "row-run_digest-22",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1,\"run_digest\":\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"}]}"
+  },
+  {
+    "name": "row-metrics-23",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1,\"metrics\":{\"loss\":1}}]}"
+  },
+  {
+    "name": "repeated-pair",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":2}]}"
+  },
+  {
+    "name": "aggregate-overflow",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1000},{\"operation\":\"inspect\",\"outcome\":\"failed\",\"count\":1}]}"
+  },
+  {
+    "name": "too-many-rows",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1},{\"operation\":\"inspect\",\"outcome\":\"success\",\"count\":1}]}"
+  },
+  {
+    "name": "duplicate-root-key",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"sdk\",\"context\":\"cli\",\"events\":[]}"
+  },
+  {
+    "name": "duplicate-event-key",
+    "accepted": false,
+    "body": "{\"schema_version\":\"apizr.telemetry/v1\",\"context\":\"cli\",\"events\":[{\"operation\":\"inspect\",\"operation\":\"history_list\",\"outcome\":\"success\",\"count\":1}]}"
+  },
+  {
+    "name": "too-deep",
+    "accepted": false,
+    "body": "[[[[[[[[[0]]]]]]]]]"
+  },
+  {
+    "name": "too-many-tokens",
+    "accepted": false,
+    "body": "[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]"
+  },
+  {
+    "name": "invalid-json",
+    "accepted": false,
+    "body": "not json"
+  }
+]

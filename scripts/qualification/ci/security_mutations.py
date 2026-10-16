@@ -28,6 +28,27 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "telemetry-report-byte-limit",
+        "src/apizr/telemetry/model.py",
+        "MAX_REPORT_BYTES = 16384",
+        "MAX_REPORT_BYTES = 16385",
+        "tests/telemetry/test_contract.py::test_byte_boundary_encoding_and_forged_models",
+    ),
+    Mutation(
+        "telemetry-unknown-report-field",
+        "src/apizr/telemetry/model.py",
+        'class UsageReport(BaseModel):\n    model_config = ConfigDict(\n        extra="forbid",',
+        'class UsageReport(BaseModel):\n    model_config = ConfigDict(\n        extra="ignore",',
+        "tests/telemetry/test_contract.py::test_reusable_contract_fixtures[invalid-path]",
+    ),
+    Mutation(
+        "telemetry-loopback-only-override",
+        "src/apizr/telemetry/preview.py",
+        "            or not ipaddress.ip_address(parsed.hostname).is_loopback",
+        "            or False",
+        "tests/telemetry/test_contract.py::test_external_or_unsafe_override_refused[http://192.0.2.1:1234]",
+    ),
+    Mutation(
         "transport-http-cumulative-bytes",
         "src/apizr/interfaces/http_admission.py",
         "            if len(body) + len(chunk) > self.max_bytes:",

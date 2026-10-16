@@ -36,6 +36,16 @@ kind = "domain"
 responsibility = "Installed MCP/REST clients, protocol schemas, native collections and onboarding qualification."
 prefix = "scripts/qualification/interfaces/"
 
+[files."scripts/qualification/interfaces/telemetry_contract.py"]
+group = "interfaces"
+role = "fixture"
+kind = "implementation"
+gate = "Export the telemetry schema and qualify a disposable bounded loopback-only receiver; never contact production."
+standalone = false
+workflows = []
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
+
 [groups."experiments"]
 kind = "domain"
 responsibility = "Scientific contracts, tracked runs, history, notebooks, providers and the installed data-scientist journey."

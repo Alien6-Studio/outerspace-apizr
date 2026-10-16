@@ -151,6 +151,7 @@ nav:
       - Python compiler API: reference/compiler-api.md
       - In-process tracking SDK: reference/tracking-sdk.md
       - Editor engine contract: reference/editor-contract.md
+      - Telemetry policy and contract: about/telemetry.md
       - Extension invocation API: reference/extension-invocation.md
       - Operator permissions: reference/operator-policy.md
       - Compatibility notes: getting-started/developer-guide/releases.md

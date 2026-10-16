@@ -164,6 +164,14 @@ shared operations; neither transport validates stored evidence or computes a
 second diff. MCP history workers receive only analysis/history grants, never
 delivery credentials or signing authority.
 
+`telemetry` owns the closed identifier-free usage-report contract, bounded JSON
+admission and explicit local preview. It depends only on the shared lexical JSON
+budget and Pydantic, with no experiment, tracking, workspace, plugin or transport
+dependency. The CLI presents that preview. The disposable HTTP receiving stub is
+qualification tooling under `scripts/qualification/interfaces`; no receiver or
+sender ships in generated services. Production collection and transmission remain
+unavailable pending the policy review and private collector qualification.
+
 Static recognition providers and in-process scientific adapters are distinct
 contracts. Static recognition stays bounded and does not import or execute
 scientific libraries. An adapter that needs those libraries is an out-of-tree

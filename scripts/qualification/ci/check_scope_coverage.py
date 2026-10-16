@@ -44,6 +44,7 @@ def main() -> None:
                     "src/apizr/plugins/preparation/",
                     "src/apizr/experiments/",
                     "src/apizr/scientific_providers/",
+                    "src/apizr/telemetry/",
                 )
             )
             and data["summary"]["num_statements"]

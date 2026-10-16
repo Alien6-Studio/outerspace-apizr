@@ -50,6 +50,12 @@ responsibility = "In-process experiment-tracking SDK sessions, bounded observati
 allowed_internal_imports = ["apizr.tracking", "apizr.experiments", "apizr.scientific_providers.contracts"]
 allowed_external_imports = ["pydantic"]
 
+[packages."telemetry"]
+kind = "domain"
+responsibility = "Closed identifier-free usage-report contracts, bounded admission and explicit local preview; no automatic collection, project/store access, persistence or network transmission."
+allowed_internal_imports = ["apizr.telemetry", "apizr.contracts.json_budget"]
+allowed_external_imports = ["pydantic"]
+
 [packages."scientific_providers"]
 kind = "composition"
 responsibility = "Compose scientific provider contracts and the official built-in source recognizers; retain admission compatibility exports."

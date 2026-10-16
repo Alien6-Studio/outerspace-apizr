@@ -10,6 +10,7 @@ from apizr.environment.extras import MissingExtra, available, require
 # Only the selected adapter is imported. Completion and onboarding have distinct
 # call signatures and remain explicit in _main alongside the top-level help.
 COMMAND_TARGETS: dict[str, tuple[str, str]] = {
+    "telemetry": ("apizr.cli.commands.telemetry", "main"),
     "editor": ("apizr.cli.commands.editor", "main"),
     "ci": ("apizr.cli.commands.ci", "main"),
     "clients": ("apizr.cli.commands.clients", "main"),
@@ -67,6 +68,7 @@ def _main(argv: Sequence[str] | None = None) -> int:
         )
         print("Local MCP analysis server (optional plugin): apizr mcp serve --help")
         print("Editor JSON request/response: apizr editor --help")
+        print("Local telemetry contract: apizr telemetry {status,preview}")
         print(
             "Extensions: apizr plugins {install,list,enable,disable,run,uninstall} --help"
         )
