@@ -608,7 +608,7 @@ If you intentionally restore A with that explicit enable command, rerunning
 update reuses B and attempts the conditional transition again.
 
 The existing packaging workflow runs these operations from installed wheels on
-Linux 3.11–3.14, macOS 3.11/3.14 and disposable Homebrew. It retains
+Linux 3.11–3.15, macOS 3.11/3.14 and disposable Homebrew. It retains
 `update-evidence.json`, `backend-network.jsonl`, `update-summary.json` and
 `core-evidence.json`: dry-run equality, real uv failure/retry, prepare-only behavior,
 transition/repetition with uv absent, explicit rollback, original-environment and

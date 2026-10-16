@@ -20,7 +20,9 @@ The stable installation commands below remain for published 0.4.4.
 
 ## Install the core
 
-Use Python 3.11–3.14 on macOS or Linux, with a POSIX shell and pip.
+Use Python 3.11–3.14 for the published installation commands below, on macOS
+or Linux with a POSIX shell and pip. The development 0.4.6 candidate extends
+support through Python 3.15; it is not published yet.
 Choose **one** installation method. For a first try, create a virtual environment:
 
 ```sh

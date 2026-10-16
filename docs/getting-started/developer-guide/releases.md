@@ -41,7 +41,7 @@ they are not additional breaking changes introduced by 0.3.
 
 ## Supported environments
 
-- **Python 3.11–3.14 only**, for both Apizr and generated targets.
+- **Python 3.11–3.15 only**, for both Apizr and generated targets.
 - Use a supported interpreter and deployment image. Set `--python-version` and YAML `python_version` targets; unsupported targets fail with the supported range. Existing source is parsed, never transpiled.
 - Application APIs live under `apizr`; use Python standard-library APIs for interpreter compatibility.
 - Security minima for FastAPI, Starlette, python-multipart, nbconvert, Black and pytest are documented in the [current security baseline](../../architecture/security-baseline.md). Pydantic 2 remains in use.

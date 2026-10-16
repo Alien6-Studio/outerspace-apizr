@@ -25,7 +25,7 @@ Already using pandas and scikit-learn? Install the candidate's notebook support
 into that same Python environment. Apizr does not provide a science extra or
 install scientific packages as core dependencies.
 
-For this exact reference example, use Python 3.11–3.14 on macOS or Linux and a
+For this exact reference example, use Python 3.11–3.15 on macOS or Linux and a
 fresh virtual environment. Copy the example outside the Apizr checkout. Obtain
 the retained `release-candidate` and matching `release-target` artifacts from
 the candidate's [CI run](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml).

@@ -15,6 +15,8 @@ import sys
 import tarfile
 import tempfile
 import tomllib
+import zipfile
+from email.parser import BytesParser
 from pathlib import Path
 
 from scripts.qualification.packaging.check_distribution import check
@@ -26,6 +28,25 @@ PROJECTS = {
     "outerspace-apizr-attest": ROOT / "plugins/attest",
     "outerspace-apizr-mcp": ROOT / "plugins/mcp",
 }
+SUPPORTED_PYTHONS = tuple(f"3.{minor}" for minor in range(11, 16))
+HISTORICAL_TARGETS = tuple(
+    [("ubuntu-latest", version) for version in ("3.11", "3.12", "3.13", "3.14")]
+    + [("macos-latest", version) for version in ("3.11", "3.14")]
+)
+QUALIFICATION_TARGETS = tuple(
+    [("ubuntu-latest", version) for version in SUPPORTED_PYTHONS]
+    + [("macos-latest", version) for version in ("3.11", "3.14", "3.15")]
+)
+
+
+def required_targets(candidate: dict) -> tuple[tuple[str, str], ...]:
+    """Old retained candidates keep their six targets; new builds declare eight."""
+    declared = candidate.get("qualification_targets")
+    if declared is None:
+        return HISTORICAL_TARGETS
+    if declared != [list(target) for target in QUALIFICATION_TARGETS]:
+        raise ValueError("Unreviewed candidate qualification targets")
+    return QUALIFICATION_TARGETS
 
 
 def run(*args, cwd=ROOT, timeout=300, env=None):
@@ -80,6 +101,7 @@ def verify_records(root: Path, records: list[dict]) -> None:
 
 def load(root: Path) -> dict:
     manifest = json.loads((root / "candidate.json").read_text())
+    required_targets(manifest)
     if (
         manifest["schema"] != "apizr.release-candidate/v1"
         or manifest["commit"] != source_commit()
@@ -159,11 +181,93 @@ def build(output: Path) -> None:
             "version": version,
             "commit": source_commit(),
             "repository": "Alien6-Studio/outerspace-apizr",
+            "qualification_targets": QUALIFICATION_TARGETS,
             "artifacts": [record(path, output) for path in sorted(dist.iterdir())],
         },
     )
     write(output / "distribution-checks.json", reports)
     load(output)
+
+
+def download_closure(python: Path, lock: Path, house: Path) -> None:
+    """Only PyYAML may use its locked source on 3.15, without native compilation.
+
+    Acquisition/building is explicit preparation. Consumers receive only retained
+    wheels and never fall back to a build. All other dependencies remain binary.
+    """
+    pure_yaml = sys.version_info[:2] == (3, 15)
+    run(
+        python,
+        "-m",
+        "pip",
+        "download",
+        "--require-hashes",
+        "--only-binary=:all:",
+        *(["--no-binary=pyyaml"] if pure_yaml else []),
+        "--dest",
+        house,
+        "-r",
+        lock,
+        timeout=600,
+    )
+    sources = [path for path in house.iterdir() if path.suffix != ".whl"]
+    if not sources:
+        return
+    packages = tomllib.loads((ROOT / "uv.lock").read_text())["package"]
+    (package,) = [item for item in packages if item["name"] == "pyyaml"]
+    (source,) = sources
+    if not pure_yaml or digest(source) != package["sdist"]["hash"].removeprefix(
+        "sha256:"
+    ):
+        raise ValueError("Only the locked PyYAML source is allowed")
+    log = run(
+        python,
+        "-m",
+        "pip",
+        "wheel",
+        "--no-deps",
+        "--no-cache-dir",
+        "--wheel-dir",
+        house,
+        source,
+        timeout=600,
+        env={
+            **os.environ,
+            "PYYAML_FORCE_LIBYAML": "0",
+            "CC": "/usr/bin/false",
+            "CXX": "/usr/bin/false",
+            "RUSTC": "/usr/bin/false",
+            "SOURCE_DATE_EPOCH": "315532800",
+        },
+    )
+    (wheel,) = house.glob("pyyaml-*-py3-none-any.whl")
+    with zipfile.ZipFile(wheel) as archive:
+        (metadata,) = [
+            name for name in archive.namelist() if name.endswith(".dist-info/METADATA")
+        ]
+        value = BytesParser().parsebytes(archive.read(metadata))
+        if (value["Name"].lower(), value["Version"]) != (
+            "pyyaml",
+            package["version"],
+        ) or any(
+            name.endswith((".so", ".pyd", ".dylib")) for name in archive.namelist()
+        ):
+            raise ValueError("Expected the locked pure-Python PyYAML wheel")
+    retained = house.parent / "pyyaml-build"
+    retained.mkdir(exist_ok=True)
+    shutil.copyfile(source, retained / source.name)
+    (retained / "build.log").write_text(log)
+    write(
+        retained / "provenance.json",
+        {
+            "upstream_source": record(source, house),
+            "prepared_wheel": record(wheel, house),
+            "python": platform.python_version(),
+            "native_compilation": "disabled",
+            "scope": "explicit preparation only; offline consumers install the retained wheel",
+        },
+    )
+    source.unlink()
 
 
 def prepare_target(candidate: Path, output: Path) -> None:
@@ -207,19 +311,7 @@ def prepare_target(candidate: Path, output: Path) -> None:
             )
             house = output / name
             house.mkdir()
-            run(
-                work / "prepare/bin/python",
-                "-m",
-                "pip",
-                "download",
-                "--require-hashes",
-                "--only-binary=:all:",
-                "--dest",
-                house,
-                "-r",
-                lock,
-                timeout=600,
-            )
+            download_closure(work / "prepare/bin/python", lock, house)
         core = next((candidate / "dist").glob("outerspace_apizr-*.whl"))
         for name in ("base", "mcp", "extras"):
             shutil.copyfile(core, output / name / core.name)

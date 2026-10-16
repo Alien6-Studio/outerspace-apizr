@@ -68,6 +68,62 @@ def test_retained_set_rejects_mismatch(packaging, tmp_path, fault):
         packaging.load(tmp_path)
 
 
+@pytest.mark.parametrize("fault", [None, "source", "native"])
+def test_only_locked_pure_yaml_can_be_prepared_from_source(
+    packaging, tmp_path, monkeypatch, fault
+):
+    import hashlib
+    import zipfile
+
+    house = tmp_path / "extras"
+    house.mkdir()
+    source = house / "pyyaml-6.0.3.tar.gz"
+    content = b"locked upstream source"
+    lock = tmp_path / "resolved.txt"
+    lock.write_text("pyyaml==6.0.3\n")
+    (tmp_path / "uv.lock").write_text(
+        '[[package]]\nname="pyyaml"\nversion="6.0.3"\n'
+        'sdist={hash="sha256:' + hashlib.sha256(content).hexdigest() + '"}\n'
+    )
+    monkeypatch.setattr(packaging, "ROOT", tmp_path)
+    monkeypatch.setattr(packaging.sys, "version_info", (3, 15))
+    calls = []
+
+    def prepare(*args, **kwargs):
+        calls.append(args)
+        if "download" in args:
+            assert "--require-hashes" in args and "--only-binary=:all:" in args
+            assert "--no-binary=pyyaml" in args
+            source.write_bytes(b"tampered" if fault == "source" else content)
+        else:
+            env = kwargs["env"]
+            assert env["PYYAML_FORCE_LIBYAML"] == "0"
+            assert env["CC"] == env["CXX"] == env["RUSTC"] == "/usr/bin/false"
+            with zipfile.ZipFile(house / "pyyaml-6.0.3-py3-none-any.whl", "w") as wheel:
+                wheel.writestr(
+                    "pyyaml-6.0.3.dist-info/METADATA", "Name: PyYAML\nVersion: 6.0.3\n"
+                )
+                if fault == "native":
+                    wheel.writestr("yaml/_yaml.so", b"native extension")
+        return "prepared without native compilation\n"
+
+    monkeypatch.setattr(packaging, "run", prepare)
+    if fault:
+        with pytest.raises(ValueError, match="(locked|pure-Python)"):
+            packaging.download_closure(tmp_path / "python", lock, house)
+        assert not (tmp_path / "pyyaml-build/provenance.json").exists()
+        if fault == "source":
+            assert len(calls) == 1
+    else:
+        packaging.download_closure(tmp_path / "python", lock, house)
+        assert not source.exists()
+        evidence = json.loads((tmp_path / "pyyaml-build/provenance.json").read_text())
+        assert (
+            evidence["upstream_source"]["sha256"] == hashlib.sha256(content).hexdigest()
+        )
+        assert evidence["prepared_wheel"]["file"].endswith("py3-none-any.whl")
+
+
 def test_candidate_proof_never_falls_back_to_rebuild(packaging, tmp_path, monkeypatch):
     monkeypatch.setenv("APIZR_RELEASE_SET", str(tmp_path))
     monkeypatch.delenv("APIZR_RELEASE_TARGET", raising=False)

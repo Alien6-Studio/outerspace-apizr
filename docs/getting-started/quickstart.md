@@ -106,7 +106,7 @@ Python MCP client.
 ## Prepare an isolated workspace
 
 [Install Apizr](install.md) with the pip instructions and keep `core/` activated.
-You need Python 3.11–3.14, `curl`, a POSIX shell on macOS/Linux and internet access
+You need Python 3.11–3.15, `curl`, a POSIX shell on macOS/Linux and internet access
 for the example and server dependencies. In the same terminal:
 
 <!-- quickstart:setup -->

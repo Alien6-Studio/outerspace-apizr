@@ -127,7 +127,7 @@ display identifiers and display updates remain visible. Importing the SDK or
 applying a decorator does not start a kernel or register IPython hooks.
 
 The real-kernel qualification uses **ipykernel 7.4.0**, **IPython 9.17.1** and
-**jupyter-client 8.10.0**, on the supported Python 3.11–3.14 Linux/macOS CI
+**jupyter-client 8.10.0**, on the supported Python 3.11–3.15 Linux/macOS CI
 targets. Frontend-specific behavior in JupyterLab, classic Notebook and VS Code
 notebooks is not separately qualified by this kernel proof. Kernel packages
 belong to the user's notebook environment, not to the SDK's runtime dependencies.

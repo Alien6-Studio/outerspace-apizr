@@ -22,7 +22,7 @@ explicitly selected prediction function. Know which data, code, parameters and
 environment produced your result. Start with the
 [Data Scientist quickstart](getting-started/data-science.md).
 
-**[Apizr 0.4.4](releases/0.4.4.md) is available.** Python 3.11–3.14 · Open source,
+**[Apizr 0.4.4](releases/0.4.4.md) is available.** Python 3.11–3.15 · Open source,
 GPL-3.0-or-later.
 
 <div class="apizr-home-actions" markdown="1">

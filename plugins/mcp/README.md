@@ -47,4 +47,4 @@ checks for later Smithery submission; no hosted endpoint or implicit delivery is
 introduced. Use published 0.4.4 core/plugin versions together until release.
 
 See the [plugin guide](https://apizr.outerspace.sh/reference/apizr-mcp-server/).
-Python 3.11–3.14. GPL-3.0-or-later; the full license is included.
+Python 3.11–3.15. GPL-3.0-or-later; the full license is included.

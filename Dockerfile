@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates git \
     && npm install -g mcp-proxy@6.7.16 \
-    && uv python install 3.14 \
+    && uv python install 3.15 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -20,7 +20,7 @@ ARG SOURCE_REF=0.4.6
 ARG SOURCE_COMMIT
 RUN git clone --depth 1 --branch "$SOURCE_REF" https://github.com/Alien6-Studio/outerspace-apizr . \
     && if [ -n "$SOURCE_COMMIT" ]; then test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"; fi
-RUN uv run --no-project --python 3.14 python -c 'import sys; from pathlib import Path; sys.path.insert(0, str(Path.cwd() / "scripts")); from smoke_mcp_server import prepare; prepare(Path("/opt/apizr-inspection"), sys.executable)'
+RUN uv run --no-project --python 3.15 python -c 'import sys; from pathlib import Path; sys.path.insert(0, str(Path.cwd() / "scripts")); from smoke_mcp_server import prepare; prepare(Path("/opt/apizr-inspection"), sys.executable)'
 
 RUN useradd --system --create-home --shell /usr/sbin/nologin apizr \
     && chown -R apizr:apizr /opt/apizr-inspection

@@ -109,9 +109,9 @@ def verify_wheel(data, item, closure):
             raise ValueError("Build wheel metadata identity mismatch")
         for value in metadata.get_all("Requires-Dist", []):
             requirement = Requirement(value)
-            # These wheels are qualified for Homebrew CPython 3.14 on both macOS architectures.
+            # These wheels are qualified for Homebrew CPython 3.15 on both macOS architectures.
             if requirement.marker and not requirement.marker.evaluate(
-                {"python_version": "3.14", "python_full_version": "3.14.0", "extra": ""}
+                {"python_version": "3.15", "python_full_version": "3.15.0", "extra": ""}
             ):
                 continue
             version = closure.get(canonicalize_name(requirement.name))

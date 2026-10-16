@@ -13,7 +13,7 @@ from pathlib import Path
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wheel", type=Path)
-    parser.add_argument("--base-image", default="python:3.14-slim")
+    parser.add_argument("--base-image", default="python:3.15-slim")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     # This preparation command explicitly permits base-image/dependency acquisition.

@@ -76,11 +76,11 @@ def main() -> None:
   sha256 "{hashlib.sha256(archive.read_bytes()).hexdigest()}"
   license "GPL-3.0-or-later"
 
-  depends_on "python@3.14"
+  depends_on "python@3.15"
   depends_on "uv" => :build
 
   def install
-    system Formula["python@3.14"].opt_bin/"python3.14", "-m", "venv", "--without-pip", libexec
+    system Formula["python@3.15"].opt_bin/"python3.15", "-m", "venv", "--without-pip", libexec
     system Formula["uv"].opt_bin/"uv", "--no-cache", "--offline", "pip", "install",
            "--python", libexec/"bin/python", "--no-index", "--find-links", buildpath/"wheels",
            Dir["wheels/outerspace_apizr-*.whl"].first

@@ -5,7 +5,7 @@ For prerequisites and package availability, see [Install Apizr](../getting-start
 Readiness and exposure can acquire a public **HTTPS** Git repository directly.
 [Private repositories through an explicit SSH agent](git-ssh.md) use the same snapshot API.
 Install Git separately; this adapter is included in the minimal Apizr core and
-does not install or invoke plugins. Python 3.11–3.14 on macOS/Linux is supported.
+does not install or invoke plugins. Python 3.11–3.15 on macOS/Linux is supported.
 
 ## One explicit revision
 

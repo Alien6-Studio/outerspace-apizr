@@ -33,7 +33,7 @@ def test_homebrew_boundary_is_explicit_deterministic_and_preserves_build_identit
         {"platform": "linux", "reason": "runtime-not-qualified-in-0.4.3"},
     ]
     assert policy["build_inputs_manifest_sha256"] == (
-        "b4a97eda9c73b487a42d7c7cb8f0afb0b92d185d670065eeef9a7c1d15d89357"
+        "3e824a9329106bd3405016ec66a8cd24f19afe5104a250c2da801a911f28ef89"
     )
     reordered = dict(reversed(list(policy.items())))
     assert tool["encoded"](result) == tool["encoded"](
@@ -54,6 +54,8 @@ def test_development_build_refresh_preserves_frozen_publication_identity():
     assert development["lock_sha256"] != published["lock_sha256"]
     assert development["policy_sha256"] != published["policy_sha256"]
     refreshed = {"lock_sha256", "policy_sha256", "distributions"}
+    policy = json.loads((ROOT / "policy/homebrew-build-inputs.json").read_text())
+    assert policy["python_formula"] == "python@3.15"
     assert {k: v for k, v in development.items() if k not in refreshed} == {
         k: v for k, v in published.items() if k not in refreshed
     }

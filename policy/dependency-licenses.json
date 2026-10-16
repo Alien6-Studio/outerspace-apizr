@@ -86,9 +86,15 @@
       "version": "4.15.1"
     },
     {
-      "name": "appnope",
-      "version": "1.0.0",
-      "status": "reviewed",
+      "components": [
+        {
+          "evidence_sha256": [
+            "0d32193e358c88e30be8ec37069cd41867d5f7db3273776fc7bd5c19517332c4"
+          ],
+          "expression": "BSD-2-Clause",
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification."
+        }
+      ],
       "distribution_fingerprint": "7890b7afb2887ccff21825bcf673a7d2e7b1ee37618e4434a17b5f9cda4fe126",
       "evidence_archive": {
         "hash": "sha256:685db59cb6043c3c2e528adc0b3bce3a5f8d09bcf7492c6ea650d1b7421f3c49",
@@ -100,16 +106,10 @@
           "sha256": "0d32193e358c88e30be8ec37069cd41867d5f7db3273776fc7bd5c19517332c4"
         }
       ],
-      "components": [
-        {
-          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
-          "expression": "BSD-2-Clause",
-          "evidence_sha256": [
-            "0d32193e358c88e30be8ec37069cd41867d5f7db3273776fc7bd5c19517332c4"
-          ]
-        }
-      ],
-      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
+      "name": "appnope",
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission.",
+      "status": "reviewed",
+      "version": "1.0.0"
     },
     {
       "components": [
@@ -225,7 +225,7 @@
           "scope": "Unicode data used by the generation tools, under Exhibit 1 data/software terms; this does not grant rights to mirror the Unicode website or modify its terms."
         }
       ],
-      "distribution_fingerprint": "d00a19375e8e7c3d2a9dd7bb233ad7dd55460fb3d72f5a099b9ba2bdca5eb34c",
+      "distribution_fingerprint": "e59207b4392e804252b2114a5e89670c5b84bd5072d9e113e75477fbe93c514e",
       "evidence_archive": {
         "hash": "sha256:f86d9312df3ebae1241758af80809a319cafa1d8f32189edfb242c9aa55573b6",
         "url": "https://files.pythonhosted.org/packages/68/bc/c4b75b0279b2cf9e208c7dea5755a452d158a32abe1b7330824ff1127e86/backrefs-8.1.tar.gz"
@@ -445,7 +445,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "d9a9c86050dfc5890fb67e022e6612a52c250bac4310654df43b998fd7a18a7e",
+      "distribution_fingerprint": "3b2c0de5dfd7ef869ead4551132667a1c0668bc5199fbe3088698176f5da70f1",
       "evidence_archive": {
         "hash": "sha256:dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be",
         "url": "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz"
@@ -497,7 +497,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "7bb076f2caa548b82a0d29aafca0bfef3968cd4e91ea94bb4e510e7cd166b61c",
+      "distribution_fingerprint": "ea3aed3b2f709f19aed6dfec39666b82c73c2fd0c278a8f55b6dcf04a487448f",
       "evidence_archive": {
         "hash": "sha256:39de2a259fc954455c57274dc94c79d5842774e1247a016aff30bc0efed0f4ef",
         "url": "https://files.pythonhosted.org/packages/33/1c/f41d4e74c28ab327ff3acd36053f7ea506c55872d7a90b0fa71aa3ab0c89/charset_normalizer-3.5.2.tar.gz"
@@ -574,9 +574,15 @@
       "version": "0.4.6"
     },
     {
-      "name": "comm",
-      "version": "0.2.3",
-      "status": "reviewed",
+      "components": [
+        {
+          "evidence_sha256": [
+            "97a7e0a142b7c1dcd26461b20fc13980988b4449b7446ed776928826fd2ca9c4"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification."
+        }
+      ],
       "distribution_fingerprint": "eb987551743c1e9153413b73fc9d6b61c37b0d27c22ba15b93c65356547211f1",
       "evidence_archive": {
         "hash": "sha256:2dc8048c10962d55d7ad693be1e7045d891b7ce8d999c97963a5e3e99c055971",
@@ -588,16 +594,10 @@
           "sha256": "97a7e0a142b7c1dcd26461b20fc13980988b4449b7446ed776928826fd2ca9c4"
         }
       ],
-      "components": [
-        {
-          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
-          "expression": "BSD-3-Clause",
-          "evidence_sha256": [
-            "97a7e0a142b7c1dcd26461b20fc13980988b4449b7446ed776928826fd2ca9c4"
-          ]
-        }
-      ],
-      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
+      "name": "comm",
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission.",
+      "status": "reviewed",
+      "version": "0.2.3"
     },
     {
       "components": [
@@ -609,7 +609,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "010a59ef1c69d1e9c2443835f2c2756b8b93671f93457d821addfb0c200162c8",
+      "distribution_fingerprint": "f8e625cfc03d0ba14733b19e69f36c9bc52f7f702f1e3735a8f2610bf25ae589",
       "evidence_archive": {
         "hash": "sha256:ca64d9f1f384f151b9511bec01126072acd2f313439f8ed015a22d8790aab6fa",
         "url": "https://files.pythonhosted.org/packages/2f/55/d1eaf3e73781174340a00dc1ba2aee8a65f82fadb18e2797b192b6b3925b/coverage-7.16.2.tar.gz"
@@ -694,10 +694,58 @@
       "version": "11.12.0"
     },
     {
-      "name": "debugpy",
-      "version": "1.8.22",
-      "status": "reviewed",
-      "distribution_fingerprint": "ed92ef8c5a72f430bc35154e95fdfc436cbf741762063b464c4042b8330822d5",
+      "components": [
+        {
+          "evidence_sha256": [
+            "649844f60da138e54b9bcc13338c62c5f97be8612cb6249ac10f84bbb97ffc88"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification."
+        },
+        {
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ],
+          "expression": "EPL-1.0",
+          "scope": "Bundled PyDev.Debugger, used unmodified only in development kernel qualification; retain its notices and corresponding source. Not an Apizr runtime dependency or vendored distribution."
+        },
+        {
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ],
+          "expression": "Python-2.0",
+          "scope": "Bundled Python-derived code and cumulative BeOpen, CNRI and CWI notices."
+        },
+        {
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Bundled IPython, WinAppDbg and scandir components."
+        },
+        {
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Bundled Microsoft and Brainwy Apache-licensed files."
+        },
+        {
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ],
+          "expression": "MIT",
+          "scope": "Bundled six, Spyder methods and bytecode components."
+        },
+        {
+          "evidence_sha256": [
+            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
+          ],
+          "expression": "HPND",
+          "scope": "Bundled Secret Labs XML-RPC client permission and attribution notice."
+        }
+      ],
+      "distribution_fingerprint": "53afe7ee107c5e1d9f45ff058c67ac3b9cd8f9f07841b72c231857441dfc28f0",
       "evidence_archive": {
         "hash": "sha256:e489c7268e1c7b41e13b438d9c533d2a7af73fb59bf8cd30fead8286c1c39c4e",
         "url": "https://files.pythonhosted.org/packages/44/9d/3cb6693342acf96802dba89934a5b8da43c201d764ebd1f2c0514a3d42bd/debugpy-1.8.22.tar.gz"
@@ -712,58 +760,10 @@
           "sha256": "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
         }
       ],
-      "components": [
-        {
-          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
-          "expression": "MIT",
-          "evidence_sha256": [
-            "649844f60da138e54b9bcc13338c62c5f97be8612cb6249ac10f84bbb97ffc88"
-          ]
-        },
-        {
-          "scope": "Bundled PyDev.Debugger, used unmodified only in development kernel qualification; retain its notices and corresponding source. Not an Apizr runtime dependency or vendored distribution.",
-          "expression": "EPL-1.0",
-          "evidence_sha256": [
-            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
-          ]
-        },
-        {
-          "scope": "Bundled Python-derived code and cumulative BeOpen, CNRI and CWI notices.",
-          "expression": "Python-2.0",
-          "evidence_sha256": [
-            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
-          ]
-        },
-        {
-          "scope": "Bundled IPython, WinAppDbg and scandir components.",
-          "expression": "BSD-3-Clause",
-          "evidence_sha256": [
-            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
-          ]
-        },
-        {
-          "scope": "Bundled Microsoft and Brainwy Apache-licensed files.",
-          "expression": "Apache-2.0",
-          "evidence_sha256": [
-            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
-          ]
-        },
-        {
-          "scope": "Bundled six, Spyder methods and bytecode components.",
-          "expression": "MIT",
-          "evidence_sha256": [
-            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
-          ]
-        },
-        {
-          "scope": "Bundled Secret Labs XML-RPC client permission and attribution notice.",
-          "expression": "HPND",
-          "evidence_sha256": [
-            "e3baaa532b9e2303b187b18e05dfed48961d6d16c82d0ae47978b2fd2ce47084"
-          ]
-        }
-      ],
-      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
+      "name": "debugpy",
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission.",
+      "status": "reviewed",
+      "version": "1.8.22"
     },
     {
       "components": [
@@ -834,9 +834,15 @@
       "version": "0.4.3"
     },
     {
-      "name": "execnet",
-      "version": "2.1.2",
-      "status": "reviewed",
+      "components": [
+        {
+          "evidence_sha256": [
+            "e89eed1074d3a943198ba139b80844f5b445b860bba74a8aeadc0610566164ea"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed source archive, used only by development test workers."
+        }
+      ],
       "distribution_fingerprint": "a80a9a2373dcfa8157776801b7ce1521464359256ed63627ed056b9e92af217e",
       "evidence_archive": {
         "hash": "sha256:63d83bfdd9a23e35b9c6a3261412324f964c2ec8dcd8d3c6916ee9373e0befcd",
@@ -848,16 +854,10 @@
           "sha256": "e89eed1074d3a943198ba139b80844f5b445b860bba74a8aeadc0610566164ea"
         }
       ],
-      "components": [
-        {
-          "scope": "Primary project code in the reviewed source archive, used only by development test workers.",
-          "expression": "MIT",
-          "evidence_sha256": [
-            "e89eed1074d3a943198ba139b80844f5b445b860bba74a8aeadc0610566164ea"
-          ]
-        }
-      ],
-      "notes": "Reviewed the complete MIT license in the SHA-256-verified locked source archive for unmodified development-only pytest worker use. Retain upstream notices; no runtime, vendoring or distribution scope is added."
+      "name": "execnet",
+      "notes": "Reviewed the complete MIT license in the SHA-256-verified locked source archive for unmodified development-only pytest worker use. Retain upstream notices; no runtime, vendoring or distribution scope is added.",
+      "status": "reviewed",
+      "version": "2.1.2"
     },
     {
       "components": [
@@ -1107,7 +1107,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "a2a86feb9d5d0a636fb65a5457e70cb1970cf63a2a7bc28781ebe614018012bc",
+      "distribution_fingerprint": "95defe519f982ccbcf94894337fa665e1950a06910f9e8436fbcd35b1a8a15ec",
       "evidence_archive": {
         "hash": "sha256:d484ebb7e3a3f3597b0f645fbd1b85633674ca808c1f5ba11c2caf7c66f5c8b6",
         "url": "https://files.pythonhosted.org/packages/3a/ec/deed52912ab7ca6c0b12859330c571c60c61d7267b341b28951fcbf13694/httptools-0.9.0.tar.gz"
@@ -1318,9 +1318,15 @@
       "version": "2.3.1"
     },
     {
-      "name": "ipykernel",
-      "version": "7.4.0",
-      "status": "reviewed",
+      "components": [
+        {
+          "evidence_sha256": [
+            "36ec29c871f7a382cde301cba47698191cf327c3f95ff5c240065e95dde80bfd"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification."
+        }
+      ],
       "distribution_fingerprint": "616b674131309b017cc05edfd004b2328d64117df70bcb0b34446a6d28c808fe",
       "evidence_archive": {
         "hash": "sha256:4330114d22b9b33575b2c7c68753fc8faabbbcfbc60b0cdff9f14dd4ce63742f",
@@ -1332,16 +1338,10 @@
           "sha256": "36ec29c871f7a382cde301cba47698191cf327c3f95ff5c240065e95dde80bfd"
         }
       ],
-      "components": [
-        {
-          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
-          "expression": "BSD-3-Clause",
-          "evidence_sha256": [
-            "36ec29c871f7a382cde301cba47698191cf327c3f95ff5c240065e95dde80bfd"
-          ]
-        }
-      ],
-      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
+      "name": "ipykernel",
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission.",
+      "status": "reviewed",
+      "version": "7.4.0"
     },
     {
       "components": [
@@ -1763,7 +1763,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "5d574bdf35302509adb4e041917f5b8b0dc8dac70cb312ece70e33c3c87944a7",
+      "distribution_fingerprint": "f6c7aa4d5997a8e9a5caa3d94a51d7dfc5dfbb80269c4ca7253bdd6d563d26c8",
       "evidence_archive": {
         "hash": "sha256:2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6",
         "url": "https://files.pythonhosted.org/packages/38/9b/e422a865e1d5d57d0e509b4e0bf1c1a70a7f6382c29a5aa428df994c8bc8/markupsafe-3.0.4.tar.gz"
@@ -2090,7 +2090,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "5abbfd98b45c41168d5a3e792a1eb218d3106f4c4b58e75b446466f3dcd52ad2",
+      "distribution_fingerprint": "4b945b1d5f70cece85d5404bd663df68f4b098832ee8ccf6d08bd640a9a5247e",
       "evidence_archive": {
         "hash": "sha256:32edb81a2b5eb7cd7c9d941b2bfbbb082fd2cd09e0e725930316af6b708db186",
         "url": "https://files.pythonhosted.org/packages/0a/e7/bb605a7bab2d8425a64b3fa762b39dc1bf1c7e3f11ba6fb5413d6db0ff8c/msgpack-1.2.3.tar.gz"
@@ -2211,9 +2211,15 @@
       "version": "5.11.1"
     },
     {
-      "name": "nest-asyncio2",
-      "version": "1.7.4",
-      "status": "reviewed",
+      "components": [
+        {
+          "evidence_sha256": [
+            "cec819c02a99e78449d64f3c0217d415c3a210f2a6abfcd827c6b1cb76954e78"
+          ],
+          "expression": "BSD-2-Clause",
+          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification."
+        }
+      ],
       "distribution_fingerprint": "1cc00a39c85e4370b0944bf2ad293c03843d9fc0dc9987578cfe43b74a28b4ea",
       "evidence_archive": {
         "hash": "sha256:995b1409d926ec55e0876ea39a69bffdd8852cf1db3652c177e8c8ffdbcaf3cc",
@@ -2225,16 +2231,10 @@
           "sha256": "cec819c02a99e78449d64f3c0217d415c3a210f2a6abfcd827c6b1cb76954e78"
         }
       ],
-      "components": [
-        {
-          "scope": "Primary project code; unmodified dependency used only in real-kernel development qualification.",
-          "expression": "BSD-2-Clause",
-          "evidence_sha256": [
-            "cec819c02a99e78449d64f3c0217d415c3a210f2a6abfcd827c6b1cb76954e78"
-          ]
-        }
-      ],
-      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission."
+      "name": "nest-asyncio2",
+      "notes": "Reviewed the SHA-256-verified locked source archive and preserved primary and cumulative third-party notices for unmodified real-kernel development qualification. No new runtime dependency or vendoring permission.",
+      "status": "reviewed",
+      "version": "1.7.4"
     },
     {
       "components": [
@@ -3075,7 +3075,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "ddb34c9585f502e114ba6f58034c18540a86c82e1e46fe23308dd700195e0964",
+      "distribution_fingerprint": "2c686962b2cb34e017c9d4701e883d927ef0fc1a81063f215c66c70cef231c8f",
       "evidence_archive": {
         "hash": "sha256:e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09",
         "url": "https://files.pythonhosted.org/packages/a6/24/af4ec4be49fbc810f35b0bdcacc3d433b56bbfa469fd3bfd4ae116cd9bf1/pydantic_core-2.50.1.tar.gz"
@@ -3326,9 +3326,15 @@
       "version": "2.4.0"
     },
     {
-      "name": "pytest-xdist",
-      "version": "3.8.0",
-      "status": "reviewed",
+      "components": [
+        {
+          "evidence_sha256": [
+            "36c15bf831b218a24d122e3b30256b3e1ca285716c24937fe6d8475074ee9032"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed source archive, used only by development test workers."
+        }
+      ],
       "distribution_fingerprint": "c207f8875bf9a537020e026caf33e8923bb6d60e3682daaefc765ad0cb804314",
       "evidence_archive": {
         "hash": "sha256:7e578125ec9bc6050861aa93f2d59f1d8d085595d6551c2c90b6f4fad8d3a9f1",
@@ -3340,16 +3346,10 @@
           "sha256": "36c15bf831b218a24d122e3b30256b3e1ca285716c24937fe6d8475074ee9032"
         }
       ],
-      "components": [
-        {
-          "scope": "Primary project code in the reviewed source archive, used only by development test workers.",
-          "expression": "MIT",
-          "evidence_sha256": [
-            "36c15bf831b218a24d122e3b30256b3e1ca285716c24937fe6d8475074ee9032"
-          ]
-        }
-      ],
-      "notes": "Reviewed the complete MIT license in the SHA-256-verified locked source archive for unmodified development-only pytest worker use. Retain upstream notices; no runtime, vendoring or distribution scope is added."
+      "name": "pytest-xdist",
+      "notes": "Reviewed the complete MIT license in the SHA-256-verified locked source archive for unmodified development-only pytest worker use. Retain upstream notices; no runtime, vendoring or distribution scope is added.",
+      "status": "reviewed",
+      "version": "3.8.0"
     },
     {
       "components": [
@@ -3402,36 +3402,6 @@
       "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
       "status": "reviewed",
       "version": "1.6.2"
-    },
-    {
-      "components": [
-        {
-          "evidence_sha256": [
-            "80619b7049f08c81683ad0e01f08f257a840652dd71ee83146d36658c7d2c2b9"
-          ],
-          "expression": "BSD-3-Clause",
-          "scope": "Primary project code in the reviewed archive."
-        }
-      ],
-      "distribution_fingerprint": "e4ce09ce19c622784e0fc1190d0167c8390fbe284e9995379e6e748996e7bc62",
-      "evidence_archive": {
-        "hash": "sha256:f0d53e69935a851c0dcc78f3ab7aaccd8cabef0b92382b576b824212902873c0",
-        "url": "https://files.pythonhosted.org/packages/74/26/2fbeedb218a787a5eea551c7532cac4e009f83d689dd2faa0d0353473f86/python_dotenv-1.2.4.tar.gz"
-      },
-      "license_files": [
-        {
-          "path": "python_dotenv-1.2.4/LICENSE",
-          "sha256": "80619b7049f08c81683ad0e01f08f257a840652dd71ee83146d36658c7d2c2b9"
-        },
-        {
-          "path": "python_dotenv-1.2.4/docs/license.md",
-          "sha256": "80619b7049f08c81683ad0e01f08f257a840652dd71ee83146d36658c7d2c2b9"
-        }
-      ],
-      "name": "python-dotenv",
-      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
-      "status": "reviewed",
-      "version": "1.2.4"
     },
     {
       "components": [
@@ -3523,7 +3493,7 @@
           "scope": "Scintilla permits use, copying, modification and distribution, with copyright and permission retained in copies and supporting documentation."
         }
       ],
-      "distribution_fingerprint": "3f0b87288f0226a7f2bd5f60762cac24253687c391a58ee0b704a46c081da350",
+      "distribution_fingerprint": "3fcf5a94d62ce0360aed9524366c850d96699b29dad77b8c7d57c8dbc04c6519",
       "evidence_archive": {
         "hash": "sha256:17948aeadbdb091f0ced6ef0841620794e68327b94ee415571c1203594b7215c",
         "url": "https://files.pythonhosted.org/packages/1f/f5/10a6e845a00fc5e7afd0a988b744f403d4d57162a28d160a093c4d9322f0/pywin32-312-cp311-cp311-win32.whl"
@@ -3667,7 +3637,7 @@
           "scope": "The bundled Debian copyright inventory lists legacy LGPL files and a linking exception. Preserve it; this conservative component entry does not assert that every historical path is still present."
         }
       ],
-      "distribution_fingerprint": "351ed0dec9e117249c9984e66e9e67abf893d06005fbd1d1bdb7a7c8e79ae12d",
+      "distribution_fingerprint": "904a7920aca58bfaaf8ad844639c332938376cf14500af1eced9de64fab37e64",
       "evidence_archive": {
         "hash": "sha256:54d4259d1bfae24ecdb5ca79f7acc2eac6c286a02d6a0ae617797cb45f0726d3",
         "url": "https://files.pythonhosted.org/packages/e7/8d/5b3d5631c2f4b4b8862f64cd0c9eb777b5710eeb5125b4be8dd0a200a4c0/pyzmq-27.2.0.tar.gz"
@@ -3791,7 +3761,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "7910fa931ed4610bdaca2113d0dacd46fbe776daed9814821ecce2c5469f9ba8",
+      "distribution_fingerprint": "7f742c17c4f6d079ca4b9b7bd4223bef49bd61d66b96b28d3ac5e41afe59458b",
       "evidence_archive": {
         "hash": "sha256:4793ef7f78268b124b73fa933440f01d258bbae01de9fa53e9080c9ab0425a12",
         "url": "https://files.pythonhosted.org/packages/42/68/3bd46b8a5e01d3c2ebdf9c5e9497912e3fe0cde02bac21a7130ca866e403/rpds_py-2026.9.1.tar.gz"
@@ -4126,7 +4096,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "f59ef78d37a0e9ba090ffaccdb6e6f60e65c3d67ac622985168b3921de6c7979",
+      "distribution_fingerprint": "39012a97438be280db02a8d1b7f7c3e65105b9ba40dabd0af6f2ff7c26499c14",
       "evidence_archive": {
         "hash": "sha256:264507556cd8b8c8e7c6ee037cdf443a463f03f4c958e57195e3d369711b8ff6",
         "url": "https://files.pythonhosted.org/packages/b0/78/9ad63712633ed3ab5cc1a648d863d7e7da371e9425e209555a0fe711b695/tomli-2.5.0.tar.gz"
@@ -4440,7 +4410,7 @@
           "scope": "libuv documentation only; retain attribution when copying its documentation."
         }
       ],
-      "distribution_fingerprint": "2cd236286b420e4d8ff3d592d2120fbb9e012041025dbc12ea5f5dbc3a70be7d",
+      "distribution_fingerprint": "d1426e5985bc3beb3eb275379844e404999b370128a857c52398a8ab5b9d7a73",
       "evidence_archive": {
         "hash": "sha256:28d160f51ab4da3b187063652e643dea6831072add4adc1e6d62afbe73b6be27",
         "url": "https://files.pythonhosted.org/packages/fa/42/02c739ce85fb2ee8d99212c61417da8140c6b87e9d97c430bea520d76044/uvloop-0.23.0.tar.gz"
@@ -4544,32 +4514,6 @@
       "components": [
         {
           "evidence_sha256": [
-            "4fd78355b67ce2677ede9fb6f63a250f377bb7e22088136a5f4699adb4bc069f"
-          ],
-          "expression": "MIT",
-          "scope": "Primary project code in the reviewed archive."
-        }
-      ],
-      "distribution_fingerprint": "9c1b4b1d59c852555c6e306fbfb3df749a7938306cb088063d202429aad3f17a",
-      "evidence_archive": {
-        "hash": "sha256:99aee4a07847c06820765fd7b1b49ceac4f3f711ccb7d104655a33231de1c207",
-        "url": "https://files.pythonhosted.org/packages/b3/68/e6aa0b77d217b31f8f486ec0cdfe5e00e6e38dc0be657e7d85819b9faf0a/watchfiles-1.3.0.tar.gz"
-      },
-      "license_files": [
-        {
-          "path": "watchfiles-1.3.0/LICENSE",
-          "sha256": "4fd78355b67ce2677ede9fb6f63a250f377bb7e22088136a5f4699adb4bc069f"
-        }
-      ],
-      "name": "watchfiles",
-      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
-      "status": "reviewed",
-      "version": "1.3.0"
-    },
-    {
-      "components": [
-        {
-          "evidence_sha256": [
             "70b98a95a2144eb70af8017fa8c6d95ce247e40867436e8bc649e137fe13d21a"
           ],
           "expression": "MIT",
@@ -4583,7 +4527,7 @@
           "scope": "Markus Kuhn permits use, copying, modification and distribution for any purpose without fee; retain this notice."
         }
       ],
-      "distribution_fingerprint": "f397e64eff8bd4ff711e8be8b13c84a749c7ea64decbb64c0291afa6d5628b1a",
+      "distribution_fingerprint": "f8a14e949da460d4ae6e7abafcadc32c6e5e5da1834457e1cb8180efe4e52a6c",
       "evidence_archive": {
         "hash": "sha256:ae0ef90b90f6af38b54f1fe6d58662ec33b3cb4b8391958a62416d654231727b",
         "url": "https://files.pythonhosted.org/packages/f0/b4/7830542634bb2d3e62aa3b586a72d5b3b6c91c3168929e7000ef3fed041d/wcwidth-0.9.2.tar.gz"
@@ -4639,7 +4583,7 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "7d7d9f3d0d62f040b456ded8352d1b826c7c6377b1c00b78838484709c6db017",
+      "distribution_fingerprint": "f803bee7a894ce3574a82a76a85003126190c6b6e6cf0b573c6a652867006d8e",
       "evidence_archive": {
         "hash": "sha256:36c2fb94c990cc2545143b12690e2de6c16300f9dbe5b4f33fa300cf57dc8792",
         "url": "https://files.pythonhosted.org/packages/01/89/3f825ab71c242fffb62ea8fe638741c290f62f8d7aadf8125ff897747af3/websockets-17.2.tar.gz"

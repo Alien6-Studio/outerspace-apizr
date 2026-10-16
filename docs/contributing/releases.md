@@ -199,7 +199,7 @@ Unintended versions and refs are refused. Development builds alone do not
 authorize publication. Releases through 0.4.0rc1 retain `master` provenance; published
 0.4.1 retains `refs/heads/release/0.4.1` provenance.
 
-Qualification includes Linux CPython 3.11–3.14, macOS 3.11/3.14 and disposable
+Qualification includes Linux CPython 3.11–3.15, macOS 3.11/3.14 and disposable
 registry/TSA/ORAS fixtures. Target reports record architecture, patch version,
 bytes and timing samples. Runtime SBOM attestations cover the core distributions;
 plugin dependency identities remain in target inventories. Disposable worker
@@ -347,7 +347,7 @@ Complete against the final commit; historical green runs are not sufficient.
 - [ ] All four versions, tag and built metadata agree; public files are absent or byte-identical to the approved set.
 - [ ] README renders, public URLs work and current/legacy documentation is accurate.
 - [ ] Ruff, Pyright and pre-commit pass.
-- [ ] Python 3.11–3.14 tests and every package coverage floor pass.
+- [ ] Python 3.11–3.15 tests and every package coverage floor pass.
 - [ ] Wheel/sdist content and hashes are reviewed; installed-wheel smoke passes.
 - [ ] Legacy container matrix and mandatory `oci-isolation` pass unchanged.
 - [ ] Dependency audit, CodeQL and strict MkDocs build pass.
@@ -474,7 +474,7 @@ redundant Python 3.11 cells:
 | MCP stdio | 3.14 | 3.11; all four Linux versions plus full-suite and installed-target macOS 3.11 remain |
 | MCP generated recovery | 3.11 | None; already one macOS version, retains its fixed stdio/HTTP recovery series |
 | Extension cleanup and Git/worker cleanup | 3.14 | One 3.11 cell each; Linux 3.11/3.14 and all 25 repetitions per remaining cell remain |
-| Extension packaging | 3.14 | 3.11; Linux 3.11–3.14, macOS Homebrew and installed candidates remain |
+| Extension packaging | 3.14 | 3.11; Linux 3.11–3.15, macOS Homebrew and installed candidates remain |
 | Client collections | 3.14 | 3.11; Linux 3.11/3.14 and actual vendor-tool validation remain |
 | Onboarding | 3.14 | 3.11; Linux 3.11/3.14 with real bash/zsh/fish and installed proofs remain |
 

@@ -107,7 +107,7 @@ catalog and wheelhouse. It does not acquire packages. `plugins install`, `lock`,
 The recorded target includes implementation, exact Python version, operating
 system platform, machine and ABI. `resolver_platform` also records the exact
 resolver platform, including the glibc level on Linux. The 0.4.6 implementation
-supports **native CPython 3.11–3.14**, macOS arm64/x86_64 and glibc Linux
+supports **native CPython 3.11–3.15**, macOS arm64/x86_64 and glibc Linux
 aarch64/x86_64 (glibc 2.17, 2.28 or 2.31–2.41). Through 2.40 it uses uv's
 explicit platform triples. For 2.41, uv 0.12/0.13 have no explicit triple:
 Apizr verifies the native host and resolves without `--python-platform`, retaining

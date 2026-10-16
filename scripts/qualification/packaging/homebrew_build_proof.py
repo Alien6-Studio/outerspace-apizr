@@ -113,11 +113,11 @@ def prove(candidate, commit, inputs, output):
     for item in expected["distributions"]:
         verify_wheel((wheelhouse / item["filename"]).read_bytes(), item, closure)
     output.mkdir(parents=True, exist_ok=False)
-    python_prefix = Path(run(["brew", "--prefix", "python@3.14"], output).strip())
+    python_prefix = Path(run(["brew", "--prefix", "python@3.15"], output).strip())
     pydantic_prefix = Path(run(["brew", "--prefix", "pydantic"], output).strip())
-    python = python_prefix / "bin/python3.14"
+    python = python_prefix / "bin/python3.15"
     brew_info = json.loads(
-        run(["brew", "info", "--json=v2", "python@3.14", "pydantic"], output)
+        run(["brew", "info", "--json=v2", "python@3.15", "pydantic"], output)
     )
     formulas = {
         f["name"]: {
@@ -294,8 +294,8 @@ def prove(candidate, commit, inputs, output):
     )
     # Reproduce the official virtualenv_create dependency path mechanism. This does
     # not alter the global Python environment and works with an unlinked keg too.
-    (runtime / "lib/python3.14/site-packages/homebrew_deps.pth").write_text(
-        f"import site; site.addsitedir({str(pydantic_prefix / 'lib/python3.14/site-packages')!r})\n"
+    (runtime / "lib/python3.15/site-packages/homebrew_deps.pth").write_text(
+        f"import site; site.addsitedir({str(pydantic_prefix / 'lib/python3.15/site-packages')!r})\n"
     )
     runtime_python = runtime / "bin/python"
     runtime_env = {
@@ -325,11 +325,11 @@ def prove(candidate, commit, inputs, output):
 runtime=pathlib.Path(sys.argv[1]).resolve(); provider=pathlib.Path(sys.argv[2]).resolve()
 assert pathlib.Path(apizr.__file__).resolve().is_relative_to(runtime)
 locations={m.__name__:str(pathlib.Path(m.__file__).resolve().relative_to(provider)) for m in (pydantic,pydantic_core)}
-provider_distributions=list(importlib.metadata.distributions(path=[str(provider/'lib/python3.14/site-packages')]))
+provider_distributions=list(importlib.metadata.distributions(path=[str(provider/'lib/python3.15/site-packages')]))
 pydantic_metadata=[d for d in provider_distributions if d.metadata['Name'].lower().replace('_','-')=='pydantic']
 assert len(pydantic_metadata)==1
 assert all(importlib.util.find_spec(name) is None for name in ('hatchling', 'tomlkit', 'trove_classifiers'))
-local_distributions=sorted((d.metadata['Name'],d.version) for d in importlib.metadata.distributions(path=[str(runtime/'lib/python3.14/site-packages')]))
+local_distributions=sorted((d.metadata['Name'],d.version) for d in importlib.metadata.distributions(path=[str(runtime/'lib/python3.15/site-packages')]))
 assert local_distributions==[('outerspace-apizr',sys.argv[3])]
 print(json.dumps({'python':sys.version.split()[0],'apizr_module':str(pathlib.Path(apizr.__file__).resolve().relative_to(runtime)),'provider_modules':locations,'pydantic':pydantic.__version__,'pydantic_core':pydantic_core.__version__,'provider_distributions':sorted((d.metadata['Name'],d.version) for d in provider_distributions),'pydantic_requires':pydantic_metadata[0].requires or [],'local_distributions':local_distributions,'distributions':sorted(set((d.metadata.get('Name'),d.version) for d in importlib.metadata.distributions()),key=lambda pair:(pair[0] or '',pair[1] or ''))}))
 """

@@ -18,6 +18,7 @@ from scripts.qualification.packaging.coordinated_distributions import (
     PROJECTS,
     digest,
     record,
+    required_targets,
     verify_records,
     write,
 )
@@ -98,7 +99,7 @@ def inspect_target(path, candidate):
     machine = info["machine"]
     python = info["python"]
     if not re.fullmatch(r"[A-Za-z0-9_]+", machine) or not re.fullmatch(
-        r"3\.(11|12|13|14)\.\d+", python
+        r"3\.(11|12|13|14|15)\.\d+", python
     ):
         raise ValueError("Unsupported recorded target")
     return target, f"{system}-{machine}-cpython-{python}"
@@ -166,8 +167,12 @@ def prepare(
             timeout=120,
         )
     targets = sorted(downloads.glob("release-target-*"))
-    if len(targets) != 6:
-        raise ValueError("Expected six qualified dependency targets")
+    expected_targets = {
+        f"release-target-{system}-{python}"
+        for system, python in required_targets(candidate)
+    }
+    if {path.name for path in targets} != expected_targets:
+        raise ValueError("Expected every declared qualified dependency target")
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
         dir=output.parent, prefix=".release-assets-"
@@ -218,6 +223,15 @@ def prepare(
             for directory in targets:
                 source = directory / "target-export.tar.gz"
                 target, suffix = inspect_target(source, candidate)
+                info = target["target"]
+                system = {"Linux": "ubuntu-latest", "Darwin": "macos-latest"}[
+                    info["system"]
+                ]
+                minor = ".".join(info["python"].split(".")[:2])
+                if directory.name != f"release-target-{system}-{minor}":
+                    raise ValueError(
+                        "Recorded target does not match its qualification job"
+                    )
                 if target["candidate_sha256"] != digest(
                     candidate_dir / "candidate.json"
                 ):

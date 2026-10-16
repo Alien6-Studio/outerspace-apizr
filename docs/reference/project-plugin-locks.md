@@ -66,7 +66,7 @@ or secret interpolation occurs. Create/check only consult the store with
 
 ## Complete installed-wheel example
 
-Use an already installed Python 3.11–3.14 and uv on macOS/Linux. From the chosen
+Use an already installed Python 3.11–3.15 and uv on macOS/Linux. From the chosen
 development checkout, prepare a minimal core outside the checkout and build the
 existing **trusted** plugin → helper → leaf fixture. This explicit preparation
 may download core/build dependencies; create/check never do.
@@ -118,7 +118,7 @@ python3 scripts/smoke_extension_packaging.py --work-dir "$(mktemp -d)/proof"
 ```
 
 Its `evidence.json` retains the generated lock and create/check results. A [generated example](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/examples/project-plugins/apizr.plugins.lock.example.json) is retained in the source tree; its hashes and target describe that particular preparation, not new builds. Linux
-Python 3.11–3.14 and macOS 3.11/3.14 runners also exercise this proof. Homebrew
+Python 3.11–3.15 and macOS 3.11/3.14 runners also exercise this proof. Homebrew
 installation qualification stays on disposable runners.
 
 ## Lock contract and target

@@ -139,7 +139,7 @@ def main():
             )
         }
         argv = invocation(values)
-        if not (3, 11) <= sys.version_info[:2] <= (3, 14):
+        if not (3, 11) <= sys.version_info[:2] <= (3, 15):
             raise Refused("forge_python_unsupported")
         workspace = Path(os.environ["GITHUB_WORKSPACE"])
         if not workspace.is_dir() or Path.cwd().resolve() != workspace.resolve():

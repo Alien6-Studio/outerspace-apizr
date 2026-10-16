@@ -223,9 +223,9 @@ def test_required_matrix_checks_are_emitted_for_web_changes():
     # leave the required version-specific contexts missing. Gate steps instead.
     workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
     for name, versions in (
-        ("compatibility", ["3.11", "3.12", "3.13", "3.14"]),
-        ("container", ["3.11", "3.12", "3.13", "3.14"]),
-        ("macos", ["3.11", "3.14"]),
+        ("compatibility", ["3.11", "3.12", "3.13", "3.14", "3.15"]),
+        ("container", ["3.11", "3.12", "3.13", "3.14", "3.15"]),
+        ("macos", ["3.11", "3.14", "3.15"]),
     ):
         job = workflow["jobs"][name]
         assert job["if"] == "${{ !cancelled() }}"

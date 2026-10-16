@@ -2,7 +2,7 @@
 
 <span id="development-setup"></span>
 
-Use Python 3.11–3.14, Git and uv already installed on your workstation.
+Use Python 3.11–3.15, Git and uv already installed on your workstation.
 This page covers work on Apizr itself; the [development installation](../../development/0.4.md#install-a-development-wheel)
 shows how to acquire a checkout and test an unreleased wheel separately.
 For using Apizr, start with [Install Apizr](../install.md).
@@ -64,10 +64,11 @@ for private reporting and execution boundaries.
 
 ## Compatibility and packaging
 
-CI tests Python 3.11–3.14. One package job builds wheel/sdist and checks wheel
-installation outside the checkout on Python 3.11 and 3.14. A separate container
+CI tests Python 3.11–3.15. One package job builds wheel/sdist and checks wheel
+installation outside the checkout on Linux Python 3.11–3.15 and macOS
+3.11, 3.14 and 3.15. A separate container
 matrix generates projects with Python 3.14 and builds/runs target images for all
-four supported versions.
+five supported versions.
 
 ```sh
 uv run --python 3.11 --locked pytest
@@ -135,9 +136,9 @@ are under `tests/fixtures/catalog/` and `docs/specs/`. See the
 
 ## Operating-system validation
 
-Linux CI runs the complete ordinary suite on Python 3.11–3.14, plus the separate
+Linux CI runs the complete ordinary suite on Python 3.11–3.15, plus the separate
 Docker/OCI boundary suite. macOS CI runs the ordinary suite
-on Python 3.11 and 3.14. OCI isolation is qualified against a Linux Docker host,
+on Python 3.11, 3.14 and 3.15. OCI isolation is qualified against a Linux Docker host,
 not a macOS container engine. Windows is outside the validated support matrix;
 local-process supervision and safe output creation depend on POSIX facilities.
 

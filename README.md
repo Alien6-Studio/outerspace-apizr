@@ -24,7 +24,8 @@ HTTPS check for ambiguous first-publication diagnostics. See the
 for scope, validation and integration limits. Publication status is recorded in
 the [release history](https://github.com/Alien6-Studio/outerspace-apizr/releases).
 
-Python **3.11–3.14** · GPL-3.0-or-later.
+Development **0.4.6: Python 3.11–3.15** · GPL-3.0-or-later.
+Published releases below support Python **3.11–3.14**.
 
 The **0.4.5 release candidate (not yet published)** lets you record and compare
 experiments, then explicitly select a prediction function for REST or MCP.
@@ -45,14 +46,14 @@ explains dependency evidence, pagination and localized exposure refusals.
 [![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml)
 [![Security](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml)
 [![Documentation](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/mkdocs.yaml/badge.svg?branch=master)](https://apizr.outerspace.sh/)
-[![Python](https://img.shields.io/badge/python-3.11%E2%80%933.14-blue.svg)](https://pypi.org/project/outerspace-apizr/)
+[![Python](https://img.shields.io/badge/python-3.11%E2%80%933.15-blue.svg)](https://pypi.org/project/outerspace-apizr/)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://apizr.outerspace.sh/about/LICENSE/)
 [![OuterSpace Apizr MCP server – quality and maintenance score on Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/badges/score.svg)](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr)
 [![MCPLookup Trust Index: silver, 80 out of 100](https://mcplookup.com/badge/io.github.Alien6-Studio/outerspace-apizr?embed=a6d68610-7a46-4689-8add-e364a971ddbf)](https://mcplookup.com/badge/go/a6d68610-7a46-4689-8add-e364a971ddbf/io.github.Alien6-Studio/outerspace-apizr)
 
 ## Install with uv
 
-With [uv](https://docs.astral.sh/uv/getting-started/installation/) and Python 3.11–3.14 installed:
+With [uv](https://docs.astral.sh/uv/getting-started/installation/) and Python 3.11–3.14 installed for the published release:
 
 ```sh
 uv tool install outerspace-apizr==0.4.4

@@ -56,7 +56,7 @@
     ],
     "runtime_content": false
   },
-  "python_formula": "python@3.14",
+  "python_formula": "python@3.15",
   "runtime": {
     "constraint": "pydantic>=2.12,<3",
     "dependency_path_mechanism": "Homebrew virtualenv_create homebrew_deps.pth",
@@ -67,5 +67,5 @@
     "venv_system_site_packages": true
   },
   "schema": "apizr.homebrew-build-inputs/v1",
-  "selection_rationale": "Development 0.4.6 refreshes the reviewed build-only pluggy wheel from 1.6.0 to 1.7.0. Hatchling remains pinned at 1.32.4 with the same packaging, pathspec, tomlkit and trove-classifiers bytes. The MIT notice is unchanged. Qualify the exact refreshed closure with offline PEP 517 isolation and the vulnerability audit; build tools remain absent from the installed runtime. Published 0.4.5 identities remain frozen separately."
+  "selection_rationale": "Development 0.4.6 refreshes the reviewed build-only pluggy wheel from 1.6.0 to 1.7.0. Hatchling remains pinned at 1.32.4 with the same packaging, pathspec, tomlkit and trove-classifiers bytes. The MIT notice is unchanged. Qualify the exact refreshed closure with offline PEP 517 isolation and the vulnerability audit; build tools remain absent from the installed runtime. Published 0.4.5 identities remain frozen separately. Python 3.15 qualification uses the official python@3.15 and pydantic Formula providers; the six build-only wheel identities remain unchanged."
 }

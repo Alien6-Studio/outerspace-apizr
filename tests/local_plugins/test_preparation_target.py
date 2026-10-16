@@ -54,16 +54,25 @@ def probe(data, tmp_path, monkeypatch, platform="native", code=0):
         ("linux", "aarch64", "linux-aarch64", "aarch64-manylinux_2_39"),
     ],
 )
+@pytest.mark.parametrize("minor", [14, 15])
 def test_measured_native_targets_are_explicit(
-    system, machine, platform, resolver_platform, tmp_path, monkeypatch
+    system, machine, platform, resolver_platform, tmp_path, monkeypatch, minor
 ):
     result = probe(
-        measured(system, machine, platform),
+        measured(
+            system,
+            machine,
+            platform,
+            python=f"3.{minor}.0",
+            abi=f"cpython-3{minor}-darwin",
+        ),
         tmp_path,
         monkeypatch,
         platform=resolver_platform,
     )
-    assert result.identity.python == "3.14.0" and result.identity.machine == machine
+    assert (
+        result.identity.python == f"3.{minor}.0" and result.identity.machine == machine
+    )
     assert result.resolver_platform == resolver_platform
     assert result.environment == (
         {"MACOSX_DEPLOYMENT_TARGET": "15.0"} if system == "darwin" else {}
@@ -118,7 +127,7 @@ def test_glibc_241_native_resolution_refuses_a_foreign_host(tmp_path, monkeypatc
             **measured(system="linux", platform="linux-x86_64"),
             "libc": ["glibc", "2.42"],
         },
-        measured(python="3.15.0"),
+        measured(python="3.16.0"),
     ],
 )
 def test_unproven_target_measurements_fail_closed(data, tmp_path, monkeypatch):

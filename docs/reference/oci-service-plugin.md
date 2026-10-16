@@ -33,7 +33,7 @@ Use the written steps for the current release; a recording may show an earlier v
 
 ## Prerequisites and installation
 
-Use Python 3.11–3.14, uv, Docker Engine with BuildKit/Buildx, and an explicit local
+Use Python 3.11–3.15, uv, Docker Engine with BuildKit/Buildx, and an explicit local
 Unix socket. The target is `linux/amd64` or `linux/arm64`. Cross-platform builds
 require an already configured emulator; Apizr does not install one. Choose and
 review a Python base image with `python`, `venv` and pip, pinned by SHA-256 digest.

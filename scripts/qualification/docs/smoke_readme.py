@@ -124,7 +124,7 @@ def main() -> None:
 
     if args.development:
         development(cli, repository)
-        migration(cli, repository)
+        migration(cli, repository, historical=args.expected_version == "0.4.4")
         if args.repository_refinement:
             selected_scope(cli, repository)
             from scripts.qualification.interfaces.typed_dict_proof import proof
@@ -369,9 +369,14 @@ def development(cli: Path, repository: Path) -> None:
         assert [tool["name"] for tool in tools["tools"]] == ["calculator.add"]
 
 
-def migration(cli: Path, repository: Path) -> None:
-    """Execute the current authorization example with an installed minimal core outside checkout."""
-    guide = (repository / "docs/reference/operator-policy.md").read_text()
+def migration(cli: Path, repository: Path, *, historical: bool = False) -> None:
+    """Qualify each installed version with its matching authorization example."""
+    page = (
+        "tests/fixtures/documentation-0.4.4/operator-policy.md"
+        if historical
+        else "docs/reference/operator-policy.md"
+    )
+    guide = (repository / page).read_text()
     blocks = dict(
         re.findall(r"<!-- migration:([a-z]+) -->\s*```sh\n(.*?)```", guide, re.S)
     )
@@ -397,7 +402,7 @@ def migration(cli: Path, repository: Path) -> None:
                 assert not result.stdout
                 assert json.loads(result.stderr)["code"] == "operator_policy_required"
                 continue
-            result.check_returncode()
+            assert result.returncode == 0, (result.stdout, result.stderr)
             print(result.stdout)
             if name == "python":
                 assert (

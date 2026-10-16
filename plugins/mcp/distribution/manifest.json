@@ -16,7 +16,7 @@
       "args": ["run", "--directory", "${__dirname}", "src/server.py", "--project", "${user_config.project}", "--operator-policy", "${user_config.operator_policy}", "--plugins-dir", "${user_config.plugins_dir}"]
     }
   },
-  "compatibility": {"platforms": ["darwin", "linux"], "runtimes": {"python": ">=3.11,<3.15"}},
+  "compatibility": {"platforms": ["darwin", "linux"], "runtimes": {"python": ">=3.11,<3.16"}},
   "user_config": {
     "project": {"type": "file", "title": "Project file", "description": "Select the absolute path to your apizr.toml, created using the Registry installation guide. This selects the Python source root; no project is chosen automatically.", "required": true},
     "operator_policy": {"type": "file", "title": "Reviewed analysis policy", "description": "Select the absolute path to the reviewed operator JSON policy granting source.analyze for this project. Create and review it using the Registry installation guide; installation grants no authority.", "required": true},

@@ -229,7 +229,15 @@ def test_action_refuses_invalid_inputs_before_install_or_analysis(changes):
 
 @pytest.mark.parametrize(
     "version, expected",
-    [("3.11", 0), ("3.12", 0), ("3.13", 0), ("3.14", 0), ("3.10", 2), (SENTINEL, 2)],
+    [
+        ("3.11", 0),
+        ("3.12", 0),
+        ("3.13", 0),
+        ("3.14", 0),
+        ("3.15", 0),
+        ("3.10", 2),
+        (SENTINEL, 2),
+    ],
 )
 def test_actual_action_python_preflight(tmp_path, version, expected):
     process = subprocess.run(
@@ -390,7 +398,13 @@ def test_real_workflow_requires_original_candidate_and_read_only_permissions():
         "['commit'] == os.environ['GITHUB_SHA']" in step.get("run", "")
         for step in composite["steps"]
     )
-    assert composite["strategy"]["matrix"]["python"] == ["3.11", "3.12", "3.13", "3.14"]
+    assert composite["strategy"]["matrix"]["python"] == [
+        "3.11",
+        "3.12",
+        "3.13",
+        "3.14",
+        "3.15",
+    ]
     steps = [s for s in composite["steps"] if s.get("uses") == "./"]
     assert {s["with"].get("operation", "check") for s in steps} == {
         "check",

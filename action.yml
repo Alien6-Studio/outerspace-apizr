@@ -17,7 +17,7 @@ inputs:
     description: Absent or empty workspace-relative output directory; parent must exist.
     default: .apizr-ci
   python-version:
-    description: 'Supported Python minor: 3.11, 3.12, 3.13 or 3.14.'
+    description: 'Supported Python minor: 3.11, 3.12, 3.13, 3.14 or 3.15.'
     default: '3.14'
   apizr-version:
     description: Exact Apizr version. Final publication must complete before public installation.
@@ -50,7 +50,7 @@ runs:
         APIZR_PYTHON_VERSION: ${{ inputs.python-version }}
       run: |
         case "$APIZR_PYTHON_VERSION" in
-          3.11|3.12|3.13|3.14) ;;
+          3.11|3.12|3.13|3.14|3.15) ;;
           *) echo 'forge_python_unsupported' >&2; exit 2 ;;
         esac
     - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0

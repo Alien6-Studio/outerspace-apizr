@@ -153,7 +153,7 @@ three analysis tools and their inputs.
 
 1. After 0.4.5 is public, install its core and prepare an explicit MCP profile
    with the commands below. Use an absolute path to your installed CPython
-   3.11–3.14 interpreter and uv 0.12.x. Run each command in order, stopping on
+   3.11–3.15 interpreter and uv 0.12.x. Run each command in order, stopping on
    any failure. Keep this temporary directory while using the server.
 
 ```sh
@@ -621,7 +621,7 @@ From the checkout, `uv run --locked python scripts/smoke_mcp_server.py --output
 checkout, checks inactive refusal and explicit activation, compares all tools
 against Python/CLI, and exercises actual subprocess cancellation/shutdown with a
 synchronized test worker. It checks core files, activations and project contents.
-The dedicated CI matrix covers Linux 3.11–3.14 and macOS 3.11/3.14 and preserves
+The dedicated CI matrix covers Linux 3.11–3.15 and macOS 3.11/3.14 and preserves
 logs and separate plugin coverage. Linux repeats the installed proof with network
 access removed by a disposable network namespace. These are development proofs,
 not tests of a graphical client. See the [release record](../releases/0.4.1.md)
@@ -692,7 +692,7 @@ between them:
 
 - `stdio`: the installed analysis plugin and official SDK client, including
   separate plugin coverage and the Linux proof without network access, on Linux
-  Python 3.11–3.14 and macOS 3.11/3.14;
+  Python 3.11–3.15 and macOS 3.11/3.14;
 - `generated-recovery`: ten predetermined repetitions **per transport** of the
   generated business MCP server recovery test, on Linux/macOS Python 3.11.
 

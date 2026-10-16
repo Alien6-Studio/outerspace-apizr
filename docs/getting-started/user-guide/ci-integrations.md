@@ -173,7 +173,7 @@ python@sha256:51dafde81dbdb6ebde285137a295cf18a47ca95234fe388a343719cb97305b3d
 ```
 
 An explicit `python-image` override must also be digest-pinned and contain Python
-3.11–3.14 plus venv. Accepting an override does not qualify that image or another
+3.11–3.15 plus venv. Accepting an override does not qualify that image or another
 architecture. `job-name` starts with `apizr-`; multiple jobs can use distinct names
 and `.apizr-ci-<suffix>` output directories. The consumer supplies an existing stage.
 
@@ -185,7 +185,7 @@ there is no automatic upload on failure.
 ## Qualification references
 
 The `Forge integrations` workflow exercises the real local composite (`uses: ./`)
-on Linux Python 3.11–3.14 with original coordinated wheel bytes. Installed-core
+on Linux Python 3.11–3.15 with original coordinated wheel bytes. Installed-core
 proofs outside checkout compare API, CLI and Action output bytes. Tests also cover
 refusals, cancellation, portable results, bounds and shell-injection sentinels.
 GitLab qualification validates both YAML documents against the vendored official

@@ -27,7 +27,7 @@ def archive(path, files):
             tar.addfile(member, io.BytesIO(content))
 
 
-def inputs(root, assets, version="0.4.0"):
+def inputs(root, assets, version="0.4.0", *, development=False):
     candidate = root / "release-candidate"
     (candidate / "dist").mkdir(parents=True)
     for name in assets.PROJECTS:
@@ -43,14 +43,21 @@ def inputs(root, assets, version="0.4.0"):
             assets.record(p, candidate) for p in sorted((candidate / "dist").iterdir())
         ],
     }
+    if development:
+        from scripts.qualification.packaging.coordinated_distributions import (
+            QUALIFICATION_TARGETS,
+        )
+
+        manifest["qualification_targets"] = [list(t) for t in QUALIFICATION_TARGETS]
     assets.write(candidate / "candidate.json", manifest)
     targets = []
     for system, machine, versions in [
-        ("Linux", "x86_64", (11, 12, 13, 14)),
-        ("Darwin", "arm64", (11, 14)),
+        ("Linux", "x86_64", (11, 12, 13, 14, 15) if development else (11, 12, 13, 14)),
+        ("Darwin", "arm64", (11, 14, 15) if development else (11, 14)),
     ]:
         for minor in versions:
-            directory = root / f"release-target-{system}-{minor}"
+            runner = {"Linux": "ubuntu-latest", "Darwin": "macos-latest"}[system]
+            directory = root / f"release-target-{runner}-3.{minor}"
             (directory / "qualification").mkdir(parents=True)
             target = {
                 "schema": "apizr.release-target/v1",
@@ -276,6 +283,32 @@ def test_target_export_rejects_unrecorded_and_escaping_files(assets, tmp_path, n
     archive(path, {"target.json": json.dumps(target).encode(), name: b"unapproved"})
     with pytest.raises(ValueError):
         assets.inspect_target(path, {"commit": "a" * 40})
+
+
+@pytest.mark.parametrize("fault", [None, "missing", "mislabeled"])
+def test_development_exports_require_all_eight_matching_targets(
+    assets, tmp_path, fault
+):
+    downloads = tmp_path / "downloads"
+    targets = inputs(downloads, assets, development=True)
+    assert len(targets) == 8
+    newest = downloads / "release-target-ubuntu-latest-3.15"
+    if fault == "missing":
+        newest.rename(downloads / "unqualified")
+    elif fault == "mislabeled":
+        path = newest / "target-export.tar.gz"
+        with tarfile.open(path) as tar:
+            target = json.loads(assets.member_bytes(tar, "target.json"))
+        target["target"]["python"] = "3.14.1"
+        archive(path, {"target.json": json.dumps(target).encode()})
+    output = tmp_path / "assets"
+    if fault:
+        with pytest.raises(ValueError, match="target"):
+            assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+        assert not output.exists()
+    else:
+        assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+        assert len(list(output.glob("*cpython-3.15.1.tar.gz"))) == 2
 
 
 @pytest.mark.parametrize(
