@@ -64,4 +64,17 @@ def main(argv: Sequence[str]) -> int:
         response = failure("response_too_large", request)
         output = encode(response.model_dump(mode="json"), 4194304)
     sys.stdout.buffer.write(output)
+    try:
+        from apizr.telemetry.collection import observe
+
+        operation = {
+            "inspect": "inspect",
+            "experiment_list": "history_list",
+            "experiment_show": "history_show",
+            "experiment_diff": "history_diff",
+        }.get(response.operation or "")
+        if operation is not None:
+            observe(operation, "success" if response.ok else "refused")
+    except Exception:
+        pass
     return 0 if response.ok else 2

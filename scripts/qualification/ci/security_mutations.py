@@ -28,6 +28,27 @@ class Mutation:
 
 MUTATIONS = (
     Mutation(
+        "telemetry-context-opt-out",
+        "src/apizr/telemetry/consent.py",
+        '        and env.get("APIZR_TELEMETRY_ALLOWED", "1") == "1"',
+        "        and True",
+        "tests/telemetry/test_controls.py::test_preference_byte_boundary_and_disabled_context_does_not_read",
+    ),
+    Mutation(
+        "telemetry-memory-count-bound",
+        "src/apizr/telemetry/collection.py",
+        "                    or self._total >= 1000",
+        "                    or False",
+        "tests/telemetry/test_controls.py::test_bounded_memory_and_disable_discard_all_scopes",
+    ),
+    Mutation(
+        "telemetry-disable-discards-counters",
+        "src/apizr/telemetry/consent.py",
+        "    discard_all()",
+        "    pass",
+        "tests/telemetry/test_controls.py::test_bounded_memory_and_disable_discard_all_scopes",
+    ),
+    Mutation(
         "telemetry-report-byte-limit",
         "src/apizr/telemetry/model.py",
         "MAX_REPORT_BYTES = 16384",

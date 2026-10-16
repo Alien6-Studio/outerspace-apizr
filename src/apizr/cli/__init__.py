@@ -1,6 +1,7 @@
 """Static and runtime commands, separate from the historical generation parser."""
 
 import sys
+from functools import partial
 from importlib import import_module
 from importlib.metadata import version
 from typing import Sequence
@@ -30,8 +31,14 @@ COMMAND_TARGETS: dict[str, tuple[str, str]] = {
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    arguments = list(sys.argv[1:] if argv is None else argv)
+
     try:
-        return _main(argv)
+        try:
+            from apizr.cli.commands.telemetry import run_command
+        except Exception:
+            return _main(arguments)
+        return run_command(arguments, partial(_main, arguments))
     except MissingExtra as error:
         print(f"apizr: {error}", file=sys.stderr)
         return 2
@@ -68,7 +75,9 @@ def _main(argv: Sequence[str] | None = None) -> int:
         )
         print("Local MCP analysis server (optional plugin): apizr mcp serve --help")
         print("Editor JSON request/response: apizr editor --help")
-        print("Local telemetry contract: apizr telemetry {status,preview}")
+        print(
+            "Local telemetry controls: apizr telemetry {status,enable,disable,preview}"
+        )
         print(
             "Extensions: apizr plugins {install,list,enable,disable,run,uninstall} --help"
         )

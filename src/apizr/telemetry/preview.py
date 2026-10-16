@@ -1,11 +1,14 @@
-"""Pure local report preview. No preferences, project reads, spool or sender."""
+"""Local report preview: explicit consent, no project reads, spool or sender."""
 
 import ipaddress
-import os
 from collections.abc import Mapping
+from typing import TYPE_CHECKING
 from urllib.parse import urlsplit
 
-from apizr.telemetry.model import Context, UsageReport, report_bytes
+from apizr.telemetry.consent import decision
+
+if TYPE_CHECKING:
+    from apizr.telemetry.model import Context
 
 PLANNED_ENDPOINT = "https://telemetry.outerspace.sh"
 
@@ -15,11 +18,13 @@ def _endpoint(environ: Mapping[str, str]) -> str:
     if override is None:
         return PLANNED_ENDPOINT
     try:
+        if len(override) > 128 or any(
+            ord(char) <= 32 or ord(char) >= 127 for char in override
+        ):
+            raise ValueError()
         parsed = urlsplit(override)
         if (
-            len(override) > 128
-            or any(ord(char) <= 32 or ord(char) >= 127 for char in override)
-            or parsed.scheme != "http"
+            parsed.scheme != "http"
             or parsed.hostname is None
             or not ipaddress.ip_address(parsed.hostname).is_loopback
             or parsed.port is None
@@ -37,22 +42,24 @@ def _endpoint(environ: Mapping[str, str]) -> str:
 
 
 def preview(
-    *, context: Context = "cli", environ: Mapping[str, str] | None = None
+    *, context: "Context" = "cli", environ: Mapping[str, str] | None = None
 ) -> dict[str, object]:
-    """Show the exact empty payload of this non-collecting release, even at opt-in."""
+    """Show an empty report outside an explicit process-local capture scope."""
+    import os
+
+    from apizr.telemetry.model import UsageReport, report_bytes
+
     env = os.environ if environ is None else environ
-    requested = env.get("APIZR_TELEMETRY") == "1"
-    ci = env.get("CI", "").lower() not in ("", "0", "false")
-    host_allows = env.get("APIZR_TELEMETRY_ALLOWED", "1") == "1"
+    consent = decision(environ=env)
     report = UsageReport(
         schema_version="apizr.telemetry/v1", context=context, events=()
     )
     return {
         "endpoint": _endpoint(env),
-        "opt_in_requested": requested,
-        "context_allows": not ci and host_allows,
-        "collection_enabled": False,
+        "opt_in_requested": consent.requested,
+        "context_allows": consent.context_allows,
+        "collection_enabled": consent.enabled,
         "transmission_available": False,
-        "reason": "production_unavailable",
+        "reason": consent.reason,
         "payload": report_bytes(report).decode("utf-8").rstrip("\n"),
     }

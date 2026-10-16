@@ -3,6 +3,16 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
+## VS Code distribution preparation for 0.4.6
+
+The [VSIX build and qualification procedure](vscode-distribution.md) prepares
+the proposed `alien6-studio.apizr` identity and a source-including, reproducible
+archive. Marketplace/Open VSX publisher ownership must be verified separately.
+Publication requires explicit maintainer authorization of the exact qualified
+VSIX/hash and completion of the remaining remote-host qualification in #312.
+No registry publication, credential or Python release change is authorized by
+the development build.
+
 ## Authorized 0.4.5 finalization
 
 The maintainer authorized **0.4.5 only**, conditional on every mandatory

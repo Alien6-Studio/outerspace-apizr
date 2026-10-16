@@ -2,20 +2,23 @@
 
 Apizr 0.4.6 development keeps telemetry **off by default** in the CLI, Python SDK,
 VS Code and CI. This implementation contains a public receiving contract and an
-explicit local preview. It has no automatic usage collection, persistent spool,
-installation identifier or sending code. Setting `APIZR_TELEMETRY=1` records an
-opt-in request in the preview; it cannot enable collection or transmission.
+explicit local preview. After explicit consent, clients count only the approved
+operations in bounded process-local memory. There is no event spool, installation
+identifier or sending code. Opt-in cannot enable production transmission.
 
 ```bash
 apizr telemetry status
+apizr telemetry enable
 apizr telemetry preview
+apizr telemetry disable
 ```
 
 Both commands operate without a project or experiment store. `preview` returns
 an envelope containing the planned endpoint, consent request, context restriction,
-`collection_enabled: false`, `transmission_available: false` and `payload`.
+the effective `collection_enabled` state, `transmission_available: false` and `payload`.
 `payload` is a JSON string containing the **exact report bytes**, excluding its
-terminal newline. The report is empty because this release collects no events:
+terminal newline. A new `preview` process has an empty report because reports are
+never persisted between processes:
 
 ```json
 {"schema_version":"apizr.telemetry/v1","context":"cli","events":[]}
@@ -30,6 +33,37 @@ result = preview(context="sdk", environ={})
 assert result["collection_enabled"] is False
 assert result["transmission_available"] is False
 ```
+
+`enable` and `disable` save only `schema_version` and an `enabled` boolean in a
+per-user consent file (macOS: `~/Library/Application Support/Apizr/telemetry.json`;
+Linux: `$XDG_CONFIG_HOME/apizr/telemetry.json` or `~/.config/apizr/telemetry.json`;
+Windows: `%APPDATA%/Apizr/telemetry.json`). It is limited to 512 bytes and written
+atomically with mode 0600. `APIZR_TELEMETRY_CONFIG` selects an absolute operator-owned
+location for testing or managed preferences. Invalid, symlinked, nonregular or
+oversized preferences fail closed. Project files never grant consent.
+
+`APIZR_TELEMETRY=1` requests consent without creating a preference file. An explicit
+saved disable, `APIZR_TELEMETRY=0`, a CI/served/runner context or
+`APIZR_TELEMETRY_ALLOWED=0` wins over opt-in. Disabling immediately discards active
+local counters. No event data enters the consent file or experiment store.
+
+To preview the actual counters of one CLI operation, explicitly request a local
+stderr preview (outside CI):
+
+```sh
+APIZR_TELEMETRY=1 APIZR_TELEMETRY_PREVIEW=1 apizr experiment inspect model.py
+```
+
+Normal stdout and exit status are preserved; stderr adds one
+`APIZR_TELEMETRY_PREVIEW` JSON envelope. The wrapper records only the approved
+operation and its coarse outcome. Collection or preview failures cannot change
+the command's result. The SDK equivalent is an explicit `telemetry.capture()`
+context: call `usage.preview()` inside it to inspect the exact report before the
+scope clears its memory. Finalized tracking sessions contribute only one
+`capture_session` counter, never their parameters, metrics or Run identity.
+There are at most 1,000 observed calls per scope and 32 active scopes per process;
+further observations are dropped. No persistent queue, retries or network client
+exists.
 
 The planned destination is `https://telemetry.outerspace.sh`, operated by Alien6
 Studio, with intended EU hosting and no third-party processor. **That infrastructure
@@ -63,17 +97,19 @@ digests, environment details, timestamps and user or installation IDs are exclud
 There is no free-form field. Counts describe calls, not installations or persons;
 this contract cannot measure unique participating installations or people.
 
-Future controls are tracked in
+Client controls are tracked in
 [#317](https://github.com/Alien6-Studio/outerspace-apizr/issues/317): explicit
-enable/disable, bounded in-memory aggregation, status and exact preview in each
-client. CI and generated services never opt in. VS Code's global
-`telemetry.telemetryLevel` must restrict the explicit Apizr choice: the stricter
+enable/disable, bounded in-memory aggregation, status and exact preview. CI and
+generated services never opt in. VS Code's global
+`telemetry.telemetryLevel` and `isTelemetryEnabled` API restrict the Apizr choice: the stricter
 decision wins and every child engine inherits it through
-`APIZR_TELEMETRY_ALLOWED=0`. The preview already honors this restriction and any
+`APIZR_TELEMETRY_ALLOWED=0`. Usage requires global level `all` and the separate
+`apizr.telemetry.enabled` setting. The preview honors these restrictions and any
 truthy `CI` value, independently of `APIZR_TELEMETRY=1`.
 
-There is currently no local event retention. Future aggregation must remain in
-memory for the command/session lifetime; disabling discards it. Server retention,
+There is no local event retention beyond the command/capture scope lifetime;
+disabling discards its counters. The extension keeps only the last bounded preview
+in memory for its window lifetime and clears it on opt-out. Server retention,
 IP/proxy logging, deletion, access and approved aggregate indicators require the
 private qualification in #335. No retention duration or deployed privacy control
 is claimed here. Website consent-gated analytics remain a separate system.

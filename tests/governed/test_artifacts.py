@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
+from telemetry.bundle_assertions import assert_telemetry_free
 
 from apizr.execution import ExecutionPolicy, PolicyRefused
 from apizr.execution import planner as execution_planner
@@ -27,6 +28,8 @@ def test_interface_bytes_and_rendering_are_independent_of_host(
     inspected = inspect_source(SOURCE, module_name="stable.module")
     direct = render(inspected, SOURCE)
     first = render(inspected, SOURCE, execution_policy=ExecutionPolicy())
+    assert_telemetry_free(direct)
+    assert_telemetry_free(first)
 
     def unavailable():
         raise AssertionError("generation probed the runtime host")

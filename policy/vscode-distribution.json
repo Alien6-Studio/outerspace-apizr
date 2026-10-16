@@ -1,0 +1,13 @@
+{
+  "schema_version": "apizr.vscode-toolchain/v1",
+  "node": "22.22.2",
+  "typescript": "5.9.3",
+  "vscode": {
+    "version": "1.140.0",
+    "linux_x64": {
+      "url": "https://update.code.visualstudio.com/1.140.0/linux-x64/stable",
+      "sha256": "d32031e9e213d59532af3cf32fcb8b357a1cdd10417967b4f5b5ba30436dc0dc"
+    }
+  },
+  "publication": "Prepared only; no Marketplace/Open VSX publication job or credentials. Publisher identity requires independent authorization."
+}

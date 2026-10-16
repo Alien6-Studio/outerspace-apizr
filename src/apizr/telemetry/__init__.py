@@ -1,6 +1,35 @@
-"""Public, local-only usage-report contract; no collection or network client."""
+"""Explicit local usage controls and bounded memory; no network client."""
 
-from apizr.telemetry.model import UsageEvent, UsageReport, decode_report, report_bytes
+from typing import TYPE_CHECKING
+
+from apizr.telemetry.collection import capture
+from apizr.telemetry.consent import disable, enable, status
 from apizr.telemetry.preview import preview
 
-__all__ = ["UsageEvent", "UsageReport", "decode_report", "preview", "report_bytes"]
+if TYPE_CHECKING:
+    from apizr.telemetry.model import (
+        UsageEvent,
+        UsageReport,
+        decode_report,
+        report_bytes,
+    )
+
+__all__ = [
+    "UsageEvent",
+    "UsageReport",
+    "capture",
+    "decode_report",
+    "disable",
+    "enable",
+    "preview",
+    "report_bytes",
+    "status",
+]
+
+
+def __getattr__(name: str):
+    if name in {"UsageEvent", "UsageReport", "decode_report", "report_bytes"}:
+        from apizr.telemetry import model
+
+        return getattr(model, name)
+    raise AttributeError(name)

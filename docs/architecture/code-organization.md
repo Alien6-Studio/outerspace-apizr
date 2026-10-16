@@ -165,12 +165,24 @@ second diff. MCP history workers receive only analysis/history grants, never
 delivery credentials or signing authority.
 
 `telemetry` owns the closed identifier-free usage-report contract, bounded JSON
-admission and explicit local preview. It depends only on the shared lexical JSON
+admission, boolean per-user consent and bounded process-local counters. It depends only on the shared lexical JSON
 budget and Pydantic, with no experiment, tracking, workspace, plugin or transport
 dependency. The CLI presents that preview. The disposable HTTP receiving stub is
 qualification tooling under `scripts/qualification/interfaces`; no receiver or
-sender ships in generated services. Production collection and transmission remain
-unavailable pending the policy review and private collector qualification.
+sender ships in generated services. CLI adapters select only approved coarse
+operation/outcome pairs; tracking emits one coarse finalized-session outcome into
+an explicit telemetry capture scope. No experiment values, identifiers or store
+authority cross that edge. Consent owns only its bounded boolean preference file;
+events never persist. Production transmission remains unavailable pending private
+collector qualification and a subsequent release.
+
+The thin TypeScript client lives under `editors/vscode`: `environment.ts` owns
+explicit engine selection, workspace trust and child telemetry restrictions;
+`engine.ts` owns bounded stdio processes and protocol discovery;
+`presentation.ts` owns read-only rendering and source/cell navigation;
+`extension.ts` composes commands, stale-result events and publication notifications.
+All scientific admission, complete history validation and comparison remain in the
+Python engine. The extension has no runtime npm dependency or embedded engine.
 
 Static recognition providers and in-process scientific adapters are distinct
 contracts. Static recognition stays bounded and does not import or execute

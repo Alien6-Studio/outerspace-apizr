@@ -6,6 +6,7 @@ import pytest
 from oci.helpers import IMAGE
 from repository_interfaces.test_golden import FIXTURE as DIRECT_FIXTURE
 from repository_interfaces.test_golden import render as direct_render
+from telemetry.bundle_assertions import assert_telemetry_free
 
 from apizr.execution.policy import ExecutionPolicy
 from apizr.oci.model import ExecutionPolicyV2
@@ -43,6 +44,7 @@ def test_bridge_hashes_plans_public_surface_and_determinism(transport, policy):
         "runtime_image": IMAGE if isinstance(policy, ExecutionPolicyV2) else None,
     }
     artifacts = render_repository_bundle(*values, **args)
+    assert_telemetry_free(artifacts)
     reverse = (*values[:-1], dict(reversed(list(values[-1].items()))))
     assert artifacts == render_repository_bundle(*reverse, **args)
     bridge = json.loads(artifacts["execution/bundle.json"])

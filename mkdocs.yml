@@ -151,6 +151,7 @@ nav:
       - Python compiler API: reference/compiler-api.md
       - In-process tracking SDK: reference/tracking-sdk.md
       - Editor engine contract: reference/editor-contract.md
+      - VS Code development extension: reference/vscode.md
       - Telemetry policy and contract: about/telemetry.md
       - Extension invocation API: reference/extension-invocation.md
       - Operator permissions: reference/operator-policy.md
@@ -226,6 +227,7 @@ nav:
       - Qualification scripts: contributing/qualification-scripts.md
       - Release branch governance: contributing/release-branches.md
       - Publish a release: contributing/releases.md
+      - VS Code distribution: contributing/vscode-distribution.md
       - MCP distribution qualification: contributing/mcp-distribution.md
       - Verify builds and releases: contributing/verification.md
       - Managed Attest identity: contributing/attest.md

@@ -33,6 +33,14 @@ STUB = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(STUB)
 
 
+@pytest.fixture(autouse=True)
+def isolated_consent(monkeypatch, tmp_path):
+    monkeypatch.setenv("APIZR_TELEMETRY_CONFIG", str(tmp_path / "consent.json"))
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("APIZR_TELEMETRY_ALLOWED", raising=False)
+    monkeypatch.delenv("APIZR_TELEMETRY_PREVIEW", raising=False)
+
+
 @pytest.mark.parametrize("fixture", FIXTURES, ids=lambda item: item["name"])
 def test_reusable_contract_fixtures(fixture):
     raw = fixture["body"].encode()
@@ -163,14 +171,18 @@ def test_cli_exact_preview_against_stub(receiver, monkeypatch, opt_in):
         env["APIZR_TELEMETRY"] = "1"
     result = subprocess.run(
         [sys.executable, "-m", "apizr.cli", "telemetry", "preview"],
-        env={"PATH": str(Path(sys.executable).parent), **env},
+        env={
+            "PATH": str(Path(sys.executable).parent),
+            "APIZR_TELEMETRY_CONFIG": str(ROOT / "unused-telemetry-consent.json"),
+            **env,
+        },
         capture_output=True,
         check=True,
     )
     report = json.loads(result.stdout)
     assert report["endpoint"] == endpoint
     assert report["opt_in_requested"] is opt_in
-    assert report["collection_enabled"] is False
+    assert report["collection_enabled"] is opt_in
     assert report["transmission_available"] is False
     assert post(receiver, report["payload"].encode()) == (204, b"")
 
@@ -198,7 +210,7 @@ def test_preview_and_status_never_touch_network_or_project(
     assert cli.main(["telemetry", "status"]) == 0
     assert "payload" not in json.loads(capsys.readouterr().out)
     for context in ("cli", "sdk", "vscode"):
-        assert preview(context=context)["collection_enabled"] is False
+        assert preview(context=context)["collection_enabled"] is opt_in
     assert list(tmp_path.iterdir()) == []
 
 
@@ -217,7 +229,7 @@ def test_preview_and_status_never_touch_network_or_project(
 def test_stricter_context_restriction_wins(env, allowed):
     result = preview(environ={**env, "APIZR_TELEMETRY": "1"})
     assert result["context_allows"] is allowed
-    assert result["collection_enabled"] is False
+    assert result["collection_enabled"] is allowed
     assert result["transmission_available"] is False
 
 
@@ -246,7 +258,7 @@ assert main(["telemetry", "preview"]) == 0
         capture_output=True,
         check=True,
     )
-    assert json.loads(result.stdout)["collection_enabled"] is False
+    assert json.loads(result.stdout)["collection_enabled"] is (opt_in == "1")
     assert result.stderr == b""
     assert list(tmp_path.iterdir()) == []
 

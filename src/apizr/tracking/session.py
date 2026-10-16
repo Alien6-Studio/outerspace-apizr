@@ -446,8 +446,21 @@ class TrackingSession:
             self.record = publish(self.store, self._plan, run)
         except BaseException:
             self.publication_error = TrackingError("tracking_publication_failed")
+            _usage_observation("failed")
             raise
+        _usage_observation("success" if actual_status == "success" else "failed")
         return self.record
+
+
+def _usage_observation(outcome: str) -> None:
+    if capture_suppressed():
+        return
+    try:
+        from apizr.telemetry.collection import observe
+
+        observe("capture_session", outcome)
+    except Exception:
+        pass
 
 
 def session(

@@ -1,0 +1,47 @@
+{
+  "review_date": "2026-10-16",
+  "runtime_dependencies": 0,
+  "packages": {
+    "node_modules/@types/node": {
+      "version": "20.19.37",
+      "integrity": "sha512-8kzdPJ3FsNsVIurqBs7oodNnCEVbni9yUEkaHbgptDACOPW04jimGagZ51E6+lXUwJjgnBw+hyko/lkFWCldqw==",
+      "license": "MIT",
+      "license_files": {
+        "LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+      },
+      "scope": "Unmodified build/type-checking dependency only; not included in the VSIX."
+    },
+    "node_modules/@types/vscode": {
+      "version": "1.95.0",
+      "integrity": "sha512-0LBD8TEiNbet3NvWsmn59zLzOFu/txSlGxnv5yAFHCrhG9WvAnR3IvfHzMOs2aeWqgvNjq9pO99IUw8d3n+unw==",
+      "license": "MIT",
+      "license_files": {
+        "LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+      },
+      "scope": "Unmodified build/type-checking dependency only; not included in the VSIX."
+    },
+    "node_modules/typescript": {
+      "version": "5.9.3",
+      "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+      "license": "Apache-2.0",
+      "license_files": {
+        "LICENSE.txt": "a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47",
+        "ThirdPartyNoticeText.txt": "1af3c68039c57e539422da82a4faada506ce6d0ea6f90e0b699d02dbcdb7a90c"
+      },
+      "scope": "Unmodified build/type-checking dependency only; not included in the VSIX."
+    },
+    "node_modules/undici-types": {
+      "version": "6.21.0",
+      "integrity": "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==",
+      "license": "MIT",
+      "license_files": {
+        "LICENSE": "a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27"
+      },
+      "scope": "Unmodified build/type-checking dependency only; not included in the VSIX."
+    }
+  },
+  "limitations": [
+    "Exact npm lock/metadata and upstream licence/notice bytes, not a legal audit or permission to vendor these packages.",
+    "The VSIX contains Apizr source and JavaScript plus GPL-3.0-or-later licence; no engine, node_modules or private credentials."
+  ]
+}

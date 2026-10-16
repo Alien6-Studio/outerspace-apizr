@@ -129,16 +129,44 @@ def test_protected_result_jobs_refuse_missing_failed_or_skipped_product_proofs(
             "SCOPE_RESULT": scope,
             "PRODUCT_CHECKS": product,
             "QUALIFICATION_RESULT": result,
+            "VSCODE_RESULT": "skipped" if product == "false" else "success",
         },
         capture_output=True,
         timeout=10,
     )
     # Documentation always runs a real build, including web-only changes.
     if context == "build":
-        expected = scope == "success" and result == "success"
+        expected = (
+            scope == "success" and result == "success" and product in {"true", "false"}
+        )
     assert (run.returncode == 0) is expected
     assert "external-" + context in job["name"]
     assert "github.ref != 'refs/heads/master'" in job["if"]
+
+
+@pytest.mark.parametrize("context", ["build", "dependencies"])
+@pytest.mark.parametrize("product", ["true", "false"])
+@pytest.mark.parametrize("vscode", ["success", "failure", "skipped", "cancelled"])
+def test_required_checks_include_the_extension_qualification(context, product, vscode):
+    job = load("ci.yml")["jobs"][context]
+    assert "vscode" in job["needs"]
+    result = subprocess.run(
+        ["bash", "-e", "-c", job["steps"][0]["run"]],
+        env={
+            **os.environ,
+            "SCOPE_RESULT": "success",
+            "PRODUCT_CHECKS": product,
+            "QUALIFICATION_RESULT": "success"
+            if product == "true" or context == "build"
+            else "skipped",
+            "VSCODE_RESULT": vscode,
+        },
+        capture_output=True,
+        timeout=10,
+    )
+    assert (result.returncode == 0) is (
+        vscode == ("success" if product == "true" else "skipped")
+    )
 
 
 def test_shared_candidates_stay_in_the_same_run_and_bind_to_the_checkout():

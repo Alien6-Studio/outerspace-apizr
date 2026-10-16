@@ -20,13 +20,13 @@ from apizr.experiments.store import DEFAULT_STORE, RunRecordV2, records
 
 
 class Kernel:
-    def __init__(self, root):
+    def __init__(self, root, *, python=None):
         self.root = root
         self.manager = KernelManager(connection_file=str(root / "connection.json"))
         spec = self.manager.kernel_spec
         assert spec is not None
         spec.argv = [
-            sys.executable,
+            str(python) if python is not None else sys.executable,
             "-I",
             "-B",
             "-m",

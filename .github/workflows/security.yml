@@ -81,7 +81,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
         with:
-          languages: python
+          languages: python,javascript-typescript
           build-mode: none
       - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
         with:
@@ -91,7 +91,7 @@ jobs:
           output: codeql-results
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: codeql-python-sarif
+          name: codeql-python-and-typescript-sarif
           path: codeql-results/*.sarif
           if-no-files-found: error
           retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

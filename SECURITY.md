@@ -39,10 +39,18 @@ a substitute for trusted execution.
 ## Automated checks
 
 GitHub default CodeQL setup analyzes Python and Actions and publishes alerts.
-The explicit Python workflow also retains its SARIF report as an artifact; it
+The explicit workflow analyzes Python and JavaScript/TypeScript, including the
+VS Code extension, and retains its SARIF reports as artifacts; it
 does not upload a second copy while default setup is enabled. The dependency job exports the resolved `uv.lock` graph
 to temporary PEP 751 lockfiles and audits each with pip-audit. Output distinguishes
 runtime, development, documentation and security-tooling dependencies. Every
 scope is blocking; all locked variants remain covered.
 Findings are not silently ignored. Review the architecture hardening record for
 known findings and the limits of locally executed checks.
+
+The VS Code qualification audits its complete locked Node development tree with
+no dependency exclusions, verifies exact licence/notice hashes against
+`policy/vscode-dependencies.json`, and packages no runtime npm dependency or Python
+engine. Usage telemetry is off by default, bounded to process-local counters after
+explicit consent, and has no sender. Production transmission remains unavailable
+pending the private collector qualification and a subsequent release.

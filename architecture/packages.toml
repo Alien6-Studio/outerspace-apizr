@@ -47,12 +47,12 @@ responsibility = "Content-addressed experiment contracts, bounded evidence produ
 [packages."tracking"]
 kind = "domain"
 responsibility = "In-process experiment-tracking SDK sessions, bounded observation of existing kernel executions and explicit logging, publishing canonical experiment evidence through experiments; no execution isolation, CLI, plugin management or scientific-library dependency."
-allowed_internal_imports = ["apizr.tracking", "apizr.experiments", "apizr.scientific_providers.contracts"]
+allowed_internal_imports = ["apizr.tracking", "apizr.experiments", "apizr.scientific_providers.contracts", "apizr.telemetry.collection"]
 allowed_external_imports = ["pydantic"]
 
 [packages."telemetry"]
 kind = "domain"
-responsibility = "Closed identifier-free usage-report contracts, bounded admission and explicit local preview; no automatic collection, project/store access, persistence or network transmission."
+responsibility = "Closed identifier-free usage-report contracts, explicit per-user boolean consent, bounded process-local counters and exact local preview; no experiment/store access, event persistence or network transmission."
 allowed_internal_imports = ["apizr.telemetry", "apizr.contracts.json_budget"]
 allowed_external_imports = ["pydantic"]
 
