@@ -181,7 +181,7 @@ activation snapshot. No store or activation write occurs.
 
 ```python
 from pathlib import Path
-from apizr.plugin_lock import create_lock, check_lock
+from apizr.plugins.lock import create_lock, check_lock
 
 created = create_lock(
     Path("apizr.toml"), Path("wheels"), Path("apizr.plugins.lock.json")
@@ -193,8 +193,8 @@ assert created.valid and checked.valid
 ```
 
 The typed API returns `Result`; malformed/unreadable input raises `LockError`
-with a redacted code. Config loaders are `apizr.project.load_project` and
-`apizr.user_config.load_user_config`, independent of CLI presentation.
+with a redacted code. Config loaders are `apizr.workspace.project.load_project` and
+`apizr.workspace.user.load_user_config`, independent of CLI presentation.
 
 ## Bounds and publication safety
 
@@ -319,7 +319,7 @@ cleanup or a final report. No automatic repair or deletion is attempted on resta
 ```python
 from pathlib import Path
 from threading import Event
-from apizr.plugin_sync import sync_plugins
+from apizr.plugins.sync import sync_plugins
 
 cancel = Event()  # Another thread may call cancel.set().
 result = sync_plugins(

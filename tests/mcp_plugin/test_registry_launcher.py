@@ -7,7 +7,7 @@ import pytest
 from analysis_authorization import analysis_policy
 from apizr_mcp import launcher
 
-from apizr import mcp_cli
+from apizr.cli.commands import mcp as mcp_cli
 from apizr.plugins.local import PluginError
 
 

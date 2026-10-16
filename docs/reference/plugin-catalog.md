@@ -120,7 +120,7 @@ or project mutation occurs during resolution.
 ```python
 import os
 from pathlib import Path
-from apizr.plugin_catalog import load_catalog, resolve_profile, select_entry
+from apizr.plugins.catalog import load_catalog, resolve_profile, select_entry
 
 catalog = load_catalog(Path(os.environ["CATALOG"]))
 entry = select_entry(catalog, "outerspace-apizr-mcp", "0.4.4")
@@ -134,7 +134,7 @@ assert result.installation == "not_performed"
 prerequisites=...)` generates typed entries from declarations and real inspected
 wheels. Place the original requirements at their canonical artifact paths before
 calling it. `Catalog`, `Profile`, `Identity`, `Provenance` and `Prerequisite` are
-available from `apizr.plugin_catalog.models`; `serialize` produces canonical JSON.
+available from `apizr.plugins.catalog.models`; `serialize` produces canonical JSON.
 The proof driver `scripts/catalog_plugin_plan.py` is a worked generation example.
 
 ## Compatibility and qualification limits

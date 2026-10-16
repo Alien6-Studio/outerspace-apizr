@@ -62,7 +62,7 @@ replaced directly: `ast.unparse`, `importlib.metadata`,
 Resolved-path containment is retained before writing/copying. Annotation,
 stdlib inference, API runtime typing, and traversal regressions exercise these
 replacements. The AST branches for pre-3.9 subscript nodes are removed.
-`apizr.runtime` now holds target policy and validation, not backports.
+`apizr.environment.python_target` now holds target policy and validation, not backports.
 Direct dependencies on `astunparse`, `stdlib-list`, `importlib-metadata`, and
 `typing-extensions` are removed. Transitive typing-extensions remains owned by
 its consumers. Analyzer discovery and pipeline execution semantics are unchanged.

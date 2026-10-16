@@ -3,12 +3,12 @@ import pytest
 from fastapi.testclient import TestClient
 from mcp import Client
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.execution import ExecutionPolicy
 from apizr.generators.mcp import generate as mcp_generate
 from apizr.generators.rest import generate as rest_generate
 from apizr.governed.mcp import create_server
 from apizr.governed.rest import create_app
-from apizr.inspection import inspect_source
 
 pytestmark = pytest.mark.timeout(30)
 SOURCE = b"def total(values: list[int], /, *, tax:int=2): return sum(values)+tax\nasync def greet(name:str): return name\n"

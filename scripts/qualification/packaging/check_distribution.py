@@ -141,14 +141,11 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
                 "apizr/subprocess_guard/filter.py",
                 "apizr/subprocess_guard/entrypoint.py",
                 "apizr/subprocess_guard/repository_entrypoint.py",
-                "apizr/optional.py",
                 "apizr/plugins/artifacts/__init__.py",
                 "apizr/plugins/artifacts/models.py",
                 "apizr/plugins/artifacts/wheel.py",
                 "apizr/plugins/artifacts/_download_worker.py",
                 "apizr/plugins/artifacts/requirements.py",
-                "apizr/plugins/local/wheel.py",
-                "apizr/plugins/local/locking.py",
                 "apizr/contracts/analysis.py",
                 "apizr/contracts/application.py",
                 "apizr/contracts/json.py",
@@ -178,6 +175,13 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
         ):
             assert prefix + required in files, required
         if core:
+            assert not any(
+                name.startswith(prefix + "apizr/")
+                and name.endswith(".py")
+                and "/" not in name.removeprefix(prefix + "apizr/")
+                and name != prefix + "apizr/__init__.py"
+                for name in files
+            ), "Core root contains a retired facade or implementation"
             assert not any(
                 name.startswith(
                     tuple(

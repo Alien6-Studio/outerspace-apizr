@@ -5,10 +5,10 @@ import pytest
 from analysis_authorization import analysis_policy
 from provenance_assertions import assert_equivalent_bundles
 
-from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.git_source import AcquisitionLimits, GitSourceError, acquire_snapshot
 from apizr.repository_readiness import RepositoryReadinessPolicy
+from apizr.workspace.compiler import assess_readiness, prepare_exposure, render_bundle
 
 from .authorization import authorized_snapshot
 from .conftest import git_fixture
@@ -288,9 +288,9 @@ def test_temp_directory_inside_hostile_checkout_does_not_inherit_local_config(
 def test_application_resources_retained_from_authorized_git_snapshot(
     remote, tls, scratch
 ):
-    from apizr.application import ApplicationConfig
-    from apizr.application_resources import capture_resources
-    from apizr.operator_policy import AuthorizationDenied
+    from apizr.contracts.application import ApplicationConfig
+    from apizr.workspace.application_resources import capture_resources
+    from apizr.workspace.operator_policy import AuthorizationDenied
 
     url, source, _ = remote
     (source / "service/data.txt").write_bytes(b"retained resource")

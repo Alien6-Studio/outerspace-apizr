@@ -8,13 +8,13 @@ from apizr_mcp.scope import load_scope, open_root, policy_bytes
 from apizr_mcp.worker import calculate
 from pydantic import ValidationError
 
-from apizr.compiler import assess_readiness, prepare_exposure
 from apizr.exposure.serialization import plan_bytes
 from apizr.graph import analyze_repository
 from apizr.graph.serialization import graph_bytes
-from apizr.operator_policy import AuthorizationDenied
 from apizr.repository.serialization import catalog_bytes
 from apizr.repository_readiness.serialization import report_bytes
+from apizr.workspace.compiler import assess_readiness, prepare_exposure
+from apizr.workspace.operator_policy import AuthorizationDenied
 
 
 def job(scope, operation="analyze", **args):

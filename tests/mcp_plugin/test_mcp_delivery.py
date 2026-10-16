@@ -14,7 +14,7 @@ from mcp import Client
 
 from apizr.delivery_batch import BatchResult, inspect_batch, operations
 from apizr.extension_runtime import CleanupFailed, InvocationCancelled
-from apizr.mcp_session import DeliverySession, McpSession
+from apizr.workspace.mcp_session import DeliverySession, McpSession
 
 
 def configured(project, tmp_path, *, count=3, limits=None):
@@ -192,7 +192,7 @@ def test_run_and_resume_reuse_coordinator_and_return_business_results(
         return managed(*args, **kwargs)
 
     # All-destination refusal remains an ordinary typed failed BatchResult.
-    from apizr.operator_policy import AuthorizationDenied
+    from apizr.workspace.operator_policy import AuthorizationDenied
 
     def denied(*args, **kwargs):
         raise AuthorizationDenied("operator_repository_denied")

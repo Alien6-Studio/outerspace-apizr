@@ -21,7 +21,7 @@ from importlib.util import find_spec
 from pathlib import Path
 from apizr.ci import execute
 from apizr.ci.runner import analysis_authority
-from apizr.compiler import prepare_exposure, render_bundle
+from apizr.workspace.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
 from apizr.workspace.project import load_project
 from apizr.repository_readiness import RepositoryReadinessPolicy, report_bytes

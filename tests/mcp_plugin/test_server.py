@@ -323,7 +323,7 @@ def test_server_entrypoint_validation_and_interrupt(project, monkeypatch, capsys
 
 
 def test_session_scope_and_authority_cannot_be_expanded(project, monkeypatch):
-    from apizr.operator_policy import OperatorPolicy
+    from apizr.workspace.operator_policy import OperatorPolicy
 
     calculations, app = setup(project, monkeypatch)
     original = calculations.scope

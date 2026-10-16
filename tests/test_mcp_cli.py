@@ -7,10 +7,11 @@ from types import SimpleNamespace
 import pytest
 from analysis_authorization import analysis_policy
 
-from apizr import cli, mcp_cli
-from apizr.analysis_session import read_session
+from apizr import cli
+from apizr.cli.commands import mcp as mcp_cli
 from apizr.extension_runtime import PrerequisiteMissing
 from apizr.plugins.local import PluginError
+from apizr.workspace.analysis_session import read_session
 
 
 @pytest.fixture

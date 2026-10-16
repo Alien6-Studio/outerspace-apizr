@@ -209,6 +209,24 @@ def main():
             command("--help")
             command("inspect", source / "sample.py", "--ir")
             if extra == "base":
+                retired = json.loads(
+                    (
+                        Path(__file__).resolve().parents[3]
+                        / "review/import-removal-0.4.6/inventory.json"
+                    ).read_text()
+                )["removed"]
+                pairs = [(entry["old"], entry["target"]) for entry in retired]
+                probe(
+                    "import importlib\n"
+                    f"for old, target in {pairs!r}:\n"
+                    "    assert importlib.import_module(target).__name__ == target\n"
+                    "    try: importlib.import_module(old)\n"
+                    "    except ModuleNotFoundError: pass\n"
+                    "    else: raise AssertionError('Retired import still available: ' + old)\n"
+                )
+                print(
+                    f"PASS {len(pairs)} canonical import targets and retired-path refusals in the minimal installed wheel"
+                )
                 probe(
                     "from importlib.metadata import distributions; names={d.metadata['Name'].lower().replace('_','-') for d in distributions()}; assert names == {'outerspace-apizr','pydantic','pydantic-core','annotated-types','typing-extensions','typing-inspection'}, names; print('Base installation: exactly 5 dependencies')"
                 )
@@ -280,7 +298,7 @@ importlib.metadata.entry_points = forbidden
 """
                     + example
                     + """
-from apizr.compiler import assess_readiness
+from apizr.workspace.compiler import assess_readiness
 from apizr.repository_readiness import report_bytes
 from apizr.exposure import plan_bytes
 assert report_bytes(assess_readiness(Path("repository"), operator_policy=operator, readiness_policy=RepositoryReadinessPolicy.model_validate({"execution":{"modes":["direct"]}}))) == report_bytes(report)

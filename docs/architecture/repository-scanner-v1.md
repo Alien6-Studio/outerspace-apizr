@@ -212,7 +212,7 @@ filesystem tree**. It is not a Git commit hash. Policy changes alter repository
 identity even when selected source bytes overlap. Excluded content changes do not.
 `catalog_digest` hashes the complete canonical catalog, including per-source
 Inspections and diagnostics. It is returned separately and never hashes itself.
-Inspection digests use existing `apizr.inspection.json_bytes`.
+Inspection digests use existing `apizr.capabilities.inspection.json_bytes`.
 
 ## Compatibility and evidence
 

@@ -139,9 +139,9 @@ using the existing policy models before invoking
 
 ```python
 from pathlib import Path
-from apizr.operator_policy import load_operator_policy
-from apizr.compiler import assess_readiness
-from apizr.project import load_project
+from apizr.workspace.operator_policy import load_operator_policy
+from apizr.workspace.compiler import assess_readiness
+from apizr.workspace.project import load_project
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
 settings = load_project("examples/project-config/apizr.toml")

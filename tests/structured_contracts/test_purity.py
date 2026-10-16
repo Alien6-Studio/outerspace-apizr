@@ -7,9 +7,9 @@ import typing
 
 import pytest
 
+from apizr.capabilities.inspection import inspect_source, text_report
 from apizr.generators.mcp.generator import render as mcp
 from apizr.generators.rest.generator import render as rest
-from apizr.inspection import inspect_source, text_report
 from apizr.readiness import assess
 
 from .test_static import MINIMAL, NESTED

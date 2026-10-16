@@ -503,7 +503,7 @@ def test_python_api_uses_cancellable_runtime(tmp_path, monkeypatch):
 @pytest.fixture
 def transversal(mocked):
     from apizr.capabilities.model import Digest
-    from apizr.delivery import DeliveryManifest, DeliveryPlan, identity
+    from apizr.contracts.delivery import DeliveryManifest, DeliveryPlan, identity
 
     digest = Digest.of_bytes(b"reviewed unit evidence").model_dump(mode="json")
     fields = (
@@ -555,7 +555,7 @@ def transversal(mocked):
 
 
 def test_transversal_export_and_offline_linkage(transversal, tmp_path):
-    from apizr.delivery import identity
+    from apizr.contracts.delivery import identity
 
     work = tmp_path / "work"
     work.mkdir()

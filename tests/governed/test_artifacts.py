@@ -7,6 +7,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 from telemetry.bundle_assertions import assert_telemetry_free
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.execution import ExecutionPolicy, PolicyRefused
 from apizr.execution import planner as execution_planner
 from apizr.execution.policy import BackendCapabilities
@@ -14,7 +15,6 @@ from apizr.generators.mcp import render as mcp_render
 from apizr.generators.rest import render as rest_render
 from apizr.governed.embedding import MODULES, runtime_files, source
 from apizr.governed.runtime import GovernedRuntime, artifact
-from apizr.inspection import inspect_source
 
 from .helpers import SOURCE, bundle
 
@@ -88,7 +88,10 @@ def test_embedding_copies_one_execution_implementation():
             rendered["apizr_governed/" + name]
             == source(name).replace("from apizr.", "from apizr_governed.").encode()
         )
-    assert "inspect_source" not in rendered["apizr_governed/inspection.py"].decode()
+    assert (
+        "inspect_source"
+        not in rendered["apizr_governed/capabilities/inspection.py"].decode()
+    )
 
 
 @settings(max_examples=5, deadline=None)

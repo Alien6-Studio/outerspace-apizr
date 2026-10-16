@@ -206,7 +206,7 @@ For Hatch, the demonstration includes the file with:
 
 ## Python operations and inventory
 
-`apizr.local_plugins.install_extension(wheel: Path, sha256: str, *,
+`apizr.plugins.local.install_extension(wheel: Path, sha256: str, *,
 directory: Path | None = None, python: Path | None = None,
 requirements: Path | None = None, wheelhouse: Path | None = None) -> Installation`
 performs the operation. `list_extensions(*, directory: Path | None = None) ->
@@ -273,7 +273,7 @@ prints or exits Python. For example, after explicitly enabling the demo:
 ```python
 from pathlib import Path
 from apizr.extension_runtime import Limits
-from apizr.local_plugins import run_extension
+from apizr.plugins.local import run_extension
 
 response = run_extension(
     "apizr-extension-probe",
@@ -504,7 +504,7 @@ The typed Python operation is independent of the CLI:
 ```python
 from pathlib import Path
 from threading import Event
-from apizr.plugin_update import update_plugin
+from apizr.plugins.update import update_plugin
 
 cancel = Event()
 result = update_plugin(
@@ -705,7 +705,7 @@ The typed API performs the same operation without printing or exiting:
 ```python
 from pathlib import Path
 from threading import Event
-from apizr.local_plugins import uninstall_extension
+from apizr.plugins.local import uninstall_extension
 
 cancel = Event()  # Another thread can set this to cancel cooperatively.
 result = uninstall_extension(

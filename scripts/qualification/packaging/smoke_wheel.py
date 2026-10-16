@@ -34,7 +34,7 @@ def main():
         assert "apizr/generators/rest/runtime.py" in names
         assert "apizr/generators/rest/templates/preamble.txt" in names
         assert "apizr/exposure/planner.py" in names
-        assert "apizr/exposure_cli.py" in names
+        assert "apizr/cli/commands/exposure.py" in names
         assert "apizr/interfaces/runtime.py" in names
         assert "apizr/generators/mcp/runtime.py" in names
         assert not any(name == "src.py" or name.startswith("src/") for name in names)

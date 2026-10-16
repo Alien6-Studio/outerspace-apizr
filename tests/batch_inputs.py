@@ -3,9 +3,9 @@
 import json
 
 from apizr.capabilities.model import Digest
-from apizr.delivery import DeliveryManifest, DeliveryPlan, identity
+from apizr.contracts.delivery import DeliveryManifest, DeliveryPlan, identity
+from apizr.contracts.results import BuildResult
 from apizr.delivery_batch import BatchRequest
-from apizr.delivery_results import BuildResult
 
 D = Digest(algorithm="sha256", value="b" * 64)
 IMAGE = "sha256:" + "a" * 64

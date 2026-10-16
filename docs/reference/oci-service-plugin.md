@@ -341,7 +341,7 @@ core requires both registry read and publish permissions before launching the pl
 
 The Python API is `apizr_oci.push(PushRequest.model_validate(document),
 workspace=owned_directory, cancel=event)`, inside the installed plugin environment.
-From the core, use `apizr.local_plugins.run_extension` with the explicit
+From the core, use `apizr.plugins.local.run_extension` with the explicit
 `operator_policy`; it applies the same admission check as the CLI. Calling the
 plugin API directly is outside managed authorization.
 

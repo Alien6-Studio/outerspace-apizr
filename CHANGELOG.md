@@ -2,6 +2,11 @@
 
 ## 0.4.6 — development, not published
 
+- Remove the remaining 73 Python compatibility facades and 11 embedded historical
+  import exceptions. Use canonical owning namespaces; generated governed bundles
+  use the same paths under their autonomous package, changing runtime hashes and
+  manifests while preserving evidence schemas and direct bundle bytes (#291).
+
 - Deprecate then remove the complete historical FastAPI/Docker pipeline, upload
   service, step hooks and `legacy` extra. Unknown commands exit 2; the removed
   flags explain migration to inspect → explicit exposure → generate rest/mcp.

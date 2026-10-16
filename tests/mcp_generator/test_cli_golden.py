@@ -7,9 +7,9 @@ from pathlib import Path
 import nbformat
 import pytest
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.cli import main
 from apizr.generators.mcp import render
-from apizr.inspection import inspect_source
 
 FIXTURE = Path(__file__).parents[1] / "fixtures/mcp/v1"
 SOURCE = Path(__file__).parents[1] / "fixtures/rest/v1/pricing.py"
@@ -96,7 +96,7 @@ def test_cli_errors_are_nondestructive(tmp_path, capsys):
 
 def test_compiler_imports_and_rendering_do_not_load_frameworks(tmp_path):
     probe = """import sys
-from apizr.inspection import inspect_source
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.mcp import render
 from apizr.interfaces import runtime
 source = b'def f(x: int): return x'

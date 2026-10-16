@@ -436,8 +436,8 @@ repository. Neither step implicitly grants access to a second repository.
 ```python
 from pathlib import Path
 from apizr.extension_runtime import Limits
-from apizr.local_plugins import read_arguments, run_extension
-from apizr.operator_policy import AuthorizationDenied, load_operator_policy
+from apizr.plugins.local import read_arguments, run_extension
+from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
 
 try:
     response = run_extension(
@@ -592,9 +592,9 @@ the same plan and bundle bytes as the preceding CLI commands:
 ```sh
 python - <<'PY'
 from pathlib import Path
-from apizr.compiler import prepare_exposure, render_bundle
+from apizr.workspace.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
 prepared = prepare_exposure(

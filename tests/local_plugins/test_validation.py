@@ -10,6 +10,7 @@ from unittest.mock import Mock
 
 import pytest
 
+from apizr.plugins.artifacts import wheel as wheel_module
 from apizr.plugins.local import (
     Inventory,
     PluginError,
@@ -18,7 +19,6 @@ from apizr.plugins.local import (
     list_extensions,
     store,
 )
-from apizr.plugins.local import wheel as wheel_module
 
 pytestmark = pytest.mark.timeout(20)
 
@@ -248,7 +248,7 @@ def test_backend_timeout_and_spawn_failure(tmp_path, monkeypatch):
 
 
 def test_large_description_keeps_header_and_archive_bounds(wheel_factory):
-    from apizr.plugins.local.wheel import inspect_dependency, metadata_headers
+    from apizr.plugins.artifacts.wheel import inspect_dependency, metadata_headers
 
     wheel, digest = wheel_factory(
         plugin=False, metadata_extra="\n" + "description " * 10000

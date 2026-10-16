@@ -30,7 +30,7 @@ from apizr.repository_views.projection import action, analyze_view, readiness_vi
 @pytest.fixture(scope="module")
 def large_project(tmp_path_factory):
     project, operator = fixture(tmp_path_factory.mktemp("views") / "project")
-    from apizr.operator_policy import load_operator_policy
+    from apizr.workspace.operator_policy import load_operator_policy
 
     scope = load_scope(project, load_operator_policy(operator))
     evidence = analyze_repository(scope.source(), operator_policy=scope.operator_policy)
@@ -530,7 +530,7 @@ def test_page_bytes_are_stable_across_hash_seed_relocation_and_creation_order(tm
     results = []
     for seed, reverse in [("0", False), ("1", True), ("321", False)]:
         project, operator = fixture(tmp_path / seed / "project", reverse=reverse)
-        from apizr.operator_policy import load_operator_policy
+        from apizr.workspace.operator_policy import load_operator_policy
 
         scope = load_scope(project, load_operator_policy(operator))
         envelope = job(

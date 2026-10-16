@@ -191,7 +191,7 @@ digest = document_digest(ir)
 # inspect_file(Path('pricing.py'), module_name='pricing') reads exact file bytes.
 ```
 
-Notebook entry point: `apizr.capability_notebooks.inspect_notebook(path,
+Notebook entry point: `apizr.generators.notebooks.inspect_notebook(path,
 module_name=...)`. Core imports only stdlib and existing Pydantic; the notebook
 adapter owns the optional exporter boundary. Inspection performs no user imports,
 execution, network requests or subprocesses. File APIs read only the explicitly

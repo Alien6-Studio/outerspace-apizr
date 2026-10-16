@@ -290,7 +290,7 @@ def refuse_git(
         + """
 from pathlib import Path
 from apizr.git_source import acquire_snapshot
-from apizr.operator_policy import AuthorizationDenied
+from apizr.workspace.operator_policy import AuthorizationDenied
 import apizr.git_source.acquisition as acquisition
 def forbidden(*args, **kwargs): raise AssertionError("workspace before admission")
 acquisition.TemporaryDirectory = forbidden
@@ -392,8 +392,8 @@ def refuse_analysis(python, work, source):
         EFFECT_GUARD
         + """
 from pathlib import Path
-from apizr.operator_policy import AuthorizationDenied, load_operator_policy
-from apizr.compiler import assess_readiness
+from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
+from apizr.workspace.compiler import assess_readiness
 from apizr.cli import main
 request = json.loads(sys.argv[2])
 if request['entry'] == 'cli':
@@ -452,8 +452,8 @@ GIT_ANALYSIS_REFUSAL = """
 def verify_analysis_refusal(snapshot):
     import os
     import apizr.repository.discovery as discovery
-    from apizr.compiler import assess_readiness
-    from apizr.operator_policy import AuthorizationDenied, load_operator_policy
+    from apizr.workspace.compiler import assess_readiness
+    from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
     from pathlib import Path
     selected = load_operator_policy(Path("operator.json"))
     fetch_only = selected.model_copy(update={"grants": tuple(g for g in selected.grants if g.operation == "fetch")})

@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 from apizr.extension_runtime import Limits
-from apizr.local_plugins import run_extension
+from apizr.plugins.local import run_extension
 
 response = run_extension(
     "apizr-extension-probe",

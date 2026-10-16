@@ -5,8 +5,8 @@ import pytest
 from analysis_authorization import analysis_policy
 from jsonschema import Draft202012Validator
 
+from apizr.capabilities.inspection import json_bytes
 from apizr.capabilities.model import Digest
-from apizr.inspection import json_bytes
 from apizr.readiness import State
 from apizr.repository import (
     Catalog,

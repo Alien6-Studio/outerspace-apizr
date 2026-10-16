@@ -2,11 +2,11 @@ import ast
 
 import pytest
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.capabilities.model import Digest
 from apizr.generators.rest import plan, render
 from apizr.generators.rest.planner import GenerationRefused
 from apizr.generators.rest.schema import ContractError
-from apizr.inspection import inspect_source
 from apizr.readiness import report_digest
 from apizr.readiness.model import Code, Dimension, Reason
 

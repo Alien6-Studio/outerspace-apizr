@@ -10,13 +10,13 @@ from hypothesis import strategies as st
 from oci.helpers import IMAGE
 from telemetry.bundle_assertions import assert_telemetry_free
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.cli.commands.generate import main
 from apizr.execution import ExecutionPolicy
 from apizr.generators.mcp import render as mcp_render
 from apizr.generators.rest import render as rest_render
 from apizr.governed.embedding import source
 from apizr.governed_oci.model import BRIDGE_MODULES, OCI_MODULES
-from apizr.inspection import inspect_source
 from apizr.oci.model import ExecutionPolicyV2
 
 

@@ -1,7 +1,7 @@
 import pytest
 
-from apizr import optional
 from apizr.cli import main
+from apizr.environment import extras as optional
 from apizr.notebooks.exporter import NotebookTransformr
 
 

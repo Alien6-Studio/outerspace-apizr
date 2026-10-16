@@ -31,11 +31,11 @@ def prepare(python, repo, work, command):
             "-c",
             """import json,sys
 from pathlib import Path
-from apizr.application import ApplicationConfig
-from apizr.compiler import prepare_exposure,render_bundle
+from apizr.contracts.application import ApplicationConfig
+from apizr.workspace.compiler import prepare_exposure,render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.git_source import acquire_snapshot
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 from apizr.repository import ScanPolicy
 from apizr.repository_readiness import RepositoryReadinessPolicy
 from apizr.repository_interfaces.output import write_bundle

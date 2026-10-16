@@ -350,7 +350,7 @@ def test_real_worker_verifies_symbol_even_for_internally_consistent_ir(worker_im
     # other, but assert a symbol absent from the exact bound source. Only runtime
     # binding verification can detect this; the planner must not reinterpret IR.
     from apizr.capabilities import CapabilityDocument, document_digest
-    from apizr.inspection import Inspection, inspect_source
+    from apizr.capabilities.inspection import Inspection, inspect_source
     from apizr.oci.model import ExecutionPolicyV2
     from apizr.oci.planner import plan
     from apizr.readiness import ReadinessReport, report_digest

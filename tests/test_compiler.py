@@ -12,7 +12,6 @@ from analysis_authorization import analysis_policy
 from analysis_authorization import authorized_main as main
 from pydantic import ValidationError
 
-from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.execution.policy import ExecutionPolicy, PolicyRefused
 from apizr.exposure import ExposurePolicy, ExposureRefused, plan_bytes, refusal_report
 from apizr.graph import GraphPolicy
@@ -21,6 +20,7 @@ from apizr.repository import ScanPolicy
 from apizr.repository_interfaces import BundleRefused
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy, report_bytes
+from apizr.workspace.compiler import assess_readiness, prepare_exposure, render_bundle
 
 FIXTURES = Path(__file__).parent / "fixtures"
 IMAGE = RuntimeImage(image="sha256:" + "0" * 64, platform="linux/amd64")
@@ -371,12 +371,12 @@ def audit(event, args):
         raise AssertionError("source write")
 sys.addaudithook(audit)
 from pathlib import Path
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 operator = load_operator_policy(Path(sys.argv[-1]))
 import importlib.metadata
 def forbidden(*args, **kwargs): raise AssertionError("plugin discovery")
 importlib.metadata.entry_points = forbidden
-from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
+from apizr.workspace.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.repository_readiness import RepositoryReadinessPolicy
 assess_readiness(root, operator_policy=operator)

@@ -9,11 +9,11 @@ from hypothesis import strategies as st
 from jsonschema import Draft202012Validator
 
 from apizr.capabilities import document_digest
+from apizr.capabilities.inspection import Inspection, json_bytes
 from apizr.capabilities.model import Digest, Effects
 from apizr.graph import Graph, GraphPolicy, build_graph, graph_digest
 from apizr.graph.model import Code as GraphCode
 from apizr.graph.model import Diagnostic as GraphDiagnostic
-from apizr.inspection import Inspection, json_bytes
 from apizr.readiness import State
 from apizr.readiness.serialization import report_digest as local_digest
 from apizr.repository import Catalog, catalog_digest, scan_sources

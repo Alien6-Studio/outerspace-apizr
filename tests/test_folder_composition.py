@@ -131,12 +131,12 @@ def test_repository_satisfies_declared_composition():
         (
             "project.py",
             "def hidden_business_logic(): pass\n",
-            "facade contains implementation",
+            "composition namespace",
         ),
         (
             "workspace/project.py",
             "from apizr import plugins_cli\n",
-            "imports compatibility path",
+            "undeclared root domain",
         ),
         ("workspace/user.py", "from ..cli import main\n", "domain depends on CLI"),
         (
@@ -155,6 +155,11 @@ def test_repository_satisfies_declared_composition():
             "local -> update",
         ),
         ("workspace/user.py", "import mcp\n", "optional adapter"),
+        (
+            "plugins/preparation/operations.py",
+            "import apizr.plugins.local.wheel\n",
+            "absent core module",
+        ),
         (
             "plugins/artifacts/wheel.py",
             "from apizr.plugins.local.activation import enable_extension\n",
@@ -178,7 +183,7 @@ def test_repository_satisfies_declared_composition():
         (
             "plugins/preparation/operations.py",
             "from apizr.local_plugins import install_extension\n",
-            "imports compatibility path",
+            "undeclared root domain",
         ),
     ],
 )
@@ -247,5 +252,34 @@ def test_removed_legacy_kind_cannot_restore_naming_or_dependency_exceptions(tmp_
     )
     assert any(
         "notebooks: unknown package kind" in error
+        for error in check(ROOT / "src/apizr", manifest)
+    )
+
+
+def test_retired_import_exceptions_cannot_restore_forwarding_modules(tmp_path):
+    manifest = tmp_path / "packages.toml"
+    manifest.write_text(
+        (ROOT / "architecture/packages.toml").read_text()
+        + '\n[compatibility."project.py"]\ntarget = "apizr.workspace.project"\nkind = "module"\n'
+    )
+    assert any(
+        "exceptions are retired" in error
+        for error in check(ROOT / "src/apizr", manifest)
+    )
+
+
+def test_root_implementation_cannot_be_allowed_by_expanding_the_inventory(tmp_path):
+    manifest = tmp_path / "packages.toml"
+    manifest.write_text(
+        (ROOT / "architecture/packages.toml")
+        .read_text()
+        .replace(
+            'modules = ["__init__.py"]',
+            'modules = ["__init__.py", "project.py"]',
+            1,
+        )
+    )
+    assert any(
+        "root namespace may declare only" in error
         for error in check(ROOT / "src/apizr", manifest)
     )

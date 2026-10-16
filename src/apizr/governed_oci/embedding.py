@@ -1,4 +1,4 @@
-"""Extend existing source embedding without changing any v1 artifact bytes."""
+"""Extend the canonical autonomous source closure for OCI-governed transports."""
 
 import json
 from typing import Literal

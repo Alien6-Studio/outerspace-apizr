@@ -23,9 +23,9 @@ from .model import ExecutionBundle, PlanArtifact
 # This is the validation/execution dependency closure, not an Apizr installation.
 # No analyzer, notebook exporter, legacy pipeline or generator is shipped.
 MODULES = (
-    "contract_types.py",
+    "contracts/types.py",
     "contracts/json_budget.py",
-    "contract_lowering.py",
+    "contracts/lowering.py",
     "capabilities/model.py",
     "capabilities/types.py",
     "capabilities/serialization.py",
@@ -52,20 +52,8 @@ MODULES = (
 )
 
 
-SOURCE_PATHS = {
-    "contract_types.py": "contracts/types.py",
-    "contract_lowering.py": "contracts/lowering.py",
-    "application.py": "contracts/application.py",
-    "inspection.py": "capabilities/inspection.py",
-}
-
-
 def source(path: str) -> str:
-    return (
-        files("apizr")
-        .joinpath(SOURCE_PATHS.get(path, path))
-        .read_text(encoding="utf-8")
-    )
+    return files("apizr").joinpath(path).read_text(encoding="utf-8")
 
 
 def definition(path: str, name: str) -> str:
@@ -85,14 +73,14 @@ def runtime_files(transport: Literal["rest", "mcp"]) -> dict[str, bytes]:
         modules["generators/mcp/transport.py"] = source("generators/mcp/transport.py")
     # Inspection's model validates linkage; its unrelated analyzer/reporting entry
     # points would pull in the source analyzer and are deliberately not embedded.
-    modules["inspection.py"] = (
+    modules["capabilities/inspection.py"] = (
         "from typing import Literal, Self\nfrom pydantic import model_validator\n"
         "from apizr.capabilities.model import CapabilityDocument, Digest, Severity\n"
         "from apizr.capabilities.types import ValueModel\n"
         "from apizr.capabilities.serialization import document_digest\n"
         "from apizr.readiness.model import ReadinessReport, State\n"
         "from apizr.readiness.serialization import report_digest\n\n"
-        + definition("inspection.py", "Inspection")
+        + definition("capabilities/inspection.py", "Inspection")
     )
     modules["capabilities/types.py"] = modules["capabilities/types.py"].replace(
         definition("capabilities/types.py", "declared_type"), ""

@@ -28,7 +28,7 @@ def pytest_collection_modifyitems(items):
 @pytest.fixture
 def historical_generator_identity(monkeypatch):
     """Keep frozen 0.4.2 artifact fixtures independent of the installed version."""
-    from apizr.delivery import DistributionIdentity
+    from apizr.contracts.delivery import DistributionIdentity
     from apizr.repository_interfaces import generator
 
     def identity(name):

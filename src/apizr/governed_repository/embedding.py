@@ -19,10 +19,10 @@ from apizr.repository_interfaces.model import RepositoryInterface
 from .model import Bridge, ContainerBundle, ExecutionBundle, PlanArtifact
 
 MODULES = (
-    "contract_types.py",
+    "contracts/types.py",
     "contracts/json_budget.py",
     "repository_interfaces/artifacts.py",
-    "application.py",
+    "contracts/application.py",
     "capabilities/model.py",
     "capabilities/types.py",
     "interfaces/model.py",

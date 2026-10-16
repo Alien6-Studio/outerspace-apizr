@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from mcp import Client, StdioServerParameters
 from repository_interfaces.conftest import evidence
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.execution import ExecutionPolicy
 from apizr.generators.mcp import generate as mcp_generate
 from apizr.generators.rest import generate as rest_generate
@@ -17,7 +18,6 @@ from apizr.generators.rest.runtime import create_app as direct_rest
 from apizr.governed.rest import create_app as local_rest
 from apizr.governed_oci.rest import create_app as oci_rest
 from apizr.governed_repository.rest import create_app as repository_governed_rest
-from apizr.inspection import inspect_source
 from apizr.oci.model import ExecutionPolicyV2
 from apizr.repository_interfaces.generator import render_repository_bundle
 from apizr.repository_interfaces.output import write_bundle

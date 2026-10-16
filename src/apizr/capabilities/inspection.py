@@ -65,7 +65,7 @@ def inspect_file(path: str | Path, *, module_name: str) -> Inspection:
     if path.suffix == ".py":
         return inspect_source(raw, module_name=module_name)
     # Keep notebook/exporter dependencies outside the Python-only core path.
-    from apizr.capability_notebooks import inspect_notebook_bytes
+    from apizr.generators.notebooks import inspect_notebook_bytes
 
     notebook = inspect_notebook_bytes(raw, module_name=module_name)
     return _assemble(notebook.document, notebook.python_source)

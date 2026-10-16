@@ -69,9 +69,9 @@ def fixtures(root: Path, config: dict, delivery=False):
         "server.Calculations.call = call\n"
         + (
             "from apizr.delivery_batch import operations\n"
-            "from apizr.mcp_session import McpSession, DeliverySession, load_delivery_request\n"
-            "from apizr.analysis_session import load_scope\n"
-            "from apizr.operator_policy import load_operator_policy\n"
+            "from apizr.workspace.mcp_session import McpSession, DeliverySession, load_delivery_request\n"
+            "from apizr.workspace.analysis_session import load_scope\n"
+            "from apizr.workspace.operator_policy import load_operator_policy\n"
             "import tempfile, os\n"
             "def managed(name, operation, arguments, **kwargs):\n"
             "    with (directory / 'calls').open('a') as stream:\n"

@@ -166,7 +166,7 @@ def prove(args: argparse.Namespace) -> dict:
             "remote.SSH.useLocalServer": False,
             "apizr.engine.mode": "python",
             "apizr.engine.python": "/opt/apizr/bin/python",
-            "apizr.project": str(root / "proof/project/apizr.toml"),
+            "apizr.workspace.project": str(root / "proof/project/apizr.toml"),
             "apizr.operatorPolicy": str(root / "proof/operator.json"),
             "apizr.telemetry.enabled": False,
         }

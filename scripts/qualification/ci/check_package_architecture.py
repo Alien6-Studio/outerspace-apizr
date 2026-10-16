@@ -11,34 +11,6 @@ ROOT = Path(__file__).resolve().parents[3]
 GENERIC_BUCKETS = {"utils", "helpers", "common", "services"}
 
 
-def facade(target: str, kind: str) -> str:
-    """The complete allowed forwarding shape; docstrings are immaterial."""
-    if kind == "module":
-        return f"""
-import sys
-import {target} as _implementation
-from {target} import *
-sys.modules[__name__] = _implementation
-"""
-    return f"""
-from typing import Any
-import {target} as _implementation
-from {target} import *
-def __getattr__(name: str) -> Any:
-    return getattr(_implementation, name)
-def __dir__() -> list[str]:
-    return dir(_implementation)
-"""
-
-
-def shape(tree: ast.Module) -> str:
-    if tree.body and isinstance(tree.body[0], ast.Expr):
-        value = tree.body[0].value
-        if isinstance(value, ast.Constant) and isinstance(value.value, str):
-            tree.body.pop(0)
-    return ast.dump(tree, include_attributes=False)
-
-
 def module_name(path: str) -> str:
     parts = list(Path(path).with_suffix("").parts)
     if parts[-1] == "__init__":
@@ -46,7 +18,7 @@ def module_name(path: str) -> str:
     return ".".join(("apizr", *parts))
 
 
-def imports(tree: ast.Module, path: str) -> set[str]:
+def imports(tree: ast.Module, path: str, *, members: bool = True) -> set[str]:
     """Include relative, from-package and literal dynamic imports in any scope."""
     names: set[str] = set()
     package = module_name(path).split(".")
@@ -61,7 +33,8 @@ def imports(tree: ast.Module, path: str) -> set[str]:
                 base = ".".join((*package[: len(package) - node.level + 1], base))
                 base = base.rstrip(".")
             names.add(base)
-            names.update(base + "." + alias.name for alias in node.names)
+            if members:
+                names.update(base + "." + alias.name for alias in node.names)
         elif isinstance(node, ast.Call) and node.args:
             function = node.func
             dynamic = isinstance(function, ast.Name) and function.id in {
@@ -91,9 +64,15 @@ def check(source: Path, manifest: Path) -> list[str]:
         return ["unsupported architecture schema"]
     packages = config["packages"]
     debt = config["root_debt"]
-    aliases = config["compatibility"]
-    alias_modules = tuple(module_name(path) for path in aliases)
     errors: list[str] = []
+    if packages[""]["kind"] != "composition" or packages[""]["modules"] != [
+        "__init__.py"
+    ]:
+        errors.append("root namespace may declare only __init__.py")
+    if debt or config["compatibility"] or config.get("embedded_imports"):
+        errors.append(
+            "root migration, compatibility and embedded import exceptions are retired"
+        )
     graph = config["plugin_dependencies"]
     for owner, dependencies in graph.items():
         if any(dependency not in graph for dependency in dependencies):
@@ -109,26 +88,13 @@ def check(source: Path, manifest: Path) -> list[str]:
                 visited.add(sibling)
                 pending.extend(graph.get(sibling, []))
     files = {p.relative_to(source).as_posix(): p for p in source.rglob("*.py")}
+    modules = {module_name(path) for path in files}
+    root_domains = {name.split("/")[0] for name in packages if name}
     for path in files:
         if "__pycache__" in Path(path).parts:
             continue
         directory = Path(path).parent.as_posix()
         directory = "" if directory == "." else directory
-        if path in aliases:
-            entry = aliases[path]
-            forwarding = facade(entry["target"], entry["kind"])
-            if entry.get("entrypoint") == "main":
-                forwarding += (
-                    '\nif __name__ == "__main__":\n    _implementation.main()\n'
-                )
-            expected = ast.parse(forwarding)
-            if shape(ast.parse(files[path].read_text())) != shape(expected):
-                errors.append(f"{path}: compatibility facade contains implementation")
-            target = entry["target"].removeprefix("apizr.").replace(".", "/")
-            target += "/__init__.py" if entry["kind"] == "package" else ".py"
-            if target not in files or target in aliases:
-                errors.append(f"{path}: compatibility target is not an implementation")
-            continue
         if directory not in packages:
             errors.append(f"{path}: package has no declared responsibility")
             continue
@@ -138,15 +104,22 @@ def check(source: Path, manifest: Path) -> list[str]:
         if entry["kind"] not in {"composition", "domain"}:
             errors.append(f"{directory}: unknown package kind")
         if entry["kind"] == "composition" and Path(path).name not in entry["modules"]:
-            if directory or path not in debt:
-                errors.append(
-                    f"{path}: implementation added to a composition namespace"
-                )
+            errors.append(f"{path}: implementation added to a composition namespace")
         if any(part in GENERIC_BUCKETS for part in Path(path).parts):
             errors.append(f"{path}: generic responsibility bucket")
         if not re.fullmatch(r"_?[a-z][a-z0-9_]*|__init__|__main__", Path(path).stem):
             errors.append(f"{path}: module name must describe its role in snake_case")
-        names = imports(ast.parse(files[path].read_text()), path)
+        tree = ast.parse(files[path].read_text())
+        names = imports(tree, path)
+        for imported in imports(tree, path, members=False):
+            if within(imported, "apizr") and imported not in modules:
+                errors.append(f"{path}: imports absent core module {imported}")
+        for imported in names:
+            if (
+                imported.startswith("apizr.")
+                and imported.split(".")[1] not in root_domains
+            ):
+                errors.append(f"{path}: imports undeclared root domain {imported}")
         if entry["kind"] == "composition" and Path(path).name == "__init__.py":
             tree = ast.parse(files[path].read_text())
             for node in ast.walk(tree):
@@ -271,11 +244,6 @@ def check(source: Path, manifest: Path) -> list[str]:
                     errors.append(
                         f"{path}: experiment contracts depend on non-primitive {imported}"
                     )
-            embedded = config.get("embedded_imports", {}).get(path, [])
-            if any(within(imported, alias) for alias in alias_modules) and not any(
-                within(imported, allowed) for allowed in embedded
-            ):
-                errors.append(f"{path}: imports compatibility path {imported}")
             if not path.startswith("cli/") and within(imported, "apizr.cli"):
                 errors.append(f"{path}: domain depends on CLI adapter {imported}")
             if path.startswith(("plugins/", "workspace/")) and imported.split(".")[
@@ -311,14 +279,6 @@ def check(source: Path, manifest: Path) -> list[str]:
                 errors.append(
                     f"{directory}: leaf domain must be declared composition before subdivision"
                 )
-    for path in debt:
-        if path not in files or path in aliases:
-            errors.append(f"{path}: stale root migration debt; remove its exception")
-        if not debt[path].get("reason") or not debt[path].get("migration"):
-            errors.append(f"{path}: root debt needs a reason and migration constraint")
-    for path in aliases:
-        if path not in files:
-            errors.append(f"{path}: declared compatibility facade is absent")
     return sorted(set(errors))
 
 
@@ -333,9 +293,7 @@ def main() -> int:
     for error in errors:
         print(error)
     if not errors:
-        print(
-            "PASS package composition, compatibility facades and dependency boundaries"
-        )
+        print("PASS canonical package composition and dependency boundaries")
     return int(bool(errors))
 
 

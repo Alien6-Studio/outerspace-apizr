@@ -7,7 +7,7 @@ import nbformat
 import pytest
 from analysis_authorization import authorized_main as main
 
-from apizr.inspection import inspect_file, inspect_source, json_bytes
+from apizr.capabilities.inspection import inspect_file, inspect_source, json_bytes
 
 ROOT = Path(__file__).resolve().parents[2]
 

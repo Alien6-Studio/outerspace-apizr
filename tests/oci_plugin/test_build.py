@@ -697,9 +697,9 @@ def test_manifest_only_build_metadata(build_inputs, tmp_path):
 def test_application_context_and_input_identity(build_inputs, tmp_path):
     from test_application import EXAMPLE, prepare
 
-    from apizr.application import ApplicationConfig
-    from apizr.compiler import render_bundle
+    from apizr.contracts.application import ApplicationConfig
     from apizr.repository_interfaces.output import write_bundle
+    from apizr.workspace.compiler import render_bundle
 
     project = tmp_path / "application"
     shutil.copytree(EXAMPLE, project)
@@ -744,8 +744,8 @@ def test_application_context_and_input_identity(build_inputs, tmp_path):
 def test_application_snapshot_refuses_tampering(tmp_path, fault):
     from test_application import EXAMPLE, prepare
 
-    from apizr.compiler import render_bundle
     from apizr.repository_interfaces.output import write_bundle
+    from apizr.workspace.compiler import render_bundle
 
     project = tmp_path / "application"
     shutil.copytree(EXAMPLE, project)

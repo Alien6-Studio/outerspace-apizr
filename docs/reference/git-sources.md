@@ -96,10 +96,10 @@ Save this as `snapshot.py` alongside all three policy files above, then run
 import sys
 from pathlib import Path
 
-from apizr.compiler import prepare_exposure, render_bundle
+from apizr.workspace.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.git_source import acquire_snapshot
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy
 

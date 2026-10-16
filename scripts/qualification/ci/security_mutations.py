@@ -1032,7 +1032,7 @@ MUTATIONS = (
         "source-analysis-admission",
         "src/apizr/workspace/source_access.py",
         "        decision = decide_analysis(operator_policy, target)",
-        "        from apizr.operator_policy import Decision\n        decision = Decision(allowed=True, code='authorized')",
+        "        from apizr.workspace.operator_policy import Decision\n        decision = Decision(allowed=True, code='authorized')",
         "tests/source_analysis/test_authorization.py::test_all_public_filesystem_apis_refuse_before_traversal[missing-operator_policy_required-scan]",
     ),
     Mutation(

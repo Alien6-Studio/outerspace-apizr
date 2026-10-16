@@ -11,10 +11,10 @@ import pytest
 from analysis_authorization import analysis_policy
 from analysis_authorization import authorized_main as main
 
-from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
 from apizr.repository import ScanPolicy
 from apizr.repository_readiness import RepositoryReadinessPolicy, report_bytes
+from apizr.workspace.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.workspace.project import MAX_PROJECT_BYTES, load_project
 
 EXAMPLE = Path(__file__).parents[1] / "examples/project-config"
@@ -488,7 +488,7 @@ def audit(event, args):
 def forbidden(*args, **kwargs): raise AssertionError("plugin discovery")
 sys.addaudithook(audit)
 from pathlib import Path
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 operator = load_operator_policy(Path(sys.argv[-1]))
 importlib.metadata.entry_points = forbidden
 from apizr.workspace.project import load_project

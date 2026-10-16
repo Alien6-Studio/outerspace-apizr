@@ -8,7 +8,7 @@ import pytest
 from jsonschema import Draft202012Validator
 from qualification_scripts import implementation as qualification_script
 
-from apizr.delivery_results import (
+from apizr.contracts.results import (
     AdmissionResult,
     BuildResult,
     DeliveryResult,

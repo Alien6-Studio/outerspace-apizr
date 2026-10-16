@@ -58,12 +58,15 @@ See [inspection](../getting-started/user-guide/inspect.md),
 [notebook conversion](../modules/notebook-transformr.md) and
 [plugin management](../reference/plugin-authors.md).
 
-## Other compatibility imports
+## Removed Python compatibility imports
 
-Use the [canonical owning imports](../architecture/code-organization.md#canonical-imports-and-compatibility).
-The remaining root and plugin-management compatibility facades are still present;
-their separate removal is tracked by
-[#291](https://github.com/Alien6-Studio/outerspace-apizr/issues/291).
+The other 73 root/plugin-management facades and all embedded historical import
+exceptions are removed in 0.4.6. Use the
+[complete canonical replacement table](removed-imports-0.4.6.md). The console
+entrypoint and modern arguments stay the same. Existing autonomous bundles remain
+self-contained; newly generated governed bundles have new source paths and hashes.
+Versioned evidence, public interface declarations and direct bundle bytes remain
+unchanged. No compatibility import hook or warning stub is installed.
 
 Start with the [SDK quickstart](../getting-started/tracking.md), or retain the
 [ordinary notebook path](../getting-started/data-science.md) without instrumentation.

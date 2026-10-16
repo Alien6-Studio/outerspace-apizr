@@ -9,10 +9,10 @@ from oci.helpers import IMAGE
 from repository_interfaces.conftest import evidence
 from starlette.requests import Request
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.execution.policy import ExecutionPolicy
 from apizr.generators.mcp.generator import generate as mcp_generate
 from apizr.generators.rest.generator import generate as rest_generate
-from apizr.inspection import inspect_source
 from apizr.oci.model import ExecutionPolicyV2
 from apizr.repository_interfaces.generator import render_repository_bundle
 from apizr.repository_interfaces.output import write_bundle

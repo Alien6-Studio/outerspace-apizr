@@ -2,9 +2,9 @@
 
 from pydantic import JsonValue
 
+from apizr.capabilities.inspection import Inspection
 from apizr.execution.policy import PolicyRefused, Subprocess
 from apizr.execution.serialization import digest
-from apizr.inspection import Inspection
 from apizr.oci.model import (
     ContainerPlan,
     ContainerResult,

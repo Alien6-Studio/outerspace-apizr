@@ -256,7 +256,7 @@ its digest must match `source.transformed_digest`. It checks both the digest and
 reanalyzed declaration/diagnostic equality before assessing the source. The
 original notebook digest remains bound through the IR document digest.
 
-`apizr.inspection.inspect_source(source, module_name=...)` and
+`apizr.capabilities.inspection.inspect_source(source, module_name=...)` and
 `inspect_file(path, module_name=...)` assemble a typed inspection result. File
 inspection supports one `.py` or `.ipynb`; logical identity is explicit in Python.
 The notebook adapter reads original bytes once and retains the exported Python as

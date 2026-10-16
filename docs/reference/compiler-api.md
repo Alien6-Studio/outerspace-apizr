@@ -2,7 +2,7 @@
 
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
-`apizr.compiler` provides the orchestration used by `apizr readiness`,
+`apizr.workspace.compiler` provides the orchestration used by `apizr readiness`,
 `apizr expose plan` and `apizr expose build rest|mcp`. It requires only the base
 installation. It does not discover plugins or import optional transport servers.
 
@@ -17,9 +17,9 @@ The installed-wheel smoke test executes this exact example outside the checkout.
 ```python
 from pathlib import Path
 
-from apizr.compiler import prepare_exposure, render_bundle
+from apizr.workspace.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
@@ -120,7 +120,7 @@ publication. Existing contracts, selection refusals and bounds remain. Primitive
 accepting already supplied bytes/artifacts do not read a root and remain outside
 this gate. Arbitrary Python execution is not an authorization sandbox.
 
-Pass an optional `apizr.application.ApplicationConfig` as `application=` for
+Pass an optional `apizr.contracts.application.ApplicationConfig` as `application=` for
 [explicit application inputs](../getting-started/user-guide/project.md#application-dependencies-and-resources-041-development).
 Preparation captures declared resource bytes while the authorized root is open;
 rendering never reopens it. This also accepts an acquired Git snapshot while its
