@@ -49,6 +49,12 @@ def test_pre_extraction_inspection_bytes_are_unchanged(tmp_path, case):
     expected = (BASELINE / case["artifact"]).read_bytes()
     assert len(expected) == case["size"]
     assert hashlib.sha256(expected).hexdigest() == case["sha256"]
+    snapshot = MANIFEST.get("frozen_projects", {}).get(case["fixture"])
+    if snapshot:
+        for entry in snapshot["files"]:
+            data = (ROOT / case["fixture"] / entry["path"]).read_bytes()
+            assert len(data) == entry["bytes"]
+            assert hashlib.sha256(data).hexdigest() == entry["sha256"]
     project = tmp_path / "relocated"
     shutil.copytree(ROOT / case["fixture"], project)
     result = inspect_experiment(project / case["target"])

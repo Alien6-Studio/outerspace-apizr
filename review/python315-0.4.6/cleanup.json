@@ -1,0 +1,18 @@
+{
+  "invocation_containers_remaining": 0,
+  "own_images": [
+    {
+      "image": "sha256:197e1518ad41dc39a845b58a963e8facd06bc18a30c1f9cd1fcf75ff409a7516",
+      "removed": true
+    },
+    {
+      "image": "sha256:4e5f39b6a2e94980ba77037de4f62aedcedc2505ce7187a64d7292fff5932be1",
+      "removed": true
+    },
+    {
+      "image": "sha256:7e6f44c7af89ecba7d62e07d6db63b31d0098453fce2b7bbcde991e2f9f4abe2",
+      "removed": true
+    }
+  ],
+  "existing_apizr_version_after_cleanup": "0.4.5"
+}

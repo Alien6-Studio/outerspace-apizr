@@ -67,7 +67,7 @@
     },
     {
       "name": "fraud-example",
-      "fixture": "examples/data-science/fraud-detection",
+      "fixture": "tests/fixtures/experiments/builtin-baseline/fraud-project",
       "target": "fraud_detection.ipynb",
       "artifact": "fraud-example.json",
       "sha256": "acf34e68b3600917eda449bac9e81ad8f66117c887a293a60c6b1e0e73c64c7f",
@@ -75,11 +75,54 @@
     },
     {
       "name": "fraud-example",
-      "fixture": "examples/data-science/fraud-detection",
+      "fixture": "tests/fixtures/experiments/builtin-baseline/fraud-project",
       "target": "fraud_detection.ipynb",
       "artifact": "fraud-example.txt",
       "sha256": "fd88319b3fd4ddaedbf375eb89c9e39b93b632016a908ab609c8f75753991b78",
       "size": 1335
     }
-  ]
+  ],
+  "frozen_projects": {
+    "tests/fixtures/experiments/builtin-baseline/fraud-project": {
+      "source_commit": "62f3ec7bbe4118102d454f5d5a00fa8ab9565c2f",
+      "original_directory": "examples/data-science/fraud-detection",
+      "files": [
+        {
+          "path": "README.md",
+          "bytes": 1228,
+          "sha256": "9b49545b77eac61ee7f331bf66af40c801e92b553031e4c4681d22ae90480ca3"
+        },
+        {
+          "path": "data/transactions-a.csv",
+          "bytes": 8556,
+          "sha256": "f82f5bb6e0723b2166ab5eae8566ceabc913d55522fe2adbfcb638c523cc2dae"
+        },
+        {
+          "path": "data/transactions-b.csv",
+          "bytes": 8556,
+          "sha256": "16b8f77575bd5374ad4435c04b3e9749bdaac63260d770818ed33f320c1477b0"
+        },
+        {
+          "path": "features.py",
+          "bytes": 363,
+          "sha256": "25984cb62515dc7406ff9625569c0c8f830e63b2f2bd972b86c159123722d26c"
+        },
+        {
+          "path": "fraud_detection.ipynb",
+          "bytes": 3622,
+          "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+        },
+        {
+          "path": "generate_data.py",
+          "bytes": 1686,
+          "sha256": "77c23e462f37ec1f4a5f4b7f7d3a5756c583dbeca68d9088d3ef56a77bb950b8"
+        },
+        {
+          "path": "requirements.txt",
+          "bytes": 308,
+          "sha256": "a167bf952a9d47b49001bc766cf67ca834f1848cfb6985ba94e80be5e0321e7c"
+        }
+      ]
+    }
+  }
 }

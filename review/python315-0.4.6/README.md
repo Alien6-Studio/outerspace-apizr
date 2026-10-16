@@ -100,3 +100,21 @@ audits pass. CI verifies the expanded Linux/macOS matrices separately; local
 macOS/Docker evidence is not evidence of every hosted target. Publication and
 public verification of the coordinated 3.15 assets remain under #326 and the
 publication acceptance item in #330.
+
+## Hosted CI follow-up
+
+The first expanded CI exposed two historical comparison failures on 3.11,
+3.12, 3.14 and 3.15: the frozen pre-extraction outputs were still consuming the
+live scientific example's requirements. The legitimate 3.15 marker change
+therefore changed their captured input fingerprint. All seven original example
+files are now frozen from the baseline's exact `62f3ec7b` source commit, with
+per-file size/SHA-256 admission. The two cases use that frozen project. Every
+expected JSON/text byte and digest is unchanged; the current example retains
+its 3.15 numerical pins. Focused scientific-provider tests pass on 3.11, 3.14
+and 3.15. `ci-followup.json` records the correction.
+
+`glama.json` records the actual root Dockerfile built from pushed `e488f722`:
+Linux/arm64 Python 3.15.0, UID 999, six MCP tools and a successful analysis call
+over loopback streamable HTTP. `cleanup.json` confirms all three own disposable
+images and invocation containers are removed. The existing Homebrew Apizr
+still reports 0.4.5.

@@ -1,0 +1,25 @@
+{
+  "image": "sha256:7e6f44c7af89ecba7d62e07d6db63b31d0098453fce2b7bbcde991e2f9f4abe2",
+  "platform": "linux/arm64",
+  "runtime": {
+    "python": "3.15.0",
+    "machine": "aarch64",
+    "uid": 999,
+    "apizr": "0.4.5"
+  },
+  "published": false,
+  "source_commit": "e488f72230f92e215b0ce1468fb801036e695a5d",
+  "http_mcp": {
+    "endpoint": "loopback-only streamable HTTP",
+    "tools": [
+      "apizr_analyze",
+      "apizr_readiness",
+      "apizr_plan_exposure",
+      "apizr_experiment_list",
+      "apizr_experiment_show",
+      "apizr_experiment_diff"
+    ],
+    "analysis_call": "passed",
+    "proxy_tunnel": false
+  }
+}
