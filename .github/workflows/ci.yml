@@ -766,7 +766,7 @@ jobs:
       - run: npm ci --prefix editors/vscode --ignore-scripts --no-audit --no-fund
       - run: npm test --prefix editors/vscode
       - name: Audit the complete extension Node tree, without exclusions
-        run: npm audit --prefix editors/vscode --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > vscode-node-audit.json
+        run: npm audit --prefix editors/vscode --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > "$RUNNER_TEMP/vscode-node-audit.json"
       - name: Build and verify a reproducible source-including VSIX
         run: |
           uv run --locked python -m scripts.qualification.packaging.vscode_distribution --output "$RUNNER_TEMP/vscode-dist"
@@ -792,7 +792,7 @@ jobs:
         with:
           name: vscode-qualification
           path: |
-            vscode-node-audit.json
+            ${{ runner.temp }}/vscode-node-audit.json
             ${{ runner.temp }}/vscode-dist/
             ${{ runner.temp }}/vscode-installed/*.json
             ${{ runner.temp }}/vscode-installed/*.log
