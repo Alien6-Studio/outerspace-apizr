@@ -1,0 +1,91 @@
+{
+  "cli_same_records": true,
+  "editor": {
+    "cases": [
+      "same-three-jupyter-runs",
+      "success-and-failure-statuses",
+      "canonical-show-and-diff"
+    ],
+    "installed_vsix": "apizr-0.4.6.vsix",
+    "outside_checkout": true,
+    "result": "pass",
+    "run_digests": [
+      "4600054b54d20ab6363b2972043ecc5607cdffc6d7d5773dc7f92fbf82a038a1",
+      "78986343dd387bc1c863a94358a11fe4f1ea6b491aba74c2fd3120c0059e3d85",
+      "d00ca30e06c82a33571b175acd0954fb83b56b2914b83f6646d09617e9b253ba"
+    ],
+    "uninstalled_without_owned_storage": true,
+    "upgraded_qualification_fixture": false,
+    "vscode": "1.140.0"
+  },
+  "elapsed_seconds": 39.64731216698419,
+  "provider_disabled_history": true,
+  "provider_unavailable_history": true,
+  "runs": [
+    {
+      "cell": "failed-cell",
+      "run_digest": "d00ca30e06c82a33571b175acd0954fb83b56b2914b83f6646d09617e9b253ba",
+      "status": "failed"
+    },
+    {
+      "cell": "variant-b",
+      "run_digest": "4600054b54d20ab6363b2972043ecc5607cdffc6d7d5773dc7f92fbf82a038a1",
+      "status": "success"
+    },
+    {
+      "cell": "variant-a",
+      "run_digest": "78986343dd387bc1c863a94358a11fe4f1ea6b491aba74c2fd3120c0059e3d85",
+      "status": "success"
+    }
+  ],
+  "runtime": {
+    "kernel": "7.4.0",
+    "module": "<qualification-python315>/work/science/lib/python3.15/site-packages/apizr/__init__.py",
+    "prefix": "<qualification-python315>/work/science",
+    "python": "3.15.0 (main, Oct 14 2026, 00:56:12) [Clang 23.1.3 ]"
+  },
+  "serving_training_observer": {
+    "positive_controls": 2,
+    "serving_pids": [
+      5249,
+      6990
+    ],
+    "training_calls": 0
+  },
+  "status": "passed",
+  "tampered_artifact": "run_artifact_changed",
+  "training_calls_during_serving": 0,
+  "training_marker_unchanged": true,
+  "transports": {
+    "invalid_typeddict_requests_refused": 3,
+    "rest": {
+      "predictions": [
+        [
+          1,
+          0.8127568160788873
+        ]
+      ]
+    },
+    "structuredContent": {
+      "predictions": [
+        [
+          1,
+          0.8127568160788873
+        ]
+      ]
+    },
+    "timings_seconds": {
+      "mcp_call": 0.14121266698930413,
+      "mcp_startup_and_list": 2.0842588749947026,
+      "rest_call": 1.3604265419999138,
+      "rest_startup": 11.13672941699042
+    },
+    "tools": [
+      "fraud_detection.predict"
+    ]
+  },
+  "vsix": {
+    "file": "apizr-0.4.6.vsix",
+    "sha256": "534f49a6e8533e16f7d0bcfc350c022b050591503f12c011c24f8ea870e9ca0e"
+  }
+}

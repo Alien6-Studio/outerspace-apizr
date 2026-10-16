@@ -136,6 +136,14 @@ jobs:
             ${{ runner.temp }}/data-science/*.log
             ${{ runner.temp }}/data-science/science-audit-requirements.txt
             ${{ runner.temp }}/data-science/bundles/
+            ${{ runner.temp }}/data-science/integrated/*.json
+            ${{ runner.temp }}/data-science/integrated/*.jsonl
+            ${{ runner.temp }}/data-science/integrated/*.log
+            ${{ runner.temp }}/data-science/integrated/*.py
+            ${{ runner.temp }}/data-science/integrated/*.ipynb
+            ${{ runner.temp }}/data-science/integrated/bundles/
+            ${{ runner.temp }}/data-science/jupyter-requirements.lock
+            ${{ runner.temp }}/data-science/jupyter-wheels/
 
   release-delivery:
     needs: distributions
@@ -786,6 +794,12 @@ jobs:
           xvfb-run -a uv run --locked python -m scripts.qualification.interfaces.vscode_proof --engine-python "$RUNNER_TEMP/vscode-engine/bin/python" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --output "$RUNNER_TEMP/vscode-restricted" --untrusted
       - name: Real workspace extension host over isolated loopback SSH
         run: xvfb-run -a uv run --locked python -m scripts.qualification.interfaces.vscode_ssh_proof --wheel "$RUNNER_TEMP"/vscode-candidate/dist/outerspace_apizr-*.whl --requirements "$RUNNER_TEMP/vscode-engine.lock" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --output "$RUNNER_TEMP/vscode-ssh"
+      - name: Same candidate Runs across a real kernel, CLI, VSIX and REST/MCP
+        env:
+          APIZR_RELEASE_SET: ${{ runner.temp }}/vscode-candidate
+        run: |
+          uv run --locked python -m scripts.qualification.packaging.coordinated_distributions target --candidate "$APIZR_RELEASE_SET" --output "$RUNNER_TEMP/vscode-target"
+          xvfb-run -a uv run --locked python -m scripts.qualification.experiments.qualify_data_science_journey --candidate "$APIZR_RELEASE_SET" --target "$RUNNER_TEMP/vscode-target" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --output "$RUNNER_TEMP/vscode-journey"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -801,6 +815,14 @@ jobs:
             ${{ runner.temp }}/vscode-ssh/proof/*.json
             ${{ runner.temp }}/vscode-ssh/*.log
             ${{ runner.temp }}/vscode-engine.lock
+            ${{ runner.temp }}/vscode-journey/*.json
+            ${{ runner.temp }}/vscode-journey/*.log
+            ${{ runner.temp }}/vscode-journey/integrated/*.json
+            ${{ runner.temp }}/vscode-journey/integrated/*.jsonl
+            ${{ runner.temp }}/vscode-journey/integrated/*.log
+            ${{ runner.temp }}/vscode-journey/integrated/*.py
+            ${{ runner.temp }}/vscode-journey/integrated/*.ipynb
+            ${{ runner.temp }}/vscode-journey/integrated/bundles/
           if-no-files-found: error
           retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 

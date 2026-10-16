@@ -186,7 +186,7 @@ def main():
     print(json.dumps(proof))
 
 
-def run_host(args, root, python, project, policy):
+def run_host(args, root, python, project, policy, *, tests=None):
     profile, extensions = root / "profile", root / "extensions"
     (profile / "User").mkdir(parents=True)
     extensions.mkdir()
@@ -246,7 +246,7 @@ def run_host(args, root, python, project, policy):
         "--disable-updates",
         "--disable-telemetry",
         "--extensionDevelopmentPath=" + str(development),
-        "--extensionTestsPath=" + str(ROOT / "editors/vscode/test/host.cjs"),
+        "--extensionTestsPath=" + str(tests or ROOT / "editors/vscode/test/host.cjs"),
     ]
     arguments[0] = host
     if not args.untrusted:

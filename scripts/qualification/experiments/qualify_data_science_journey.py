@@ -686,6 +686,12 @@ def scientific_inventory(wheels, output):
 
 
 def main():
+    from scripts.qualification.experiments.integrated_journey import (
+        prepare_kernel,
+    )
+    from scripts.qualification.experiments.integrated_journey import (
+        prove as integrated_journey,
+    )
     from scripts.qualification.packaging.coordinated_distributions import load
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -693,15 +699,29 @@ def main():
     parser.add_argument("--target", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument(
+        "--vsix",
+        type=Path,
+        help="Also qualify these Runs in the installed candidate VSIX",
+    )
+    parser.add_argument("--code", type=Path, help="VS Code executable for --vsix")
+    parser.add_argument(
         "--primary",
         action="store_true",
         help="Enforce the five-minute target on the primary reference host",
     )
     args = parser.parse_args()
+    if (args.vsix is None) != (args.code is None):
+        parser.error("--vsix and --code must be supplied together")
     args.candidate = args.candidate.resolve()
     args.target = args.target.resolve()
     candidate = load(args.candidate)
     assert candidate["version"] == "0.4.5"
+    if args.vsix:
+        build = json.loads(args.vsix.with_suffix(".json").read_text())
+        assert build["source_commit"] == candidate["commit"]
+        assert build["sha256"] == digest(args.vsix)
+        assert build["result"] == "pass" and not build["source_dirty"]
+        assert not build["qualification_fixture"]
     output = args.output.resolve()
     assert not output.exists() and not output.is_relative_to(ROOT)
     output.mkdir(parents=True)
@@ -764,6 +784,7 @@ def main():
     install_started = time.monotonic()
     (output / "install.log").write_text(run(install, cwd=work))
     install_seconds = time.monotonic() - install_started
+    prepare_kernel(python, output)
     setup = time.monotonic() - started
     inventory = scientific_inventory(wheels, output)
     audit_requirements = output / "science-audit-requirements.txt"
@@ -800,6 +821,14 @@ def main():
     network_guard(serving, output / "network.log")
     result = journey(
         python, project, wheels, args.target, output, serving_python=serving
+    )
+    result["integrated"] = integrated_journey(
+        python,
+        wheels,
+        args.target,
+        output / "integrated",
+        vsix=args.vsix.resolve() if args.vsix else None,
+        code=args.code.resolve() if args.code else None,
     )
     result["reproduction"] = retained_reproduction(
         python,

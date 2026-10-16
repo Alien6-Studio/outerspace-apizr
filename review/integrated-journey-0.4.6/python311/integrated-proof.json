@@ -1,0 +1,18 @@
+{
+  "result": "pass",
+  "vscode": "1.140.0",
+  "outside_checkout": true,
+  "run_digests": [
+    "15b3710ae4f2bd94d57d0482069a64cce3d730e5c4337a0d1ca23e767b3b8d4f",
+    "3058f9f45ae787dc312120d636a357ef53c64684d4b06c94c309b9fe2c79cf54",
+    "30ed4c8440734348122ec93204f47a5f9dcf0c50d1e0570ecd9bb8f420f78d2f"
+  ],
+  "cases": [
+    "same-three-jupyter-runs",
+    "success-and-failure-statuses",
+    "canonical-show-and-diff"
+  ],
+  "installed_vsix": "apizr-0.4.6.vsix",
+  "uninstalled_without_owned_storage": true,
+  "upgraded_qualification_fixture": false
+}

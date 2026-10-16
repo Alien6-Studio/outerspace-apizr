@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "scope": "local qualification only; hosted matrix remains pending",
+  "candidate_commit": "0539a48a176ccdbc485e15c2fa6c20a44185d5a8",
+  "core_wheel_sha256": "4fbce65d062ade543171566661f10af4fce430210a3befc85e4749ef2354e8d5",
+  "vsix_sha256": "534f49a6e8533e16f7d0bcfc350c022b050591503f12c011c24f8ea870e9ca0e",
+  "local_targets": [
+    "macOS-arm64-Python-3.11.14",
+    "macOS-arm64-Python-3.15.0"
+  ],
+  "vscode": "1.140.0",
+  "focused_tests": 213,
+  "html_pages": 128,
+  "pyright_errors": 0,
+  "package_and_qualification_gates": "passed",
+  "vsix_refusal_cases": 4,
+  "homebrew_host_job": {
+    "run": 38903411947,
+    "job": 116981286509,
+    "conclusion": "success"
+  },
+  "qualifier_sources": [
+    {
+      "path": "scripts/qualification/experiments/integrated_journey.py",
+      "sha256": "6d4330b56c34d74e099d129fd3ee997c49d34beab829cd2c170791a97037c160"
+    },
+    {
+      "path": "scripts/qualification/experiments/qualify_data_science_journey.py",
+      "sha256": "4328b8288de0f0b55f7f2958121e669aa140d86fe60d70d576a16a16043e8c44"
+    },
+    {
+      "path": "scripts/qualification/interfaces/vscode_proof.py",
+      "sha256": "333f01c5f27bad75c46a48e4b173bdc33630187c18d430e6e577b247e59b6c48"
+    },
+    {
+      "path": "editors/vscode/test/journey.cjs",
+      "sha256": "cf1873cdf0c697e56a7d264244e51cc48f0ad3b761616012fa3465ab6ac87af7"
+    }
+  ]
+}
