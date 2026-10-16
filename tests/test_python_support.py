@@ -94,6 +94,21 @@ def test_declared_candidate_targets_cannot_be_silently_reduced():
         required_targets(declared)
 
 
+def test_homebrew_probe_prepares_wheels_for_its_formula_interpreter():
+    formula = (
+        ROOT / "scripts/qualification/extensions/prepare_extension_homebrew.py"
+    ).read_text()
+    version = re.search(r'depends_on "python@(3\.\d+)"', formula).group(1)
+    steps = workflow("extension-packaging")["homebrew"]["steps"]
+    setup = next(step for step in steps if "setup-uv@" in step.get("uses", ""))
+    assert setup["with"]["python-version"] == version
+    commands = [step.get("run", "") for step in steps]
+    # Hosted runner snapshots can predate the newly supported Homebrew formula.
+    assert commands.index("brew update") < next(
+        i for i, command in enumerate(commands) if command.startswith("brew install ")
+    )
+
+
 def test_http_dependencies_keep_acceleration_without_a_reload_build():
     project = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]
     for name in ("http", "mcp"):
