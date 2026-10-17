@@ -14,7 +14,9 @@ from apizr.experiments import CaptureMode
 from scripts.qualification.experiments.experiment_jupyter_proof import Kernel, found
 
 
-def record(notebook: Path, workspace: Path, *, pause: float = 0):
+def record(
+    notebook: Path, workspace: Path, *, pause: float = 0, input_file: Path | None = None
+):
     if not 0 <= pause <= 5:
         raise ValueError("Pause must be between zero and five seconds")
     workspace = workspace.resolve()
@@ -24,7 +26,18 @@ def record(notebook: Path, workspace: Path, *, pause: float = 0):
     source = notebook.read_bytes()
     cells = [c for c in json.loads(source)["cells"] if c["cell_type"] == "code"]
     repeat = next(c for c in cells if c["id"] == "first-variant")
+    input_bytes = None
+    if input_file is not None:
+        if (
+            input_file.is_symlink()
+            or not input_file.is_file()
+            or input_file.stat().st_size > 1024 * 1024
+        ):
+            raise ValueError("Select a regular evaluation CSV no larger than 1 MiB")
+        input_bytes = input_file.read_bytes()
     workspace.mkdir(parents=True)
+    if input_bytes is not None:
+        (workspace / "evaluation.csv").write_bytes(input_bytes)
     kernel = Kernel(workspace)
     observed = []
     try:
@@ -63,6 +76,9 @@ def record(notebook: Path, workspace: Path, *, pause: float = 0):
         "runs": [r.run_digest for r in retained],
         "capture_modes": sorted({r.run.capture.mode.value for r in retained}),
         "simulated_kernel": False,
+        "selected_input_sha256": hashlib.sha256(input_bytes).hexdigest()
+        if input_bytes is not None
+        else None,
     }
     (workspace / "kernel-evidence.json").write_text(
         json.dumps(evidence, indent=2) + "\n"
@@ -79,8 +95,13 @@ def main():
     parser.add_argument("--notebook", type=Path, required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--pause", type=float, default=0)
+    parser.add_argument(
+        "--input",
+        type=Path,
+        help="Explicit evaluation CSV for the fraud threshold lesson",
+    )
     args = parser.parse_args()
-    record(args.notebook, args.workspace, pause=args.pause)
+    record(args.notebook, args.workspace, pause=args.pause, input_file=args.input)
 
 
 if __name__ == "__main__":

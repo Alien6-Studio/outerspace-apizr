@@ -72,3 +72,43 @@ Review the full rendered movie, sound, captions and cover before publication.
 Keep drafts local until the maintainer authorizes publication. Only then add
 the actual public URL and measured duration to the Academy index, preserving
 click-to-load privacy-enhanced playback and the authoritative written guides.
+
+## Teaching progression
+
+The revised VI–XI scenarios use the existing synthetic fraud example as a common
+case. They target advanced Python developers and data scientists who need to
+interpret evidence, test failure modes and choose their next action. Each lesson has a concrete question, one
+learning objective, a diagram, actual operations broken into readable steps,
+interpretation of the observed result, a pause-and-answer exercise and a correction.
+Length follows the explanation and reading time rather than a fixed short format.
+
+`academy_curriculum.json` holds the reviewable English narration and exercises.
+Preparation exports a fresh `materials/` project, learning objectives and narration
+inputs for each lesson. The original written-guide commands remain as references.
+`lab.py` reads actual saved engine JSON into short labelled projections; full
+reports remain available. Scores are never assigned as demonstration constants.
+The explicitly selected `prepare-holdout` action loads the trusted saved model
+and derives `evaluation.csv` using the example's actual held-out split.
+
+Parts X–XI start by executing the reviewed fraud notebook in a fresh local copy,
+then derive that holdout before recording. They evaluate precision, recall and
+flagged volume at different thresholds. The SDK example is `thresholds.py`.
+For the live kernel, use `fraud-thresholds.ipynb` with the kernel driver's explicit
+`--input evaluation.csv`; the selected CSV hash joins the retained kernel proof.
+The notebook remains a terminal view of actual ipykernel execution. Native VS Code
+capture remains separate. Keep the existing voice, colours, typography, opener
+and covers; add diagrams and explanations within that visual identity.
+
+Technical media checks establish readable captures, synchronized narration and
+valid exports. Editorial review must also establish that the viewer can explain
+the result and complete the exercise. A technically valid video is not sufficient
+evidence of a useful lesson.
+
+Advanced variants use actual operations: presentation-only notebook edits versus
+scientific signal identity; a deliberately altered disposable history copy;
+self-comparison with unknown evidence; stale model bytes refused during exposure;
+SDK failure/exception propagation; and an intentionally unlogged live calibration
+offset. These are explicit teaching mutations, not evidence of successful runs.
+The Jupyter example keeps its selected CSV and threshold fixed while changing
+live state, so a repeated cell can produce different metrics. A selected input
+digest does not identify every object or setting in kernel memory.

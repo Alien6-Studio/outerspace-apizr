@@ -1,6 +1,35 @@
 # Normative qualification ownership. See docs/contributing/qualification-scripts.md.
 schema_version = 1
 
+[files."scripts/qualification/docs/academy_curriculum.json"]
+group = "docs"
+role = "prepare"
+kind = "resource"
+gate = "Source-bound teaching scenarios, diagrams and exercises for the synthetic fraud Academy case."
+workflows = []
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
+
+[files."scripts/qualification/docs/academy_lab.py"]
+group = "docs"
+role = "tool"
+kind = "implementation"
+standalone = true
+gate = "Project real saved Academy reports into readable teaching views and explicitly prepare the trusted fraud holdout."
+workflows = []
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
+
+[files."scripts/qualification/docs/academy_thresholds.py"]
+group = "docs"
+role = "tool"
+kind = "implementation"
+standalone = false
+gate = "Executable SDK teaching example over the real synthetic held-out sample; preserves ordinary return values."
+workflows = []
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
+
 [files."scripts/qualification/docs/academy_window.swift"]
 group = "docs"
 role = "tool"
