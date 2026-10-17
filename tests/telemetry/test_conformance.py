@@ -70,12 +70,22 @@ def test_production_dns_credentials_and_unsafe_endpoints_refused_before_io(
 
 def test_nonempty_receiver_responses_are_rejected_without_retaining_them():
     secret = b"unapproved-collector-response"
+    fixtures = json.loads(conformance.CORPUS.read_bytes())
+    requests = iter((len(case[1]), case[6]) for case in conformance.cases(fixtures))
 
     class RespondsWithBody(BaseHTTPRequestHandler):
         def log_message(self, format, *args):
             pass
 
         def do_POST(self):
+            # Consume the bytes actually sent, including malformed framing. An
+            # early close can reset unread requests or race the truncated
+            # sender's half-close before its response can be examined.
+            self.connection.settimeout(3)
+            length, truncated = next(requests)
+            assert len(self.rfile.read(length)) == length
+            if truncated:
+                assert self.rfile.read(1) == b""
             self.send_response(204)
             self.send_header("Content-Length", str(len(secret)))
             self.end_headers()
@@ -91,7 +101,10 @@ def test_nonempty_receiver_responses_are_rejected_without_retaining_them():
             thread.join(timeout=5)
     assert report["result"] == "failed"
     assert secret.decode() not in json.dumps(report)
-    assert all(row.get("reason") == "nonempty_response" for row in report["checks"])
+    assert len(report["checks"]) == 45
+    assert all(row.get("reason") == "nonempty_response" for row in report["checks"]), (
+        report["checks"]
+    )
 
 
 def test_closed_local_port_is_a_failed_qualification_not_an_approval():
