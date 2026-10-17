@@ -13,6 +13,7 @@ import hashlib
 import json
 import subprocess
 import sys
+from importlib import import_module
 from pathlib import Path
 
 
@@ -221,9 +222,10 @@ def binding():
 
 
 def holdout():
-    import joblib
-    import pandas as pd
-    from sklearn.model_selection import train_test_split
+    # These belong to the selected workload environment, not documentation/core.
+    joblib = import_module("joblib")
+    pd = import_module("pandas")
+    train_test_split = import_module("sklearn.model_selection").train_test_split
 
     frame = pd.read_csv("data/transactions.csv")
     columns = [
