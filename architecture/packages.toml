@@ -197,7 +197,9 @@ responsibility = "Opt-in Linux OCI subprocess prohibition; existing allow runtim
 
 [packages."workspace"]
 kind = "domain"
-responsibility = "Explicit project declarations, operator preferences and bounded file access."
+responsibility = "Explicit project declarations, operator authority, pinned analysis sessions and retained compiler composition; bounded file and application-input capture without source execution, implicit discovery or publication."
+allowed_internal_imports = ["apizr.workspace", "apizr.capabilities", "apizr.contracts", "apizr.delivery_batch", "apizr.editor_contracts", "apizr.environment", "apizr.execution.policy", "apizr.experiments", "apizr.exposure", "apizr.extension_runtime.protocol", "apizr.git_source", "apizr.graph", "apizr.oci.model", "apizr.plugins.artifacts", "apizr.plugins.local.models", "apizr.repository", "apizr.repository_interfaces.generator", "apizr.repository_readiness", "apizr.scientific_providers.contracts.selection"]
+allowed_external_imports = ["pydantic"]
 
 [packages."contracts"]
 kind = "domain"

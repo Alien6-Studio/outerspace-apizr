@@ -4,12 +4,31 @@ import json
 import sys
 from pathlib import Path
 
+SELECTED_EVIDENCE = (
+    "src/apizr/exposure/scope.py",
+    "src/apizr/exposure/scope_model.py",
+    "src/apizr/exposure/scope_index.py",
+    "src/apizr/exposure/scope_admission.py",
+    "src/apizr/exposure/scope_initialization.py",
+)
+
+
+def selected_summary(files: dict) -> dict[str, int]:
+    """Keep the original aggregate floor over the complete proof implementation."""
+    return {
+        key: sum(files[name]["summary"][key] for name in SELECTED_EVIDENCE)
+        for key in (
+            "covered_lines",
+            "num_statements",
+            "covered_branches",
+            "num_branches",
+        )
+    }
+
 
 def main() -> None:
     report = json.loads(Path(sys.argv[1]).read_bytes())
-    scopes = [
-        ("Selected evidence", report["files"]["src/apizr/exposure/scope.py"]["summary"])
-    ]
+    scopes = [("Selected evidence", selected_summary(report["files"]))]
     for name in (
         "src/apizr/readiness/structured.py",
         "src/apizr/contracts/types.py",

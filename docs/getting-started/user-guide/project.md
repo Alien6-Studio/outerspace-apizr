@@ -4,6 +4,9 @@ For prerequisites and package availability, see [Install Apizr](../install.md).
 
 Use `--project` to share readiness and exposure settings in a versioned
 `apizr.toml`. Apizr never searches for or loads this file automatically.
+The [workspace contract](../../architecture/workspace-contract.md) specifies how
+these declarations relate to operator authority, captured sessions and the Python
+compiler API.
 Existing commands without `--project` and the historical pipeline's YAML
 `--configuration` option retain their behavior.
 

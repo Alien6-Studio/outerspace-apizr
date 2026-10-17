@@ -981,9 +981,9 @@ MUTATIONS = (
     ),
     Mutation(
         "selected-scope-required-initialization",
-        "src/apizr/exposure/scope.py",
-        "            reasons = initialization_reasons(unit)",
-        "            reasons = ()",
+        "src/apizr/exposure/scope_admission.py",
+        "        reasons = initialization_reasons(unit)",
+        "        reasons = ()",
         "tests/exposure/test_scope.py::test_required_module_initialization_without_any_callable_is_not_guessed",
     ),
     Mutation(

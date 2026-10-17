@@ -60,12 +60,19 @@ complete bundle without replacing existing contents.
 | `render_bundle(prepared, *, interface, execution_policy=None, runtime_image=None)` | Prepared context, `"rest"` or `"mcp"`, existing execution policy/image models | Existing bundle filenames and bytes |
 
 `PreparedExposure` is an in-memory container for existing contracts, not a new
-serialized schema. Its `evidence` is the existing `RepositoryEvidence` with
+serialized schema. Construction and `dataclasses.replace` copy source, resource
+and dependency-archive dictionaries into read-only mappings of immutable bytes;
+later caller mutations cannot affect rendering. Non-byte payloads raise
+`TypeError`. Rendering still validates the complete retained contracts; direct
+construction does not certify them. Its `evidence` is `RepositoryEvidence` with
 `catalog`, `graph` and retained `sources`. Canonical serializers remain
 `report_bytes`, `plan_bytes`, `catalog_bytes` and `graph_bytes` in their existing
 packages. For already saved Catalog/Graph artifacts, continue to use
 `apizr.repository_readiness.assess_repository`; the repository-first operation
 intentionally performs discovery.
+
+The [workspace contract](../architecture/workspace-contract.md) defines the
+configuration, authority, session and retained-context lifetimes together.
 
 Readiness alone needs no exposure selection. To reuse analysis for a plan and
 bundles, call `prepare_exposure` once and use its `readiness` result; do not call

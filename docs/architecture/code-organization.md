@@ -256,6 +256,12 @@ configuration and plugin management have no optional SDK or plugin-distribution
 dependencies. Project loading reads only the explicit project file and grants no
 operator authority.
 
+The [workspace contract](workspace-contract.md) defines project declarations,
+explicit authority, pinned sessions and retained compilation as distinct values.
+The workspace inventory enforces its core-only import boundary. Prepared contexts
+own their byte mappings; rendering revalidates canonical evidence without
+reopening project files.
+
 Plugin management depends on core policy, project declarations, locks and the
 bounded extension protocol. It does not import optional plugin distributions,
 REST frameworks or the MCP SDK. Importing `apizr.plugins` performs no discovery,

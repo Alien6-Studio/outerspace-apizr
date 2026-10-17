@@ -195,6 +195,7 @@ nav:
   - Transport admission: architecture/transport-admission.md
   - Engine performance: architecture/engine-performance.md
   - Code organization: architecture/code-organization.md
+  - Workspace contract: architecture/workspace-contract.md
 - Reference:
   - Commands, APIs and formats: reference/index.md
   - Concepts and limits: reference/concepts.md

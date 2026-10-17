@@ -24,6 +24,21 @@ def test_repository_satisfies_declared_composition():
 @pytest.mark.parametrize(
     "path,addition,expected",
     [
+        (
+            "workspace/compiler.py",
+            "from apizr.cli import main\n",
+            "domain dependency not declared",
+        ),
+        (
+            "workspace/analysis_session.py",
+            "import mcp\n",
+            "external dependency not declared",
+        ),
+        (
+            "workspace/project.py",
+            "import apizr_attest\n",
+            "external dependency not declared",
+        ),
         ("experiments/inspection.py", "from apizr.cli import main\n", "non-primitive"),
         (
             "experiments/inspection.py",
