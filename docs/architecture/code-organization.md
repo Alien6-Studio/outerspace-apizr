@@ -183,7 +183,10 @@ collector qualification and a subsequent release.
 The thin TypeScript client lives under `editors/vscode`: `environment.ts` owns
 explicit engine selection, workspace trust and child telemetry restrictions;
 `engine.ts` owns bounded stdio processes and protocol discovery;
-`presentation.ts` owns read-only rendering and source/cell navigation;
+`presentation.ts` owns read-only evidence rendering and source/cell navigation;
+`dashboard.ts` projects canonical history and Run details in a script-free local
+webview; `workbench.ts` resolves editor/notebook contexts and provides static
+CodeLens actions without launching analysis;
 `extension.ts` composes commands, stale-result events and publication notifications.
 All scientific admission, complete history validation and comparison remain in the
 Python engine. The extension has no runtime npm dependency or embedded engine.

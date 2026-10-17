@@ -24,13 +24,23 @@ Set these values in Settings:
 | `apizr.store` | Project-relative history store; default `.apizr/experiments/v1`. |
 | `apizr.timeoutMs` | Engine deadline from 500 to 120,000 ms; default 30,000. |
 | `apizr.inspectOnSave` | Explicit opt-in; default false. |
+| `apizr.codeLens` | Show inspection/dashboard shortcuts above saved Python files; default true. |
 
 **Apizr: Check engine** discovers the protocol and supported operations before
 project evidence is requested. An incompatible engine is refused with a clear
 message. The [operator policy](operator-policy.md) must grant `source.analyze` for
 the exact project and, for Runs, `history.read` for the exact store. The extension
 cannot enlarge those permissions. Restricted Mode launches no engine and disables
-project operations; only local telemetry settings remain accessible.
+project operations; the dashboard and local settings remain accessible.
+
+## The Apizr workspace
+
+Click the **Apizr bee** in the Activity Bar to open **Runs** and **Inspection**.
+**Apizr: Open experiment dashboard** opens a dedicated page with validated history,
+capture modes (CLI, SDK or Jupyter), recorded parameters and metrics. Select a Run
+for its details; **Open complete JSON** retains the complete canonical evidence.
+Opening the sidebar or dashboard starts no engine. Use **Refresh history** to load
+the configured project explicitly.
 
 ## Inspect the saved file
 
@@ -40,6 +50,15 @@ canonical sections and locations; a read-only JSON document retains the complete
 result and diagnostics. Select a located tree item to open its source line or
 notebook cell. Unsaved changes are explicitly excluded. Editing or saving the
 source marks the result outdated until a fresh inspection completes.
+
+Python files also offer inspection in the editor title and CodeLens shortcuts.
+Jupyter notebooks have **Inspect with Apizr** and **Open experiment dashboard**
+in their notebook toolbar. A Python cell's editor context resolves to its owning
+saved notebook; inspection covers the saved notebook, including when a different
+Python file is open alongside it. Unsaved notebooks must be saved first.
+These actions use the existing notebook editor and kernel; they do not install
+or replace Jupyter or execute a cell. Experiment tracking remains explicit in
+your Python/SDK or notebook code, as described in the [tracking guide](tracking-sdk.md).
 
 No inspection runs on typing. Optional inspection on save is disabled by default.
 The progress notification and **Apizr: Cancel current operation** terminate the

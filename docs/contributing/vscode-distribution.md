@@ -71,6 +71,14 @@ default Python/Actions alerts remain enabled without duplicate SARIF uploads.
 
 ## Publication is a separate authorized operation
 
+A dedicated GitHub repository is not required by the
+[Marketplace publication procedure](https://code.visualstudio.com/api/working-with-extensions/publishing-extension). Keep
+the client in this repository while engine and editor contracts are qualified
+together; `repository.directory` identifies `editors/vscode`. A later repository
+split requires its own source history, dependency policy and engine compatibility
+qualification before changing release ownership. Do not duplicate the client into
+a second repository with an independent implementation.
+
 `alien6-studio.apizr` is the **proposed development identity** in `package.json`,
 not a claim that a Marketplace/Open VSX publisher has been reserved or verified.
 Before any publication, a maintainer must separately authorize the release, verify

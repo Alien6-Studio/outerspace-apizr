@@ -8,14 +8,14 @@ Requires **VS Code 1.140+** and an installed **Apizr 0.4.6** engine.
 
 1. Open a trusted project containing `apizr.toml`.
 2. Run **Apizr: Select engine**, then **Apizr: Check engine** from the command palette.
-3. Set `apizr.operatorPolicy` to your policy file, granting `source.analyze` and
-   `history.read` for the project and experiment store.
+3. Set `apizr.operatorPolicy` to your policy file for source analysis and history.
 
 ## Use
 
-- **Apizr: Inspect with Apizr** — inspect a saved `.py` or `.ipynb` file.
-- **Apizr: Refresh runs** — browse history in the **Apizr Runs** view.
-- **Apizr: Compare two Runs** — compare selected records.
+- Click the **Apizr bee** in the Activity Bar for Runs and Inspection.
+- Open the **experiment dashboard** for parameters, metrics and Run details.
+- Use the **Python editor shortcuts** or **notebook toolbar** to inspect saved code.
+- Select two Runs to compare their recorded evidence.
 
 Inspection does not execute your code. Telemetry is off by default.
 

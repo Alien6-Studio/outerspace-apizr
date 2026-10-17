@@ -6,6 +6,11 @@
   "version": "0.4.6",
   "publisher": "alien6-studio",
   "license": "GPL-3.0-or-later",
+  "homepage": "https://apizr.outerspace.sh/reference/vscode/",
+  "bugs": {
+    "url": "https://github.com/Alien6-Studio/outerspace-apizr/issues"
+  },
+  "keywords": ["apizr", "python", "jupyter", "experiments", "tracking"],
   "repository": {
     "type": "git",
     "url": "https://github.com/Alien6-Studio/outerspace-apizr.git",
@@ -48,6 +53,21 @@
   "contributes": {
     "commands": [
       {
+        "command": "apizr.openDashboard",
+        "title": "Apizr: Open experiment dashboard",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "apizr.showTrackedRun",
+        "title": "Apizr: Show tracked Run",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.openSettings",
+        "title": "Apizr: Open settings",
+        "icon": "$(gear)"
+      },
+      {
         "command": "apizr.selectEngine",
         "title": "Apizr: Select engine",
         "enablement": "isWorkspaceTrusted"
@@ -60,12 +80,14 @@
       {
         "command": "apizr.inspect",
         "title": "Apizr: Inspect with Apizr",
-        "enablement": "isWorkspaceTrusted"
+        "enablement": "isWorkspaceTrusted",
+        "icon": "$(search)"
       },
       {
         "command": "apizr.refreshRuns",
         "title": "Apizr: Refresh runs",
-        "enablement": "isWorkspaceTrusted"
+        "enablement": "isWorkspaceTrusted",
+        "icon": "$(refresh)"
       },
       {
         "command": "apizr.showRun",
@@ -75,7 +97,8 @@
       {
         "command": "apizr.compareRuns",
         "title": "Apizr: Compare two Runs",
-        "enablement": "isWorkspaceTrusted"
+        "enablement": "isWorkspaceTrusted",
+        "icon": "$(git-compare)"
       },
       {
         "command": "apizr.openSource",
@@ -174,18 +197,27 @@
           "default": "",
           "scope": "resource",
           "description": "Exact project root declared by apizr.toml, absolute or workspace-relative; empty uses the project file directory. Must match the operator grants."
+        },
+        "apizr.codeLens": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "Show inspection and experiment-dashboard shortcuts above saved Python files. No analysis runs until clicked."
         }
       }
     },
     "views": {
-      "explorer": [
-        {
-          "id": "apizr.inspection",
-          "name": "Apizr Inspection"
-        },
+      "apizr": [
         {
           "id": "apizr.runs",
-          "name": "Apizr Runs"
+          "name": "Runs",
+          "contextualTitle": "Apizr"
+        },
+        {
+          "id": "apizr.inspection",
+          "name": "Inspection",
+          "contextualTitle": "Apizr",
+          "visibility": "collapsed"
         }
       ]
     },
@@ -206,6 +238,11 @@
       ],
       "view/title": [
         {
+          "command": "apizr.openDashboard",
+          "when": "view == apizr.runs",
+          "group": "navigation@1"
+        },
+        {
           "command": "apizr.inspect",
           "when": "view == apizr.inspection && isWorkspaceTrusted",
           "group": "navigation"
@@ -220,8 +257,58 @@
           "when": "view == apizr.runs && isWorkspaceTrusted",
           "group": "navigation"
         }
+      ],
+      "editor/title": [
+        {
+          "command": "apizr.inspect",
+          "when": "isWorkspaceTrusted && resourceScheme == file && resourceExtname == .py",
+          "group": "navigation@20"
+        },
+        {
+          "command": "apizr.openDashboard",
+          "when": "resourceScheme == file && resourceExtname == .py",
+          "group": "apizr"
+        }
+      ],
+      "notebook/toolbar": [
+        {
+          "command": "apizr.inspect",
+          "when": "isWorkspaceTrusted && notebookType == jupyter-notebook",
+          "group": "navigation@20"
+        },
+        {
+          "command": "apizr.openDashboard",
+          "when": "notebookType == jupyter-notebook",
+          "group": "navigation@21"
+        }
       ]
-    }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "apizr",
+          "title": "Apizr",
+          "icon": "media/icon.png"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "apizr.runs",
+        "contents": "Browse local CLI, SDK and Jupyter experiments.\n[Open experiment dashboard](command:apizr.openDashboard)\n[Refresh history](command:apizr.refreshRuns)\n[Select engine](command:apizr.selectEngine) \u00b7 [Settings](command:apizr.openSettings)",
+        "when": "isWorkspaceTrusted"
+      },
+      {
+        "view": "apizr.runs",
+        "contents": "Trust this workspace to read experiment history. Apizr starts no engine in Restricted Mode.",
+        "when": "!isWorkspaceTrusted"
+      },
+      {
+        "view": "apizr.inspection",
+        "contents": "Inspect a saved Python file or notebook without executing it.\n[Inspect saved source](command:apizr.inspect)",
+        "when": "isWorkspaceTrusted"
+      }
+    ]
   },
   "scripts": {
     "compile": "tsc -p .",

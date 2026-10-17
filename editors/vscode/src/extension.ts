@@ -4,12 +4,18 @@ import { EngineClient, EngineError, Json, Response, object } from "./engine";
 import { childEnvironment, folderFor, settings, usageAllowed } from "./environment";
 import { Documents, EvidenceItem, EvidenceTree, Location, locations, navigate, relativeSource } from "./presentation";
 import { stringify } from "./json";
+import { Dashboard, captureLabel, sourceReference } from "./dashboard";
+import { inspectionLenses, sourceUri } from "./workbench";
 
 export function activate(context: vscode.ExtensionContext) {
     const inspection = new EvidenceTree(), runs = new EvidenceTree(), documents = new Documents();
     const inspectionView = vscode.window.createTreeView("apizr.inspection", { treeDataProvider: inspection });
     const runsView = vscode.window.createTreeView("apizr.runs", { treeDataProvider: runs, canSelectMany: true });
-    context.subscriptions.push(inspection, runs, inspectionView, runsView, vscode.workspace.registerTextDocumentContentProvider("apizr-result", documents));
+    const dashboard = new Dashboard(vscode.Uri.joinPath(context.extensionUri, "media", "icon.png"));
+    const lenses = new vscode.EventEmitter<void>();
+    context.subscriptions.push(inspection, runs, inspectionView, runsView, dashboard, lenses, vscode.workspace.registerTextDocumentContentProvider("apizr-result", documents),
+        vscode.languages.registerCodeLensProvider({ language: "python", scheme: "file" }, { onDidChangeCodeLenses: lenses.event, provideCodeLenses: inspectionLenses }),
+        vscode.workspace.onDidGrantWorkspaceTrust(() => lenses.fire()));
     const clients = new Set<EngineClient>();
     const watchers = new Map<string, vscode.FileSystemWatcher>();
     const timers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -43,13 +49,9 @@ export function activate(context: vscode.ExtensionContext) {
     function diagnostics(response: Response): void {
         if (!response.ok) { void vscode.window.showWarningMessage(`Apizr — ${response.diagnostics.map(d => object(d) ? String(d.code) : "operation_failed").join(", ")}`); }
     }
-    function activeSource(): vscode.Uri | undefined {
-        const active = vscode.window.activeTextEditor?.document.uri;
-        const notebook = vscode.workspace.notebookDocuments.find(n => n.getCells().some(c => c.document.uri.toString() === active?.toString()));
-        return notebook?.uri ?? vscode.window.activeNotebookEditor?.notebook.uri ?? active;
-    }
-    async function inspect(uri?: vscode.Uri): Promise<Response> {
-        const selected = uri ?? activeSource();
+    const activeSource = () => sourceUri();
+    async function inspect(context?: unknown): Promise<Response> {
+        const selected = sourceUri(context);
         if (!selected || selected.scheme !== "file" || ![".py", ".ipynb"].includes(path.extname(selected.fsPath))) { throw new EngineError("source_required", "Save and select a Python script or notebook before inspection."); }
         const folder = folderFor(selected), config = settings(folder);
         const source = relativeSource(config.cwd, selected.fsPath);
@@ -87,7 +89,8 @@ export function activate(context: vscode.ExtensionContext) {
         watchers.set(key, watcher);
     }
     async function refreshRuns(uri?: vscode.Uri, progress = true): Promise<Response> {
-        const folder = folderFor(uri ?? activeSource());
+        const selected = sourceUri(uri);
+        const folder = folderFor(selected?.scheme === "file" ? selected : historyFolder);
         const generation = ++historyGeneration;
         const response = await run(folder.uri, true, "Read validated history", (client, signal) => client.request("experiment_list", { limit: 20 }, signal), progress);
         if (generation !== historyGeneration) { return response; }
@@ -96,16 +99,18 @@ export function activate(context: vscode.ExtensionContext) {
         if (response.ok && response.value && Array.isArray(response.value.runs)) {
             for (const value of response.value.runs) {
                 if (!object(value) || typeof value.run_digest !== "string") { continue; }
-                const item = new EvidenceItem(value.run_digest.slice(0, 12), value);
-                item.description = String(value.status);
+                const item = new EvidenceItem(path.basename(sourceReference(value.source)), value);
+                item.description = `${String(value.status)} · ${captureLabel(value.capture)} · ${value.run_digest.slice(0, 8)}`;
+                item.iconPath = new vscode.ThemeIcon(value.status === "success" ? "pass" : value.status === "failed" ? "error" : "circle-slash");
                 item.tooltip = stringify(value, 2);
-                item.command = { command: "apizr.showRun", title: "Show Run", arguments: [value.run_digest, folder.uri] };
+                item.command = { command: "apizr.showTrackedRun", title: "Show tracked Run", arguments: [value.run_digest, folder.uri] };
                 item.contextValue = "apizrRun";
                 runs.items.push(item);
             }
             runsView.description = `${String(response.value.matched)} matched / ${String(response.value.total)} validated; up to 20 shown`;
             publicationWatch(folder);
         }
+        dashboard.update(response.ok ? response.value ?? undefined : undefined, folder.uri.fsPath);
         runs.changed(); return response;
     }
     async function selectRun(title: string, exclude?: string): Promise<string | undefined> {
@@ -113,7 +118,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (!choices.length) { throw new EngineError("history_required", "Refresh Runs before selecting an experiment."); }
         return (await vscode.window.showQuickPick(choices, { title }))?.id;
     }
-    async function showRun(id?: string, uri?: vscode.Uri): Promise<Response | undefined> {
+    async function showRun(id?: string, uri?: vscode.Uri, showJson = true): Promise<Response | undefined> {
         const selected = id ?? await selectRun("Select a Run"); if (!selected) { return; }
         const response = await run(uri ?? historyFolder ?? activeSource(), true, "Show recorded Run", (client, signal) => client.request("experiment_show", { run_id: selected }, signal));
         diagnostics(response);
@@ -125,7 +130,9 @@ export function activate(context: vscode.ExtensionContext) {
                 recorded = { root: settings(folderFor(uri ?? historyFolder ?? activeSource())).cwd, location: { source: identity.reference, line: 1, column: 0 } };
             }
         }
-        await documents.show("run", (response.value ?? response) as unknown as Json); return response;
+        dashboard.select(response.ok ? response.value ?? undefined : undefined);
+        if (showJson || !response.ok) { await documents.show("run", (response.value ?? response) as unknown as Json); }
+        return response;
     }
     async function compare(runA?: string, runB?: string, uri?: vscode.Uri): Promise<Response | undefined> {
         const selection = runsView.selection;
@@ -159,6 +166,13 @@ export function activate(context: vscode.ExtensionContext) {
         if (uri.toString() === inspected.toString() || notebook?.getCells().some(c => c.document.uri.toString() === uri.toString())) { stale = true; inspectionView.description = "Outdated — inspect saved file again"; }
     }
     const commands: Record<string, (...args: any[]) => unknown> = {
+        openDashboard: () => dashboard.show(),
+        openSettings: () => vscode.commands.executeCommand("workbench.action.openSettings", "@ext:alien6-studio.apizr"),
+        showTrackedRun: async (id?: string, uri?: vscode.Uri) => {
+            const response = await showRun(id, uri, false);
+            if (response?.ok) { dashboard.show(); }
+            return response;
+        },
         inspect, refreshRuns, showRun, compareRuns: compare, openSource: (root?: string, location?: Location) => {
             if (root && location) { return navigate(root, location); }
             if (recorded) { return navigate(recorded.root, recorded.location); }
@@ -176,7 +190,7 @@ export function activate(context: vscode.ExtensionContext) {
     };
     for (const [name, command] of Object.entries(commands)) {
         context.subscriptions.push(vscode.commands.registerCommand(`apizr.${name}`, async (...args: unknown[]) => { try {
-            if (!vscode.workspace.isTrusted && !name.startsWith("telemetry") && name !== "cancel") { throw new EngineError("workspace_untrusted", "Project operations are disabled in Restricted Mode."); }
+            if (!vscode.workspace.isTrusted && !name.startsWith("telemetry") && !["cancel", "openDashboard", "openSettings"].includes(name)) { throw new EngineError("workspace_untrusted", "Project operations are disabled in Restricted Mode."); }
             return await command(...args);
         } catch (error) { reportError(error); return undefined; } }));
     }
@@ -193,10 +207,14 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.env.onDidChangeTelemetryEnabled(() => { if (!usageAllowed()) { lastReport = undefined; cancel(); } }));
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
         if (event.affectsConfiguration("apizr") || event.affectsConfiguration("telemetry")) {
+            lenses.fire();
             if (!usageAllowed()) { lastReport = undefined; }
             cancel();
             if (["apizr.engine", "apizr.project", "apizr.projectRoot", "apizr.operatorPolicy", "apizr.store"].some(key => event.affectsConfiguration(key))) {
                 for (const watcher of watchers.values()) { watcher.dispose(); } watchers.clear();
+                for (const timer of timers.values()) { clearTimeout(timer); } timers.clear();
+                historyGeneration++; historyFolder = undefined; lastHistory = undefined;
+                runs.items = []; runsView.description = undefined; runs.changed(); dashboard.clear(); recorded = undefined;
             }
         }
     }));
