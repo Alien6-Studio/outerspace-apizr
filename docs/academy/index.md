@@ -127,21 +127,23 @@ question:
 4. [Where does execution happen?](execution.md)
 5. [What do REST and MCP expose?](interfaces.md)
 
-## Experiment path — recordings coming later
+<span id="experiment-path-recordings-coming-later"></span>
 
-New recordings are planned after 0.4.6. Start with the
+## Experiment path — recordings in preparation
+
+New recordings for 0.4.6 are in preparation in #334. Start with the
 [Data Scientist quickstart](../getting-started/data-science.md) and use the
 written guides while the videos are being prepared.
 
 | Planned lesson | Recording | Written steps |
 | --- | --- | --- |
-| Part VI — Inspect experiment evidence | Coming later | [Inspection](../getting-started/user-guide/experiment-inspection.md) |
-| Part VII — Run an experiment and read its history | Coming later | [Runs and history](../getting-started/user-guide/experiment-runs.md) |
-| Part VIII — Compare experiment Runs | Coming later | [Comparison](../getting-started/user-guide/experiment-comparison.md) |
-| Part IX — Expose a selected prediction | Coming later | [Experiment → serving](../getting-started/user-guide/experiment-exposure.md) |
-| Part X — Capture a Python call with SDK sessions and decorators | Planned after 0.4.6 (#334) | [Runnable SDK quickstart](../getting-started/tracking.md) |
-| Part XI — Capture real Jupyter cells | Planned after 0.4.6 (#334) | [Live-kernel steps](../getting-started/tracking.md#3-use-the-same-calls-in-jupyter) |
-| Part XII — Inspect and compare Runs in VS Code | Planned after 0.4.6 (#334) | [VS Code guide](../reference/vscode.md) |
+| Part VI — Inspect experiment evidence | In preparation | [Inspection](../getting-started/user-guide/experiment-inspection.md) |
+| Part VII — Run an experiment and read its history | In preparation | [Runs and history](../getting-started/user-guide/experiment-runs.md) |
+| Part VIII — Compare experiment Runs | In preparation | [Comparison](../getting-started/user-guide/experiment-comparison.md) |
+| Part IX — Expose a selected prediction | In preparation | [Experiment → serving](../getting-started/user-guide/experiment-exposure.md) |
+| Part X — Capture a Python call with SDK sessions and decorators | In preparation | [Runnable SDK quickstart](../getting-started/tracking.md) |
+| Part XI — Capture real Jupyter cells | In preparation | [Live-kernel steps](../getting-started/tracking.md#3-use-the-same-calls-in-jupyter) |
+| Part XII — Inspect and compare Runs in VS Code | In preparation | [VS Code guide](../reference/vscode.md) |
 
 A planned lesson does not establish that its feature has been qualified. The
 linked guides state their current scope and limits.

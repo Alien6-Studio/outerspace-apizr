@@ -18,7 +18,7 @@ Set these values in Settings:
 | --- | --- |
 | `apizr.engine.mode` | `python` interpreter/venv or installed `executable`. |
 | `apizr.engine.python` / `apizr.engine.executable` | Absolute engine path in the workspace extension host. |
-| `apizr.workspace.project` | Project file; default `apizr.toml` in the selected folder. |
+| `apizr.project` | Project file; default `apizr.toml` in the selected folder. |
 | `apizr.projectRoot` | Exact declared project root, absolute or workspace-relative; empty uses the project file directory. |
 | `apizr.operatorPolicy` | Absolute operator policy file. |
 | `apizr.store` | Project-relative history store; default `.apizr/experiments/v1`. |

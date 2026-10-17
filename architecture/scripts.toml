@@ -1,6 +1,26 @@
 # Normative qualification ownership. See docs/contributing/qualification-scripts.md.
 schema_version = 1
 
+[files."scripts/qualification/docs/academy_lessons.py"]
+group = "docs"
+role = "prepare"
+kind = "implementation"
+gate = "Prepare Academy source, narration and shot lists from executable guides for the existing local video pipeline; never publish."
+standalone = false
+workflows = []
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
+
+[files."scripts/qualification/interfaces/telemetry_conformance.py"]
+group = "interfaces"
+role = "proof"
+kind = "implementation"
+gate = "Qualify public synthetic admission and framing against an explicitly selected disposable loopback receiver; never contact production."
+standalone = false
+workflows = []
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
+
 [groups."ci"]
 kind = "domain"
 responsibility = "Repository policy, dependency admission, structural/security gates and measured CI behavior."

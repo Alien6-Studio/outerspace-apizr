@@ -83,6 +83,14 @@ then push and qualify the whole batch once. Moving a proof or adding a ticket
 does not require starting another full platform matrix in the middle of that
 batch. The separate pytest performance comparison is manual only.
 
+Academy source/shot-list preparation uses
+`python3 -m scripts.qualification.docs.academy_lessons --output /absolute/new/directory`.
+See [the existing recording process](../academy/production.md); this command
+does not render or publish videos. The loopback-only
+`python3 -m scripts.qualification.interfaces.telemetry_conformance --endpoint http://127.0.0.1:8080 --output /absolute/report.json`
+checks a disposable receiver against the public synthetic corpus. It never
+qualifies production hosting, storage or retention.
+
 The engine performance baseline is also manual only. Its
 `scripts.qualification.experiments.benchmark_engine` command records import,
 inspection, SDK, file digest, publication, history and editor timings, with
