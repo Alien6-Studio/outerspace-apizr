@@ -1,10 +1,10 @@
 {
-  "review_date": "2026-10-16",
+  "review_date": "2026-10-17",
   "runtime_dependencies": 0,
   "packages": {
     "node_modules/@types/node": {
-      "version": "20.19.37",
-      "integrity": "sha512-8kzdPJ3FsNsVIurqBs7oodNnCEVbni9yUEkaHbgptDACOPW04jimGagZ51E6+lXUwJjgnBw+hyko/lkFWCldqw==",
+      "version": "22.20.5",
+      "integrity": "sha512-U2+DNr+wSjpsTS/wZGYHq7GcwfuSmKiKvoPvK22zwTlRhU91yOniN4qRR5KhIjvif7ysw/dz/hKmfDH0Ris4aA==",
       "license": "MIT",
       "license_files": {
         "LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
@@ -12,8 +12,8 @@
       "scope": "Unmodified build/type-checking dependency only; not included in the VSIX."
     },
     "node_modules/@types/vscode": {
-      "version": "1.95.0",
-      "integrity": "sha512-0LBD8TEiNbet3NvWsmn59zLzOFu/txSlGxnv5yAFHCrhG9WvAnR3IvfHzMOs2aeWqgvNjq9pO99IUw8d3n+unw==",
+      "version": "1.140.0",
+      "integrity": "sha512-KAB5RBZIgnUhpp4mKsVJPPHLOQKu6WtGy2xpfWjaajEXO4xIIC+UESAXLiQ9ewx6QD1uBmvC/S8BJzkbvv4bRA==",
       "license": "MIT",
       "license_files": {
         "LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"

@@ -1,13 +1,48 @@
 import * as vscode from "vscode";
 import * as path from "node:path";
+import { readFileSync } from "node:fs";
 import { EngineClient, EngineError, Json, Response, object } from "./engine";
 import { childEnvironment, folderFor, settings, usageAllowed } from "./environment";
 import { Documents, EvidenceItem, EvidenceTree, Location, locations, navigate, relativeSource } from "./presentation";
 import { stringify } from "./json";
 import { Dashboard, captureLabel, sourceReference } from "./dashboard";
 import { inspectionLenses, sourceUri } from "./workbench";
+import { EngineSpec, InstalledEngine, ManagedEngine } from "./installation";
 
 export function activate(context: vscode.ExtensionContext) {
+    const spec: EngineSpec = JSON.parse(readFileSync(vscode.Uri.joinPath(context.extensionUri, "engine.json").fsPath, "utf8"));
+    if (spec.version !== context.extension.packageJSON.version) { throw new EngineError("invalid_engine_spec", "The CLI descriptor must match the extension version."); }
+    const managed = new ManagedEngine(context.globalStorageUri.fsPath, spec, { ...childEnvironment(), APIZR_TELEMETRY: "0", APIZR_TELEMETRY_ALLOWED: "0", GIT_TERMINAL_PROMPT: "0" });
+    let installed: InstalledEngine | undefined;
+    let setupPrompt: Promise<void> | undefined;
+    async function installEngine(): Promise<InstalledEngine> {
+        if (!vscode.workspace.isTrusted || process.platform === "win32" || context.globalStorageUri.scheme !== "file") { throw new EngineError("unsupported_environment", "CLI installation requires a trusted native macOS or Linux extension host."); }
+        installed = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `Install Apizr CLI ${spec.version}`, cancellable: true }, (progress, token) => {
+            const controller = new AbortController();
+            const subscription = token.onCancellationRequested(() => controller.abort());
+            return managed.install(message => progress.report({ message }), controller.signal).finally(() => subscription.dispose());
+        });
+        void vscode.window.showInformationMessage(`Apizr CLI ${spec.version} is installed and ready.`, "Open CLI terminal").then(action => { if (action) { void vscode.commands.executeCommand("apizr.openCli"); } });
+        return installed;
+    }
+    async function offerInstallation(): Promise<void> {
+        if (setupPrompt) { return setupPrompt; }
+        setupPrompt = (async () => {
+            const source = spec.source.kind === "git" ? ` from official development source ${spec.source.commit.slice(0, 8)}` : " from PyPI";
+            const choice = await vscode.window.showInformationMessage(`Install Apizr CLI ${spec.version}${source} with notebook support? Python 3.11–3.15${spec.source.kind === "git" ? " and Git are" : " is"} required. Your project environment is kept separate.`, "Install CLI", "Use existing CLI");
+            if (choice === "Install CLI") { await installEngine(); }
+            if (choice === "Use existing CLI") { await selectEngine(); }
+        })().finally(() => { setupPrompt = undefined; });
+        return setupPrompt;
+    }
+    async function configuration(folder: vscode.WorkspaceFolder, project = true) {
+        if (vscode.workspace.getConfiguration("apizr", folder.uri).get("engine.mode", "managed") === "managed") {
+            if (!vscode.workspace.isTrusted) { throw new EngineError("workspace_untrusted", "Trust this workspace before installing or using the CLI."); }
+            installed = await managed.installed();
+            if (!installed) { await offerInstallation(); installed = await managed.installed(); }
+        }
+        return settings(folder, project, installed);
+    }
     const inspection = new EvidenceTree(), runs = new EvidenceTree(), documents = new Documents();
     const inspectionView = vscode.window.createTreeView("apizr.inspection", { treeDataProvider: inspection });
     const runsView = vscode.window.createTreeView("apizr.runs", { treeDataProvider: runs, canSelectMany: true });
@@ -25,14 +60,14 @@ export function activate(context: vscode.ExtensionContext) {
     let historyFolder: vscode.Uri | undefined;
     let inspectionGeneration = 0, historyGeneration = 0;
 
-    const cancel = () => { for (const client of clients) { client.cancel(); } };
+    const cancel = () => { managed.cancel(); for (const client of clients) { client.cancel(); } };
     const reportError = (error: unknown) => {
         const message = error instanceof EngineError ? `${error.code}: ${error.message}` : "operation_failed: Check the selected engine, saved source and operator configuration.";
         void vscode.window.showErrorMessage(`Apizr — ${message}`);
     };
     async function run<T>(uri: vscode.Uri | undefined, project: boolean, title: string, action: (client: EngineClient, signal: AbortSignal) => Promise<T>, progress = true): Promise<T> {
         const folder = folderFor(uri);
-        const client = new EngineClient(settings(folder, project));
+        const client = new EngineClient(await configuration(folder, project));
         const controller = new AbortController();
         clients.add(client);
         const work = async (token?: vscode.CancellationToken) => {
@@ -53,7 +88,7 @@ export function activate(context: vscode.ExtensionContext) {
     async function inspect(context?: unknown): Promise<Response> {
         const selected = sourceUri(context);
         if (!selected || selected.scheme !== "file" || ![".py", ".ipynb"].includes(path.extname(selected.fsPath))) { throw new EngineError("source_required", "Save and select a Python script or notebook before inspection."); }
-        const folder = folderFor(selected), config = settings(folder);
+        const folder = folderFor(selected), config = await configuration(folder);
         const source = relativeSource(config.cwd, selected.fsPath);
         const document = vscode.workspace.textDocuments.find(d => d.uri.toString() === selected.toString());
         const notebook = vscode.workspace.notebookDocuments.find(d => d.uri.toString() === selected.toString());
@@ -77,7 +112,7 @@ export function activate(context: vscode.ExtensionContext) {
     function publicationWatch(folder: vscode.WorkspaceFolder): void {
         const key = folder.uri.toString();
         if (watchers.has(key)) { return; }
-        const config = settings(folder);
+        const config = settings(folder, true, installed);
         const pattern = new vscode.RelativePattern(vscode.Uri.file(path.join(config.cwd, config.store, "runs")), "*.json");
         const watcher = vscode.workspace.createFileSystemWatcher(pattern, false, true, false);
         const refresh = () => {
@@ -127,7 +162,7 @@ export function activate(context: vscode.ExtensionContext) {
             const subject = response.value.run.subject;
             const identity = object(subject) && object(subject.identity) ? subject.identity : subject;
             if (object(identity) && typeof identity.reference === "string") {
-                recorded = { root: settings(folderFor(uri ?? historyFolder ?? activeSource())).cwd, location: { source: identity.reference, line: 1, column: 0 } };
+                recorded = { root: settings(folderFor(uri ?? historyFolder ?? activeSource()), true, installed).cwd, location: { source: identity.reference, line: 1, column: 0 } };
             }
         }
         dashboard.select(response.ok ? response.value ?? undefined : undefined);
@@ -166,6 +201,12 @@ export function activate(context: vscode.ExtensionContext) {
         if (uri.toString() === inspected.toString() || notebook?.getCells().some(c => c.document.uri.toString() === uri.toString())) { stale = true; inspectionView.description = "Outdated — inspect saved file again"; }
     }
     const commands: Record<string, (...args: any[]) => unknown> = {
+        installEngine,
+        openCli: async () => {
+            const config = await configuration(folderFor(activeSource()), false);
+            const terminal = vscode.window.createTerminal({ name: "Apizr CLI", env: { PATH: path.dirname(config.command) + path.delimiter + (process.env.PATH ?? "") } });
+            terminal.show();
+        },
         openDashboard: () => dashboard.show(),
         openSettings: () => vscode.commands.executeCommand("workbench.action.openSettings", "@ext:alien6-studio.apizr"),
         showTrackedRun: async (id?: string, uri?: vscode.Uri) => {
@@ -219,5 +260,10 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
     context.subscriptions.push({ dispose: () => { cancel(); for (const timer of timers.values()) { clearTimeout(timer); } for (const watcher of watchers.values()) { watcher.dispose(); } documents.clear(); lastReport = undefined; } });
+    // Present setup on first trusted activation; only an explicit action downloads software.
+    const folder = vscode.workspace.workspaceFolders?.length === 1 ? vscode.workspace.workspaceFolders[0] : undefined;
+    if (vscode.workspace.isTrusted && folder && vscode.workspace.getConfiguration("apizr", folder.uri).get("engine.mode", "managed") === "managed") {
+        void managed.installed().then(value => { if (!value) { return offerInstallation(); } }).catch(reportError);
+    }
     return { inspect, refreshRuns, showRun, compare, telemetry, state: () => ({ stale, inspection: lastInspection, history: lastHistory, activeProcesses: clients.size, telemetryAllowed: childEnvironment().APIZR_TELEMETRY_ALLOWED }) };
 }

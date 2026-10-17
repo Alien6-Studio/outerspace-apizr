@@ -19,6 +19,9 @@ def digest(raw):
 
 
 def audit():
+    from scripts.qualification.packaging.vscode_source import verify
+
+    verify(ROOT)
     policy = json.loads((ROOT / "policy/vscode-dependencies.json").read_bytes())
     lock = json.loads((EXTENSION / "package-lock.json").read_bytes())
     package = json.loads((EXTENSION / "package.json").read_bytes())
@@ -112,6 +115,7 @@ def build(output, version=None):
         "package-lock.json",
         "tsconfig.json",
         "media/icon.png",
+        "engine.json",
     ):
         payload["extension/" + filename] = (EXTENSION / filename).read_bytes()
     sources = sorted((EXTENSION / "src").glob("*.ts"))

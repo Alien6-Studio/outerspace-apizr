@@ -101,6 +101,7 @@ def check_vsix(path: Path, project_root: Path) -> dict[str, str]:
                 "package-lock.json",
                 "tsconfig.json",
                 "media/icon.png",
+                "engine.json",
             )
         ),
         *(

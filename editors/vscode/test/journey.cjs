@@ -21,7 +21,9 @@ exports.run = async () => {
             const shown = await api.showRun(id, project);
             assert.ok(shown.ok, stringify(shown));
             assert.deepEqual(shown.value, expected);
-            assert.equal(vscode.window.activeTextEditor.document.getText(), stringify(expected, 2));
+            const text = stringify(expected, 2), deadline = Date.now() + 5000;
+            while (vscode.window.activeTextEditor?.document.getText() !== text && Date.now() < deadline) { await new Promise(resolve => setTimeout(resolve, 50)); }
+            assert.equal(vscode.window.activeTextEditor?.document.getText(), text);
         }
         const compared = await api.compare(...fixture.comparison_ids, project);
         assert.ok(compared.ok, stringify(compared));

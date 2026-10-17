@@ -1,0 +1,9 @@
+{
+  "schema_version": "apizr.vscode-engine/v1",
+  "version": "0.4.6",
+  "protocol": "apizr.editor/v1",
+  "source": {
+    "kind": "git",
+    "commit": "50e4e0fdad31cffe10b1f9accce2b440bf457570"
+  }
+}

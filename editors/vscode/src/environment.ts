@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "node:path";
+import { InstalledEngine } from "./installation";
 import { EngineError, Settings } from "./engine";
 
 export function usageAllowed(): boolean {
@@ -16,13 +17,13 @@ export function folderFor(uri?: vscode.Uri): vscode.WorkspaceFolder {
     if (!folder || folder.uri.scheme !== "file") { throw new EngineError("workspace_required", "Open one native project folder, or select a source in the intended workspace folder. Virtual workspaces are unsupported."); }
     return folder;
 }
-export function settings(folder: vscode.WorkspaceFolder, projectRequired = true): Settings {
+export function settings(folder: vscode.WorkspaceFolder, projectRequired = true, managed?: InstalledEngine): Settings {
     if (!vscode.workspace.isTrusted) { throw new EngineError("workspace_untrusted", "Trust this workspace before starting an engine. Apizr launches no engine in Restricted Mode."); }
     if (process.platform === "win32") { throw new EngineError("unsupported_environment", "This extension currently qualifies native Linux and macOS engines. Use a Linux SSH/Dev Container workspace for Windows clients."); }
     const config = vscode.workspace.getConfiguration("apizr", folder.uri);
-    const mode = config.get<string>("engine.mode", "python");
-    const command = config.get<string>(mode === "python" ? "engine.python" : "engine.executable", "");
-    if (!["python", "executable"].includes(mode) || !path.isAbsolute(command) || /[\x00-\x1f]/.test(command)) { throw new EngineError("engine_required", "Use Apizr: Select engine or set an absolute apizr.engine.python / apizr.engine.executable path in this extension host."); }
+    const mode = config.get<string>("engine.mode", "managed");
+    const command = mode === "managed" ? managed?.command ?? "" : config.get<string>(mode === "python" ? "engine.python" : "engine.executable", "");
+    if (!["managed", "python", "executable"].includes(mode) || !path.isAbsolute(command) || /[\x00-\x1f]/.test(command)) { throw new EngineError("engine_required", "Use Apizr: Install CLI or Select engine, or set an absolute apizr.engine.python / apizr.engine.executable path in this extension host."); }
     const project = path.resolve(folder.uri.fsPath, config.get<string>("project", "apizr.toml"));
     const policy = config.get<string>("operatorPolicy", "");
     const store = config.get<string>("store", ".apizr/experiments/v1");
@@ -32,5 +33,5 @@ export function settings(folder: vscode.WorkspaceFolder, projectRequired = true)
     if (!Number.isInteger(timeout) || timeout < 500 || timeout > 120000) { throw new EngineError("invalid_deadline", "Set apizr.timeoutMs between 500 and 120000."); }
     const selectedRoot = config.get<string>("projectRoot", "");
     const root = selectedRoot ? path.resolve(folder.uri.fsPath, selectedRoot) : path.dirname(project);
-    return { command, prefix: mode === "python" ? ["-I", "-B", "-m", "apizr.cli"] : [], project, policy, store, cwd: root, timeoutMs: timeout, env: childEnvironment() };
+    return { command, prefix: mode === "managed" ? managed!.prefix : mode === "python" ? ["-I", "-B", "-m", "apizr.cli"] : [], project, policy, store, cwd: root, timeoutMs: timeout, env: childEnvironment() };
 }

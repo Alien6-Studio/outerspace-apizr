@@ -31,7 +31,7 @@ test('every child inherits the stricter global and Apizr usage decision', () => 
 test('no executable is inferred and Restricted Mode refuses before launch', () => {
     values = {}; trusted = true;
     assert.throws(() => settings(folder), { code: 'engine_required' });
-    values = { 'apizr.engine.python': '/engine/python', 'apizr.operatorPolicy': '/operator.json' };
+    values = { 'apizr.engine.mode': 'python', 'apizr.engine.python': '/engine/python', 'apizr.operatorPolicy': '/operator.json' };
     assert.deepEqual(settings(folder).prefix, ['-I', '-B', '-m', 'apizr.cli']);
     values['apizr.projectRoot'] = 'work'; assert.equal(settings(folder).cwd, '/project/work'); delete values['apizr.projectRoot'];
     values['apizr.engine.mode'] = 'executable'; values['apizr.engine.executable'] = '/tool/bin/apizr';

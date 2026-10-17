@@ -180,8 +180,12 @@ authority cross that edge. Consent owns only its bounded boolean preference file
 events never persist. Production transmission remains unavailable pending private
 collector qualification and a subsequent release.
 
-The thin TypeScript client lives under `editors/vscode`: `environment.ts` owns
-explicit engine selection, workspace trust and child telemetry restrictions;
+The thin TypeScript client is owned by the dedicated `outerspace-apizr-vscode`
+repository. `editors/vscode` is its generated, commit/hash-pinned integration
+snapshot, admitted by `vscode_source` before candidate builds. `environment.ts` owns
+engine selection, workspace trust and child telemetry restrictions;
+`installation.ts` owns explicit installation of the bundled pinned CLI into a
+managed environment, bounded cancellable installer processes and completion identity;
 `engine.ts` owns bounded stdio processes and protocol discovery;
 `presentation.ts` owns read-only evidence rendering and source/cell navigation;
 `dashboard.ts` projects canonical history and Run details in a script-free local

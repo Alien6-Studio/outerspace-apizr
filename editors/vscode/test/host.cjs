@@ -11,6 +11,13 @@ async function dashboardVisible() {
     }
     assert.ok(vscode.window.tabGroups.activeTabGroup.activeTab?.input instanceof vscode.TabInputWebview, 'Dashboard must open as a dedicated editor page');
 }
+async function rendered(value) {
+    const expected = stringify(value, 2), deadline = Date.now() + 5000;
+    while (vscode.window.activeTextEditor?.document.getText() !== expected && Date.now() < deadline) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    assert.equal(vscode.window.activeTextEditor?.document.getText(), expected);
+}
 async function suite() {
     const root = process.env.APIZR_VSCODE_PROOF;
     const fixture = parseJson(fs.readFileSync(path.join(root, 'fixtures.json'), 'utf8'));
@@ -30,6 +37,8 @@ async function suite() {
     if (process.env.APIZR_VSCODE_UNTRUSTED === '1') {
         assert.equal(vscode.workspace.isTrusted, false);
         assert.equal(await vscode.commands.executeCommand('apizr.inspect', vscode.Uri.file(path.join(fixture.project, 'inspect_only.py'))), undefined);
+        assert.equal(await vscode.commands.executeCommand('apizr.installEngine'), undefined);
+        assert.equal(await vscode.commands.executeCommand('apizr.openCli'), undefined);
         assert.equal(api.state().activeProcesses, 0);
         const status = await api.telemetry('preview');
         assert.equal(status.collection_enabled, false);
@@ -80,7 +89,7 @@ async function suite() {
         assert.deepEqual(shown.value, fixture.records[ids[0]]);
         await dashboardVisible();
         proof.cases.push('experiment-dashboard', 'python-editor-shortcuts', 'notebook-toolbar-and-cell-context');
-        for (const id of ids) { assert.deepEqual((await api.showRun(id, vscode.Uri.file(fixture.project))).value, fixture.records[id]); const rendered = vscode.window.activeTextEditor.document.getText(); assert.equal(rendered, stringify(fixture.records[id], 2)); }
+        for (const id of ids) { assert.deepEqual((await api.showRun(id, vscode.Uri.file(fixture.project))).value, fixture.records[id]); await rendered(fixture.records[id]); }
         assert.deepEqual((await api.compare(ids[0], ids[1], vscode.Uri.file(fixture.project))).value, fixture.diff);
         proof.cases.push('mixed-cli-sdk-jupyter-history', 'canonical-show-and-diff');
         cp.execFileSync(fixture.python, ['-I', '-B', '-c', "from pathlib import Path; from apizr import tracking\nwith tracking.session(root=Path.cwd(), source='model.py'): tracking.log_metric('score', 0.95)"], { cwd: fixture.project, env: { ...process.env, APIZR_TELEMETRY: '0' } });

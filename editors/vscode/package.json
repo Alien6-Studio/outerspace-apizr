@@ -8,13 +8,18 @@
   "license": "GPL-3.0-or-later",
   "homepage": "https://apizr.outerspace.sh/reference/vscode/",
   "bugs": {
-    "url": "https://github.com/Alien6-Studio/outerspace-apizr/issues"
+    "url": "https://github.com/Alien6-Studio/outerspace-apizr-vscode/issues"
   },
-  "keywords": ["apizr", "python", "jupyter", "experiments", "tracking"],
+  "keywords": [
+    "apizr",
+    "python",
+    "jupyter",
+    "experiments",
+    "tracking"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Alien6-Studio/outerspace-apizr.git",
-    "directory": "editors/vscode"
+    "url": "https://github.com/Alien6-Studio/outerspace-apizr-vscode.git"
   },
   "engines": {
     "vscode": "^1.140.0",
@@ -52,6 +57,12 @@
   },
   "contributes": {
     "commands": [
+      {
+        "command": "apizr.installEngine",
+        "title": "Apizr: Install CLI",
+        "enablement": "isWorkspaceTrusted",
+        "icon": "$(cloud-download)"
+      },
       {
         "command": "apizr.openDashboard",
         "title": "Apizr: Open experiment dashboard",
@@ -124,6 +135,12 @@
       {
         "command": "apizr.telemetryPreview",
         "title": "Apizr: Preview usage report"
+      },
+      {
+        "command": "apizr.openCli",
+        "title": "Apizr: Open CLI terminal",
+        "enablement": "isWorkspaceTrusted",
+        "icon": "$(terminal)"
       }
     ],
     "configuration": {
@@ -132,11 +149,12 @@
         "apizr.engine.mode": {
           "type": "string",
           "enum": [
+            "managed",
             "python",
             "executable"
           ],
-          "default": "python",
-          "description": "Use an explicitly selected Python interpreter or an installed apizr executable (including uv tool).",
+          "default": "managed",
+          "description": "Use the CLI installed by Apizr, an existing Python environment, or an existing apizr executable.",
           "scope": "resource"
         },
         "apizr.engine.python": {
@@ -295,7 +313,7 @@
     "viewsWelcome": [
       {
         "view": "apizr.runs",
-        "contents": "Browse local CLI, SDK and Jupyter experiments.\n[Open experiment dashboard](command:apizr.openDashboard)\n[Refresh history](command:apizr.refreshRuns)\n[Select engine](command:apizr.selectEngine) \u00b7 [Settings](command:apizr.openSettings)",
+        "contents": "Browse local CLI, SDK and Jupyter experiments.\n[Open experiment dashboard](command:apizr.openDashboard)\n[Refresh history](command:apizr.refreshRuns)\n[Install CLI](command:apizr.installEngine)\n[Select engine](command:apizr.selectEngine) \u00b7 [Settings](command:apizr.openSettings)",
         "when": "isWorkspaceTrusted"
       },
       {
@@ -314,11 +332,12 @@
     "compile": "tsc -p .",
     "check": "tsc -p . --noEmit",
     "test": "npm run compile && node --test test/*.test.cjs",
-    "audit": "npm audit --audit-level=low"
+    "audit": "npm audit --audit-level=low",
+    "package": "python3 scripts/distribution.py --output dist"
   },
   "devDependencies": {
     "typescript": "5.9.3",
-    "@types/node": "20.19.37",
-    "@types/vscode": "1.95.0"
+    "@types/node": "22.20.5",
+    "@types/vscode": "1.140.0"
   }
 }

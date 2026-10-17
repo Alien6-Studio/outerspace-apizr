@@ -55,6 +55,7 @@ def inventory(version):
             "LICENSE",
             "policy/vscode-dependencies.json",
             "policy/vscode-distribution.json",
+            "policy/vscode-source.json",
             *(
                 "editors/vscode/" + name
                 for name in (
@@ -63,6 +64,7 @@ def inventory(version):
                     "README.md",
                     "tsconfig.json",
                     "media/icon.png",
+                    "engine.json",
                 )
             ),
             *(
@@ -136,10 +138,12 @@ def check(root=ROOT, *, release=False, ref=None):
     errors, descriptions = [], []
     editor = json.loads((root / "editors/vscode/package.json").read_text())
     editor_lock = json.loads((root / "editors/vscode/package-lock.json").read_text())
+    editor_engine = json.loads((root / "editors/vscode/engine.json").read_text())
     if (
         editor["version"] != version
         or editor_lock.get("version") != version
         or editor_lock["packages"][""]["version"] != version
+        or editor_engine["version"] != version
     ):
         errors.append("VS Code: uncoordinated package/lock version")
     for directory in PROJECTS:

@@ -51,6 +51,6 @@ test('dashboard renders local canonical history without scripts, HTML injection 
     assert.doesNotMatch(html, /<script|<img|https?:\/\//);
     assert.match(html, /default-src 'none'/);
     assert.match(html, /1 validated Runs/);
-    assert.match(renderDashboard(), /Select engine/);
+    assert.match(renderDashboard(), /Install CLI/);
     assert.match(renderDashboard({ total: 0, matched: 0, runs: [] }), /No recorded Runs/);
 });
