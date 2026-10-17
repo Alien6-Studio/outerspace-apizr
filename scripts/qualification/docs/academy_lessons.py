@@ -204,6 +204,97 @@ STORIES["XI"] = {
 }
 
 
+STORIES["XII"] = {
+    "hero": ["Read evidence.", "Review Runs.", "Keep control."],
+    "intro": "Welcome back to Apizr Academy. This lesson uses the installed VS Code extension "
+    "with an explicitly selected Apizr engine. We inspect saved Python and notebook "
+    "source, browse the same experiment history and compare two Runs. The interface does "
+    "not execute the inspected source, and Restricted Mode refuses project operations.",
+    "items": [
+        ["Inspect", "Read saved source and follow its locations"],
+        ["History", "Show canonical Runs and comparisons"],
+        ["Control", "Keep edits, execution and workspace trust explicit"],
+    ],
+    "map": "The extension delegates inspection and history to the selected engine. Its operator "
+    "policy limits access to this project and store. Nothing is installed when a window "
+    "opens. Inspection on save is off unless explicitly enabled. CLI, SDK and live "
+    "notebook records share one history, while their capture modes remain distinct.",
+    "demo": "",
+    "detail": "",
+    "commands": [],
+    "native_scenes": [
+        {
+            "id": "inspection",
+            "title": "Inspect saved Python and notebook evidence",
+            "capture": "inspection.mp4",
+            "seconds": 55,
+            "voice": "The candidate extension is installed in a separate recording "
+            "profile. Check engine confirms the explicit interpreter before "
+            "we inspect the saved Python file. The Inspection tree and "
+            "read-only report show the engine’s actual evidence. Notebook "
+            "locations lead back to real cells. Editing the source marks the "
+            "earlier result outdated. Typing does not start a new inspection, "
+            "and unsaved changes are excluded until we save and explicitly "
+            "inspect again.",
+            "native_actions": [
+                "apizr.checkEngine",
+                "apizr.inspect",
+                "apizr.openSource",
+                "edit-source",
+                "verify-stale-state",
+            ],
+            "takeaway": "Inspect saved evidence; editing marks results outdated "
+            "without running code.",
+        },
+        {
+            "id": "history",
+            "title": "Read shared Runs and compare retained evidence",
+            "capture": "history.mp4",
+            "seconds": 55,
+            "voice": "Refresh runs reads the same store used by the command line, SDK "
+            "and live Jupyter kernel. Expand the records to read their "
+            "capture modes and observations. Show Run opens the canonical "
+            "retained record. Select two Runs and compare their actual "
+            "intended and observed evidence. TypeScript does not invent a "
+            "separate comparison or fill in unknown values. These records "
+            "support review; a metric difference is not a causal or "
+            "deployment approval.",
+            "native_actions": [
+                "apizr.refreshRuns",
+                "apizr.showRun",
+                "apizr.compareRuns",
+            ],
+            "takeaway": "CLI, SDK and notebook Runs share canonical history and "
+            "comparisons.",
+        },
+        {
+            "id": "restricted",
+            "title": "Restricted Mode refuses project operations",
+            "capture": "restricted.mp4",
+            "seconds": 30,
+            "voice": "The separate untrusted recording profile is in Restricted Mode. "
+            "Project inspection and history operations are refused, and no "
+            "engine is started. Local usage controls cannot override this "
+            "boundary. The candidate still has no production telemetry "
+            "sender. Workspace trust is a separate decision from reading "
+            "evidence or approving execution.",
+            "native_actions": [
+                "verify-restricted-mode",
+                "verify-project-refusal",
+                "verify-zero-engine-starts",
+            ],
+            "takeaway": "Restricted Mode launches no engine and refuses project "
+            "operations.",
+        },
+    ],
+    "takeaway": "Use the actual installed extension and an explicitly selected engine.",
+    "recap": "We have inspected saved source, read shared history and compared canonical Runs in "
+    "the real editor. Edits remain visible as stale evidence, and Restricted Mode keeps "
+    "the engine stopped. Follow the written VS Code guide for the current settings, "
+    "policy and supported environments.",
+}
+
+
 def episode_files(directory, part, title, commands):
     """Write compatible inputs; rendering still uses the original local tools."""
     if part not in STORIES:
@@ -275,6 +366,9 @@ def episode_files(directory, part, title, commands):
             "items": [["Apizr", "Alien6-Studio/outerspace-apizr"]],
         },
     ]
+    if part == "XII":
+        episode["recording_interface"] = "vscode-native-window"
+        scenes[2:3] = story["native_scenes"]
     for scene in scenes:
         scene.setdefault("section", title.upper())
         scene.setdefault("repository", episode["repository"])

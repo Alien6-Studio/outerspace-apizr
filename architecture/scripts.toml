@@ -1,6 +1,15 @@
 # Normative qualification ownership. See docs/contributing/qualification-scripts.md.
 schema_version = 1
 
+[files."scripts/qualification/docs/academy_window.swift"]
+group = "docs"
+role = "tool"
+kind = "resource"
+gate = "Native source for an explicitly authorized Academy-only window recorder; preview and identity checks refuse missing, ambiguous or changed windows."
+workflows = []
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
+
 [files."scripts/qualification/experiments/academy_kernel.py"]
 group = "experiments"
 role = "proof"

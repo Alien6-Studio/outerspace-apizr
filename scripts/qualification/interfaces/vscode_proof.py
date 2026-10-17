@@ -202,7 +202,7 @@ def run_host(args, root, python, project, policy, *, tests=None):
         "apizr.engine.executable": str(args.engine_executable.absolute())
         if args.engine_executable
         else "",
-        "apizr.workspace.project": str(project / "apizr.toml"),
+        "apizr.project": str(project / "apizr.toml"),
         "apizr.operatorPolicy": str(policy),
         "apizr.telemetry.enabled": False,
     }
