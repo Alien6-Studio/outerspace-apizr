@@ -1,6 +1,7 @@
 {
   "name": "apizr",
   "displayName": "Apizr",
+  "icon": "media/icon.png",
   "description": "Inspect Python and notebook evidence and browse local experiment Runs through your installed Apizr engine.",
   "version": "0.4.6",
   "publisher": "alien6-studio",

@@ -17,7 +17,7 @@ def attach_editor(directory, candidate, source):
         "[Content_Types].xml": b"fixture content types",
         "extension/LICENSE": (source / "LICENSE").read_bytes(),
     }
-    for name in ("README.md", "package-lock.json", "tsconfig.json"):
+    for name in ("README.md", "package-lock.json", "tsconfig.json", "media/icon.png"):
         payload["extension/" + name] = (source / "editors/vscode" / name).read_bytes()
     for path in (source / "editors/vscode/src").glob("*.ts"):
         payload["extension/src/" + path.name] = path.read_bytes()

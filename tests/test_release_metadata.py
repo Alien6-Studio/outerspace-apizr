@@ -27,7 +27,7 @@ def source(tmp_path):
 def release(source):
     root = source
     for path in root.rglob("*"):
-        if path.is_file():
+        if path.is_file() and path.suffix != ".png":
             path.write_text(path.read_text().replace("0.4.5", "0.4.6"))
     (root / gate.POLICY).write_text(
         'schema_version = 1\n[release]\nversion = "0.4.6"\n'
@@ -54,7 +54,7 @@ def release(source):
 def development(release):
     root = release
     for path in root.rglob("*"):
-        if path.is_file():
+        if path.is_file() and path.suffix != ".png":
             path.write_text(path.read_text().replace("0.4.6", "0.4.5"))
     (root / gate.POLICY).write_text(
         'schema_version=1\n[release]\nversion="0.4.6"\n[development]\nbranch="0.4.6"\npackage_version="0.4.5"\npublished_version="0.4.5"\nreason="Explicit test-only inherited metadata"\n'

@@ -62,6 +62,7 @@ def inventory(version):
                     "package-lock.json",
                     "README.md",
                     "tsconfig.json",
+                    "media/icon.png",
                 )
             ),
             *(

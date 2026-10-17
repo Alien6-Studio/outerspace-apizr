@@ -96,7 +96,12 @@ def check_vsix(path: Path, project_root: Path) -> dict[str, str]:
         ("LICENSE", project_root / "LICENSE"),
         *(
             (name, project_root / "editors/vscode" / name)
-            for name in ("README.md", "package-lock.json", "tsconfig.json")
+            for name in (
+                "README.md",
+                "package-lock.json",
+                "tsconfig.json",
+                "media/icon.png",
+            )
         ),
         *(
             ("src/" + p.name, p)
