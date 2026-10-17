@@ -86,7 +86,15 @@ STORIES = {
         ],
         "map": "The report separates code, data, parameters, randomness, environment, metrics, outputs and serving. Those sections describe evidence that Apizr can identify. They are not a guarantee that this experiment is reproducible. An unresolved input stays visible instead of becoming a guessed value.",
         "demo": "These are the exact commands from the inspection guide. The source reads a local training file and refers to a validation path that has not been defined. It also names a learning rate, a metric and a prediction function. We run inspect in its readable and JSON forms. The script itself is not run, so the unresolved names do not turn into a training failure. Read the data evidence and the unknown validation input. Finding a prediction function also does not approve exposing it as a service.",
-        "detail": "apizr experiment inspect example.py",
+        "detail": "apizr experiment inspect example.py | sed -n '49,78p'",
+        "commands": [
+            [1, "apizr --version"],
+            [4, "cat guide-commands.sh"],
+            [14, "bash guide-commands.sh > guide-output.log"],
+            [16, "apizr experiment inspect example.py | sed -n '1,24p'"],
+            [30, "apizr experiment inspect example.py | sed -n '25,48p'"],
+            [43, "apizr experiment inspect example.py | sed -n '49,78p'"],
+        ],
         "takeaway": "Static evidence includes unknowns; inspection does not run training.",
         "recap": "Inspection gives us a starting point for review. We have not trained a model or proved reproducibility. In the next lesson we make the separate decision to run a trusted local script and retain its observations. Follow the linked written guide when commands change.",
     },
@@ -114,7 +122,7 @@ STORIES = {
         ],
         "map": "Each run has its own retained identity. The diff uses that history, rather than rereading whichever script happens to be present now. A changed parameter and a changed metric can appear together. That alone is not evidence of causation or a model approval.",
         "demo": "We use the exact comparison guide. The first variant sets the maximum depth to eight and the score to zero point nine one. The second uses twelve and zero point nine two. Both Runs explicitly record the score as the metric. We list the retained Runs and compare their digests. The guide then deletes the source script and writes another comparison in JSON. The final commands confirm that the source is gone and the comparison still exists. Retained evidence makes this review possible without silently substituting the latest source file.",
-        "detail": "test ! -e compare_train.py && ls -l comparison.json && python3 -m json.tool comparison.json",
+        "detail": 'test ! -e compare_train.py && python3 -c \'import json; d=json.load(open("comparison.json")); p=d["parameters"][0]; m=d["metrics"][0]; print("max_depth:",p["observed_a"]["value"],"->",p["observed_b"]["value"]); print("roc_auc:",m["a"]["value"],"->",m["b"]["value"]); print("Retained comparison available after source deletion")\'',
         "takeaway": "Compare retained evidence; a changed score is not a causal claim.",
         "recap": "We compared two retained Runs before and after removing the source. This establishes what the history contains, not why the score changed. Keep the execution context and scientific review alongside any comparison. Next we select one recorded prediction for exposure.",
     },
@@ -128,7 +136,7 @@ STORIES = {
         ],
         "map": "The main guard keeps training separate from prediction when the module is imported. The operator policy grants source analysis for this exact local directory. The expose command selects a capability, an interface and a recorded artifact. These choices define the serving scope.",
         "demo": "These commands come directly from the exposure guide. Running the trusted script writes a model and a debug file, and both are recorded as outputs. We then choose the prediction capability and select only the model for each interface. The generated REST and MCP directories are local artifacts. We inspect the binding descriptions and their retained files. The debug output was recorded for the experiment but was not selected for serving. This lesson stops at generation: it does not start a service, publish an image or promote the model.",
-        "detail": "python3 -m json.tool rest-binding.json && python3 -m json.tool mcp-binding.json && find dist -type f | sort",
+        "detail": 'python3 -c \'import json; files=["rest-binding.json","mcp-binding.json"]; [(lambda b: print(b["interface"], b["capability"], [(o["name"],o["reference"]) for o in b["outputs"]]))(json.load(open(f))["binding"]) for f in files]\'',
         "takeaway": "One selected prediction and model; generation does not promote a model.",
         "recap": "We have explicit local REST and MCP bindings for the selected prediction. Training, experiment evidence and serving selection remain separate decisions. Review the written guide for the current contract before moving to service qualification or deployment.",
     },
@@ -149,6 +157,53 @@ STORIES = {
 }
 
 
+STORIES["XI"] = {
+    "hero": ["Keep cells.", "Capture calls.", "Share history."],
+    "intro": "Welcome back to Apizr Academy. We now use the same tracking API inside a real live "
+    "Jupyter kernel. A small recording driver sends the committed notebook cells to an "
+    "installed ipykernel. This terminal view shows actual cell execution and output, "
+    "rather than a notebook interface or an exported Python script.",
+    "items": [
+        ["Kernel", "Run the committed notebook in a live ipykernel"],
+        ["Repeat", "Keep cell identity and a new execution count"],
+        ["History", "Read the same retained Runs from the CLI"],
+    ],
+    "map": "The session captures a block, and the decorator captures each function call. In a "
+    "live kernel their evidence includes the executing cell identity and count. Repeating "
+    "a cell produces another Run. In-memory input identity and the saved notebook identity "
+    "remain unknown unless explicitly supplied.",
+    "demo": "The recording driver opens a real kernel using the candidate interpreter. It sends "
+    "each committed code cell with its own cell identifier and prints the actual kernel "
+    "messages. The session reports its execution count. Two calls then return their "
+    "normal scores. We repeat the first variant cell, keeping its identifier while the "
+    "execution count advances. The retained history contains four Runs: one session and "
+    "three decorated calls. The final command reads that same store through the command "
+    "line. No experiment run export is used, and the SDK has not started a kernel behind "
+    "the user’s back.",
+    "detail": "apizr experiment list --store "
+    '"$APIZR_ACADEMY_KERNEL_WORKSPACE/.apizr/experiments/v1"',
+    "commands": [
+        [1, "apizr --version"],
+        [4, "ls -l jupyter-capture.ipynb"],
+        [
+            8,
+            "python -m scripts.qualification.experiments.academy_kernel --notebook "
+            'jupyter-capture.ipynb --workspace "$APIZR_ACADEMY_KERNEL_WORKSPACE" --pause 3',
+        ],
+        [
+            43,
+            "apizr experiment list --store "
+            '"$APIZR_ACADEMY_KERNEL_WORKSPACE/.apizr/experiments/v1"',
+        ],
+    ],
+    "takeaway": "Real kernel cells retain identity and execution count; history is shared.",
+    "recap": "We have captured real live-kernel cells, including a repeated cell. The decorator "
+    "still records decorated calls, and both capture styles preserve cell evidence. This "
+    "does not identify unsaved notebook content as a saved file or establish a serving "
+    "binding. Use the written notebook guide for the current contract.",
+}
+
+
 def episode_files(directory, part, title, commands):
     """Write compatible inputs; rendering still uses the original local tools."""
     if part not in STORIES:
@@ -157,9 +212,10 @@ def episode_files(directory, part, title, commands):
     number = f"{[p[0] for p in LESSONS].index(part) + 6:02}"
     production = directory / "production"
     production.mkdir()
-    (production / "guide-commands.sh").write_text(
-        "#!/usr/bin/env bash\nset -euo pipefail\n\n" + commands + "\n"
-    )
+    if commands:
+        (production / "guide-commands.sh").write_text(
+            "#!/usr/bin/env bash\nset -euo pipefail\n\n" + commands + "\n"
+        )
     episode = {
         "number": number,
         "title": title,
@@ -191,12 +247,15 @@ def episode_files(directory, part, title, commands):
             "voice": story["demo"],
             "seconds": 64,
             "capture": "demonstration.mp4",
-            "commands": [
-                [1, "apizr --version"],
-                [4, "cat guide-commands.sh"],
-                [14, "bash guide-commands.sh"],
-                [43, story["detail"]],
-            ],
+            "commands": story.get(
+                "commands",
+                [
+                    [1, "apizr --version"],
+                    [4, "cat guide-commands.sh"],
+                    [14, "bash guide-commands.sh"],
+                    [43, story["detail"]],
+                ],
+            ),
             "takeaway": story["takeaway"],
         },
         {
@@ -268,7 +327,7 @@ def prepare(output, *, root=ROOT):
             (directory / "guide-commands.sh").write_text(
                 "#!/usr/bin/env bash\nset -euo pipefail\n\n" + commands + "\n"
             )
-        if commands:
+        if part in STORIES:
             episode_files(directory, part, title, commands)
         if part == "XI":
             notebook = root / "examples/tracking/jupyter-capture.ipynb"

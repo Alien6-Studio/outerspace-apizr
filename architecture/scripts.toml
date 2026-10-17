@@ -1,6 +1,16 @@
 # Normative qualification ownership. See docs/contributing/qualification-scripts.md.
 schema_version = 1
 
+[files."scripts/qualification/experiments/academy_kernel.py"]
+group = "experiments"
+role = "proof"
+kind = "implementation"
+gate = "Record the trusted Academy notebook in a real installed kernel and verify repeated cell identity and shared retained history."
+standalone = false
+workflows = []
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
+
 [files."scripts/qualification/docs/academy_lessons.py"]
 group = "docs"
 role = "prepare"

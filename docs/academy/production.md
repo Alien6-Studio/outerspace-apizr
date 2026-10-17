@@ -16,8 +16,9 @@ python3 -m scripts.qualification.docs.academy_lessons --output /absolute/new/dir
 The output directory must be outside the checkout and must not already exist.
 The manifest records source and guide identities. Parts VI–X include compatible
 `production/episode.json`, `production/narration.json` and the exact guide
-commands. Parts XI–XII include their notebook or actual editor command list and
-a shot list. Preparation does not establish that a recording exists.
+commands. Part XI also includes narration and the live-kernel shot sequence;
+Part XII includes its actual editor command list and shot list. Preparation does
+not establish that a recording exists.
 
 Copy each prepared production folder into a new local recording project. Use
 the original `prepare_voice.cjs`, `record_episode.py` and `make_movie.py`; retain
@@ -31,6 +32,17 @@ speed and the final media validation. Narration and captions must match what is
 visible. A live-kernel recording is required for Part XI. Part XII requires
 the real installed VS Code extension, including stale-result and Restricted Mode
 behaviour; a terminal demonstration is not evidence of the editor journey.
+
+The live-kernel sequence uses
+`python -m scripts.qualification.experiments.academy_kernel --notebook /path/to/jupyter-capture.ipynb --workspace /absolute/new/workspace`.
+Run it with the installed candidate interpreter and qualified Jupyter dependencies;
+`PYTHONPATH` may point at this checkout to load the qualification module. It
+reuses the existing qualified kernel lifecycle, sends the committed cells and
+repeats `first-variant`. It verifies four retained Runs and their actual kernel
+cell counts. `--pause 3` leaves reading time between real executions. The generated
+recording commands expect `APIZR_ACADEMY_KERNEL_WORKSPACE` to identify a new
+directory outside the checkout. This terminal sequence shows a real kernel;
+it does not depict the Jupyter graphical interface.
 
 Review the full rendered movie, sound, captions and cover before publication.
 Keep drafts local until the maintainer authorizes publication. Only then add
