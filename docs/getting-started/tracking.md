@@ -150,5 +150,5 @@ starts no engine. Inspection reads saved source; unsaved changes mark the result
 stale. No training is started by inspecting or browsing history.
 
 See [migration from 0.4.5](../releases/migrate-0.4.6.md) for store, CLI and
-compatibility details, and [Academy planned lessons](../academy/index.md#experiment-path-recordings-coming-later)
-for the recording schedule.
+compatibility details, and [Academy experiment lessons](../academy/index.md#experiment-path-recordings-coming-later)
+for the recordings and their written guides.

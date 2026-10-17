@@ -1,8 +1,11 @@
 # Academy recording preparation
 
-Parts VI–XII continue the existing Academy production project. The original
-local sources are in `.output/academy-videos/production` and
-`.output/install-tutorial/production`, rather than in the published site.
+Parts I–XII share the current local Academy production project under
+`.output/academy-videos/`. Its single command entry point is
+`.output/academy-videos/production/academy.py`; see the adjacent `README.md`
+for reconstruction, validation and manual YouTube kit commands. Published I–V
+masters retain their original recorded version and sources. Parts VI–XI use the
+0.4.6 candidate; XII remains preparation until actual native capture is approved.
 The narrator explicitly reuses Continuum Attest's local Kokoro voice:
 `af_heart`, speed `1.04`, quantized Kokoro 82M. Keep the existing Apizr colours,
 logo, terminal layout, chapter cards, captions, closing sequence and covers.
@@ -24,9 +27,12 @@ footage and must never use a terminal recording as a substitute. Preparation doe
 not establish that a recording exists.
 
 Copy each prepared production folder into a new local recording project. Use
-the original `prepare_voice.cjs`, `record_episode.py` and `make_movie.py`; retain
-the original source hashes alongside any adapted copies. Select an isolated
-installed candidate engine instead of the old 0.4.3 environment, and read the
+the shared `prepare_voice.cjs`, `record_episode.py` and `render.py` through
+`production/academy.py`; retain the original source hashes alongside adapted
+inputs. `render` rebuilds I–XI from retained takes and narration. `record` requires
+a new project outside the checkout and an explicitly installed 0.4.6 engine. It
+prepares fresh lesson inputs and history without replacing retained masters. Select
+an isolated installed candidate engine instead of the old 0.4.3 environment, and read the
 hero version from the episode metadata. Do not overwrite Parts I–V or reuse old
 Run history. Rehearse the guide commands before real-time recording.
 

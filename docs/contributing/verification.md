@@ -339,11 +339,14 @@ update. Existing physical/hosted candidate evidence is not relabeled as final
 public installation evidence. No Linux or Intel Homebrew runtime qualification
 is claimed.
 
-The frozen candidate source `3ddd068e64dd2f5a8148d77a0f4e7a2e2eeb5d46`, its
-original four wheels/four sdists, hashes and qualification evidence remain
-unchanged in `release-evidence/0.4.4-candidate/`. Final source qualification and
-publication records are retained separately in `release-evidence/0.4.4-final/`.
-Independent sdist rebuilds are tests and never replace selected upload bytes.
+The frozen 0.4.4 candidate source was
+`3ddd068e64dd2f5a8148d77a0f4e7a2e2eeb5d46`. Published archives, hashes and
+provenance remain available in the
+[0.4.4 release](https://github.com/Alien6-Studio/outerspace-apizr/releases/tag/v0.4.4).
+Obsolete local candidate and final qualification workspaces are no longer kept in
+the development checkout. Current local evidence belongs in
+`release-evidence/0.4.6/`; versioned review records remain in `review/`. Independent
+sdist rebuilds are tests and never replace selected upload bytes.
 
 ### Trunx integration qualification
 

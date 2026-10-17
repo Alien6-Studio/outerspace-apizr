@@ -6,20 +6,24 @@ description: Follow the Alien6 Studio tutorials in order, understand the main de
 # Apizr Academy
 
 Start with an existing Python function and follow it through inspection, selection
-and your first REST or MCP call. These English-language lessons use the same
-workflow in different interfaces. The written guides remain authoritative: a
-recording may show an earlier version of Apizr.
+and your first REST or MCP call. Then follow a synthetic fraud example through
+experiment inspection, retained Runs, comparison, serving and Python tracking.
+These English-language lessons explain the results, their limits and the next
+decision. The written guides remain authoritative: a recording may show an
+earlier version of Apizr.
 
 The covers below are local images. YouTube loads only when you select a play
 button; playback uses its privacy-enhanced player. Each lesson also links to
 written steps you can follow without watching a video.
+
+[Open the Academy playlist on YouTube](https://www.youtube.com/playlist?list=PLPxU4WUOuPeQ).
 
 ## Start here: from Python to a callable service
 
 ### 00 — See the result
 
 **Turn existing Python expertise into APIs and AI tools** · Demonstration
-· Duration not listed
+· 2:34
 
 Result: see an existing route calculation used by an application and an AI
 assistant through REST and MCP.
@@ -128,21 +132,120 @@ question:
 5. [What do REST and MCP expose?](interfaces.md)
 
 <span id="experiment-path-recordings-coming-later"></span>
+<span id="experiment-path-recordings-in-preparation"></span>
 
-## Experiment path — recordings in preparation
+## Experiment path — from evidence to serving
 
-New recordings for 0.4.6 are in preparation in #334. Start with the
-[Data Scientist quickstart](../getting-started/data-science.md) and use the
-written guides while the videos are being prepared.
+These advanced lessons use the same synthetic fraud example and a recorded
+Apizr 0.4.6 candidate. Start with the
+[Data Scientist quickstart](../getting-started/data-science.md), then use each
+lesson's written guide to repeat the operations and check their current scope.
+
+### 06 — Inspect experiment evidence
+
+**Academy Part VI — Inspect a machine learning notebook without running it** · 5:54
+
+Result: read inspection evidence, change the selected CSV and distinguish a
+recognized metric call from an observed result, before training the model.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=9P5F42RYCRs" data-apizr-video="9P5F42RYCRs" data-apizr-title="Inspect a machine learning notebook without running it" aria-label="Play: Inspect a machine learning notebook without running it">
+    <img src="../assets/videos/tutorial-experiment-inspection.png" width="1280" height="720" loading="lazy" alt="Academy Part VI: inspect experiment evidence before training" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+[Follow the written steps](../getting-started/user-guide/experiment-inspection.md)
+
+### 07 — Run an experiment and read its history
+
+**Academy Part VII — From notebook to Run: experiments and local history** · 6:15
+
+Result: execute the reviewed notebook, read its retained evidence and distinguish
+an artifact fingerprint from preservation of the artifact's bytes.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=XHszreGQhMY" data-apizr-video="XHszreGQhMY" data-apizr-title="Run an experiment and read its history" aria-label="Play: Run an experiment and read its history">
+    <img src="../assets/videos/tutorial-experiment-history.png" width="1280" height="720" loading="lazy" alt="Academy Part VII: connect an actual experiment Run to retained evidence" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+[Follow the written steps](../getting-started/user-guide/experiment-runs.md)
+
+### 08 — Compare experiment Runs
+
+**Academy Part VIII — Compare data, models and observed metrics** · 7:15
+
+Result: compare two actual Runs, interpret metric deltas in both directions and
+keep unknown evidence explicit. Changed synthetic label rules limit the
+conclusions that can be drawn about model quality.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=uu01blkTRRg" data-apizr-video="uu01blkTRRg" data-apizr-title="Compare experiment Runs: data, models and metrics" aria-label="Play: Compare experiment Runs: data, models and metrics">
+    <img src="../assets/videos/tutorial-experiment-comparison.png" width="1280" height="720" loading="lazy" alt="Academy Part VIII: compare actual data identities and metric deltas" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+[Follow the written steps](../getting-started/user-guide/experiment-comparison.md)
+
+### 09 — Expose a selected prediction
+
+**Academy Part IX — Bind a retained model to REST and MCP** · 6:50
+
+Result: select a Run, prediction capability, retained model and dependencies;
+inspect both local interface bundles and observe the refusal of changed model
+bytes. Deployment remains a separate step.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=s68H9yhNWgk" data-apizr-video="s68H9yhNWgk" data-apizr-title="Bind a retained model to REST and MCP" aria-label="Play: Bind a retained model to REST and MCP">
+    <img src="../assets/videos/tutorial-experiment-exposure.png" width="1280" height="720" loading="lazy" alt="Academy Part IX: bind a selected model to local REST and MCP bundles" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+[Follow the written steps](../getting-started/user-guide/experiment-exposure.md)
+
+### 10 — Track Python calls
+
+**Academy Part X — Capture calls with sessions and decorators** · 6:30
+
+Result: evaluate classification thresholds on the same held-out sample, choose
+the unit of capture and retain selected inputs and observed metrics while
+preserving normal return values and exceptions.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Cge2-6L5cSE" data-apizr-video="Cge2-6L5cSE" data-apizr-title="Track Python calls with sessions and decorators" aria-label="Play: Track Python calls with sessions and decorators">
+    <img src="../assets/videos/tutorial-sdk.png" width="1280" height="720" loading="lazy" alt="Academy Part X: track real Python evaluations with sessions and decorators" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+[Follow the written steps](../getting-started/tracking.md)
+
+### 11 — Capture real Jupyter cells
+
+**Academy Part XI — Track cell executions and hidden kernel state** · 5:56
+
+Result: read actual cell identities and execution counts from a live Jupyter
+kernel, repeat a cell and compare its retained evidence. The recording shows the
+real kernel through a terminal; selected file and parameter identities do not
+identify every in-memory value or setting.
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=VqTmKCU-Auo" data-apizr-video="VqTmKCU-Auo" data-apizr-title="Track real Jupyter cell executions and hidden kernel state" aria-label="Play: Track real Jupyter cell executions and hidden kernel state">
+    <img src="../assets/videos/tutorial-jupyter.png" width="1280" height="720" loading="lazy" alt="Academy Part XI: inspect real Jupyter cell executions and retained Runs" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+[Follow the written steps](../getting-started/tracking.md#3-use-the-same-calls-in-jupyter)
+
+## Next recordings
 
 | Planned lesson | Recording | Written steps |
 | --- | --- | --- |
-| Part VI — Inspect experiment evidence | In preparation | [Inspection](../getting-started/user-guide/experiment-inspection.md) |
-| Part VII — Run an experiment and read its history | In preparation | [Runs and history](../getting-started/user-guide/experiment-runs.md) |
-| Part VIII — Compare experiment Runs | In preparation | [Comparison](../getting-started/user-guide/experiment-comparison.md) |
-| Part IX — Expose a selected prediction | In preparation | [Experiment → serving](../getting-started/user-guide/experiment-exposure.md) |
-| Part X — Capture a Python call with SDK sessions and decorators | In preparation | [Runnable SDK quickstart](../getting-started/tracking.md) |
-| Part XI — Capture real Jupyter cells | In preparation | [Live-kernel steps](../getting-started/tracking.md#3-use-the-same-calls-in-jupyter) |
 | Part XII — Inspect and compare Runs in VS Code | In preparation | [VS Code guide](../reference/vscode.md) |
 
 A planned lesson does not establish that its feature has been qualified. The
