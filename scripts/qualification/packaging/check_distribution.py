@@ -192,6 +192,7 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
         prefix = "" if artifact.suffix == ".whl" else "src/"
         for required in (
             (
+                "apizr/py.typed",
                 "apizr/exposure/planner.py",
                 "apizr/experiments/__init__.py",
                 "apizr/experiments/model.py",
