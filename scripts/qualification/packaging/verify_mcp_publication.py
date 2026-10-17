@@ -66,6 +66,17 @@ def validate_release(
                 raise ValueError(
                     "GitHub release archives differ from the qualified candidate"
                 )
+    if candidate["schema"] == "apizr.release-candidate/v2":
+        for item in [*candidate["artifacts"], *candidate.get("editor_evidence", [])]:
+            if item["file"].startswith("editor/"):
+                asset = assets.get(Path(item["file"]).name, {})
+                if (
+                    asset.get("digest") != "sha256:" + item["sha256"]
+                    or asset.get("size") != item["bytes"]
+                ):
+                    raise ValueError(
+                        "GitHub release VSIX evidence differs from the candidate"
+                    )
     return expected
 
 
@@ -136,6 +147,36 @@ def main(argv=None) -> int:
                 timeout=60,
             )
             dist = Path(directory) / "dist"
+            candidate = read(Path(directory) / "candidate.json")
+            if candidate.get("schema") == "apizr.release-candidate/v2":
+                editor = Path(directory) / "editor"
+                editor.mkdir()
+                for item in [
+                    *candidate["artifacts"],
+                    *candidate.get("editor_evidence", []),
+                ]:
+                    if not item["file"].startswith("editor/"):
+                        continue
+                    name = Path(item["file"]).name
+                    if item["file"] != "editor/" + name:
+                        raise ValueError("Unexpected editor release asset path")
+                    subprocess.run(
+                        [
+                            "gh",
+                            "release",
+                            "download",
+                            args.release_tag,
+                            "--repo",
+                            REPOSITORY,
+                            "--pattern",
+                            name,
+                            "--dir",
+                            str(editor),
+                        ],
+                        check=True,
+                        capture_output=True,
+                        timeout=60,
+                    )
             subprocess.run(
                 [
                     "gh",

@@ -28,9 +28,11 @@ def archive(path, files):
 
 
 def inputs(root, assets, version="0.4.0", *, development=False):
+    from scripts.qualification.packaging.coordinated_distributions import PROJECTS
+
     candidate = root / "release-candidate"
     (candidate / "dist").mkdir(parents=True)
-    for name in assets.PROJECTS:
+    for name in PROJECTS:
         for suffix in ("-py3-none-any.whl", ".tar.gz"):
             (
                 candidate / "dist" / (name.replace("-", "_") + "-" + version + suffix)
@@ -50,6 +52,11 @@ def inputs(root, assets, version="0.4.0", *, development=False):
 
         manifest["qualification_targets"] = [list(t) for t in QUALIFICATION_TARGETS]
     if version == "0.4.6":
+        from release_candidate_helpers import attach_editor
+
+        from scripts.qualification.packaging.coordinated_distributions import ROOT
+
+        attach_editor(candidate, manifest, ROOT)
         assets.write(
             candidate / "release-metadata.json",
             {"schema": "apizr.release-metadata/v1", "version": version, "files": []},
@@ -393,3 +400,29 @@ def test_current_assets_require_prebuild_metadata(assets, tmp_path):
     with pytest.raises(ValueError, match="Missing pre-build"):
         assets.prepare(downloads, output, "a" * 40, 123, preview=True)
     assert not output.exists()
+
+
+def test_coordinated_extension_is_retained_byte_for_byte(assets, tmp_path):
+    downloads = tmp_path / "downloads"
+    inputs(downloads, assets, "0.4.6", development=True)
+    output = tmp_path / "assets"
+    assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+    manifest = json.loads((output / "release-assets.json").read_text())
+    entry = next(i for i in manifest["artifacts"] if i["role"] == "VS Code extension")
+    assert (output / entry["file"]).read_bytes() == (
+        downloads / "release-candidate/editor" / entry["file"]
+    ).read_bytes()
+    assert (
+        entry["evidence_member"]
+        == "coordinated/release-candidate/editor/" + entry["file"]
+    )
+    assert (
+        len(
+            [
+                i
+                for i in manifest["artifacts"]
+                if i["role"] == "VSIX build and licence evidence"
+            ]
+        )
+        == 2
+    )

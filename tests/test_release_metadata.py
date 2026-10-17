@@ -253,6 +253,8 @@ def test_stale_text_refuses_before_any_build_or_output(release, tmp_path, monkey
 
 @pytest.fixture
 def qualified(release, tmp_path, monkeypatch):
+    from release_candidate_helpers import attach_editor
+
     candidate, dist = tmp_path / "candidate", tmp_path / "dist"
     candidate.mkdir()
     archives(release, dist)
@@ -277,6 +279,7 @@ def qualified(release, tmp_path, monkeypatch):
             for p in sorted(dist.iterdir())
         ],
     }
+    attach_editor(candidate, manifest, release)
     (candidate / "candidate.json").write_text(json.dumps(manifest))
     monkeypatch.setattr(gate.subprocess, "check_output", lambda *a, **kw: "a" * 40)
     return release, candidate, dist
@@ -388,3 +391,91 @@ def test_publication_workflows_cannot_skip_metadata_before_side_effects():
     for name in ("publish-mcp.yml", "verify-mcp-distribution.yml"):
         text = (gate.ROOT / ".github/workflows" / name).read_text()
         assert "verify_mcp_publication.py" in text
+
+
+@pytest.mark.parametrize("fault", [None, "wrong-commit", "link", "changed-blob"])
+def test_revision_comparison_reads_only_regular_tagged_blobs(
+    qualified, monkeypatch, tmp_path, fault
+):
+    import subprocess
+
+    root, candidate, dist = qualified
+    monkeypatch.undo()
+
+    def git(*args):
+        return subprocess.check_output(
+            [
+                "git",
+                "-c",
+                "core.hooksPath=/dev/null",
+                "-c",
+                "commit.gpgsign=false",
+                "-c",
+                "user.name=Qualification",
+                "-c",
+                "user.email=qualification@example.invalid",
+                *args,
+            ],
+            cwd=root,
+            text=True,
+        ).strip()
+
+    marker = tmp_path / "source-was-executed"
+    (root / "scripts").mkdir()
+    (root / "scripts/prepare_publication.py").write_text(
+        f"from pathlib import Path\nPath({str(marker)!r}).touch()\n"
+    )
+    if fault == "link":
+        path = root / "README.md"
+        raw = path.read_text()
+        path.unlink()
+        (root / "unrelated-readme").write_text(raw)
+        path.symlink_to("unrelated-readme")
+    git("init", "--quiet", "--initial-branch=fixture")
+    git("add", ".")
+    git("commit", "--quiet", "-m", "metadata fixture")
+    revision = git("rev-parse", "HEAD")
+    manifest = json.loads((candidate / "candidate.json").read_text())
+    manifest["commit"] = revision if fault != "wrong-commit" else "a" * 40
+    proof = candidate / "editor/apizr-0.4.6.json"
+    data = json.loads(proof.read_text())
+    data["source_commit"] = manifest["commit"]
+    proof.write_text(json.dumps(data))
+    manifest["editor_evidence"] = [
+        packaging.record(candidate / i["file"], candidate)
+        for i in manifest["editor_evidence"]
+    ]
+    (candidate / "candidate.json").write_text(json.dumps(manifest))
+    if fault == "changed-blob":
+        (root / "README.md").write_text("Different committed metadata\n")
+        git("add", ".")
+        git("commit", "--quiet", "-m", "changed metadata")
+        revision = git("rev-parse", "HEAD")
+        manifest["commit"] = revision
+        (candidate / "candidate.json").write_text(json.dumps(manifest))
+    elif fault != "link":
+        # Working-tree edits must not replace the selected immutable Git blobs.
+        (root / "README.md").write_text("Uncommitted working-tree text\n")
+    if fault:
+        with pytest.raises(ValueError):
+            gate.verify_revision(root, revision, candidate, dist)
+    else:
+        result = gate.verify_revision(root, revision, candidate, dist)
+        assert result["candidate_commit"] == revision
+        assert result["qualified_archives"] == 8
+    assert not marker.exists()
+
+
+@pytest.mark.parametrize(
+    "revision", ["HEAD", "v0.4.6", "a" * 39, "--help", "../README.md"]
+)
+def test_revision_comparison_refuses_mutable_refs_before_git(
+    tmp_path, revision, monkeypatch
+):
+    monkeypatch.setattr(
+        gate.subprocess,
+        "check_output",
+        lambda *a, **kw: pytest.fail("no Git call for invalid revision"),
+    )
+    with pytest.raises(ValueError, match="full source commit"):
+        gate.verify_revision(tmp_path, revision, tmp_path, tmp_path)

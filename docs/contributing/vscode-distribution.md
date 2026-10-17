@@ -22,8 +22,11 @@ project files or experiment store. Sorted stored ZIP entries, fixed timestamps a
 modes make repeated builds byte-identical; the build record retains each file's
 SHA-256, archive SHA-256, source commit and tool versions.
 
-The `vscode` CI job consumes the same coordinated candidate wheel as other product
-qualification. It installs the engine outside the checkout, installs the VSIX into
+The `distributions` CI job builds the VSIX alongside the eight Python archives.
+Its v2 candidate manifest retains the VSIX hash, complete ZIP inventory, source
+commit, reproducibility proof and dependency licence report. The `vscode` job
+consumes that same candidate VSIX and engine wheel on development and protected
+master. It installs the engine outside the checkout, installs the VSIX into
 clean profiles and exercises real inspection, notebook navigation, saved/dirty and
 stale results, mixed CLI/SDK/Jupyter history, canonical show/diff, publication
 notifications, telemetry opt-out and incompatible-engine refusal. A synthetic
@@ -79,3 +82,5 @@ Marketplace and Open VSX can use the same manifest/VSIX; their publisher setup,
 authentication and publication are independent decisions. No `vsce publish`,
 `ovsx publish`, tag-triggered publication or registry credential is added here.
 Python release versions, tags and publication workflows remain separate.
+The reviewed VSIX is included in the common release attachments and protected
+CI provenance; this preparation does not enable registry publication.

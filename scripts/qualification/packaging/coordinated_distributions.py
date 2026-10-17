@@ -19,7 +19,11 @@ import zipfile
 from email.parser import BytesParser
 from pathlib import Path
 
-from scripts.qualification.packaging.check_distribution import check
+from scripts.qualification.packaging.check_distribution import (
+    candidate_inventory,
+    check,
+    check_vsix,
+)
 from scripts.qualification.packaging.check_release_metadata import (
     check as check_release_metadata,
 )
@@ -112,27 +116,15 @@ def verify_records(root: Path, records: list[dict]) -> None:
 def load(root: Path) -> dict:
     manifest = json.loads((root / "candidate.json").read_text())
     required_targets(manifest)
-    if (
-        manifest["schema"] != "apizr.release-candidate/v1"
-        or manifest["commit"] != source_commit()
-    ):
+    if manifest["commit"] != source_commit():
         raise ValueError("Candidate belongs to another source commit")
-    expected = {
-        name.replace("-", "_") + "-" + manifest["version"] + suffix
-        for name in PROJECTS
-        for suffix in ("-py3-none-any.whl", ".tar.gz")
-    }
-    if {Path(item["file"]).name for item in manifest["artifacts"]} != expected or len(
-        manifest["artifacts"]
-    ) != 8:
-        raise ValueError("Expected exactly four wheels and four sdists")
+    python_files, editor_files = candidate_inventory(manifest)
+    expected = {Path(name).name for name in python_files}
     if {path.name for path in (root / "dist").iterdir()} != expected:
         raise ValueError("Unexpected distribution files")
-    if {item["file"] for item in manifest["artifacts"]} != {
-        "dist/" + name for name in expected
-    }:
-        raise ValueError("Unexpected distribution paths")
     verify_records(root, manifest["artifacts"])
+    if editor_files:
+        verify_editor(root, manifest)
     if "release_metadata" in manifest:
         verify_records(root, [manifest["release_metadata"]])
         if manifest["release_metadata"]["file"] != "release-metadata.json":
@@ -144,6 +136,58 @@ def load(root: Path) -> dict:
     elif tuple(map(int, manifest["version"].split("rc")[0].split("."))) >= (0, 4, 6):
         raise ValueError("Missing pre-build release metadata snapshot")
     return manifest
+
+
+def verify_editor(root, manifest, project_root=ROOT):
+    """Bind the editor bytes, notices and reproducibility proof to this candidate."""
+    _, editor_files = candidate_inventory(manifest)
+    if not editor_files:
+        raise ValueError("Missing coordinated VSIX")
+    version = manifest["version"]
+    if {p.name for p in (root / "editor").iterdir()} != {
+        f"apizr-{version}.vsix",
+        f"apizr-{version}.json",
+        "dependency-licenses.json",
+    }:
+        raise ValueError("Unrecorded editor candidate files")
+    evidence = manifest.get("editor_evidence", [])
+    if len(evidence) != 2 or {item["file"] for item in evidence} != {
+        f"editor/apizr-{version}.json",
+        "editor/dependency-licenses.json",
+    }:
+        raise ValueError("Missing VSIX build/licence evidence")
+    verify_records(
+        root,
+        [*evidence, *(i for i in manifest["artifacts"] if i["file"] in editor_files)],
+    )
+    path = root / next(iter(editor_files))
+    files = check_vsix(path, project_root)
+    proof = json.loads(path.with_suffix(".json").read_text())
+    toolchain = json.loads(
+        (project_root / "policy/vscode-distribution.json").read_text()
+    )
+    if (
+        proof.get("schema_version") != "apizr.vscode-build/v1"
+        or proof.get("result") != "pass"
+        or proof.get("source_commit") != manifest["commit"]
+        or proof.get("source_dirty") is not False
+        or proof.get("qualification_fixture") is not False
+        or proof.get("repeated_build_identical") is not True
+        or proof.get("vsix") != path.name
+        or proof.get("sha256") != digest(path)
+        or proof.get("files") != files
+        or proof.get("node") != "v" + toolchain["node"]
+        or proof.get("typescript") != toolchain["typescript"]
+    ):
+        raise ValueError("VSIX build evidence identity mismatch")
+    licenses = json.loads((root / "editor/dependency-licenses.json").read_text())
+    policy = json.loads((project_root / "policy/vscode-dependencies.json").read_text())
+    if licenses != {
+        "result": "pass",
+        "runtime_dependencies": 0,
+        "packages": policy["packages"],
+    }:
+        raise ValueError("VSIX dependency licence evidence differs from policy")
 
 
 def build(output: Path) -> None:
@@ -197,17 +241,39 @@ def build(output: Path) -> None:
             )
     verify_snapshot(ROOT, metadata_snapshot)
     verify_archives(ROOT, dist)
+    run(
+        sys.executable,
+        "-m",
+        "scripts.qualification.packaging.vscode_distribution",
+        "--output",
+        output / "editor",
+    )
+    versioned = [*sorted(dist.iterdir()), output / f"editor/apizr-{version}.vsix"]
     write(output / "release-metadata.json", metadata_snapshot)
     write(
         output / "candidate.json",
         {
-            "schema": "apizr.release-candidate/v1",
+            "schema": "apizr.release-candidate/v2",
             "version": version,
             "commit": source_commit(),
             "repository": "Alien6-Studio/outerspace-apizr",
             "qualification_targets": QUALIFICATION_TARGETS,
             "release_metadata": record(output / "release-metadata.json", output),
-            "artifacts": [record(path, output) for path in sorted(dist.iterdir())],
+            "artifacts": [
+                {
+                    **record(path, output),
+                    "kind": "vsix"
+                    if path.suffix == ".vsix"
+                    else "wheel"
+                    if path.suffix == ".whl"
+                    else "sdist",
+                }
+                for path in versioned
+            ],
+            "editor_evidence": [
+                record(output / "editor" / name, output)
+                for name in (f"apizr-{version}.json", "dependency-licenses.json")
+            ],
         },
     )
     write(output / "distribution-checks.json", reports)

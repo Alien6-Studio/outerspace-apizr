@@ -236,9 +236,13 @@ Before building a release-line candidate, complete the dependency freeze:
   qualification; never re-resolve dependencies during publication or replace
   the retained candidate archives.
 
-CI builds four wheels and four sdists once per candidate. Independent sdist
-reconstructions are tests and never replace the selected archives. Retain
-`release-candidate`, the six `release-target-*` exports, `release-delivery`,
+CI builds four wheels, four sdists and one source-including VSIX in the
+`distributions` job. The v2 candidate manifest records all nine artifacts and
+their kinds, sizes and SHA-256 digests, plus the VSIX reproducibility and licence
+reports. The editor job consumes those exact VSIX bytes; only the synthetic
+historical update fixture is built there. Independent sdist reconstructions and
+the repeated VSIX compilation are tests and never replace selected candidates.
+Retain `release-candidate`, all eight `release-target-*` exports, `release-editor`, `release-delivery`,
 `build-attestations` and `release-assets`. The latter is only an Actions artifact,
 not an automatic upload to a GitHub release. PR previews lack signed provenance
 and cannot authorize publication.
@@ -256,9 +260,12 @@ Unintended versions and refs are refused. Development builds alone do not
 authorize publication. Releases through 0.4.0rc1 retain `master` provenance; published
 0.4.1 retains `refs/heads/release/0.4.1` provenance.
 
-Qualification includes Linux CPython 3.11–3.15, macOS 3.11/3.14 and disposable
+Qualification includes Linux CPython 3.11–3.15, macOS 3.11/3.14/3.15 and disposable
 registry/TSA/ORAS fixtures. Target reports record architecture, patch version,
-bytes and timing samples. Runtime SBOM attestations cover the core distributions;
+bytes and timing samples. The protected-master signer waits for editor
+qualification and includes the VSIX as a provenance subject. The complete
+validation archive also retains the editor logs, executed notebook, bundles,
+Node audit and source-bound build/licence records. Runtime SBOM attestations cover the core distributions;
 plugin dependency identities remain in target inventories. Disposable worker
 image identities are test evidence, not official published images.
 
@@ -270,6 +277,25 @@ public archives with the original eight files. Existing bytes must match exactly
 missing files alone are staged. No rebuild, overwrite or `skip-existing` is allowed.
 Network/access errors never mean absence. Verify fresh public installations and
 retain the public comparison and signed timestamped receipt before declaring delivery.
+
+### Dated directory verification after authorized publication
+
+Record a dated observation for each channel in `docs/releases/0.4.6.md`, retaining
+the JSON responses or a dated explanation when an API is unavailable:
+
+- Official Registry: exact version and `isLatest`; PyPI: actual archive bytes and
+  rendered README without development wording.
+- Glama: request a re-evaluation only when authorized, then observe its actual
+  score date and schema coverage. A request alone is not evidence of refresh.
+- MCPLookup: observed version and observation date; Smithery: completed listing
+  or the explicit decision not to pursue it.
+- TensorBlock and punkpeye awesome lists: observed submission/listing state;
+  MCPfinder: observed snapshot date, including a stale or unavailable result.
+- README directory badges: retain only claims supported by those observations;
+  annotate or remove stale badges. Archive these observations with the release.
+
+These are post-publication checks. Preparing this checklist never contacts a
+publication endpoint, requests indexing or authorizes distribution.
 
 For first-time plugin publishers, PyPI allows only one pending publisher for an
 identical repository/workflow/environment configuration. Register and publish one

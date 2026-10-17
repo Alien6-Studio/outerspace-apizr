@@ -42,7 +42,8 @@ def run(argv, cwd, *, env=None, combined=False):
 def candidate_source(candidate, commit):
     evidence = json.loads((candidate / "candidate.json").read_text())
     if (
-        evidence["schema"] != "apizr.release-candidate/v1"
+        evidence["schema"]
+        not in {"apizr.release-candidate/v1", "apizr.release-candidate/v2"}
         or evidence["repository"] != "Alien6-Studio/outerspace-apizr"
         or evidence["commit"] != commit
         or evidence["version"] not in {"0.4.3", "0.4.4", "0.4.5", "0.4.6"}

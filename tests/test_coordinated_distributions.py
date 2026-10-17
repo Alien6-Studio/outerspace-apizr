@@ -68,6 +68,80 @@ def test_retained_set_rejects_mismatch(packaging, tmp_path, fault):
         packaging.load(tmp_path)
 
 
+@pytest.mark.parametrize(
+    "fault",
+    [
+        None,
+        "downgrade",
+        "missing",
+        "kind",
+        "bytes",
+        "commit",
+        "dirty",
+        "fixture",
+        "reproducibility",
+        "licences",
+        "proof-files",
+    ],
+)
+def test_coordinated_vsix_is_source_bound_and_cannot_be_omitted(
+    packaging, tmp_path, fault
+):
+    from release_candidate_helpers import attach_editor
+
+    value = candidate(tmp_path, packaging)
+    value["version"] = "0.4.6"
+    for item in value["artifacts"]:
+        path = tmp_path / item["file"]
+        renamed = path.with_name(path.name.replace("0.4.0", "0.4.6"))
+        path.rename(renamed)
+    value["artifacts"] = [
+        packaging.record(p, tmp_path) for p in sorted((tmp_path / "dist").iterdir())
+    ]
+    attach_editor(tmp_path, value, packaging.ROOT)
+    snapshot = tmp_path / "release-metadata.json"
+    packaging.write(snapshot, packaging.check_release_metadata(packaging.ROOT))
+    value["release_metadata"] = packaging.record(snapshot, tmp_path)
+    proof_path = tmp_path / "editor/apizr-0.4.6.json"
+    proof = json.loads(proof_path.read_text())
+    if fault == "downgrade":
+        value["schema"] = "apizr.release-candidate/v1"
+        value["artifacts"] = value["artifacts"][:-1]
+    elif fault == "missing":
+        value["artifacts"].pop()
+    elif fault == "kind":
+        value["artifacts"][-1]["kind"] = "wheel"
+    elif fault == "bytes":
+        (tmp_path / value["artifacts"][-1]["file"]).write_bytes(b"replacement")
+    elif fault == "commit":
+        proof["source_commit"] = "b" * 40
+    elif fault == "dirty":
+        proof["source_dirty"] = True
+    elif fault == "fixture":
+        proof["qualification_fixture"] = True
+    elif fault == "reproducibility":
+        proof["repeated_build_identical"] = False
+    elif fault == "proof-files":
+        proof["files"].pop(next(iter(proof["files"])))
+    elif fault == "licences":
+        packaging.write(
+            tmp_path / "editor/dependency-licenses.json",
+            {"result": "pass", "runtime_dependencies": 0, "packages": {}},
+        )
+    packaging.write(proof_path, proof)
+    value["editor_evidence"] = [
+        packaging.record(tmp_path / i["file"], tmp_path)
+        for i in value["editor_evidence"]
+    ]
+    packaging.write(tmp_path / "candidate.json", value)
+    if fault:
+        with pytest.raises(ValueError):
+            packaging.load(tmp_path)
+    else:
+        assert packaging.load(tmp_path) == value
+        assert len(value["artifacts"]) == 9
+
+
 @pytest.mark.parametrize("fault", [None, "source", "native"])
 def test_only_locked_pure_yaml_can_be_prepared_from_source(
     packaging, tmp_path, monkeypatch, fault

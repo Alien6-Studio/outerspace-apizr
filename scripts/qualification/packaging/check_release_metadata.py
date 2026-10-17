@@ -8,10 +8,13 @@ import os
 import re
 import subprocess
 import tarfile
+import tempfile
 import tomllib
 import zipfile
 from email.parser import BytesParser
 from pathlib import Path
+
+from scripts.qualification.packaging.check_distribution import candidate_inventory
 
 ROOT = Path(__file__).resolve().parents[3]
 REPOSITORY = "https://github.com/Alien6-Studio/outerspace-apizr"
@@ -49,6 +52,22 @@ def inventory(version):
             "CHANGELOG.md",
             "docs/index.md",
             "mkdocs.yml",
+            "LICENSE",
+            "policy/vscode-dependencies.json",
+            "policy/vscode-distribution.json",
+            *(
+                "editors/vscode/" + name
+                for name in (
+                    "package.json",
+                    "package-lock.json",
+                    "README.md",
+                    "tsconfig.json",
+                )
+            ),
+            *(
+                p.relative_to(ROOT).as_posix()
+                for p in (ROOT / "editors/vscode/src").glob("*.ts")
+            ),
             "plugins/mcp/distribution/manifest.json",
             "plugins/mcp/distribution/pyproject.toml",
             *(
@@ -114,6 +133,14 @@ def check(root=ROOT, *, release=False, ref=None):
             raise ValueError("Release metadata disagrees with pyproject.toml")
         public = version
     errors, descriptions = [], []
+    editor = json.loads((root / "editors/vscode/package.json").read_text())
+    editor_lock = json.loads((root / "editors/vscode/package-lock.json").read_text())
+    if (
+        editor["version"] != version
+        or editor_lock.get("version") != version
+        or editor_lock["packages"][""]["version"] != version
+    ):
+        errors.append("VS Code: uncoordinated package/lock version")
     for directory in PROJECTS:
         project_root = root / directory
         project = tomllib.loads((project_root / "pyproject.toml").read_text())[
@@ -290,16 +317,20 @@ def verify_archives(root, dist):
                 )
 
 
-def verify_candidate(root, candidate, dist):
+def verify_candidate(root, candidate, dist, *, source_commit=None):
     """Bind final tagged text to the original CI snapshot and eight archives."""
     root, candidate = root.resolve(), candidate.resolve()
     manifest = json.loads((candidate / "candidate.json").read_text())
-    commit = subprocess.check_output(
-        ["git", "rev-parse", "HEAD"], cwd=root, text=True, timeout=10
-    ).strip()
+    commit = (
+        source_commit
+        or subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=root, text=True, timeout=10
+        ).strip()
+    )
     report = check(root, release=True)
     if (
-        manifest.get("schema") != "apizr.release-candidate/v1"
+        manifest.get("schema")
+        not in {"apizr.release-candidate/v1", "apizr.release-candidate/v2"}
         or manifest.get("repository") != "Alien6-Studio/outerspace-apizr"
         or manifest.get("commit") != commit
         or manifest.get("version") != report["version"]
@@ -327,8 +358,9 @@ def verify_candidate(root, candidate, dist):
         for directory in PROJECTS
         for suffix in ("-py3-none-any.whl", ".tar.gz")
     }
-    artifacts = manifest.get("artifacts", [])
-    if len(artifacts) != 8 or {item["file"] for item in artifacts} != expected:
+    python_files, editor_files = candidate_inventory(manifest)
+    artifacts = [i for i in manifest["artifacts"] if i["file"] in python_files]
+    if python_files != expected:
         raise ValueError("Expected eight qualified metadata archives")
     if {p.name for p in dist.iterdir()} != {Path(n).name for n in expected}:
         raise ValueError("Unexpected release metadata archives")
@@ -342,17 +374,23 @@ def verify_candidate(root, candidate, dist):
         ):
             raise ValueError("Release archive differs from qualified candidate")
     verify_archives(root, dist)
+    if editor_files:
+        from scripts.qualification.packaging.coordinated_distributions import (
+            verify_editor,
+        )
+
+        verify_editor(candidate, manifest, root)
     return {**report, "candidate_commit": commit, "qualified_archives": 8}
 
 
-def verify_public(root, candidate, dist):
+def verify_public(root, candidate, dist, *, source_commit=None):
     """Download public bytes and prove the already-checked tagged README equality."""
     from scripts.qualification.packaging.prepare_publication import (
         matches,
         public_files,
     )
 
-    report = verify_candidate(root, candidate, dist)
+    report = verify_candidate(root, candidate, dist, source_commit=source_commit)
     for directory in PROJECTS:
         project = tomllib.loads((root / directory / "pyproject.toml").read_text())[
             "project"
@@ -370,6 +408,33 @@ def verify_public(root, candidate, dist):
                     "Public archive differs from the tagged README/metadata"
                 )
     return {**report, "public_archive_bytes_equal": True}
+
+
+def verify_revision(repository, revision, candidate, dist, *, public=False):
+    """Read only metadata blobs from an exact commit; never check out its code."""
+    if re.fullmatch(r"[0-9a-f]{40}", revision) is None:
+        raise ValueError("Expected a full source commit")
+
+    def git(*args):
+        return subprocess.check_output(["git", *args], cwd=repository, timeout=30)
+
+    if git("rev-parse", revision + "^{commit}").decode().strip() != revision:
+        raise ValueError("Source revision is not the exact commit")
+    policy = tomllib.loads(git("show", revision + ":" + POLICY).decode())
+    version = policy["release"]["version"]
+    if re.fullmatch(VERSION, version) is None:
+        raise ValueError("Invalid source metadata version")
+    with tempfile.TemporaryDirectory(prefix="apizr-release-metadata-") as directory:
+        root = Path(directory)
+        for name in inventory(version):
+            entry = git("ls-tree", revision, "--", name).decode().split()
+            if len(entry) != 4 or entry[0] != "100644" or entry[1] != "blob":
+                raise ValueError("Expected a regular metadata blob: " + name)
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(git("show", revision + ":" + name))
+        verify = verify_public if public else verify_candidate
+        return verify(root, candidate, dist, source_commit=revision)
 
 
 def render(root, output):
@@ -395,6 +460,9 @@ def render(root, output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-root", type=Path, default=ROOT)
+    parser.add_argument(
+        "--source-revision", help="Read exact Git metadata blobs without checkout"
+    )
     parser.add_argument(
         "--release",
         action="store_true",
@@ -427,6 +495,20 @@ def main():
         parser.error("--candidate requires --dist and replaces --snapshot")
     if args.public and not args.candidate:
         parser.error("--public requires --candidate and --dist")
+    if args.source_revision:
+        if not args.candidate or args.snapshot or args.render:
+            parser.error("--source-revision requires a candidate comparison")
+        report = verify_revision(
+            args.source_root,
+            args.source_revision,
+            args.candidate,
+            args.dist,
+            public=args.public,
+        )
+        if args.output:
+            args.output.write_text(json.dumps(report, indent=2) + "\n")
+        print(json.dumps(report, indent=2))
+        return
     report = check(args.source_root, release=args.release)
     if args.candidate:
         verify = verify_public if args.public else verify_candidate

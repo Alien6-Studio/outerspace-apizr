@@ -153,6 +153,83 @@ def test_registry_preflight_binds_all_release_identities(candidate, fault):
         assert validate_release(*args) == hashes
 
 
+@pytest.mark.parametrize("fault", [None, "missing", "kind", "bytes", "size"])
+def test_registry_requires_the_coordinated_editor_identity(candidate, fault):
+    candidate["schema"] = "apizr.release-candidate/v2"
+    candidate["artifacts"].extend(
+        {
+            "file": f"outerspace_apizr_{plugin}-0.4.6{suffix}",
+            "bytes": 1,
+            "sha256": "b" * 64,
+        }
+        for plugin in ("oci", "attest")
+        for suffix in ("-py3-none-any.whl", ".tar.gz")
+    )
+    for item in candidate["artifacts"]:
+        item["file"] = "dist/" + item["file"]
+        item["kind"] = "wheel" if item["file"].endswith(".whl") else "sdist"
+    editor = {
+        "file": "editor/apizr-0.4.6.vsix",
+        "bytes": 1,
+        "sha256": "d" * 64,
+        "kind": "vsix",
+    }
+    candidate["artifacts"].append(editor)
+    hashes = candidate_artifacts(candidate, "0.4.6", SHA)
+    release = {
+        "tag_name": "v0.4.6",
+        "draft": False,
+        "prerelease": False,
+        "published_at": "2026-10-17T00:00:00Z",
+        "assets": [
+            {"name": n}
+            for n in (
+                "candidate.json",
+                "public-comparison.json",
+                "attest-verification.json",
+                "release-assets.json",
+            )
+        ]
+        + [
+            {"name": n, "digest": "sha256:" + h}
+            for entries in hashes.values()
+            for n, h in entries.items()
+        ]
+        + [
+            {
+                "name": "apizr-0.4.6.vsix",
+                "digest": "sha256:" + editor["sha256"],
+                "size": 1,
+            }
+        ],
+    }
+    if fault == "missing":
+        release["assets"].pop()
+    elif fault == "kind":
+        editor["kind"] = "wheel"
+    elif fault == "bytes":
+        release["assets"][-1]["digest"] = "sha256:" + "e" * 64
+    elif fault == "size":
+        release["assets"][-1]["size"] = 2
+    args = (
+        validate_metadata(),
+        SHA,
+        "v0.4.6",
+        SHA,
+        "",
+        release,
+        {"sha": SHA},
+        {"protected": True},
+        {"status": "identical", "merge_base_commit": {"sha": SHA}},
+        candidate,
+    )
+    if fault:
+        with pytest.raises(ValueError):
+            validate_release(*args)
+    else:
+        assert validate_release(*args) == hashes
+
+
 @pytest.mark.parametrize("version", ["0.4.5", "0.4.6"])
 def test_registry_and_glama_preflight_require_frozen_public_text_for_new_releases(
     tmp_path, monkeypatch, version

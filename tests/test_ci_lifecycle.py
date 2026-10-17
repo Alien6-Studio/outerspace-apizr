@@ -97,3 +97,24 @@ def test_dependabot_groups_compatible_updates_and_all_codeql_steps():
     assert updates["github-actions"]["groups"] == {
         "action-updates": {"patterns": ["*"]}
     }
+
+
+def test_final_candidate_includes_one_shared_editor_and_signed_evidence():
+    jobs = DEFINITIONS["ci.yml"]["jobs"]
+    distributions = jobs["distributions"]["steps"]
+    assert any(
+        s.get("uses", "").startswith("actions/setup-node@") for s in distributions
+    )
+    vscode = jobs["vscode"]
+    assert "github.ref != 'refs/heads/master'" not in vscode["if"]
+    commands = "\n".join(s.get("run", "") for s in vscode["steps"])
+    assert '--output "$RUNNER_TEMP/vscode-dist"\n' not in commands
+    assert 'cp "$RUNNER_TEMP/vscode-candidate/editor/"*' in commands
+    assert any(
+        s.get("with", {}).get("name") == "release-editor" for s in vscode["steps"]
+    )
+    for name in ("provenance", "release-assets"):
+        assert "vscode" in jobs[name]["needs"]
+    assert "needs.vscode.result == 'success'" in jobs["release-assets"]["if"]
+    attest = next(s for s in jobs["provenance"]["steps"] if s.get("id") == "provenance")
+    assert "editor/*.vsix" in attest["with"]["subject-path"]

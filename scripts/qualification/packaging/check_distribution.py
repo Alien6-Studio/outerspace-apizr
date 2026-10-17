@@ -13,6 +13,114 @@ import zipfile
 from pathlib import Path
 
 
+def candidate_inventory(manifest):
+    """Admit historical Python sets and the coordinated Python/VSIX contract."""
+    schema = manifest.get("schema")
+    if schema not in {"apizr.release-candidate/v1", "apizr.release-candidate/v2"}:
+        raise ValueError("Unsupported candidate schema")
+    version = manifest["version"]
+    if (
+        not isinstance(version, str)
+        or re.fullmatch(r"\d+\.\d+\.\d+(?:rc[1-9]\d*)?", version) is None
+    ):
+        raise ValueError("Invalid candidate version")
+    if tuple(map(int, version.split("rc")[0].split("."))) >= (
+        0,
+        4,
+        6,
+    ) and schema.endswith("/v1"):
+        raise ValueError("Current candidates require the coordinated VSIX schema")
+    python = {
+        "dist/outerspace_apizr" + plugin + "-" + version + suffix
+        for plugin in ("", "_oci", "_attest", "_mcp")
+        for suffix in ("-py3-none-any.whl", ".tar.gz")
+    }
+    editor = {f"editor/apizr-{version}.vsix"} if schema.endswith("/v2") else set()
+    artifacts = manifest["artifacts"]
+    if (
+        len(artifacts) != len(python | editor)
+        or {item["file"] for item in artifacts} != python | editor
+    ):
+        raise ValueError("Unexpected coordinated candidate artifacts")
+    if editor:
+        for item in artifacts:
+            expected = (
+                "vsix"
+                if item["file"] in editor
+                else "wheel"
+                if item["file"].endswith(".whl")
+                else "sdist"
+            )
+            if item.get("kind") != expected:
+                raise ValueError("Unexpected candidate artifact kind")
+    return python, editor
+
+
+def check_vsix(path: Path, project_root: Path) -> dict[str, str]:
+    """Inspect a source-including extension without extracting or executing it."""
+    if (
+        path.is_symlink()
+        or not path.is_file()
+        or path.stat().st_size > 20 * 1024 * 1024
+    ):
+        raise ValueError("Invalid VSIX artifact")
+    package = json.loads((project_root / "editors/vscode/package.json").read_bytes())
+    with zipfile.ZipFile(path) as archive:
+        entries = archive.infolist()
+        names = {item.filename for item in entries}
+        if (
+            len(entries) > 256
+            or len(entries) != len(names)
+            or sum(item.file_size for item in entries) > 20 * 1024 * 1024
+        ):
+            raise ValueError("Invalid VSIX inventory")
+        for item in entries:
+            name = Path(item.filename)
+            if (
+                name.is_absolute()
+                or ".." in name.parts
+                or (item.external_attr >> 16) & 0o170000 != 0o100000
+            ):
+                raise ValueError("Unsafe VSIX member")
+        payload = {name: archive.read(name) for name in names}
+    if json.loads(payload["extension/package.json"]) != package or package.get(
+        "dependencies"
+    ):
+        raise ValueError("VSIX package metadata differs from source")
+    expected = {
+        "extension/package.json",
+        "extension.vsixmanifest",
+        "[Content_Types].xml",
+    }
+    sources = [
+        ("LICENSE", project_root / "LICENSE"),
+        *(
+            (name, project_root / "editors/vscode" / name)
+            for name in ("README.md", "package-lock.json", "tsconfig.json")
+        ),
+        *(
+            ("src/" + p.name, p)
+            for p in sorted((project_root / "editors/vscode/src").glob("*.ts"))
+        ),
+    ]
+    if not any(name.startswith("src/") for name, _ in sources):
+        raise ValueError("Missing extension source inventory")
+    for name, source in sources:
+        member = "extension/" + name
+        expected.add(member)
+        if payload.get(member) != source.read_bytes():
+            raise ValueError("VSIX source/notice differs: " + name)
+        if name.startswith("src/"):
+            expected.add("extension/out/" + Path(name).stem + ".js")
+    from scripts.qualification.packaging.vscode_distribution import manifest
+
+    if names != expected or payload["extension.vsixmanifest"] != manifest(package):
+        raise ValueError("Unexpected VSIX files or manifest")
+    return {
+        name: hashlib.sha256(raw).hexdigest() for name, raw in sorted(payload.items())
+    }
+
+
 def check(directory: Path, project_root: Path) -> dict[str, str]:
     project = tomllib.loads((project_root / "pyproject.toml").read_text())["project"]
     readme = (project_root / project["readme"]).read_text()
@@ -301,9 +409,15 @@ def main() -> None:
     parser.add_argument("directory", type=Path)
     parser.add_argument("--manifest", type=Path)
     parser.add_argument("--coordinated", action="store_true")
+    parser.add_argument(
+        "--vsix", type=Path, help="Also inspect the coordinated extension"
+    )
     args = parser.parse_args()
     inspect = check_coordinated if args.coordinated else check
     digests = inspect(args.directory, Path(__file__).resolve().parents[3])
+    if args.vsix:
+        check_vsix(args.vsix, Path(__file__).resolve().parents[3])
+        digests[args.vsix.name] = hashlib.sha256(args.vsix.read_bytes()).hexdigest()
     if args.manifest:
         args.manifest.write_text(json.dumps(digests, indent=2, sort_keys=True) + "\n")
     print(json.dumps(digests, sort_keys=True))

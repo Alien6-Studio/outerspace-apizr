@@ -31,12 +31,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22.22.2'
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: '0.13.1'
           python-version: '3.14'
       - run: uv sync --locked
-      - name: Build the four candidate wheels and sdists exactly once
+      - run: npm ci --prefix editors/vscode --ignore-scripts --no-audit --no-fund
+      - name: Audit every extension dependency before candidate build
+        run: npm audit --prefix editors/vscode --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > "$RUNNER_TEMP/vscode-node-audit.json"
+      - name: Build the four wheels, four sdists and coordinated VSIX
         run: |
           uv run --locked python -m scripts.qualification.packaging.coordinated_distributions build --candidate "$RUNNER_TEMP/candidate"
           uv run --locked python -m scripts.qualification.packaging.check_distribution "$RUNNER_TEMP/candidate/dist" --coordinated --manifest "$RUNNER_TEMP/candidate/SHA256SUMS.json"
@@ -531,7 +537,7 @@ jobs:
     if: >-
       github.event_name == 'push' &&
       github.ref == 'refs/heads/master' && github.ref_protected
-    needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations, release-target, release-delivery]
+    needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations, release-target, release-delivery, vscode]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -563,11 +569,14 @@ jobs:
         run: |
           mkdir attestations
           tar -czf attestations/ci-evidence.tar.gz -C evidence .
+          mkdir editor
+          cp evidence/coordinated/release-candidate/editor/*.vsix editor/
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         id: provenance
         with:
           subject-path: |
             dist/*
+            editor/*.vsix
             attestations/ci-evidence.tar.gz
       - uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
         id: sbom
@@ -589,11 +598,12 @@ jobs:
           retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   release-assets:
-    needs: [provenance, release-target, release-delivery]
+    needs: [provenance, release-target, release-delivery, vscode]
     if: >-
       !cancelled() && needs.release-target.result == 'success' &&
       needs.release-delivery.result == 'success' &&
-      (needs.provenance.result == 'success' || github.event_name == 'pull_request')
+      needs.vscode.result == 'success' &&
+      (needs.provenance.result == 'success' || github.event_name == 'pull_request' || github.ref == 'refs/heads/0.4.6')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -606,7 +616,7 @@ jobs:
           pattern: release-*
           path: downloads
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        if: github.event_name != 'pull_request'
+        if: needs.provenance.result == 'success'
         with:
           name: build-attestations
           path: downloads/build-attestations
@@ -759,7 +769,7 @@ jobs:
 
   vscode:
     needs: [scope, distributions]
-    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' && needs.distributions.result == 'success' }}
+    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' && needs.distributions.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -780,9 +790,10 @@ jobs:
       - run: npm test --prefix editors/vscode
       - name: Audit the complete extension Node tree, without exclusions
         run: npm audit --prefix editors/vscode --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > "$RUNNER_TEMP/vscode-node-audit.json"
-      - name: Build and verify a reproducible source-including VSIX
+      - name: Reuse the coordinated VSIX; build only the historical update fixture
         run: |
-          uv run --locked python -m scripts.qualification.packaging.vscode_distribution --output "$RUNNER_TEMP/vscode-dist"
+          mkdir "$RUNNER_TEMP/vscode-dist"
+          cp "$RUNNER_TEMP/vscode-candidate/editor/"* "$RUNNER_TEMP/vscode-dist/"
           uv run --locked python -m scripts.qualification.packaging.vscode_distribution --output "$RUNNER_TEMP/vscode-dist" --fixture-version 0.4.5
       - name: Install the same candidate engine outside the checkout
         run: |
@@ -811,7 +822,7 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
-          name: vscode-qualification
+          name: release-editor
           path: |
             ${{ runner.temp }}/vscode-node-audit.json
             ${{ runner.temp }}/vscode-dist/

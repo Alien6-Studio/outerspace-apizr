@@ -14,11 +14,12 @@ import tarfile
 import tempfile
 from pathlib import Path
 
+from scripts.qualification.packaging.check_distribution import candidate_inventory
 from scripts.qualification.packaging.coordinated_distributions import (
-    PROJECTS,
     digest,
     record,
     required_targets,
+    verify_editor,
     verify_records,
     write,
 )
@@ -119,21 +120,16 @@ def prepare(
     candidate = json.loads((candidate_dir / "candidate.json").read_text())
     version = candidate["version"]
     if (
-        candidate["schema"] != "apizr.release-candidate/v1"
+        candidate["schema"]
+        not in {"apizr.release-candidate/v1", "apizr.release-candidate/v2"}
         or candidate["commit"] != commit
         or not re.fullmatch(r"\d+\.\d+\.\d+(?:rc[1-9]\d*)?", version)
     ):
         raise ValueError("Candidate source/version mismatch")
-    expected = {
-        "dist/" + name.replace("-", "_") + "-" + version + suffix
-        for name in PROJECTS
-        for suffix in ("-py3-none-any.whl", ".tar.gz")
-    }
-    if {i["file"] for i in candidate["artifacts"]} != expected or len(
-        candidate["artifacts"]
-    ) != 8:
-        raise ValueError("Expected eight candidate distributions")
+    _, editor_files = candidate_inventory(candidate)
     verify_records(candidate_dir, candidate["artifacts"])
+    if editor_files:
+        verify_editor(candidate_dir, candidate)
     metadata = candidate.get("release_metadata")
     if metadata:
         if metadata["file"] != "release-metadata.json":
@@ -223,9 +219,17 @@ def prepare(
                 copy(
                     source,
                     source.name,
-                    "PyPI distribution",
+                    "VS Code extension"
+                    if item["file"] in editor_files
+                    else "PyPI distribution",
                     "coordinated/release-candidate/" + item["file"],
                 )
+            for item in candidate.get("editor_evidence", []):
+                source = candidate_dir / item["file"]
+                member = "coordinated/release-candidate/" + item["file"]
+                if not preview:
+                    bound_file(proof, member, source)
+                copy(source, source.name, "VSIX build and licence evidence", member)
             copy(
                 candidate_dir / "candidate.json",
                 "candidate.json",

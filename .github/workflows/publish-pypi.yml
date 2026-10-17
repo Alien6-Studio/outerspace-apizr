@@ -122,6 +122,7 @@ jobs:
           path: |
             metadata-candidate/candidate.json
             metadata-candidate/release-metadata.json
+            metadata-candidate/editor/
           if-no-files-found: error
           retention-days: 90
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -241,11 +242,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ needs.verify.outputs.release_sha }}
-          path: release-source
-          persist-credentials: false
+      - name: Fetch verified source objects without checking out release code
+        env:
+          RELEASE_SHA: ${{ needs.verify.outputs.release_sha }}
+        run: |
+          [[ "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          git fetch --no-tags --depth=1 origin "$RELEASE_SHA"
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         if: needs.verify.outputs.release_version != '0.4.4' && needs.verify.outputs.release_version != '0.4.5'
         with:
@@ -267,9 +269,12 @@ jobs:
           fi
       - name: Compare downloaded public bytes with the tagged README and metadata
         if: needs.verify.outputs.release_version != '0.4.4' && needs.verify.outputs.release_version != '0.4.5' && inputs.package == 'all'
+        env:
+          RELEASE_SHA: ${{ needs.verify.outputs.release_sha }}
         run: >-
           python3 -m scripts.qualification.packaging.check_release_metadata
-          --release --source-root release-source --candidate metadata-candidate --dist dist
+          --release --source-root . --source-revision "$RELEASE_SHA"
+          --candidate metadata-candidate --dist dist
           --public --output public-verification/public-release-metadata.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()

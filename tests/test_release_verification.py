@@ -500,13 +500,14 @@ def test_public_archive_check_executes_workflow_tools_and_reads_exact_tagged_sou
     checkouts = [
         step for step in steps if step.get("uses", "").startswith("actions/checkout@")
     ]
-    assert len(checkouts) == 2
+    assert len(checkouts) == 1
     assert checkouts[0]["with"] == {"persist-credentials": "false"}
-    assert checkouts[1]["with"] == {
-        "ref": "${{ needs.verify.outputs.release_sha }}",
-        "path": "release-source",
-        "persist-credentials": "false",
-    }
+    fetch = next(s for s in steps if s.get("name", "").startswith("Fetch verified"))
+    assert fetch["env"]["RELEASE_SHA"] == "${{ needs.verify.outputs.release_sha }}"
+    assert 'git fetch --no-tags --depth=1 origin "$RELEASE_SHA"' in fetch["run"]
+    metadata = next(s for s in steps if "--public" in s.get("run", ""))
+    assert '--source-revision "$RELEASE_SHA"' in metadata["run"]
+    assert "--source-root ." in metadata["run"]
     # Tagged package content is comparison input; it cannot replace the verifier.
     for step in steps:
         assert step.get("working-directory") != "release-source"
