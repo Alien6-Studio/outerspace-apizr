@@ -207,7 +207,8 @@ generation from the intended source instead of editing its expected digest.
 
 Only Tools are generated. Resources, Prompts, Tasks, Apps, Skills, agents,
 repository scanning, containers, sandboxing and attestation are outside this path.
-Historical generation and `apizr generate rest` remain available separately.
+`apizr generate rest` remains available separately. The historical generation
+pipeline was removed in 0.4.6.
 
 See the [MCP architecture contract](../../architecture/mcp-generator-v1.md) and
 [REST guide](rest.md) for the shared validation semantics.

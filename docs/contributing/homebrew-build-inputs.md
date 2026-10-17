@@ -9,7 +9,7 @@ are tracked in [#232](https://github.com/Alien6-Studio/outerspace-apizr/issues/2
 
 ## Runtime provider
 
-The runtime uses Homebrew `python@3.14`, a system-site-packages virtual
+The development runtime uses Homebrew `python@3.15`, an isolated virtual
 environment and the official `pydantic` formula. The first qualification used
 Pydantic **2.13.5** and pydantic-core **2.46.5**. Import locations must resolve into
 that formula's keg. The proof reproduces the dependency `.pth` written by
@@ -19,8 +19,10 @@ This is a different packaging contract from pip/uv: Homebrew owns Pydantic and
 its runtime closure, and may update them. Future qualification must check
 Apizr's public `pydantic>=2.12,<3` constraint and record exact tested versions.
 There is no claim of permanent byte parity with `uv.lock`, and no artificial
-versioned Pydantic formula. Python 3.14 is the Homebrew interpreter selection;
-Apizr's supported Python range remains 3.11–3.14.
+versioned Pydantic formula. Development 0.4.6 selects Homebrew Python 3.15;
+Apizr supports Python 3.11–3.15. Its virtualenv excludes global site-packages
+and admits the declared provider through `homebrew_deps.pth`. Historical
+qualifications retain their original interpreter and provider versions.
 
 The ongoing offline-build preflight checks the active provider against the
 formula's current stable/installed identity and that public version constraint.
@@ -29,13 +31,23 @@ the provider keg, and the loaded core must match Pydantic's exact, unconditional
 metadata requirement. Exact observed versions are retained in the proof.
 The policy's `qualification_version` fields and physical-Mac records remain the
 historical qualification evidence; they do not pin the rolling runtime provider.
-The locked, checksummed build-only wheelhouse and its manifest remain unchanged.
+Build-only inputs have a separate reviewed identity; a runtime-provider update
+does not select new build wheels.
 
 Official references: [Python formula guidance](https://docs.brew.sh/Language-Specific-Formulae),
 [Pydantic formula](https://formulae.brew.sh/formula/pydantic), and
 [Homebrew virtualenv API](https://docs.brew.sh/rubydoc/Language/Python/Virtualenv.html).
 
 ## Build-only inputs
+
+The `0.4.6` development refresh retains Hatchling 1.32.4 and the same packaging,
+pathspec, tomlkit and trove-classifiers bytes. Its six-package build closure
+updates only Pluggy 1.6.0 to 1.7.0, with an unchanged MIT notice. The reviewed
+policy, qualification manifest and Formula qualification identity bind these
+new bytes and the complete development lock. Frozen 0.4.5 publication evidence
+and its Formula publication identity remain separate.
+
+### Initial qualification baseline
 
 The initial `homebrew-build = ["hatchling==1.28.0"]` review added exactly two packages to the universal
 lock: Hatchling 1.28.0 and trove-classifiers 2026.9.21.13. Existing packaging 26.3,
@@ -133,6 +145,17 @@ the manifest SHA-256 remains
 `c981a11d84ec319cd10d156b18b31e073ca480e1f2b62f3880c4a17cac0f5405`.
 The boundary validator binds its deterministic receipt to that manifest, and
 release evidence archives both policies.
+
+On the **0.4.6 development branch**, raising the legacy/dev packaging constraint
+to the already locked 26.3 changed the full `uv.lock` identity without changing
+any third-party package or wheel. Development qualification therefore binds
+`1d817f4dd97c52b3a0dd5a59d5e24ac1cd7be086fd6ed8b1290e64920b4c3bb3`.
+The renderer's publication mode retains the frozen 0.4.5 identity
+`1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd`
+and refuses the changed development lock. The frozen publication fixture verifies
+that its distribution inventory, hashes, policy and roots differ from development
+only in the full lock hash. This qualification update grants no new publication
+authorization.
 
 GitHub's [hosted macOS runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
 are virtual machines. `macos-26` supplies an ARM64 CI proof for the intended
@@ -306,7 +329,7 @@ relabeled as a 0.4.3 qualification.
 
 ## 0.4.5 dependency maintenance
 
-The development branch adopts Hatchling **1.32.4** and its new build-only
+The 0.4.5 development branch adopted Hatchling **1.32.4** and its new build-only
 TOML parser, tomlkit **0.15.1**. The reviewed closure now contains six universal
 wheels: Hatchling, packaging, pathspec, pluggy, tomlkit and trove-classifiers.
 The exact source notices, dependency metadata and wheel hashes are retained;
@@ -336,3 +359,10 @@ public-tap receipts retain their original identities.
 The optional preparation environment uses PyPA `packaging` for runtime wheel-tag
 selection. Homebrew's minimal application runtime remains Pydantic-only, and its
 isolated build tools still do not enter that environment.
+
+## 0.4.6 legacy removal
+
+Removing the retired `legacy` extra and `questionary` refreshes only the universal
+lock identity in the development manifest: `b4a97eda9c73b487a42d7c7cb8f0afb0b92d185d670065eeef9a7c1d15d89357`. The six reviewed build
+wheels, their hashes, roots and build policy remain unchanged. Frozen publication
+inputs and physical-host evidence remain historical identities.

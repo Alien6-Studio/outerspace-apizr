@@ -4,9 +4,9 @@ from pathlib import Path
 from governed.helpers import SOURCE as BASE_SOURCE
 from oci.helpers import IMAGE
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.mcp import generate as mcp_generate
 from apizr.generators.rest import generate as rest_generate
-from apizr.inspection import inspect_source
 from apizr.oci.model import ExecutionPolicyV2
 
 SOURCE = (

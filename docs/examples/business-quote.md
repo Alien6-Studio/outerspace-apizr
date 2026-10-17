@@ -8,7 +8,7 @@ Generate REST/MCP directly, without an Experiment Run.
 The order receives a quote of **9,180 EUR cents**, with a fictional 20% tax and
 10% launch discount. These pedagogical business rules belong to this example.
 
-Use Python 3.11–3.14 on Linux/macOS and [Apizr core](../getting-started/install.md).
+Use Python 3.11–3.15 on Linux/macOS and [Apizr core](../getting-started/install.md).
 Download [business-quote.zip](../downloads/business-quote.zip), extract outside the
 checkout and open `business-quote/`. Stock/products and `order.json` are fictional;
 all files are GPL-3.0-or-later. Generated service requirements go in a separate

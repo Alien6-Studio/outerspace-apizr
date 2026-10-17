@@ -70,14 +70,11 @@ resulting author is `Your Name <your-email>`, not the GitHub login.
 
 ## Development workflow
 
-The published **0.4.3** release is integrated into `master`. All new work,
-including product fixes and documentation, branches from and targets protected
-`master`. The completed `release/0.4.2` and `release/0.4.3` branches are retired;
-immutable release tags, source commits and published archives remain unchanged.
-Development builds are previews, not replacement release archives.
-
-A future release line requires an explicit maintainer decision and its own
-qualification policy. Merging a PR into `master` never publishes a release.
+The current development line is the official `0.4.6` branch. Branch from it and
+target it for product fixes and documentation. Stable `master`, immutable release
+tags and published archives stay outside development changes. The maintainer
+must validate the branch and complete its protected integration before separately
+authorizing a release. A merge alone never publishes a package or site.
 See [release governance](docs/contributing/release-branches.md).
 
 Documentation, site and example changes use an independent CI environment in
@@ -85,11 +82,13 @@ Documentation, site and example changes use an independent CI environment in
 strict site construction, HTML validation and examples against published wheels.
 Product, root dependency, packaging and workflow changes retain full qualification.
 The [documentation publication guide](docs/contributing/releases.md#web-only-changes)
-defines the boundary and the automatic deployment after merge.
+defines the routing boundary and guarded stable-site deployment. Pushes to the
+pre-release `0.4.6` line retain full product qualification, including candidate
+examples; local documentation checks still use the independent environment.
 
 ```sh
 git fetch origin
-git switch -c feature/my-change origin/master
+git switch -c feature/my-change origin/0.4.6
 ```
 
 Fork the repository if needed. Install uv and run:

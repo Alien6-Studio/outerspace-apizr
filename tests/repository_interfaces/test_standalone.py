@@ -8,11 +8,18 @@ import time
 import anyio
 import httpx
 import httpx2
+import pytest
 from governed.helpers import SERVER, http_server
 from mcp import Client, StdioServerParameters
+from telemetry.bundle_assertions import assert_telemetry_free
 
 from apizr.repository_interfaces.generator import render_repository_bundle
 from apizr.repository_interfaces.output import write_bundle
+
+
+@pytest.mark.parametrize("interface", ["rest", "mcp"])
+def test_direct_repository_has_no_telemetry(inputs, interface):
+    assert_telemetry_free(render_repository_bundle(*inputs, interface=interface))
 
 
 async def exercise(target):

@@ -93,8 +93,8 @@ No RBAC, approvals, identity service or enterprise control plane is included.
 
 The [single-source REST](rest-generator-v1.md), [MCP](mcp-generator-v1.md),
 [local execution](execution-policy-v1.md) and [OCI](oci-container-runtime-v1.md)
-workflows remain supported. The [legacy pipeline](../getting-started/user-guide/apizr.md)
-is independent and retains its [documented limitations](legacy-behavior-contract.md).
+workflows remain supported. The legacy generation pipeline is removed in 0.4.6;
+see its [migration paths](../releases/migrate-0.4.6.md#removed-generation-pipeline).
 Canonical artifacts retain their versioned contracts.
 
 Explicit [application inputs](../getting-started/user-guide/project.md#application-dependencies-and-resources-041-development)
@@ -102,4 +102,4 @@ add selected resources and exact dependency pins to direct service bundles.
 The [experiment bridge](../getting-started/user-guide/experiment-exposure.md)
 selects matching outputs/dependencies from a successful Run using those contracts.
 
-See the [release notes and known limitations](../releases/0.4.5.md).
+See the [release notes and known limitations](../releases/0.4.6.md).

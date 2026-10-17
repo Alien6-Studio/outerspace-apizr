@@ -7,11 +7,11 @@ from fastapi.testclient import TestClient
 from mcp import Client
 from rest.helpers import application
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.mcp import render
 from apizr.generators.mcp.model import Manifest
 from apizr.generators.mcp.planner import tool_name
 from apizr.generators.rest import render as rest_render
-from apizr.inspection import inspect_source
 
 from .helpers import server_bundle
 

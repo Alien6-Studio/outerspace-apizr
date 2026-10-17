@@ -6,7 +6,8 @@ from typing import NamedTuple
 
 from apizr.capabilities import CapabilityDocument, inspect_source
 from apizr.capabilities.model import Digest, Source
-from apizr.modules.notebook_transformr.transformr.nbTransformr import NotebookTransformr
+from apizr.capabilities.source import notebook_text, read_source
+from apizr.notebooks.exporter import NotebookTransformr
 
 
 class NotebookAnalysis(NamedTuple):
@@ -16,6 +17,7 @@ class NotebookAnalysis(NamedTuple):
 
 def inspect_notebook_bytes(raw: bytes, *, module_name: str) -> NotebookAnalysis:
     """Retain transient Python evidence without adding fields to Capability IR."""
+    notebook_text(raw)
     python_source, _ = NotebookTransformr().convert_notebook(io.BytesIO(raw))
     analyzed = inspect_source(python_source, module_name=module_name)
     document = CapabilityDocument(
@@ -34,6 +36,4 @@ def inspect_notebook_bytes(raw: bytes, *, module_name: str) -> NotebookAnalysis:
 
 def inspect_notebook(path: str | Path, *, module_name: str) -> CapabilityDocument:
     """Hash original notebook bytes and the exact non-executed exported Python."""
-    return inspect_notebook_bytes(
-        Path(path).read_bytes(), module_name=module_name
-    ).document
+    return inspect_notebook_bytes(read_source(path), module_name=module_name).document

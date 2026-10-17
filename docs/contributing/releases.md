@@ -3,11 +3,76 @@
 This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
 and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
+## 0.4.6 preparation and publication boundary
+
+Prepare the README, site, installation commands and distribution metadata in
+final 0.4.6 form before building the candidates. This presentation does not
+establish that packages, tags, documentation or listings have been published.
+The maintainer requires review and validation of the GitHub branch, followed by
+its normal protected merge into `main`/`master`, before any publication to PyPI,
+Homebrew, MCP Registry, extension registries, Glama or the public documentation
+site. A successful development build is not publication authorization.
+
+Before candidate construction, run:
+
+```sh
+uv run --locked python -m scripts.qualification.packaging.check_release_metadata --release
+```
+
+The version source is `pyproject.toml`. Review the inventory:
+
+| Surface | Files and statements |
+| --- | --- |
+| Frozen package descriptions | Root and three plugin `README.md` files; current feature prose, package pins and immutable `v<version>` source links |
+| Package metadata | Root and plugin `pyproject.toml`: version, internal pins, Repository, Documentation, Issues and Changelog URLs |
+| Plugin/launcher descriptors | Three `apizr-extension.json` files; `plugins/mcp/distribution/{pyproject.toml,manifest.json}` |
+| Installation and site | `docs/getting-started/install.md`, `docs/index.md`, `mkdocs.yml`, `docs/releases/<version>.md`, `CHANGELOG.md` |
+| Forge and directories | `action.yml` and `templates/apizr.yml` defaults, `server.json` package versions, Dockerfile `SOURCE_REF=v<version>` and qualified `glama.json` ownership bytes |
+
+The retained Glama descriptor schema has no version field; bind its exact bytes
+and the tagged Dockerfile to the qualified source instead of inventing a field.
+Render and inspect all four package READMEs in the docs environment with
+`--render <new-directory>`. Candidate construction records a SHA-256 snapshot
+before building. Rechecking the retained snapshot with `--snapshot` refuses any
+subsequent change to the inventoried files, including same-version editorial
+changes. Such a change requires a new candidate and renewed qualification.
+
+Before any later, explicitly authorized publication dispatch or Glama re-index,
+use the original CI candidate inventory against the exact tagged source:
+
+```sh
+python3 -m scripts.qualification.packaging.check_release_metadata --release \
+  --source-root release-source --candidate metadata-candidate --dist dist
+```
+
+This binds the source commit, original pre-build snapshot, all eight archive
+identities, frozen README bytes and package URLs. PyPI preflight runs it before
+any upload. MCP publication and the Glama/Smithery verification path require the
+already-published protected release, download its original snapshot and archives,
+and compare actual public PyPI bytes before any registry/re-index action.
+The PyPI post-publication job also runs the checker with `--public` and retains
+`public-release-metadata.json`. Only historical 0.4.4/0.4.5 releases predate this
+snapshot contract; a missing policy or snapshot on later versions fails closed.
+Review the four retained rendered READMEs before building. An editorial change
+requires a new candidate; public verification checks the frozen bytes. Executing
+these publication paths still requires the maintainer's authorization and the
+protected release source described above.
+
+## VS Code distribution preparation for 0.4.6
+
+The [VSIX build and qualification procedure](vscode-distribution.md) prepares
+the proposed `alien6-studio.apizr` identity and a source-including, reproducible
+archive. Marketplace/Open VSX publisher ownership must be verified separately.
+Publication requires explicit maintainer authorization of the exact qualified
+VSIX/hash and completion of the remaining milestone qualification.
+No registry publication, credential or Python release change is authorized by
+the development build.
+
 ## Authorized 0.4.5 finalization
 
-The maintainer has authorized **0.4.5 only**, conditional on every mandatory
-security/release gate. Development work stays on `0.4.5`; integration uses the
-normal protected PR into `master`. The exact resulting master commit must have
+The maintainer authorized **0.4.5 only**, conditional on every mandatory
+security/release gate. At that time, development work stayed on `0.4.5`; integration
+used the normal protected PR into `master`. The exact resulting master commit must have
 successful push CI, Security and Documentation. The verifier requires all six
 release targets, distributions, release-delivery, provenance and release-assets,
 plus the actual Node audit step in the required Security dependencies job.
@@ -111,16 +176,17 @@ Homebrew tap from the immutable final core sdist and signed master provenance;
 complete its own reviewed audit and real Apple Silicon installation before
 merging the tap update.
 
-## Current published baseline
+<span id="current-published-baseline"></span>
 
-The current public package version is **0.4.5** for the core and all three plugins,
-source `da74e6de5800eab9c275e42c5d4c24a59ac4fcbe`. GitHub, PyPI and Official
-Registry publication are verified. Third-party indexing is outside release
-acceptance criteria. The original archives from protected master CI `38137540311` were
-published by workflow `38140159100`; all eight public files match the qualified
-bytes. See the [release record](../releases/0.4.5.md). Master integration and documentation
+## Historical 0.4.4 published baseline
+
+The historical stable release was **0.4.4** for the core and all three plugins,
+source `46c573d7f808f8d491cde1062d474b145288697f`. Publication is complete.
+The original archives from protected master CI `37222486067` were published
+by workflow `37223902790`; all eight public files match the qualified bytes.
+See the [release record](../releases/0.4.4.md). Master integration and documentation
 commits preserve the released product but never replace its immutable source.
-Documentation maintenance targets `master`.
+That integration targeted `master`; current development uses `0.4.6`.
 
 The **0.4.1rc1** and **0.4.0rc1** prereleases remain immutable history. The earlier
 core-only 0.4.0 upload was incomplete and removed; no coordinated final 0.4.0
@@ -156,9 +222,27 @@ validation. No personal token or rebuild is required.
 
 ## Retain and publish one coordinated artifact set
 
-CI builds four wheels and four sdists once per candidate. Independent sdist
-reconstructions are tests and never replace the selected archives. Retain
-`release-candidate`, the six `release-target-*` exports, `release-delivery`,
+Before building a release-line candidate, complete the dependency freeze:
+
+- [ ] Refresh runtime, optional and development dependencies within the reviewed
+  bounds; record any deliberate hold or constraint change.
+- [ ] Review the exact locked source/archive hashes and upstream notices. Pass
+  source, licence, all Python audit scopes and the unfiltered client-tool Node
+  audit; qualify the corresponding development Homebrew build inputs and Formula.
+- [ ] Commit the reviewed `uv.lock` and policy together before building from the
+  exact clean source. Retain that lock with the candidate and its SBOMs.
+- [ ] Use that same committed lock for final qualification and publication.
+  A subsequent dependency or notice change requires a new candidate and renewed
+  qualification; never re-resolve dependencies during publication or replace
+  the retained candidate archives.
+
+CI builds four wheels, four sdists and one source-including VSIX in the
+`distributions` job. The v2 candidate manifest records all nine artifacts and
+their kinds, sizes and SHA-256 digests, plus the VSIX reproducibility and licence
+reports. The editor job consumes those exact VSIX bytes; only the synthetic
+historical update fixture is built there. Independent sdist reconstructions and
+the repeated VSIX compilation are tests and never replace selected candidates.
+Retain `release-candidate`, all eight `release-target-*` exports, `release-editor`, `release-delivery`,
 `build-attestations` and `release-assets`. The latter is only an Actions artifact,
 not an automatic upload to a GitHub release. PR previews lack signed provenance
 and cannot authorize publication.
@@ -176,9 +260,12 @@ Unintended versions and refs are refused. Development builds alone do not
 authorize publication. Releases through 0.4.0rc1 retain `master` provenance; published
 0.4.1 retains `refs/heads/release/0.4.1` provenance.
 
-Qualification includes Linux CPython 3.11–3.14, macOS 3.11/3.14 and disposable
+Qualification includes Linux CPython 3.11–3.15, macOS 3.11/3.14/3.15 and disposable
 registry/TSA/ORAS fixtures. Target reports record architecture, patch version,
-bytes and timing samples. Runtime SBOM attestations cover the core distributions;
+bytes and timing samples. The protected-master signer waits for editor
+qualification and includes the VSIX as a provenance subject. The complete
+validation archive also retains the editor logs, executed notebook, bundles,
+Node audit and source-bound build/licence records. Runtime SBOM attestations cover the core distributions;
 plugin dependency identities remain in target inventories. Disposable worker
 image identities are test evidence, not official published images.
 
@@ -190,6 +277,25 @@ public archives with the original eight files. Existing bytes must match exactly
 missing files alone are staged. No rebuild, overwrite or `skip-existing` is allowed.
 Network/access errors never mean absence. Verify fresh public installations and
 retain the public comparison and signed timestamped receipt before declaring delivery.
+
+### Dated directory verification after authorized publication
+
+Record a dated observation for each channel in `docs/releases/0.4.6.md`, retaining
+the JSON responses or a dated explanation when an API is unavailable:
+
+- Official Registry: exact version and `isLatest`; PyPI: actual archive bytes and
+  rendered README without development wording.
+- Glama: request a re-evaluation only when authorized, then observe its actual
+  score date and schema coverage. A request alone is not evidence of refresh.
+- MCPLookup: observed version and observation date; Smithery: completed listing
+  or the explicit decision not to pursue it.
+- TensorBlock and punkpeye awesome lists: observed submission/listing state;
+  MCPfinder: observed snapshot date, including a stale or unavailable result.
+- README directory badges: retain only claims supported by those observations;
+  annotate or remove stale badges. Archive these observations with the release.
+
+These are post-publication checks. Preparing this checklist never contacts a
+publication endpoint, requests indexing or authorizes distribution.
 
 For first-time plugin publishers, PyPI allows only one pending publisher for an
 identical repository/workflow/environment configuration. Register and publish one
@@ -322,19 +428,145 @@ must be present on the default branch before its first manual dispatch.
 Complete against the final commit; historical green runs are not sufficient.
 
 - [ ] All four versions, tag and built metadata agree; public files are absent or byte-identical to the approved set.
-- [ ] README renders, public URLs work and current/legacy documentation is accurate.
+- [ ] README and installation guide are final before candidate build; rendered previews and frozen archive metadata match the reviewed source.
+- [ ] The retained metadata snapshot passes again before each authorized publication dispatch; no README or metadata changed after candidate construction.
 - [ ] Ruff, Pyright and pre-commit pass.
-- [ ] Python 3.11–3.14 tests and every package coverage floor pass.
+- [ ] Python 3.11–3.15 tests and every package coverage floor pass.
 - [ ] Wheel/sdist content and hashes are reviewed; installed-wheel smoke passes.
 - [ ] Legacy container matrix and mandatory `oci-isolation` pass unchanged.
 - [ ] Dependency audit, CodeQL and strict MkDocs build pass.
 - [ ] License inventory/policy and preserved notices cover the exact universal lock.
 - [ ] Open issues are classified and no release blocker remains unresolved.
+- [ ] Roll development-cycle references in `AGENTS.md`, the architecture guide and
+      contributor documentation forward to the next development branch.
 - [ ] Ownership, Trusted Publisher and protected `pypi` environment are verified.
 - [ ] The tag identifies the exact verified source commit and CI artifact run (protected master for 0.4.4).
 - [ ] Managed Attest identity, signature, RFC 3161 timestamp and recomputation pass
       for the exact delivery; receipt and public verification material are archived.
 - [ ] PyPI file hashes and fresh index installation are verified after publication.
+
+## Development iteration and PR qualification
+
+On the `0.4.6` development line, implement several related milestone tickets
+locally before pushing. Run focused checks while the batch evolves, including
+the mandatory package architecture gate before commits. Do not wait for a full
+matrix between individual tickets and do not push each ticket separately: one
+push starts the complete qualification of the batch. The complete platform
+matrix, coverage/security floors and final release qualification remain required.
+Dependency refreshes include their lock, licence inventory and Homebrew identity
+in the same batch. Qualification closes the batch, rather than interrupting each
+implementation step.
+
+### Automatic development qualification
+
+`CI` is the single automatic entry point for development pushes and pull requests.
+It classifies the complete change once, builds one coordinated candidate, then
+calls the existing satellite workflows with the validated scope and immutable
+candidate artifact from the same run. All native, installed, vendor, cleanup,
+security and documentation proofs remain. Documentation examples reuse the core
+wheel from that candidate. The MCP caller still invokes native preparation.
+
+Security and Documentation retain their independent **master push** and manual
+entry points, and Security retains its scheduled audit. Their master publication
+and verification contracts remain unchanged. On development/PR runs, three
+small top-level result jobs retain the protected `dependencies`, `codeql` and
+`build` contexts; each requires its actual shared qualification to succeed.
+On master those result jobs have distinct `external-*` names and are skipped,
+so they cannot replace or mask the existing protected master checks. Development
+builds have read permissions; the existing documentation deploy remains restricted
+to master. Publication workflows and accepted release source refs remain separate.
+
+The called workflows skip their fallback scope job when a validated caller
+supplies it. Standalone manual runs still classify their own source and build a
+candidate if needed. Shared candidates use the caller's checked-out GitHub SHA,
+including the synthetic merge commit for PR qualification; consumers verify the
+manifest/source identity before using its wheel bytes. No artifact from another
+workflow run or source is selected implicitly.
+
+Retain the source SHA, run ID, event, attempt and all job conclusions from the
+orchestrating CI run. A green subset is not qualification. PR supersession uses
+the root workflow/PR group, while each called workflow has its own literal group
+prefix; reusable calls must never share the caller's `github.workflow` group and
+cancel one another. PR artifacts retain seven days and qualification artifacts
+90 days. The existing documentation deployment serialization remains unchanged.
+
+A deliberate same-source cost comparison can dispatch CI with
+`qualification_layout=independent`, then `shared`, on the same development ref.
+The control restores independent scope decisions, candidate builds and the docs
+wheel build while retaining the same proofs, thresholds and job graph. Normal
+pushes always share inputs. This comparison is opt-in: it must not add a second
+full matrix to ordinary development batches. Record runner time and wall-clock
+from completed runs before claiming an orchestration gain.
+
+`Pytest performance comparison` is now manual only. Its accepted #296 measurement
+is retained; moving or maintaining the benchmark must not automatically run four
+more full suites. A deliberate serial/parallel comparison remains separate from
+qualification of the complete batch.
+
+Dependabot's development configuration groups compatible minor/patch uv updates
+and groups monthly Actions updates, including CodeQL init/analyze together. It
+does not modify the ten existing master-targeted PRs or authorize their merge.
+Scanner consolidation still needs to preserve the explicit protected `codeql`
+context and native alert publication. Development work never changes master
+protection implicitly.
+
+### Parallel full-suite qualification
+
+The four Linux compatibility jobs and both macOS full-suite jobs use
+`-n auto --maxprocesses=2 --dist=loadfile --max-worker-restart=0`. Each worker
+collects the complete test directory with its nested fixtures; file scheduling
+keeps module fixtures together without rewriting test identities. The cap of two
+limits competing process starts in deadline-sensitive tests. Worker crashes fail
+the run without automatic restart. Local serial reproduction uses `-n 0`.
+
+Pytest-cov combines worker data into the existing `.coverage`, `coverage.json`
+and Linux `coverage.xml`; JUnit remains `tests.xml`. All 23 compatibility coverage
+commands and the two macOS coverage commands remain in place, including the
+global, legacy, domain and selected line/branch floors. Artifact names and the
+17 protected check contexts are unchanged.
+
+The resource audit for parallel execution is:
+
+| Resource | Isolation and scheduling |
+| --- | --- |
+| HTTP/TLS and SSH fixtures | Loopback port 0, per-test keys/configuration, temporary roots and owned process groups; parallel allowed |
+| Unix sockets, agents, fake OCI daemons | Unique temporary directories and socket paths; parallel allowed |
+| Environment/import/working-directory mutations | Confined to a worker process or a disposable source copy; file fixtures remain together |
+| Real Docker worker integration (`worker_image` fixture) | Explicit `serial` marker, including dependent fixtures; `APIZR_TEST_OCI_IMAGE` rejects distributed pytest before opening the image inventory |
+
+No tests are deselected for parallel runs. The real Docker and repeated kernel
+boundary cases stay in the existing serial `oci-isolation` job with its image,
+coverage gates and repetitions unchanged. Their ordinary full-suite skips remain
+visible when no worker image is configured.
+
+`scripts/benchmark_pytest.py --output /absolute/new/directory` runs serial then
+parallel on the same checkout, interpreter, lock and runner. It retains both
+JUnit/JSON/XML reports, logs, commands, durations, source SHA and lock digest.
+Every compatibility coverage gate runs against each independent coverage data
+file. It rejects changed test identities, multiplicities or pass/skip outcomes,
+failed/incomplete reports, and a duration reduction below 40%. The dedicated
+workflow measures Python 3.14 on Ubuntu and macOS. One ordered pair is a bounded
+comparison, not a statistical estimate: the second run may benefit from caches,
+and runner load can vary. Read its retained summary before claiming a measured
+gain; historical runs on different commits are not the before/after pair.
+
+Satellite workflows retain these distinct macOS proofs while removing six
+redundant Python 3.11 cells:
+
+| Satellite job | Retained macOS Python | Removed cell and remaining evidence |
+| --- | --- | --- |
+| MCP stdio | 3.14 | 3.11; all four Linux versions plus full-suite and installed-target macOS 3.11 remain |
+| MCP generated recovery | 3.11 | None; already one macOS version, retains its fixed stdio/HTTP recovery series |
+| Extension cleanup and Git/worker cleanup | 3.14 | One 3.11 cell each; Linux 3.11/3.14 and all 25 repetitions per remaining cell remain |
+| Extension packaging | 3.14 | 3.11; Linux 3.11–3.15, macOS Homebrew and installed candidates remain |
+| Client collections | 3.14 | 3.11; Linux 3.11/3.14 and actual vendor-tool validation remain |
+| Onboarding | 3.14 | 3.11; Linux 3.11/3.14 with real bash/zsh/fish and installed proofs remain |
+
+The main macOS 3.11/3.14 full suites and installed-target jobs remain. Native
+preparation's ARM/Intel and libc-specific proofs are distinct and unchanged.
+Cleanup keeps 25 macOS samples: process-group, pipe and SSH cleanup are OS-sensitive
+and a single pass would discard repeated native evidence. Removing duplicate
+Python cells reduces runner contention without making that tradeoff.
 
 ## Documentation publication
 

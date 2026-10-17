@@ -1,3 +1,5 @@
+<span id="legacy-pipeline-compatibility"></span>
+
 # Technical reference
 
 For shared definitions, see [Concepts and limits](concepts.md). For a task
@@ -46,25 +48,13 @@ historical pipeline.
 The [MCP generator contract](../architecture/mcp-generator-v1.md) describes the
 Tools backend and the interface semantics shared with REST.
 
-### Legacy pipeline — compatibility
+### Removed historical pipeline
 
-These entries describe the historical pipeline and its HTTP generation service,
-separately from the modern compiler commands above.
-
-| What you need | Where to look |
-| --- | --- |
-| Run one pipeline stage from the command line | [Python analysis](../getting-started/user-guide/code-analyzr.md), [FastAPI generation](../getting-started/user-guide/fast-apizr.md), [Docker generation](../getting-started/user-guide/dockerizr.md) |
-| Understand or call a pipeline component | [Notebook conversion](../modules/notebook-transformr.md), [Python analysis](../modules/code-analyzr.md), [FastAPI generation](../modules/fast-apizr.md), [Docker generation](../modules/dockerizr.md) |
-| Generate files through Apizr's HTTP service | [Service setup and project upload](../apis/apizr-api.md), with the stage endpoints in the same navigation group |
-| Understand compatibility guarantees | [Legacy behavior contract](../architecture/legacy-behavior-contract.md) |
-
-The HTTP generation service is Apizr's own interface for producing files. It is
-separate from the business API produced by a conversion; the generated
-application exposes its own `/docs` schema when started.
-
-The historical pipeline and Capability IR remain independent. The new REST
-generator consumes IR and readiness; legacy FastApizr and Dockerizr retain their
-existing analysis and output.
+The legacy CLI, HTTP generation service and step-plugin APIs were removed in
+0.4.6. The [migration table](../releases/migrate-0.4.6.md#removed-generation-pipeline)
+records every former entrypoint and its modern replacement.
+[Notebook conversion](../modules/notebook-transformr.md) remains supported through
+`apizr.notebooks`; it does not execute cells.
 
 ## Policies and formats
 

@@ -3,14 +3,14 @@
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 `apizr.extension_runtime` invokes a **trusted, already installed** Python module
-in a fresh process. It is independent of the CLI, `apizr.compiler`, project
+in a fresh process. It is independent of the CLI, `apizr.workspace.compiler`, project
 configuration and historical `apizr.pipeline.v1` plugins.
 
 <span id="managed-publication-and-signing-authorization"></span>
 
 ## Managed build, publication and signing authorization
 
-`apizr.local_plugins.run_extension` enforces an explicit
+`apizr.plugins.local.run_extension` enforces an explicit
 [operator policy](operator-policy.md) for `outerspace-apizr-oci build`, `outerspace-apizr-oci push`, `outerspace-apizr-attest publish`
 and `outerspace-apizr-attest attest`, equally from Python and `apizr plugins run`. It retains
 activation and usage protection, then checks the build identity, operation and

@@ -48,11 +48,10 @@ def action_values(**updates):
 def test_platform_contracts_and_immutable_supply_chain():
     assert ACTION["name"] and ACTION["description"]
     version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
-    # Public defaults remain on the published release; candidate CI supplies
-    # the exact unreleased wheel and version explicitly.
-    assert version == "0.4.5"
-    assert ACTION["inputs"]["apizr-version"]["default"] == "0.4.5"
-    assert INPUTS["apizr-version"]["default"] == "0.4.5"
+    # Prepared release defaults match the core; CI supplies the exact wheel.
+    assert version == "0.4.6"
+    assert ACTION["inputs"]["apizr-version"]["default"] == version
+    assert INPUTS["apizr-version"]["default"] == version
     assert ACTION["runs"]["using"] == "composite"
     assert set(ACTION["inputs"]) == {
         "operation",
@@ -229,7 +228,15 @@ def test_action_refuses_invalid_inputs_before_install_or_analysis(changes):
 
 @pytest.mark.parametrize(
     "version, expected",
-    [("3.11", 0), ("3.12", 0), ("3.13", 0), ("3.14", 0), ("3.10", 2), (SENTINEL, 2)],
+    [
+        ("3.11", 0),
+        ("3.12", 0),
+        ("3.13", 0),
+        ("3.14", 0),
+        ("3.15", 0),
+        ("3.10", 2),
+        (SENTINEL, 2),
+    ],
 )
 def test_actual_action_python_preflight(tmp_path, version, expected):
     process = subprocess.run(
@@ -275,7 +282,7 @@ def test_original_wheel_identity_and_hash(tmp_path):
         ADAPTER["wheel_bytes"]("https://example.invalid/file.whl", digest, "0.4.4")
 
 
-@pytest.mark.parametrize("version", ["0.4.2", "0.4.6", "0.4.4rc1"])
+@pytest.mark.parametrize("version", ["0.4.2", "0.4.7", "0.4.4rc1"])
 def test_original_wheel_refuses_other_qualification_versions(tmp_path, version):
     path, digest = wheel(tmp_path, version=version)
     with pytest.raises(ValueError, match="development_version_required"):
@@ -341,7 +348,7 @@ def test_action_install_is_exact_core_only_and_child_has_no_tokens(
         ADAPTER["main"].__globals__["subprocess"],
         "run",
         lambda *a, **kw: types.SimpleNamespace(
-            returncode=0, stdout=b"outerspace-apizr 0.4.5\n"
+            returncode=0, stdout=b"outerspace-apizr 0.4.6\n"
         ),
     )
     assert ADAPTER["main"]() == 0
@@ -354,12 +361,12 @@ def test_action_install_is_exact_core_only_and_child_has_no_tokens(
         "--no-input",
         "--index-url",
         "https://pypi.org/simple",
-        "outerspace-apizr==0.4.5",
+        "outerspace-apizr==0.4.6",
     ]
     assert calls[1][1:] == ADAPTER["invocation"](values)
     assert (
         (tmp_path / "outputs").read_text()
-        == "result=.apizr-ci/result.json\nartifacts=.apizr-ci\napizr-version=0.4.5\nstate=success\n"
+        == "result=.apizr-ci/result.json\nartifacts=.apizr-ci\napizr-version=0.4.6\nstate=success\n"
     )
 
 
@@ -370,14 +377,33 @@ def test_real_workflow_requires_original_candidate_and_read_only_permissions():
         Loader=yaml.BaseLoader,
     )
     assert workflow["permissions"] == {"contents": "read"}
-    assert {"pull_request", "workflow_dispatch"} <= set(workflow["on"])
+    assert {"workflow_call", "workflow_dispatch"} == set(workflow["on"])
+    caller = yaml.load(
+        (ROOT / ".github/workflows/ci.yml").read_text(), Loader=yaml.BaseLoader
+    )
+    assert "pull_request" in caller["on"]
+    assert caller["jobs"]["forge-integrations-qualification"]["uses"] == (
+        "./.github/workflows/forge-integrations.yml"
+    )
     jobs = workflow["jobs"]
     assert all(
         "environment" not in job and "permissions" not in job for job in jobs.values()
     )
     composite = jobs["composite"]
-    assert composite["needs"] == "candidate"
-    assert composite["strategy"]["matrix"]["python"] == ["3.11", "3.12", "3.13", "3.14"]
+    assert composite["needs"] == ["scope", "candidate"]
+    assert "needs.candidate.result == 'success'" in composite["if"]
+    assert "inputs.scope_ready && inputs.candidate_artifact != ''" in composite["if"]
+    assert any(
+        "['commit'] == os.environ['GITHUB_SHA']" in step.get("run", "")
+        for step in composite["steps"]
+    )
+    assert composite["strategy"]["matrix"]["python"] == [
+        "3.11",
+        "3.12",
+        "3.13",
+        "3.14",
+        "3.15",
+    ]
     steps = [s for s in composite["steps"] if s.get("uses") == "./"]
     assert {s["with"].get("operation", "check") for s in steps} == {
         "check",
@@ -386,7 +412,7 @@ def test_real_workflow_requires_original_candidate_and_read_only_permissions():
     }
     assert any(s.get("continue-on-error") == "true" for s in steps)
     for step in steps:
-        assert step["with"]["apizr-version"] == "0.4.5"
+        assert step["with"]["apizr-version"] == "0.4.6"
         assert step["with"]["wheel-path"] == "${{ steps.wheel.outputs.path }}"
         assert step["with"]["wheel-sha256"] == "${{ steps.wheel.outputs.sha256 }}"
     assert (

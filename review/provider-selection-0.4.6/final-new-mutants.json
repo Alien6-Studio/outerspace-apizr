@@ -1,0 +1,20 @@
+{
+  "baseline": "passed",
+  "mutations": [
+    {
+      "name": "scientific-provider-source-facts-binding",
+      "test": "tests/scientific_providers/test_analysis.py::test_revalidation_reuses_only_matching_immutable_facts",
+      "result": "killed"
+    },
+    {
+      "name": "scientific-provider-retained-identity",
+      "test": "tests/scientific_providers/test_selection.py::test_retained_provider_identity_cannot_change",
+      "result": "killed"
+    },
+    {
+      "name": "scientific-provider-selection-readmission",
+      "test": "tests/scientific_providers/test_selection.py::test_refusal_is_unknown_no_exception_or_fallback[invalid-True-provider_result_invalid]",
+      "result": "killed"
+    }
+  ]
+}

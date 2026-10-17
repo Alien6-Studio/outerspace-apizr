@@ -212,7 +212,7 @@ filesystem tree**. It is not a Git commit hash. Policy changes alter repository
 identity even when selected source bytes overlap. Excluded content changes do not.
 `catalog_digest` hashes the complete canonical catalog, including per-source
 Inspections and diagnostics. It is returned separately and never hashes itself.
-Inspection digests use existing `apizr.inspection.json_bytes`.
+Inspection digests use existing `apizr.capabilities.inspection.json_bytes`.
 
 ## Compatibility and evidence
 
@@ -229,7 +229,8 @@ cross-version parser. The common-syntax golden corpus is identical on all four.
 Filesystem filename codepoints are preserved rather than silently renamed.
 
 Existing IR, Inspection, Readiness, REST/MCP, policy/runtime, direct/local/OCI and
-legacy artifact contracts are unchanged. Lexical import inventory and relationship
+retained historical artifacts are unchanged. The legacy generator was removed in
+0.4.6. Lexical import inventory and relationship
 resolution belong to the separate [Capability Graph v1](capability-graph-v1.md)
 consumer. Repository generation/execution, notebook discovery, Windows filesystem
 traversal and SCM provenance remain deliberately outside the scanner.

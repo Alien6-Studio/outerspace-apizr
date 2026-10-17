@@ -5,9 +5,9 @@ import nbformat
 import pytest
 
 from apizr.capabilities import document_digest
-from apizr.capability_notebooks import inspect_notebook_bytes
+from apizr.capabilities.inspection import Inspection, inspect_source
+from apizr.generators.notebooks import inspect_notebook_bytes
 from apizr.generators.rest import plan, render
-from apizr.inspection import Inspection, inspect_source
 from apizr.readiness import assess, report_digest
 
 

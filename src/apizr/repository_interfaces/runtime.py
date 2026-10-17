@@ -5,50 +5,18 @@ import importlib
 import importlib.abc
 import importlib.util
 import json
-import os
 import re
-import stat
 import sys
 import types
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any
 
 from apizr.interfaces.runtime import IntegrityError, verify_binding
+from apizr.repository_interfaces.artifacts import BundleBudget, read_artifact
 
 
 def digest(content: bytes) -> dict[str, str]:
     return {"algorithm": "sha256", "value": hashlib.sha256(content).hexdigest()}
-
-
-def read_artifact(root: Path, name: str) -> bytes:
-    path = PurePosixPath(name)
-    if (
-        not path.parts
-        or path.is_absolute()
-        or str(path) != name
-        or ".." in path.parts
-        or "\\" in name
-    ):
-        raise IntegrityError("Invalid repository artifact")
-    descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
-    try:
-        for part in path.parts[:-1]:
-            child = os.open(
-                part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=descriptor
-            )
-            os.close(descriptor)
-            descriptor = child
-        file = os.open(
-            path.parts[-1],
-            os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK,
-            dir_fd=descriptor,
-        )
-        with os.fdopen(file, "rb") as stream:
-            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
-                raise IntegrityError("Repository artifact must be a regular file")
-            return stream.read()
-    finally:
-        os.close(descriptor)
 
 
 class RepositoryLoader(importlib.abc.MetaPathFinder, importlib.abc.Loader):
@@ -104,7 +72,7 @@ class RepositoryLoader(importlib.abc.MetaPathFinder, importlib.abc.Loader):
         if source is None:
             return  # Synthetic namespace, no invented source file.
         try:
-            content = read_artifact(self.root, source["bundle_path"])
+            content = read_artifact(self.root, source["bundle_path"], source["size"])
             if (
                 len(content) != source["size"]
                 or digest(content) != source["source_digest"]
@@ -131,17 +99,17 @@ def validate_bundle(
     The entry point additionally pins the repository interface digest.
     """
     manifest_name = "apizr-repository-" + interface + ".json"
-    manifest = json.loads(read_artifact(root, manifest_name))
+    budget = BundleBudget()
+    manifest = json.loads(budget.read(root, manifest_name))
     if manifest["schema_version"] != "apizr.repository-" + interface + "/v1":
         raise ValueError("schema")
-    artifacts: dict[str, bytes] = {}
+    artifacts = budget.read_many(root, manifest["artifacts"])
     for name, expected_hash in manifest["artifacts"].items():
         if name == manifest_name:
             raise ValueError("self hash")
-        content = read_artifact(root, name)
+        content = artifacts[name]
         if digest(content) != expected_hash:
             raise ValueError("artifact digest")
-        artifacts[name] = content
     contract = json.loads(artifacts["repository-interface.json"])
     interface_digest = digest(artifacts["repository-interface.json"])
     if interface_digest != manifest["repository_interface_digest"] or (

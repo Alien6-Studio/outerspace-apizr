@@ -33,6 +33,7 @@ class NativeTarget:
     identity: Target
     resolver_platform: str
     environment: dict[str, str]
+    native_resolution: bool = False
 
 
 def probe(python: Path, platform: str, work: Path, control: Control) -> NativeTarget:
@@ -58,6 +59,7 @@ def probe(python: Path, platform: str, work: Path, control: Control) -> NativeTa
         if target.implementation != "cpython" or not target.abi:
             raise ValueError()
         environment: dict[str, str] = {}
+        native_resolution = False
         if data["system"] == "darwin" and target.machine in {"arm64", "x86_64"}:
             match = re.fullmatch(r"macosx-(\d+\.\d+)-(arm64|x86_64)", target.platform)
             if match is None or match[2] != target.machine:
@@ -72,15 +74,23 @@ def probe(python: Path, platform: str, work: Path, control: Control) -> NativeTa
             if (
                 libc != "glibc"
                 or match is None
-                or int(match[1]) not in {17, 28, *range(31, 41)}
+                or int(match[1]) not in {17, 28, *range(31, 42)}
             ):
                 raise ValueError()
             resolver_platform = f"{target.machine}-manylinux_2_{match[1]}"
+            if int(match[1]) == 41:
+                # uv 0.12/0.13 enumerate explicit triples only through 2.40.
+                # Its measured native mode supports this host; do not pretend
+                # 2.41 is an accepted CLI triple or resolve for an older libc.
+                if sys.platform != "linux" or target.machine != host_platform.machine():
+                    raise ValueError()
+                resolver_platform = f"native-{target.machine}-glibc-2.41"
+                native_resolution = True
         else:
             raise ValueError()
         if platform not in {"native", target.platform, resolver_platform}:
             raise ValueError()
-        return NativeTarget(target, resolver_platform, environment)
+        return NativeTarget(target, resolver_platform, environment, native_resolution)
     except (ValueError, KeyError, TypeError, RecursionError):
         raise PreparationError("target_invalid") from None
 

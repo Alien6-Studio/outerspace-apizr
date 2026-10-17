@@ -6,6 +6,7 @@ from pydantic import ConfigDict, Field, RootModel, model_validator
 
 from apizr.capabilities.model import Digest
 from apizr.capabilities.types import ValueModel
+from apizr.editor_contracts.model import EditorRequest
 from apizr.exposure import ExposurePolicy
 from apizr.graph import Graph
 from apizr.repository import Catalog
@@ -137,6 +138,21 @@ class Job(StrictModel):
             or self.arguments.limit is not None
         ):
             raise ValueError("Analysis does not accept planning arguments")
+        return self
+
+
+class HistoryJob(StrictModel):
+    scope: Scope
+    request: EditorRequest
+
+    @model_validator(mode="after")
+    def read_only_history(self) -> Self:
+        if self.request.operation not in {
+            "experiment_list",
+            "experiment_show",
+            "experiment_diff",
+        }:
+            raise ValueError("history_operation_invalid")
         return self
 
 

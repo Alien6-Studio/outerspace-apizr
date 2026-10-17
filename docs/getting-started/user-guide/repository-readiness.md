@@ -46,7 +46,7 @@ For a single-discovery Python workflow:
 from pathlib import Path
 
 from apizr.graph import graph_repository
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 from apizr.repository_readiness import assess_repository
 
 operator = load_operator_policy(Path("operator.json"))

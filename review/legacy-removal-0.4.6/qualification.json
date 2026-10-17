@@ -1,0 +1,307 @@
+{
+  "status": "passed_after_targeted_corrections",
+  "development_branch": "0.4.6",
+  "deprecation_commit": "b4fb8b1e14f58ed26b6ad545fca9835012d08c0a",
+  "parent_ci": {
+    "run": 38891285044,
+    "source_commit": "7efec77135002afe81e039cb723b2e148424f791",
+    "conclusion": "success",
+    "successful_jobs": 80
+  },
+  "phase_a": {
+    "tests_passed": 263
+  },
+  "first_common_run": {
+    "passed": 7568,
+    "failed": 6,
+    "skipped": 74,
+    "seconds": 372.88,
+    "corrected_failures": [
+      "Tracked-tree check encountered staged deletions: final-tree read now skips absent paths.",
+      "Empty legacy parser request now returns explicit code 2: covered by the unknown-command tests.",
+      "Four Homebrew qualification tests required the refreshed development lock binding; frozen publication binding unchanged."
+    ]
+  },
+  "targeted_validation": [
+    {
+      "tests_passed": 575,
+      "scope": "Final affected compiler, notebook, release, dependency, architecture and qualification tests."
+    },
+    {
+      "tests_passed": 63,
+      "scope": "Every failing test module/contract plus new retired-kind rejection; coverage appended to the common report."
+    },
+    {
+      "tests_passed": 105,
+      "scope": "Final dependency graph, license evidence and all Homebrew bindings after retaining the Jinja2 security floor."
+    }
+  ],
+  "security_mutations": {
+    "baseline_tests_passed": 470,
+    "mutants": 172,
+    "killed": 172
+  },
+  "coverage": {
+    "totals": {
+      "covered_lines": 20641,
+      "num_statements": 21049,
+      "percent_covered": 97.46493468043374,
+      "percent_covered_display": "97.46",
+      "missing_lines": 408,
+      "excluded_lines": 129,
+      "percent_statements_covered": 98.06166563732243,
+      "percent_statements_covered_display": "98.06",
+      "num_branches": 5972,
+      "num_partial_branches": 241,
+      "covered_branches": 5695,
+      "missing_branches": 277,
+      "percent_branches_covered": 95.36168787675821,
+      "percent_branches_covered_display": "95.36"
+    },
+    "required_gates": [
+      {
+        "arguments": [
+          "/private/tmp/apizr-retirement-coverage-qualified.json"
+        ],
+        "returncode": 0,
+        "output": "Selected evidence line coverage: 100.00%\nSelected evidence branch coverage: 100.00%\nsrc/apizr/readiness/structured.py line coverage: 100.00%\nsrc/apizr/readiness/structured.py branch coverage: 100.00%\nsrc/apizr/contracts/types.py line coverage: 100.00%\nsrc/apizr/contracts/types.py branch coverage: 100.00%\nsrc/apizr/contracts/lowering.py line coverage: 100.00%\nsrc/apizr/contracts/lowering.py branch coverage: 100.00%\nsrc/apizr/capabilities/source.py line coverage: 100.00%\nsrc/apizr/capabilities/source.py branch coverage: 100.00%\nsrc/apizr/contracts/json_budget.py line coverage: 100.00%\nsrc/apizr/contracts/json_budget.py branch coverage: 100.00%\nsrc/apizr/interfaces/json_budget.py line coverage: 100.00%\nsrc/apizr/interfaces/json_budget.py branch coverage: 100.00%\nsrc/apizr/interfaces/http_admission.py line coverage: 100.00%\nsrc/apizr/interfaces/http_admission.py branch coverage: 100.00%\nsrc/apizr/generators/mcp/transport.py line coverage: 100.00%\nsrc/apizr/generators/mcp/transport.py branch coverage: 100.00%\nsrc/apizr/repository_interfaces/artifacts.py line coverage: 100.00%\nsrc/apizr/repository_interfaces/artifacts.py branch coverage: 100.00%\nsrc/apizr/plugins/artifacts/central_directory.py line coverage: 100.00%\nsrc/apizr/plugins/artifacts/central_directory.py branch coverage: 100.00%\nsrc/apizr/repository_views/model.py line coverage: 100.00%\nsrc/apizr/repository_views/model.py branch coverage: 100.00%\nsrc/apizr/repository_views/projection.py line coverage: 100.00%\nsrc/apizr/repository_views/projection.py branch coverage: 100.00%\nplugins/mcp/src/apizr_mcp/model.py line coverage: 100.00%\nplugins/mcp/src/apizr_mcp/model.py branch coverage: 100.00%\nSourceFacts.typing_marker line coverage: 100.00%\nSourceFacts.typing_marker branch coverage: 95.00%\nSourceFacts.import_only_main_guard line coverage: 100.00%\nSourceFacts.import_only_main_guard branch coverage: 100.00%\nvalidate_object line coverage: 100.00%\nvalidate_object branch coverage: 100.00%\ncalculate line coverage: 100.00%\ncalculate branch coverage: 100.00%\nerror_result line coverage: 100.00%\nerror_result branch coverage: 100.00%\ncreate_server.call_tool line coverage: 95.56%\ncreate_server.call_tool branch coverage: 100.00%\nsrc/apizr/experiments/__init__.py line coverage: 100.00%\nsrc/apizr/experiments/__init__.py branch coverage: 100.00%\nsrc/apizr/experiments/_files.py line coverage: 100.00%\nsrc/apizr/experiments/_files.py branch coverage: 100.00%\nsrc/apizr/experiments/_lexical.py line coverage: 100.00%\nsrc/apizr/experiments/_lexical.py branch coverage: 100.00%\nsrc/apizr/experiments/bindings.py line coverage: 100.00%\nsrc/apizr/experiments/bindings.py branch coverage: 100.00%\nsrc/apizr/experiments/capture_model.py line coverage: 100.00%\nsrc/apizr/experiments/capture_model.py branch coverage: 100.00%\nsrc/apizr/experiments/comparison.py line coverage: 100.00%\nsrc/apizr/experiments/comparison.py branch coverage: 100.00%\nsrc/apizr/experiments/comparison_reporting.py line coverage: 100.00%\nsrc/apizr/experiments/comparison_reporting.py branch coverage: 100.00%\nsrc/apizr/experiments/environment.py line coverage: 100.00%\nsrc/apizr/experiments/environment.py branch coverage: 100.00%\nsrc/apizr/experiments/exposure.py line coverage: 100.00%\nsrc/apizr/experiments/exposure.py branch coverage: 100.00%\nsrc/apizr/experiments/exposure_model.py line coverage: 100.00%\nsrc/apizr/experiments/exposure_model.py branch coverage: 100.00%\nsrc/apizr/experiments/history.py line coverage: 100.00%\nsrc/apizr/experiments/history.py branch coverage: 100.00%\nsrc/apizr/experiments/inputs.py line coverage: 100.00%\nsrc/apizr/experiments/inputs.py branch coverage: 100.00%\nsrc/apizr/experiments/inspection.py line coverage: 100.00%\nsrc/apizr/experiments/inspection.py branch coverage: 100.00%\nsrc/apizr/experiments/inspection_model.py line coverage: 100.00%\nsrc/apizr/experiments/inspection_model.py branch coverage: 100.00%\nsrc/apizr/experiments/metrics.py line coverage: 100.00%\nsrc/apizr/experiments/metrics.py branch coverage: 100.00%\nsrc/apizr/experiments/model.py line coverage: 100.00%\nsrc/apizr/experiments/model.py branch coverage: 100.00%\nsrc/apizr/experiments/notebook_source.py line coverage: 100.00%\nsrc/apizr/experiments/notebook_source.py branch coverage: 100.00%\nsrc/apizr/experiments/outputs.py line coverage: 100.00%\nsrc/apizr/experiments/outputs.py branch coverage: 100.00%\nsrc/apizr/experiments/parameters.py line coverage: 100.00%\nsrc/apizr/experiments/parameters.py branch coverage: 100.00%\nsrc/apizr/experiments/planning.py line coverage: 100.00%\nsrc/apizr/experiments/planning.py branch coverage: 100.00%\nsrc/apizr/experiments/provider_source.py line coverage: 100.00%\nsrc/apizr/experiments/provider_source.py branch coverage: 100.00%\nsrc/apizr/experiments/randomness.py line coverage: 100.00%\nsrc/apizr/experiments/randomness.py branch coverage: 100.00%\nsrc/apizr/experiments/reporting.py line coverage: 100.00%\nsrc/apizr/experiments/reporting.py branch coverage: 100.00%\nsrc/apizr/experiments/run_protocol.py line coverage: 100.00%\nsrc/apizr/experiments/run_protocol.py branch coverage: 100.00%\nsrc/apizr/experiments/runner.py line coverage: 100.00%\nsrc/apizr/experiments/runner.py branch coverage: 98.28%\nsrc/apizr/experiments/serialization.py line coverage: 100.00%\nsrc/apizr/experiments/serialization.py branch coverage: 100.00%\nsrc/apizr/experiments/source_analysis.py line coverage: 100.00%\nsrc/apizr/experiments/source_analysis.py branch coverage: 100.00%\nsrc/apizr/experiments/store.py line coverage: 100.00%\nsrc/apizr/experiments/store.py branch coverage: 100.00%\nsrc/apizr/experiments/values.py line coverage: 100.00%\nsrc/apizr/experiments/values.py branch coverage: 100.00%\nsrc/apizr/experiments/worker.py line coverage: 100.00%\nsrc/apizr/experiments/worker.py branch coverage: 100.00%\nsrc/apizr/plugins/preparation/models.py line coverage: 100.00%\nsrc/apizr/plugins/preparation/models.py branch coverage: 100.00%\nsrc/apizr/plugins/preparation/operations.py line coverage: 100.00%\nsrc/apizr/plugins/preparation/operations.py branch coverage: 100.00%\nsrc/apizr/plugins/preparation/process.py line coverage: 100.00%\nsrc/apizr/plugins/preparation/process.py branch coverage: 100.00%\nsrc/apizr/plugins/preparation/requirements.py line coverage: 100.00%\nsrc/apizr/plugins/preparation/requirements.py branch coverage: 100.00%\nsrc/apizr/plugins/preparation/resolver.py line coverage: 100.00%\nsrc/apizr/plugins/preparation/resolver.py branch coverage: 100.00%\nsrc/apizr/plugins/preparation/selection.py line coverage: 100.00%\nsrc/apizr/plugins/preparation/selection.py branch coverage: 100.00%\nsrc/apizr/plugins/preparation/target.py line coverage: 100.00%\nsrc/apizr/plugins/preparation/target.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/__init__.py line coverage: 100.00%\nsrc/apizr/scientific_providers/__init__.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/admission.py line coverage: 100.00%\nsrc/apizr/scientific_providers/admission.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/__init__.py line coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/__init__.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/inputs.py line coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/inputs.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/locations.py line coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/locations.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/metrics.py line coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/metrics.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/outputs.py line coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/outputs.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/provider.py line coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/provider.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/randomness.py line coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/randomness.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/recognition.py line coverage: 100.00%\nsrc/apizr/scientific_providers/builtin/recognition.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/contracts/__init__.py line coverage: 100.00%\nsrc/apizr/scientific_providers/contracts/__init__.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/contracts/admission.py line coverage: 100.00%\nsrc/apizr/scientific_providers/contracts/admission.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/contracts/model.py line coverage: 100.00%\nsrc/apizr/scientific_providers/contracts/model.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/contracts/selection.py line coverage: 100.00%\nsrc/apizr/scientific_providers/contracts/selection.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/selection/__init__.py line coverage: 100.00%\nsrc/apizr/scientific_providers/selection/__init__.py branch coverage: 100.00%\nsrc/apizr/scientific_providers/selection/operations.py line coverage: 100.00%\nsrc/apizr/scientific_providers/selection/operations.py branch coverage: 100.00%\nsrc/apizr/telemetry/__init__.py line coverage: 100.00%\nsrc/apizr/telemetry/__init__.py branch coverage: 100.00%\nsrc/apizr/telemetry/collection.py line coverage: 100.00%\nsrc/apizr/telemetry/collection.py branch coverage: 100.00%\nsrc/apizr/telemetry/consent.py line coverage: 100.00%\nsrc/apizr/telemetry/consent.py branch coverage: 100.00%\nsrc/apizr/telemetry/model.py line coverage: 100.00%\nsrc/apizr/telemetry/model.py branch coverage: 100.00%\nsrc/apizr/telemetry/preview.py line coverage: 100.00%\nsrc/apizr/telemetry/preview.py branch coverage: 100.00%\nExperiment exposure CLI line coverage: 100.00%\nExperiment exposure CLI branch coverage: 100.00%\nExperiment diff CLI line coverage: 100.00%\nExperiment diff CLI branch coverage: 100.00%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/capabilities/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                        Stmts   Miss Branch BrPart   Cover   Missing\n----------------------------------------------------------------------------------------\nsrc/apizr/capabilities/__init__.py              4      0      0      0 100.00%\nsrc/apizr/capabilities/analyzer.py            199      0     90      1  99.65%   105->exit\nsrc/apizr/capabilities/inspection.py           62      0     16      0 100.00%\nsrc/apizr/capabilities/instrumentation.py     154      1    104      3  98.45%   137, 150->exit, 201->189\nsrc/apizr/capabilities/model.py               153      0     18      0 100.00%\nsrc/apizr/capabilities/serialization.py         6      0      0      0 100.00%\nsrc/apizr/capabilities/source.py               39      0      8      0 100.00%\nsrc/apizr/capabilities/types.py                45      0     12      0 100.00%\n----------------------------------------------------------------------------------------\nTOTAL                                         662      1    248      4  99.45%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/readiness/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                   Stmts   Miss Branch BrPart   Cover   Missing\n-----------------------------------------------------------------------------------\nsrc/apizr/readiness/__init__.py            4      0      0      0 100.00%\nsrc/apizr/readiness/analysis.py           35      0      6      0 100.00%\nsrc/apizr/readiness/analyzer.py           75      0     32      0 100.00%\nsrc/apizr/readiness/contracts.py          52      0     42      0 100.00%\nsrc/apizr/readiness/model.py             126      0     22      0 100.00%\nsrc/apizr/readiness/serialization.py       7      0      0      0 100.00%\nsrc/apizr/readiness/source.py            183      1    102      6  97.54%   224->226, 229->exit, 233->235, 241, 258->268, 310->315\nsrc/apizr/readiness/stdlib.py              1      0      0      0 100.00%\nsrc/apizr/readiness/structured.py         98      0     64      0 100.00%\n-----------------------------------------------------------------------------------\nTOTAL                                    581      1    268      6  99.18%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/generators/rest/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                         Stmts   Miss Branch BrPart   Cover   Missing\n-----------------------------------------------------------------------------------------\nsrc/apizr/generators/rest/__init__.py            4      0      0      0 100.00%\nsrc/apizr/generators/rest/generator.py          46      1     16      1  96.77%   48\nsrc/apizr/generators/rest/model.py              27      0      0      0 100.00%\nsrc/apizr/generators/rest/output.py              1      0      0      0 100.00%\nsrc/apizr/generators/rest/planner.py             8      0      0      0 100.00%\nsrc/apizr/generators/rest/rendering.py          11      0      0      0 100.00%\nsrc/apizr/generators/rest/runtime.py            49      0      4      0 100.00%\nsrc/apizr/generators/rest/schema.py             14      0      4      0 100.00%\nsrc/apizr/generators/rest/serialization.py       1      0      0      0 100.00%\n-----------------------------------------------------------------------------------------\nTOTAL                                          161      1     24      1  98.92%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/generators/mcp/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                    Stmts   Miss Branch BrPart   Cover   Missing\n------------------------------------------------------------------------------------\nsrc/apizr/generators/mcp/__init__.py        3      0      0      0 100.00%\nsrc/apizr/generators/mcp/generator.py      56      1     20      1  97.37%   66\nsrc/apizr/generators/mcp/model.py          18      0      0      0 100.00%\nsrc/apizr/generators/mcp/planner.py        17      0      4      0 100.00%\nsrc/apizr/generators/mcp/runtime.py        66      3      8      1  94.59%   110-111, 136\nsrc/apizr/generators/mcp/transport.py      86      0     20      0 100.00%\n------------------------------------------------------------------------------------\nTOTAL                                     246      4     52      2  97.99%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/interfaces/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                     Stmts   Miss Branch BrPart   Cover   Missing\n-------------------------------------------------------------------------------------\nsrc/apizr/interfaces/__init__.py             0      0      0      0 100.00%\nsrc/apizr/interfaces/embedding.py           14      0      4      0 100.00%\nsrc/apizr/interfaces/files.py                8      3      2      0  50.00%   7-14\nsrc/apizr/interfaces/http_admission.py      48      0     14      0 100.00%\nsrc/apizr/interfaces/json_budget.py         71      0     34      0 100.00%\nsrc/apizr/interfaces/model.py               17      0      0      0 100.00%\nsrc/apizr/interfaces/output.py              41      0     16      0 100.00%\nsrc/apizr/interfaces/planner.py             68      0     34      0 100.00%\nsrc/apizr/interfaces/results.py              7      0      0      0 100.00%\nsrc/apizr/interfaces/runtime.py            203      5    100      3  97.36%   98, 106, 154, 191-192\nsrc/apizr/interfaces/schema.py              45      0     24      0 100.00%\nsrc/apizr/interfaces/serialization.py        4      0      0      0 100.00%\n-------------------------------------------------------------------------------------\nTOTAL                                      526      8    228      3  98.28%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/execution/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                   Stmts   Miss Branch BrPart   Cover   Missing\n-----------------------------------------------------------------------------------\nsrc/apizr/execution/__init__.py            6      0      0      0 100.00%\nsrc/apizr/execution/invocation.py         10      1      0      0  90.00%   18\nsrc/apizr/execution/model.py              26      0      0      0 100.00%\nsrc/apizr/execution/planner.py            22      0      6      1  96.43%   46->45\nsrc/apizr/execution/policy.py             68      0     14      0 100.00%\nsrc/apizr/execution/protocol.py           53      3     16      3  91.30%   37, 45, 48\nsrc/apizr/execution/serialization.py      11      0      0      0 100.00%\nsrc/apizr/execution/supervisor.py        118      1     30      2  97.97%   139->142, 157\nsrc/apizr/execution/worker.py             82      1     10      1  97.83%   125\n-----------------------------------------------------------------------------------\nTOTAL                                    396      6     76      7  97.25%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/tracking/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                              Stmts   Miss Branch BrPart   Cover   Missing\n------------------------------------------------------------------------------\nsrc/apizr/tracking/__init__.py        3      0      0      0 100.00%\nsrc/apizr/tracking/adapters.py       20      0      2      0 100.00%\nsrc/apizr/tracking/budget.py         36      0     18      0 100.00%\nsrc/apizr/tracking/decorator.py      70      3     20      1  95.56%   37, 43-44\nsrc/apizr/tracking/kernel.py         40      0     18      0 100.00%\nsrc/apizr/tracking/session.py       268     10     72     12  93.53%   167->183, 193, 196, 239, 258->261, 265, 306, 321, 336, 369, 391, 457\n------------------------------------------------------------------------------\nTOTAL                               437     13    130     13  95.41%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/extension_runtime/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                        Stmts   Miss Branch BrPart   Cover   Missing\n----------------------------------------------------------------------------------------\nsrc/apizr/extension_runtime/__init__.py         4      0      0      0 100.00%\nsrc/apizr/extension_runtime/errors.py          24      0      0      0 100.00%\nsrc/apizr/extension_runtime/protocol.py        44      0      8      0 100.00%\nsrc/apizr/extension_runtime/supervisor.py     149      3     50      2  97.49%   68->70, 188, 259-260\n----------------------------------------------------------------------------------------\nTOTAL                                         221      3     58      2  98.21%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/git_source/*,src/apizr/cli/commands/git_source.py",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                   Stmts   Miss Branch BrPart   Cover   Missing\n-----------------------------------------------------------------------------------\nsrc/apizr/cli/commands/git_source.py      53      0     20      0 100.00%\nsrc/apizr/git_source/__init__.py           3      0      0      0 100.00%\nsrc/apizr/git_source/acquisition.py      145      9     48      8  91.19%   45, 77, 101, 108, 119, 148, 185, 241, 251\nsrc/apizr/git_source/contracts.py         77      3     32      3  94.50%   50, 156, 160\nsrc/apizr/git_source/models.py            21      0      0      0 100.00%\nsrc/apizr/git_source/process.py          145      5     52      1  96.95%   89, 151-152, 231-232\nsrc/apizr/git_source/ssh.py               41      0     10      0 100.00%\n-----------------------------------------------------------------------------------\nTOTAL                                    485     17    162     12  95.52%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/plugins/local/*,src/apizr/plugins/artifacts/*,src/apizr/cli/commands/plugins.py",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                               Stmts   Miss Branch BrPart   Cover   Missing\n-----------------------------------------------------------------------------------------------\nsrc/apizr/cli/commands/plugins.py                    205     12     66      7  92.25%   218, 255-256, 260, 321->325, 328-329, 334, 365, 375, 430-432\nsrc/apizr/plugins/artifacts/__init__.py                0      0      0      0 100.00%\nsrc/apizr/plugins/artifacts/_download_worker.py      111      4     36      4  94.56%   77->exit, 92, 105, 158, 164\nsrc/apizr/plugins/artifacts/central_directory.py      36      0     22      0 100.00%\nsrc/apizr/plugins/artifacts/models.py                 27      1      4      1  93.55%   46\nsrc/apizr/plugins/artifacts/requirements.py          125      6     52      3  94.92%   64, 93, 137-138, 161, 181\nsrc/apizr/plugins/artifacts/wheel.py                 108      3     42      2  96.67%   60, 73, 152\nsrc/apizr/plugins/local/__init__.py                    7      0      0      0 100.00%\nsrc/apizr/plugins/local/_download_worker.py            4      0      0      0 100.00%\nsrc/apizr/plugins/local/activation.py                227     13     72      8  92.98%   88, 113, 198, 202, 207, 211-212, 233, 236-237, 305, 315, 364\nsrc/apizr/plugins/local/backend.py                    52      3     14      1  93.94%   66, 79-80\nsrc/apizr/plugins/local/control.py                    22      0      4      0 100.00%\nsrc/apizr/plugins/local/download.py                   92      4     14      1  95.28%   103-104, 132, 161\nsrc/apizr/plugins/local/locking.py                     4      0      0      0 100.00%\nsrc/apizr/plugins/local/models.py                     19      0      0      0 100.00%\nsrc/apizr/plugins/local/operations.py                 89      2     28      2  96.58%   87, 154\nsrc/apizr/plugins/local/retirement.py                 53      1     12      1  96.92%   74\nsrc/apizr/plugins/local/store.py                     118      2     46      2  97.56%   101, 129\nsrc/apizr/plugins/local/uninstall.py                 152      3     38      4  96.32%   93, 107, 118, 164->173\nsrc/apizr/plugins/local/usage.py                      53      4     12      0  90.77%   48-51\nsrc/apizr/plugins/local/wheel.py                       4      0      0      0 100.00%\n-----------------------------------------------------------------------------------------------\nTOTAL                                               1508     58    462     36  95.03%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/governed/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                              Stmts   Miss Branch BrPart   Cover   Missing\n------------------------------------------------------------------------------\nsrc/apizr/governed/__init__.py        0      0      0      0 100.00%\nsrc/apizr/governed/bootstrap.py      11      0      2      0 100.00%\nsrc/apizr/governed/embedding.py      55      0     10      0 100.00%\nsrc/apizr/governed/mcp.py            52      6     10      0  90.32%   58-59, 64-65, 81-82\nsrc/apizr/governed/model.py          15      0      0      0 100.00%\nsrc/apizr/governed/rest.py           36      0      8      0 100.00%\nsrc/apizr/governed/runtime.py        93      0     34      0 100.00%\n------------------------------------------------------------------------------\nTOTAL                               262      6     64      0  98.16%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/repository/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                    Stmts   Miss Branch BrPart   Cover   Missing\n------------------------------------------------------------------------------------\nsrc/apizr/repository/__init__.py            6      0      0      0 100.00%\nsrc/apizr/repository/discovery.py         126      5     40      1  96.39%   96, 103, 121-123\nsrc/apizr/repository/model.py             161      0     40      0 100.00%\nsrc/apizr/repository/modules.py            22      1     12      1  94.12%   16\nsrc/apizr/repository/policy.py             48      0     14      0 100.00%\nsrc/apizr/repository/reporting.py          34      0     24      0 100.00%\nsrc/apizr/repository/scanner.py            79      0     24      0 100.00%\nsrc/apizr/repository/serialization.py      16      0      0      0 100.00%\n------------------------------------------------------------------------------------\nTOTAL                                     492      6    154      2  98.76%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/graph/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                               Stmts   Miss Branch BrPart   Cover   Missing\n-------------------------------------------------------------------------------\nsrc/apizr/graph/__init__.py            6      0      0      0 100.00%\nsrc/apizr/graph/analysis.py           57      0     12      0 100.00%\nsrc/apizr/graph/bindings.py          109      1     74      3  97.81%   92->89, 99, 120->143\nsrc/apizr/graph/builder.py           116      1     36      1  98.68%   150\nsrc/apizr/graph/calls.py              68      0     46      1  99.12%   98->115\nsrc/apizr/graph/imports.py           134      0     76      0 100.00%\nsrc/apizr/graph/model.py             228      2     54      2  98.58%   122, 158\nsrc/apizr/graph/policy.py              9      0      0      0 100.00%\nsrc/apizr/graph/reporting.py          27      0     10      0 100.00%\nsrc/apizr/graph/serialization.py      13      0      0      0 100.00%\n-------------------------------------------------------------------------------\nTOTAL                                767      4    308      7  98.98%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/repository_readiness/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                               Stmts   Miss Branch BrPart   Cover   Missing\n-----------------------------------------------------------------------------------------------\nsrc/apizr/repository_readiness/__init__.py             6      0      0      0 100.00%\nsrc/apizr/repository_readiness/eligibility.py         40      0     24      1  98.44%   109->108\nsrc/apizr/repository_readiness/evaluator.py           58      0     24      0 100.00%\nsrc/apizr/repository_readiness/evidence.py            53      0     26      1  98.73%   139->136\nsrc/apizr/repository_readiness/execution.py           26      0      2      0 100.00%\nsrc/apizr/repository_readiness/initialization.py      10      0      4      0 100.00%\nsrc/apizr/repository_readiness/model.py              110      1     18      1  98.44%   137\nsrc/apizr/repository_readiness/policy.py              44      0      4      0 100.00%\nsrc/apizr/repository_readiness/reporting.py           24      0     12      0 100.00%\nsrc/apizr/repository_readiness/serialization.py       13      0      0      0 100.00%\n-----------------------------------------------------------------------------------------------\nTOTAL                                                384      1    114      3  99.20%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/repository_interfaces/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                              Stmts   Miss Branch BrPart   Cover   Missing\n----------------------------------------------------------------------------------------------\nsrc/apizr/repository_interfaces/__init__.py           2      0      0      0 100.00%\nsrc/apizr/repository_interfaces/artifacts.py         73      0     24      0 100.00%\nsrc/apizr/repository_interfaces/errors.py             1      0      0      0 100.00%\nsrc/apizr/repository_interfaces/evidence.py         111      4     36      6  93.20%   93->95, 109, 173, 184, 186->195, 194\nsrc/apizr/repository_interfaces/generator.py         84      1     24      1  98.15%   111\nsrc/apizr/repository_interfaces/mcp_runtime.py       58      0      6      0 100.00%\nsrc/apizr/repository_interfaces/model.py             72      1     12      1  97.62%   79\nsrc/apizr/repository_interfaces/output.py            58      0     18      0 100.00%\nsrc/apizr/repository_interfaces/planner.py           62      2     32      2  95.74%   86, 141\nsrc/apizr/repository_interfaces/rest_runtime.py      38      0      4      0 100.00%\nsrc/apizr/repository_interfaces/runtime.py          181      8    104      8  94.39%   80, 169, 172, 176, 179, 183, 189, 258\n----------------------------------------------------------------------------------------------\nTOTAL                                               740     16    260     18  96.60%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/repository_execution/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                           Stmts   Miss Branch BrPart   Cover   Missing\n-------------------------------------------------------------------------------------------\nsrc/apizr/repository_execution/__init__.py         0      0      0      0 100.00%\nsrc/apizr/repository_execution/docker.py          24      0      4      0 100.00%\nsrc/apizr/repository_execution/entrypoint.py      11      1      2      1  84.62%   18\nsrc/apizr/repository_execution/model.py           34      0      0      0 100.00%\nsrc/apizr/repository_execution/planner.py         67      1     32      2  96.97%   66, 82->81\nsrc/apizr/repository_execution/supervisor.py      81      0     22      0 100.00%\nsrc/apizr/repository_execution/worker.py          89      1      8      1  97.94%   127\n-------------------------------------------------------------------------------------------\nTOTAL                                            306      3     68      4  98.13%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/governed_repository/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                         Stmts   Miss Branch BrPart   Cover   Missing\n-----------------------------------------------------------------------------------------\nsrc/apizr/governed_repository/__init__.py        0      0      0      0 100.00%\nsrc/apizr/governed_repository/embedding.py      88      5     24      4  91.96%   186, 189, 201, 222-224\nsrc/apizr/governed_repository/mcp.py            55      4     12      0  94.03%   61-62, 67-68\nsrc/apizr/governed_repository/model.py          28      0      0      0 100.00%\nsrc/apizr/governed_repository/rest.py           40      0     10      0 100.00%\nsrc/apizr/governed_repository/runtime.py       101      1     34      1  98.52%   161\n-----------------------------------------------------------------------------------------\nTOTAL                                          312     10     80      5  96.17%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/exposure/*",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                  Stmts   Miss Branch BrPart   Cover   Missing\n----------------------------------------------------------------------------------\nsrc/apizr/exposure/__init__.py            6      0      0      0 100.00%\nsrc/apizr/exposure/model.py              96      0     12      0 100.00%\nsrc/apizr/exposure/planner.py            91      0     22      0 100.00%\nsrc/apizr/exposure/policy.py             42      0      4      0 100.00%\nsrc/apizr/exposure/reporting.py          48      1     26      1  97.30%   34\nsrc/apizr/exposure/scope.py             254      0    124      0 100.00%\nsrc/apizr/exposure/selector.py           11      0      2      0 100.00%\nsrc/apizr/exposure/serialization.py      12      0      0      0 100.00%\n----------------------------------------------------------------------------------\nTOTAL                                   560      1    190      1  99.73%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/cli/commands/exposure.py",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                 Stmts   Miss Branch BrPart   Cover   Missing\n---------------------------------------------------------------------------------\nsrc/apizr/cli/commands/exposure.py     137      4     32      0  96.45%   192-195\n---------------------------------------------------------------------------------\nTOTAL                                  137      4     32      0  96.45%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/cli/commands/readiness.py,src/apizr/cli/commands/repository_readiness.py,src/apizr/cli/commands/repository.py",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                             Stmts   Miss Branch BrPart   Cover   Missing\n---------------------------------------------------------------------------------------------\nsrc/apizr/cli/commands/readiness.py                 37      4      2      0  84.62%   46-49\nsrc/apizr/cli/commands/repository.py                55      0     26      0 100.00%\nsrc/apizr/cli/commands/repository_readiness.py      36      0      2      0 100.00%\n---------------------------------------------------------------------------------------------\nTOTAL                                              128      4     30      0  96.20%\n"
+      },
+      {
+        "arguments": [
+          "report",
+          "--include=src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py",
+          "--fail-under=90"
+        ],
+        "returncode": 0,
+        "output": "Name                                Stmts   Miss Branch BrPart   Cover   Missing\n--------------------------------------------------------------------------------\nsrc/apizr/execution/protocol.py        53      3     16      3  91.30%   37, 45, 48\nsrc/apizr/execution/supervisor.py     118      1     30      2  97.97%   139->142, 157\nsrc/apizr/execution/worker.py          82      1     10      1  97.83%   125\n--------------------------------------------------------------------------------\nTOTAL                                 253      5     56      6  96.44%\n"
+      }
+    ]
+  },
+  "static_checks": {
+    "package_architecture": "passed",
+    "qualification_architecture": "passed",
+    "pyright_errors": 0,
+    "ruff": "passed",
+    "pre_commit_all_files": "passed"
+  },
+  "docs": {
+    "strict_build": "passed",
+    "html_pages_checked": 127,
+    "links_anchors_canonicals_home_assets": "passed"
+  },
+  "installed_wheel": {
+    "status": "passed",
+    "outside_checkout": true,
+    "same_wheel_after_final_rebuild": true,
+    "scientific_provider": "passed",
+    "rest_mcp_direct_governed_repository": "passed"
+  },
+  "isolated_installations": {
+    "base": "passed; exactly five dependencies",
+    "clients": "passed",
+    "notebook": "passed",
+    "http": "passed",
+    "mcp": "passed",
+    "https_ssh_sources": "passed",
+    "trusted_extension": "passed; core environment unchanged"
+  },
+  "modern_container": {
+    "status": "passed",
+    "python": "3.12",
+    "platform": "linux/aarch64",
+    "non_root": true,
+    "health": 200,
+    "route": "/capabilities/total",
+    "post_result": 36,
+    "own_container_and_image_removed": true
+  },
+  "structure": {
+    "legacy_package_kinds": 0,
+    "removed_legacy_package_entries": 15,
+    "removed_legacy_facades": 6,
+    "remaining_facades_for_291": 73,
+    "root_implementation_debt": 0,
+    "notebook_golden_cases": 18
+  },
+  "publication": false
+}

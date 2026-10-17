@@ -1,0 +1,49 @@
+{
+  "protocol": "apizr.editor/v1",
+  "accepted": [
+    {"operation": "capabilities"},
+    {"operation": "inspect", "arguments": {"source": "model.py"}},
+    {"operation": "experiment_list", "arguments": {"limit": 5, "status": "failed"}},
+    {"operation": "experiment_show", "arguments": {"run_id": "0123456789ab"}},
+    {"operation": "experiment_diff", "arguments": {"run_a": "0123456789ab", "run_b": "abcdef012345"}},
+    {"operation": "plan_exposure"}
+  ],
+  "rejected": [
+    {"operation": []},
+    {"operation": null},
+    {"schema_version": "apizr.editor/v2", "operation": "capabilities"},
+    {"operation": "run", "arguments": {}},
+    {"operation": "inspect", "arguments": {"source": "../outside.py"}},
+    {"operation": "inspect", "arguments": {"source": "/outside.py"}},
+    {"operation": "inspect"},
+    {"operation": "inspect", "arguments": {"run_id": "0123456789ab"}},
+    {"operation": "experiment_list", "arguments": {"limit": 0}},
+    {"operation": "experiment_list", "arguments": {"limit": true}},
+    {"operation": "experiment_list", "arguments": {"root": "/"}},
+    {"operation": "experiment_list", "arguments": {"store": "other"}},
+    {"operation": "experiment_show", "arguments": {"run_id": "ABCDEF012345"}},
+    {"operation": "experiment_diff", "arguments": {"run_a": "0123456789ab"}},
+    {"operation": "capabilities", "operator_policy": {}},
+    {"operation": "capabilities", "arguments": {"permissions": ["source.analyze"]}}
+  ],
+  "responses": [
+    {
+      "scenario": "missing-project",
+      "request": {"request_id": "missing", "operation": "inspect", "arguments": {"source": "model.py"}},
+      "expected": {
+        "schema_version": "apizr.editor-response/v1", "request_id": "missing", "operation": "inspect", "ok": false, "value": null,
+        "diagnostics": [{"code": "project_required", "message": "Select a project and operator policy before requesting project evidence.", "severity": "error", "location": null}],
+        "exposure_diagnostics": []
+      }
+    },
+    {
+      "scenario": "authorized-empty-history",
+      "request": {"request_id": "empty", "operation": "experiment_list"},
+      "expected": {
+        "schema_version": "apizr.editor-response/v1", "request_id": "empty", "operation": "experiment_list", "ok": true,
+        "value": {"schema_version": "apizr.experiment-history/v2", "query": {"status": null, "source": null, "capability": null, "limit": 20}, "total": 0, "matched": 0, "runs": []},
+        "diagnostics": [], "exposure_diagnostics": []
+      }
+    }
+  ]
+}

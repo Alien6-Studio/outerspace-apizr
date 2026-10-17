@@ -120,8 +120,9 @@ expressions are conservatively retained. Later events matching a function name
 produce conditional binding. Branches/loops are not evaluated: even a possible
 rebinding in dead-looking code is reported.
 
-Conditional IR definitions and all ordinary decorators remain conditional. No
-runtime decorator whitelist exists. Recognized overload declarations belong to
+Conditional IR definitions and ordinary decorators remain conditional. The narrow
+SDK import-binding rule below is the only implementation-decorator allowance.
+Recognized overload declarations belong to
 the IR analyzer and are not ordinary implementation decorators. IR duplicate and
 overload errors become ambiguous assessments, preserving the original diagnostics.
 
@@ -138,6 +139,40 @@ are considered both before and after a definition, because later failure can als
 prevent module import from completing. Overload stubs already associated by IR
 are excluded from this heuristic. Definition-time calls/decorators remain visible;
 function bodies are not treated as module initialization.
+
+### Proven SDK decoration (0.4.6)
+
+One `apizr.tracking.experiment` decorator may retain an unconditional function
+binding when its root has exactly one earlier, top-level SDK import. Supported
+forms are `from apizr.tracking import experiment` (including aliases),
+`import apizr.tracking as t`, `import apizr.tracking`, and
+`from apizr import tracking` (including aliases). Matching the word `experiment`
+alone establishes nothing. A shadowed, conditional, reflected or indirectly
+mutated namespace remains uncertain; stacked decorators remain uncertain too.
+
+The bare decorator and keyword-only calls with bounded literal configuration are
+recognized for ordinary and async functions; generators remain refused by the
+SDK at decoration time. Selected parameters must name real signature parameters uniquely.
+Calls, unpacking, unknown options and nonliteral configuration receive the
+ordinary decorator/initialization reasons. Function defaults, annotations and
+other module statements keep their existing initialization checks.
+
+This rule records source-only binding evidence without importing the SDK or the
+project. It does not waive dependency checks: source-local readiness still retains
+the SDK import reason. Repository exposure requires explicit dependency pins and
+retained wheel admission under the existing conditional-selection policy. A local
+module/package called `apizr.tracking` cannot discharge that reason as if it were
+the official SDK. Graph import/call evidence remains complete and unmodified;
+rendering uses those retained facts and never reparses source to find SDK imports.
+
+The v1 policy/schema stays unchanged: this reviewed allowance uses existing
+binding, initialization and dependency reasons. Capability/readiness goldens for
+noninstrumented sources retain their original bytes. Governed runtime artifact
+digests change with the reviewed worker implementation. Generated SDK-dependent repository entrypoints and
+governed workers set `APIZR_SERVED_PROCESS=1` before project imports. In that
+process the SDK decorator returns the original function and logging is disabled;
+served calls create no sessions or history writes. This is capture suppression,
+not an additional execution permission or isolation boundary.
 
 Visible `globals`/`locals`/`vars` access, `exec`/`eval` or star imports make namespace
 binding uncertain. Dynamic imports (`__import__`, `import_module`, including
@@ -221,7 +256,7 @@ its digest must match `source.transformed_digest`. It checks both the digest and
 reanalyzed declaration/diagnostic equality before assessing the source. The
 original notebook digest remains bound through the IR document digest.
 
-`apizr.inspection.inspect_source(source, module_name=...)` and
+`apizr.capabilities.inspection.inspect_source(source, module_name=...)` and
 `inspect_file(path, module_name=...)` assemble a typed inspection result. File
 inspection supports one `.py` or `.ipynb`; logical identity is explicit in Python.
 The notebook adapter reads original bytes once and retains the exported Python as
@@ -261,9 +296,8 @@ Conditional is not an execution approval: it is nonblocking for inspection but
 not eligible for adapter generation under this policy. Empty sources report zero
 capabilities and exit 0. Ordinary user errors use stderr without a traceback.
 
-A small CLI router recognizes `inspect` and delegates all historical arguments to
-the unchanged generation CLI. `apizr --script ...` and `apizr --notebook ...` retain
-their behavior; there is no mandatory `generate` subcommand.
+The CLI dispatches supported commands explicitly. The historical generation
+fallback is removed in 0.4.6; unknown commands exit 2 without opening source.
 
 ## Limits
 
@@ -271,6 +305,5 @@ This is not Python abstract interpretation, import resolution, a resource
 sandbox, full effect inference or a guarantee of runtime safety. Reflection,
 indirect aliases and arbitrary mutation cannot be resolved completely. The
 explicit bounded allowances and unknown effects remain visible to consumers.
-The REST v1 generator consumes this report without redefining eligibility. Historical issue #28
-remains open for the unchanged legacy pipeline; this policy addresses the
-separate static-evidence problem in issue #31.
+The REST v1 generator consumes this report without redefining eligibility.
+The legacy generator is removed in 0.4.6; this evidence policy remains independent.

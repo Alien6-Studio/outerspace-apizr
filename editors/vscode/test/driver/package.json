@@ -1,0 +1,1 @@
+{"name":"apizr-qualification-driver","publisher":"alien6-studio","version":"0.0.1","engines":{"vscode":"^1.140.0"},"main":"index.cjs","activationEvents":["onStartupFinished"]}

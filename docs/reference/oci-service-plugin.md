@@ -33,7 +33,7 @@ Use the written steps for the current release; a recording may show an earlier v
 
 ## Prerequisites and installation
 
-Use Python 3.11–3.14, uv, Docker Engine with BuildKit/Buildx, and an explicit local
+Use Python 3.11–3.15, uv, Docker Engine with BuildKit/Buildx, and an explicit local
 Unix socket. The target is `linux/amd64` or `linux/arm64`. Cross-platform builds
 require an already configured emulator; Apizr does not install one. Choose and
 review a Python base image with `python`, `venv` and pip, pinned by SHA-256 digest.
@@ -63,22 +63,22 @@ uv build --wheel plugins/oci --out-dir "$work/plugin-wheels"
 cd "$work"
 uv venv --seed --python 3.14 prepare
 prepare/bin/python -m pip download --only-binary=:all: --dest plugin-wheels \
-  plugin-wheels/outerspace_apizr-0.4.5-py3-none-any.whl \
-  plugin-wheels/outerspace_apizr_oci-0.4.5-py3-none-any.whl
+  plugin-wheels/outerspace_apizr-0.4.6-py3-none-any.whl \
+  plugin-wheels/outerspace_apizr_oci-0.4.6-py3-none-any.whl
 uv venv --python 3.14 core
 uv pip install --python core/bin/python --offline --no-index \
-  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.5-py3-none-any.whl
+  --find-links plugin-wheels plugin-wheels/outerspace_apizr-0.4.6-py3-none-any.whl
 ```
 
 Create `lock_wheels.py` using the [shared wheel-lock recipe](#prepare-server-dependency-locks) below before continuing.
 
 ```sh
 prepare/bin/python lock_wheels.py plugin-wheels plugin.lock
-plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/outerspace_apizr_oci-0.4.5-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.5-py3-none-any.whl \
+plugin_sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("plugin-wheels/outerspace_apizr_oci-0.4.6-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.6-py3-none-any.whl \
   --sha256 "$plugin_sha" --requirements plugin.lock --wheelhouse plugin-wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-oci --version 0.4.5 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-oci --version 0.4.6 --plugins-dir "$work/plugins"
 ```
 
 The lock uses the existing restricted requirements syntax: `name==version
@@ -270,7 +270,7 @@ runners for build tests and inspect the explicitly chosen tag before retrying.
 This mechanism is not a sandbox or a daemon resource quota. Operator authorization
 also does not constrain daemon mirrors or redirects.
 
-The [proof script](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/scripts/smoke_oci_plugin.py)
+The [proof script](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/scripts/smoke_oci_plugin.py)
 installs both packages outside the checkout, acquires a real HTTPS Git fixture,
 builds and calls REST/MCP after removing sources and bundles, interrupts after an
 explicit Docker progress handshake, and compares all core files/distributions.
@@ -341,7 +341,7 @@ core requires both registry read and publish permissions before launching the pl
 
 The Python API is `apizr_oci.push(PushRequest.model_validate(document),
 workspace=owned_directory, cancel=event)`, inside the installed plugin environment.
-From the core, use `apizr.local_plugins.run_extension` with the explicit
+From the core, use `apizr.plugins.local.run_extension` with the explicit
 `operator_policy`; it applies the same admission check as the CLI. Calling the
 plugin API directly is outside managed authorization.
 

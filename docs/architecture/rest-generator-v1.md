@@ -140,7 +140,7 @@ or evaluate user annotations, including Python 3.14 deferred annotations.
 
 Return declarations contribute documentation only. Statically representable
 returns have a response schema; unknown returns use `{}`. No response model or
-return-type validation is applied. Results undergo ordinary JSON serialization;
+return-type validation is applied. Results undergo [bounded finite JSON normalization](transport-admission.md), including tuple/set lowering;
 serialization failures are handled as server errors.
 
 Async functions are awaited; sync functions run in the framework's thread pool.

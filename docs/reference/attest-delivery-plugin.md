@@ -43,26 +43,26 @@ uv build --wheel plugins/attest --out-dir "$work/wheels"
 cd "$work"
 uv venv --seed --python 3.14 prepare
 prepare/bin/python -m pip download --only-binary=:all: --dest wheels \
-  wheels/outerspace_apizr-0.4.5-py3-none-any.whl \
-  wheels/outerspace_apizr_oci-0.4.5-py3-none-any.whl \
-  wheels/outerspace_apizr_attest-0.4.5-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.6-py3-none-any.whl \
+  wheels/outerspace_apizr_oci-0.4.6-py3-none-any.whl \
+  wheels/outerspace_apizr_attest-0.4.6-py3-none-any.whl
 uv venv --python 3.14 core
 uv pip install --python core/bin/python --offline --no-index --find-links wheels \
-  wheels/outerspace_apizr-0.4.5-py3-none-any.whl
+  wheels/outerspace_apizr-0.4.6-py3-none-any.whl
 ```
 
 Use the complete `lock_wheels.py` example on the linked OCI page to create a
 reviewed lock for this wheelhouse. All plugin dependencies go into the plugin's
 own environment; the core stays minimal. No additional mandatory core dependency
-is introduced. These commands build local 0.4.5 previews.
+is introduced. These commands build local 0.4.6 previews.
 
 ```sh
 prepare/bin/python lock_wheels.py wheels attest.lock
-sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_attest-0.4.5-py3-none-any.whl").read_bytes()).hexdigest())')
-core/bin/apizr plugins install wheels/outerspace_apizr_attest-0.4.5-py3-none-any.whl \
+sha=$(prepare/bin/python -c 'import hashlib; from pathlib import Path; print(hashlib.sha256(Path("wheels/outerspace_apizr_attest-0.4.6-py3-none-any.whl").read_bytes()).hexdigest())')
+core/bin/apizr plugins install wheels/outerspace_apizr_attest-0.4.6-py3-none-any.whl \
   --sha256 "$sha" --requirements attest.lock --wheelhouse wheels \
   --plugins-dir "$work/plugins"
-core/bin/apizr plugins enable outerspace-apizr-attest --version 0.4.5 --plugins-dir "$work/plugins"
+core/bin/apizr plugins enable outerspace-apizr-attest --version 0.4.6 --plugins-dir "$work/plugins"
 ```
 
 
@@ -108,6 +108,12 @@ No proxy or parent authentication environment is inherited.
 Managed signing requires an explicit [operator signing grant](operator-policy.md#authorize-signing-separately)
 binding the installed plugin identity, repository, key ID/file, expected signer
 and TSA, with `registry.read`, `receipt.sign` and `timestamp.request` permissions.
+Its `verification` target also binds the exact Attest executable/version/hash,
+signer, trust directory and `trust_store_sha256`. Capture this digest from your
+reviewed public trust files using the [operator authoring example](operator-policy.md#bind-proof-verification-authority)
+and put that same value in the request. An older grant without the binding is
+refused before invocation. The plugin rechecks the trust snapshot before using
+Attest or the signing key.
 The core decides before launching the plugin or accessing credentials or keys.
 A publication grant does not authorize signing. These permissions compare the
 operator's expectations; native cryptographic verification remains mandatory.
@@ -139,6 +145,7 @@ build/push results, paths, signer and TSA):
   "key_id": "cccccccccccccccccccccccccccccccc",
   "tsa_url": "https://tsa.example/timestamp",
   "trust_store": "/private/independent-trust",
+  "trust_store_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
   "output_dir": "/work/proofs/delivery",
   "timeout_ms": 300000,
   "max_output_bytes": 1048576

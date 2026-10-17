@@ -7,16 +7,29 @@ from pathlib import Path
 
 import pytest
 import yaml
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("ci_scope", ROOT / "scripts/ci_scope.py")
+spec = importlib.util.spec_from_file_location(
+    "ci_scope", str(qualification_script("ci_scope"))
+)
 assert spec and spec.loader
 scope = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(scope)
 
 
 def git(root, *args):
-    return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
+    return subprocess.check_output(
+        [
+            "git",
+            "-c",
+            "core.hooksPath=" + str(root / "no-hooks"),
+            "-C",
+            str(root),
+            *args,
+        ],
+        text=True,
+    ).strip()
 
 
 def commit(root, name, content="content"):
@@ -230,6 +243,23 @@ def test_missing_empty_manual_and_release_comparisons_run_full_checks(repo):
         assert result["product"] == result["examples"] == "true"
 
 
+@pytest.mark.parametrize("branch_creation", [False, True])
+def test_official_development_push_qualifies_even_web_only_changes(
+    repo, branch_creation
+):
+    base = git(repo, "rev-parse", "HEAD")
+    head = commit(repo, "docs/index.md")
+    assert scope.classify("push", event(base, head))["product"] == "false"
+    payload = event("0" * 40 if branch_creation else base, head)
+    payload["ref"] = "refs/heads/0.4.6"
+    result = scope.classify("push", payload)
+    assert result == {
+        "product": "true",
+        "examples": "true",
+        "reason": "Development push; full qualification required",
+    }
+
+
 def test_cli_invalid_event_defaults_to_full_checks(repo, monkeypatch):
     payload, output = repo / "event.json", repo / "output"
     payload.write_text("invalid JSON")
@@ -246,16 +276,17 @@ def test_required_matrix_checks_are_emitted_for_web_changes():
     # leave the required version-specific contexts missing. Gate steps instead.
     workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
     for name, versions in (
-        ("compatibility", ["3.11", "3.12", "3.13", "3.14"]),
-        ("container", ["3.11", "3.12", "3.13", "3.14"]),
-        ("macos", ["3.11", "3.14"]),
+        ("compatibility", ["3.11", "3.12", "3.13", "3.14", "3.15"]),
+        ("container", ["3.11", "3.12", "3.13", "3.14", "3.15"]),
+        ("macos", ["3.11", "3.14", "3.15"]),
     ):
         job = workflow["jobs"][name]
-        assert job["if"] == "always()"
+        assert job["if"] == "${{ !cancelled() }}"
         assert job["strategy"]["matrix"]["python"] == versions
-        assert all("needs.scope.outputs.product" in step["if"] for step in job["steps"])
+        assert job["env"]["PRODUCT_CHECKS"] == "${{ needs.scope.outputs.product }}"
+        assert all("env.PRODUCT_CHECKS" in step["if"] for step in job["steps"])
     assert "ubuntu-latest" in workflow["jobs"]["macos"]["runs-on"]
-    assert workflow["jobs"]["quality"]["if"] == "always()"
+    assert workflow["jobs"]["quality"]["if"] == "${{ !cancelled() }}"
 
 
 def test_documentation_allowlist_excludes_published_implementation():
@@ -308,14 +339,17 @@ def test_docs_jobs_do_not_install_or_build_the_product_for_docs_only_changes():
             if "uv run" in command or "uv sync" in command:
                 assert "--project tools/docs --locked" in command
             if "uv build" in command:
-                assert step["if"] == "needs.scope.outputs.product != 'false'"
+                assert "needs.scope.outputs.product) != 'false'" in step["if"]
     tooling = next(
         s
         for s in workflow["jobs"]["build"]["steps"]
-        if "pytest -c tools/docs/pyproject.toml tests/test_ci_scope.py"
-        in s.get("run", "")
+        if "tests/test_ci_scope.py" in s.get("run", "") and "pytest" in s.get("run", "")
     )
     assert "if" not in tooling
+    assert any(
+        "--project tools/docs --locked ruff check" in step.get("run", "")
+        for step in workflow["jobs"]["build"]["steps"]
+    )
     dco = next(
         s
         for s in workflow["jobs"]["build"]["steps"]
@@ -328,21 +362,24 @@ def test_docs_jobs_do_not_install_or_build_the_product_for_docs_only_changes():
     public_examples = next(
         s
         for s in workflow["jobs"]["build"]["steps"]
-        if s.get("name")
-        == "Check current and historical examples with published wheels outside the checkout"
+        if s.get("name") == "Install published examples only for documentation changes"
     )
-    assert public_examples["if"] == "needs.scope.outputs.examples != 'false'"
-    assert "outerspace-apizr[http,mcp]==0.4.5" in public_examples["run"]
-    assert (
-        '--example-python "$RUNNER_TEMP/docs-public/bin/python"'
-        in public_examples["run"]
-    )
+    assert "needs.scope.outputs.product) == 'false'" in public_examples["if"]
+    assert "needs.scope.outputs.examples) != 'false'" in public_examples["if"]
+    assert "outerspace-apizr[http,mcp]==$version" in public_examples["run"]
     assert "uv build" not in public_examples["run"]
+    examples = next(
+        s
+        for s in workflow["jobs"]["build"]["steps"]
+        if s.get("name")
+        == "Check current installed documentation examples outside the checkout"
+    )
+    assert '--example-python "$RUNNER_TEMP/docs-dev/bin/python"' in examples["run"]
     ci = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
     for step in ci["jobs"]["quality"]["steps"]:
         command = step.get("run", "")
         if "uv " in command or step.get("uses") == "./.github/actions/install-attest":
-            assert step["if"] == "needs.scope.outputs.product != 'false'"
+            assert step["if"] == "env.PRODUCT_CHECKS != 'false'"
 
 
 def test_docs_dependencies_keep_reviewed_sources_versions_and_archive_hashes():
@@ -397,3 +434,37 @@ def test_scope_summary_and_outputs(repo, monkeypatch):
     scope.main()
     assert "product=false\nexamples=false\n" in output.read_text()
     assert "Only documentation, site tooling or examples changed" in summary.read_text()
+
+
+@pytest.mark.parametrize(
+    "paths",
+    [("src/product.py",), ("docs/index.md",), ("docs/index.md", "src/product.py")],
+)
+@pytest.mark.parametrize("prior_success", [False, True])
+def test_bound_step_conditions_preserve_scope_and_failure_behavior(
+    repo, paths, prior_success
+):
+    base = git(repo, "rev-parse", "HEAD")
+    for name in paths:
+        head = commit(repo, name, "changed")
+    product = scope.classify("pull_request", pr_event(base, head))["product"]
+    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+    for name in ("quality", "compatibility", "macos", "container"):
+        job = workflow["jobs"][name]
+        assert job["env"]["PRODUCT_CHECKS"] == "${{ needs.scope.outputs.product }}"
+        for step in job["steps"]:
+            condition = step.get("if", "")
+            assert "needs.scope.outputs.product" not in condition
+            if "env.PRODUCT_CHECKS" not in condition:
+                continue
+            predicate = (
+                product == "false" if " == " in condition else product != "false"
+            )
+            selected = predicate and ("always()" in condition or prior_success)
+            web_placeholder = (
+                step.get("name") == "Web-only change; product tests are not needed"
+            )
+            should_run = product == "false" if web_placeholder else product != "false"
+            is_upload = step.get("uses", "").startswith("actions/upload-artifact@")
+            assert ("always()" in condition) == is_upload
+            assert selected == (should_run and (is_upload or prior_success))

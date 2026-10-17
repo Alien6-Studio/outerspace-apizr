@@ -9,6 +9,10 @@
     `--operator-policy`. An installed, active plugin alone does not permit
     building, publication or signing.
 
+The verification binding described below is part of **Apizr 0.4.6**.
+Older installed versions do not implement this additional grant field; use the
+matching core and plugin versions when qualifying it.
+
 Installation puts verified wheel bytes in an isolated environment. Activation
 chooses one installed version. **Authorization** permits a particular installed
 build to perform one operation on explicitly selected inputs or a remote repository. None implies the next.
@@ -83,6 +87,16 @@ exec and workers. Policy edits require a **restart**; there is no dynamic
 revocation. Clients cannot choose roots or new authority. See the
 [complete MCP example](apizr-mcp-server.md#choose-one-local-project).
 
+## Authorize experiment-history reading (Apizr 0.4.6)
+
+Editor and MCP history tools also require an exact `adapter: experiments`,
+`operation: history.read` grant with `permissions: [experiments.read]`, a local
+`target` root and the project-relative `store`. This is independent of analysis,
+execution and delivery. The default store is `.apizr/experiments/v1`.
+See the complete grant and request examples in the [editor contract](editor-contract.md).
+MCP uses that configured project's default store; clients cannot choose a different
+one through tool arguments. The engine checks admission before reading records.
+
 ## Authorize a Git source
 
 Git is part of the minimal core, not an installed plugin. Use a separate
@@ -154,20 +168,32 @@ python3 - <<'PY'
 import json
 from pathlib import Path
 
+from apizr.contracts.publication import Tool
+from apizr.workspace.verification import capture_verification
+
 records = json.loads(Path("installed.json").read_text())["installations"]
 repository = "registry.example:5443/team/service"
+# Select reviewed operator inputs, outside the project and incoming requests.
+verification = capture_verification(
+    expected_signer="b" * 64,  # Replace with your reviewed public signer identity.
+    tool=Tool(executable="/opt/attest", version="0.1.0", sha256="c" * 64),
+    trust_store="/private/trust",
+).model_dump(mode="json")
 grants = []
 for name, operation in (("outerspace-apizr-oci", "push"), ("outerspace-apizr-attest", "publish")):
     record = next(item for item in records if item["name"] == name)
     identity = {key: record[key] for key in (
         "name", "version", "sha256", "lock_sha256", "dependencies"
     )}
-    grants.append({
+    grant = {
         "plugin": identity,
         "operation": operation,
         "repository": repository,
         "permissions": ["registry.read", "registry.publish"],
-    })
+    }
+    if operation == "publish":
+        grant["verification"] = verification
+    grants.append(grant)
 with Path("operator.json").open("x") as output:
     json.dump({"schema": "apizr.operator-policy/v1", "grants": grants}, output, indent=2)
     output.write("\n")
@@ -185,7 +211,7 @@ operation arguments cannot select or extend a policy.
 The JSON document must specify `schema: apizr.operator-policy/v1` and `grants`.
 Files are regular, nonsymlink UTF-8 JSON, at most 65,536 bytes and 128 grants.
 Unknown fields/versions, duplicate JSON keys, duplicate dependency names or
-permissions, and invalid types are refused. Publication grants retain their existing fields and meaning:
+permissions, and invalid types are refused. Publication grants contain:
 
 | Field | Meaning |
 | --- | --- |
@@ -193,12 +219,45 @@ permissions, and invalid types are refused. Publication grants retain their exis
 | `operation` | `push` for outerspace-apizr-oci or `publish` for outerspace-apizr-attest |
 | `repository` | Exact registry, optional explicit port, namespace and image repository; no tag, digest or wildcard |
 | `permissions` | Both `registry.read` and `registry.publish` for this operation |
+| `verification` | Required for proof `publish` and `admit`: exact reviewed signer, Attest tool and public trust identity, as described below |
 
 A rebuilt wheel with the same name/version, or a changed lock/dependency set,
 needs a new grant. Reordering dependencies does not change identity. A grant must
 contain both required permissions; separate partial grants are not combined.
 No grant contains credentials, private key bytes or a free-form command.
 Signing grants add explicit references as described below.
+
+### Bind proof verification authority
+
+For `attest`, `publish` and `admit`, one matching grant must include
+`verification` with `expected_signer`, `tool` (absolute executable path, exact
+version and SHA-256), `trust_store` (exact absolute path) and
+`trust_store_sha256`. The request must carry those same values. Changes to any
+of them require the operator to review and issue a new grant. Separate grants
+cannot contribute partial verification authority or permissions.
+
+`capture_verification` above reads the explicitly selected public trust store.
+Its digest is SHA-256 of UTF-8 canonical JSON mapping each relative filename to
+the SHA-256 of its bytes, with sorted keys, compact separators and a final
+newline. Only root `*.pub`, `trust.toml`, and `tsa/*.crt` are accepted, with at
+most 128 files, 1 MiB per file and 4 MiB total. Symlinks, special files and private
+key material are refused. The plugin checks this identity against the bytes of
+its private trust snapshot before invoking Attest, and uses that snapshot for
+verification. Subsequent changes to the original store cannot change the
+snapshot. Keep operator-selected binaries and stores protected from untrusted
+writers.
+
+Use this capture step only with trusted operator choices. It is an explicit
+authoring action; the runtime never derives a grant from request-supplied tools
+or trust roots. Copy the reviewed `trust_store_sha256` into the corresponding
+operation's arguments (or batch `proof.verification`) before invoking it.
+
+Older v1 policy documents remain readable. Grants without this verification
+binding refuse `attest`, `publish` and `admit` with
+`operator_verification_denied`; review and extend them before use. `push`,
+`observe`, build, Git and analysis grants keep their existing behavior. Historical
+read-only `verify` requests and receipt/result bytes remain compatible; an
+optional trust digest on `verify` is checked when supplied.
 
 ## Authorize an image build
 
@@ -307,12 +366,13 @@ In addition to `plugin`, `operation: attest` and the exact `repository`, specify
 | `expected_signer` | Exact 64-character lowercase hexadecimal public signer identity |
 | `key_file` | Exact absolute local file reference from `attest.json`; no private key contents |
 | `tsa_url` | Explicit RFC 3161 authority URL from `attest.json` |
+| `verification` | Exact verifier, signer and pinned public trust store described above; its signer must also match `expected_signer` |
 | `permissions` | All three: `registry.read`, `receipt.sign`, `timestamp.request` |
 
 One matching rule must contain all three rights. Partial rules are not combined.
 Signing grants do not accept `registry.publish`; publication grants do not accept
-signing or timestamp permissions. Existing v1 publication-only documents remain
-valid and do not authorize signing. Add a separate signing rule to authorize it.
+signing or timestamp permissions. A publication-only document does not authorize
+signing. Add a separately reviewed signing rule including verification authority.
 
 Key paths are compared as exact absolute strings, without resolving symlinks,
 reading files or treating `/private/./operator.key` as `/private/operator.key`.
@@ -376,8 +436,8 @@ repository. Neither step implicitly grants access to a second repository.
 ```python
 from pathlib import Path
 from apizr.extension_runtime import Limits
-from apizr.local_plugins import read_arguments, run_extension
-from apizr.operator_policy import AuthorizationDenied, load_operator_policy
+from apizr.plugins.local import read_arguments, run_extension
+from apizr.workspace.operator_policy import AuthorizationDenied, load_operator_policy
 
 try:
     response = run_extension(
@@ -414,6 +474,7 @@ No paths, reference values, credentials or native diagnostics appear in it.
 | `operator_operation_denied` | No matching operation grant |
 | `operator_repository_denied` | No matching exact repository |
 | `operator_permissions_denied` | The grant lacks a required build, registry, signing or timestamp permission |
+| `operator_verification_denied` | The reviewed verifier, signer or pinned public trust identity is absent or differs from the request |
 | `operator_git_source_denied` | Exact Git source, revision, selection or trust references do not match |
 | `operator_analysis_denied` | Exact analysis root or Git source does not match |
 | `operator_source_invalid` / `operator_source_unavailable` / `operator_source_changed` | Invalid context, inaccessible/link traversal, or changed pinned identity |
@@ -531,9 +592,9 @@ the same plan and bundle bytes as the preceding CLI commands:
 ```sh
 python - <<'PY'
 from pathlib import Path
-from apizr.compiler import prepare_exposure, render_bundle
+from apizr.workspace.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 from apizr.repository_readiness import RepositoryReadinessPolicy
 
 prepared = prepare_exposure(

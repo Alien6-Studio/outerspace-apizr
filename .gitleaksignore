@@ -1,5 +1,34 @@
 # Reviewed generated apizr_runtime.py SHA-256, not an API key:
 # b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656
 # Only the two matching entries in the immutable direct-baseline fixture.
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:13
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:38
+
+# Reviewed generated apizr_json_preflight.py SHA-256, not an API key:
+# 681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8
+# Exact two current generator-golden entries, verified against contracts/json_budget.py.
 tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:8
-tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:28
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:34
+
+# Reviewed generated apizr_http_admission.py SHA-256, not an API key:
+# 3e3ceb585c24917999e1e461fa4141a555b6e5056dcecaa35ccc8ff06a84e11c
+# Exact current generator-golden entries, verified against the portable source.
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:6
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:32
+
+# Reviewed generated apizr_json_budget.py SHA-256, not an API key:
+# 19a3fe9b446340a70fe1b0719a6f3b0091af7c70d383888641325e5e4ec09a3d
+# Exact current generator-golden entries, verified against the portable source.
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:7
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:33
+
+# Reviewed generated apizr_mcp_transport.py SHA-256, not an API key:
+# 5bc13931b19e1c80b48a8e8649bf733e92a7cbe9ce2f8aa299fdaabf098378b9
+# Exact current generator-golden entries, verified against the portable source.
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:9
+
+# Reviewed generated apizr_results.py SHA-256, not an API key:
+# 758fb6f4ac426d39bb27c1d6a073a1db22342620af254541ba715144781e7176
+# Exact current generator-golden entries, verified against the portable source.
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:12
+tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:37

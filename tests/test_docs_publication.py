@@ -11,12 +11,13 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 
 
 def load(name):
-    spec = importlib.util.spec_from_file_location(name, SCRIPTS / f"{name}.py")
+    spec = importlib.util.spec_from_file_location(name, str(qualification_script(name)))
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -26,6 +27,32 @@ def load(name):
 checker = load("check_docs_site")
 build = load("docs_build")
 https = load("https_fixture")
+
+
+@pytest.mark.parametrize("available", [True, False])
+def test_historical_python_preparation_preserves_offline_consumer_policy(
+    monkeypatch, available
+):
+    smoke = load("smoke_readme")
+    environment = {"PATH": "/tools", "UV_PYTHON_DOWNLOADS": "never"}
+    calls = []
+
+    def run(command, **kwargs):
+        calls.append((command, kwargs))
+        if command[2] == "install":
+            assert kwargs["env"]["UV_PYTHON_DOWNLOADS"] == "manual"
+            return SimpleNamespace(returncode=0)
+        assert "--no-python-downloads" in command
+        assert kwargs["env"]["UV_PYTHON_DOWNLOADS"] == "never"
+        return SimpleNamespace(
+            returncode=0 if available or len(calls) == 3 else 1,
+            stdout="/tools/python3.14\n",
+        )
+
+    monkeypatch.setattr(smoke.subprocess, "run", run)
+    assert smoke.historical_python(environment) == Path("/tools/python3.14")
+    assert len(calls) == (1 if available else 3)
+    assert environment["UV_PYTHON_DOWNLOADS"] == "never"
 
 
 @pytest.fixture(scope="module")
@@ -376,11 +403,13 @@ def test_pages_ready_requires_separate_public_probe(monkeypatch):
 def test_candidate_docs_can_be_verified_locally_but_not_deployed(site):
     config = SimpleNamespace(extra={})
     build.on_config(config)
-    assert config.extra["docs_build"]["status"] == "stable"
-    assert config.extra["docs_build"]["target_version"] == "0.4.5"
+    assert config.extra["docs_build"]["status"] == "release-candidate"
+    assert config.extra["docs_build"]["target_version"] == "0.4.6"
     path = site / "build-info.json"
     marker = json.loads(path.read_text())
-    marker.update(status="release-candidate", target_version="0.4.5")
+    marker.update(
+        status="release-candidate", target_version="0.4.6", stable_release="0.4.5"
+    )
     path.write_text(json.dumps(marker))
     assert checker.marker_at(site)["status"] == "release-candidate"
     with pytest.raises(ValueError, match="not authorized for deployment"):
@@ -464,24 +493,10 @@ def test_workflow_qualifies_candidates_without_deploying_or_forcing_pages():
     assert "--no-history" not in publication["run"]
 
 
-@pytest.mark.parametrize(
-    "status,target,stable,accepted",
-    [
-        ("stable", "0.4.5", "0.4.5", True),
-        ("stable", "0.4.5", "0.4.4", False),
-        ("stable", "0.4.6", "0.4.6", False),
-        ("release-candidate", "0.4.6", "0.4.5", False),
-    ],
-)
-def test_only_explicit_published_documentation_generation_is_admitted(
-    site, status, target, stable, accepted
-):
+def test_prepared_046_text_cannot_authorize_stable_deployment(site):
     path = site / "build-info.json"
     marker = json.loads(path.read_text())
-    marker.update(status=status, target_version=target, stable_release=stable)
+    marker.update(status="stable", target_version="0.4.6", stable_release="0.4.6")
     path.write_text(json.dumps(marker))
-    if accepted:
-        assert checker.publication_marker(site)["stable_release"] == "0.4.5"
-    else:
-        with pytest.raises(ValueError, match="Invalid documentation build marker"):
-            checker.publication_marker(site)
+    with pytest.raises(ValueError, match="Invalid documentation build marker"):
+        checker.publication_marker(site)

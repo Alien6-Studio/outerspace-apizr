@@ -1,5 +1,15 @@
 """Public experiment intent and observed-run evidence contracts."""
 
+from apizr.experiments.capture_model import (
+    CallParameter,
+    CaptureIdentity,
+    CaptureMode,
+    CellIdentity,
+    ExperimentPlanV2,
+    ExperimentRunV2,
+    FunctionBinding,
+    SourceEvidence,
+)
 from apizr.experiments.environment import (
     EnvironmentDiagnostic,
     EnvironmentResult,
@@ -60,12 +70,24 @@ from apizr.experiments.randomness import (
 from apizr.experiments.serialization import (
     plan_bytes,
     plan_digest,
+    read_plan,
+    read_run,
     run_bytes,
     run_digest,
     validate_run_binding,
 )
 
 __all__ = [
+    "CallParameter",
+    "CaptureIdentity",
+    "CaptureMode",
+    "CellIdentity",
+    "ExperimentPlanV2",
+    "ExperimentRunV2",
+    "FunctionBinding",
+    "SourceEvidence",
+    "read_plan",
+    "read_run",
     "MetricDiagnostic",
     "MetricDiscoveryResult",
     "MetricSignal",

@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from apizr.capabilities import CapabilityDocument, canonical_bytes, document_digest
 from apizr.capabilities import inspect_source as capabilities
-from apizr.inspection import Inspection, inspect_source, json_bytes
+from apizr.capabilities.inspection import Inspection, inspect_source, json_bytes
 from apizr.readiness import ReadinessReport, assess, report_digest
 from apizr.readiness import canonical_bytes as readiness_bytes
 from apizr.readiness.model import Code, Dimension, Reason, State

@@ -1,3 +1,6 @@
+<span id="adopt-compiler-workflows-incrementally"></span>
+<span id="from-021-to-030"></span>
+
 # Compatibility notes
 
 <span id="migration-and-releases"></span>
@@ -12,16 +15,20 @@ application inputs, delivery identities, proof/admission and resumable delivery
 introduced in 0.4.1. The [0.4.3 notes](../../releases/0.4.3.md) add the MCP client
 launcher and directory metadata. The [0.4.4 notes](../../releases/0.4.4.md) add
 JSON-only evidence export and generic first-publication confirmation.
-**0.4.5 is the current public package version.** See the [0.4.5 record](../../releases/0.4.5.md) for package verification and installation evidence.
-
-The historical 0.4.4 record retains its evidence. Its release source and
-archives remain immutable when integrated into master. The
+Its historical release source and archives remain immutable when integrated
+into master. Use [Apizr 0.4.6](../../releases/0.4.6.md) for the current documentation. The
 [release-branch model](../../contributing/release-branches.md) records that distinction.
 The [0.4.0rc1 record](../../releases/0.4.0.md) retains the earlier coordinated RC.
 
 Keep the historical instructions below for the versions they describe.
 
-## From 0.2.1 to 0.3.0
+## Apizr 0.4.6
+
+The legacy generation pipeline, HTTP upload service, step hooks and `legacy`
+extra are removed. Follow the [migration table](../../releases/migrate-0.4.6.md#removed-generation-pipeline).
+Notebook export remains supported under `apizr.notebooks`.
+
+## From 0.2.1 to 0.3.0 (historical)
 
 **0.3.0** was released on 22 September 2026.
 Existing single-source and legacy commands remain available,
@@ -37,7 +44,7 @@ they are not additional breaking changes introduced by 0.3.
 
 ## Supported environments
 
-- **Python 3.11–3.14 only**, for both Apizr and generated targets.
+- **Python 3.11–3.15 only**, for both Apizr and generated targets.
 - Use a supported interpreter and deployment image. Set `--python-version` and YAML `python_version` targets; unsupported targets fail with the supported range. Existing source is parsed, never transpiled.
 - Application APIs live under `apizr`; use Python standard-library APIs for interpreter compatibility.
 - Security minima for FastAPI, Starlette, python-multipart, nbconvert, Black and pytest are documented in the [current security baseline](../../architecture/security-baseline.md). Pydantic 2 remains in use.
@@ -52,9 +59,9 @@ they are not additional breaking changes introduced by 0.3.
 - HTTP generation returns a ZIP instead of writing to caller-selected paths. Directory scanning and the old `/dockerize_file/` endpoint are removed. The notebook endpoint returns script text. Docker endpoints return generated content.
 - Non-empty output directories are rejected. Choose a new directory when regenerating.
 
-## Adopt compiler workflows incrementally
+## Compiler adoption before 0.4.6 (historical)
 
-The `--script` / `--notebook` legacy pipeline remains supported. Its discovery,
+Before 0.4.6, the `--script` / `--notebook` legacy pipeline remained supported. Its discovery,
 routes and configuration are independent of the Capability Compiler; existing
 projects do not automatically switch to the new generators.
 

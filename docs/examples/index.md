@@ -3,7 +3,7 @@
 Choose the outcome you need. Every scenario provides complete files, prerequisites,
 commands, results to check, a useful failure, limits and cleanup. Downloads are
 built from this documentation revision, including new files that are not in the
-historical release tag. Commands use public **Apizr 0.4.5**.
+historical release tag. Commands use public **Apizr 0.4.6**.
 
 | Goal | Scenario | Prerequisites | Result |
 | --- | --- | --- | --- |

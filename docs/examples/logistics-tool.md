@@ -11,7 +11,7 @@ and Manhattan distance as minutes. It is distinct from the
 [recorded Paris demonstration](../index.md#watch-apizr-in-action), with no live
 traffic, optimum guarantee or universal savings claim.
 
-Use Python 3.11–3.14, [Apizr core](../getting-started/install.md) and a separate MCP
+Use Python 3.11–3.15, [Apizr core](../getting-started/install.md) and a separate MCP
 runtime. Download [logistics-tool.zip](../downloads/logistics-tool.zip), extract
 outside the checkout and open `logistics-tool/`. Files are `route.py`, `stops.json`
 and real `client.py`; data/algorithm are pedagogical GPL-3.0-or-later. No external

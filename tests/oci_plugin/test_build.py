@@ -107,6 +107,106 @@ def test_mcp_snapshot_copies_and_verifies_result_normalizer(tmp_path, alter):
         assert (target / "apizr_results.py").read_bytes() == original
 
 
+@pytest.mark.parametrize("interface", ["rest", "mcp"])
+@pytest.mark.parametrize(
+    "fault",
+    [
+        None,
+        "partial-reader",
+        "partial-json",
+        "modified-reader",
+        "modified-json",
+        "foreign",
+        "legacy",
+        "legacy-partial-reader",
+    ],
+)
+def test_portable_admission_closure_is_copied_verified_and_closed(
+    tmp_path, interface, fault
+):
+    source, target = tmp_path / "source", tmp_path / "copy"
+    artifacts = render_repository_bundle(*evidence(), interface=interface)
+    name = f"apizr-repository-{interface}.json"
+    manifest = json.loads(artifacts[name])
+    modules = ("apizr_repository_artifacts.py", "apizr_json_preflight.py")
+    if fault is not None and fault.startswith("legacy"):
+        legacy = Path(__file__).parents[1] / "fixtures/oci"
+        for module in (
+            "apizr_json_budget.py",
+            "apizr_http_admission.py",
+            "apizr_results.py",
+            "apizr_mcp_transport.py",
+        ):
+            artifacts.pop(module, None)
+            manifest["artifacts"].pop(module, None)
+        for filename, fixture in [
+            (
+                "app.py" if interface == "rest" else "server.py",
+                f"legacy-{interface}-runtime.txt",
+            ),
+            *(
+                ([("apizr_results.py", "legacy-results.txt")])
+                if interface == "mcp"
+                else []
+            ),
+        ]:
+            content = (
+                (legacy / fixture)
+                .read_text()
+                .replace(
+                    "from apizr.interfaces.runtime import", "from apizr_runtime import"
+                )
+                .replace(
+                    "from apizr.interfaces.results import", "from apizr_results import"
+                )
+                .replace(
+                    "from apizr.repository_interfaces.runtime import",
+                    "from apizr_repository_runtime import",
+                )
+                .encode()
+            )
+            artifacts[filename] = content
+            manifest["artifacts"][filename] = {
+                "algorithm": "sha256",
+                "value": hashlib.sha256(content).hexdigest(),
+            }
+        for module in modules if fault == "legacy" else modules[:1]:
+            artifacts.pop(module)
+            manifest["artifacts"].pop(module)
+        # Exact pre-admission standalone runtime, retained as compatibility data.
+        runtime = (
+            Path(__file__).parents[1] / "fixtures/oci/legacy-repository-runtime.txt"
+        ).read_bytes()
+        artifacts["apizr_repository_runtime.py"] = runtime
+        manifest["artifacts"]["apizr_repository_runtime.py"]["value"] = hashlib.sha256(
+            runtime
+        ).hexdigest()
+    elif fault and fault.startswith("partial"):
+        module = modules[0 if fault.endswith("reader") else 1]
+        artifacts.pop(module)
+        manifest["artifacts"].pop(module)
+    elif fault and fault.startswith("modified"):
+        module = modules[0 if fault.endswith("reader") else 1]
+        artifacts[module] = (
+            b"raise AssertionError('unverified code must never execute')\n"
+        )
+    elif fault == "foreign":
+        artifacts["unreviewed_admission.py"] = b"pass\n"
+        manifest["artifacts"]["unreviewed_admission.py"] = {
+            "algorithm": "sha256",
+            "value": hashlib.sha256(b"pass\n").hexdigest(),
+        }
+    artifacts[name] = json.dumps(manifest).encode()
+    write_bundle(source, artifacts)
+    if fault not in (None, "legacy"):
+        with pytest.raises((BuildError, ValueError)):
+            bundle_snapshot(source, target, interface)
+    else:
+        bundle_snapshot(source, target, interface)
+        for module in modules if fault is None else ("apizr_repository_runtime.py",):
+            assert (target / module).read_bytes() == artifacts[module]
+
+
 @pytest.mark.parametrize(
     "alter",
     ["modified", "symlink", "fifo", "governed", "foreign", "traversal", "duplicate"],
@@ -597,9 +697,9 @@ def test_manifest_only_build_metadata(build_inputs, tmp_path):
 def test_application_context_and_input_identity(build_inputs, tmp_path):
     from test_application import EXAMPLE, prepare
 
-    from apizr.application import ApplicationConfig
-    from apizr.compiler import render_bundle
+    from apizr.contracts.application import ApplicationConfig
     from apizr.repository_interfaces.output import write_bundle
+    from apizr.workspace.compiler import render_bundle
 
     project = tmp_path / "application"
     shutil.copytree(EXAMPLE, project)
@@ -644,8 +744,8 @@ def test_application_context_and_input_identity(build_inputs, tmp_path):
 def test_application_snapshot_refuses_tampering(tmp_path, fault):
     from test_application import EXAMPLE, prepare
 
-    from apizr.compiler import render_bundle
     from apizr.repository_interfaces.output import write_bundle
+    from apizr.workspace.compiler import render_bundle
 
     project = tmp_path / "application"
     shutil.copytree(EXAMPLE, project)
@@ -664,3 +764,36 @@ def test_application_snapshot_refuses_tampering(tmp_path, fault):
             target.symlink_to(project / "data/message.txt")
     with pytest.raises((BuildError, ValueError, OSError)):
         bundle_snapshot(bundle, tmp_path / "copy", "rest")
+
+
+@pytest.mark.parametrize(
+    "interface,module",
+    [
+        ("rest", "apizr_json_budget.py"),
+        ("rest", "apizr_http_admission.py"),
+        ("rest", "apizr_results.py"),
+        ("mcp", "apizr_json_budget.py"),
+        ("mcp", "apizr_http_admission.py"),
+        ("mcp", "apizr_results.py"),
+        ("mcp", "apizr_mcp_transport.py"),
+    ],
+)
+@pytest.mark.parametrize("fault", ["partial", "modified"])
+def test_transport_admission_closure_is_complete_and_verified(
+    tmp_path, interface, module, fault
+):
+    source, target = tmp_path / "source", tmp_path / "copy"
+    artifacts = render_repository_bundle(*evidence(), interface=interface)
+    name = f"apizr-repository-{interface}.json"
+    manifest = json.loads(artifacts[name])
+    if fault == "partial":
+        artifacts.pop(module)
+        manifest["artifacts"].pop(module)
+    else:
+        artifacts[module] = (
+            b"raise AssertionError('unverified transport must never execute')\n"
+        )
+    artifacts[name] = json.dumps(manifest).encode()
+    write_bundle(source, artifacts)
+    with pytest.raises((BuildError, ValueError)):
+        bundle_snapshot(source, target, interface)

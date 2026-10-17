@@ -1,6 +1,6 @@
 <span id="experiment-serving-045"></span>
 
-# Share a selected experiment
+# Experiment → serving
 
 You reviewed a successful Run and chose the capability you want to expose.
 `apizr experiment expose` binds that recorded context to Apizr's existing

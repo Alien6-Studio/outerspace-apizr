@@ -29,7 +29,7 @@ def fetch(
         )
     headers = {
         "Accept": "application/json",
-        "User-Agent": "apizr-distribution-verifier/0.4.5",
+        "User-Agent": "apizr-distribution-verifier/0.4.6",
     }
     if token:
         headers["Authorization"] = f"Bearer {token}"

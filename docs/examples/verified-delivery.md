@@ -14,7 +14,7 @@ accepts the original proof and refuses altered proof.
 Use Python 3.11+, Git and Docker Engine/Buildx on a trusted Linux/macOS host.
 Docker must support the fixture's privileged nested Linux daemons; these are
 test infrastructure, not an untrusted-code sandbox. Preparation downloads public
-Apizr core/OCI/Attest **0.4.5**, Linux target wheels and trusted tool/base images.
+Apizr core/OCI/Attest **0.4.6**, Linux target wheels and trusted tool/base images.
 The optional native tool is Continuum Attest 0.1.0 with pinned archive/executable
 hashes. No paid platform, production credential, organizational key or remote
 publication is used.

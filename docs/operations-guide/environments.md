@@ -6,8 +6,8 @@ operation. The result is a reviewed environment plan with no implied authority.
 ## Before you begin
 
 Use [Install Apizr](../getting-started/install.md) as the canonical procedure.
-Core Python support is 3.11–3.14. Release dependency exports qualify Linux x86-64
-3.11–3.14 and macOS arm64 3.11/3.14; Homebrew runtime is qualified on Apple Silicon.
+Core Python support is 3.11–3.15. Release dependency exports qualify Linux x86-64
+3.11–3.15 and macOS arm64 3.11/3.14; Homebrew runtime is qualified on Apple Silicon.
 Windows and Intel macOS Homebrew runtime are not qualified by those exports.
 
 ## Assign dependencies to an environment

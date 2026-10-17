@@ -6,8 +6,9 @@ from pathlib import Path
 
 import pytest
 from jsonschema import Draft202012Validator
+from qualification_scripts import implementation as qualification_script
 
-from apizr.delivery_results import (
+from apizr.contracts.results import (
     AdmissionResult,
     BuildResult,
     DeliveryResult,
@@ -41,7 +42,7 @@ def test_published_result_schema_matches_v1_contract(model):
 def test_ab_example_changes_content_identity_not_logical_identity(tmp_path):
     root = Path(__file__).parents[1]
     spec = importlib.util.spec_from_file_location(
-        "governance_proof", root / "scripts/governance_evidence_proof.py"
+        "governance_proof", str(qualification_script("governance_evidence_proof"))
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

@@ -1,0 +1,141 @@
+{
+  "source_commit": "7efec77135002afe81e039cb723b2e148424f791",
+  "cases": [
+    {
+      "name": "00-basic_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/basic_notebook.ipynb",
+      "input_sha256": "f6d690607199df9e56b33f9621b1ba2c3eea97a34d74aa9eb23a23c62f563e97",
+      "export_sha256": "e87cb9c7b43ca1ba3df474e7f9ab914ba9b55205f646db1e050669c4f7eef5f5",
+      "formatted_sha256": "40a2ae3a079ca43e8059384931e04226712ceb9d7f9de3f74749462ddf16a433"
+    },
+    {
+      "name": "01-complex_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/complex_notebook.ipynb",
+      "input_sha256": "df39cf998a5e92c42478d5f5b2672968c659de78eff8150c46935a6898fa024a",
+      "export_sha256": "b12db6b6db72a4c9b2a67c9ec8545fd2a53e4a5f22cdd360ed7031bd4a888124",
+      "formatted_sha256": "1287505c023c479b2e8c014bc198a09e387a87bfb51e65a947a11ee791572cce"
+    },
+    {
+      "name": "02-dependencies_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/dependencies_notebook.ipynb",
+      "input_sha256": "925551d9d26bf0d640a43c92ec45c899a9c2a8e350f7a202704fa3fd5c5f0413",
+      "export_sha256": "636dc51285b6fc6a7423b5efd86c9b4b07cd85b183402f3422ab3237db1178ce",
+      "formatted_sha256": "e5ff372957b0ac642888231a6e54c4ac944a01b846f49b35d2d08d4a3a92cb29"
+    },
+    {
+      "name": "03-emptyTest",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/emptyTest.ipynb",
+      "input_sha256": "a8a7306d1db3262d20b019bffeb7c185ad5e7304199618eba07178426f1d3d89",
+      "export_sha256": "2b01a2656870ba0d0ae67827a0fdf2d57c7444f4872e88ec448182779b8c301d",
+      "formatted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "04-error_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/error_notebook.ipynb",
+      "input_sha256": "22712ab845787bbcb3178f56d8a7661bfe6765bc4b594129cb019f3c39c5c99b",
+      "export_sha256": "e7acdf3db719f3a84c329ab6e8bd31d5112079e894c9142304f1eea18621e516",
+      "formatted_sha256": "da15c2f8f4627fc7d8513972d23852b57497c21a28f614306cd2c973febe4f3d"
+    },
+    {
+      "name": "05-importTest",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/importTest.ipynb",
+      "input_sha256": "a6af96035281f544c861e3c530c2a91ffdb387d3f38da1e05068d62ed6d9c96b",
+      "export_sha256": "672423fec72568e8e94c612765bf48e99c924f5fbe2f0236442c4694c606995c",
+      "formatted_sha256": "5dbad6e643e99063a84b08aadecede9a0ef0e6e27231d29756b7eadfdfbde680"
+    },
+    {
+      "name": "06-interactive_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/interactive_notebook.ipynb",
+      "input_sha256": "e0c7c80833759d7fc7ac2ca6a99e092a658f751a5c7c49f48a7cdd94b65b0f92",
+      "export_sha256": "df80a582c02403caebd8b44b513f1b4e93bdb6ce3b98f485ec00991081f12ee7",
+      "formatted_sha256": "f633dfdaf59af232762bbfd6c0f6db6cdd2c923c89077de064194261cbc46fb4"
+    },
+    {
+      "name": "07-ipythonTest",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/ipythonTest.ipynb",
+      "input_sha256": "1391cd1be589a7f3a944511ea6cdc6c4eb4b9b279879198aca9a1b0747d4e3c3",
+      "refusal": {
+        "type": "ValueError",
+        "message": "Notebook magics and shell commands are not supported; convert them to ordinary Python first"
+      }
+    },
+    {
+      "name": "08-no_code_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/no_code_notebook.ipynb",
+      "input_sha256": "a8a0bba59b7cc96f156899da37bb09fd85ec21b11cb7227166c771df656fb0eb",
+      "export_sha256": "f9a8b47545bfc2dade479e5a43748013a3d9c3f2d00372531a7dffea6aaa471d",
+      "formatted_sha256": "6d2b16d92e6fc1849df75b9ed52eae10b9b89943ba61c6cdcb60f32265a8425d"
+    },
+    {
+      "name": "09-pep8Test",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/pep8Test.ipynb",
+      "input_sha256": "a46915da92b1ed32633867b49851b24cea18f8099ae6d4f7af9852705556a98a",
+      "export_sha256": "f3862dce7afb6ec424b14f9e9f493f2de4376e58fe815ae99cc98bed141b7fe0",
+      "formatted_sha256": "f2b432111952aad9e8fd1624d9174bb6b006242cc80beedb93d2c23876fb9294"
+    },
+    {
+      "name": "10-prediction_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/prediction_notebook.ipynb",
+      "input_sha256": "3f5d93c54daaa44d15e761dcf071f493cdcc910cc6502a7e21039063f4358b79",
+      "export_sha256": "a8300af309c3ad868195b1deaea5405576f63eac6f404c8d6ee80d27c252a8b4",
+      "formatted_sha256": "84e02c169906ba93c20a234bd3a060c3e8d09fcd5e3a4ee312e6ffd5393d76e5"
+    },
+    {
+      "name": "11-sensitive_data_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/sensitive_data_notebook.ipynb",
+      "input_sha256": "0aa34ad600ad6b6315043682db4d8a90a20206af78d0693bd93e393efb85a61d",
+      "export_sha256": "3207ab06a8efb9e13c53d1c910faef4f3e2f6ced29294d5de1ade22165658c02",
+      "formatted_sha256": "265feebde3e91fbe7f1fb5e5fbc130a5e7c521f9be2690d2e62e77c85a7a867e"
+    },
+    {
+      "name": "12-service_access_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/service_access_notebook.ipynb",
+      "input_sha256": "12b42452f0ae2ac1a35916ccacb6b536b5931cfc980134ae2adb1f96561f3f29",
+      "export_sha256": "aeeb381a46d6c35505e8a1af0b70b772e8c5f433f30a9e92394741c97081c463",
+      "formatted_sha256": "e61d3760bffdda4a9d7987e23930f105ea4eda6c41afd97f605f74bac0ac4b2e"
+    },
+    {
+      "name": "13-simpleTest",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/simpleTest.ipynb",
+      "input_sha256": "9a3da180dd3a003ff0c89e32683a9ad1cb3d1dc91aef77572bc812364591a260",
+      "export_sha256": "938eeabce4d259b5dc45dbf434e4dfbdd3f097dc87bf6ad91dd08f0c1117fb4d",
+      "formatted_sha256": "07219cd9561b41ce1f39209958076c471b17855679c968b42767b0122423c782"
+    },
+    {
+      "name": "14-specialTest",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/specialTest.ipynb",
+      "input_sha256": "3c7135361a7b2392e0d4bfac17948d19298b3a92a286bcc41369d6d50119c551",
+      "export_sha256": "dea933251c0e9f21a1bf0ec551a448ee93ae973e6f51f63d28678552d27b6980",
+      "formatted_sha256": "7e27ba3001a15c85dfbcc338c78fda7453c29fd75359072c773d1a6e226f9569"
+    },
+    {
+      "name": "15-state_notebook",
+      "historical_path": "tests/fixtures/legacy/notebook_transformr/templateTest/state_notebook.ipynb",
+      "input_sha256": "158bc4a6044598379022f96b73843804cb6b1aecabffce1769b0b2a2375fe335",
+      "export_sha256": "311c87f8ab18d73423f6f837a410bf3a4697d419098045bcd27ed5cb7a606aed",
+      "formatted_sha256": "c2c3cffb71259c70aa0ce55483f8e82bc82e23029c1611c012b085e13e7a000b"
+    },
+    {
+      "name": "16-pricing",
+      "historical_path": "examples/pricing.ipynb",
+      "input_sha256": "16df4c4eed2e12689f7d34f73917107aa48e13b2a7a47bb7cbef7f3a35d15519",
+      "export_sha256": "3fd5e379f04000f94f43feced64c45f20d5d7142a8fc8537226d97ba026d75b2",
+      "formatted_sha256": "44459699f71337bb85bfc53b95f74fb5b54d592c4e57db5cef67026572fa8426"
+    },
+    {
+      "name": "17-pricing",
+      "historical_path": "examples/complex-notebook/pricing.ipynb",
+      "input_sha256": "28f8d0ec0eb91a529580b53a114a60005add90f5ee860443290195c4cd2838b2",
+      "selection": {
+        "include_tags": [
+          "deploy"
+        ],
+        "exclude_tags": [
+          "explore"
+        ]
+      },
+      "export_sha256": "334a64f6f5874306f5fdc1c097e6ec20d11bfbd9139433dd256dde2f5b7edfd1",
+      "formatted_sha256": "759b4f6d4814e31a2a3e7aec0b2d6043e388e3073dba679518d1c5e3acf338e3"
+    }
+  ]
+}

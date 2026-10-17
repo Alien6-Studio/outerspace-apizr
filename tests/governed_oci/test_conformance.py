@@ -8,6 +8,7 @@ from governed.helpers import SOURCE
 from governed.test_conformance import CORPUS
 from mcp import Client
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.cli.commands.execute import main as execute_cli
 from apizr.execution import ExecutionPolicy
 from apizr.generators.mcp import generate as mcp_generate
@@ -18,7 +19,6 @@ from apizr.governed.mcp import create_server as local_mcp
 from apizr.governed.rest import create_app as local_rest
 from apizr.governed_oci.mcp import create_server as oci_mcp
 from apizr.governed_oci.rest import create_app as oci_rest
-from apizr.inspection import inspect_source
 from apizr.oci.model import ExecutionPolicyV2
 
 pytestmark = pytest.mark.timeout(180)

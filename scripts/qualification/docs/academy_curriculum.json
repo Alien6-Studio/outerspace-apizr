@@ -1,0 +1,1160 @@
+{
+  "schema": "apizr.academy-curriculum/v2",
+  "audience": "Advanced Python developers and data scientists: realistic evidence, failure modes and technical variants",
+  "case": "examples/data-science/fraud-detection",
+  "language": "en",
+  "lessons": {
+    "VI": {
+      "hero": [
+        "Before training,",
+        "what do we",
+        "actually know?"
+      ],
+      "objective": "Identify what a notebook inspection establishes, locate its evidence, and decide what still requires execution. Verify the notebook bytes versus scientific signals boundary on actual evidence.",
+      "prerequisites": "Python, a prepared candidate environment, and the synthetic fraud example. Each lesson starts from a fresh local copy.",
+      "scenes": [
+        {
+          "id": "intro",
+          "title": "A notebook arrives for review",
+          "voice": "A colleague sends you a fraud detection notebook and asks whether its result is ready to share. Before spending time on another training run, what can you establish from the notebook itself? We will inspect the real example in this repository: synthetic transactions, a random forest, a held-out test split, three metrics and a saved prediction model. By the end, you will distinguish a source finding from an observed result and explain one missing piece of evidence.",
+          "items": [],
+          "kind": "hero",
+          "seconds": 0
+        },
+        {
+          "id": "question",
+          "title": "From source to a review decision",
+          "voice": "Imagine that the notebook names a ROC AUC calculation and fixes random state to forty two. Does reading that source establish an AUC value? Does the seed establish that the experiment has been reproduced? Keep your answers in mind. Our question is practical: which facts can we use for review now, and which facts require a separately chosen execution?",
+          "items": [
+            [
+              "Source + selected CSV",
+              "Inputs to static inspection"
+            ],
+            [
+              "Inspection",
+              "Evidence, locations and unresolved facts"
+            ],
+            [
+              "Review decision",
+              "What still requires execution?"
+            ]
+          ],
+          "kind": "diagram",
+          "seconds": 0
+        },
+        {
+          "id": "source",
+          "title": "Read the experiment, not a shell script",
+          "voice": "Start with the scientific workflow rather than the command list. The active CSV is the training input. The split reserves a quarter of the rows for evaluation. Twenty four trees and maximum depth five are the visible hyperparameters. Both the split and the forest name a seed. The main guard separates training from prediction. Notice that these are statements in source; we have not loaded the CSV into pandas or fitted a model.",
+          "commands": [
+            [
+              1,
+              "python lab.py source settings"
+            ],
+            [
+              19,
+              "test ! -e artifacts/model.joblib && echo \"No trained model in this fresh copy\""
+            ]
+          ],
+          "capture": "source.mp4",
+          "seconds": 50,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "inspect",
+          "title": "Inspect once; read the eight evidence states",
+          "voice": "We now ask Apizr to inspect the saved notebook and retain its JSON report. The second command is a teaching projection of that actual file; the complete report remains on disk. Read the execution line first: not executed. Parameters can be captured as static candidates while metrics and outputs remain partial. Captured does not mean scientifically verified. The data section can also remain partial because the model loader contains a dynamic path. A known CSV and an unresolved reference can coexist.",
+          "commands": [
+            [
+              1,
+              "apizr experiment inspect fraud_detection.ipynb --format json > inspection-a.json"
+            ],
+            [
+              7,
+              "python lab.py inspection inspection-a.json"
+            ]
+          ],
+          "capture": "inspect.mp4",
+          "seconds": 50,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "read",
+          "title": "Read each state in its evidence context",
+          "voice": "Use three different questions. For data, ask which exact bytes were identified. For parameters, ask whether the value came from source or from execution. For a metric, ask whether we found a calculation or actually observed its value. This prevents a common mistake: treating a visually complete report as an experiment that has already run. The source location is your way back to the notebook when a finding needs explanation.",
+          "items": [
+            [
+              "Data identity",
+              "A reference plus a content digest"
+            ],
+            [
+              "Parameter origin",
+              "Static candidate or runtime observation"
+            ],
+            [
+              "Metric evidence",
+              "Recognized call or observed value"
+            ]
+          ],
+          "kind": "table",
+          "seconds": 0
+        },
+        {
+          "id": "change",
+          "title": "Same filename; different data",
+          "voice": "We replace only the active CSV with the second committed synthetic cohort and inspect again. Before reading the comparison, predict which facts should change. The notebook and its hyperparameters have not been edited. The path is still data slash transactions dot CSV, but its bytes differ because the synthetic label rule differs. The new input digest should expose that change. Neither inspection creates a model or an observed AUC. A familiar filename is not a data version.",
+          "commands": [
+            [
+              1,
+              "cp data/transactions-b.csv data/transactions.csv"
+            ],
+            [
+              4,
+              "apizr experiment inspect fraud_detection.ipynb --format json > inspection-b.json"
+            ],
+            [
+              10,
+              "python lab.py inspect-change"
+            ]
+          ],
+          "capture": "change.mp4",
+          "seconds": 50,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "identity",
+          "title": "Variant: notebook bytes versus scientific signals",
+          "voice": "For an advanced review, distinguish raw notebook identity from the identity of its scientific signals. We deliberately change stored execution counts and presentation metadata without changing any executable cell text. These are fixture edits, not kernel execution. Inspect again and compare both digests. Raw bytes should differ, while the signal digest should remain stable. This lets you explain why a notebook file change need not be a changed scientific signal. Neither identity establishes that the cell actually executed.",
+          "commands": [
+            [
+              1,
+              "python lab.py presentation"
+            ],
+            [
+              5,
+              "apizr experiment inspect fraud_detection.ipynb --format json > presentation.json"
+            ],
+            [
+              12,
+              "python lab.py signal-check"
+            ]
+          ],
+          "capture": "identity.mp4",
+          "seconds": 55,
+          "takeaway": "Verify the actual boundary; retain the complete report.",
+          "interpret_after": 2
+        },
+        {
+          "id": "exercise",
+          "title": "Your turn: can we report an AUC?",
+          "voice": "Pause the lesson. A colleague sees captured parameters, a seed and a recognized AUC call, then writes: the model achieved a reproducible score. Identify two unsupported parts of that sentence. Then name the next operation you would choose, and the environment you would need.",
+          "items": [
+            [
+              "Pause and answer",
+              "What is observed? What is still unknown?"
+            ],
+            [
+              "Next step",
+              "Choose execution only after reviewing the notebook"
+            ]
+          ],
+          "kind": "exercise",
+          "seconds": 18
+        },
+        {
+          "id": "answer",
+          "title": "Answer: evidence determines the next action",
+          "voice": "No AUC value has been observed, because inspection never executed the notebook. A declared seed also does not establish a reproduced outcome across environments. If we trust the notebook, the next step is an explicit experiment Run in the Python environment containing its scientific dependencies. Keep the inspection as a review starting point. We will use that distinction in the next lesson when a Plan becomes a retained Run.",
+          "items": [
+            [
+              "Known now",
+              "Source, selected input identity, static controls"
+            ],
+            [
+              "Still missing",
+              "Observed metrics and selected output identity"
+            ],
+            [
+              "Next lesson",
+              "Execute deliberately and read the retained record"
+            ]
+          ],
+          "kind": "recap",
+          "seconds": 0
+        }
+      ]
+    },
+    "VII": {
+      "hero": [
+        "From intention",
+        "to an observed",
+        "experiment Run."
+      ],
+      "objective": "Execute the fraud notebook, distinguish Plan from Run, and explain what the local history retains. Verify the altered retained evidence is refused boundary on actual evidence.",
+      "prerequisites": "Python, a prepared candidate environment, and the synthetic fraud example. Each lesson starts from a fresh local copy.",
+      "scenes": [
+        {
+          "id": "intro",
+          "title": "What produced this model file?",
+          "voice": "You have reviewed the fraud notebook. Now your colleague asks which data and settings produced the saved model on your disk. A model filename alone cannot answer that. In this lesson we execute the trusted notebook and read a retained experiment record. We will connect the intended setup, the observed metrics and the selected model identity, then check what happens when the current CSV is replaced.",
+          "items": [],
+          "kind": "hero",
+          "seconds": 0
+        },
+        {
+          "id": "map",
+          "title": "Plan, execution, Run",
+          "voice": "Think of the lifecycle as three separate steps. A Plan identifies the intended source, inputs and controls. A fresh local Python process executes the workload in the selected environment. The Run records observed facts, including status, selected metrics and output fingerprints. The process has host access, so this is the point at which trusting the notebook matters. Apizr does not install pandas or scikit-learn for you.",
+          "items": [
+            [
+              "Plan",
+              "Intended source, inputs and controls"
+            ],
+            [
+              "Local worker",
+              "Your selected scientific environment"
+            ],
+            [
+              "Run",
+              "Observed status, metrics and outputs"
+            ]
+          ],
+          "kind": "diagram",
+          "seconds": 0
+        },
+        {
+          "id": "execute",
+          "title": "Execute the reviewed notebook",
+          "voice": "Read the command before running it. Experiment run selects the saved notebook. The output option gives the model a stable logical name and points to its actual file. JSON goes into run a dot JSON so that later commands can use the exact Run identity. During execution the forest is trained and its held-out metrics are calculated. A successful exit says that this execution completed; model quality still needs scientific interpretation.",
+          "commands": [
+            [
+              1,
+              "apizr experiment run fraud_detection.ipynb --output model=artifacts/model.joblib --format json > run-a.json"
+            ],
+            [
+              38,
+              "python lab.py run run-a.json"
+            ]
+          ],
+          "capture": "execute.mp4",
+          "seconds": 65,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "origins",
+          "title": "Intended values and observed values",
+          "voice": "Do not merge the Plan and Run into one undifferentiated configuration. A parameter candidate in source and a runtime parameter observation answer different questions. Likewise, a seed in the Plan is not automatically an observed seed in the Run. Look for origin and missing evidence rather than filling the gap yourself. The worker Python and package versions describe the execution environment; requirements text alone describes a specification.",
+          "items": [
+            [
+              "Plan parameters",
+              "What the source indicated before execution"
+            ],
+            [
+              "Run parameters",
+              "What was observed at the boundary"
+            ],
+            [
+              "Environment",
+              "Specifications and worker facts stay distinct"
+            ]
+          ],
+          "kind": "table",
+          "seconds": 0
+        },
+        {
+          "id": "show",
+          "title": "Read the retained record by identity",
+          "voice": "List helps discover the retained Run, while show selects one exact identity. We save the complete record and display a short projection so that each line remains readable. Find the three observed metric values, the input digest and the selected model digest. These values come from this actual execution. Precision and recall describe different errors; neither can be replaced by the label successful. Keep the complete JSON when a reviewer needs more than this projection.",
+          "commands": [
+            [
+              1,
+              "apizr experiment list"
+            ],
+            [
+              9,
+              "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])')"
+            ],
+            [
+              13,
+              "apizr experiment show \"$RUN_A\" --format json > retained-a.json"
+            ],
+            [
+              19,
+              "python lab.py run retained-a.json"
+            ]
+          ],
+          "capture": "show.mp4",
+          "seconds": 50,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "replace",
+          "title": "Does history silently follow the current CSV?",
+          "voice": "Now we deliberately replace the current CSV with cohort B without rerunning the notebook. Predict the effect on Run A. The retained input identity stays tied to A, while the file at the same path now has another digest. This is why a content identity matters. The local history records evidence; it is not a dataset archive or a model registry. If the underlying bytes are overwritten, the recorded digest does not recreate them.",
+          "commands": [
+            [
+              1,
+              "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])')"
+            ],
+            [
+              4,
+              "cp data/transactions-b.csv data/transactions.csv"
+            ],
+            [
+              9,
+              "python lab.py retain"
+            ],
+            [
+              27,
+              "apizr experiment show \"$RUN_A\" --format json > retained-a-after.json"
+            ]
+          ],
+          "capture": "replace.mp4",
+          "seconds": 50,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "integrity",
+          "title": "Variant: altered retained evidence is refused",
+          "voice": "Now test the integrity boundary instead of trusting a happy-path report. We copy the local store and append whitespace to one retained Run in that disposable copy. The JSON may still be syntactically readable, but its bytes no longer match the canonical record and filename identity. Show must refuse it. The original history remains available. This demonstrates byte integrity of retained local evidence, not a signed attestation or authorization for another user to trust the experiment.",
+          "commands": [
+            [
+              1,
+              "cp -R .apizr/experiments/v1 damaged-store"
+            ],
+            [
+              4,
+              "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])'); printf \" \" >> \"damaged-store/runs/$RUN_A.json\""
+            ],
+            [
+              8,
+              "apizr experiment show \"$RUN_A\" --store damaged-store --format json > refused.json 2> refused.log",
+              2
+            ],
+            [
+              15,
+              "python lab.py refusal"
+            ]
+          ],
+          "capture": "integrity.mp4",
+          "seconds": 55,
+          "takeaway": "Verify the actual boundary; retain the complete report.",
+          "interpret_after": 2
+        },
+        {
+          "id": "exercise",
+          "title": "Your turn: what should you preserve?",
+          "voice": "Pause and answer. You have a Run digest and a selected model fingerprint. Tomorrow you overwrite the model file. Can show restore the previous model? What should you retain separately if another engineer must serve that exact model later? Explain the difference between identifying an artifact and storing the artifact bytes.",
+          "items": [
+            [
+              "Question",
+              "Does a fingerprint restore a file?"
+            ],
+            [
+              "Practical decision",
+              "Preserve the selected bytes in your artifact process"
+            ]
+          ],
+          "kind": "exercise",
+          "seconds": 18
+        },
+        {
+          "id": "answer",
+          "title": "A Run is a reviewable execution record",
+          "voice": "Show cannot recreate overwritten model bytes. Keep the selected data and model through your own artifact retention process when they must be reused. The Run lets you verify which identities and observations were recorded, and it refuses corrupt retained evidence. You can now explain what produced this observed result and what must be preserved alongside it. Next we record cohort B and compare the two histories.",
+          "items": [
+            [
+              "Execution",
+              "A deliberate choice in a trusted environment"
+            ],
+            [
+              "History",
+              "Retained identities and observations"
+            ],
+            [
+              "Artifacts",
+              "Keep their actual bytes when reuse is required"
+            ]
+          ],
+          "kind": "recap",
+          "seconds": 0
+        }
+      ]
+    },
+    "VIII": {
+      "hero": [
+        "The score moved.",
+        "What else",
+        "changed?"
+      ],
+      "objective": "Compare two real model Runs, read material versus result changes, and formulate a defensible conclusion. Verify the compare a run with itself boundary on actual evidence.",
+      "prerequisites": "Python, a prepared candidate environment, and the synthetic fraud example. Each lesson starts from a fresh local copy.",
+      "scenes": [
+        {
+          "id": "intro",
+          "title": "A different score is the start of an investigation",
+          "voice": "Your colleague sees another AUC and asks whether the new model is better. We will compare two actual fraud detection Runs. The notebook, forest settings and seed stay fixed; the active synthetic data changes. Our goal is to find the recorded differences, interpret the metric direction, and state what further evidence would be needed before choosing a model.",
+          "items": [],
+          "kind": "hero",
+          "seconds": 0
+        },
+        {
+          "id": "hypothesis",
+          "title": "Write the comparison question first",
+          "voice": "Before running anything, make the comparison question explicit. We expect the input content identity to change, while the source and declared parameters should agree. Observed scores and the saved model may change as a consequence of execution. That expectation is a hypothesis to check against the records. The two synthetic cohorts have identical feature rows but different fraud-label rules, so they are not an unchanged benchmark.",
+          "items": [
+            [
+              "Hold fixed",
+              "Notebook, hyperparameters and declared seeds"
+            ],
+            [
+              "Change",
+              "The synthetic fraud-label rule"
+            ],
+            [
+              "Observe",
+              "Input identity, metrics and model identity"
+            ]
+          ],
+          "kind": "table",
+          "seconds": 0
+        },
+        {
+          "id": "a",
+          "title": "Record baseline A",
+          "voice": "We begin with the first cohort in a fresh local project and retain a real baseline Run. The metric values are measured from the held-out split, rather than assigned as constants in a toy script. Read the model and input fingerprints alongside the numbers. This is the evidence we will compare with B. Writing A down before changing data prevents the current working directory from becoming our only memory of the experiment.",
+          "commands": [
+            [
+              1,
+              "apizr experiment run fraud_detection.ipynb --output model=artifacts/model.joblib --format json > run-a.json"
+            ],
+            [
+              38,
+              "python lab.py run run-a.json"
+            ]
+          ],
+          "capture": "a.mp4",
+          "seconds": 62,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "b",
+          "title": "Change the cohort; retain B",
+          "voice": "Replace only the active CSV, then run the same notebook with the same output selection. The active model path is reused, but the two retained Runs keep their recorded identities. Before looking at the diff, notice the experimental limitation: changing the label rule changes the task being evaluated. Even if one score rises, this setup does not establish an improvement against a fixed real-world evaluation target.",
+          "commands": [
+            [
+              1,
+              "cp data/transactions-b.csv data/transactions.csv"
+            ],
+            [
+              5,
+              "apizr experiment run fraud_detection.ipynb --output model=artifacts/model.joblib --format json > run-b.json"
+            ],
+            [
+              43,
+              "python lab.py run run-b.json"
+            ]
+          ],
+          "capture": "b.mp4",
+          "seconds": 65,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "diff",
+          "title": "Separate material evidence from observed results",
+          "voice": "We select the exact two Run digests and ask for the canonical diff. Read material evidence first: does the input reference match while its content changes? Do intended and observed parameter values agree? Then read the results: metric values and their B minus A deltas. Unknown is its own state. It does not mean same, and it should not be silently counted as unchanged. The projection shows actual diff fields; the full report remains available.",
+          "commands": [
+            [
+              1,
+              "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])'); RUN_B=$(python -c 'import json; print(json.load(open(\"run-b.json\"))[\"run_digest\"])')"
+            ],
+            [
+              5,
+              "apizr experiment diff \"$RUN_A\" \"$RUN_B\" --format json > comparison.json"
+            ],
+            [
+              12,
+              "python lab.py comparison comparison.json"
+            ]
+          ],
+          "capture": "diff.mp4",
+          "seconds": 58,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "interpret",
+          "title": "Read the actual metric trade-off",
+          "voice": "Read AUC, precision and recall side by side in the actual retained comparison. Each row shows A, B and the B minus A delta. A metric direction is not a universal quality ranking: precision and recall answer different error questions, while AUC summarizes ranking across thresholds. More importantly, these cohorts use different label rules. A defensible conclusion names those changed inputs and observed results; a model-quality decision still needs a stable evaluation protocol, an appropriate test population and error analysis.",
+          "items": [
+            [
+              "Recorded",
+              "Different input content and observed results"
+            ],
+            [
+              "Not established",
+              "Which difference caused which outcome"
+            ],
+            [
+              "Next investigation",
+              "Fixed evaluation protocol and error analysis"
+            ]
+          ],
+          "kind": "metrics",
+          "seconds": 0,
+          "evidence_file": "comparison.json"
+        },
+        {
+          "id": "self",
+          "title": "Variant: compare a Run with itself",
+          "voice": "An advanced comparison must preserve unknown evidence even in a self-comparison. Predict what happens when A is compared with A. Known numeric metric deltas should be zero. But the absence of a runtime seed observation does not become evidence that the seed was observed merely because the two record identities match. Read the actual unknown facet count and the parameter states. Identity equality and field-level knowledge are different concepts; your review should preserve both.",
+          "commands": [
+            [
+              1,
+              "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])')"
+            ],
+            [
+              4,
+              "apizr experiment diff \"$RUN_A\" \"$RUN_A\" --format json > self-comparison.json"
+            ],
+            [
+              11,
+              "python lab.py comparison self-comparison.json"
+            ]
+          ],
+          "capture": "self.mp4",
+          "seconds": 55,
+          "takeaway": "Verify the actual boundary; retain the complete report.",
+          "interpret_after": 2
+        },
+        {
+          "id": "exercise",
+          "title": "Your turn: reverse the comparison",
+          "voice": "Pause and predict. If we swap A and B, what should happen to a numeric delta? What should happen to a material content difference? Would two missing observations suddenly become known? Write the expected result, then watch the same canonical comparison in the reverse direction.",
+          "items": [
+            [
+              "Delta",
+              "Predict the sign of B minus A"
+            ],
+            [
+              "Unknown",
+              "Decide whether direction changes missing evidence"
+            ]
+          ],
+          "kind": "exercise",
+          "seconds": 18
+        },
+        {
+          "id": "reverse",
+          "title": "Check the prediction against the real reverse diff",
+          "voice": "The reverse comparison is a useful reading check. Comparable numeric deltas change sign because the subtraction direction changes. Different recorded content still differs. Missing evidence stays unknown rather than becoming a match. Read the actual result before accepting your prediction. This simple check teaches you how to read a comparison rather than memorizing a particular score from this machine.",
+          "commands": [
+            [
+              1,
+              "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])'); RUN_B=$(python -c 'import json; print(json.load(open(\"run-b.json\"))[\"run_digest\"])')"
+            ],
+            [
+              4,
+              "apizr experiment diff \"$RUN_B\" \"$RUN_A\" --format json > reverse.json"
+            ],
+            [
+              10,
+              "python lab.py comparison reverse.json"
+            ]
+          ],
+          "capture": "reverse.mp4",
+          "seconds": 44,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "recap",
+          "title": "From a score to a review question",
+          "voice": "We have compared two measured model Runs, separated material and result changes, and checked the direction of the diff. Keep this habit: state the question, hold an appropriate baseline, inspect evidence origins and explain the remaining uncertainty. The next lesson makes another explicit choice: which retained prediction and which model bytes should be included in an interface?",
+          "items": [
+            [
+              "Identify",
+              "Choose exact retained Runs"
+            ],
+            [
+              "Interpret",
+              "Read origins, states and metric deltas"
+            ],
+            [
+              "Decide",
+              "Keep model approval separate from comparison"
+            ]
+          ],
+          "kind": "recap",
+          "seconds": 0
+        }
+      ]
+    },
+    "IX": {
+      "hero": [
+        "From a Run",
+        "to one selected",
+        "prediction."
+      ],
+      "objective": "Explain the serving boundary, select a retained model and capability, and inspect the generated REST and MCP bindings. Verify the replaced model bytes block exposure boundary on actual evidence.",
+      "prerequisites": "Python, a prepared candidate environment, and the synthetic fraud example. Each lesson starts from a fresh local copy.",
+      "scenes": [
+        {
+          "id": "intro",
+          "title": "Share prediction without rerunning training",
+          "voice": "An application team wants to call the fraud model. Giving them the whole notebook leaves important questions unanswered: which Run, which model, which function and which dependencies? We will use a successful Run from the same example to generate one selected prediction interface. By the end you will explain why a training artifact, a serving selection and a deployment are different things.",
+          "items": [],
+          "kind": "hero",
+          "seconds": 0
+        },
+        {
+          "id": "boundary",
+          "title": "Draw the serving boundary first",
+          "voice": "The notebook trains inside a main guard and defines prediction separately. Importing the prediction module must not retrain the forest. The prediction needs the selected model, joblib, scikit-learn and the feature-order helper. Pandas belongs to training here. These concrete dependencies are more useful than exposing every callable found in a repository. Our public surface will be one prediction accepting a typed transaction.",
+          "items": [
+            [
+              "Experiment",
+              "Training, evaluation and model output"
+            ],
+            [
+              "Selection",
+              "One Run, predict and one model artifact"
+            ],
+            [
+              "Interface",
+              "REST or MCP around the selected capability"
+            ]
+          ],
+          "kind": "diagram",
+          "seconds": 0
+        },
+        {
+          "id": "source",
+          "title": "Inspect what predict really needs",
+          "voice": "Read the actual predict function. It loads the saved model and uses the shared helper to construct the feature row in the expected order. The transaction has an amount, a velocity, a foreign-transaction flag and account age. The return carries a classification and probability. These are ordinary workload choices; Apizr does not invent the prediction logic. The main guard keeps training out of module import, while dependencies still need explicit serving evidence.",
+          "commands": [
+            [
+              1,
+              "python lab.py source predict"
+            ],
+            [
+              28,
+              "python lab.py source settings"
+            ]
+          ],
+          "capture": "source.mp4",
+          "seconds": 58,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "run",
+          "title": "Retain the model that will be selected",
+          "voice": "For this independent lesson we start from a fresh copy, select cohort B and execute the reviewed notebook. We give the model its explicit logical name. Read the retained output identity before generation: this is the artifact we intend to bind. The training marker helps us distinguish an experiment-side file from a serving selection. Generating the interfaces later must not be treated as a new training run.",
+          "commands": [
+            [
+              1,
+              "cp data/transactions-b.csv data/transactions.csv"
+            ],
+            [
+              5,
+              "apizr experiment run fraud_detection.ipynb --output model=artifacts/model.joblib --format json > run-b.json"
+            ],
+            [
+              43,
+              "python lab.py run run-b.json"
+            ]
+          ],
+          "capture": "run.mp4",
+          "seconds": 65,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "choices",
+          "title": "Four choices you must be able to explain",
+          "voice": "Name the four choices before typing the expose command. The Run digest selects retained evidence. The capability identifier selects prediction. The artifact name selects the recorded model bytes. The dependency wheelhouse supplies evidence for the external packages. Conditional allowance acknowledges that external code remains opaque; it is not a certificate of safe initialization. Missing or stale required evidence is a reason to stop and investigate.",
+          "items": [
+            [
+              "Run",
+              "Which execution record?"
+            ],
+            [
+              "Capability",
+              "Which callable becomes public?"
+            ],
+            [
+              "Artifact and packages",
+              "Which model bytes and external imports?"
+            ]
+          ],
+          "kind": "table",
+          "seconds": 0
+        },
+        {
+          "id": "generate",
+          "title": "Generate the two explicit bindings",
+          "voice": "We create a narrow operator grant for this copied local project. Expose then selects the Run, prediction capability, model and scientific dependencies. The interface option changes between REST and MCP, while the selected Run stays the same. These commands create local bundles. They do not start a server or contact a registry. Keep the complete generated reports so that a reviewer can inspect the actual selection and its dependency evidence.",
+          "commands": [
+            [
+              1,
+              "python -c 'import json; from pathlib import Path; Path(\"operator.json\").write_text(json.dumps({\"schema\":\"apizr.operator-policy/v1\",\"grants\":[{\"adapter\":\"repository\",\"operation\":\"analyze\",\"target\":{\"kind\":\"local\",\"root\":str(Path.cwd())},\"permissions\":[\"source.analyze\"]}]}))'"
+            ],
+            [
+              5,
+              "RUN_B=$(python -c 'import json; print(json.load(open(\"run-b.json\"))[\"run_digest\"])')"
+            ],
+            [
+              8,
+              "for interface in rest mcp; do apizr experiment expose \"$RUN_B\" --root . --operator-policy operator.json --capability python:fraud_detection:predict --interface \"$interface\" --artifact model --dependency scikit-learn --dependency joblib --dependency-wheelhouse \"$SCIENCE_WHEELHOUSE\" --allow-conditional --output-dir \"bundles/$interface\" > \"$interface-exposure.json\"; done"
+            ],
+            [
+              48,
+              "python lab.py binding"
+            ]
+          ],
+          "capture": "generate.mp4",
+          "seconds": 72,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "stale",
+          "title": "Variant: replaced model bytes block exposure",
+          "voice": "Test the binding against a stale artifact, not just a valid model. We save the selected model, then deliberately alter the bytes at its current path. The original Run still identifies the old model. Expose must refuse the mismatch instead of binding the new bytes under the old evidence. We read the actual refusal and restore the selected bytes, checking their digest. This is why an artifact path, an artifact identity and a retained artifact copy are three separate operational concerns.",
+          "commands": [
+            [
+              1,
+              "RUN_B=$(python -c 'import json; print(json.load(open(\"run-b.json\"))[\"run_digest\"])')"
+            ],
+            [
+              4,
+              "cp artifacts/model.joblib artifacts/original-model.joblib; printf \"altered\" >> artifacts/model.joblib"
+            ],
+            [
+              8,
+              "apizr experiment expose \"$RUN_B\" --root . --operator-policy operator.json --capability python:fraud_detection:predict --interface rest --artifact model --dependency scikit-learn --dependency joblib --dependency-wheelhouse \"$SCIENCE_WHEELHOUSE\" --allow-conditional --output-dir bundles/stale > refused.json 2> refused.log",
+              2
+            ],
+            [
+              18,
+              "python lab.py refusal"
+            ],
+            [
+              25,
+              "python lab.py restore-model"
+            ]
+          ],
+          "capture": "stale.mp4",
+          "seconds": 55,
+          "takeaway": "Verify the actual boundary; retain the complete report.",
+          "interpret_after": 2
+        },
+        {
+          "id": "exercise",
+          "title": "Your turn: a newer model appears at the path",
+          "voice": "Pause here. Another training run overwrites model dot joblib after the selected Run was recorded. Should the original Run silently pick up that newer model when exposed? Which fact would you compare before continuing? Also explain why training completed dot text should not become a serving dependency merely because it exists in the experiment folder.",
+          "items": [
+            [
+              "Integrity",
+              "Check selected current bytes against recorded identity"
+            ],
+            [
+              "Scope",
+              "Select necessary serving artifacts explicitly"
+            ]
+          ],
+          "kind": "exercise",
+          "seconds": 18
+        },
+        {
+          "id": "answer",
+          "title": "Bind evidence before you discuss deployment",
+          "voice": "A different file at the same path is not the selected recorded model. Preserve and verify the intended bytes instead of silently substituting a newer artifact. Only selected serving artifacts belong in the binding. REST and MCP describe two interfaces around this selection; real calls, runtime isolation, operations and deployment need their own qualification. You now have a reviewable handoff with a clear serving boundary.",
+          "items": [
+            [
+              "Selected",
+              "Retained Run, capability, model and dependencies"
+            ],
+            [
+              "Generated",
+              "Local REST and MCP bindings"
+            ],
+            [
+              "Next qualification",
+              "Actual serving calls and operational approval"
+            ]
+          ],
+          "kind": "recap",
+          "seconds": 0
+        }
+      ]
+    },
+    "X": {
+      "hero": [
+        "One model.",
+        "Two thresholds.",
+        "Explicit observations."
+      ],
+      "objective": "Choose session versus decorator, record meaningful threshold metrics and compare calls without changing return values. Verify the failed capture preserves the exception boundary on actual evidence.",
+      "prerequisites": "Python, a prepared candidate environment, and the synthetic fraud example. Each lesson starts from a fresh local copy.",
+      "scenes": [
+        {
+          "id": "intro",
+          "title": "The same model can make different review queues",
+          "voice": "The fraud model emits a probability. Your team must choose when to flag a transaction for review. A lower threshold can flag more transactions, while precision and recall describe different mistakes. In this lesson we evaluate a real held-out synthetic sample from our trained forest. We will capture one evaluation block with a session, then compare two ordinary function calls with a decorator.",
+          "items": [],
+          "kind": "hero",
+          "seconds": 0
+        },
+        {
+          "id": "design",
+          "title": "Decide what one Run should mean",
+          "voice": "Choose the unit you want to review. A session suits a block with several operations and observations. A decorator suits repeated function calls, where each call becomes a Run. In both cases explicitly select parameters, inputs and metrics. Tracking should preserve your function return and exception behavior. It does not infer every meaningful variable in your program or decide which metric the business should optimize.",
+          "items": [
+            [
+              "Session",
+              "One explicit evaluation block"
+            ],
+            [
+              "Decorator",
+              "One Run per ordinary function call"
+            ],
+            [
+              "History",
+              "Same canonical store for review"
+            ]
+          ],
+          "kind": "diagram",
+          "seconds": 0
+        },
+        {
+          "id": "sample",
+          "title": "Inspect the held-out sample and metric calculation",
+          "voice": "The preparation step has trained the same example in this fresh copy and retained its baseline Run. Now we derive the exact held-out rows using the notebook split and saved model. Evaluation dot CSV contains labels and the actual predicted probabilities. Our small evaluator counts true positives, false positives and false negatives, then computes precision and recall. Unlike a hard-coded score, these values depend on the selected sample and threshold. The sample remains synthetic and is not a production benchmark.",
+          "commands": [
+            [
+              1,
+              "python lab.py prepare-holdout"
+            ],
+            [
+              8,
+              "python lab.py source evaluate"
+            ]
+          ],
+          "capture": "sample.mp4",
+          "seconds": 60,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "session",
+          "title": "Record a block with named evidence",
+          "voice": "Read the session code first. The input call fingerprints the actual evaluation file. The parameter call records threshold zero point five, and the loop records the observed metric values. Run the code, then read the returned result and retained Run identity. The distinction matters: the return is still an ordinary Python value used by your program; the record is the evidence you chose to retain for later review.",
+          "commands": [
+            [
+              1,
+              "python lab.py source session_example"
+            ],
+            [
+              18,
+              "python thresholds.py session"
+            ]
+          ],
+          "capture": "session.mp4",
+          "seconds": 54,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "metrics",
+          "title": "Why report precision and recall together?",
+          "voice": "Precision asks how many flagged rows were actually labelled fraudulent. Recall asks how many labelled fraudulent rows were found. The flagged count describes review volume in this particular sample. Changing a threshold can trade one concern against another, so a single best score is not enough to define a review policy. These metrics are observed values over selected data, and the data identity is part of their interpretation.",
+          "items": [
+            [
+              "Precision",
+              "True positives / all flagged rows"
+            ],
+            [
+              "Recall",
+              "True positives / all fraudulent rows"
+            ],
+            [
+              "Flagged count",
+              "Review volume on this sample"
+            ]
+          ],
+          "kind": "table",
+          "seconds": 0
+        },
+        {
+          "id": "calls",
+          "title": "Compare two calls; keep their normal results",
+          "voice": "The decorator selects threshold from the function arguments. Each call logs the same input file and its observed metrics. We call thresholds zero point three five and zero point six five, and verify that tracking leaves their ordinary return values unchanged. Before reading the output, predict which call should flag at least as many rows. Compare the recorded precision and recall rather than assuming that either threshold is automatically preferable.",
+          "commands": [
+            [
+              1,
+              "python lab.py source tracked_evaluate"
+            ],
+            [
+              19,
+              "python thresholds.py calls"
+            ],
+            [
+              30,
+              "python lab.py history"
+            ]
+          ],
+          "capture": "calls.mp4",
+          "seconds": 62,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "failure",
+          "title": "Variant: failed capture preserves the exception",
+          "voice": "A useful SDK integration must survive failures without changing program behavior. This evaluation deliberately logs a partial observation, then raises a synthetic ValueError. The caller catches that same exception outside the decorated function. We check the retained failed Run and verify that its exception message is absent from the record. Failure status and explicitly logged observations can be useful evidence; a complete traceback is not silently made part of the experiment. This is also why successful function returns alone are an incomplete qualification of a tracking integration.",
+          "commands": [
+            [
+              1,
+              "python lab.py source failed_review"
+            ],
+            [
+              18,
+              "python thresholds.py failure"
+            ],
+            [
+              24,
+              "python lab.py failure-check"
+            ]
+          ],
+          "capture": "failure.mp4",
+          "seconds": 55,
+          "takeaway": "Verify the actual boundary; retain the complete report.",
+          "interpret_after": 2
+        },
+        {
+          "id": "exercise",
+          "title": "Your turn: an in-memory array replaces the file",
+          "voice": "Pause and explain what changes if the program logs only an input name for an in-memory array, instead of identifying evaluation dot CSV. Does that input name fingerprint its contents? Would an unchanged name establish that two evaluations used the same values? Then decide what evidence you would record for a review that must compare actual input content.",
+          "items": [
+            [
+              "Question",
+              "A logical name is not a content digest"
+            ],
+            [
+              "Design",
+              "Choose which input bytes your review needs"
+            ]
+          ],
+          "kind": "exercise",
+          "seconds": 18
+        },
+        {
+          "id": "answer",
+          "title": "Capture the evidence your decision needs",
+          "voice": "An input name alone does not establish an in-memory content identity. A selected local file can be fingerprinted, as in this lesson; other unknowns must stay visible. Choose a session for a block or a decorator for repeated calls, and keep the same input definition when comparing their outcomes. The SDK makes these observations reviewable without selecting your threshold policy. Next we use these same evaluation ideas in a real live kernel.",
+          "items": [
+            [
+              "Unit",
+              "Block or function call"
+            ],
+            [
+              "Evidence",
+              "Selected sample, threshold and observed metrics"
+            ],
+            [
+              "Decision",
+              "Review the trade-off instead of ranking one number"
+            ]
+          ],
+          "kind": "recap",
+          "seconds": 0
+        }
+      ]
+    },
+    "XI": {
+      "hero": [
+        "A cell reruns.",
+        "What does",
+        "history mean?"
+      ],
+      "objective": "Read real kernel cell identity and execution count, and distinguish repeated calls from saved notebook content. Verify the the unlogged calibration offset boundary on actual evidence.",
+      "prerequisites": "Python, a prepared candidate environment, and the synthetic fraud example. Each lesson starts from a fresh local copy.",
+      "scenes": [
+        {
+          "id": "intro",
+          "title": "The notebook screen is not the whole execution history",
+          "voice": "In a notebook you can rerun a cell after changing a threshold or changing kernel state. The visible output is then only the latest display for that cell. How do you review the actual calls you made? We use the same fraud holdout evaluation from the SDK lesson inside a real installed ipykernel. We will repeat a cell and inspect the retained evidence rather than relying on its position on screen.",
+          "items": [],
+          "kind": "hero",
+          "seconds": 0
+        },
+        {
+          "id": "map",
+          "title": "Three identities to keep separate",
+          "voice": "A saved notebook has a file identity. A running cell has an identity supplied by its frontend and an execution count assigned by the kernel. An experiment Run has its own retained digest. These identities answer different questions. Repeating a cell can keep its cell identifier while advancing execution count and creating another Run. It does not establish that the notebook was saved or that all earlier cells were executed in order.",
+          "items": [
+            [
+              "Saved file",
+              "Notebook bytes, when explicitly identified"
+            ],
+            [
+              "Live cell",
+              "Cell identifier and execution count"
+            ],
+            [
+              "Retained Run",
+              "Observed capture from that execution"
+            ]
+          ],
+          "kind": "diagram",
+          "seconds": 0
+        },
+        {
+          "id": "predict",
+          "title": "Predict the number of retained captures",
+          "voice": "Our notebook loads the real evaluation sample, captures one evaluation session, defines a decorated evaluator and calls it at two thresholds. We then repeat the first call cell. Predict how many Runs should remain: defining a function is not an evaluation call. Also predict whether the repeated cell will share its identifier, its execution count and its Run digest. We will check these distinctions against actual kernel messages.",
+          "items": [
+            [
+              "Session",
+              "One captured block"
+            ],
+            [
+              "Calls",
+              "Two variants plus one repeated call"
+            ],
+            [
+              "Your prediction",
+              "Which identities repeat; which advance?"
+            ]
+          ],
+          "kind": "exercise",
+          "seconds": 22
+        },
+        {
+          "id": "kernel",
+          "title": "Execute the actual cells and repeat a call",
+          "voice": "This recording sends the prepared notebook cells to a real ipykernel using the candidate interpreter. The displayed source and outputs are actual kernel messages. Watch the session result, the two threshold evaluations and the repeated first variant. Our capture is a terminal view of that live kernel, not a recording of a notebook frontend. We keep the original cell identifiers and record each returned execution count so that the repetition can be verified afterwards.",
+          "commands": [
+            [
+              1,
+              "python -m scripts.qualification.experiments.academy_kernel --notebook fraud-thresholds.ipynb --workspace \"$APIZR_ACADEMY_KERNEL_WORKSPACE\" --input evaluation.csv --pause 3"
+            ]
+          ],
+          "capture": "kernel.mp4",
+          "seconds": 75,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "history",
+          "title": "Read cell evidence in the shared history",
+          "voice": "Now read the store created by those kernel executions. We expect one session capture and three decorated-call captures. Find the first variant cell twice: its cell identifier is the same, while its execution count differs. The metrics remain observations of the selected evaluation file and threshold. Separate Runs keep the history of repeated work instead of replacing the previous cell display.",
+          "commands": [
+            [
+              1,
+              "apizr experiment list --store \"$APIZR_ACADEMY_KERNEL_WORKSPACE/.apizr/experiments/v1\""
+            ],
+            [
+              14,
+              "(cd \"$APIZR_ACADEMY_KERNEL_WORKSPACE\" && python \"$APIZR_ACADEMY_LAB\" history)"
+            ]
+          ],
+          "capture": "history.mp4",
+          "seconds": 55,
+          "takeaway": "Read the observed result before continuing.",
+          "interpret_after": 2
+        },
+        {
+          "id": "state",
+          "title": "Variant: the unlogged calibration offset",
+          "voice": "The final notebook cell deliberately changes a calibration offset in live memory before the first variant is repeated. Its threshold and selected CSV identity stay the same, but the classification calculation reads that changed offset. Read the two actual results from the repeated cell. Cell identity plus an input file digest is not a complete kernel-state snapshot. The correction is practical: explicitly log calibration offset as a parameter and preserve the relevant source, rather than claiming that matching cell identifiers establish equivalent executions.",
+          "items": [
+            [
+              "Held fixed",
+              "Selected evaluation CSV and threshold"
+            ],
+            [
+              "Changed in memory",
+              "Unlogged calibration_offset: 0.0 to 0.2"
+            ],
+            [
+              "Record next",
+              "Log the offset; retain relevant source evidence"
+            ]
+          ],
+          "kind": "table",
+          "seconds": 0
+        },
+        {
+          "id": "pitfall",
+          "title": "What this does not reveal about kernel state",
+          "voice": "Execution counts tell you about order in this kernel; they are not a complete snapshot of memory. A repeated cell may read variables created earlier or modified elsewhere. Logging the evaluation file gives us content evidence for that selected input, but does not turn every live object into a verified snapshot. A saved notebook can also differ from the currently executing cell. Keep these limits explicit when explaining a result to a colleague.",
+          "items": [
+            [
+              "Count",
+              "Execution order in this kernel"
+            ],
+            [
+              "Selected input",
+              "Fingerprint of the explicitly logged CSV"
+            ],
+            [
+              "Unknown state",
+              "Other live objects and unsaved source"
+            ]
+          ],
+          "kind": "table",
+          "seconds": 0
+        },
+        {
+          "id": "exercise",
+          "title": "Your turn: same cell, same result?",
+          "voice": "Pause and answer. You rerun the same cell identifier with the same threshold but have changed an unlogged in-memory array. Must the metric stay the same? Does a new execution count tell you which array values were used? Explain what you would log or preserve to make that comparison useful.",
+          "items": [
+            [
+              "Reason about evidence",
+              "Cell identity does not identify all memory"
+            ],
+            [
+              "Make the review useful",
+              "Retain the relevant input identity"
+            ]
+          ],
+          "kind": "exercise",
+          "seconds": 18
+        },
+        {
+          "id": "answer",
+          "title": "Review the execution, not just the latest display",
+          "voice": "The same cell can produce another result when its live inputs differ. Its execution count alone cannot identify those values. Our real notebook example produces four retained captures, including two executions of the first variant cell. You can now read the shared history without confusing a cell, its latest display and a saved file. The VS Code lesson uses the same retained evidence; its native recording remains a separate task.",
+          "items": [
+            [
+              "Observed",
+              "Real cell identity, counts and selected metrics"
+            ],
+            [
+              "Retained",
+              "Four captures with their own Run identities"
+            ],
+            [
+              "Habit",
+              "Log the inputs needed to interpret repeated work"
+            ]
+          ],
+          "kind": "recap",
+          "seconds": 0
+        }
+      ]
+    }
+  }
+}

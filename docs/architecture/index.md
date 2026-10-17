@@ -10,7 +10,7 @@ where optional experiments, execution controls and delivery proofs fit. By the
 end, you can distinguish what the compiler establishes from what the runtime,
 operator and external deployment platform must provide.
 
-This guide describes the published **Apizr 0.4.5** workflows. Schema versions
+This guide describes the published **Apizr 0.4.6** workflows. Schema versions
 identify individual artifact contracts; they are independent of the package
 version. The existing specifications remain available in the contract sections
 of this guide, at their original addresses.

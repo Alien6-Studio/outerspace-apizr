@@ -1,13 +1,9 @@
 # Validate and build in CI
 
-Validate project evidence and optionally render a direct service bundle in CI.
-The result is a retained readiness report, exposure plan and generated artifact
-tree; this static step does not test a running service.
-
-Use [Install Apizr](../install.md) with public **0.4.5**, and the reviewed project
-configuration from [the developer guide](../../developer-guide/index.md).
-The GitHub Action is published with the release. The GitLab component remains
-source-only: no hosted runtime or Component Catalog publication is claimed.
+**Apizr 0.4.6** provides `apizr ci`, a GitHub
+composite Action, and canonical GitLab component source. The matching `v0.4.6` Action tag selects the release source. The GitLab component is source-only:
+hosted runtime and catalog publication have not been performed. Qualification
+installs the exact original candidate wheel.
 
 ## One static command
 
@@ -78,7 +74,7 @@ identical bytes across repeat runs and both wrappers.
 ## GitHub Actions
 
 The root `action.yml` is a real composite Action. This example uses the
-**published stable v0.4.5 tag**:
+**v0.4.6 release tag**:
 
 ```yaml
 permissions:
@@ -88,13 +84,13 @@ steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     with:
       persist-credentials: false
-  - uses: Alien6-Studio/outerspace-apizr@v0.4.5
+  - uses: Alien6-Studio/outerspace-apizr@v0.4.6
     id: apizr
     with:
       operation: check
       project: apizr.toml
       authorize-analysis: "true"
-      apizr-version: "0.4.5"
+      apizr-version: "0.4.6"
       python-version: "3.14"
       output-dir: .apizr-ci
 ```
@@ -102,8 +98,8 @@ steps:
 Use the immutable release tag shared with the Python release, or pin its exact
 commit SHA. There are no moving major/minor Action tags. The Action reference and
 `apizr-version` are separate identities; choose matching releases deliberately.
-The published `v0.4.5` Action and component source default to **0.4.5**.
-The matching coordinated packages are available from PyPI.
+The `v0.4.6` Action and component source default to **0.4.6**.
+Use matching coordinated packages for that tag.
 
 | Input | Default / behavior |
 | --- | --- |
@@ -128,7 +124,7 @@ retention. The Action itself performs neither checkout nor artifact upload.
 
 For repository qualification only, paired `wheel-path` / `wheel-sha256` inputs
 select a regular local candidate wheel matching the Action's qualification version.
-The v0.4.5 Action accepts exactly 0.4.5 for qualification; historical Action tags
+The v0.4.6 Action accepts exactly 0.4.6 for qualification; historical Action tags
 retain their original version policies. The Action checks the SHA-256, embedded core
 distribution/version and installed CLI version, using a snapshot of the original
 verified bytes. URLs, symlinks and mismatched identities are rejected. This is not
@@ -147,14 +143,14 @@ instance; it is not a live component URL:
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/<alien6-component-project>/apizr@0.4.5
+  - component: $CI_SERVER_FQDN/<alien6-component-project>/apizr@0.4.6
     inputs:
       job-name: apizr-check
       stage: test
       operation: check
       project: apizr.toml
       authorize-analysis: true
-      apizr-version: "0.4.5"
+      apizr-version: "0.4.6"
       output-dir: .apizr-ci
 ```
 
@@ -176,7 +172,7 @@ python@sha256:51dafde81dbdb6ebde285137a295cf18a47ca95234fe388a343719cb97305b3d
 ```
 
 An explicit `python-image` override must also be digest-pinned and contain Python
-3.11–3.14 plus venv. Accepting an override does not qualify that image or another
+3.11–3.15 plus venv. Accepting an override does not qualify that image or another
 architecture. `job-name` starts with `apizr-`; multiple jobs can use distinct names
 and `.apizr-ci-<suffix>` output directories. The consumer supplies an existing stage.
 
@@ -188,7 +184,7 @@ there is no automatic upload on failure.
 ## Qualification references
 
 The `Forge integrations` workflow exercises the real local composite (`uses: ./`)
-on Linux Python 3.11–3.14 with original coordinated wheel bytes. Installed-core
+on Linux Python 3.11–3.15 with original coordinated wheel bytes. Installed-core
 proofs outside checkout compare API, CLI and Action output bytes. Tests also cover
 refusals, cancellation, portable results, bounds and shell-injection sentinels.
 GitLab qualification validates both YAML documents against the vendored official

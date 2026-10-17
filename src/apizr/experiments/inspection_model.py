@@ -19,6 +19,7 @@ from apizr.experiments.randomness import RandomnessResult
 from apizr.readiness import ReadinessReport, State, report_digest
 from apizr.repository.model import CapabilityEntry
 from apizr.repository_views.model import CapabilityFocus, ReadinessIdentity
+from apizr.scientific_providers.contracts.selection import ProviderReport
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -136,6 +137,9 @@ class ExperimentInspection(ExperimentValue):
     serving: ServingEvidence
     locations: Annotated[tuple[EvidenceLocation, ...], Field(max_length=8192)] = ()
     states: InspectionStates
+    providers: ProviderReport | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
     @field_validator("locations")
     @classmethod

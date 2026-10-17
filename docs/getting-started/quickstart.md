@@ -5,13 +5,18 @@ description: Generate your first REST API or MCP server from Python, run it loca
 
 # Make your first MCP and REST calls
 
+For Apizr 0.4.6 sessions, decorated calls and Jupyter, use the
+[SDK quickstart](tracking.md).
+
 Working with a training notebook? Follow the [Data Scientist quickstart](data-science.md)
-for Apizr 0.4.5: inspect, record two Runs, compare and serve a prediction.
+for the 0.4.6 release: inspect, record two Runs, compare and serve a prediction.
 
 
-## Inspect a training script first (0.4.5)
+<span id="inspect-a-training-script-first-045"></span>
 
-With Apizr 0.4.5 installed, you can start with experiment
+## Inspect a training script first
+
+With Apizr 0.4.6 installed, start with experiment
 evidence before building a service. This example requires only Apizr's core:
 
 <!-- experiment-inspection:quickstart -->
@@ -30,7 +35,9 @@ unobserved. Undefined names and an absent sklearn installation are fine because
 inspection does not execute the file. See the [experiment guide](user-guide/experiment-inspection.md)
 for data fingerprints, notebooks and all eight sections.
 
-## Run a trusted experiment (0.4.5)
+<span id="run-a-trusted-experiment-045"></span>
+
+## Run a trusted experiment
 
 `inspect` never executes your code. **`run` executes trusted code in a fresh
 process with host filesystem, network and subprocess access. It is not a security
@@ -103,7 +110,7 @@ Python MCP client.
 ## Prepare an isolated workspace
 
 [Install Apizr](install.md) with the pip instructions and keep `core/` activated.
-You need Python 3.11–3.14, `curl`, a POSIX shell on macOS/Linux and internet access
+You need Python 3.11–3.15, `curl`, a POSIX shell on macOS/Linux and internet access
 for the example and server dependencies. In the same terminal:
 
 <!-- quickstart:setup -->
@@ -114,7 +121,7 @@ apizr --version
 python3 -m venv runtime
 ```
 
-`apizr --version` should report `outerspace-apizr 0.4.5`. The new `runtime/`
+`apizr --version` should report `outerspace-apizr 0.4.6`. The new `runtime/`
 environment will hold the generated server's dependencies separately from Apizr.
 
 ## Get the example and choose its public functions
@@ -347,6 +354,6 @@ ones to expose. Review its source and dependencies before running the generated
 service. Follow [The full journey](introduction.md) to understand each stage,
 or the [exposure guide](user-guide/exposure.md) for repository configuration.
 
-For Apizr 0.4.5, your selected function can use statically resolvable
+For Apizr 0.4.6, your selected function can use statically resolvable
 [private helpers in other modules](user-guide/exposure.md#use-private-helpers-from-the-same-repository)
 without exposing those helpers.

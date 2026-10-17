@@ -1,6 +1,63 @@
 # Changelog
 
-## 0.4.5 — 2026-10-11
+## 0.4.6
+
+- Add the VS Code extension for saved-source inspection, shared CLI/SDK/Jupyter
+  history, canonical comparison, notebook navigation and explicit engine selection.
+- Qualify Python 3.11–3.15, uv 0.13.x and native glibc 2.41 preparation; keep
+  scientific libraries as workload dependencies and core runtime dependencies minimal.
+- Qualify the integrated notebook → Runs → prediction journey from the same
+  installed wheel and VSIX, with real REST/MCP calls and no retraining (#325).
+- Gate candidate construction on current release-facing documentation and metadata;
+  bind frozen README bytes and package URLs to the qualified source (#328).
+
+- Remove the remaining 73 Python compatibility facades and 11 embedded historical
+  import exceptions. Use canonical owning namespaces; generated governed bundles
+  use the same paths under their autonomous package, changing runtime hashes and
+  manifests while preserving evidence schemas and direct bundle bytes (#291).
+
+- Deprecate then remove the complete historical FastAPI/Docker pipeline, upload
+  service, step hooks and `legacy` extra. Unknown commands exit 2; the removed
+  flags explain migration to inspect → explicit exposure → generate rest/mcp.
+  Move non-executing notebook export to `apizr.notebooks`, preserving golden
+  exported/formatted bytes and admission controls (#284, #331).
+
+- Define separate bounded static scientific provider and in-process SDK adapter
+  contracts, with core admission over existing evidence types and reuse of the
+  current extension protocol and ordinary SDK validation (#308).
+
+- Capture active Jupyter cell identities, prompt counters and bounded source
+  digests through the ordinary SDK session/decorator, with independent saved-file
+  evidence, preserved displays and real interrupt/recovery qualification (#305).
+
+- Qualify stable uv 0.13.x for plugin preparation, retain measured resolver
+  versions, pin development CI to 0.13.1 and detect new unqualified series (#329).
+- Support measured native glibc 2.41 hosts without passing an unsupported uv
+  triple or substituting an older libc; retain the earlier Linux baselines and
+  secure Intel MCP refusal. Rebase the development Glama recipe to Debian 13 (#285).
+- Bind Homebrew development qualification to the current full lock identity,
+  preserving the frozen 0.4.5 publication manifest and identical build wheels.
+- Bind product scope once per mixed CI job while retaining job-level gates,
+  required matrix check names and upload behavior after failures (#286).
+- Add context-local in-process tracking sessions and explicit bounded parameter,
+  input, metric and artifact logging. Preserve business exceptions, record failed
+  and cancelled captures, and publish through the canonical immutable store (#303).
+- Add an inert-on-import experiment decorator with explicit argument selection,
+  preserved ordinary/async function behavior and unknown scientific object values
+  without pickling (#304).
+- Unify CLI and SDK history, validated record exports and producer-aware pure
+  comparison, with explicit v2 derived views and unchanged stored v1 evidence.
+  The outer CLI runner owns publication for instrumented workloads (#306).
+- Add explicit v2 Plan/Run evidence for in-process captures, selected call
+  parameters, function bindings, kernel cells and unknown source observations.
+  Preserve v1 schema exports, canonical bytes and digests, with versioned readers
+  and frozen 0.4.5 store qualification. In-flight execution ids remain distinct
+  from final evidence digests (#302).
+- Resolve modern CLI commands through one lazy dispatch table, retaining the
+  completion/onboarding special cases, existing help bytes and captured grammar.
+  Importing the CLI and resolving its adapters does not load optional SDKs (#293).
+
+## 0.4.5 — release candidate, not yet published
 
 Inspect ordinary notebooks, record and compare trusted Runs, then explicitly
 select a prediction capability for REST/MCP. Python developers also gain private

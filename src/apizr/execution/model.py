@@ -4,9 +4,9 @@ from typing import Literal
 
 from pydantic import JsonValue
 
+from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import Digest
 from apizr.capabilities.types import ValueModel
-from apizr.inspection import Inspection
 from apizr.interfaces.model import InvocationContract
 from apizr.interfaces.planner import BoundSource
 

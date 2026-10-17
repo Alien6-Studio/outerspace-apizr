@@ -2,9 +2,9 @@
 
 from collections.abc import Mapping, Sequence
 
+from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import Capability, Digest, Source
 from apizr.capabilities.types import ValueModel
-from apizr.inspection import Inspection
 from apizr.readiness.model import Assessment
 
 from .model import Input, InvocationContract, TypeSpec

@@ -5,6 +5,7 @@ import sys
 
 from pydantic import ValidationError
 
+from apizr.experiments.store import StoreError
 from apizr.exposure import ExposureRefused, plan_bytes, plan_exposure
 from apizr.extension_runtime.protocol import Request, unique_object
 from apizr.graph import analyze_repository
@@ -19,9 +20,10 @@ from apizr.repository_views.projection import (
     localize,
     readiness_view,
 )
+from apizr.workspace.editor_session import history_error, history_value
 from apizr.workspace.operator_policy import AuthorizationDenied
 
-from .model import Job, PlanArguments, ViewArguments
+from .model import HistoryJob, Job, PlanArguments, ViewArguments
 
 MAX_JOB_BYTES = 1048576
 
@@ -137,6 +139,18 @@ def calculate(job: Job) -> dict:
         return failure("scope_changed" if code == "operator_source_changed" else code)
 
 
+def calculate_history(job: HistoryJob) -> dict:
+    try:
+        return {
+            "ok": True,
+            "value": history_value(job.scope, job.request).model_dump(mode="json"),
+        }
+    except AuthorizationDenied as error:
+        return failure(error.code)
+    except StoreError as error:
+        return failure(history_error(error))
+
+
 def main() -> int:
     try:
         raw = sys.stdin.buffer.read(MAX_JOB_BYTES + 1)
@@ -149,10 +163,16 @@ def main() -> int:
         print("invalid_calculation_request", file=sys.stderr)
         return 2
     try:
-        if request.operation != "calculate":
+        if request.operation not in {"calculate", "history"}:
             raise ValueError()
-        job = Job.model_validate_json(json.dumps(request.arguments), strict=True)
-        result = calculate(job)
+        if request.operation == "history":
+            history = HistoryJob.model_validate_json(
+                json.dumps(request.arguments), strict=True
+            )
+            result = calculate_history(history)
+        else:
+            job = Job.model_validate_json(json.dumps(request.arguments), strict=True)
+            result = calculate(job)
     except ValidationError:
         result = failure("invalid_arguments")
     except (OSError, ValueError, RecursionError):

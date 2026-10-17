@@ -1,0 +1,28 @@
+{
+  "invalid_typeddict_requests_refused": 3,
+  "rest": {
+    "predictions": [
+      [
+        1,
+        0.8127568160788873
+      ]
+    ]
+  },
+  "structuredContent": {
+    "predictions": [
+      [
+        1,
+        0.8127568160788873
+      ]
+    ]
+  },
+  "timings_seconds": {
+    "mcp_call": 0.09681580500000564,
+    "mcp_startup_and_list": 2.7961088670000436,
+    "rest_call": 0.10315698599993084,
+    "rest_startup": 2.1180929100000867
+  },
+  "tools": [
+    "fraud_detection.predict"
+  ]
+}

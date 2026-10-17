@@ -1,5 +1,8 @@
 """Read-only composition of static experiment producers and canonical serving evidence."""
 
+import io
+import tokenize
+from collections.abc import Mapping
 from pathlib import Path
 
 from pydantic import TypeAdapter
@@ -9,13 +12,11 @@ from apizr.capabilities.inspection import Inspection, inspect_source
 from apizr.capabilities.model import Digest
 from apizr.capabilities.types import logical_module
 from apizr.experiments._lexical import MAX_SOURCE_BYTES, SourceLimit, bounded_tree
-from apizr.experiments._locations import trace_locations
 from apizr.experiments.environment import discover_environment_specs
 from apizr.experiments.inputs import (
     FingerprintPolicy,
     InputDeclaration,
     InputResult,
-    discover_inputs,
     fingerprint_inputs,
     select_inputs,
 )
@@ -26,7 +27,6 @@ from apizr.experiments.inspection_model import (
     RepositoryServing,
     ServingEvidence,
 )
-from apizr.experiments.metrics import discover_metrics
 from apizr.experiments.model import Reference
 from apizr.experiments.notebook_source import (
     NotebookSource,
@@ -34,15 +34,17 @@ from apizr.experiments.notebook_source import (
     code_cells,
     map_exported,
 )
-from apizr.experiments.outputs import discover_outputs
 from apizr.experiments.parameters import discover_parameters
-from apizr.experiments.randomness import discover_randomness
 from apizr.graph.model import Graph
 from apizr.readiness import assess, report_digest
 from apizr.repository.model import CapabilityEntry, Catalog
 from apizr.repository_readiness import RepositoryReadinessReport, validate_report
 from apizr.repository_views.model import CapabilityFocus, ReadinessDetail, ViewQuery
 from apizr.repository_views.projection import readiness_view
+from apizr.scientific_providers.builtin.locations import trace_locations
+from apizr.scientific_providers.builtin.recognition import Recognition, recognize_source
+from apizr.scientific_providers.contracts.model import StaticProvider
+from apizr.scientific_providers.contracts.selection import ProviderSelection
 from apizr.workspace.files import absolute_path, read_regular
 
 MAX_NOTEBOOK_BYTES = 16 * 1024 * 1024
@@ -72,7 +74,10 @@ def _serving(inspection: Inspection, reference: str) -> ServingEvidence:
 
 
 def _locations(
-    result: ExperimentInspection, source: str | bytes, notebook: NotebookSource | None
+    result: ExperimentInspection,
+    source: str | bytes,
+    notebook: NotebookSource | None,
+    recognized: Recognition | None = None,
 ) -> tuple[EvidenceLocation, ...]:
     reference = result.code.reference
     locations: list[EvidenceLocation] = []
@@ -109,19 +114,41 @@ def _locations(
     ):
         for index, record in enumerate(records):
             add(f"/{collection}/{index}", record.source.line, 0, exported=True)
-    try:
-        inputs, randomness = trace_locations(source, reference)
-    except SourceLimit:
-        # The same producer bounds already retain a discovery-limit diagnostic.
+    allowed = {"input_reads", "randomness_controls"}
+    if result.providers is not None:
+        allowed = {
+            o.capability
+            for o in result.providers.owners
+            if o.provider is not None
+            and o.provider.name == "apizr.builtin"
+            and o.state == "static"
+        }
+    if not allowed.intersection({"input_reads", "randomness_controls"}):
         return tuple(locations)
+    if recognized is not None:
+        input_locations, random_locations = (
+            dict(recognized.inputs),
+            dict(recognized.controls),
+        )
+    else:
+        try:
+            inputs, randomness = trace_locations(source, reference)
+        except SourceLimit:
+            # The same producer bounds already retain a discovery-limit diagnostic.
+            return tuple(locations)
+        input_locations, random_locations = inputs.locations, randomness.locations
     for index, artifact in enumerate(result.data.artifacts):
-        for line, column in inputs.locations.get(
-            artifact.reference or artifact.uri or "", ()
+        if "input_reads" not in allowed:
+            continue
+        for line, column in sorted(
+            input_locations.get(artifact.reference or artifact.uri or "", ())
         ):
             add(f"/data/artifacts/{index}", line, column)
     for index, control in enumerate(result.randomness.controls):
-        for line, column in randomness.locations.get(
-            (control.provider, control.name), ()
+        if "randomness_controls" not in allowed:
+            continue
+        for line, column in sorted(
+            random_locations.get((control.provider, control.name), ())
         ):
             add(f"/randomness/controls/{index}", line, column)
     return tuple(locations)
@@ -188,6 +215,10 @@ def inspect_experiment(
     module_name: str | None = None,
     declarations: tuple[InputDeclaration, ...] = (),
     fingerprint_policy: FingerprintPolicy | None = None,
+    max_source_bytes: int | None = None,
+    providers: ProviderSelection | None = None,
+    provider_implementations: Mapping[str, StaticProvider] | None = None,
+    provider_directory: Path | None = None,
 ) -> ExperimentInspection:
     """Inspect one explicit source, bounded local inputs and root-level environment specs.
 
@@ -212,10 +243,14 @@ def inspect_experiment(
         if fingerprint_policy is None
         else FingerprintPolicy.model_validate(fingerprint_policy)
     )
-    raw = read_regular(
-        source_path,
-        MAX_SOURCE_BYTES if source_path.suffix == ".py" else MAX_NOTEBOOK_BYTES,
+    source_limit = (
+        MAX_SOURCE_BYTES if source_path.suffix == ".py" else MAX_NOTEBOOK_BYTES
     )
+    if max_source_bytes is not None:
+        if type(max_source_bytes) is not int or max_source_bytes < 1:
+            raise ValueError("inspection_source_limit_invalid")
+        source_limit = min(source_limit, max_source_bytes)
+    raw = read_regular(source_path, source_limit)
     notebook = None
     source: str | bytes = raw
     if source_path.suffix == ".ipynb":
@@ -235,9 +270,43 @@ def inspect_experiment(
     else:
         bounded_tree(raw)  # Fail before canonical analysis on excessive/invalid source.
         inspection = inspect_source(raw, module_name=module)
-    selected = select_inputs(
-        discover_inputs(source, source_reference=reference), declarations
-    )
+    provider_report = None
+    recognized = None
+    if providers is None:
+        recognized = recognize_source(source, reference)
+        inputs, randomness = recognized.input_reads, recognized.randomness_controls
+        metrics, outputs = recognized.metric_signals, recognized.output_candidates
+    else:
+        from apizr.experiments.metrics import MetricDiscoveryResult
+        from apizr.experiments.outputs import OutputDiscoveryResult
+        from apizr.experiments.provider_source import SourceView
+        from apizr.experiments.randomness import RandomnessResult
+        from apizr.scientific_providers.selection import SelectionSession
+
+        text = (
+            source
+            if isinstance(source, str)
+            else source.decode(tokenize.detect_encoding(io.BytesIO(source).readline)[0])
+        )
+        session = SelectionSession(
+            providers,
+            implementations=provider_implementations,
+            directory=provider_directory,
+        )
+        provider_report, results = session.recognize(
+            SourceView(reference=reference, text=text)
+        )
+        sections = {
+            owner.capability: getattr(result, owner.capability)
+            for owner in provider_report.owners
+            for result in results
+            if owner.provider == result.identity
+        }
+        inputs = sections.get("input_reads", InputResult())
+        randomness = sections.get("randomness_controls", RandomnessResult())
+        metrics = sections.get("metric_signals", MetricDiscoveryResult())
+        outputs = sections.get("output_candidates", OutputDiscoveryResult())
+    selected = select_inputs(inputs, declarations)
     captured = fingerprint_inputs(selected_root, selected.artifacts, policy=policy)
     # Build only from validated producers; model_construct permits computing derived
     # states before the final strict admission, never returning an unchecked artifact.
@@ -258,17 +327,18 @@ def inspect_experiment(
             diagnostics=(*selected.diagnostics, *captured.diagnostics),
         ),
         parameters=discover_parameters(source, source_reference=reference),
-        randomness=discover_randomness(source, source_reference=reference),
+        randomness=randomness,
         environment=discover_environment_specs(selected_root),
-        metrics=discover_metrics(source, source_reference=reference),
-        outputs=discover_outputs(source, source_reference=reference),
+        metrics=metrics,
+        outputs=outputs,
         serving=_serving(inspection, reference),
+        providers=provider_report,
     )
     return ExperimentInspection.model_validate(
         draft.model_copy(
             update={
                 "states": draft.derived_states(),
-                "locations": _locations(draft, source, notebook),
+                "locations": _locations(draft, source, notebook, recognized),
             }
         )
     )

@@ -1,0 +1,290 @@
+{
+  "candidate_commit": "0539a48a176ccdbc485e15c2fa6c20a44185d5a8",
+  "candidate_manifest_sha256": "80d15c4bc2a1d526e52c0584893a9cd938057ee88d610c29596d11fec448c244",
+  "changed_files": [
+    ".apizr/experiments/v1/plans/edf174955c5ba652e5ad8078903ed0c474765c9c36753328429ca43d945e1df7.json",
+    ".apizr/experiments/v1/runs/ce113958368fd27d03d4bb6e7c30812440e858ab3a556ce644eb5454555e4866.json",
+    "artifacts/model.joblib",
+    "data/transactions.csv",
+    "run-b.json"
+  ],
+  "data_a": "f82f5bb6e0723b2166ab5eae8566ceabc913d55522fe2adbfcb638c523cc2dae",
+  "data_b": "16b8f77575bd5374ad4435c04b3e9749bdaac63260d770818ed33f320c1477b0",
+  "download_seconds": 0.5492724159848876,
+  "inspection_did_not_execute": true,
+  "install_seconds": 11.347408708999865,
+  "integrated": {
+    "cli_same_records": true,
+    "editor": {
+      "cases": [
+        "same-three-jupyter-runs",
+        "success-and-failure-statuses",
+        "canonical-show-and-diff"
+      ],
+      "installed_vsix": "apizr-0.4.6.vsix",
+      "outside_checkout": true,
+      "result": "pass",
+      "run_digests": [
+        "4600054b54d20ab6363b2972043ecc5607cdffc6d7d5773dc7f92fbf82a038a1",
+        "78986343dd387bc1c863a94358a11fe4f1ea6b491aba74c2fd3120c0059e3d85",
+        "d00ca30e06c82a33571b175acd0954fb83b56b2914b83f6646d09617e9b253ba"
+      ],
+      "uninstalled_without_owned_storage": true,
+      "upgraded_qualification_fixture": false,
+      "vscode": "1.140.0"
+    },
+    "elapsed_seconds": 39.64731216698419,
+    "provider_disabled_history": true,
+    "provider_unavailable_history": true,
+    "runs": [
+      {
+        "cell": "failed-cell",
+        "run_digest": "d00ca30e06c82a33571b175acd0954fb83b56b2914b83f6646d09617e9b253ba",
+        "status": "failed"
+      },
+      {
+        "cell": "variant-b",
+        "run_digest": "4600054b54d20ab6363b2972043ecc5607cdffc6d7d5773dc7f92fbf82a038a1",
+        "status": "success"
+      },
+      {
+        "cell": "variant-a",
+        "run_digest": "78986343dd387bc1c863a94358a11fe4f1ea6b491aba74c2fd3120c0059e3d85",
+        "status": "success"
+      }
+    ],
+    "runtime": {
+      "kernel": "7.4.0",
+      "module": "<qualification-python315>/work/science/lib/python3.15/site-packages/apizr/__init__.py",
+      "prefix": "<qualification-python315>/work/science",
+      "python": "3.15.0 (main, Oct 14 2026, 00:56:12) [Clang 23.1.3 ]"
+    },
+    "serving_training_observer": {
+      "positive_controls": 2,
+      "serving_pids": [
+        5249,
+        6990
+      ],
+      "training_calls": 0
+    },
+    "status": "passed",
+    "tampered_artifact": "run_artifact_changed",
+    "training_calls_during_serving": 0,
+    "training_marker_unchanged": true,
+    "transports": {
+      "invalid_typeddict_requests_refused": 3,
+      "rest": {
+        "predictions": [
+          [
+            1,
+            0.8127568160788873
+          ]
+        ]
+      },
+      "structuredContent": {
+        "predictions": [
+          [
+            1,
+            0.8127568160788873
+          ]
+        ]
+      },
+      "timings_seconds": {
+        "mcp_call": 0.14121266698930413,
+        "mcp_startup_and_list": 2.0842588749947026,
+        "rest_call": 1.3604265419999138,
+        "rest_startup": 11.13672941699042
+      },
+      "tools": [
+        "fraud_detection.predict"
+      ]
+    },
+    "vsix": {
+      "file": "apizr-0.4.6.vsix",
+      "sha256": "534f49a6e8533e16f7d0bcfc350c022b050591503f12c011c24f8ea870e9ca0e"
+    }
+  },
+  "journey_seconds": 35.63375120802084,
+  "offline_python_guard": true,
+  "reproduction": {
+    "fixed_run_bundle_bytes_identical": true,
+    "required_helper_defect_refused": true,
+    "same_inspection": true,
+    "same_plan": true,
+    "second_run": {
+      "metrics": 3,
+      "outputs": 2,
+      "plan_digest": "0b2b0248e3628118b809772be16d192fa0c2ccea53b96e48924949f4e829707a",
+      "run_digest": "34469d1e5093a6949805cc2e40a0d1c1c576d7baa71d2ae93079c2a772d15a3a",
+      "schema_version": "apizr.experiment-run-result/v1",
+      "source": {
+        "capability_id": null,
+        "digest": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+        "executable_digest": "18269caab85610eb3ad17338f4264bfb10af1319f60f9a53f85fed945e23e9b3",
+        "kind": "notebook",
+        "module": "fraud_detection",
+        "reference": "fraud_detection.ipynb"
+      },
+      "started_at": "2026-10-16T12:58:45.477726Z",
+      "status": "success"
+    },
+    "second_setup_seconds": 17.495980042003794,
+    "serving_without_apizr_or_pandas": true,
+    "transports": {
+      "invalid_typeddict_requests_refused": 3,
+      "rest": {
+        "predictions": [
+          [
+            1,
+            0.8127568160788873
+          ]
+        ]
+      },
+      "structuredContent": {
+        "predictions": [
+          [
+            1,
+            0.8127568160788873
+          ]
+        ]
+      },
+      "timings_seconds": {
+        "mcp_call": 0.09587366599589586,
+        "mcp_startup_and_list": 0.7666034169960767,
+        "rest_call": 0.15343787500751205,
+        "rest_startup": 1.1372121659805998
+      },
+      "tools": [
+        "fraud_detection.predict"
+      ]
+    },
+    "unrelated_ambiguity_retained": true,
+    "without_original_projects": true
+  },
+  "rest_mcp_parity": true,
+  "rest_typeddict_refusals": 3,
+  "run_a": {
+    "metrics": 3,
+    "outputs": 2,
+    "plan_digest": "0b2b0248e3628118b809772be16d192fa0c2ccea53b96e48924949f4e829707a",
+    "run_digest": "cb07de8b4a663a6278eedfbf79015b9a2e95bea99acf65baedb402dac746b622",
+    "schema_version": "apizr.experiment-run-result/v1",
+    "source": {
+      "capability_id": null,
+      "digest": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "executable_digest": "18269caab85610eb3ad17338f4264bfb10af1319f60f9a53f85fed945e23e9b3",
+      "kind": "notebook",
+      "module": "fraud_detection",
+      "reference": "fraud_detection.ipynb"
+    },
+    "started_at": "2026-10-16T12:57:11.187054Z",
+    "status": "success"
+  },
+  "run_b": {
+    "metrics": 3,
+    "outputs": 2,
+    "plan_digest": "edf174955c5ba652e5ad8078903ed0c474765c9c36753328429ca43d945e1df7",
+    "run_digest": "ce113958368fd27d03d4bb6e7c30812440e858ab3a556ce644eb5454555e4866",
+    "schema_version": "apizr.experiment-run-result/v1",
+    "source": {
+      "capability_id": null,
+      "digest": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "executable_digest": "18269caab85610eb3ad17338f4264bfb10af1319f60f9a53f85fed945e23e9b3",
+      "kind": "notebook",
+      "module": "fraud_detection",
+      "reference": "fraud_detection.ipynb"
+    },
+    "started_at": "2026-10-16T12:57:22.185602Z",
+    "status": "success"
+  },
+  "runtime": {
+    "packages": {
+      "joblib": "1.6.0",
+      "numpy": "2.5.4",
+      "outerspace-apizr": "0.4.5",
+      "pandas": "3.0.6",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1"
+    },
+    "path": "<qualification-python315>/work/science/lib/python3.15/site-packages/apizr/__init__.py",
+    "python": "3.15.0"
+  },
+  "setup_seconds": 15.4824958750105,
+  "source_hashes": [
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "authority"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "completed"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "diff"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "inspect"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "list"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "mcp-call"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "mcp-expose"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "rest-call"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "rest-expose"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "rest-install"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "rest-start"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "run-a"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "run-b"
+    },
+    {
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec",
+      "stage": "show"
+    }
+  ],
+  "stale_model_refused": true,
+  "status": "passed",
+  "synthetic_data_reproduced": true,
+  "time_to_first_value_seconds": 1.1260827090009116,
+  "timings_seconds": {
+    "authority": 0.0448989580036141,
+    "diff": 0.1687977499968838,
+    "inspect": 0.8948297500028275,
+    "list": 0.16393524999148212,
+    "mcp-call": 1.718443624995416,
+    "mcp-expose": 2.1226977920159698,
+    "rest-call": 6.321556124981726,
+    "rest-expose": 0.644146833976265,
+    "rest-install": 9.04010620797635,
+    "rest-start": 0.02064816700294614,
+    "run-a": 10.442889874975663,
+    "run-b": 2.731593958014855,
+    "show": 0.16752970800735056
+  }
+}

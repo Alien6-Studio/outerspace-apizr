@@ -34,6 +34,12 @@ COMMON = {
     "apizr_runtime.py",
     "requirements.txt",
 }
+TRANSPORT_MODULES = {
+    "apizr_json_budget.py",
+    "apizr_http_admission.py",
+    "apizr_results.py",
+}
+ADMISSION_MODULES = {"apizr_repository_artifacts.py", "apizr_json_preflight.py"}
 
 
 def read(root: Path, name: str, limit: int) -> bytes:
@@ -84,6 +90,16 @@ def bundle_snapshot(source: Path, target: Path, interface: str) -> None:
         if interface == "rest"
         else {"server.py", "mcp-tools.json"}
     )
+    # Current bundles carry this complete portable admission closure. Older v1
+    # runtimes are self-contained; neither shape permits arbitrary extra files.
+    if ADMISSION_MODULES.intersection(manifest.artifacts):
+        allowed |= ADMISSION_MODULES
+    if {"apizr_json_budget.py", "apizr_http_admission.py"}.intersection(
+        manifest.artifacts
+    ):
+        allowed |= TRANSPORT_MODULES | ADMISSION_MODULES
+        if interface == "mcp":
+            allowed.add("apizr_mcp_transport.py")
     # Corrected MCP bundles embed the reviewed result normalizer. Older v1
     # bundles predate that module; retain their existing admission contract.
     if interface == "mcp" and "apizr_results.py" in manifest.artifacts:

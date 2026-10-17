@@ -1,0 +1,29 @@
+{
+  "result": "pass",
+  "vscode": "1.140.0",
+  "remote": null,
+  "node": "v24.21.0",
+  "engine": "/private/tmp/apizr-client-engine/bin/python",
+  "engine_origin": "/private/tmp/apizr-client-engine/lib/python3.12/site-packages/apizr/__init__.py",
+  "outside_checkout": true,
+  "cases": [
+    "canonical-inspection:inspect_only.py",
+    "canonical-inspection:fraud_detection.ipynb",
+    "canonical-inspection:jupyter_capture.ipynb",
+    "saved-file-and-stale-buffer",
+    "mixed-cli-sdk-jupyter-history",
+    "canonical-show-and-diff",
+    "publication-event-refresh",
+    "global-telemetry-opt-out",
+    "incompatible-engine-refused"
+  ],
+  "installed_vsix": "apizr-0.4.6.vsix",
+  "uninstalled_without_owned_storage": true,
+  "upgraded_qualification_fixture": false,
+  "offline_python_engine": {
+    "positive_controls": 2,
+    "connection_attempts": 0,
+    "guarded_processes": 25,
+    "apizr_processes": 24
+  }
+}

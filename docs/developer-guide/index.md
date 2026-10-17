@@ -6,7 +6,7 @@ call both interfaces and retain reviewable artifacts in CI.
 
 ## Before you begin
 
-Use the [core installation](../getting-started/install.md), Python 3.11–3.14 and
+Use the [core installation](../getting-started/install.md), Python 3.11–3.15 and
 a trusted project you can inspect. Transport dependencies belong to the generated
 service. You do not need to modify Apizr or install the analysis MCP plugin.
 

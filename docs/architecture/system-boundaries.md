@@ -52,9 +52,10 @@ an authorization system merely because their artifacts have digests.
 
 The ownership inventory behind these boundaries is
 [Code organization](code-organization.md). CLI adapters call domains; core
-plugin management does not import optional plugin SDKs. The supported compiler
-import `apizr.compiler` forwards to its owning implementation; integrations
-use the [public API](../developer-guide/compiler.md), not internal modules.
+plugin management does not import optional plugin SDKs. Integrations use the
+[public compiler API](../developer-guide/compiler.md) in `apizr.workspace.compiler`.
+The former `apizr.compiler` forwarding import was removed in 0.4.6; the
+[migration table](../releases/removed-imports-0.4.6.md) lists its replacement.
 
 ## Two MCP servers serve different purposes
 

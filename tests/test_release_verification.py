@@ -4,9 +4,10 @@ import importlib.util
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 spec = importlib.util.spec_from_file_location(
-    "verify_release", Path(__file__).resolve().parents[1] / "scripts/verify_release.py"
+    "verify_release", str(qualification_script("verify_release"))
 )
 assert spec and spec.loader
 release = importlib.util.module_from_spec(spec)
@@ -52,7 +53,6 @@ def test_release_rejects_unverified_source(field, value):
 def test_installed_version_and_current_help(capsys):
     from importlib.metadata import version
 
-    from apizr.app import app
     from apizr.cli import main
 
     assert main(["--version"]) == 0
@@ -60,11 +60,11 @@ def test_installed_version_and_current_help(capsys):
         capsys.readouterr().out.strip()
         == f"outerspace-apizr {version('outerspace-apizr')}"
     )
-    assert app.version == version("outerspace-apizr")
     assert main(["--help"]) == 0
     text = capsys.readouterr().out
-    assert text.index("capability compiler") < text.index("Legacy generation pipeline")
-    assert "--notebook" in text and "--script" in text
+    assert "capability compiler" in text
+    assert "Legacy generation pipeline" not in text
+    assert "--notebook" not in text and "--script" not in text
 
 
 @pytest.mark.parametrize(
@@ -488,7 +488,7 @@ def test_resume_refuses_unrelated_or_unprotected_dispatch(
         release.main()
 
 
-def test_public_archive_check_does_not_checkout_artifact_source():
+def test_public_archive_check_executes_workflow_tools_and_reads_exact_tagged_source():
     import yaml
 
     root = Path(__file__).resolve().parents[1]
@@ -502,6 +502,16 @@ def test_public_archive_check_does_not_checkout_artifact_source():
     ]
     assert len(checkouts) == 1
     assert checkouts[0]["with"] == {"persist-credentials": "false"}
+    fetch = next(s for s in steps if s.get("name", "").startswith("Fetch verified"))
+    assert fetch["env"]["RELEASE_SHA"] == "${{ needs.verify.outputs.release_sha }}"
+    assert 'git fetch --no-tags --depth=1 origin "$RELEASE_SHA"' in fetch["run"]
+    metadata = next(s for s in steps if "--public" in s.get("run", ""))
+    assert '--source-revision "$RELEASE_SHA"' in metadata["run"]
+    assert "--source-root ." in metadata["run"]
+    # Tagged package content is comparison input; it cannot replace the verifier.
+    for step in steps:
+        assert step.get("working-directory") != "release-source"
+        assert "release-source/scripts/" not in step.get("run", "")
     public = next(
         step
         for step in steps
@@ -830,16 +840,21 @@ def test_workflows_separate_release_validation_from_external_publication():
         p.name: yaml.load(p.read_text(), Loader=yaml.BaseLoader)
         for p in directory.iterdir()
     }
-    for name in ("ci.yml", "security.yml", "mkdocs.yaml"):
+    triggers = workflows["ci.yml"]["on"]
+    assert triggers["push"]["branches"] == ["master", "0.4.6"]
+    assert not triggers["pull_request"]  # No target-branch or path exclusions.
+    for name in ("security.yml", "mkdocs.yaml"):
         triggers = workflows[name]["on"]
         assert triggers["push"]["branches"] == ["master"]
-        assert not triggers["pull_request"]  # No target-branch or path exclusions.
+        assert "pull_request" not in triggers
+        assert "workflow_call" in triggers
     docs = workflows["mkdocs.yaml"]["jobs"]
     assert (
         docs["deploy"]["if"]
         == "github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build.outputs.publishable == 'true'"
     )
-    assert set(workflows["publish-pypi.yml"]["on"]) == {"workflow_dispatch"}
+    for name in ("publish-pypi.yml", "publish-mcp.yml", "verify-mcp-distribution.yml"):
+        assert set(workflows[name]["on"]) == {"workflow_dispatch"}
     for name in (
         "oci-service-plugin.yml",
         "attest-delivery-plugin.yml",
@@ -847,8 +862,16 @@ def test_workflows_separate_release_validation_from_external_publication():
         "extension-packaging.yml",
         "extension-cleanup.yml",
     ):
-        assert set(workflows[name]["on"]) == {"pull_request", "workflow_dispatch"}
+        assert set(workflows[name]["on"]) == {
+            "workflow_call",
+            "workflow_dispatch",
+        }
         assert workflows[name]["permissions"] == {"contents": "read"}
+        assert any(
+            job.get("uses") == "./.github/workflows/" + name
+            and "github.ref != 'refs/heads/master'" in job["if"]
+            for job in workflows["ci.yml"]["jobs"].values()
+        )
     signer = workflows["ci.yml"]["jobs"]["provenance"]
     assert " ".join(signer["if"].split()) == (
         "github.event_name == 'push' && github.ref == 'refs/heads/master' && github.ref_protected"
@@ -893,6 +916,7 @@ def test_current_tracked_tree_keeps_oss_product_scope():
         for name in tracked.split(b"\0")
         if name
         and name.decode() not in documented_boundary
+        and (root / name.decode()).is_file()
         and excluded in (root / name.decode()).read_bytes().lower()
     ]
     assert not matches, f"Out-of-scope product references in tracked files: {matches}"

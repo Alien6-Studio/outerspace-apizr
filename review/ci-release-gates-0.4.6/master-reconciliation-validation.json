@@ -1,0 +1,65 @@
+{
+  "development_before": "98377601ef1812d0ca3dacb39f5fe35299c25058",
+  "stable_source": "b7c576d9b26c3c55027d0efeff253ab7f4aa73aa",
+  "resolved_conflicts": 54,
+  "production_trees": [
+    {
+      "scope": "src/apizr",
+      "tree": "5e9973aba265a2761d1410222ee51fb6ff06dc72",
+      "changed": false
+    },
+    {
+      "scope": "plugins/oci/src",
+      "tree": "04454f2dae67f450bd7868ce1208c94c9554fc73",
+      "changed": false
+    },
+    {
+      "scope": "plugins/attest/src",
+      "tree": "1b30b3891879682e3e1be8ce7674cd7bb7964b4e",
+      "changed": false
+    },
+    {
+      "scope": "plugins/mcp/src",
+      "tree": "db54f8a0d480f2dceee6599dcf4a4bf003f148a2",
+      "changed": false
+    },
+    {
+      "scope": "editors/vscode/src",
+      "tree": "126190288fccdd2c0ff86b3bffe16773c4e1bab0",
+      "changed": false
+    }
+  ],
+  "root_lock_changed": false,
+  "docs_lock_reuses_reviewed_sources_and_hashes": true,
+  "isolated_docs_tests": 170,
+  "affected_product_tests": 518,
+  "rendered_pages": 160,
+  "preserved_baseline_pages": 104,
+  "preserved_baseline_anchors": 759,
+  "compatibility_anchor_aliases": 47,
+  "site_state": {
+    "status": "release-candidate",
+    "target_version": "0.4.6",
+    "stable_release": "0.4.5"
+  },
+  "local_evidence": [
+    {
+      "stage": "apizr-346-isolated-final",
+      "sha256": "2b8d08b80d485f1c7532bd3a0f2d0d3d38dbed9e18df8894788e31e8ce6935c5"
+    },
+    {
+      "stage": "apizr-346-product-final",
+      "sha256": "bb1b2fea73d7904d15536d44f96a34569b9718e3e078427145621970e02ef01e"
+    },
+    {
+      "stage": "apizr-346-readme-proof-final",
+      "sha256": "151f7aa5b858271144940c14f398439ec12bbf4d8f0df069703987a58a418b7c"
+    },
+    {
+      "stage": "apizr-346-site-final",
+      "sha256": "12f1c224bfa6f8b6da36c6447fcb576e97a405ba4b0127a59d1bb60e609dcdaf"
+    }
+  ],
+  "master_updated": false,
+  "publication_performed": false
+}

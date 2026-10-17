@@ -1,0 +1,247 @@
+[
+  {
+    "path": "mcp/apizr-bundle-provenance.json",
+    "bytes": 250,
+    "sha256": "3442142502cb726a78d34cb99a372666f3b11f6ab5d823023706459e0e340f43"
+  },
+  {
+    "path": "mcp/apizr-repository-mcp.json",
+    "bytes": 6033,
+    "sha256": "65ed151a92601783f1dba20d72dccb2560bab73301540e150fc9ffe51787588d"
+  },
+  {
+    "path": "mcp/apizr_http_admission.py",
+    "bytes": 2594,
+    "sha256": "3e3ceb585c24917999e1e461fa4141a555b6e5056dcecaa35ccc8ff06a84e11c"
+  },
+  {
+    "path": "mcp/apizr_json_budget.py",
+    "bytes": 4656,
+    "sha256": "19a3fe9b446340a70fe1b0719a6f3b0091af7c70d383888641325e5e4ec09a3d"
+  },
+  {
+    "path": "mcp/apizr_json_preflight.py",
+    "bytes": 1826,
+    "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+  },
+  {
+    "path": "mcp/apizr_mcp_transport.py",
+    "bytes": 4677,
+    "sha256": "5bc13931b19e1c80b48a8e8649bf733e92a7cbe9ce2f8aa299fdaabf098378b9"
+  },
+  {
+    "path": "mcp/apizr_repository_artifacts.py",
+    "bytes": 4061,
+    "sha256": "ccbf0ce06cce729fc46248d2f24968c538ca014c5cf91ff3262d250a2921bf54"
+  },
+  {
+    "path": "mcp/apizr_repository_runtime.py",
+    "bytes": 12774,
+    "sha256": "0bb5163c831fa889f6d7b07ef8dc592f94263a041f87026ab50263292a2cc1ac"
+  },
+  {
+    "path": "mcp/apizr_results.py",
+    "bytes": 710,
+    "sha256": "758fb6f4ac426d39bb27c1d6a073a1db22342620af254541ba715144781e7176"
+  },
+  {
+    "path": "mcp/apizr_runtime.py",
+    "bytes": 9794,
+    "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+  },
+  {
+    "path": "mcp/application-requirements.txt",
+    "bytes": 34,
+    "sha256": "9bdb679b809389f8097db53aacc8b13f0bd47a7a7b9ceece4c234360827516d2"
+  },
+  {
+    "path": "mcp/capability-catalog.json",
+    "bytes": 16529,
+    "sha256": "e85279a3169f2dfe35fe059b51e1e0978bcc4651d4b70e6c0d9c39df9f4b9aca"
+  },
+  {
+    "path": "mcp/capability-graph.json",
+    "bytes": 13371,
+    "sha256": "10044f32cd6383b83a43a315be6590d0f51c87ba7eb019adbe8f84b14e13436b"
+  },
+  {
+    "path": "mcp/experiment-exposure.json",
+    "bytes": 2194,
+    "sha256": "8d587a487f84ff25f133769ae289741e4694f3f0cca1055697f317912879f9e7"
+  },
+  {
+    "path": "mcp/exposure-plan.json",
+    "bytes": 5879,
+    "sha256": "65ff0d63e6400f6f2faf178995c63919a7b7b194794398805f88f02ff00ab01f"
+  },
+  {
+    "path": "mcp/exposure-policy.json",
+    "bytes": 254,
+    "sha256": "bb169caf22bc76751bee110bbc8813970291a28bc1472dda34cc7f76721e40ca"
+  },
+  {
+    "path": "mcp/mcp-tools.json",
+    "bytes": 707,
+    "sha256": "8cef882a31c58eaca455615955f65e9a2d347b50debfb336d7c4aededae68a06"
+  },
+  {
+    "path": "mcp/repository-interface.json",
+    "bytes": 2956,
+    "sha256": "52f06215528f132029d0eca738c3c96e95553a398d83a20e260b529aef5c7299"
+  },
+  {
+    "path": "mcp/repository-readiness.json",
+    "bytes": 54190,
+    "sha256": "7bd2f37c0c82f71410790d5d330b4d840602fe84b4417e7a568edf11add02411"
+  },
+  {
+    "path": "mcp/requirements.txt",
+    "bytes": 45,
+    "sha256": "92af853508dc94ec5da25d834bad8540be7df90930dbf7b4063ae94b098a4353"
+  },
+  {
+    "path": "mcp/server.py",
+    "bytes": 3989,
+    "sha256": "fafa63f7fc9461f93d485ef82c31f4ecda159bc3e1f416d4c72421f9691313d0"
+  },
+  {
+    "path": "mcp/source/artifacts/model.joblib",
+    "bytes": 22722,
+    "sha256": "0bc897b35a4c8aa18bbe9d1586ac9dbaba9c7b81317d62418d2f82b184ecae44"
+  },
+  {
+    "path": "mcp/source/features.py",
+    "bytes": 363,
+    "sha256": "25984cb62515dc7406ff9625569c0c8f830e63b2f2bd972b86c159123722d26c"
+  },
+  {
+    "path": "mcp/source/fraud_detection.py",
+    "bytes": 2267,
+    "sha256": "4d34a5c1b94354d74205a6818df235dbc4659a3c552532714c829a486c188a97"
+  },
+  {
+    "path": "mcp/source/generate_data.py",
+    "bytes": 1686,
+    "sha256": "77c23e462f37ec1f4a5f4b7f7d3a5756c583dbeca68d9088d3ef56a77bb950b8"
+  },
+  {
+    "path": "rest/apizr-bundle-provenance.json",
+    "bytes": 250,
+    "sha256": "3442142502cb726a78d34cb99a372666f3b11f6ab5d823023706459e0e340f43"
+  },
+  {
+    "path": "rest/apizr-repository-rest.json",
+    "bytes": 5467,
+    "sha256": "12e69430e172d45e4359aff9d945cc31b897e46eabfe1511298dedc586521744"
+  },
+  {
+    "path": "rest/apizr_http_admission.py",
+    "bytes": 2594,
+    "sha256": "3e3ceb585c24917999e1e461fa4141a555b6e5056dcecaa35ccc8ff06a84e11c"
+  },
+  {
+    "path": "rest/apizr_json_budget.py",
+    "bytes": 4656,
+    "sha256": "19a3fe9b446340a70fe1b0719a6f3b0091af7c70d383888641325e5e4ec09a3d"
+  },
+  {
+    "path": "rest/apizr_json_preflight.py",
+    "bytes": 1826,
+    "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+  },
+  {
+    "path": "rest/apizr_repository_artifacts.py",
+    "bytes": 4061,
+    "sha256": "ccbf0ce06cce729fc46248d2f24968c538ca014c5cf91ff3262d250a2921bf54"
+  },
+  {
+    "path": "rest/apizr_repository_runtime.py",
+    "bytes": 12774,
+    "sha256": "0bb5163c831fa889f6d7b07ef8dc592f94263a041f87026ab50263292a2cc1ac"
+  },
+  {
+    "path": "rest/apizr_results.py",
+    "bytes": 710,
+    "sha256": "758fb6f4ac426d39bb27c1d6a073a1db22342620af254541ba715144781e7176"
+  },
+  {
+    "path": "rest/apizr_runtime.py",
+    "bytes": 9794,
+    "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+  },
+  {
+    "path": "rest/app.py",
+    "bytes": 2335,
+    "sha256": "f413c8afe9ac6ca33fc4273db4ba4c4bec12b638e8950ec4f5c0ca61d2471685"
+  },
+  {
+    "path": "rest/application-requirements.txt",
+    "bytes": 34,
+    "sha256": "9bdb679b809389f8097db53aacc8b13f0bd47a7a7b9ceece4c234360827516d2"
+  },
+  {
+    "path": "rest/capability-catalog.json",
+    "bytes": 16529,
+    "sha256": "e85279a3169f2dfe35fe059b51e1e0978bcc4651d4b70e6c0d9c39df9f4b9aca"
+  },
+  {
+    "path": "rest/capability-graph.json",
+    "bytes": 13371,
+    "sha256": "10044f32cd6383b83a43a315be6590d0f51c87ba7eb019adbe8f84b14e13436b"
+  },
+  {
+    "path": "rest/experiment-exposure.json",
+    "bytes": 2195,
+    "sha256": "fe0f815362dbfdda4c28483b5ac0301db8552d4311c08e10a9282ac2ae36e2f7"
+  },
+  {
+    "path": "rest/exposure-plan.json",
+    "bytes": 5882,
+    "sha256": "7adaf9017fb6a2db2d0dfb0546ad77d37c8d72f68e5f212a6f382aa8369c5837"
+  },
+  {
+    "path": "rest/exposure-policy.json",
+    "bytes": 255,
+    "sha256": "7fe0a972897374a31771e8a93dee4ead5c54c5ea0ebb1af72d9a43e726c07362"
+  },
+  {
+    "path": "rest/openapi.json",
+    "bytes": 1424,
+    "sha256": "4ccfce2a09f2ac9a88827834b009c44def57b4111211eb1b47b6c35a50803d5d"
+  },
+  {
+    "path": "rest/repository-interface.json",
+    "bytes": 2957,
+    "sha256": "1ec2144c4d31e54e261667c444aca3f871505a6b6cebd8db62dc3cd1f38c58d1"
+  },
+  {
+    "path": "rest/repository-readiness.json",
+    "bytes": 54190,
+    "sha256": "7bd2f37c0c82f71410790d5d330b4d840602fe84b4417e7a568edf11add02411"
+  },
+  {
+    "path": "rest/requirements.txt",
+    "bytes": 52,
+    "sha256": "b6720280cbeb47c0e9e9dc6b7b58c67e28610b25321019774db612b9ba3fb3d5"
+  },
+  {
+    "path": "rest/source/artifacts/model.joblib",
+    "bytes": 22722,
+    "sha256": "0bc897b35a4c8aa18bbe9d1586ac9dbaba9c7b81317d62418d2f82b184ecae44"
+  },
+  {
+    "path": "rest/source/features.py",
+    "bytes": 363,
+    "sha256": "25984cb62515dc7406ff9625569c0c8f830e63b2f2bd972b86c159123722d26c"
+  },
+  {
+    "path": "rest/source/fraud_detection.py",
+    "bytes": 2267,
+    "sha256": "4d34a5c1b94354d74205a6818df235dbc4659a3c552532714c829a486c188a97"
+  },
+  {
+    "path": "rest/source/generate_data.py",
+    "bytes": 1686,
+    "sha256": "77c23e462f37ec1f4a5f4b7f7d3a5756c583dbeca68d9088d3ef56a77bb950b8"
+  }
+]

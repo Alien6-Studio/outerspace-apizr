@@ -1,0 +1,38 @@
+{
+  "pull_request": 347,
+  "base": "0.4.6",
+  "probe_only": true,
+  "merge_performed": false,
+  "runs": [
+    {
+      "stage": "opened",
+      "run": 38916940713,
+      "commit": "44e58277860a894d6dc5c234b928217800b33693",
+      "conclusion": "cancelled",
+      "manual_cancellation_requested": false,
+      "jobs": 96
+    },
+    {
+      "stage": "first-push",
+      "run": 38917050872,
+      "commit": "dfabe2285057219b8d64e65cebcc0b595aa9764e",
+      "conclusion": "cancelled",
+      "manual_cancellation_requested": false,
+      "jobs": 0
+    }
+  ],
+  "second_push": {
+    "run": 38917127725,
+    "commit": "9e04ed6ff9d888351cd348df034591b3709d8bb0"
+  },
+  "ruleset": 23727291,
+  "required_contexts_unchanged": true,
+  "required_context_count": 17,
+  "independent_push_control": {
+    "run": 38909667156,
+    "commit": "53238688cbdf40395e9e54d046c4eed972e91a05",
+    "conclusion": "success",
+    "automatically_cancelled": false
+  },
+  "master_push_performed": false
+}

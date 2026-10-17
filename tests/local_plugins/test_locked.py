@@ -8,6 +8,7 @@ import sys
 import pytest
 
 from apizr.cli import main
+from apizr.plugins.artifacts import requirements as locking
 from apizr.plugins.local import (
     PluginError,
     backend,
@@ -15,7 +16,6 @@ from apizr.plugins.local import (
     install_extension,
     install_from_source,
     list_extensions,
-    locking,
     run_extension,
 )
 

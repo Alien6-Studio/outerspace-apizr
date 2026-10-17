@@ -1,0 +1,256 @@
+{
+  "single-direct-rest": {
+    "removed": [],
+    "added": [],
+    "changed": []
+  },
+  "single-direct-mcp": {
+    "removed": [],
+    "added": [],
+    "changed": []
+  },
+  "single-local-rest": {
+    "removed": [
+      "apizr_governed/contract_lowering.py",
+      "apizr_governed/contract_types.py",
+      "apizr_governed/inspection.py"
+    ],
+    "added": [
+      "apizr_governed/capabilities/inspection.py",
+      "apizr_governed/contracts/lowering.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-rest.json",
+      "apizr_governed/execution/model.py",
+      "apizr_governed/execution/planner.py",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/interfaces/planner.py",
+      "apizr_governed/interfaces/schema.py",
+      "apizr_governed/readiness/model.py",
+      "execution/bundle.json"
+    ]
+  },
+  "single-local-mcp": {
+    "removed": [
+      "apizr_governed/contract_lowering.py",
+      "apizr_governed/contract_types.py",
+      "apizr_governed/inspection.py"
+    ],
+    "added": [
+      "apizr_governed/capabilities/inspection.py",
+      "apizr_governed/contracts/lowering.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-mcp.json",
+      "apizr_governed/execution/model.py",
+      "apizr_governed/execution/planner.py",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/interfaces/planner.py",
+      "apizr_governed/interfaces/schema.py",
+      "apizr_governed/readiness/model.py",
+      "execution/bundle.json"
+    ]
+  },
+  "single-oci-rest": {
+    "removed": [
+      "apizr_governed/contract_lowering.py",
+      "apizr_governed/contract_types.py",
+      "apizr_governed/inspection.py"
+    ],
+    "added": [
+      "apizr_governed/capabilities/inspection.py",
+      "apizr_governed/contracts/lowering.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-rest.json",
+      "apizr_governed/execution/model.py",
+      "apizr_governed/execution/planner.py",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/interfaces/planner.py",
+      "apizr_governed/interfaces/schema.py",
+      "apizr_governed/oci/planner.py",
+      "apizr_governed/readiness/model.py",
+      "execution/bundle.json"
+    ]
+  },
+  "single-oci-mcp": {
+    "removed": [
+      "apizr_governed/contract_lowering.py",
+      "apizr_governed/contract_types.py",
+      "apizr_governed/inspection.py"
+    ],
+    "added": [
+      "apizr_governed/capabilities/inspection.py",
+      "apizr_governed/contracts/lowering.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-mcp.json",
+      "apizr_governed/execution/model.py",
+      "apizr_governed/execution/planner.py",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/interfaces/planner.py",
+      "apizr_governed/interfaces/schema.py",
+      "apizr_governed/oci/planner.py",
+      "apizr_governed/readiness/model.py",
+      "execution/bundle.json"
+    ]
+  },
+  "single-deny-rest": {
+    "removed": [
+      "apizr_governed/contract_lowering.py",
+      "apizr_governed/contract_types.py",
+      "apizr_governed/inspection.py"
+    ],
+    "added": [
+      "apizr_governed/capabilities/inspection.py",
+      "apizr_governed/contracts/lowering.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-rest.json",
+      "apizr_governed/execution/model.py",
+      "apizr_governed/execution/planner.py",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/interfaces/planner.py",
+      "apizr_governed/interfaces/schema.py",
+      "apizr_governed/oci/planner.py",
+      "apizr_governed/readiness/model.py",
+      "apizr_governed/subprocess_guard/single.py",
+      "execution/bundle.json"
+    ]
+  },
+  "single-deny-mcp": {
+    "removed": [
+      "apizr_governed/contract_lowering.py",
+      "apizr_governed/contract_types.py",
+      "apizr_governed/inspection.py"
+    ],
+    "added": [
+      "apizr_governed/capabilities/inspection.py",
+      "apizr_governed/contracts/lowering.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-mcp.json",
+      "apizr_governed/execution/model.py",
+      "apizr_governed/execution/planner.py",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/interfaces/planner.py",
+      "apizr_governed/interfaces/schema.py",
+      "apizr_governed/oci/planner.py",
+      "apizr_governed/readiness/model.py",
+      "apizr_governed/subprocess_guard/single.py",
+      "execution/bundle.json"
+    ]
+  },
+  "repository-direct-rest": {
+    "removed": [],
+    "added": [],
+    "changed": []
+  },
+  "repository-direct-mcp": {
+    "removed": [],
+    "added": [],
+    "changed": []
+  },
+  "repository-local-rest": {
+    "removed": [
+      "apizr_governed/application.py",
+      "apizr_governed/contract_types.py"
+    ],
+    "added": [
+      "apizr_governed/contracts/application.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-repository-rest.json",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/repository_interfaces/model.py",
+      "execution/bundle.json"
+    ]
+  },
+  "repository-local-mcp": {
+    "removed": [
+      "apizr_governed/application.py",
+      "apizr_governed/contract_types.py"
+    ],
+    "added": [
+      "apizr_governed/contracts/application.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-repository-mcp.json",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/repository_interfaces/model.py",
+      "execution/bundle.json"
+    ]
+  },
+  "repository-oci-rest": {
+    "removed": [
+      "apizr_governed/application.py",
+      "apizr_governed/contract_types.py"
+    ],
+    "added": [
+      "apizr_governed/contracts/application.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-repository-rest.json",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/repository_interfaces/model.py",
+      "execution/bundle.json"
+    ]
+  },
+  "repository-oci-mcp": {
+    "removed": [
+      "apizr_governed/application.py",
+      "apizr_governed/contract_types.py"
+    ],
+    "added": [
+      "apizr_governed/contracts/application.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-repository-mcp.json",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/repository_interfaces/model.py",
+      "execution/bundle.json"
+    ]
+  },
+  "repository-deny-rest": {
+    "removed": [
+      "apizr_governed/application.py",
+      "apizr_governed/contract_types.py"
+    ],
+    "added": [
+      "apizr_governed/contracts/application.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-repository-rest.json",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/repository_interfaces/model.py",
+      "execution/bundle.json"
+    ]
+  },
+  "repository-deny-mcp": {
+    "removed": [
+      "apizr_governed/application.py",
+      "apizr_governed/contract_types.py"
+    ],
+    "added": [
+      "apizr_governed/contracts/application.py",
+      "apizr_governed/contracts/types.py"
+    ],
+    "changed": [
+      "apizr-repository-mcp.json",
+      "apizr_governed/interfaces/model.py",
+      "apizr_governed/repository_interfaces/model.py",
+      "execution/bundle.json"
+    ]
+  }
+}

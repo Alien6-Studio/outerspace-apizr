@@ -1,12 +1,19 @@
 [project]
 name = "outerspace-apizr-mcp"
-version = "0.4.5"
+version = "0.4.6"
 description = "Optional local stdio MCP server for Apizr analysis and explicitly enabled delivery"
-requires-python = ">=3.11,<3.15"
+requires-python = ">=3.11,<3.16"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
-dependencies = ["outerspace-apizr==0.4.5", "mcp>=2.2,<3"]
+dependencies = ["outerspace-apizr==0.4.6", "mcp>=2.2,<3"]
+
+
+[project.urls]
+Repository = "https://github.com/Alien6-Studio/outerspace-apizr"
+Documentation = "https://apizr.outerspace.sh/"
+Issues = "https://github.com/Alien6-Studio/outerspace-apizr/issues"
+Changelog = "https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/CHANGELOG.md"
 
 [project.scripts]
 outerspace-apizr-mcp = "apizr_mcp.launcher:main"

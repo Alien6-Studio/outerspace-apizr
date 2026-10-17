@@ -6,15 +6,19 @@ import os
 import pytest
 from analysis_authorization import analysis_policy
 
-from apizr.analysis_contracts import GitAnalysisTarget, LocalTarget, PinnedRoot
 from apizr.cli import main
-from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
+from apizr.contracts.analysis import GitAnalysisTarget, LocalTarget, PinnedRoot
 from apizr.exposure import ExposurePolicy
 from apizr.graph import analyze_repository, graph_repository
-from apizr.operator_policy import AuthorizationDenied, OperatorPolicy, decide_analysis
 from apizr.repository import ScanPolicy, scan, scan_sources
 from apizr.repository.discovery import discover
 from apizr.repository_readiness import RepositoryReadinessPolicy
+from apizr.workspace.compiler import assess_readiness, prepare_exposure, render_bundle
+from apizr.workspace.operator_policy import (
+    AuthorizationDenied,
+    OperatorPolicy,
+    decide_analysis,
+)
 
 EXPOSURE = ExposurePolicy.model_validate(
     {

@@ -11,10 +11,10 @@ import pytest
 from analysis_authorization import analysis_policy
 from analysis_authorization import authorized_main as main
 
-from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
 from apizr.repository import ScanPolicy
 from apizr.repository_readiness import RepositoryReadinessPolicy, report_bytes
+from apizr.workspace.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.workspace.project import MAX_PROJECT_BYTES, load_project
 
 EXAMPLE = Path(__file__).parents[1] / "examples/project-config"
@@ -488,7 +488,7 @@ def audit(event, args):
 def forbidden(*args, **kwargs): raise AssertionError("plugin discovery")
 sys.addaudithook(audit)
 from pathlib import Path
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 operator = load_operator_policy(Path(sys.argv[-1]))
 importlib.metadata.entry_points = forbidden
 from apizr.workspace.project import load_project
@@ -532,28 +532,3 @@ def test_absolute_paths_and_literal_environment_names(tmp_path, monkeypatch):
     assert config.root == path.parent
     assert config.readiness_policy == path.parent / "policies/readiness.json"
     assert config.exposure_policy == path.parent / "$POLICY.json"
-
-
-def test_legacy_yaml_configuration_ignores_project_file(tmp_path, monkeypatch, capfd):
-    monkeypatch.chdir(tmp_path)
-    (tmp_path / "apizr.toml").write_text("INVALID PROJECT FILE")
-    (tmp_path / "sample.py").write_text("def f(x: int) -> int: return x + 1\n")
-    (tmp_path / "config.yaml").write_text(
-        "dockerizr:\n  server:\n    port: 5017\n    workers: 2\n"
-    )
-    assert (
-        main(
-            [
-                "--script",
-                "sample.py",
-                "--configuration",
-                "config.yaml",
-                "--output-dir",
-                "legacy",
-            ]
-        )
-        == 0
-    )
-    result = json.loads(capfd.readouterr().out)
-    assert "Dockerfile" in result["files"]
-    assert "--port 5017 --workers 2" in (tmp_path / "legacy/start.sh").read_text()

@@ -8,9 +8,9 @@ import pytest
 from analysis_authorization import analysis_policy
 
 from apizr.cli import main
-from apizr.compiler import assess_readiness
 from apizr.git_source import GitSnapshot
-from apizr.operator_policy import AuthorizationDenied
+from apizr.workspace.compiler import assess_readiness
+from apizr.workspace.operator_policy import AuthorizationDenied
 
 from .authorization import authorized_snapshot, document
 

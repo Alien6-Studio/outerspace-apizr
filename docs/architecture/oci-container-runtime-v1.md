@@ -224,7 +224,7 @@ classification limitation, even when terminal-state polling is correct.
 This fix changes three embedded OCI source files and their hashes in generated
 OCI bundles (including the enclosing manifests). Existing bundles must be
 regenerated to receive it. Public schemas/versions, policies/plans, direct/local
-bundles and legacy artifacts remain unchanged.
+bundles remain unchanged. Existing historical artifacts are not rewritten.
 Failure results contain only stable statuses and null values: no provider stderr,
 source exceptions, host paths, daemon addresses, IDs or environment values.
 
@@ -253,6 +253,7 @@ fail, rather than silently skipping security checks.
 | Absolute subprocess prohibition | No | No |
 
 REST/MCP direct and governed output, execution v1 goldens, Capability IR,
-Readiness, Interface Contract and the legacy generator remain byte-compatible.
+Readiness and Interface Contract retain their versioned contracts. The legacy
+generator was removed separately in 0.4.6.
 Custom seccomp/subprocess prohibition, microVM isolation,
 image publication/acquisition UX and resource scheduling remain deferred.

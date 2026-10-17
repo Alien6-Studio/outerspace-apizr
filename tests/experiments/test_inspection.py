@@ -148,6 +148,18 @@ def test_explicit_inputs_and_bounded_reads(tmp_path):
     assert "input_too_large" in {d.code for d in limited.data.diagnostics}
 
 
+@pytest.mark.parametrize("limit", [True, 0, -1, 1.5, "1024"])
+def test_invalid_source_limit_is_refused_before_reading(tmp_path, monkeypatch, limit):
+    from apizr.experiments import inspection
+
+    def unexpected_read(*args):
+        raise AssertionError("An invalid bound must be rejected before source I/O")
+
+    monkeypatch.setattr(inspection, "read_regular", unexpected_read)
+    with pytest.raises(ValueError, match="inspection_source_limit_invalid"):
+        inspect_experiment(tmp_path / "train.py", max_source_bytes=limit)
+
+
 def test_custom_root_and_module(tmp_path):
     (tmp_path / "src").mkdir()
     path = write_source(

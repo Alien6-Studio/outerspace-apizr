@@ -14,9 +14,10 @@ import tomllib
 from pathlib import Path
 
 import yaml
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).resolve().parents[2]
-STATE = runpy.run_path(str(ROOT / "scripts/docs_build.py"))["RELEASE_STATE"]
+STATE = runpy.run_path(str(qualification_script("docs_build")))["RELEASE_STATE"]
 STABLE = STATE["stable_release"]
 TARGET = STATE["target_version"]
 
@@ -46,24 +47,23 @@ def test_release_state_is_coherent():
         assert STABLE != TARGET
 
 
-def test_forge_defaults_pin_the_declared_stable_release():
+def test_forge_defaults_pin_the_prepared_target_release():
     action = yaml.safe_load((ROOT / "action.yml").read_text())
-    assert action["inputs"]["apizr-version"]["default"] == STABLE
+    assert action["inputs"]["apizr-version"]["default"] == TARGET
     header, _ = yaml.safe_load_all((ROOT / "templates/apizr.yml").read_text())
-    assert header["spec"]["inputs"]["apizr-version"]["default"] == STABLE
+    assert header["spec"]["inputs"]["apizr-version"]["default"] == TARGET
 
 
-def test_install_surfaces_follow_the_declared_stable_release():
-    install = f"uv tool install outerspace-apizr=={STABLE}"
+def test_install_surfaces_follow_prepared_and_recorded_release_identities():
+    install = f"uv tool install outerspace-apizr=={TARGET}"
     assert install in README
     tape = (ROOT / "docs/assets/videos/uv-install.tape").read_text()
-    assert install in tape
-    # The recording must be referenced from master, never from a commit pinned
-    # before the release flip.
-    assert (
-        "https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/"
-        "master/docs/assets/videos/uv-install.gif" in README
-    )
+    assert f"uv tool install outerspace-apizr=={STABLE}" in tape
+    # Preserve the historical installation recording while preparing final text.
+    # Its pinned source is independent from any future publication authorization.
+    assert "docs/assets/videos/uv-install.gif" in README
+    if TARGET != STABLE:
+        assert f"recorded with {STABLE}" in README
 
 
 def test_security_policy_names_the_current_line():

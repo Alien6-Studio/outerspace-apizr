@@ -1,6 +1,6 @@
 ---
 title: Start here
-description: Choose an Apizr workflow and get a first useful result with Python 3.11–3.14.
+description: Choose an Apizr workflow and get a first useful result with Python 3.11–3.15.
 ---
 
 # Start here
@@ -21,7 +21,7 @@ Experiment Run.
 
 ## Install for the action you chose
 
-Use Python 3.11–3.14 on a qualified macOS or Linux environment.
+Use Python 3.11–3.15 on a qualified macOS or Linux environment.
 [Install Apizr](../getting-started/install.md) is the canonical installation
 procedure. The core is sufficient for static Python inspection and generation.
 The notebook extra enables conversion; scientific libraries belong to the
@@ -63,6 +63,6 @@ Apizr. A **generated MCP server** executes the Python functions you selected.
 You can call generated tools with the Python SDK without an AI account.
 The [canonical concepts](../reference/concepts.md) explain the shared terms.
 
-[Releases](../releases/0.4.5.md), [Contributing](../about/CONTRIBUTING.md),
+[Releases](../releases/0.4.6.md), [Contributing](../about/CONTRIBUTING.md),
 [License](../about/LICENSE.md) and [legacy compatibility](../architecture/legacy-behavior-contract.md)
 remain available under Reference. The logo always returns to the home page.

@@ -4,7 +4,7 @@ import runpy
 
 import pytest
 
-from apizr.inspection import inspect_source
+from apizr.capabilities.inspection import inspect_source
 from apizr.readiness.model import Code, State
 
 FUNCTION = "def predict(value: int) -> int: return value * 3\n"

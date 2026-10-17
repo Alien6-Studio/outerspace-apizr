@@ -1,8 +1,10 @@
-# Code organization (0.4.5 development)
+<span id="code-organization-045-development"></span>
+
+# Code organization (0.4.6 development)
 
 ## Accepted package composition rule
 
-This rule governs new code and the ongoing 0.4.5 migration. Organize by domain
+This rule governs new code and the ongoing 0.4.6 implementation. Organize by domain
 responsibility. A domain owns its models, policy and operations; transports and
 optional providers consume those contracts. Do not introduce a global `models/`,
 `services/`, `utils/`, `helpers/` or `common/` collection.
@@ -14,8 +16,6 @@ Each Python package has one declared owner and exactly one composition role in
 | --- | --- | --- |
 | Domain leaf | Cohesive implementation modules; no child Python packages | `plugins/lock`, `workspace`, `repository_views` |
 | Composition | Declared subdomains, exports, explicit entrypoints and named shared adapter support; no business implementation in its initializer | `plugins`, `generators`, `cli` |
-| Historical | Existing generation pipeline, explicitly inventoried; no precedent for new layout | `modules`, `extensions` |
-| Compatibility facade | Exact forwarding shape to one canonical implementation; no business code | `project.py`, `local_plugins/` |
 
 The package name answers **what responsibility lives here**. Its module names
 answer **which part of that responsibility lives here**, such as `models.py`,
@@ -51,6 +51,26 @@ interpreter requirements live in `environment`.
 Static compiler domains and execution contracts remain explicit packages. Optional
 plugin distributions live outside the core package.
 
+`capabilities.source` owns explicit source admission and AST traversal budgets.
+Notebook adapters reuse its byte and structure limits before export;
+`experiments.notebook_source` retains its stricter source/cell contract and uses
+the portable lexical preflight in `contracts.json_budget` before JSON decoding.
+`plugins.artifacts.central_directory` bounds wheel directory records before the
+standard library builds its per-entry index. These checks add no optional imports
+to the core and do not execute inspected content.
+
+`repository_interfaces.artifacts` owns retained-bundle admission: descriptor reads,
+per-file and aggregate byte/count limits, and metadata JSON preflight. Direct
+interfaces, governed transports and repository workers consume this one policy.
+Generators embed its complete module and `contracts.json_budget` in their
+standalone closures and check final bundle sizes before output staging.
+
+`interfaces.json_budget` owns bounded interface-value traversal and encoded size;
+`interfaces.http_admission` applies lexical admission to ASGI body streams.
+`generators.mcp.transport` integrates public SDK streams and MCP representations;
+the static compiler remains independent of optional SDK imports. All standalone
+closures copy these implementations, including the inlined single-file REST form.
+
 ```text
 src/apizr/
 ├── cli/
@@ -78,7 +98,7 @@ src/apizr/
 │   └── analysis_session.py, mcp_session.py  captured session authority
 ├── contracts/                whole shared source/interface/delivery modules
 ├── environment/              interpreter targets and optional extra requirements
-├── legacy/                   historical app, parser, configuration and prompts
+├── notebooks/                bounded non-executing notebook export and formatting
 ├── capabilities/             source-local capability IR
 ├── repository/               bounded discovery and complete Catalog
 ├── graph/                    imports, bindings and dependency evidence
@@ -86,6 +106,12 @@ src/apizr/
 ├── repository_readiness/     repository evidence assessment
 ├── repository_views/         pure bounded projections of complete evidence
 ├── experiments/              intended experiment controls and observed-run evidence
+├── tracking/                 in-process SDK; consumes canonical experiment evidence
+├── scientific_providers/     composes contracts, selection and lexical recognition
+│   ├── contracts/            bounded provider/adapter values and result admission
+│   ├── builtin/              official default scientific rules and occurrence locations
+│   └── selection/            explicit precedence and trusted extension invocation
+├── editor_contracts/         versioned editor-facing engine contracts
 ├── exposure/                 explicit selection and required-evidence planning
 ├── interfaces/               shared interface contracts and runtime validation
 ├── repository_interfaces/    retained multi-source bundles
@@ -95,21 +121,24 @@ src/apizr/
 ├── repository_execution/     retained-repository local/OCI worker contracts
 ├── subprocess_guard/         restrictions installed before project imports
 ├── governed*/                REST/MCP adapters for those execution contracts
-└── modules/, extensions/     historical generation pipeline
+└── telemetry/                explicit identifier-free local counters
 
 plugins/{mcp,oci,attest}/      separately packaged optional distributions
 ```
 
-The root also retains compatibility facades such as `plugins_cli.py` and
-`local_plugins/`. Their implementations are in the namespaces above. `root_debt` is empty: all 26 remaining root implementations have moved as whole
-modules. Existing public paths remain exact forwarding facades. Functions and
-classes retain their bodies; no definitions are extracted or combined.
+The root contains only the inert `__init__.py`. `root_debt` and `compatibility`
+are empty: the six legacy facades were removed with #284/#331, and the remaining
+73 forwarding modules/packages were removed with #291. All implementations have
+one canonical owner; no root migration exception or forwarding shape is accepted.
 
-The existing source reader in `governed.embedding` maps four moved source paths to
-their installed locations. Autonomous runtimes keep their reviewed logical imports
-and generated bytes. `[embedded_imports]` lists the exact imports retained in those
-source modules; other internal callers use the new owning namespaces. No source
-snapshot, import hook or new runtime composition mechanism is introduced.
+The source reader in `governed.embedding` reads canonical installed paths directly.
+Generated autonomous runtimes use the same `contracts/*` and `capabilities/*`
+module layout under `apizr_governed`. There is no historical source-path map or
+embedded-import exception. The existing narrow model/worker projections remain;
+no analyzer, notebook exporter or optional SDK is added to those closures.
+Generated governed runtime hashes/manifests change and are requalified; direct
+bundle bytes and versioned evidence schemas remain unchanged. Existing autonomous
+bundles are self-contained and do not require the removed installed facades.
 
 ## Required dependency direction
 
@@ -117,10 +146,121 @@ CLI commands parse input, call operations and present results. Core operations
 and plugin management must not import CLI adapters. `workspace/compiler.py` remains usable
 without importing CLI commands or optional REST/MCP/notebook dependencies.
 
+The `tracking` SDK consumes `experiments` contracts and the existing Pydantic
+runtime; it never imports CLI adapters, plugin lifecycle code, optional SDKs or
+scientific libraries. `experiments` does not depend on `tracking`. The
+SDK initializer exports lightweight session/decorator definitions; their core
+imports occur on explicit use. `tracking/budget.py` owns exact aggregate capture
+accounting over admitted observations, while `experiments/values.py` owns bounded
+immutable value admission and its canonical JSON byte budget. Neither caches
+file observations or shares mutable values between sessions. The
+`scientific_providers/contracts` consumes bounded capability and experiment values;
+recognizers return candidates for core validation and never publish records.
+`editor_contracts` consumes experiment and provider contracts, while clients and
+transports adapt to it rather than defining alternate evidence formats. These
+allowlisted edges are enforced by `scripts/check_package_architecture.py`.
+
+`editor_contracts/model.py` owns the closed editor request/response, discovery and
+history argument schemas over canonical experiment and exposure values.
+`workspace/editor_session.py` composes their read-only operations with captured
+project scope and exact history authorization. CLI JSON and MCP adapt those
+shared operations; neither transport validates stored evidence or computes a
+second diff. MCP history workers receive only analysis/history grants, never
+delivery credentials or signing authority.
+
+`telemetry` owns the closed identifier-free usage-report contract, bounded JSON
+admission, boolean per-user consent and bounded process-local counters. It depends only on the shared lexical JSON
+budget and Pydantic, with no experiment, tracking, workspace, plugin or transport
+dependency. The CLI presents that preview. The disposable HTTP receiving stub is
+qualification tooling under `scripts/qualification/interfaces`; no receiver or
+sender ships in generated services. CLI adapters select only approved coarse
+operation/outcome pairs; tracking emits one coarse finalized-session outcome into
+an explicit telemetry capture scope. No experiment values, identifiers or store
+authority cross that edge. Consent owns only its bounded boolean preference file;
+events never persist. Production transmission remains unavailable pending private
+collector qualification and a subsequent release.
+
+The thin TypeScript client lives under `editors/vscode`: `environment.ts` owns
+explicit engine selection, workspace trust and child telemetry restrictions;
+`engine.ts` owns bounded stdio processes and protocol discovery;
+`presentation.ts` owns read-only rendering and source/cell navigation;
+`extension.ts` composes commands, stale-result events and publication notifications.
+All scientific admission, complete history validation and comparison remain in the
+Python engine. The extension has no runtime npm dependency or embedded engine.
+
+Static recognition providers and in-process scientific adapters are distinct
+contracts. Static recognition stays bounded and does not import or execute
+scientific libraries. An adapter that needs those libraries is an out-of-tree
+extension using the existing `apizr.extension/v1` protocol; it reports through
+the SDK's bounded calls and cannot write to the evidence store. No second plugin
+loader is introduced. `scientific_providers/builtin` owns the existing sklearn
+metric calls, joblib output calls, pandas/numpy/joblib input calls, seed APIs,
+scientific import-to-distribution mapping and their occurrence-location hooks.
+It ships in the core wheel and is selected by default. The four existing
+`experiments.discover_*` operations dispatch lazily to their canonical built-in
+implementation, preserving their public imports and historical bounds. Inspection
+uses the built-in location tracer; neither path imports a scientific library.
+
+`scientific_providers/selection` owns explicit ordered selection and bounded
+descriptor/result admission through the existing plugin lifecycle. Contracts own
+the portable selection and provenance reports; `workspace/provider_selection`
+admits an explicit bounded configuration file and CLI adapters present it.
+Only inspection and execution composition invoke selection. Plan construction
+retains the report as a finite execution control; history and comparison consume
+the portable contract without loading providers. The architecture gate declares
+these narrow composition edges; primitive Plan/Run values remain independent of
+provider invocation and plugin lifecycle.
+
+`experiments/source_analysis` owns immutable source digest, physical-line byte
+lengths and AST budget facts. `SourceView` revalidation shares these facts only
+for identical admitted source. A changed source is parsed again, and `tree()`
+always creates a fresh caller-owned AST. No mutable tree crosses a provider
+boundary and no global analysis cache exists. Built-in recognition privately
+visits one tree with its four rules, returning immutable evidence and occurrence
+tuples. Readiness computes module initialization reasons and annotation
+classifications once within a matching-source assessment; structured declaration
+ordering stays part of each annotation cache key.
+
+```mermaid
+flowchart LR
+    Source[Explicit source] --> Facts[Immutable bounded source facts]
+    Facts --> Selection[Explicit provider selection]
+    Selection --> Builtin[Built-in private AST and rules]
+    Selection --> Extension[Trusted extension protocol]
+    Builtin --> Admission[Core result admission]
+    Extension --> Admission
+    Admission --> Plan[Plan and retained provenance]
+    Plan --> Run[Run bound by Plan digest]
+    Run --> History[Show and diff without producers]
+```
+
+Canonical result models, closed v1 schema refinements, explicit input/output
+selection and fingerprinting, explicit metric capture, literal parameters and
+main-guard detection remain in `experiments`. Filename suffix hints also remain
+there: they describe explicitly selected file formats without resolving a
+scientific callable. Recognition uses the supported `provider_source` lexical
+API, never private cross-domain imports. Contracts do not depend on the built-in
+implementation. `scientific_providers` is a declared composition namespace;
+its initializer exports and its old `admission` module forwards only.
+
+The [scientific contract](scientific-providers-v1.md) separates static provider
+payloads and SDK adapter reporting. `experiments.provider_source` exposes the
+bounded source/lexical authority, while `scientific_providers/contracts` admits untrusted
+results over existing experiment values and the existing extension envelope.
+`tracking.adapters` consumes only the adapter contracts and delegates to ordinary
+session logging. Providers have no store/publication API; plugin lifecycle remains
+in `plugins/*`.
+
 Bounded file access (`workspace.files`) has no Apizr domain dependencies. Workspace
 configuration and plugin management have no optional SDK or plugin-distribution
 dependencies. Project loading reads only the explicit project file and grants no
 operator authority.
+
+The [workspace contract](workspace-contract.md) defines project declarations,
+explicit authority, pinned sessions and retained compilation as distinct values.
+The workspace inventory enforces its core-only import boundary. Prepared contexts
+own their byte mappings; rendering revalidates canonical evidence without
+reopening project files.
 
 Plugin management depends on core policy, project declarations, locks and the
 bounded extension protocol. It does not import optional plugin distributions,
@@ -158,8 +298,8 @@ Artifact verification previously lived in `plugins/local/wheel.py` and
 verification can be imported without importing installation or activation.
 `Manifest` and `PluginError` have the same single definitions, re-exported from
 the old local model module. Installation and inventory records remain local.
-The old wheel and locking modules forward directly to the new modules, preserving
-module identity and patched validation bounds. The strict installer lock remains
+The old wheel, locking and download-worker paths inside `plugins.local` are
+removed in 0.4.6; callers use `plugins.artifacts` directly. The strict installer lock remains
 one SHA-256 per exact distribution pin.
 
 The plugin lifecycle follows these dependencies:
@@ -213,15 +353,16 @@ from shared transport/build/publication primitives in `contracts`.
 `model.py` owns strict Plan/Run values and evidence semantics; `values.py` owns
 bounded, deeply immutable recursive JSON; `serialization.py` owns canonical
 bytes, content digests and explicit Run-to-Plan validation. `__init__.py` exports
-this public API. `inputs.py` owns source-only input recognition, explicit selection
+this public API. `inputs.py` owns canonical input results, explicit selection
 and bounded local fingerprinting; it uses the existing `workspace.files` descriptor
 primitive without importing workspace configuration or compilation. There is no
-historical experiment facade. `randomness.py` owns bounded source-only randomness
-controls and explicit distribution candidates; `environment.py` owns selected
+historical experiment facade. `randomness.py` owns canonical randomness results
+and their closed v1 refinements; `environment.py` owns selected
 trusted-runtime facts and static/runtime root-level specification identities.
-Both source producers share the internal `_lexical.py` authority and AST bounds.
-`metrics.py` owns explicit metric construction and static sklearn call signals;
-`outputs.py` owns explicit output selections, static joblib candidates and current
+Scientific recognizers live in `scientific_providers/builtin` and consume the
+supported `provider_source` lexical view over `_lexical.py` and its AST bounds.
+`metrics.py` owns explicit metric construction and canonical static signal models;
+`outputs.py` owns canonical output candidates, explicit selections and current
 byte observations. `_files.py` owns the one internal regular-file digest primitive
 shared by input, environment and output capture. It returns factual identity or a
 safety failure; callers assign their context-specific evidence provenance.
@@ -230,8 +371,9 @@ safety failure; callers assign their context-specific evidence provenance.
 `Parameter` value. `inspection.py` composes these producers and canonical compiler
 evidence; `inspection_model.py` binds their identities and derives section states.
 `notebook_source.py` provides a transient cell sidecar verified against the unchanged
-exporter's AST. `_locations.py` observes same-domain discovery hooks for provenance;
-it adds no input/control recognition rules. `reporting.py` presents bounded text
+exporter's AST. `scientific_providers/builtin/locations.py` observes its owning
+domain's discovery hooks for provenance; it adds no independent input/control
+recognition rules. `reporting.py` presents bounded text
 and deterministic JSON. CLI parsing remains in `cli/commands/experiment.py`.
 
 `planning.py` derives immutable intent from Inspection. `bindings.py` correlates
@@ -247,6 +389,12 @@ history. `history.py` owns list/show queries and their intended/observed views.
 bounded factual text. Inspection → Plan → Run → Comparison is an evidence lifecycle.
 Comparison revalidates stored identities and never captures or recreates evidence.
 It separates material evidence changes from observed results without causal inference.
+`compare_stored_runs` resolves both identities through `history.select_runs` in one
+complete bounded validation. `store.records` validates each canonical artifact
+once, checks its byte digest and Run-to-Plan binding, then assembles its envelope
+without repeating those admissions. The Plan cache lives only in that iterator.
+Public record constructors, serializers and `compare_runs` still revalidate
+caller-supplied values. No digest-only lookup replaces the complete store check.
 These modules belong to the same evidence lifecycle; neither inspection nor its
 producers import the runner, worker, protocol or history. CLI dispatch is lazy.
 
@@ -302,29 +450,40 @@ from apizr.plugins.sync import sync_plugins
 from apizr.plugins.update import update_plugin
 ```
 
-The following previous paths remain supported:
+The previous paths below are **removed in 0.4.6**. The
+[complete 73-path migration table](../releases/removed-imports-0.4.6.md) records each
+canonical replacement, explicit documentation references, deprecation decision and
+which autonomous runtime closures need qualification. Deprecation was documented
+during development; no import-time warning or forwarding hook survives removal.
 
-| Previous path | Implementation |
+| Removed path family | Canonical implementation |
 | --- | --- |
-| `apizr.<name>_cli` | `apizr.cli.commands.<name>` |
+| `apizr.<name>_cli` | `apizr.cli.commands.<name>` (see exact module names in the migration table) |
 | `apizr.completion`, `apizr.completion_spec` | corresponding `apizr.cli` modules |
 | `apizr.project`, `apizr.user_config`, `apizr.config_files` | `apizr.workspace.project`, `.user`, `.files` |
-| `apizr.local_plugins` | `apizr.plugins.local` |
-| `apizr.plugin_lock` | `apizr.plugins.lock` |
-| `apizr.plugin_catalog` | `apizr.plugins.catalog` |
-| `apizr.plugin_sync` | `apizr.plugins.sync` |
-| `apizr.plugin_update` | `apizr.plugins.update` |
+| `apizr.local_plugins`, `apizr.plugin_lock`, `apizr.plugin_catalog`, `apizr.plugin_sync`, `apizr.plugin_update` | `apizr.plugins.local`, `.lock`, `.catalog`, `.sync`, `.update` |
+| Root contract, application and delivery aliases | their owning `apizr.contracts` modules |
+| `apizr.optional`, `apizr.runtime` | `apizr.environment.extras`, `.python_target` |
+| `apizr.inspection`, `apizr.capability_notebooks`, `apizr.output` | `apizr.capabilities.inspection`, `apizr.generators.notebooks`, `apizr.interfaces.files` |
+| `apizr.plugins.local.wheel`, `.locking`, `._download_worker` | `apizr.plugins.artifacts.wheel`, `.requirements`, `._download_worker` |
 
-Submodule aliases share the actual implementation module, preserving class and
-exception identity and visibility of patched helpers. Package facades expose
-the same public objects and delegate access to loaded submodules. They contain
-no duplicated business implementation or global import hook.
+Legacy app/main/configuration/HTTP/prompt/delivery operations and the complete
+`modules`, `legacy`, `extensions` trees were removed with #284/#331; see their
+[workflow migration table](../releases/migrate-0.4.6.md#removed-generation-pipeline).
 
-The console entrypoint stays `apizr.cli:main`, and `python -m apizr.cli` remains
-supported. CLI arguments, completion grammar, package versions, dependencies,
-canonical JSON and generated business runtime contracts are unchanged.
+The console entrypoint stays `apizr.cli:main`; `python -m apizr.cli` stays supported.
+Modern command arguments, completion grammar and canonical evidence meanings are
+unchanged. Generated governed runtime files now use canonical paths, so their
+bytes and enclosing manifests change. Direct bundle bytes remain unchanged.
 
 ## Maintaining the boundaries
+
+Repository proof tooling has a separate ownership inventory in
+`architecture/scripts.toml`. Its implementations live in named responsibility
+packages under `scripts/qualification`; stable command paths only dispatch.
+See [qualification scripts](../contributing/qualification-scripts.md) for groups,
+evidence, source-free probes and the executable inventory check. This tooling is
+outside the installed Apizr distributions and does not extend core ownership.
 
 Run the structural gate directly:
 
@@ -335,28 +494,33 @@ python3 scripts/check_package_architecture.py
 It runs in pre-commit and the CI quality job. It checks every Python package
 against the ownership inventory, rejects undeclared folders and root modules,
 prevents adding children to a leaf without explicit recomposition, checks
-composition initializers and snake_case module names, and validates the complete
-AST of each historical forwarding facade. A `Compatibility` docstring never
-exempts code from checks.
+composition initializers and snake_case module names. The root may declare only
+`__init__.py`; migration, compatibility and embedded-import exceptions are
+rejected. A `Compatibility` docstring never exempts code from checks.
 
 Dependency checks resolve absolute imports, relative imports, `from apizr import`
 and literal dynamic imports, including imports inside functions and type-checking
-blocks. They reject implementation imports of historical aliases, domain-to-CLI
+blocks. They reject absent core module imports, undeclared root domains, domain-to-CLI
 imports, management-to-optional-adapter imports, forbidden plugin sibling edges
 and domain dependencies from bounded file access. Computed dynamic imports and
 semantic cohesion still require review; the gate is not a complete Python call
 or import graph analyzer.
 
 `tests/test_folder_composition.py` deliberately misplaces code and verifies
-rejection. `tests/test_package_architecture.py` separately protects installed old
-imports, module identity and lazy namespace imports. CLI parsers remain covered
-by the captured grammar test. Passing compatibility tests alone does not establish
+rejection. `tests/test_package_architecture.py` separately protects canonical target imports,
+retired-path absence, lazy namespaces and the complete emitted import closures.
+The minimal installed wheel repeats all 73 target/refusal pairs. CLI parsers
+remain covered by the captured grammar test. Structural tests alone do not establish
 that a domain composition is appropriate.
 
-The remaining root debt and historical pipelines are recorded explicitly. Runtime
+The facade debt and historical pipeline are removed; their migration inventories
+remain historical qualification evidence. Notebook export has one canonical
+owner in `notebooks`; its pre-move output goldens and mutation targets are retained. Runtime
 source embedding in `governed*/embedding.py` and generator resource reads must
 keep using real implementation sources, never compatibility facade source text.
 Keep the three execution contract identities separate during any later migration.
+They remain `apizr.execution/v1`, `apizr.runtime/v1` and
+`apizr.local-process/v1`; experiment tracking does not redefine any of them.
 
 Coverage gates and security mutation targets follow the moved implementations.
 Their existing thresholds and mutations are preserved. Continue to run

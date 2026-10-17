@@ -77,10 +77,10 @@ def test_unsupported_results_never_coerced(value, nested):
 
 
 @pytest.mark.parametrize("tuple_cycle", [False, True])
-def test_recursive_result_keeps_controlled_recursion_failure(tuple_cycle):
+def test_recursive_result_is_refused_before_unbounded_recursion(tuple_cycle):
     value = []
     value.append((value,) if tuple_cycle else value)
-    with pytest.raises(RecursionError):
+    with pytest.raises(ValueError, match="json_depth_limit"):
         normalize_result_for_json(value)
 
 

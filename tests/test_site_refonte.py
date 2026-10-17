@@ -11,9 +11,10 @@ from pathlib import Path
 
 import pytest
 import yaml
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).resolve().parents[1]
-BUILD = runpy.run_path(str(ROOT / "scripts/docs_build.py"))
+BUILD = runpy.run_path(str(qualification_script("docs_build")))
 INVENTORY = json.loads((ROOT / "review/site-refonte/page-migration.json").read_text())
 
 
@@ -97,7 +98,7 @@ def test_downloads_are_reproducible_and_fixture_contains_no_product_source():
 def test_public_fixture_refuses_candidate_inputs_before_download(
     monkeypatch, tmp_path, key
 ):
-    package = runpy.run_path(str(ROOT / "scripts/site_example_packages.py"))
+    package = runpy.run_path(str(qualification_script("site_example_packages")))
     monkeypatch.setenv("APIZR_DOCS_PUBLIC_PROOF", "1")
     monkeypatch.setenv(key, str(tmp_path))
     monkeypatch.setattr(

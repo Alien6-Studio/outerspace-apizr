@@ -4,6 +4,8 @@ import ast
 from collections import defaultdict
 from dataclasses import dataclass
 
+from apizr.capabilities.instrumentation import TrackingBindings
+
 from .stdlib import STDLIB_ROOTS
 
 Function = ast.FunctionDef | ast.AsyncFunctionDef
@@ -56,7 +58,9 @@ def declaration_expressions(node: Function) -> tuple[ast.expr, ...]:
     )
 
 
-def initialization_risk(node: ast.stmt) -> bool:
+def initialization_risk(
+    node: ast.stmt, *, tracking: TrackingBindings | None = None
+) -> bool:
     if isinstance(node, (ast.Pass, ast.Import, ast.ImportFrom)):
         return False
     if isinstance(node, ast.Expr):
@@ -68,8 +72,9 @@ def initialization_risk(node: ast.stmt) -> bool:
             and any(isinstance(n, ast.Call) for n in ast.walk(node.annotation))
         )
     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        inert = tracking is not None and tracking.inert_decorator(node)
         return (
-            bool(node.decorator_list)
+            (bool(node.decorator_list) and not inert)
             or any(
                 not literal_only(e)
                 for e in node.args.defaults
@@ -78,6 +83,7 @@ def initialization_risk(node: ast.stmt) -> bool:
             or any(
                 isinstance(n, ast.Call)
                 for expression in declaration_expressions(node)
+                if not inert or expression not in node.decorator_list
                 for n in ast.walk(expression)
             )
         )

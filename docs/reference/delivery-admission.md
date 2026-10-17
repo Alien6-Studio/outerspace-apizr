@@ -72,8 +72,8 @@ Invoke the installed `outerspace-apizr-attest` plugin's `admit` operation with:
 - `destination`: the originally requested destination tag;
 - `expected_reference`: the exact transferred image digest reference;
 - `artifact_reference`: the explicitly selected proof digest in that repository;
-- `expected_signer`, `trust_store`, `tool`: independently selected Attest trust
-  and pinned native binary, as for `verify`;
+- `expected_signer`, `trust_store`, `trust_store_sha256`, `tool`: independently
+  selected Attest trust, captured public trust digest and pinned native binary;
 - `transport`: pinned ORAS binary and explicit registry authentication, as for
   `fetch`;
 - `docker`: explicit Docker executable, socket and optional Buildx binary;
@@ -89,7 +89,9 @@ apizr plugins run outerspace-apizr-attest admit \
 The managed operator grant must bind the exact installed Attest identity and
 locked closure, operation `admit`, exact registry repository, and both
 `registry.read` and `registry.publish`. A `publish` or `attest` grant does not
-allow `admit`. No private signing key, `receipt.sign`, or `timestamp.request`
+allow `admit`. Its `verification` must match the exact signer, verifier and
+pinned trust identity in the request; use the [operator authoring example](operator-policy.md#bind-proof-verification-authority).
+An older grant missing that binding is refused. No private signing key, `receipt.sign`, or `timestamp.request`
 permission is needed. The core only validates shared contracts and permissions;
 it does not import native proof support.
 

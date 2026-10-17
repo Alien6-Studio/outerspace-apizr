@@ -155,7 +155,17 @@
       "permissions": [
         "registry.read",
         "registry.publish"
-      ]
+      ],
+      "verification": {
+        "expected_signer": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "tool": {
+          "executable": "/opt/attest",
+          "version": "0.1.0",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "trust_store": "/private/trust",
+        "trust_store_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      }
     },
     {
       "plugin": {
@@ -211,7 +221,17 @@
       "key_id": "cccccccccccccccccccccccccccccccc",
       "expected_signer": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       "key_file": "/private/operator.key",
-      "tsa_url": "https://tsa.example:8443/timestamp"
+      "tsa_url": "https://tsa.example:8443/timestamp",
+      "verification": {
+        "expected_signer": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "tool": {
+          "executable": "/opt/attest",
+          "version": "0.1.0",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "trust_store": "/private/trust",
+        "trust_store_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      }
     }
   ]
 }

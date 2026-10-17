@@ -1,5 +1,7 @@
 <span id="repository-agent-readiness-v1"></span>
 
+<span id="explicit-external-import-providers-045"></span>
+
 # Repository / Agent Readiness
 
 The original backend contract described here is unchanged. The 0.3 release
@@ -149,7 +151,7 @@ proofs. There is no transitive effect or state propagation in v1.
 
 ## Resolved local import refinement
 
-The 0.4.5 selected exposure proof consumes this complete audit; it does
+The Apizr 0.4.6 selected exposure proof consumes this complete audit; it does
 not filter or rewrite its assessments, diagnostics or aggregate completeness.
 It reuses the exact local-import predicate and shared module-initialization facts
 with validated execution support from the required closure. Source-local Readiness
@@ -310,7 +312,7 @@ network access, Git/package-install commands and Docker/transport imports; hosti
 top-level statements, decorators and defaults remain inert.
 
 
-## Explicit external import providers (0.4.5)
+## Explicit external import providers (Apizr 0.4.6)
 
 The ordinary scikit-learn journey in #267 exposed a missing boundary: a Run's
 observed distribution version does not identify its import namespace. The

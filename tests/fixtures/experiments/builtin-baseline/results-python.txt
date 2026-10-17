@@ -1,0 +1,25 @@
+Experiment inspection
+train.py
+No code executed; runtime evidence not observed.
+
+Code — CAPTURED
+  python; module train; sha256:d26f0634b030
+Data — UNKNOWN
+  No identifiable input; dynamic references are not guessed.
+Parameters — UNKNOWN
+  No literal parameter candidates.
+  Static candidates, not runtime parameters.
+Randomness — CAPTURED
+  sklearn.ensemble.RandomForestClassifier.random_state = 42 (static) (line 9)
+Environment — PARTIAL
+  Source mentions: joblib, scikit-learn
+  Experiment runtime versions not observed.
+Metrics — PARTIAL
+  sklearn.metrics.roc_auc_score: value not observed (line 13)
+  sklearn.metrics.precision_score: value not observed (line 14)
+  +1 more; see --format json
+Outputs — PARTIAL
+  artifacts/model.joblib: output not observed (line 16)
+Serving — PARTIAL
+  train: CONDITIONAL; python:train:train (line 8)
+  Source-local readiness; repository context not assessed.

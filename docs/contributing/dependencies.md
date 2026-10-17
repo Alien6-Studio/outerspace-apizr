@@ -4,6 +4,18 @@ Changes to dependencies are reviewed through the protected pull-request process,
 including Dependabot updates. An available update is not an instruction to merge
 it. Keep runtime dependency changes separate from release and documentation work.
 
+## Packaging compatibility floor
+
+The `preparation` and `legacy` extras and the development group use
+`packaging>=26.3,<27`. Preparation preserves the ordered native wheel tags from
+`packaging.tags`; 26.3 prefers native Linux tags before manylinux/musllinux tags,
+so changing that baseline can change which admitted wheel is selected. See the
+[upstream 26.3 changes](https://packaging.pypa.io/en/stable/changelog.html).
+Development qualification and installed extras therefore use the same minimum.
+The reviewed lock already resolves 26.3; harmonizing the floor changes no locked
+third-party version or archive hash. A different ordering requires renewed
+native preparation qualification, including supported-platform refusal cases.
+
 ## Sources and integrity
 
 All third-party locked packages must resolve from `https://pypi.org/simple`.
@@ -31,13 +43,13 @@ maintainer has resolved the issue and recorded the decision. Do not treat packag
 metadata or an SBOM entry as a legal compatibility determination.
 
 The required `dependencies` job runs `scripts/check_dependency_licenses.py`.
-Its reviewed baseline covers all **141 third-party versions** in the universal
+Its reviewed baseline covers all **149 third-party versions** in the universal
 lock, including platform alternatives and every dependency group:
 
 - `policy/dependency-licenses.json` records component expressions, review scope,
   notes, the exact evidence archive and its license-file hashes.
-- `policy/dependency-license-texts.json` preserves 199 distinct UTF-8 notice texts
-  from 261 archive paths, including original line endings inside JSON strings.
+- `policy/dependency-license-texts.json` preserves 213 distinct UTF-8 notice texts
+  from 280 archive paths, including original line endings inside JSON strings.
 - `policy/dependency-policy.json` defines the SPDX allowlist, version-specific
   exceptions and named-package denials with upstream references.
 
@@ -72,7 +84,7 @@ nested wheels or tools downloaded outside `uv.lock`.
 | pywin32 | BSD/MIT/Python/Scintilla notices plus LGPL 2.1 for adodbapi; do not strip these or ignore source/relinking obligations. |
 | Native and nested packages | cryptography, pyzmq, cffi, Rust extensions and virtualenv need an exact-content review before binary redistribution. |
 
-The eight exceptions are confined to the named versions and preserved evidence;
+The nine exceptions are confined to the named versions and preserved evidence;
 they do not globally allow these terms for arbitrary packages. Before publishing
 containers, vendoring dependencies, modifying third-party code or selecting new
 documentation assets, review the actual contents and meet their notice, source,

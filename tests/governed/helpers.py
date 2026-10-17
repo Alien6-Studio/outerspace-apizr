@@ -7,10 +7,10 @@ from contextlib import contextmanager
 
 import httpx
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.execution import ExecutionPolicy
 from apizr.generators.mcp import generate as mcp_generate
 from apizr.generators.rest import generate as rest_generate
-from apizr.inspection import inspect_source
 
 SOURCE = b"""import os
 import time

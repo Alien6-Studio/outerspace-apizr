@@ -1,0 +1,122 @@
+[
+  {
+    "file": "appnope-1.0.0-py3-none-any.whl",
+    "sha256": "6fe0c04218aab65c54c4ff81638cdbf848d89f5653b74d68638a137f200dd16e"
+  },
+  {
+    "file": "asttokens-3.0.2-py3-none-any.whl",
+    "sha256": "9da13157f5b28becde0bd374fc677dcd3c290614264eff096f167c469cd9f933"
+  },
+  {
+    "file": "comm-0.2.3-py3-none-any.whl",
+    "sha256": "c615d91d75f7f04f095b30d1c1711babd43bdc6419c1be9886a85f2f4e489417"
+  },
+  {
+    "file": "debugpy-1.8.22-cp315-cp315-macosx_15_0_universal2.whl",
+    "sha256": "a9eca6ab09a61534e923064400081e016f7e1d8430cc6e8b7a9cecd2f59e2b07"
+  },
+  {
+    "file": "executing-2.3.0-py3-none-any.whl",
+    "sha256": "736e859c9f8701f11fcf516856f26f562e04776387824b43a35a1dfe21c84122"
+  },
+  {
+    "file": "ipykernel-7.4.0-py3-none-any.whl",
+    "sha256": "a6757f790ddc5a6006b813d82da1a9dbb65b3a00f2b6607df776418c6566ec1c"
+  },
+  {
+    "file": "ipython-9.17.1-py3-none-any.whl",
+    "sha256": "6d1645743cfd1a07eb695d85aa2b5fa66721f8cbae9431d4049f7084bbf06509"
+  },
+  {
+    "file": "ipython_pygments_lexers-1.1.1-py3-none-any.whl",
+    "sha256": "a9462224a505ade19a605f71f8fa63c2048833ce50abc86768a0d81d876dc81c"
+  },
+  {
+    "file": "jedi-0.20.1-py2.py3-none-any.whl",
+    "sha256": "0fb16d86c4a4c73c37ba518c77419975e30fcc620658a8d14fbb5720cdd34142"
+  },
+  {
+    "file": "jupyter_client-8.10.0-py3-none-any.whl",
+    "sha256": "5f73f24f22fa25192cfff6b23c051932a2473a797b05734aff495b392103e14e"
+  },
+  {
+    "file": "jupyter_core-5.9.1-py3-none-any.whl",
+    "sha256": "ebf87fdc6073d142e114c72c9e29a9d7ca03fad818c5d300ce2adc1fb0743407"
+  },
+  {
+    "file": "matplotlib_inline-0.2.2-py3-none-any.whl",
+    "sha256": "3c821cf1c209f59fb2d2d64abbf5b23b67bcb2210d663f9918dd851c6da1fcf6"
+  },
+  {
+    "file": "nest_asyncio2-1.7.4-py3-none-any.whl",
+    "sha256": "86e77b52c3d1496b294af3c944b44213b9b82a12a5ee590c0acc4ca4692ef6c7"
+  },
+  {
+    "file": "packaging-26.3-py3-none-any.whl",
+    "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+  },
+  {
+    "file": "parso-0.8.7-py2.py3-none-any.whl",
+    "sha256": "a8926eb2a1b915486941fdbd31e86a4baf88fe8c210f25f2f35ecec5b574ca1c"
+  },
+  {
+    "file": "pexpect-4.9.0-py2.py3-none-any.whl",
+    "sha256": "7236d1e080e4936be2dc3e326cec0af72acf9212a7e1d060210e70a47e253523"
+  },
+  {
+    "file": "platformdirs-4.13.0-py3-none-any.whl",
+    "sha256": "3dbcf4cd708f21cf876c4eaa90e58412bc4f033d87143f41b1493ff77c25b7e1"
+  },
+  {
+    "file": "prompt_toolkit-3.0.53-py3-none-any.whl",
+    "sha256": "01c0891d7f9237d5e339f7d3e42cdae80b7534abb1c7c0e3352efba6231492f2"
+  },
+  {
+    "file": "psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+    "sha256": "1a7b04c10f32cc88ab39cbf606e117fd74721c831c98a27dc04578deb0c16979"
+  },
+  {
+    "file": "ptyprocess-0.7.0-py2.py3-none-any.whl",
+    "sha256": "4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35"
+  },
+  {
+    "file": "pure_eval-0.2.4-py3-none-any.whl",
+    "sha256": "96cae060a313cfaad51bb761278bfb0e62dc0248d9315a81173752dc546cd37a"
+  },
+  {
+    "file": "pygments-2.21.0-py3-none-any.whl",
+    "sha256": "2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9"
+  },
+  {
+    "file": "python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+    "sha256": "a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"
+  },
+  {
+    "file": "pyzmq-27.2.0-cp312-abi3-macosx_10_15_universal2.whl",
+    "sha256": "591c8de5851c5ea372194469fe97587b97c3b641e9a70f31bb3474acbfde0241"
+  },
+  {
+    "file": "six-1.17.0-py2.py3-none-any.whl",
+    "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"
+  },
+  {
+    "file": "stack_data-0.6.3-py3-none-any.whl",
+    "sha256": "d5558e0c25a4cb0853cddad3d77da9891a08cb85dd9f9f91b9f8cd66e511e695"
+  },
+  {
+    "file": "tornado-6.5.10-cp39-abi3-macosx_10_9_universal2.whl",
+    "sha256": "9261783640e23258694a9ff0795df430a5a7b0a651d3dd53dd0969ad6be16da7"
+  },
+  {
+    "file": "traitlets-5.16.1-py3-none-any.whl",
+    "sha256": "f775618166caa0396c8e337099240f2bd3e5e917d203b2e6fbe21a58d3cb1f6b"
+  },
+  {
+    "file": "typing_extensions-4.16.0-py3-none-any.whl",
+    "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8"
+  },
+  {
+    "file": "wcwidth-0.9.2-cp310-abi3-macosx_11_0_arm64.whl",
+    "sha256": "ae0800c5339423cc53d33a266ad264b42ba8aaa16d4464f6e6b1bee607f50b17"
+  }
+]

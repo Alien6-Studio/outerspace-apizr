@@ -5,7 +5,7 @@ from pathlib import Path
 
 from apizr.git_source import acquire_snapshot
 from apizr.git_source.contracts import is_ssh
-from apizr.operator_policy import OperatorPolicy
+from apizr.workspace.operator_policy import OperatorPolicy
 
 
 def document(

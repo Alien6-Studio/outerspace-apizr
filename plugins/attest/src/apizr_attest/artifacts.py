@@ -98,7 +98,9 @@ def registry(request, work, deadline):
 
 def check_proof(request, work: Path, proof: Path, deadline: float, original: Path):
     trust = work / "trust"
-    trust_snapshot(Path(request.trust_store), trust, original)
+    trust_snapshot(
+        Path(request.trust_store), trust, original, request.trust_store_sha256
+    )
     executable = tool(request, work, deadline)
     return verified(request, executable, proof, trust, deadline)
 

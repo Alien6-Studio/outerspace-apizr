@@ -7,6 +7,7 @@ from pathlib import Path
 
 from apizr.capabilities import document_digest
 from apizr.capabilities.inspection import Inspection, inspect_source
+from apizr.capabilities.source import read_source
 from apizr.execution import (
     ExecutionPolicy,
     ExecutionResult,
@@ -58,7 +59,7 @@ def main(argv: Sequence[str]) -> int:
         if len(raw_arguments) > policy.limits.max_input_bytes:
             raise ValueError("input_limit")
         payload = finite_json(json.loads(raw_arguments))
-        raw = args.source.read_bytes()
+        raw = read_source(args.source)
         module = args.module_name or args.source.stem
         if args.source.suffix == ".py":
             inspected = inspect_source(raw, module_name=module)

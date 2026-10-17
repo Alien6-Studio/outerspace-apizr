@@ -1,9 +1,18 @@
-# Using Fast Apizr
+<span id="using-fast-apizr"></span>
 
-Generate an API from Code Analyzr metadata:
+# Using Fast Apizr — removed in 0.4.6
 
-```sh
-uv run python -m apizr.modules.fast_apizr.main metadata.json --force --module_name business --api_filename business_api.py --output .output/api
-```
+The historical notebook/script pipeline and its HTTP generation service were
+removed during 0.4.6 development. This URL is retained for migration. Existing
+0.4.5 generated applications are independent artifacts; upgrading Apizr does not
+rewrite them.
 
-Place `business.py` and its dependencies beside the generated API before running it. The metadata is a positional argument. Options also include `--configuration` and `--encoding`. Use the main `apizr` CLI to automate copying local modules and creating Docker files.
+Use the [migration table](../../releases/migrate-0.4.6.md#removed-generation-pipeline)
+for the replacement of each CLI, Python, HTTP and plugin entrypoint. Start with
+[inspection](../../getting-started/user-guide/inspect.md), select public functions
+explicitly, then [generate REST](../../getting-started/user-guide/rest.md) or
+[MCP](../../getting-started/user-guide/mcp.md). For a repository, use the
+[exposure workflow](../../getting-started/user-guide/exposure.md).
+
+Notebook conversion remains available through the supported
+[notebook exporter](../../modules/notebook-transformr.md), without executing cells.

@@ -18,6 +18,8 @@ Example checks install published wheels into separate temporary environments
 and execute documented commands outside the checkout. Documentation-only changes
 do not build a candidate wheel or invoke Attest, Docker or release qualification.
 Mixed product changes retain candidate example checks and full product CI.
+The official pre-release `0.4.6` push policy also retains full qualification.
+The site remains non-publishable until the separate maintainer release approval.
 
 The lockfile reuses versions and distribution hashes from the reviewed root
 lockfile. `tests/test_ci_scope.py` enforces that relationship; new versions or

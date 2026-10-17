@@ -15,6 +15,16 @@ TRUST_WARNING = (
 
 def _source_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("source", type=Path)
+    parser.add_argument(
+        "--providers",
+        type=Path,
+        help="Explicit provider-selection JSON; invoking external providers executes trusted installed extensions",
+    )
+    parser.add_argument(
+        "--provider-directory",
+        type=Path,
+        help="Installed extension store for explicitly selected scientific providers",
+    )
     parser.add_argument("--format", choices=("text", "json"), default="text")
     parser.add_argument(
         "--module-name",
@@ -161,6 +171,7 @@ def _inspect(args: argparse.Namespace) -> int:
     from apizr.experiments.inputs import FingerprintPolicy, parse_input_declaration
     from apizr.experiments.inspection import inspect_experiment
     from apizr.experiments.reporting import inspection_bytes, text_report
+    from apizr.workspace.provider_selection import load_selection
 
     try:
         result = inspect_experiment(
@@ -169,6 +180,8 @@ def _inspect(args: argparse.Namespace) -> int:
             module_name=args.module_name,
             declarations=tuple(parse_input_declaration(value) for value in args.input),
             fingerprint_policy=FingerprintPolicy(max_file_bytes=args.max_input_bytes),
+            providers=load_selection(args.providers),
+            provider_directory=args.provider_directory,
         )
         output = (
             inspection_bytes(result)
@@ -217,6 +230,7 @@ def _run(args: argparse.Namespace) -> int:
     from apizr.experiments.outputs import parse_output_declaration
     from apizr.experiments.planning import RunOptions, parse_metric_binding
     from apizr.experiments.runner import run_experiment
+    from apizr.workspace.provider_selection import load_selection
 
     print(TRUST_WARNING, file=sys.stderr)
     try:
@@ -225,6 +239,8 @@ def _run(args: argparse.Namespace) -> int:
             root=args.root,
             module_name=args.module_name,
             store=args.store,
+            providers=load_selection(args.providers),
+            provider_directory=args.provider_directory,
             declarations=tuple(parse_input_declaration(value) for value in args.input),
             fingerprint_policy=FingerprintPolicy(max_file_bytes=args.max_input_bytes),
             options=RunOptions(
@@ -251,14 +267,13 @@ def _run(args: argparse.Namespace) -> int:
 
 
 def _diff(args: argparse.Namespace) -> int:
-    from apizr.experiments.comparison import compare_runs, diff_bytes
+    from apizr.experiments.comparison import compare_stored_runs, diff_bytes
     from apizr.experiments.comparison_reporting import diff_text
-    from apizr.experiments.history import show_run
     from apizr.experiments.store import DEFAULT_STORE
 
     try:
         path = args.store if args.store is not None else DEFAULT_STORE
-        result = compare_runs(show_run(path, args.run_a), show_run(path, args.run_b))
+        result = compare_stored_runs(path, args.run_a, args.run_b)
         output = (
             diff_bytes(result)
             if args.format == "json"
@@ -286,6 +301,7 @@ def _history(args: argparse.Namespace) -> int:
         if args.command == "list":
             listing = list_runs(
                 path,
+                include_values=True,
                 query=HistoryQuery(
                     status=args.status,
                     source=args.source,

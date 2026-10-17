@@ -19,9 +19,13 @@ Your calculation stays in Python. You choose the public functions and execution
 boundary; Apizr generates the interface and retains its documented evidence.
 MCP (Model Context Protocol) lets tool clients discover and call those functions.
 
-**[Apizr 0.4.5](releases/0.4.5.md) is available.** Python 3.11–3.14 · Open source,
-GPL-3.0-or-later. Begin with a useful local result; no Docker or AI account is
-needed for the first REST/MCP calls.
+Working on a training script or notebook? **Apizr 0.4.6** lets you inspect, run and compare experiments, then expose an
+explicitly selected prediction function. Know which data, code, parameters and
+environment produced your result. Start with the
+[Data Scientist quickstart](getting-started/data-science.md).
+
+**[Apizr 0.4.6](releases/0.4.6.md).** Python 3.11–3.15 · Open source,
+GPL-3.0-or-later.
 
 <div class="apizr-home-actions" markdown="1">
 
@@ -29,6 +33,16 @@ needed for the first REST/MCP calls.
 [Notebook → prediction](getting-started/data-science.md){ .md-button }
 [Install Apizr](getting-started/install.md){ .md-button }
 
+</div>
+
+<div class="apizr-home-feedback" data-apizr-producthunt>
+  <p>Share your feedback on Product Hunt.</p>
+  <a class="apizr-home-feedback__badge" href="https://www.producthunt.com/products/outerspace-apizr?launch=outerspace-apizr" target="_blank" rel="noopener noreferrer" aria-label="View OuterSpace Apizr on Product Hunt">
+    <span class="apizr-home-feedback__placeholder">View Apizr on Product Hunt</span>
+    <img data-apizr-badge-src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=410734&amp;theme=light#only-light" alt="OuterSpace Apizr on Product Hunt" width="250" height="54" loading="lazy" referrerpolicy="no-referrer" hidden />
+    <img data-apizr-badge-src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=410734&amp;theme=dark#only-dark" alt="OuterSpace Apizr on Product Hunt" width="250" height="54" loading="lazy" referrerpolicy="no-referrer" hidden />
+  </a>
+  <p class="apizr-home-feedback__settings">Badge preferences: <a href="#__consent">Cookie settings</a>.</p>
 </div>
 
 </div>
@@ -88,7 +102,7 @@ Find exact commands, APIs, formats and compatibility details.
 </div>
 
 See [Install Apizr](getting-started/install.md) for package availability and
-optional profiles, or [the current release record](releases/0.4.5.md) for published
+optional profiles, or [the current release record](releases/0.4.6.md) for published
 evidence. [Historical releases](releases/0.4.1.md) retain their original context.
 
   <section class="apizr-demo-section md-typeset" aria-labelledby="watch-apizr-in-action">
@@ -102,6 +116,7 @@ evidence. [Historical releases](releases/0.4.1.md) retain their original context
         </a>
       </div>
       <p class="apizr-demo-section__language">English narration · English captions</p>
+      <p><a href="academy/">Continue with Apizr Academy</a>: follow the tutorials in order and read the written lessons.</p>
       <details class="apizr-demo-transcript">
         <summary>Read the transcript</summary>
         <div class="apizr-demo-transcript__body">
@@ -162,7 +177,7 @@ Find Apizr's analysis plugin on
 It helps an assistant explore your project. To let an assistant call your own
 functions, follow the [MCP guide](getting-started/user-guide/mcp.md).
 
-Watch the tutorials throughout these guides or visit
+Follow [Apizr Academy](academy/index.md), watch the tutorials throughout these guides or visit
 [Alien6 Studio on YouTube](https://www.youtube.com/@Alien6Studio).
 
 Want to improve Apizr? The [contributor guide](about/CONTRIBUTING.md) covers

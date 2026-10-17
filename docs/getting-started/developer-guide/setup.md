@@ -2,7 +2,7 @@
 
 <span id="development-setup"></span>
 
-Use Python 3.11–3.14, Git and uv already installed on your workstation.
+Use Python 3.11–3.15, Git and uv already installed on your workstation.
 This page covers work on Apizr itself; the [development installation](../../development/0.4.md#install-a-development-wheel)
 shows how to acquire a checkout and test an unreleased wheel separately.
 For using Apizr, start with [Install Apizr](../install.md).
@@ -14,7 +14,7 @@ the resulting lockfile with the tested changes. The installed namespace is
 
 See [Code organization](../../architecture/code-organization.md) for CLI adapters,
 core plugin management, compiler domains and the supported compatibility imports
-on the `0.4.5` development branch.
+on the `0.4.6` development branch.
 
 Documentation, site and example changes use a separate environment under
 `tools/docs/`, without installing the checkout package or invoking Attest:
@@ -63,25 +63,26 @@ uv run --group security python scripts/audit_dependencies.py
 Ruff is the repository linter and formatter. Black remains a runtime dependency
 of notebook conversion. Pyright uses standard mode on production/tooling code and
 strict mode for `apizr.capabilities`, `apizr.readiness` and `apizr.generators.rest`, targeting Python 3.11 syntax and APIs.
-Dynamic legacy metadata and pipeline state still have incomplete inferred types.
+The legacy metadata and pipeline engine were removed in 0.4.6.
 
-Coverage has a global 90% branch-aware floor, a separate 59.5% measured legacy
-floor, and 90% floors for modern packages including Exposure (see CI for the full
+Coverage has a global 90% branch-aware floor and independent 90% domain floors,
+including Exposure (see CI for the full
 list). Exposure also uses strict Pyright. Generated applications are tested functionally; their temporary
 files and subprocess execution are not included in the package coverage metric.
 
 The security audit exports the resolved `uv.lock` graph for runtime, development,
 documentation and security-tooling scopes, then runs `pip-audit --locked`. Findings
 and collection failures block the check. No advisories are automatically ignored.
-See [SECURITY.md](https://github.com/Alien6-Studio/outerspace-apizr/blob/master/SECURITY.md)
+See [SECURITY.md](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/SECURITY.md)
 for private reporting and execution boundaries.
 
 ## Compatibility and packaging
 
-CI tests Python 3.11–3.14. One package job builds wheel/sdist and checks wheel
-installation outside the checkout on Python 3.11 and 3.14. A separate container
+CI tests Python 3.11–3.15. One package job builds wheel/sdist and checks wheel
+installation outside the checkout on Linux Python 3.11–3.15 and macOS
+3.11, 3.14 and 3.15. A separate container
 matrix generates projects with Python 3.14 and builds/runs target images for all
-four supported versions.
+five supported versions.
 
 ```sh
 uv run --python 3.11 --locked pytest
@@ -96,23 +97,22 @@ directories and FastAPI's test client.
 
 ## Characterization and fixtures
 
-The [legacy behavior contract](../../architecture/legacy-behavior-contract.md)
-records intentional support, explicit rejections, observed behavior and future
-candidates. Its corpus lives in `tests/fixtures/characterization/`, with tests in
-`tests/characterization/`. Capability IR uses separate expectations under
-`tests/capabilities/`; static readiness and inspection tests live in `tests/readiness/`.
+The [historical pipeline note](../../architecture/legacy-behavior-contract.md)
+records its removal. Shared compiler JSON fixtures remain under
+`tests/fixtures/characterization/`. Immutable notebook input/export/script goldens
+live in `tests/fixtures/notebooks/exporter/`; modern source admission, non-execution
+and mutation controls remain active. Do not regenerate goldens simply to make a
+changed implementation pass.
+
+Documentation tooling has its own environment, without installing Apizr or its
+plugins and without invoking Attest:
 
 ```sh
-uv run pytest tests/characterization tests/capabilities tests/readiness tests/rest tests/mcp_generator
+uv sync --project tools/docs --locked
+uv run --project tools/docs --locked pytest -c tools/docs/pyproject.toml tests/test_ci_scope.py tests/test_dco.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
+uv run --project tools/docs --locked mkdocs build --strict
+uv run --project tools/docs --locked python -m scripts.qualification.docs.check_docs_html
 ```
-
-Hypothesis retains its failure database in `.hypothesis/` and prints replay
-information. Preserve failing examples when reporting defects. Generated-application
-imports in tests execute trusted fixtures only.
-
-Historical fixtures remain unchanged under `tests/fixtures/legacy/`; the Python
-3.11 golden set runs on all supported interpreters. Do not update historical
-expectations merely to make a changed implementation pass.
 
 ## Work on the documentation
 
@@ -160,9 +160,9 @@ are under `tests/fixtures/catalog/` and `docs/specs/`. See the
 
 ## Operating-system validation
 
-Linux CI runs the complete ordinary suite on Python 3.11–3.14, plus the separate
-Docker/OCI boundary suite and legacy containers. macOS CI runs the ordinary suite
-on Python 3.11 and 3.14. OCI isolation is qualified against a Linux Docker host,
+Linux CI runs the complete ordinary suite on Python 3.11–3.15, plus the separate
+Docker/OCI boundary suite. macOS CI runs the ordinary suite
+on Python 3.11, 3.14 and 3.15. OCI isolation is qualified against a Linux Docker host,
 not a macOS container engine. Windows is outside the validated support matrix;
 local-process supervision and safe output creation depend on POSIX facilities.
 
@@ -172,19 +172,19 @@ CI retains JUnit, branch-coverage and mutation reports. See
 
 ## Optional installation paths (0.3)
 
-The base wheel depends only on Pydantic. Select `notebook`, `http`, `mcp`, or
-`legacy` extras for their respective workflows; extras can be combined.
-For example, `python -m pip install ".[legacy]"` retains the full historical
-0.2.1 pipeline dependency stack from this checkout. `uv sync --locked` installs
+The base wheel depends only on Pydantic. Select `notebook`, `http`, `mcp`,
+`clients` or `preparation` explicitly; extras can be combined. The `legacy` extra
+is removed. `uv sync --locked` installs
 the development group, which includes all optional dependencies for validation.
 
 The package job tests the base wheel and each extra in separate environments on
 Python 3.11 and 3.14. Security audits cover the base, each extra, and validation
 groups; archived SBOMs distinguish the base and combined optional runtime.
 
-The published 0.4.5 packages come from protected `master`. Postpublication
-documentation branches target `master`; the `0.4.5` development branch is retained
-as historical evidence. No future release work is authorized by this guide. See
+The coordinated 0.4.6 packages are prepared on the official `0.4.6` development
+branch. Contributor changes target that branch until the maintainer validates
+it and merges through the protected stable branch. Publication follows that
+separate approval. See
 [release governance](../../contributing/release-branches.md) for the active rules.
-All four packages are 0.4.5. Integration and contributor builds do not replace
-the immutable published archives.
+All four packages declare 0.4.6. Integration and contributor builds do not replace
+immutable published archives.

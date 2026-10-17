@@ -2,12 +2,12 @@
 
 from pathlib import Path
 
-from apizr.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, ExposureRefused
-from apizr.operator_policy import load_operator_policy
 from apizr.repository import ScanPolicy
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy
+from apizr.workspace.compiler import prepare_exposure, render_bundle
+from apizr.workspace.operator_policy import load_operator_policy
 
 root = Path(__file__).resolve().parent
 operator = load_operator_policy(root / "operator.json")

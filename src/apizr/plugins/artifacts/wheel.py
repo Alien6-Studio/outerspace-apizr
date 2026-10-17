@@ -12,6 +12,7 @@ from email.parser import Parser
 from pathlib import Path, PurePosixPath
 
 from apizr.extension_runtime.protocol import unique_object
+from apizr.plugins.artifacts.central_directory import preflight_directory
 from apizr.plugins.artifacts.models import (
     LockedDistribution,
     Manifest,
@@ -112,6 +113,7 @@ def _inspect(
 def _manifest(
     data: bytes, filename: str, digest: str, plugin: bool, allow_dependencies: bool
 ) -> Manifest | LockedDistribution:
+    preflight_directory(data)
     with zipfile.ZipFile(io.BytesIO(data)) as archive:
         entries = archive.infolist()
         names = [entry.filename for entry in entries]

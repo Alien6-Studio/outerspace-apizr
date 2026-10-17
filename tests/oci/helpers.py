@@ -1,4 +1,4 @@
-from apizr.inspection import inspect_source
+from apizr.capabilities.inspection import inspect_source
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.oci.planner import plan
 

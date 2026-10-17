@@ -1,58 +1,36 @@
-# Notebook Transformr
+<span id="configure-a-multi-cell-notebook-03"></span>
+<span id="notebook-transformr"></span>
 
-`apizr.modules.notebook_transformr.transformr.NotebookTransformr` exports code cells through nbconvert without executing them. It rejects notebook magics and shell commands and formats saved scripts with Black.
+# Notebook conversion
+
+The supported owner in 0.4.6 is `apizr.notebooks`. Install the `notebook` extra.
+The exporter uses nbconvert without executing cells, rejects magics and shell
+commands, and uses Black only when explicitly saving a formatted script.
 
 ```python
-from apizr.modules.notebook_transformr.transformr import NotebookTransformr
+from apizr.notebooks import NotebookTransformr, NotebookTransformrConfiguration
 
-transformer = NotebookTransformr()
-source, _ = transformer.convert_notebook("examples/pricing.ipynb")
-transformer.save_script(source, ".output/notebook", "pricing.ipynb")
+transformer = NotebookTransformr(
+    NotebookTransformrConfiguration(include_tags=["deploy"], exclude_tags=["explore"])
+)
+source, resources = transformer.convert_notebook("model.ipynb")
+transformer.save_script(source, ".output/notebook", "model.py")
 ```
 
-Dependency generation is a separate pipeline stage. Markdown, saved outputs and interactive execution state do not become API behavior. Models and external files must be provided explicitly.
+Tag selection applies to code cells in notebook order. With no selectors all code
+cells are retained. An include list selects cells matching any listed tag; an
+empty include list selects all code cells. Exclusion wins. Unknown requested tags,
+malformed selectors and selections with no code cells refuse. Magics and shell
+commands in retained cells still refuse. Tags do not infer prior kernel state.
 
-## Configure a multi-cell notebook (0.3)
+The modern `apizr inspect model.ipynb`, `apizr experiment inspect model.ipynb` and
+`apizr generate rest model.ipynb --output-dir .output/model` workflows inspect all
+code cells. To select cells for a deployment, explicitly export a reviewed script
+first, then inspect that script. Declare application dependencies and resources
+through the modern [exposure workflow](../getting-started/user-guide/exposure.md).
+Conversion never installs dependencies or executes notebook cells.
 
-Install the `legacy` extra for the complete pipeline. The reviewed example in
-`examples/complex-notebook` contains interactive exploration, deployable functions,
-a JSON data file and explicit requirements:
-
-```sh
-apizr --notebook examples/complex-notebook/pricing.ipynb \
-  --configuration examples/complex-notebook/configuration.yaml \
-  --output-dir .output/complex-notebook
-```
-
-Its configuration is:
-
-```yaml
-notebook_transformr:
-  include_tags: [deploy]
-  exclude_tags: [explore]
-code_analyzr:
-  functions_to_analyze: quote
-requirements: requirements.txt
-include: [data]
-```
-
-Tag selection applies to **code cells**, in notebook order. With no selectors all
-code cells are retained, preserving the existing behavior. An include list selects
-cells matching any listed tag; an empty include list selects all code cells.
-Exclusion always wins. Unknown requested tags, malformed selectors and selections
-with no code cells fail with an explicit error. Magics and shell commands in any
-retained cell still fail. Tags do not execute a cell or infer hidden notebook state.
-
-`requirements` and `include` paths in YAML are relative to the source directory,
-independent of the working directory and the configuration file location. Explicit
-`--requirements` replaces the configured requirements; one or more `--include`
-flags replace the configured include list. The existing resource path/collision
-checks apply. Explicit requirements are retained even with `--skip-pipreqs`.
-
-Conversion never installs application dependencies or executes notebook cells.
-Dependencies between retained cells must therefore be ordinary Python, with helper
-definitions before their use. Declare application dependencies explicitly and
-include required data/model files; install generated requirements before starting
-the trusted server. Cells depending on prior interactive state must be rewritten.
-These selectors belong to the legacy conversion configuration; static modern
-inspection continues to inspect all notebook code cells.
+The old `apizr.modules.notebook_transformr` imports and YAML pipeline configuration
+were removed. Eighteen pre-removal notebook fixtures retain exact input hashes,
+exported Python, formatted scripts and the magic refusal; these verify the move
+without changing exported source or transformed evidence digests.

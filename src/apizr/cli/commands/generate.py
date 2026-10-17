@@ -34,6 +34,7 @@ def main(argv: Sequence[str]) -> int:
         target.add_argument("--select", help="Comma-separated capability names or IDs")
     args = parser.parse_args(argv)
     from apizr.capabilities import document_digest
+    from apizr.capabilities.source import read_source
 
     if args.target == "rest":
         from apizr.generators.rest import generate
@@ -50,7 +51,7 @@ def main(argv: Sequence[str]) -> int:
             raise ValueError(
                 f"{args.target.upper()} generation supports one .py or .ipynb file"
             )
-        raw = args.source.read_bytes()
+        raw = read_source(args.source)
         executable = raw
         if args.source.suffix == ".py":
             inspected = inspect_source(raw, module_name=module_name)

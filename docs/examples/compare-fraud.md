@@ -7,7 +7,7 @@ from observed result differences.
 ## Expected result and prerequisites
 
 Two successful Runs retain different data/model hashes and observed metrics.
-Code, hyperparameters and declared seed remain unchanged. Use Python 3.11–3.14
+Code, hyperparameters and declared seed remain unchanged. Use Python 3.11–3.15
 on qualified Linux/macOS, Apizr notebook support and the scientific requirements
 provided in [fraud-detection.zip](../downloads/fraud-detection.zip).
 Extract outside the checkout and open `fraud-detection/`.

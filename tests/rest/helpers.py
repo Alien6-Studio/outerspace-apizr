@@ -3,8 +3,8 @@ import sys
 from contextlib import contextmanager
 from types import SimpleNamespace
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.rest import generate, runtime
-from apizr.inspection import inspect_source
 from apizr.interfaces.runtime import validate
 
 

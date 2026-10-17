@@ -153,6 +153,7 @@ def test_real_environment_filter_and_no_values_in_arguments(worker_image, monkey
     marker = "oci-private-marker-do-not-disclose"
     monkeypatch.setenv("APIZR_ALLOWED", marker)
     monkeypatch.setenv("APIZR_HIDDEN", marker)
+    monkeypatch.setenv("APIZR_SERVED_PROCESS", marker)
     commands = []
     original = DockerProvider.run
 
@@ -163,7 +164,12 @@ def test_real_environment_filter_and_no_values_in_arguments(worker_image, monkey
     monkeypatch.setattr(DockerProvider, "run", observed)
     source = """import os
 def f():
-    return {"allowed": os.environ.get("APIZR_ALLOWED") == "oci-private-marker-do-not-disclose", "hidden": "APIZR_HIDDEN" in os.environ, "names": sorted(os.environ)}
+    return {
+        "allowed": os.environ.get("APIZR_ALLOWED") == "oci-private-marker-do-not-disclose",
+        "hidden": "APIZR_HIDDEN" in os.environ,
+        "served": os.environ.get("APIZR_SERVED_PROCESS") == "1",
+        "names": sorted(os.environ),
+    }
 """
     result, provider = invoke(
         worker_image, source, environment={"allow": ["APIZR_ALLOWED"]}
@@ -171,7 +177,8 @@ def f():
     assert result.value == {
         "allowed": True,
         "hidden": False,
-        "names": ["APIZR_ALLOWED"],
+        "served": True,
+        "names": ["APIZR_ALLOWED", "APIZR_SERVED_PROCESS"],
     }
     assert marker not in json.dumps(commands)
     assert marker not in result.model_dump_json()
@@ -343,7 +350,7 @@ def test_real_worker_verifies_symbol_even_for_internally_consistent_ir(worker_im
     # other, but assert a symbol absent from the exact bound source. Only runtime
     # binding verification can detect this; the planner must not reinterpret IR.
     from apizr.capabilities import CapabilityDocument, document_digest
-    from apizr.inspection import Inspection, inspect_source
+    from apizr.capabilities.inspection import Inspection, inspect_source
     from apizr.oci.model import ExecutionPolicyV2
     from apizr.oci.planner import plan
     from apizr.readiness import ReadinessReport, report_digest

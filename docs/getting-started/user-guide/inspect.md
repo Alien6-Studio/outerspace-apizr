@@ -18,6 +18,14 @@ The default report shows logical source identity, source and IR digests, each
 capability's readiness, execution form, input/return limitations, unknown effects,
 and stable reason codes. Ordinary syntax or file errors appear on stderr.
 
+In **Apizr 0.4.6**, single-source inspection, generation and execution
+planning read at most **16 MiB** from a regular `.py` or `.ipynb` file. An explicitly
+selected file alias is followed. Python analysis admits at most **100,000 AST
+nodes**, with depth **128**. Notebooks also have a JSON budget of **100,000 values
+and keys**, with container depth **64**, checked before decoding or export.
+Outputs and metadata count toward these budgets. Large output strings can still
+fit within the byte budget; excessive collections or nesting are refused.
+
 <details open markdown="1">
 <summary>Watch: Inspect a project and understand readiness · 4:11</summary>
 

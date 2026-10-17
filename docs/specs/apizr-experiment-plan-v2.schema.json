@@ -1,0 +1,738 @@
+{
+  "$defs": {
+    "CaptureIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "producer": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Producer",
+          "type": "string"
+        },
+        "producer_version": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Producer Version",
+          "type": "string"
+        },
+        "function": {
+          "$ref": "#/$defs/FunctionBinding",
+          "default": {
+            "module": null,
+            "qualified_name": null,
+            "definition_id": null,
+            "source_digest": null,
+            "origin": "unknown"
+          }
+        },
+        "cell": {
+          "$ref": "#/$defs/CellIdentity",
+          "default": {
+            "cell_id": null,
+            "execution_count": null,
+            "source_digest": null,
+            "origin": "unknown"
+          }
+        },
+        "selected_parameters": {
+          "default": [],
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 256,
+          "title": "Selected Parameters",
+          "type": "array"
+        }
+      },
+      "required": [
+        "mode",
+        "producer",
+        "producer_version"
+      ],
+      "title": "CaptureIdentity",
+      "type": "object"
+    },
+    "CaptureMode": {
+      "enum": [
+        "cli_run",
+        "sdk_session",
+        "decorated_call",
+        "jupyter_cell",
+        "unknown"
+      ],
+      "title": "CaptureMode",
+      "type": "string"
+    },
+    "CellIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "cell_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell Id"
+        },
+        "execution_count": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Execution Count"
+        },
+        "source_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Digest"
+        },
+        "origin": {
+          "default": "unknown",
+          "enum": [
+            "runtime",
+            "unknown"
+          ],
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "title": "CellIdentity",
+      "type": "object"
+    },
+    "EnvironmentEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "python_implementation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "python_version": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "architecture": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvironmentValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "packages": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PackageEvidence"
+          },
+          "maxItems": 4096,
+          "title": "Packages",
+          "type": "array"
+        },
+        "artifacts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/InputArtifact"
+          },
+          "maxItems": 64,
+          "title": "Artifacts",
+          "type": "array"
+        }
+      },
+      "title": "EnvironmentEvidence",
+      "type": "object"
+    },
+    "EnvironmentValue": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "value",
+        "origin"
+      ],
+      "title": "EnvironmentValue",
+      "type": "object"
+    },
+    "EvidenceOrigin": {
+      "enum": [
+        "declared",
+        "static",
+        "runtime",
+        "unknown"
+      ],
+      "title": "EvidenceOrigin",
+      "type": "string"
+    },
+    "ExecutionIntent": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "policy_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Policy Digest"
+        },
+        "controls": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          },
+          "maxItems": 128,
+          "title": "Controls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "ExecutionIntent",
+      "type": "object"
+    },
+    "FrozenJSON": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "maxLength": 8192,
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/FrozenJSON"
+          },
+          "maxItems": 1024,
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/FrozenJSON"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "maxLength": 256
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "FunctionBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "module": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Module"
+        },
+        "qualified_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Qualified Name"
+        },
+        "definition_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Definition Id"
+        },
+        "source_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Digest"
+        },
+        "origin": {
+          "default": "unknown",
+          "enum": [
+            "runtime",
+            "unknown"
+          ],
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "title": "FunctionBinding",
+      "type": "object"
+    },
+    "InputArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Digest"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        },
+        "content_origin": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceOrigin"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "format_hint": {
+          "anyOf": [
+            {
+              "enum": [
+                "csv",
+                "parquet",
+                "numpy",
+                "joblib"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format Hint"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        }
+      },
+      "required": [
+        "name",
+        "origin"
+      ],
+      "title": "InputArtifact",
+      "type": "object"
+    },
+    "PackageEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Version"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "origin"
+      ],
+      "title": "PackageEvidence",
+      "type": "object"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "RandomnessControl": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        },
+        "provider": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin",
+        "provider"
+      ],
+      "title": "RandomnessControl",
+      "type": "object"
+    },
+    "SourceEvidence": {
+      "additionalProperties": false,
+      "description": "A source identity is absent when no source bytes have been observed.",
+      "properties": {
+        "identity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "origin": {
+          "default": "unknown",
+          "enum": [
+            "runtime",
+            "unknown"
+          ],
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "title": "SourceEvidence",
+      "type": "object"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "python",
+            "notebook"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "executable_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Executable Digest"
+        },
+        "module": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Module"
+        },
+        "capability_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "^[^\\s/\\\\]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Id"
+        }
+      },
+      "required": [
+        "kind",
+        "reference",
+        "digest"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.experiment-plan/v2",
+      "default": "apizr.experiment-plan/v2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "subject": {
+      "$ref": "#/$defs/SourceEvidence"
+    },
+    "execution": {
+      "$ref": "#/$defs/ExecutionIntent"
+    },
+    "capture": {
+      "$ref": "#/$defs/CaptureIdentity"
+    },
+    "inputs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/InputArtifact"
+      },
+      "maxItems": 256,
+      "title": "Inputs",
+      "type": "array"
+    },
+    "parameters": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Parameter"
+      },
+      "maxItems": 256,
+      "title": "Parameters",
+      "type": "array"
+    },
+    "randomness": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RandomnessControl"
+      },
+      "maxItems": 128,
+      "title": "Randomness",
+      "type": "array"
+    },
+    "environment": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnvironmentEvidence"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "subject",
+    "execution",
+    "capture"
+  ],
+  "title": "ExperimentPlanV2",
+  "type": "object"
+}

@@ -16,7 +16,7 @@ source → Capability IR v1 → Readiness v1 → apizr.interfaces
 
 The target is [MCP 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28).
 The generated runtime requires the [official Python SDK](https://github.com/modelcontextprotocol/python-sdk)
-`mcp>=2.2,<3`; the reviewed and locked development version is 2.2.0. This is the
+`mcp>=2.2,<3`; the reviewed and locked development version is 2.3.0. This is the
 stable v2 API, not the old FastMCP API. AnyIO and Uvicorn are explicit runtime
 requirements because the adapter uses them directly. MCP is a development/test
 dependency of Apizr, not a dependency needed to inspect or generate artifacts.
@@ -26,7 +26,9 @@ It accepts precompiled schemas without deriving another contract from runtime
 annotations. Unlike the high-level `MCPServer`, which registers resource/prompt
 managers even when empty, this API advertises only the supplied Tool handlers.
 No private SDK attributes, custom JSON-RPC implementation or vendored SDK code are
-used. SDK negotiation, envelopes, transports and compatibility remain SDK concerns.
+used. SDK negotiation, envelopes and compatibility remain SDK concerns.
+[Transport admission](transport-admission.md) bounds HTTP bodies and stdio lines
+before SDK parsing, and admits both tool-result representations before encoding.
 
 ## Shared interface contract
 

@@ -10,7 +10,7 @@ import tempfile
 from pathlib import Path
 
 from apizr.git_source.models import GitSnapshot
-from apizr.operator_policy import OperatorPolicy
+from apizr.workspace.operator_policy import OperatorPolicy
 
 
 def analysis_policy(source):

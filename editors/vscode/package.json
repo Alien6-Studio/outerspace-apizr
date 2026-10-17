@@ -1,0 +1,236 @@
+{
+  "name": "apizr",
+  "displayName": "Apizr",
+  "description": "Inspect Python and notebook evidence and browse local experiment Runs through your installed Apizr engine.",
+  "version": "0.4.6",
+  "publisher": "alien6-studio",
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alien6-Studio/outerspace-apizr.git",
+    "directory": "editors/vscode"
+  },
+  "engines": {
+    "vscode": "^1.140.0",
+    "node": ">=22.22.2"
+  },
+  "extensionKind": [
+    "workspace"
+  ],
+  "categories": [
+    "Data Science",
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:apizr.toml"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Engine processes and all project operations are disabled in Restricted Mode. Local telemetry settings remain accessible.",
+      "restrictedConfigurations": [
+        "apizr.engine.mode",
+        "apizr.engine.python",
+        "apizr.engine.executable",
+        "apizr.project",
+        "apizr.operatorPolicy",
+        "apizr.store",
+        "apizr.projectRoot"
+      ]
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "Apizr needs an installed native engine and local project paths in the workspace extension host."
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "apizr.selectEngine",
+        "title": "Apizr: Select engine",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.checkEngine",
+        "title": "Apizr: Check engine",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.inspect",
+        "title": "Apizr: Inspect with Apizr",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.refreshRuns",
+        "title": "Apizr: Refresh runs",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.showRun",
+        "title": "Apizr: Show Run",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.compareRuns",
+        "title": "Apizr: Compare two Runs",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.openSource",
+        "title": "Apizr: Open recorded source",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.cancel",
+        "title": "Apizr: Cancel current operation"
+      },
+      {
+        "command": "apizr.telemetryStatus",
+        "title": "Apizr: Telemetry status"
+      },
+      {
+        "command": "apizr.telemetryEnable",
+        "title": "Apizr: Enable local usage counters"
+      },
+      {
+        "command": "apizr.telemetryDisable",
+        "title": "Apizr: Disable usage counters"
+      },
+      {
+        "command": "apizr.telemetryPreview",
+        "title": "Apizr: Preview usage report"
+      }
+    ],
+    "configuration": {
+      "title": "Apizr",
+      "properties": {
+        "apizr.engine.mode": {
+          "type": "string",
+          "enum": [
+            "python",
+            "executable"
+          ],
+          "default": "python",
+          "description": "Use an explicitly selected Python interpreter or an installed apizr executable (including uv tool).",
+          "scope": "resource"
+        },
+        "apizr.engine.python": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the Python interpreter containing the Apizr engine.",
+          "scope": "resource"
+        },
+        "apizr.engine.executable": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to an installed apizr executable. Nothing is downloaded or installed.",
+          "scope": "resource"
+        },
+        "apizr.project": {
+          "type": "string",
+          "default": "apizr.toml",
+          "description": "Explicit project file, absolute or relative to the selected workspace folder.",
+          "scope": "resource"
+        },
+        "apizr.operatorPolicy": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the operator policy granting source.analyze and, for runs, history.read.",
+          "scope": "resource"
+        },
+        "apizr.store": {
+          "type": "string",
+          "default": ".apizr/experiments/v1",
+          "description": "Project-relative history store; must match the exact operator grant.",
+          "scope": "resource"
+        },
+        "apizr.timeoutMs": {
+          "type": "integer",
+          "default": 30000,
+          "minimum": 500,
+          "maximum": 120000,
+          "description": "Deadline for each bounded engine process.",
+          "scope": "resource"
+        },
+        "apizr.inspectOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Inspect saved Python scripts and notebooks after an explicit opt-in. Never inspect on typing.",
+          "scope": "resource"
+        },
+        "apizr.telemetry.enabled": {
+          "type": "boolean",
+          "default": false,
+          "scope": "application",
+          "tags": [
+            "telemetry"
+          ],
+          "description": "Opt in to bounded local usage counters. VS Code global telemetry restrictions win. No production transmission is available."
+        },
+        "apizr.projectRoot": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "description": "Exact project root declared by apizr.toml, absolute or workspace-relative; empty uses the project file directory. Must match the operator grants."
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "apizr.inspection",
+          "name": "Apizr Inspection"
+        },
+        {
+          "id": "apizr.runs",
+          "name": "Apizr Runs"
+        }
+      ]
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "apizr.inspect",
+          "when": "isWorkspaceTrusted && (resourceExtname == .py || resourceExtname == .ipynb)",
+          "group": "apizr"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "apizr.inspect",
+          "when": "isWorkspaceTrusted && (resourceExtname == .py || resourceExtname == .ipynb)",
+          "group": "apizr"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "apizr.inspect",
+          "when": "view == apizr.inspection && isWorkspaceTrusted",
+          "group": "navigation"
+        },
+        {
+          "command": "apizr.refreshRuns",
+          "when": "view == apizr.runs && isWorkspaceTrusted",
+          "group": "navigation"
+        },
+        {
+          "command": "apizr.compareRuns",
+          "when": "view == apizr.runs && isWorkspaceTrusted",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "check": "tsc -p . --noEmit",
+    "test": "npm run compile && node --test test/*.test.cjs",
+    "audit": "npm audit --audit-level=low"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "20.19.37",
+    "@types/vscode": "1.95.0"
+  }
+}

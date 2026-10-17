@@ -14,7 +14,7 @@ import pytest
 from apizr.cli import main
 from apizr.git_source import AcquisitionLimits, acquire_snapshot
 from apizr.git_source.contracts import GitTarget
-from apizr.operator_policy import (
+from apizr.workspace.operator_policy import (
     AuthorizationDenied,
     OperatorPolicy,
     decide_git,
@@ -286,7 +286,7 @@ def test_ca_refusal_and_typed_object_revalidation(monkeypatch):
 
 
 def test_snapshot_keeps_captured_parameters(remote, tls, scratch, monkeypatch):
-    import apizr.operator_policy as operator
+    import apizr.workspace.operator_policy as operator
 
     url, _, commit = remote
     kwargs = {"subdir": "service", "ca_file": tls[0], "limits": AcquisitionLimits()}
@@ -378,7 +378,7 @@ def test_addresses_are_not_equated(left, right):
 
 
 def test_relative_trust_references_captured_without_resolving(tmp_path, monkeypatch):
-    import apizr.operator_policy as operator
+    import apizr.workspace.operator_policy as operator
 
     monkeypatch.chdir(tmp_path)
     selected = policy(

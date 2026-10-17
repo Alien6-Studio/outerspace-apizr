@@ -1,0 +1,421 @@
+{
+  "schema": "apizr.engine-benchmark/v1",
+  "recorded_at": "2026-10-15T20:46:06.509172+00:00",
+  "commit": "3f02a13866a40a2a415906bb0b87ba880a184d72",
+  "dirty": true,
+  "python": "3.12.13 (main, Jul 23 2026, 14:33:47) [Clang 22.1.3 ]",
+  "executable": ".venv/bin/python",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "machine": "arm64",
+  "runner": "local",
+  "logical_cpus": 16,
+  "lock_sha256": "d5c6b8b640c2f17167ea89ba573ba9909d42fae0455e1199db47739b495ea0db",
+  "method": {
+    "repeats": 3,
+    "clock": "perf_counter",
+    "history_cache": "OS cache may be warm; no application cache across commands",
+    "fixture_creation_timed": false,
+    "durable_publication": true
+  },
+  "limits": {
+    "entries_per_directory": 4096,
+    "aggregate_read_bytes": 67108864
+  },
+  "fixtures": {
+    "fraud_detection.ipynb": {
+      "bytes": 3622,
+      "sha256": "bdd26dc7d9d9aeda7f9267b958436ff4e57b5cf9a8a5835dcb44bc527c13cfec"
+    },
+    "large.py": {
+      "bytes": 31781,
+      "sha256": "cea7bb7e4298a9b65c9232d3daf98ad3ecfdc504db99e91bba5540bcfebd2663"
+    }
+  },
+  "measurements": {
+    "import_apizr": {
+      "seconds": [
+        0.015028041991172358,
+        0.014813541987678036,
+        0.015048874993226491
+      ],
+      "median_seconds": 0.015028041991172358,
+      "minimum_seconds": 0.014813541987678036,
+      "maximum_seconds": 0.015048874993226491,
+      "outcome": "success"
+    },
+    "import_tracking": {
+      "seconds": [
+        0.14153187500778586,
+        0.163143209007103,
+        0.17859450000105426
+      ],
+      "median_seconds": 0.163143209007103,
+      "minimum_seconds": 0.14153187500778586,
+      "maximum_seconds": 0.17859450000105426,
+      "outcome": "success"
+    },
+    "cli_version": {
+      "seconds": [
+        0.059849500001291744,
+        0.057750584004679695,
+        0.06739016699430067
+      ],
+      "median_seconds": 0.059849500001291744,
+      "minimum_seconds": 0.057750584004679695,
+      "maximum_seconds": 0.06739016699430067,
+      "outcome": "success"
+    },
+    "inspect_ipynb": {
+      "seconds": [
+        0.5105442500062054,
+        0.3782489169971086,
+        0.3797039580094861
+      ],
+      "median_seconds": 0.3797039580094861,
+      "minimum_seconds": 0.3782489169971086,
+      "maximum_seconds": 0.5105442500062054,
+      "outcome": "success"
+    },
+    "inspect_py": {
+      "seconds": [
+        1.174481249996461,
+        1.1801624999934575,
+        1.1717492919997312
+      ],
+      "median_seconds": 1.174481249996461,
+      "minimum_seconds": 1.1717492919997312,
+      "maximum_seconds": 1.1801624999934575,
+      "outcome": "success"
+    },
+    "digest_0": {
+      "seconds": [
+        0.00020058300287928432,
+        9.51670081121847e-05,
+        7.324999023694545e-05
+      ],
+      "median_seconds": 9.51670081121847e-05,
+      "minimum_seconds": 7.324999023694545e-05,
+      "maximum_seconds": 0.00020058300287928432,
+      "outcome": "success"
+    },
+    "digest_1048576": {
+      "seconds": [
+        0.000542207999387756,
+        0.0004991669993614778,
+        0.00045649999810848385
+      ],
+      "median_seconds": 0.0004991669993614778,
+      "minimum_seconds": 0.00045649999810848385,
+      "maximum_seconds": 0.000542207999387756,
+      "outcome": "success"
+    },
+    "digest_16777216": {
+      "seconds": [
+        0.006602749999728985,
+        0.006338957988191396,
+        0.006241541996132582
+      ],
+      "median_seconds": 0.006338957988191396,
+      "minimum_seconds": 0.006241541996132582,
+      "maximum_seconds": 0.006602749999728985,
+      "outcome": "success"
+    },
+    "publication_empty_store": {
+      "seconds": [
+        0.0026912920002359897,
+        0.0026621669967425987,
+        0.0022432919940911233
+      ],
+      "median_seconds": 0.0026621669967425987,
+      "minimum_seconds": 0.0022432919940911233,
+      "maximum_seconds": 0.0026912920002359897,
+      "outcome": "success"
+    },
+    "sdk_0_entry": {
+      "seconds": [
+        0.0017406669940100983,
+        0.0010281659924658015,
+        0.0008512919885106385
+      ],
+      "median_seconds": 0.0010281659924658015,
+      "outcome": "success"
+    },
+    "sdk_0_per_value": {
+      "seconds": [
+        3.7500285543501377e-07,
+        4.590110620483756e-07,
+        4.1601015254855156e-07
+      ],
+      "median_seconds": 4.1601015254855156e-07,
+      "outcome": "success"
+    },
+    "sdk_0_exit": {
+      "seconds": [
+        0.0015790000034030527,
+        0.0014355829916894436,
+        0.0014408339920919389
+      ],
+      "median_seconds": 0.0014408339920919389,
+      "outcome": "success"
+    },
+    "sdk_256_entry": {
+      "seconds": [
+        0.000795749991084449,
+        0.0010046249954029918,
+        0.0009999999892897904
+      ],
+      "median_seconds": 0.0009999999892897904,
+      "outcome": "success"
+    },
+    "sdk_256_per_value": {
+      "seconds": [
+        6.353027345085138e-06,
+        6.183105483614781e-06,
+        2.0480468776895577e-05
+      ],
+      "median_seconds": 6.353027345085138e-06,
+      "outcome": "success"
+    },
+    "sdk_256_exit": {
+      "seconds": [
+        0.010245334007777274,
+        0.010251667001284659,
+        0.010272832994814962
+      ],
+      "median_seconds": 0.010251667001284659,
+      "outcome": "success"
+    },
+    "history_10_list": {
+      "seconds": [
+        0.01624020899180323,
+        0.017115708003984764,
+        0.01564587499888148
+      ],
+      "median_seconds": 0.01624020899180323,
+      "minimum_seconds": 0.01564587499888148,
+      "maximum_seconds": 0.017115708003984764,
+      "outcome": "success",
+      "profile_calls": {
+        "serialization.py:plan_bytes": 51,
+        "serialization.py:run_bytes": 40,
+        "serialization.py:read_plan": 1,
+        "serialization.py:read_run": 10,
+        "store.py:validate_record": 10,
+        "serialization.py:plan_digest": 50,
+        "serialization.py:run_digest": 30,
+        "json.py:encode": 92,
+        "store.py:records": 11
+      }
+    },
+    "history_10_show": {
+      "seconds": [
+        0.010910666998825036,
+        0.010779208008898422,
+        0.011073000001488253
+      ],
+      "median_seconds": 0.010910666998825036,
+      "minimum_seconds": 0.010779208008898422,
+      "maximum_seconds": 0.011073000001488253,
+      "outcome": "success",
+      "profile_calls": {
+        "serialization.py:plan_bytes": 33,
+        "serialization.py:run_bytes": 31,
+        "serialization.py:read_plan": 1,
+        "serialization.py:read_run": 10,
+        "serialization.py:plan_digest": 32,
+        "serialization.py:run_digest": 21,
+        "json.py:encode": 65,
+        "store.py:records": 11
+      }
+    },
+    "history_10_diff": {
+      "seconds": [
+        0.02297770799486898,
+        0.023388332992908545,
+        0.02349641700857319
+      ],
+      "median_seconds": 0.023388332992908545,
+      "minimum_seconds": 0.02297770799486898,
+      "maximum_seconds": 0.02349641700857319,
+      "outcome": "success",
+      "profile_calls": {
+        "serialization.py:plan_bytes": 66,
+        "serialization.py:run_bytes": 62,
+        "serialization.py:read_plan": 2,
+        "serialization.py:read_run": 20,
+        "store.py:validate_record": 2,
+        "serialization.py:plan_digest": 64,
+        "serialization.py:run_digest": 42,
+        "json.py:encode": 160,
+        "store.py:records": 22
+      }
+    },
+    "editor_capabilities": {
+      "seconds": [
+        0.20067683300294448,
+        0.19979970798885915,
+        0.19707412499701604
+      ],
+      "median_seconds": 0.19979970798885915,
+      "minimum_seconds": 0.19707412499701604,
+      "maximum_seconds": 0.20067683300294448,
+      "outcome": "success"
+    },
+    "editor_experiment_list": {
+      "seconds": [
+        0.220437290990958,
+        0.22772070800419897,
+        0.22402362499269657
+      ],
+      "median_seconds": 0.22402362499269657,
+      "minimum_seconds": 0.220437290990958,
+      "maximum_seconds": 0.22772070800419897,
+      "outcome": "success"
+    },
+    "editor_experiment_show": {
+      "seconds": [
+        0.2179015830042772,
+        0.21541654199245386,
+        0.2165222920011729
+      ],
+      "median_seconds": 0.2165222920011729,
+      "minimum_seconds": 0.21541654199245386,
+      "maximum_seconds": 0.2179015830042772,
+      "outcome": "success"
+    },
+    "editor_experiment_diff": {
+      "seconds": [
+        0.2323404579947237,
+        0.23237087500456255,
+        0.2295109999977285
+      ],
+      "median_seconds": 0.2323404579947237,
+      "minimum_seconds": 0.2295109999977285,
+      "maximum_seconds": 0.23237087500456255,
+      "outcome": "success"
+    },
+    "history_1000_list": {
+      "seconds": [
+        1.7571020829927875,
+        1.7164278749987716,
+        1.636610790999839
+      ],
+      "median_seconds": 1.7164278749987716,
+      "minimum_seconds": 1.636610790999839,
+      "maximum_seconds": 1.7571020829927875,
+      "outcome": "success",
+      "profile_calls": {
+        "serialization.py:plan_bytes": 5001,
+        "serialization.py:run_bytes": 4000,
+        "serialization.py:read_plan": 1,
+        "serialization.py:read_run": 1000,
+        "store.py:validate_record": 1000,
+        "serialization.py:plan_digest": 5000,
+        "serialization.py:run_digest": 3000,
+        "json.py:encode": 9002,
+        "store.py:records": 1001
+      }
+    },
+    "history_1000_show": {
+      "seconds": [
+        1.2394317909929669,
+        0.9865928750077728,
+        0.9842983340058709
+      ],
+      "median_seconds": 0.9865928750077728,
+      "minimum_seconds": 0.9842983340058709,
+      "maximum_seconds": 1.2394317909929669,
+      "outcome": "success",
+      "profile_calls": {
+        "serialization.py:plan_bytes": 3003,
+        "serialization.py:run_bytes": 3001,
+        "serialization.py:read_plan": 1,
+        "serialization.py:read_run": 1000,
+        "serialization.py:plan_digest": 3002,
+        "serialization.py:run_digest": 2001,
+        "json.py:encode": 6005,
+        "store.py:records": 1001
+      }
+    },
+    "history_1000_diff": {
+      "seconds": [
+        2.0617192500067176,
+        2.3386864170024637,
+        2.1639109999960056
+      ],
+      "median_seconds": 2.1639109999960056,
+      "minimum_seconds": 2.0617192500067176,
+      "maximum_seconds": 2.3386864170024637,
+      "outcome": "success",
+      "profile_calls": {
+        "serialization.py:plan_bytes": 6006,
+        "serialization.py:run_bytes": 6002,
+        "serialization.py:read_plan": 2,
+        "serialization.py:read_run": 2000,
+        "store.py:validate_record": 2,
+        "serialization.py:plan_digest": 6004,
+        "serialization.py:run_digest": 4002,
+        "json.py:encode": 12040,
+        "store.py:records": 2002
+      }
+    },
+    "history_10000_list": {
+      "seconds": [
+        0.004158125011599623,
+        0.004371792005258612,
+        0.003776582991122268
+      ],
+      "median_seconds": 0.004158125011599623,
+      "minimum_seconds": 0.003776582991122268,
+      "maximum_seconds": 0.004371792005258612,
+      "outcome": "store_limit"
+    },
+    "history_10000_show": {
+      "seconds": [
+        0.003798625009949319,
+        0.0037187499983701855,
+        0.00348400000075344
+      ],
+      "median_seconds": 0.0037187499983701855,
+      "minimum_seconds": 0.00348400000075344,
+      "maximum_seconds": 0.003798625009949319,
+      "outcome": "store_limit"
+    },
+    "history_10000_diff": {
+      "seconds": [
+        0.003488417001790367,
+        0.0034429160004947335,
+        0.0035314169945195317
+      ],
+      "median_seconds": 0.003488417001790367,
+      "minimum_seconds": 0.0034429160004947335,
+      "maximum_seconds": 0.0035314169945195317,
+      "outcome": "store_limit"
+    }
+  },
+  "result": "pass",
+  "source_sha256": {
+    "src/apizr/experiments/store.py": "9ef7f895d2c548d8c9bb05fb3d377cc8a9f2a7317334dfbccb28966042ee9fa1",
+    "src/apizr/experiments/history.py": "bd55e0f1b0dd36a481a6173036a43ca0c77cd0e21e70688d1a6060a11543c046",
+    "src/apizr/experiments/serialization.py": "e72905f7ce7f100178902cd854fc3b3b14a10a1007e1c31012c5f90cab15e7c8",
+    "src/apizr/experiments/comparison.py": "f3937265c247701dcba00ad6e025719ae44b6ea200bf04455f0fd123f8dc68c3",
+    "src/apizr/workspace/editor_session.py": "b83d75f8722b12c2af7945d3cf090505b01ef9879e6123edb4c24b9f8c8ac92e",
+    "src/apizr/cli/commands/experiment.py": "f3661961ee9a25b52161938e40c6c22c564eb35884b73cefd955828a43319b54",
+    "scripts/qualification/experiments/benchmark_engine.py": "3d33b6300a8e8558912968ed15d7e20b4db9c8a5ba65738a233e9b0c886fff2c"
+  },
+  "public_evidence_note": "Absolute interpreter path normalized; samples and environment unchanged.",
+  "history_fixture_manifests": {
+    "10": {
+      "files": 11,
+      "sha256": "7064a7ce26b3767715709a193863523d99c63fbb4a6d5a6df0621cb9d5fa55a3"
+    },
+    "1000": {
+      "files": 1001,
+      "sha256": "bfa581e0e48b1accf4b7e99eddbd0d3dd596eaa050e206cf12b03d5cca017e15"
+    },
+    "10000": {
+      "files": 10001,
+      "sha256": "ab1e7af7eb21e635b221bf45ffa7a84524e6a878cd28da6a10088850544ba986"
+    }
+  }
+}

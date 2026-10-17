@@ -511,7 +511,7 @@ def test_read_only_observation_preserves_exact_bytes_and_ignores_tag(
 @pytest.mark.parametrize("fault", [None, "substitution", "downgrade", "missing-label"])
 def test_new_image_requires_matching_delivery_lineage(transport, tmp_path, fault):
     from apizr.capabilities.model import Digest
-    from apizr.delivery import PLAN_LABEL, DeliveryManifest, identity
+    from apizr.contracts.delivery import PLAN_LABEL, DeliveryManifest, identity
 
     request, calls, remote, image = transport
     manifest = DeliveryManifest(

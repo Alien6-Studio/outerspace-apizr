@@ -1,12 +1,14 @@
 # outerspace-apizr-mcp
 
-Core and all three optional plugins are published on PyPI at **0.4.5**.
-Use matching versions; see the release record for verification and directory status.
+Apizr **0.4.6**: use the matching core and plugin versions together.
 
 <!-- mcp-name: io.github.Alien6-Studio/outerspace-apizr -->
 
 Analyze a local Python project from an MCP client without executing its functions.
-Default mode exposes exactly three read-only tools. The published **0.4.2** version also supports opt-in
+Apizr 0.4.6 adds read-only experiment list/show/diff to the three
+analysis tools. History requires a separate `history.read` grant for the configured
+project's store; installation and `source.analyze` grant no history permission.
+Use matching core/plugin versions for these tools. The existing delivery path supports opt-in
 status/run/resume for an existing
 delivery request selected by the operator with `--delivery-request`. Clients
 cannot choose operational paths, credentials or keys. Existing per-operation
@@ -16,14 +18,14 @@ registry/proof state.
 This optional Apizr plugin runs in its own Python environment. Use the
 [installation guide](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile)
 to choose the matching catalog profile and verified target artifacts. The
-[release record](https://apizr.outerspace.sh/releases/0.4.5/) describes the
-functionality and validation for **Apizr 0.4.5**.
+[release record](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/docs/releases/0.4.6.md) describes the
+functionality and validation for **Apizr 0.4.6**.
 
 Installation does not activate a plugin or authorize its operations. Enable the
-chosen version explicitly and supply the required operator policy. Development
+chosen version explicitly and supply the required operator policy. Existing
 locks, activations and permissions are not migrated automatically.
 
-## Registry installation (0.4.5)
+## Registry installation
 
 The `outerspace-apizr-mcp` command delegates to `apizr mcp serve`. Follow the short
 [Registry installation guide](https://apizr.outerspace.sh/reference/apizr-mcp-server/#registry-installation)
@@ -36,11 +38,10 @@ does not install or activate the governed plugin, grant access to a project, or
 enable delivery. Startup retains the existing admission checks and isolated
 plugin interpreter. No hosted endpoint is provided.
 
-The repository's `server.json` describes the published Official MCP Registry
-0.4.5 entry. The MCPB wrapper is attached to the immutable GitHub Release and
-uses the same explicit inputs and admission checks. Automatic Smithery/Glama indexing is separate from release validation;
-see the release record for the verified public distribution.
-Use matching 0.4.5 core/plugin versions.
+The repository's `server.json` identifies the matching Apizr 0.4.6 package.
+Registry publication is separate from package publication. The prepared MCPB wrapper uses the same explicit inputs and admission
+checks for later Smithery submission; no hosted endpoint or implicit delivery is
+introduced. Use matching Apizr 0.4.6 core/plugin versions together.
 
 See the [plugin guide](https://apizr.outerspace.sh/reference/apizr-mcp-server/).
-Python 3.11–3.14. GPL-3.0-or-later; the full license is included.
+Python 3.11–3.15. GPL-3.0-or-later; the full license is included.

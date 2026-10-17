@@ -8,7 +8,7 @@ Then add a defect to a required helper, observe refusal and correct it legitimat
 `serving.predict(50.0)` returns REST `0.4` and MCP `{"result":0.4}`. The full audit
 retains the unrelated ambiguity in `old_notebook.py`; only `serving.predict` is public.
 
-Use [Apizr 0.4.5 core](../getting-started/install.md), Python 3.11–3.14 on Linux/macOS
+Use [Apizr 0.4.6 core](../getting-started/install.md), Python 3.11–3.15 on Linux/macOS
 and a generated REST/MCP runtime. Download
 [research-serving.zip](../downloads/research-serving.zip), extract outside the
 checkout and open `research-serving/`. Existing GPL-3.0-or-later files need no

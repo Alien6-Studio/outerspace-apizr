@@ -1,42 +1,62 @@
 name: Extension packaging prototype
 
 on:
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   workflow_dispatch:
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: Extension packaging prototype-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   uv-tool:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python: ['3.11', '3.12', '3.13', '3.14']
+        python: ['3.11', '3.12', '3.13', '3.14', '3.15']
         include:
           - os: macos-latest
-            python: '3.11'
-          - os: macos-latest
             python: '3.14'
+          - os: macos-latest
+            python: '3.15'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: ${{ matrix.python }}
       - run: uv sync --locked
-      - run: uv run --locked pytest tests/test_extension_probe.py tests/extension_runtime tests/local_plugins tests/test_pipeline_plugins.py tests/test_optional.py --timeout=30
-      - run: uv run --locked python scripts/smoke_extension_packaging.py --work-dir "$RUNNER_TEMP/apizr-extension-proof"
+      - run: uv run --locked pytest tests/test_extension_probe.py tests/extension_runtime tests/local_plugins tests/test_optional.py --timeout=30
+      - run: uv run --locked python -m scripts.qualification.extensions.smoke_extension_packaging --work-dir "$RUNNER_TEMP/apizr-extension-proof"
       - name: Sync, update and uninstall installed plugins with OS network isolation
-        run: uv run --locked python scripts/run_plugin_sync_proof.py "$RUNNER_TEMP/apizr-extension-proof"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        run: uv run --locked python -m scripts.qualification.extensions.run_plugin_sync_proof "$RUNNER_TEMP/apizr-extension-proof"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: extension-uv-${{ matrix.os }}-${{ matrix.python }}
@@ -49,11 +69,11 @@ jobs:
             ${{ runner.temp }}/apizr-extension-proof/update/backend-network.jsonl
             ${{ runner.temp }}/apizr-extension-proof/update/update-summary.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   homebrew:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     runs-on: macos-latest
     env:
       HOMEBREW_NO_AUTO_UPDATE: '1'
@@ -61,30 +81,32 @@ jobs:
       HOMEBREW_DEVELOPER: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
-          python-version: '3.14'
+          version: '0.13.1'
+          python-version: '3.15'
       - run: uv sync --locked
+      - name: Refresh Homebrew dependencies for Python 3.15
+        run: brew update
       - name: Prepare local-only test formula
         # The temporary tap is never pushed; do not impersonate the commit author.
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          uv run --locked python scripts/prepare_extension_homebrew.py "$RUNNER_TEMP/apizr-brew"
+          uv run --locked python -m scripts.qualification.extensions.prepare_extension_homebrew "$RUNNER_TEMP/apizr-brew"
       - run: brew tap apizr-v04/prototype "file://$RUNNER_TEMP/apizr-brew/tap"
       - run: brew install --build-from-source apizr-v04/prototype/apizr-v04-probe
       - run: brew test apizr-v04/prototype/apizr-v04-probe
       - name: Probe real Homebrew installation
         run: |
-          uv run --locked python scripts/smoke_extension_packaging.py \
+          uv run --locked python -m scripts.qualification.extensions.smoke_extension_packaging \
             --work-dir "$RUNNER_TEMP/apizr-extension-proof" \
             --core-python "$(brew --prefix apizr-v04-probe)/libexec/bin/python" \
             --core-root "$(brew --prefix apizr-v04-probe)"
           brew info --json=v2 apizr-v04/prototype/apizr-v04-probe > "$RUNNER_TEMP/apizr-extension-proof/homebrew-receipt.json"
       - name: Sync, update and uninstall installed plugins with OS network isolation
-        run: uv run --locked python scripts/run_plugin_sync_proof.py "$RUNNER_TEMP/apizr-extension-proof"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        run: uv run --locked python -m scripts.qualification.extensions.run_plugin_sync_proof "$RUNNER_TEMP/apizr-extension-proof"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: extension-homebrew
@@ -99,4 +121,4 @@ jobs:
             ${{ runner.temp }}/apizr-extension-proof/homebrew-receipt.json
             ${{ runner.temp }}/apizr-brew/dependency-evidence.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

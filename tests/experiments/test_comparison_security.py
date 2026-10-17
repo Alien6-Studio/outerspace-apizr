@@ -16,7 +16,6 @@ from apizr.cli import main
 from apizr.experiments import environment, inputs, inspection, outputs, runner, worker
 from apizr.experiments.comparison import compare_runs, diff_bytes
 from apizr.experiments.comparison_reporting import diff_text
-from apizr.experiments.history import show_run
 from apizr.experiments.store import DEFAULT_STORE, publish
 
 from .comparison_support import record, replace
@@ -186,7 +185,7 @@ def test_cli_same_store_errors_no_partial_output(tmp_path, capfd, monkeypatch, c
         def broken(*args):
             raise OSError("secret exception")
 
-        monkeypatch.setattr(history, "show_run", broken)
+        monkeypatch.setattr(history, "records", broken)
     assert (
         main(["experiment", "diff", a.run_digest, identifier, "--store", str(tmp_path)])
         == 2
@@ -196,18 +195,22 @@ def test_cli_same_store_errors_no_partial_output(tmp_path, capfd, monkeypatch, c
     assert "apizr experiment diff:" in err
 
 
-def test_cli_calls_existing_show_run_for_each_id(tmp_path, capfd, monkeypatch):
+def test_cli_resolves_both_ids_in_one_complete_store_validation(
+    tmp_path, capfd, monkeypatch
+):
     from apizr.experiments import history
 
     a = record()
     publish(tmp_path, a.plan, a.run)
     calls = []
 
-    def observed(path, run_id):
-        calls.append((path, run_id))
-        return show_run(path, run_id)
+    original = history.records
 
-    monkeypatch.setattr(history, "show_run", observed)
+    def observed(path):
+        calls.append(path)
+        yield from original(path)
+
+    monkeypatch.setattr(history, "records", observed)
     assert (
         main(
             [
@@ -223,7 +226,7 @@ def test_cli_calls_existing_show_run_for_each_id(tmp_path, capfd, monkeypatch):
         )
         == 0
     )
-    assert calls == [(tmp_path, a.run_digest), (tmp_path, a.run_digest[:12])]
+    assert calls == [tmp_path]
     assert json.loads(capfd.readouterr().out)["serving"] == "unknown"
 
 

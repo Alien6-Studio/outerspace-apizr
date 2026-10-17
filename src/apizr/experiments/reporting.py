@@ -171,4 +171,12 @@ def text_report(inspection: ExperimentInspection) -> str:
         if repository is None
         else "Selection-scoped repository evidence; not an execution approval.",
     )
+    if result.providers is not None:
+        lines.append("Scientific providers (static recognition)")
+        for provider in result.providers.providers:
+            lines.append(
+                f"  {provider.choice.identity.name} {provider.choice.identity.version}: {provider.diagnostic or 'active'}"
+            )
+        for owner in result.providers.owners:
+            lines.append(f"  {owner.capability}: {owner.state}")
     return "\n".join(lines) + "\n"

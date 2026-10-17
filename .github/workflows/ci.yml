@@ -2,9 +2,21 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, '0.4.6']
   pull_request:
   workflow_dispatch:
+    inputs:
+      qualification_layout:
+        description: Shared inputs normally; independent inputs only for a deliberate cost comparison
+        type: choice
+        default: shared
+        options: [shared, independent]
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -15,37 +27,43 @@ jobs:
 
   distributions:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          version: '0.12.0'
+          node-version: '22.22.2'
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: '0.13.1'
           python-version: '3.14'
       - run: uv sync --locked
-      - name: Build the four candidate wheels and sdists exactly once
+      - run: npm ci --prefix editors/vscode --ignore-scripts --no-audit --no-fund
+      - name: Audit every extension dependency before candidate build
+        run: npm audit --prefix editors/vscode --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > "$RUNNER_TEMP/vscode-node-audit.json"
+      - name: Build the four wheels, four sdists and coordinated VSIX
         run: |
-          uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/candidate"
-          uv run --locked python scripts/check_distribution.py "$RUNNER_TEMP/candidate/dist" --coordinated --manifest "$RUNNER_TEMP/candidate/SHA256SUMS.json"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          uv run --locked python -m scripts.qualification.packaging.coordinated_distributions build --candidate "$RUNNER_TEMP/candidate"
+          uv run --locked python -m scripts.qualification.packaging.check_distribution "$RUNNER_TEMP/candidate/dist" --coordinated --manifest "$RUNNER_TEMP/candidate/SHA256SUMS.json"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: python-distributions
           path: ${{ runner.temp }}/candidate/dist/*
           if-no-files-found: error
-          retention-days: 90
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: distribution-checksums
           path: ${{ runner.temp }}/candidate/SHA256SUMS.json
           if-no-files-found: error
-          retention-days: 90
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-candidate
           path: ${{ runner.temp }}/candidate/
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   release-target:
     needs: distributions
@@ -59,8 +77,10 @@ jobs:
           - {os: ubuntu-latest, python: '3.12'}
           - {os: ubuntu-latest, python: '3.13'}
           - {os: ubuntu-latest, python: '3.14'}
+          - {os: ubuntu-latest, python: '3.15'}
           - {os: macos-latest, python: '3.11'}
           - {os: macos-latest, python: '3.14'}
+          - {os: macos-latest, python: '3.15'}
     env:
       PYTHONDONTWRITEBYTECODE: '1'
     steps:
@@ -69,11 +89,11 @@ jobs:
           echo "APIZR_RELEASE_SET=$RUNNER_TEMP/candidate" >> "$GITHUB_ENV"
           echo "APIZR_RELEASE_TARGET=$RUNNER_TEMP/target" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: ${{ matrix.python }}
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-candidate
           path: ${{ runner.temp }}/candidate
@@ -87,16 +107,16 @@ jobs:
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
       - name: Export locked dependency closures and catalog for this exact target
-        run: uv run --locked python scripts/coordinated_distributions.py target --candidate "$APIZR_RELEASE_SET" --output "$APIZR_RELEASE_TARGET"
+        run: uv run --locked python -m scripts.qualification.packaging.coordinated_distributions target --candidate "$APIZR_RELEASE_SET" --output "$APIZR_RELEASE_TARGET"
       - name: pip, uv, pipx, extras, Git, migration and profile installation
-        run: uv run --locked python scripts/qualify_distributions.py --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/qualification"
+        run: uv run --locked python -m scripts.qualification.packaging.qualify_distributions --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/qualification"
       - name: Real MCP sessions from the same candidate bytes
         run: |
-          uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-candidate"
-          uv run --locked python scripts/run_catalog_offline_proof.py "$RUNNER_TEMP/mcp-candidate"
+          uv run --locked python -m scripts.qualification.interfaces.smoke_mcp_server --output "$RUNNER_TEMP/mcp-candidate"
+          uv run --locked python -m scripts.qualification.extensions.run_catalog_offline_proof "$RUNNER_TEMP/mcp-candidate"
           "$RUNNER_TEMP/mcp-candidate/client/bin/python" -B scripts/mcp_uninstall_proof.py "$RUNNER_TEMP/mcp-candidate"
       - name: Ordinary scikit-learn notebook, real REST/MCP and retained-wheel replay
-        run: uv run --locked python scripts/qualify_data_science_journey.py --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/data-science"
+        run: uv run --locked python -m scripts.qualification.experiments.qualify_data_science_journey --candidate "$APIZR_RELEASE_SET" --target "$APIZR_RELEASE_TARGET" --output "$RUNNER_TEMP/data-science"
       - name: Archive installable export without installed environments
         if: always()
         run: |
@@ -106,11 +126,11 @@ jobs:
           if test -d "$RUNNER_TEMP/data-science/science-wheels"; then
             tar -czf "$RUNNER_TEMP/science-wheels.tar.gz" -C "$RUNNER_TEMP/data-science" science-wheels
           fi
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: release-target-${{ matrix.os }}-${{ matrix.python }}
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: |
             ${{ runner.temp }}/target-export.tar.gz
@@ -122,6 +142,14 @@ jobs:
             ${{ runner.temp }}/data-science/*.log
             ${{ runner.temp }}/data-science/science-audit-requirements.txt
             ${{ runner.temp }}/data-science/bundles/
+            ${{ runner.temp }}/data-science/integrated/*.json
+            ${{ runner.temp }}/data-science/integrated/*.jsonl
+            ${{ runner.temp }}/data-science/integrated/*.log
+            ${{ runner.temp }}/data-science/integrated/*.py
+            ${{ runner.temp }}/data-science/integrated/*.ipynb
+            ${{ runner.temp }}/data-science/integrated/bundles/
+            ${{ runner.temp }}/data-science/jupyter-requirements.lock
+            ${{ runner.temp }}/data-science/jupyter-wheels/
 
   release-delivery:
     needs: distributions
@@ -133,44 +161,45 @@ jobs:
           echo "APIZR_RELEASE_SET=$RUNNER_TEMP/candidate" >> "$GITHUB_ENV"
           echo "APIZR_RELEASE_TARGET=$RUNNER_TEMP/target" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-candidate
           path: ${{ runner.temp }}/candidate
       - name: Same candidates through build, TLS push, signing, timestamp and offline proof
-        run: python3 scripts/smoke_oci_registry.py --artifacts --output "$RUNNER_TEMP/candidate-delivery"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        run: python3 -m scripts.qualification.delivery.smoke_oci_registry --artifacts --output "$RUNNER_TEMP/candidate-delivery"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: release-delivery
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: ${{ runner.temp }}/candidate-delivery/
 
   quality:
     needs: scope
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
+    # Preserve required contexts and mixed unscoped checks; bind once for steps.
+    env:
+      PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
     steps:
       - name: Require a successful scope decision
         env:
           SCOPE_RESULT: ${{ needs.scope.result }}
-          PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
         run: |
           test "$SCOPE_RESULT" = success
           test "$PRODUCT_CHECKS" = true || test "$PRODUCT_CHECKS" = false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-        if: needs.scope.outputs.product != 'false'
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: '3.14'
           enable-cache: true
       # Type-check the site hook with its declared documentation dependencies.
       - run: uv sync --locked --group docs
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - name: Check DCO declarations for new contributions
         if: github.event_name == 'pull_request' || github.event_name == 'push'
         env:
@@ -187,47 +216,53 @@ jobs:
           elif git merge-base --is-ancestor "$DCO_AUDIT_BASE" "$DCO_BASE"; then
             DCO_BASE="$DCO_AUDIT_BASE"
           fi
-          python3 scripts/check_dco.py --base "$DCO_BASE" --head "$DCO_HEAD"
-      - if: needs.scope.outputs.product != 'false'
+          python3 -m scripts.qualification.ci.check_dco --base "$DCO_BASE" --head "$DCO_HEAD"
+      - if: env.PRODUCT_CHECKS != 'false'
         run: uv run --locked ruff check .
-      - if: needs.scope.outputs.product != 'false'
+      - if: env.PRODUCT_CHECKS != 'false'
         run: uv run --locked ruff format --check .
-      - if: needs.scope.outputs.product != 'false'
+      - if: env.PRODUCT_CHECKS != 'false'
         run: uv run --locked pyright
       - name: Enforce package composition and dependency boundaries
-        if: needs.scope.outputs.product != 'false'
-        run: uv run --locked python scripts/check_package_architecture.py
+        if: env.PRODUCT_CHECKS != 'false'
+        run: uv run --locked python -m scripts.qualification.ci.check_package_architecture
+      - name: Enforce qualification ownership and workflow script references
+        if: env.PRODUCT_CHECKS != 'false'
+        run: uv run --locked python -m scripts.qualification.ci.check_script_architecture
       - run: uv run --locked pre-commit run --all-files
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - uses: ./.github/actions/install-attest
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - name: Verify managed Attest identity and real offline rejection cases
-        if: needs.scope.outputs.product != 'false'
-        run: uv run --locked python scripts/check_attest_identity.py --attest "$(command -v attest)"
+        if: env.PRODUCT_CHECKS != 'false'
+        run: uv run --locked python -m scripts.qualification.packaging.check_attest_identity --attest "$(command -v attest)"
 
   compatibility:
     needs: scope
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.11', '3.12', '3.13', '3.14']
+        python: ['3.11', '3.12', '3.13', '3.14', '3.15']
     # Keep every required matrix check name even when product work is omitted.
+    # Preserve required contexts and mixed unscoped checks; bind once for steps.
+    env:
+      PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
     steps:
       - name: Web-only change; product tests are not needed
-        if: needs.scope.outputs.product == 'false'
+        if: env.PRODUCT_CHECKS == 'false'
         run: echo "Web-only change; validated by quality and Documentation."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: needs.scope.outputs.product != 'false'
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        if: env.PRODUCT_CHECKS != 'false'
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: ${{ matrix.python }}
           enable-cache: true
       - name: Prepare disposable SSH integration prerequisites
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
         run: |
           if ! test -x /usr/sbin/sshd; then
             sudo apt-get update
@@ -235,59 +270,58 @@ jobs:
           fi
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
-        if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked pytest --cov --cov-report=term-missing --cov-report=json:coverage.json --cov-report=xml:coverage.xml --junitxml=tests.xml
-        if: needs.scope.outputs.product != 'false'
-      - name: Protect the measured legacy coverage separately
-        if: needs.scope.outputs.product != 'false'
-        run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
+        if: env.PRODUCT_CHECKS != 'false'
+      - run: uv run --locked pytest -n auto --maxprocesses=2 --dist=loadfile --max-worker-restart=0 --cov --cov-report=term-missing --cov-report=json:coverage.json --cov-report=xml:coverage.xml --junitxml=tests.xml
+        if: env.PRODUCT_CHECKS != 'false'
       - name: Protect selected evidence line and branch coverage separately
-        if: needs.scope.outputs.product != 'false'
-        run: uv run --locked python scripts/check_scope_coverage.py coverage.json
+        if: env.PRODUCT_CHECKS != 'false'
+        run: uv run --locked python -m scripts.qualification.ci.check_scope_coverage coverage.json
       - run: uv run --locked coverage report --include='src/apizr/capabilities/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/readiness/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/generators/rest/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/generators/mcp/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/interfaces/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/execution/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
+      - run: uv run --locked coverage report --include='src/apizr/tracking/*' --fail-under=90
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/extension_runtime/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/git_source/*,src/apizr/cli/commands/git_source.py' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/plugins/local/*,src/apizr/plugins/artifacts/*,src/apizr/cli/commands/plugins.py' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/governed/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/repository/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/graph/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/repository_readiness/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/repository_interfaces/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/repository_execution/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/governed_repository/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/exposure/*' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/cli/commands/exposure.py' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/cli/commands/readiness.py,src/apizr/cli/commands/repository_readiness.py,src/apizr/cli/commands/repository.py' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       - run: uv run --locked coverage report --include='src/apizr/execution/worker.py,src/apizr/execution/supervisor.py,src/apizr/execution/protocol.py' --fail-under=90
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
 
       - name: Preserve tests and branch coverage
-        if: (always()) && needs.scope.outputs.product != 'false'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: (always()) && env.PRODUCT_CHECKS != 'false'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: validation-linux-python-${{ matrix.python }}
           path: |
@@ -295,77 +329,78 @@ jobs:
             coverage.json
             coverage.xml
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   macos:
     needs: scope
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ${{ needs.scope.outputs.product == 'false' && 'ubuntu-latest' || 'macos-latest' }}
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.11', '3.14']
+        python: ['3.11', '3.14', '3.15']
     # Keep every required matrix check name even when product work is omitted.
+    # Preserve required contexts and mixed unscoped checks; bind once for steps.
+    env:
+      PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
     steps:
       - name: Web-only change; product tests are not needed
-        if: needs.scope.outputs.product == 'false'
+        if: env.PRODUCT_CHECKS == 'false'
         run: echo "Web-only change; validated by quality and Documentation."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: needs.scope.outputs.product != 'false'
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        if: env.PRODUCT_CHECKS != 'false'
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: ${{ matrix.python }}
           enable-cache: true
       - run: uv sync --locked
-        if: needs.scope.outputs.product != 'false'
-      - run: uv run --locked pytest --cov --cov-report=term-missing --cov-report=json:coverage.json --junitxml=tests.xml
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
+      - run: uv run --locked pytest -n auto --maxprocesses=2 --dist=loadfile --max-worker-restart=0 --cov --cov-report=term-missing --cov-report=json:coverage.json --junitxml=tests.xml
+        if: env.PRODUCT_CHECKS != 'false'
       - name: Protect selected evidence line and branch coverage separately
-        if: needs.scope.outputs.product != 'false'
-        run: uv run --locked python scripts/check_scope_coverage.py coverage.json
-      - run: uv run --locked coverage report --include='src/apizr/modules/*' --fail-under=59.5
-        if: needs.scope.outputs.product != 'false'
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: (always()) && needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
+        run: uv run --locked python -m scripts.qualification.ci.check_scope_coverage coverage.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: (always()) && env.PRODUCT_CHECKS != 'false'
         with:
           name: validation-macos-python-${{ matrix.python }}
           path: |
             tests.xml
             coverage.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   security-mutations:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && needs.scope.outputs.product != 'false' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: '3.14'
           enable-cache: true
       - run: uv sync --locked
-      - run: uv run --locked python scripts/security_mutations.py
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - run: uv run --locked python -m scripts.qualification.ci.security_mutations
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: security-mutation-evidence
           path: mutation-evidence/
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   package:
     needs: distributions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: '3.14'
           enable-cache: true
       - name: Prepare disposable SSH integration prerequisites
@@ -376,63 +411,68 @@ jobs:
           fi
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: python-distributions
           path: dist
-      - run: uv run --locked python scripts/check_distribution.py dist --coordinated --manifest SHA256SUMS.json
+      - run: uv run --locked python -m scripts.qualification.packaging.check_distribution dist --coordinated --manifest SHA256SUMS.json
       - name: Verify minimal and optional installed-wheel dependency paths
         run: |
-          uv run --locked python scripts/smoke_installations.py dist/outerspace_apizr-*.whl
-          uv run --locked python scripts/smoke_installations.py dist/outerspace_apizr-*.whl --python 3.11
-      - run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl
+          uv run --locked python -m scripts.qualification.packaging.smoke_installations dist/outerspace_apizr-*.whl
+          uv run --locked python -m scripts.qualification.packaging.smoke_installations dist/outerspace_apizr-*.whl --python 3.11
+      - run: uv run --locked python -m scripts.qualification.packaging.smoke_wheel dist/outerspace_apizr-*.whl --scientific-proof release-evidence/scientific-contracts-proof.json
+      - name: Real Jupyter SDK sessions from the installed candidate outside checkout
+        run: uv run --locked python -m scripts.qualification.experiments.experiment_jupyter_proof dist/outerspace_apizr-*.whl --output release-evidence/jupyter-proof.json
       - name: Check the same wheel on the oldest supported Python
-        run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --python 3.11
+        run: uv run --locked python -m scripts.qualification.packaging.smoke_wheel dist/outerspace_apizr-*.whl --python 3.11
       - name: Preserve source, lock and dependency SBOMs
-        run: uv run --locked python scripts/build_evidence.py
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        run: uv run --locked python -m scripts.qualification.packaging.build_evidence
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-evidence
           path: release-evidence/
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   container:
     needs: scope
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.11', '3.12', '3.13', '3.14']
+        python: ['3.11', '3.12', '3.13', '3.14', '3.15']
     # Keep every required matrix check name even when product work is omitted.
+    # Preserve required contexts and mixed unscoped checks; bind once for steps.
+    env:
+      PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
     steps:
       - name: Web-only change; product tests are not needed
-        if: needs.scope.outputs.product == 'false'
+        if: env.PRODUCT_CHECKS == 'false'
         run: echo "Web-only change; validated by quality and Documentation."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: needs.scope.outputs.product != 'false'
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        if: env.PRODUCT_CHECKS != 'false'
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: '3.14'
           enable-cache: true
       - run: uv sync --locked
-        if: needs.scope.outputs.product != 'false'
+        if: env.PRODUCT_CHECKS != 'false'
       # Generate once per target: verifies target-specific dependency resolution in Docker.
-      - run: uv run --locked python scripts/smoke_container.py --python-version "${{ matrix.python }}"
-        if: needs.scope.outputs.product != 'false'
+      - run: uv run --locked python -m scripts.qualification.packaging.smoke_container --python-version "${{ matrix.python }}"
+        if: env.PRODUCT_CHECKS != 'false'
 
   oci-isolation:
     needs: distributions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
-          python-version: '3.14'
+          version: '0.13.1'
+          python-version: '3.15'
           enable-cache: true
       # systemd scope GC can discard OOM evidence before containerd reads it:
       # https://github.com/containerd/containerd/pull/12819
@@ -454,12 +494,12 @@ jobs:
           docker info --format 'Docker={{.ServerVersion}} cgroup_driver={{.CgroupDriver}} cgroup_version={{.CgroupVersion}}'
           test "$(docker info --format '{{.CgroupDriver}}')" = cgroupfs
       - run: uv sync --locked
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: python-distributions
           path: dist
       - name: Deliberately build local fixture worker image
-        run: uv run --locked python scripts/build_worker_image.py dist/outerspace_apizr-*.whl --output /tmp/apizr-worker-image.json
+        run: uv run --locked python -m scripts.qualification.packaging.build_worker_image dist/outerspace_apizr-*.whl --output /tmp/apizr-worker-image.json
       - name: Exercise actual Linux container boundaries
         env:
           APIZR_TEST_OCI_IMAGE: /tmp/apizr-worker-image.json
@@ -475,11 +515,11 @@ jobs:
       - run: uv run --locked coverage report --include='src/apizr/repository_execution/*' --fail-under=90
       - run: uv run --locked coverage report --include='src/apizr/governed_repository/*' --fail-under=90
       - name: Installed wheel supports explicit OCI execution
-        run: uv run --locked python scripts/smoke_wheel.py dist/outerspace_apizr-*.whl --runtime-image-config /tmp/apizr-worker-image.json
+        run: uv run --locked python -m scripts.qualification.packaging.smoke_wheel dist/outerspace_apizr-*.whl --runtime-image-config /tmp/apizr-worker-image.json
       - name: Assert no invocation containers remain
         if: always()
         run: test -z "$(docker ps -aq --filter label=org.apizr.execution=oci-v1)"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: validation-oci
@@ -490,14 +530,14 @@ jobs:
             /tmp/apizr-worker-image.json
             /tmp/apizr-worker-image.inventory.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   provenance:
     # New evidence is limited to the active protected development branch.
     if: >-
       github.event_name == 'push' &&
       github.ref == 'refs/heads/master' && github.ref_protected
-    needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations, release-target, release-delivery]
+    needs: [quality, compatibility, macos, package, container, oci-isolation, security-mutations, release-target, release-delivery, vscode]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -505,23 +545,23 @@ jobs:
       attestations: write
     steps:
       # Isolated signer: no checkout or repository code execution.
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: python-distributions
           path: dist
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build-evidence
           path: evidence
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: validation-*
           path: evidence/validation
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: security-mutation-evidence
           path: evidence/security-mutations
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: release-*
           path: evidence/coordinated
@@ -529,11 +569,14 @@ jobs:
         run: |
           mkdir attestations
           tar -czf attestations/ci-evidence.tar.gz -C evidence .
+          mkdir editor
+          cp evidence/coordinated/release-candidate/editor/*.vsix editor/
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         id: provenance
         with:
           subject-path: |
             dist/*
+            editor/*.vsix
             attestations/ci-evidence.tar.gz
       - uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
         id: sbom
@@ -547,20 +590,20 @@ jobs:
         run: |
           cp "$PROVENANCE_BUNDLE" attestations/build-provenance.sigstore.json
           cp "$SBOM_BUNDLE" attestations/runtime-sbom.sigstore.json
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-attestations
           path: attestations/
           if-no-files-found: error
-          retention-days: 90
-
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   release-assets:
-    needs: [provenance, release-target, release-delivery]
+    needs: [provenance, release-target, release-delivery, vscode]
     if: >-
-      always() && needs.release-target.result == 'success' &&
+      !cancelled() && needs.release-target.result == 'success' &&
       needs.release-delivery.result == 'success' &&
-      (needs.provenance.result == 'success' || github.event_name == 'pull_request')
+      needs.vscode.result == 'success' &&
+      (needs.provenance.result == 'success' || github.event_name == 'pull_request' || github.ref == 'refs/heads/0.4.6')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -568,12 +611,12 @@ jobs:
       attestations: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: release-*
           path: downloads
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        if: github.event_name != 'pull_request'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        if: needs.provenance.result == 'success'
         with:
           name: build-attestations
           path: downloads/build-attestations
@@ -588,9 +631,276 @@ jobs:
             options=()
           fi
           python3 scripts/prepare_release_assets.py --downloads downloads --output release-assets --commit "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID" --source-ref "$GITHUB_REF" "${options[@]}"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-assets
           path: release-assets/
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
+
+  attest-delivery-plugin-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/attest-delivery-plugin.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  client-collections-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/client-collections.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  extension-cleanup-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/extension-cleanup.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  extension-packaging-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/extension-packaging.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  forge-integrations-qualification:
+    needs: [scope, distributions]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' && (needs.distributions.result == 'success') }}
+    uses: ./.github/workflows/forge-integrations.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+      candidate_artifact: ${{ inputs.qualification_layout != 'independent' && needs.distributions.result == 'success' && 'release-candidate' || '' }}
+
+  governed-rest-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/governed-rest-qualification.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  homebrew-build-inputs-qualification:
+    needs: [scope, distributions]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' && (needs.distributions.result == 'success') }}
+    uses: ./.github/workflows/homebrew-build-inputs.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+      candidate_artifact: ${{ inputs.qualification_layout != 'independent' && needs.distributions.result == 'success' && 'release-candidate' || '' }}
+
+  homebrew-formula-qualification:
+    needs: [scope, distributions]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' && (needs.distributions.result == 'success') }}
+    uses: ./.github/workflows/homebrew-formula.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+      candidate_artifact: ${{ inputs.qualification_layout != 'independent' && needs.distributions.result == 'success' && 'release-candidate' || '' }}
+
+  mcp-server-plugin-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/mcp-server-plugin.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  oci-service-plugin-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/oci-service-plugin.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  onboarding-dx-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    uses: ./.github/workflows/onboarding-dx.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  security-qualification:
+    needs: [scope]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' }}
+    permissions:
+      contents: read
+      security-events: read
+    uses: ./.github/workflows/security.yml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+
+  mkdocs-qualification:
+    needs: [scope, distributions]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && (needs.distributions.result == 'success' || (needs.scope.outputs.product == 'false' && needs.distributions.result == 'skipped')) }}
+    # Upper bound for the existing master-only deploy job. The called build
+    # explicitly has contents: read; this caller never runs on master.
+    permissions:
+      contents: write
+      pages: read
+    uses: ./.github/workflows/mkdocs.yaml
+    with:
+      scope_ready: ${{ inputs.qualification_layout != 'independent' }}
+      product: ${{ fromJSON(needs.scope.outputs.product) }}
+      examples: ${{ fromJSON(needs.scope.outputs.examples) }}
+      candidate_artifact: ${{ inputs.qualification_layout != 'independent' && needs.distributions.result == 'success' && 'release-candidate' || '' }}
+
+  vscode:
+    needs: [scope, distributions]
+    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.product == 'true' && needs.distributions.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22.22.2'
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: '0.13.1'
+          python-version: '3.14'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-candidate
+          path: ${{ runner.temp }}/vscode-candidate
+      - run: uv sync --locked --group jupyter-qualification --extra notebook
+      - run: npm ci --prefix editors/vscode --ignore-scripts --no-audit --no-fund
+      - run: npm test --prefix editors/vscode
+      - name: Audit the complete extension Node tree, without exclusions
+        run: npm audit --prefix editors/vscode --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > "$RUNNER_TEMP/vscode-node-audit.json"
+      - name: Reuse the coordinated VSIX; build only the historical update fixture
+        run: |
+          mkdir "$RUNNER_TEMP/vscode-dist"
+          cp "$RUNNER_TEMP/vscode-candidate/editor/"* "$RUNNER_TEMP/vscode-dist/"
+          uv run --locked python -m scripts.qualification.packaging.vscode_distribution --output "$RUNNER_TEMP/vscode-dist" --fixture-version 0.4.5
+      - name: Install the same candidate engine outside the checkout
+        run: |
+          uv run --locked python -m scripts.qualification.packaging.coordinated_distributions verify --candidate "$RUNNER_TEMP/vscode-candidate"
+          uv export --locked --no-default-groups --group jupyter-qualification --extra notebook --no-emit-project --output-file "$RUNNER_TEMP/vscode-engine.lock"
+          uv venv --python 3.14 "$RUNNER_TEMP/vscode-engine"
+          uv pip install --python "$RUNNER_TEMP/vscode-engine/bin/python" --require-hashes --only-binary :all: -r "$RUNNER_TEMP/vscode-engine.lock"
+          uv pip install --python "$RUNNER_TEMP/vscode-engine/bin/python" --no-deps --no-index "$RUNNER_TEMP"/vscode-candidate/dist/outerspace_apizr-*.whl
+      - name: Fetch the exact qualified VS Code binary
+        run: |
+          curl --fail --location --retry 2 'https://update.code.visualstudio.com/1.140.0/linux-x64/stable' --output "$RUNNER_TEMP/vscode.tar.gz"
+          echo "d32031e9e213d59532af3cf32fcb8b357a1cdd10417967b4f5b5ba30436dc0dc  $RUNNER_TEMP/vscode.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/vscode.tar.gz" -C "$RUNNER_TEMP"
+      - name: Real installed extension, mixed history and restricted workspace
+        run: |
+          xvfb-run -a uv run --locked python -m scripts.qualification.interfaces.vscode_proof --engine-python "$RUNNER_TEMP/vscode-engine/bin/python" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --previous-vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.5.vsix" --output "$RUNNER_TEMP/vscode-installed"
+          xvfb-run -a uv run --locked python -m scripts.qualification.interfaces.vscode_proof --engine-python "$RUNNER_TEMP/vscode-engine/bin/python" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --output "$RUNNER_TEMP/vscode-restricted" --untrusted
+      - name: Real workspace extension host over isolated loopback SSH
+        run: xvfb-run -a uv run --locked python -m scripts.qualification.interfaces.vscode_ssh_proof --wheel "$RUNNER_TEMP"/vscode-candidate/dist/outerspace_apizr-*.whl --requirements "$RUNNER_TEMP/vscode-engine.lock" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --output "$RUNNER_TEMP/vscode-ssh"
+      - name: Same candidate Runs across a real kernel, CLI, VSIX and REST/MCP
+        env:
+          APIZR_RELEASE_SET: ${{ runner.temp }}/vscode-candidate
+        run: |
+          uv run --locked python -m scripts.qualification.packaging.coordinated_distributions target --candidate "$APIZR_RELEASE_SET" --output "$RUNNER_TEMP/vscode-target"
+          xvfb-run -a uv run --locked python -m scripts.qualification.experiments.qualify_data_science_journey --candidate "$APIZR_RELEASE_SET" --target "$RUNNER_TEMP/vscode-target" --vsix "$RUNNER_TEMP/vscode-dist/apizr-0.4.6.vsix" --code "$RUNNER_TEMP/VSCode-linux-x64/bin/code" --output "$RUNNER_TEMP/vscode-journey"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: release-editor
+          path: |
+            ${{ runner.temp }}/vscode-node-audit.json
+            ${{ runner.temp }}/vscode-dist/
+            ${{ runner.temp }}/vscode-installed/*.json
+            ${{ runner.temp }}/vscode-installed/*.log
+            ${{ runner.temp }}/vscode-restricted/*.json
+            ${{ runner.temp }}/vscode-restricted/*.log
+            ${{ runner.temp }}/vscode-ssh/remote-proof.json
+            ${{ runner.temp }}/vscode-ssh/proof/*.json
+            ${{ runner.temp }}/vscode-ssh/*.log
+            ${{ runner.temp }}/vscode-engine.lock
+            ${{ runner.temp }}/vscode-journey/*.json
+            ${{ runner.temp }}/vscode-journey/*.log
+            ${{ runner.temp }}/vscode-journey/integrated/*.json
+            ${{ runner.temp }}/vscode-journey/integrated/*.jsonl
+            ${{ runner.temp }}/vscode-journey/integrated/*.log
+            ${{ runner.temp }}/vscode-journey/integrated/*.py
+            ${{ runner.temp }}/vscode-journey/integrated/*.ipynb
+            ${{ runner.temp }}/vscode-journey/integrated/bundles/
+          if-no-files-found: error
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
+
+  dependencies:
+    name: ${{ github.ref == 'refs/heads/master' && 'external-dependencies' || 'dependencies' }}
+    needs: [scope, security-qualification, vscode]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the shared qualification result
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
+          QUALIFICATION_RESULT: ${{ needs.security-qualification.result }}
+          VSCODE_RESULT: ${{ needs.vscode.result }}
+        run: |
+          test "$SCOPE_RESULT" = success
+          case "$PRODUCT_CHECKS" in
+            true) test "$QUALIFICATION_RESULT" = success && test "$VSCODE_RESULT" = success ;;
+            false) test "$QUALIFICATION_RESULT" = skipped && test "$VSCODE_RESULT" = skipped ;;
+            *) exit 1 ;;
+          esac
+
+  codeql:
+    name: ${{ github.ref == 'refs/heads/master' && 'external-codeql' || 'codeql' }}
+    needs: [scope, security-qualification]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the shared qualification result
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
+          QUALIFICATION_RESULT: ${{ needs.security-qualification.result }}
+        run: |
+          test "$SCOPE_RESULT" = success
+          case "$PRODUCT_CHECKS" in
+            true) test "$QUALIFICATION_RESULT" = success ;;
+            false) test "$QUALIFICATION_RESULT" = skipped ;;
+            *) exit 1 ;;
+          esac
+
+  build:
+    name: ${{ github.ref == 'refs/heads/master' && 'external-build' || 'build' }}
+    needs: [scope, mkdocs-qualification, vscode]
+    if: ${{ !cancelled() && github.ref != 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the shared qualification result
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
+          QUALIFICATION_RESULT: ${{ needs.mkdocs-qualification.result }}
+          VSCODE_RESULT: ${{ needs.vscode.result }}
+        run: |
+          test "$SCOPE_RESULT" = success
+          test "$QUALIFICATION_RESULT" = success
+          case "$PRODUCT_CHECKS" in
+            true) test "$VSCODE_RESULT" = success ;;
+            false) test "$VSCODE_RESULT" = skipped ;;
+            *) exit 1 ;;
+          esac

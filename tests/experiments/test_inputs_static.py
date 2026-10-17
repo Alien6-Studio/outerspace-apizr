@@ -12,10 +12,10 @@ from apizr.experiments import (
     InputDeclaration,
     InputResult,
     discover_inputs,
-    inputs,
     parse_input_declaration,
     select_inputs,
 )
+from apizr.scientific_providers.builtin import inputs
 
 
 def scan(source):

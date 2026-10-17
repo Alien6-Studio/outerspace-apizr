@@ -5,6 +5,19 @@ description: Explore Python projects from your AI assistant with Apizr's MCP plu
 
 # Apizr as a local MCP server
 
+!!! note "Apizr 0.4.6: experiment history"
+    Matching core/plugin versions provide `apizr_experiment_list`,
+    `apizr_experiment_show` and `apizr_experiment_diff`. These read the configured
+    project's `.apizr/experiments/v1` store, using the same argument contracts and
+    canonical history/comparison as the [editor engine](editor-contract.md).
+    Add an exact `history.read` grant with `experiments.read` alongside the existing
+    `source.analyze` grant. Installation and analysis authority alone grant no
+    history access. Tool arguments cannot select another root, store or authority.
+    Every read validates the complete bounded history; a display filter or limit
+    never hides corruption. Producers/capture modes are retained, unknowns stay
+    unknown, and comparison does not infer causality. No new tool executes,
+    retrains, exposes, mutates evidence or loads the producing provider. Use matching Apizr 0.4.6 core/plugin versions for these tools.
+
 For prerequisites and package availability, see [Install Apizr](../getting-started/install.md).
 
 Let your AI assistant explore a Python project with the optional
@@ -126,10 +139,8 @@ as an envelope around MCP traffic. Those workers call Python APIs, not the CLI.
 
 ## Registry installation {#registry-installation}
 
-This is the canonical installation path linked by `server.json`. **0.4.5 is
-published on PyPI and in the Official MCP Registry.** The launcher and its
-explicit plugin profile have been verified from fresh public installations.
-Use matching 0.4.5 core and plugin versions.
+This is the canonical installation path for Apizr 0.4.6 linked by `server.json`.
+Use matching core and plugin versions in the separate environments below.
 
 The [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.Alien6-Studio%2Fouterspace-apizr)
 lists Apizr as `io.github.Alien6-Studio/outerspace-apizr`.
@@ -138,7 +149,7 @@ three analysis tools and their inputs.
 
 1. Install its core and prepare an explicit MCP profile
    with the commands below. Use an absolute path to your installed CPython
-   3.11–3.14 interpreter and uv 0.12.x. Run each command in order, stopping on
+   3.11–3.15 interpreter and stable uv 0.12.x or 0.13.x. Run each command in order, stopping on
    any failure. Keep this temporary directory while using the server.
 
 ```sh
@@ -146,18 +157,18 @@ python=/absolute/path/to/python3.14
 setup=$(mktemp -d)
 setup=$(cd "$setup" && pwd -P)
 uv venv --python "$python" "$setup/core"
-uv pip install --python "$setup/core/bin/python" 'outerspace-apizr[preparation]==0.4.5'
+uv pip install --python "$setup/core/bin/python" 'outerspace-apizr[preparation]==0.4.6'
 apizr="$setup/core/bin/apizr"
-"$apizr" plugins prepare outerspace-apizr-mcp --version 0.4.5 \
+"$apizr" plugins prepare outerspace-apizr-mcp --version 0.4.6 \
   --python "$python" --platform native \
   --index-url https://pypi.org/simple --output-dir "$setup/prepared" --json
-plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.5" {sub("--hash=sha256:", "", $2); print $2}' \
+plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.6" {sub("--hash=sha256:", "", $2); print $2}' \
   "$setup/prepared/requirements.lock")
-"$apizr" plugins install "$setup/prepared/wheelhouse/outerspace_apizr_mcp-0.4.5-py3-none-any.whl" \
+"$apizr" plugins install "$setup/prepared/wheelhouse/outerspace_apizr_mcp-0.4.6-py3-none-any.whl" \
   --sha256 "$plugin_sha" --python "$python" \
   --requirements "$setup/prepared/requirements.lock" \
   --wheelhouse "$setup/prepared/wheelhouse" --plugins-dir "$setup/profile"
-"$apizr" plugins enable outerspace-apizr-mcp --version 0.4.5 \
+"$apizr" plugins enable outerspace-apizr-mcp --version 0.4.6 \
   --plugins-dir "$setup/profile"
 ```
 
@@ -167,7 +178,7 @@ plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.5" {sub("--hash=sha256:", "",
    The [preparation guide](plugin-preparation.md#targets-and-integrity) explains
    supported platforms, including the reviewed dependency's macOS Intel refusal.
    For unpublished contributor candidates, use the qualified local wheelhouse
-   without `--index-url`; do not mix public 0.4.4 artifacts with this profile.
+   without `--index-url`; do not mix different core/plugin versions in this profile.
 2. Create the four project files in [Choose one local project](#choose-one-local-project),
    or select your existing `apizr.toml`. It selects a source root and analysis
    policies; it does not grant access to that root.
@@ -192,7 +203,7 @@ plugin_sha=$(awk '$1 == "outerspace-apizr-mcp==0.4.5" {sub("--hash=sha256:", "",
    Replace each angle-bracket placeholder with an absolute path you selected:
 
 ```sh
-uvx outerspace-apizr-mcp@0.4.5 \
+uvx outerspace-apizr-mcp@0.4.6 \
   --project "<ABSOLUTE_APIZR_TOML>" \
   --operator-policy "<ABSOLUTE_OPERATOR_JSON>" \
   --plugins-dir "<ABSOLUTE_MANAGED_PLUGIN_DIRECTORY>"
@@ -358,9 +369,10 @@ response. In contrast, readiness `exit_code: 1` with `isError: false` is a valid
 assessment of limitations or uncertainty. Delivery business outcomes retain
 their separate [existing semantics](#explicit-delivery-mode-042).
 
+<span id="start-with-a-small-view-045"></span>
 <span id="start-with-a-small-view-045-development"></span>
 
-## Start with a small view (0.4.5)
+## Start with a small view
 
 Ask your AI assistant to summarize the repository before inspecting a function:
 
@@ -608,7 +620,7 @@ From the checkout, `uv run --locked python scripts/smoke_mcp_server.py --output
 checkout, checks inactive refusal and explicit activation, compares all tools
 against Python/CLI, and exercises actual subprocess cancellation/shutdown with a
 synchronized test worker. It checks core files, activations and project contents.
-The dedicated CI matrix covers Linux 3.11–3.14 and macOS 3.11/3.14 and preserves
+The dedicated CI matrix covers Linux 3.11–3.15 and macOS 3.11/3.14 and preserves
 logs and separate plugin coverage. Linux repeats the installed proof with network
 access removed by a disposable network namespace. These are development proofs,
 not tests of a graphical client. See the [release record](../releases/0.4.1.md)
@@ -679,7 +691,7 @@ between them:
 
 - `stdio`: the installed analysis plugin and official SDK client, including
   separate plugin coverage and the Linux proof without network access, on Linux
-  Python 3.11–3.14 and macOS 3.11/3.14;
+  Python 3.11–3.15 and macOS 3.11/3.14;
 - `generated-recovery`: ten predetermined repetitions **per transport** of the
   generated business MCP server recovery test, on Linux/macOS Python 3.11.
 

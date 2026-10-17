@@ -70,6 +70,14 @@ sanitized failure; restoring the original bytes permits later calls. Hash bindin
 is integrity within the trusted bundle, not publisher authentication against an
 attacker who replaces an entire bundle before startup.
 
+Each validation uses the shared [artifact admission budgets](repository-bundle-v1.md#artifact-admission-budgets):
+the initial manifest counts toward retained bytes and artifact count, each read is
+bounded by the remaining allowance, and metadata structure is checked before
+decoding. The fresh worker charges its interface, exposure evidence and complete
+source set to one budget before installing the importer. Standalone local and OCI
+closures embed the same reader and lexical JSON preflight. Generation checks the
+final governed bundle after adding its worker, plans and execution bridge.
+
 ## Worker and importer
 
 Only the fresh worker installs the existing `RepositoryLoader`. It verifies the

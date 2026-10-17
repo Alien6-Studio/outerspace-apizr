@@ -6,7 +6,7 @@ with [Install Apizr](../getting-started/install.md).
 
 ## Prepare a verified installation workspace
 
-These commands download the published 0.4.5 packages and a complete dependency
+These commands download the published 0.4.6 packages and a complete dependency
 export. They do not build or publish anything. Use this workspace for the
 [offline installation and plugin profiles](../getting-started/install.md#choose-a-plugin-profile).
 
@@ -20,8 +20,8 @@ This selection uses Linux x86-64 / Python 3.11. The published inventory supplies
 the exact patch-level export and source commit. Keep all files from the same release:
 
 ```sh
-export APIZR_VERSION=0.4.5
-export RELEASE_TAG=v0.4.5
+export APIZR_VERSION=0.4.6
+export RELEASE_TAG=v0.4.6
 export PYTHON=python3.11
 export TARGET_PATTERN="apizr-${APIZR_VERSION}-linux-x86_64-cpython-3.11.*.tar.gz"
 mkdir -p release/assets release/candidate/dist release/target-download
@@ -205,9 +205,10 @@ Do not count the repeated OCI samples as additional distinct test cases.
 The 0.2.0 release measured global branch-aware coverage of 90.87%, 90.99%, 90.99%
 and 90.65% on Python 3.11, 3.12, 3.13 and 3.14 respectively. The global floor is
 now **90%**, in addition to the modern packages' individual 90% floors.
-The legacy `src/apizr/modules/` aggregate measured 59.91%, 59.91%, 59.91% and
-59.56%; its separate **59.5%** floor prevents modern coverage from hiding a legacy
-regression. This is a regression floor, not a claim of sufficient legacy coverage.
+The historical `src/apizr/modules/` tree and its separate 59.5% floor were
+removed in 0.4.6. The global and every modern domain/security floor remain.
+The notebook exporter moved to `apizr.notebooks` with byte-identical golden
+exports and its existing source-admission mutation targets.
 
 The security mutation job first runs designated tests on unchanged code, then
 removes one protection at a time in a disposable copy. Each mutant must fail its

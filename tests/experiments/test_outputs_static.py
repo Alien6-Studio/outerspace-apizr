@@ -14,9 +14,9 @@ from apizr.experiments import (
     OutputDiscoveryResult,
     OutputSignal,
     discover_outputs,
-    outputs,
     parse_output_declaration,
 )
+from apizr.scientific_providers.builtin import outputs
 
 
 @pytest.mark.parametrize(

@@ -1,0 +1,56 @@
+         61065 function calls (55683 primitive calls) in 0.009 seconds
+
+   Ordered by: cumulative time
+   List reduced from 178 to 50 due to restriction <50>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.009    0.009 benchmark_engine.py:149(<lambda>)
+        1    0.000    0.000    0.006    0.006 history.py:247(show_run)
+        1    0.000    0.000    0.006    0.006 history.py:251(select_runs)
+       11    0.000    0.000    0.006    0.001 store.py:256(records)
+       15    0.002    0.000    0.005    0.000 json.py:27(encode)
+        1    0.000    0.000    0.003    0.003 history.py:277(history_bytes)
+     4354    0.000    0.000    0.002    0.000 encoder.py:414(_iterencode)
+    21/13    0.000    0.000    0.002    0.000 {method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+9706/4354    0.001    0.000    0.002    0.000 encoder.py:334(_iterencode_dict)
+        1    0.000    0.000    0.002    0.002 main.py:746(model_validate)
+        1    0.000    0.000    0.002    0.002 store.py:63(bound)
+        1    0.000    0.000    0.002    0.002 store.py:48(_validate_record_binding)
+       11    0.000    0.000    0.002    0.000 type_adapter.py:421(validate_json)
+       11    0.000    0.000    0.002    0.000 {method 'validate_json' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+       10    0.000    0.000    0.001    0.000 serialization.py:45(read_run)
+      324    0.000    0.000    0.001    0.000 model.py:23(_text)
+      461    0.000    0.000    0.001    0.000 {built-in method builtins.any}
+       20    0.000    0.000    0.001    0.000 type_adapter.py:362(validate_python)
+        2    0.000    0.000    0.001    0.000 serialization.py:25(plan_digest)
+        2    0.000    0.000    0.001    0.000 serialization.py:20(plan_bytes)
+     2528    0.000    0.000    0.001    0.000 encoder.py:278(_iterencode_list)
+        1    0.000    0.000    0.001    0.001 serialization.py:52(validate_run_binding)
+     4117    0.000    0.000    0.001    0.000 model.py:24(<genexpr>)
+      144    0.000    0.000    0.001    0.000 values.py:51(_freeze)
+       11    0.000    0.000    0.001    0.000 store.py:286(load_plan)
+        1    0.000    0.000    0.001    0.001 serialization.py:34(run_digest)
+        1    0.000    0.000    0.001    0.001 serialization.py:29(run_bytes)
+       59    0.000    0.000    0.000    0.000 model.py:53(_reference)
+9214/9192    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+     4807    0.000    0.000    0.000    0.000 {method 'encode' of 'str' objects}
+       15    0.000    0.000    0.000    0.000 main.py:472(model_dump)
+       15    0.000    0.000    0.000    0.000 {method 'to_python' of 'pydantic_core._pydantic_core.SchemaSerializer' objects}
+     4469    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+      144    0.000    0.000    0.000    0.000 __init__.py:183(dumps)
+     4350    0.000    0.000    0.000    0.000 {method 'extend' of 'bytearray' objects}
+       15    0.000    0.000    0.000    0.000 json.py:23(finite_json)
+     7586    0.000    0.000    0.000    0.000 {built-in method builtins.ord}
+       11    0.000    0.000    0.000    0.000 store.py:276(read)
+      144    0.000    0.000    0.000    0.000 encoder.py:183(encode)
+       11    0.000    0.000    0.000    0.000 store.py:174(_read)
+       19    0.000    0.000    0.000    0.000 {built-in method posix.open}
+      134    0.000    0.000    0.000    0.000 model.py:44(ordered_evidence)
+        6    0.000    0.000    0.000    0.000 {built-in method builtins.next}
+        3    0.000    0.000    0.000    0.000 contextlib.py:132(__enter__)
+        1    0.000    0.000    0.000    0.000 serialization.py:38(read_plan)
+     1656    0.000    0.000    0.000    0.000 {built-in method _json.encode_basestring}
+      208    0.000    0.000    0.000    0.000 values.py:43(_thaw)
+        2    0.000    0.000    0.000    0.000 store.py:119(_root)
+      159    0.000    0.000    0.000    0.000 encoder.py:205(iterencode)
+     1224    0.000    0.000    0.000    0.000 types.py:3212(_get_type_name)

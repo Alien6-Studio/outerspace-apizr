@@ -52,6 +52,7 @@ default plugin store. Run the Python example in the separate environment where
   "expected_reference": "registry.example:5443/services/rest@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "expected_signer": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
   "trust_store": "/private/independent-trust",
+  "trust_store_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
   "tool": {
     "executable": "/opt/attest/attest",
     "version": "0.1.0",
@@ -82,6 +83,12 @@ outerspace-apizr-attest build both registry read and publish access to the exact
 repository. The core refuses missing or insufficient grants before invocation or
 credential reads. Publishing this already signed proof needs no private key or
 additional signature authorization.
+
+The grant must also contain the exact [verification target](operator-policy.md#bind-proof-verification-authority):
+reviewed signer, Attest tool path/version/hash, trust directory and public trust
+digest. Replace the illustrative `trust_store_sha256` above with the captured
+digest in both request and grant. Changing verifier or trust requires a newly
+reviewed grant; a changed trust store is refused before native verification.
 
 The plugin snapshots the allowlisted files, runs all five native verification
 checks without warnings or skips, reads the image manifest by digest, and calls

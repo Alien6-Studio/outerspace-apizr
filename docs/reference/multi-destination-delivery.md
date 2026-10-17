@@ -37,7 +37,7 @@ plan, every destination supplies `proof` and needs the `delivery` profile:
 
 | Proof input | Existing contract fields |
 | --- | --- |
-| `verification` | `expected_signer`, `trust_store`, pinned `tool`, optional `timeout_ms` and `max_output_bytes` |
+| `verification` | `expected_signer`, `trust_store`, `trust_store_sha256`, pinned `tool`, optional `timeout_ms` and `max_output_bytes` |
 | `signing` | `key_file`, `key_id`, `tsa_url` |
 | `transport` | Existing ORAS transport, with pinned tool and this destination's authentication/CA files |
 
@@ -65,6 +65,11 @@ observer. Its `apizr.observe-delivery/v1` request contains `push` and an optiona
 operation lets resume check a destination without replaying publication. Grants
 for another operation, repository or installed identity do not authorize it.
 There is no wildcard batch grant and partial grants are not combined.
+
+Each Attest grant also binds the destination's exact [verification target](operator-policy.md#bind-proof-verification-authority),
+including the public trust digest. A request cannot replace its verifier,
+signer or trust roots. Capture these inputs under operator control and supply
+the same digest in `proof.verification`; older unbound grants are refused.
 
 Optional delivery completes after the existing push has verified promotion and
 re-observed the destination. Required delivery completes only after this

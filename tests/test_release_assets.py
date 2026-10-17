@@ -14,7 +14,9 @@ import pytest
 @pytest.fixture
 def assets(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "scripts"))
-    return importlib.import_module("prepare_release_assets")
+    return importlib.import_module(
+        "scripts.qualification.packaging.prepare_release_assets"
+    )
 
 
 def archive(path, files):
@@ -25,10 +27,12 @@ def archive(path, files):
             tar.addfile(member, io.BytesIO(content))
 
 
-def inputs(root, assets, version="0.4.0"):
+def inputs(root, assets, version="0.4.0", *, development=False):
+    from scripts.qualification.packaging.coordinated_distributions import PROJECTS
+
     candidate = root / "release-candidate"
     (candidate / "dist").mkdir(parents=True)
-    for name in assets.PROJECTS:
+    for name in PROJECTS:
         for suffix in ("-py3-none-any.whl", ".tar.gz"):
             (
                 candidate / "dist" / (name.replace("-", "_") + "-" + version + suffix)
@@ -41,14 +45,34 @@ def inputs(root, assets, version="0.4.0"):
             assets.record(p, candidate) for p in sorted((candidate / "dist").iterdir())
         ],
     }
+    if development:
+        from scripts.qualification.packaging.coordinated_distributions import (
+            QUALIFICATION_TARGETS,
+        )
+
+        manifest["qualification_targets"] = [list(t) for t in QUALIFICATION_TARGETS]
+    if version == "0.4.6":
+        from release_candidate_helpers import attach_editor
+
+        from scripts.qualification.packaging.coordinated_distributions import ROOT
+
+        attach_editor(candidate, manifest, ROOT)
+        assets.write(
+            candidate / "release-metadata.json",
+            {"schema": "apizr.release-metadata/v1", "version": version, "files": []},
+        )
+        manifest["release_metadata"] = assets.record(
+            candidate / "release-metadata.json", candidate
+        )
     assets.write(candidate / "candidate.json", manifest)
     targets = []
     for system, machine, versions in [
-        ("Linux", "x86_64", (11, 12, 13, 14)),
-        ("Darwin", "arm64", (11, 14)),
+        ("Linux", "x86_64", (11, 12, 13, 14, 15) if development else (11, 12, 13, 14)),
+        ("Darwin", "arm64", (11, 14, 15) if development else (11, 14)),
     ]:
         for minor in versions:
-            directory = root / f"release-target-{system}-{minor}"
+            runner = {"Linux": "ubuntu-latest", "Darwin": "macos-latest"}[system]
+            directory = root / f"release-target-{runner}-3.{minor}"
             (directory / "qualification").mkdir(parents=True)
             target = {
                 "schema": "apizr.release-target/v1",
@@ -276,6 +300,32 @@ def test_target_export_rejects_unrecorded_and_escaping_files(assets, tmp_path, n
         assets.inspect_target(path, {"commit": "a" * 40})
 
 
+@pytest.mark.parametrize("fault", [None, "missing", "mislabeled"])
+def test_development_exports_require_all_eight_matching_targets(
+    assets, tmp_path, fault
+):
+    downloads = tmp_path / "downloads"
+    targets = inputs(downloads, assets, development=True)
+    assert len(targets) == 8
+    newest = downloads / "release-target-ubuntu-latest-3.15"
+    if fault == "missing":
+        newest.rename(downloads / "unqualified")
+    elif fault == "mislabeled":
+        path = newest / "target-export.tar.gz"
+        with tarfile.open(path) as tar:
+            target = json.loads(assets.member_bytes(tar, "target.json"))
+        target["target"]["python"] = "3.14.1"
+        archive(path, {"target.json": json.dumps(target).encode()})
+    output = tmp_path / "assets"
+    if fault:
+        with pytest.raises(ValueError, match="target"):
+            assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+        assert not output.exists()
+    else:
+        assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+        assert len(list(output.glob("*cpython-3.15.1.tar.gz"))) == 2
+
+
 @pytest.mark.parametrize(
     "source_ref",
     ["refs/heads/master", "refs/heads/feature", "refs/heads/release/0.4.2"],
@@ -313,3 +363,66 @@ def test_inherited_version_on_release_line_is_only_verification_evidence(
     manifest = json.loads((output / "release-assets.json").read_text())
     assert manifest["source_ref"] == "refs/heads/release/0.4.1"
     assert "human publication approval still required" in manifest["status"]
+
+
+@pytest.mark.parametrize("tamper", [False, True])
+def test_prebuild_metadata_is_retained_or_refused(assets, tmp_path, tamper):
+    downloads = tmp_path / "downloads"
+    inputs(downloads, assets, "0.4.6", development=True)
+    snapshot = downloads / "release-candidate/release-metadata.json"
+    original = snapshot.read_bytes()
+    if tamper:
+        snapshot.write_bytes(original + b" ")
+    output = tmp_path / "assets"
+    if tamper:
+        with pytest.raises(ValueError, match="Artifact identity mismatch"):
+            assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+        assert not output.exists()
+    else:
+        assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+        assert (output / snapshot.name).read_bytes() == original
+        manifest = json.loads((output / "release-assets.json").read_text())
+        entry = next(a for a in manifest["artifacts"] if a["file"] == snapshot.name)
+        assert (
+            entry["evidence_member"]
+            == "coordinated/release-candidate/release-metadata.json"
+        )
+
+
+def test_current_assets_require_prebuild_metadata(assets, tmp_path):
+    downloads = tmp_path / "downloads"
+    inputs(downloads, assets, "0.4.6", development=True)
+    path = downloads / "release-candidate/candidate.json"
+    candidate = json.loads(path.read_text())
+    del candidate["release_metadata"]
+    assets.write(path, candidate)
+    output = tmp_path / "assets"
+    with pytest.raises(ValueError, match="Missing pre-build"):
+        assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+    assert not output.exists()
+
+
+def test_coordinated_extension_is_retained_byte_for_byte(assets, tmp_path):
+    downloads = tmp_path / "downloads"
+    inputs(downloads, assets, "0.4.6", development=True)
+    output = tmp_path / "assets"
+    assets.prepare(downloads, output, "a" * 40, 123, preview=True)
+    manifest = json.loads((output / "release-assets.json").read_text())
+    entry = next(i for i in manifest["artifacts"] if i["role"] == "VS Code extension")
+    assert (output / entry["file"]).read_bytes() == (
+        downloads / "release-candidate/editor" / entry["file"]
+    ).read_bytes()
+    assert (
+        entry["evidence_member"]
+        == "coordinated/release-candidate/editor/" + entry["file"]
+    )
+    assert (
+        len(
+            [
+                i
+                for i in manifest["artifacts"]
+                if i["role"] == "VSIX build and licence evidence"
+            ]
+        )
+        == 2
+    )

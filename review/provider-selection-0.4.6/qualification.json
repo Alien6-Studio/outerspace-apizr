@@ -1,0 +1,45 @@
+{
+  "coverage": {
+    "covered_branches": 5996,
+    "covered_lines": 21890,
+    "excluded_lines": 129,
+    "missing_branches": 416,
+    "missing_lines": 873,
+    "num_branches": 6412,
+    "num_partial_branches": 290,
+    "num_statements": 22763,
+    "percent_branches_covered": 93.51216469120399,
+    "percent_branches_covered_display": "93.51",
+    "percent_covered": 95.58183376178235,
+    "percent_covered_display": "95.58",
+    "percent_statements_covered": 96.16482888898652,
+    "percent_statements_covered_display": "96.16"
+  },
+  "docs": "strict build and 125 HTML pages passed",
+  "full_suite": {
+    "initial_collection_error": "duplicate test module basename, resolved by scientific_providers test package",
+    "initial_failures": [
+      "MCP history schema fingerprint (reviewed additive provenance extension)"
+    ],
+    "passed": 7822,
+    "skipped": 74
+  },
+  "installed_external_provider": "passed, positive and negative recognition, uninstall/history, unchanged core environment",
+  "security_mutants": {
+    "baseline": "passed",
+    "killed": 166,
+    "new_mutants_rechecked_after_test_package_fix": 3
+  },
+  "standard_platform_scope_gates": "passed: 22 coverage reports and selected evidence gate",
+  "static_checks": [
+    "package architecture",
+    "qualification architecture",
+    "Ruff",
+    "Pyright",
+    "pre-commit"
+  ],
+  "targeted_recovery": {
+    "failed": 0,
+    "passed": 174
+  }
+}

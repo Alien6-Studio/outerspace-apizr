@@ -1,0 +1,32 @@
+{
+  "schema_version": "apizr.vscode-build/v1",
+  "result": "pass",
+  "vsix": "apizr-0.4.6.vsix",
+  "sha256": "534f49a6e8533e16f7d0bcfc350c022b050591503f12c011c24f8ea870e9ca0e",
+  "files": {
+    "[Content_Types].xml": "237c0de5b17b84c02d474e7f90251a600a0ef09ad465e69ed30969360e54e3a7",
+    "extension.vsixmanifest": "44a1aca5676458a8d5b4171ce91b32a4c12871e297c09570f2804ea378f61a2b",
+    "extension/LICENSE": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "extension/README.md": "935ec05557b5166db20b1ef712221138cadae4a22551207e177b113e435280d9",
+    "extension/out/engine.js": "337c428f4b163533eb03f4e5c3351fa2c26d2b83fc40fc0ea5d4116cce705ca1",
+    "extension/out/environment.js": "60dd78270862255d9f9d91ae0ee4de0df130457bec687ab535ee57fe19b32b22",
+    "extension/out/extension.js": "865faacbfed99c2627014dbb30cf574daafc365ed134dc4d338c613d3577bcca",
+    "extension/out/json.js": "96e2fe68fb4598b29239ab201a56267a2c39d74139677961e87158e1055ca078",
+    "extension/out/presentation.js": "2e46dcfb2ae1b6ca31d6dc82ebbd4965dce092bcc88fdec8c08546e468fff3ca",
+    "extension/package-lock.json": "c5d52a84e0d18f5e65268d22d4c9100e7b7cc3b0920e9f10ec5f21609cae4ec8",
+    "extension/package.json": "52bd875169ddd4d9c1f45e613251a00b5b2126fcd5f9b1cd7f89921894a08c33",
+    "extension/src/engine.ts": "f12d0c3fbc590bb09db61107b06e3c9c97b2d64b54db5f8c5e44da9b0dc63b99",
+    "extension/src/environment.ts": "ee12e1f0640ca98eac8e80c9c91eca6528e54222ea71606591dd820685928461",
+    "extension/src/extension.ts": "e676867004b73719a3afc5744e0d7c7bf7074a901462a47146c47f34d0637d07",
+    "extension/src/json.ts": "09c6f2da3a02857ef6679a01707d06de0bdf3cb83e6d98fcd7ef53fc1dc589d5",
+    "extension/src/presentation.ts": "d19db1dcaf767b92897ee9edf4936fc7fb4f5eeb28380487dd3e91a5fc53fa6f",
+    "extension/tsconfig.json": "85a798203430007d068a00f0a37cc491884ff8ee96369ffde455e391a2b0df41"
+  },
+  "repeated_build_identical": true,
+  "node": "v22.22.2",
+  "npm": "10.9.7",
+  "typescript": "5.9.3",
+  "source_commit": "745bae6ab3f04402f8dff764f9e4fd7f356801c0",
+  "qualification_fixture": false,
+  "source_dirty": false
+}

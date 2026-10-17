@@ -1,13 +1,18 @@
-# Using Dockerizr
+<span id="using-dockerizr"></span>
 
-Generate dependency and Docker files for an existing FastAPI project:
+# Using Dockerizr — removed in 0.4.6
 
-```sh
-uv run python -m apizr.modules.dockerizr.main --project_path .output/api --module_name business_api --force
-```
+The historical notebook/script pipeline and its HTTP generation service were
+removed during 0.4.6 development. This URL is retained for migration. Existing
+0.4.5 generated applications are independent artifacts; upgrading Apizr does not
+rewrite them.
 
-Use `--action requirements` or `--action dockerfile` to run an individual generator. YAML configuration accepts `DockerizrConfiguration` fields directly (without the top-level `dockerizr` key used by the complete pipeline).
+Use the [migration table](../../releases/migrate-0.4.6.md#removed-generation-pipeline)
+for the replacement of each CLI, Python, HTTP and plugin entrypoint. Start with
+[inspection](../../getting-started/user-guide/inspect.md), select public functions
+explicitly, then [generate REST](../../getting-started/user-guide/rest.md) or
+[MCP](../../getting-started/user-guide/mcp.md). For a repository, use the
+[exposure workflow](../../getting-started/user-guide/exposure.md).
 
-The generated startup script runs Uvicorn. The optional `--action gunicorn` produces legacy Gunicorn configuration instead; install `gunicorn` and `uvicorn-worker` in the target environment if using it.
-
-Prefer the main `apizr` CLI for a complete notebook or script conversion; it keeps the module names and paths consistent automatically.
+Notebook conversion remains available through the supported
+[notebook exporter](../../modules/notebook-transformr.md), without executing cells.

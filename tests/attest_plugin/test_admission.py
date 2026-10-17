@@ -10,7 +10,7 @@ from apizr_attest.model import AdmitRequest, AttestError
 from apizr_oci.model import BuildError
 from apizr_oci.oras import OCI_MANIFEST, sha
 
-from apizr.delivery import PLAN_LABEL, PROOF_LABEL, DeliveryPlan, identity
+from apizr.contracts.delivery import PLAN_LABEL, PROOF_LABEL, DeliveryPlan, identity
 
 mocked = delivery_fixtures.mocked
 transversal = delivery_fixtures.transversal
@@ -24,7 +24,7 @@ def required(transversal, tmp_path, monkeypatch):
     )
     built["delivery_plan"] = plan.model_dump(mode="json")
     built["delivery_manifest"]["delivery_plan_digest"] = identity(plan).model_dump()
-    from apizr.delivery import DeliveryManifest
+    from apizr.contracts.delivery import DeliveryManifest
 
     manifest = DeliveryManifest.model_validate(built["delivery_manifest"])
     built["delivery_manifest_digest"] = identity(manifest).model_dump()

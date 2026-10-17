@@ -2,13 +2,14 @@
 
 from typing import Annotated, Literal, Self
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, TypeAdapter, field_validator, model_validator
 
 from apizr.capabilities.model import Digest
 from apizr.contracts.application import ApplicationConfig, ApplicationInputs
 from apizr.contracts.distribution import Digest as ExperimentDigest
 from apizr.contracts.distribution import canonical_name
 from apizr.contracts.json import encode
+from apizr.experiments.capture_model import CaptureIdentity, SourceEvidence
 from apizr.experiments.model import (
     EvidenceOrigin,
     ExperimentValue,
@@ -16,7 +17,7 @@ from apizr.experiments.model import (
     SourceIdentity,
     ordered_evidence,
 )
-from apizr.experiments.store import RunRecord
+from apizr.experiments.store import Record, RunRecordV2, record_source, validate_record
 from apizr.exposure import ExposurePlan
 from apizr.exposure.policy import Interface, capability_id
 from apizr.repository.serialization import canonical_bytes
@@ -30,7 +31,7 @@ class ExperimentExposureRefused(ValueError):
     """Stable bridge refusal, without project paths or source/exception contents."""
 
 
-def selected_dependencies(record: RunRecord, names: tuple[str, ...]) -> tuple[str, ...]:
+def selected_dependencies(record: Record, names: tuple[str, ...]) -> tuple[str, ...]:
     """Only explicitly selected, observed Run versions; no environment lookup."""
     try:
         normalized = tuple(canonical_name(name) for name in names)
@@ -118,28 +119,98 @@ class ExperimentExposureBinding(ExperimentValue):
         return self
 
 
+class ExperimentExposureBindingV2(ExperimentValue):
+    """Retain the observed SDK source separately from its selected static module.
+
+    Source content is bound to the bundle; a static module name is not promoted
+    into runtime evidence. Unknown defining-code/executable evidence stays unknown.
+    The independent version keeps the published v1 schema and bytes frozen.
+    """
+
+    schema_version: Literal["apizr.experiment-exposure/v2"] = (
+        "apizr.experiment-exposure/v2"
+    )
+    run_digest: ExperimentDigest
+    plan_digest: ExperimentDigest
+    source: SourceIdentity
+    observed_source: SourceEvidence
+    capture: CaptureIdentity
+    repository_digest: Digest
+    catalog_digest: Digest
+    graph_digest: Digest
+    repository_readiness_digest: Digest
+    exposure_plan_digest: Digest
+    repository_interface_digest: Digest
+    capability: str
+    interface: Interface
+    outputs: Annotated[tuple[OutputArtifact, ...], Field(max_length=128)] = ()
+    dependencies: Annotated[tuple[str, ...], Field(max_length=128)] = ()
+    application_inputs_digest: Digest | None = None
+
+    _capability = field_validator("capability")(capability_id)
+
+    @field_validator(
+        "repository_digest",
+        "catalog_digest",
+        "graph_digest",
+        "repository_readiness_digest",
+        "exposure_plan_digest",
+        "repository_interface_digest",
+        "application_inputs_digest",
+    )
+    @classmethod
+    def validated_digest(cls, value: Digest | None) -> Digest | None:
+        return ExperimentExposureBinding.validated_digest(value)
+
+    @field_validator("outputs")
+    @classmethod
+    def selected_outputs(
+        cls, values: tuple[OutputArtifact, ...]
+    ) -> tuple[OutputArtifact, ...]:
+        return ExperimentExposureBinding.selected_outputs(values)
+
+    @field_validator("dependencies")
+    @classmethod
+    def exact_pins(cls, values: tuple[str, ...]) -> tuple[str, ...]:
+        return ExperimentExposureBinding.exact_pins(values)
+
+    @model_validator(mode="after")
+    def application_presence(self) -> Self:
+        if bool(self.outputs or self.dependencies) != (
+            self.application_inputs_digest is not None
+        ):
+            raise ValueError("experiment_application_binding_missing")
+        return self
+
+
+ExposureBinding = ExperimentExposureBinding | ExperimentExposureBindingV2
+_BINDING: TypeAdapter[ExposureBinding] = TypeAdapter(
+    Annotated[ExposureBinding, Field(discriminator="schema_version")]
+)
+
+
 class ExperimentExposureResult(ExperimentValue):
     """Portable bundle identity; filesystem destinations are presentation only."""
 
-    binding: ExperimentExposureBinding
+    binding: Annotated[ExposureBinding, Field(discriminator="schema_version")]
     bundle_manifest_digest: Digest
 
 
-def exposure_bytes(binding: ExperimentExposureBinding) -> bytes:
-    binding = ExperimentExposureBinding.model_validate(binding)
+def exposure_bytes(binding: ExposureBinding) -> bytes:
+    binding = _BINDING.validate_python(binding)
     return encode(binding.model_dump(mode="json"), MAX_BINDING_BYTES)
 
 
 def validate_exposure_binding(
-    binding: ExperimentExposureBinding,
-    record: RunRecord,
+    binding: ExposureBinding,
+    record: Record,
     contract: RepositoryInterface,
     exposure: ExposurePlan,
     application: ApplicationInputs | None,
-) -> ExperimentExposureBinding:
+) -> ExposureBinding:
     """Validate exact retained identities without I/O, execution or new evidence."""
-    binding = ExperimentExposureBinding.model_validate(binding)
-    record = RunRecord.model_validate(record)
+    binding = _BINDING.validate_python(binding)
+    record = validate_record(record)
     contract = RepositoryInterface.model_validate_json(contract.model_dump_json())
     exposure = ExposurePlan.model_validate_json(exposure.model_dump_json())
     if application is not None:
@@ -148,10 +219,25 @@ def validate_exposure_binding(
         )
     if record.run.status != "success":
         raise ExperimentExposureRefused("run_not_successful")
+    subject = record_source(record)
+    if isinstance(record, RunRecordV2):
+        if (
+            not isinstance(binding, ExperimentExposureBindingV2)
+            or binding.observed_source != record.run.subject
+            or binding.capture != record.run.capture
+            or subject is None
+            or subject.model_dump(exclude={"module"})
+            != binding.source.model_dump(exclude={"module"})
+            or (subject.module is not None and subject.module != binding.source.module)
+        ):
+            raise ExperimentExposureRefused("experiment_capture_binding_mismatch")
+    elif (
+        not isinstance(binding, ExperimentExposureBinding) or binding.source != subject
+    ):
+        raise ExperimentExposureRefused("experiment_exposure_binding_mismatch")
     if (
         binding.run_digest != record.run_digest
         or binding.plan_digest != record.plan_digest
-        or binding.source != record.run.subject
         or binding.repository_interface_digest
         != Digest.of_bytes(canonical_bytes(contract))
         or binding.exposure_plan_digest != Digest.of_bytes(canonical_bytes(exposure))

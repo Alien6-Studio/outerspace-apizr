@@ -8,12 +8,13 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
+from qualification_scripts import implementation as qualification_script
 
 from apizr._prototypes.extension import Request, invoke, main, validate_response
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location(
-    "packaging_probe", ROOT / "scripts/smoke_extension_packaging.py"
+    "packaging_probe", str(qualification_script("smoke_extension_packaging"))
 )
 assert SPEC and SPEC.loader
 probe = importlib.util.module_from_spec(SPEC)

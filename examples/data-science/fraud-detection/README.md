@@ -1,7 +1,7 @@
 # Fraud detection: one notebook, two datasets, two interfaces
 
 Follow the [Data Scientist quickstart](../../../docs/getting-started/data-science.md)
-using public Apizr 0.4.5 packages. The notebook and datasets are included in the historical v0.4.5 tag.
+using Apizr 0.4.6.
 
 The notebook uses pandas, a modest Random Forest and ordinary joblib serialization.
 It contains no Apizr integration. Training runs under the standard Python main

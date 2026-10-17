@@ -1,0 +1,56 @@
+         3722085 function calls (3419703 primitive calls) in 0.662 seconds
+
+   Ordered by: cumulative time
+   List reduced from 178 to 50 due to restriction <50>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.662    0.662 benchmark_engine.py:149(<lambda>)
+        1    0.000    0.000    0.659    0.659 history.py:247(show_run)
+        1    0.003    0.003    0.659    0.659 history.py:251(select_runs)
+     1001    0.004    0.000    0.656    0.001 store.py:256(records)
+     1005    0.114    0.000    0.401    0.000 json.py:27(encode)
+   279574    0.029    0.000    0.181    0.000 encoder.py:414(_iterencode)
+     1000    0.000    0.000    0.177    0.000 serialization.py:45(read_run)
+     1001    0.000    0.000    0.176    0.000 type_adapter.py:421(validate_json)
+     1001    0.031    0.000    0.176    0.000 {method 'validate_json' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+581926/279574    0.093    0.000    0.151    0.000 encoder.py:334(_iterencode_dict)
+    18144    0.006    0.000    0.071    0.000 model.py:23(_text)
+    25211    0.017    0.000    0.069    0.000 {built-in method builtins.any}
+   160928    0.024    0.000    0.067    0.000 encoder.py:278(_iterencode_list)
+   230827    0.032    0.000    0.049    0.000 model.py:24(<genexpr>)
+     8064    0.008    0.000    0.038    0.000 values.py:51(_freeze)
+     1001    0.001    0.000    0.034    0.000 store.py:276(read)
+587374/587352    0.032    0.000    0.032    0.000 {built-in method builtins.len}
+     1001    0.003    0.000    0.029    0.000 store.py:174(_read)
+     1005    0.000    0.000    0.029    0.000 main.py:472(model_dump)
+     1005    0.020    0.000    0.029    0.000 {method 'to_python' of 'pydantic_core._pydantic_core.SchemaSerializer' objects}
+     3029    0.003    0.000    0.028    0.000 model.py:53(_reference)
+   304777    0.026    0.000    0.026    0.000 {method 'encode' of 'str' objects}
+   279570    0.025    0.000    0.025    0.000 {method 'extend' of 'bytearray' objects}
+   279689    0.021    0.000    0.024    0.000 {built-in method builtins.isinstance}
+1011/1003    0.012    0.000    0.022    0.000 {method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects}
+     1010    0.000    0.000    0.021    0.000 type_adapter.py:362(validate_python)
+     1005    0.000    0.000    0.020    0.000 json.py:23(finite_json)
+     8064    0.006    0.000    0.019    0.000 __init__.py:183(dumps)
+     1009    0.018    0.000    0.018    0.000 {built-in method posix.open}
+   425366    0.017    0.000    0.017    0.000 {built-in method builtins.ord}
+     9069    0.007    0.000    0.013    0.000 encoder.py:205(iterencode)
+     8064    0.005    0.000    0.012    0.000 encoder.py:183(encode)
+   106596    0.011    0.000    0.011    0.000 {built-in method _json.encode_basestring}
+     8054    0.006    0.000    0.011    0.000 model.py:44(ordered_evidence)
+    12088    0.003    0.000    0.010    0.000 values.py:43(_thaw)
+    78444    0.008    0.000    0.008    0.000 types.py:3212(_get_type_name)
+    23147    0.007    0.000    0.008    0.000 {built-in method builtins.sorted}
+     4012    0.001    0.000    0.007    0.000 model.py:348(ordered_named)
+     1000    0.004    0.000    0.007    0.000 main.py:333(model_construct)
+     1003    0.002    0.000    0.006    0.000 model.py:367(observed_evidence)
+     1005    0.006    0.000    0.006    0.000 encoder.py:260(_make_iterencode)
+    17119    0.002    0.000    0.005    0.000 <frozen abc>:117(__instancecheck__)
+     2002    0.005    0.000    0.005    0.000 {built-in method posix.read}
+     1008    0.001    0.000    0.004    0.000 distribution.py:14(canonical_name)
+     1004    0.003    0.000    0.003    0.000 {built-in method _hashlib.openssl_sha256}
+    12068    0.002    0.000    0.003    0.000 enum.py:202(__get__)
+     2016    0.000    0.000    0.003    0.000 model.py:202(ordered_inventory)
+     1001    0.001    0.000    0.003    0.000 serialization.py:59(check_run_binding)
+        1    0.000    0.000    0.003    0.003 history.py:277(history_bytes)
+     8064    0.002    0.000    0.003    0.000 values.py:54(visit)

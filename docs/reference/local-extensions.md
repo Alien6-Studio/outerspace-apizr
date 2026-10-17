@@ -206,7 +206,7 @@ For Hatch, the demonstration includes the file with:
 
 ## Python operations and inventory
 
-`apizr.local_plugins.install_extension(wheel: Path, sha256: str, *,
+`apizr.plugins.local.install_extension(wheel: Path, sha256: str, *,
 directory: Path | None = None, python: Path | None = None,
 requirements: Path | None = None, wheelhouse: Path | None = None) -> Installation`
 performs the operation. `list_extensions(*, directory: Path | None = None) ->
@@ -273,7 +273,7 @@ prints or exits Python. For example, after explicitly enabling the demo:
 ```python
 from pathlib import Path
 from apizr.extension_runtime import Limits
-from apizr.local_plugins import run_extension
+from apizr.plugins.local import run_extension
 
 response = run_extension(
     "apizr-extension-probe",
@@ -504,7 +504,7 @@ The typed Python operation is independent of the CLI:
 ```python
 from pathlib import Path
 from threading import Event
-from apizr.plugin_update import update_plugin
+from apizr.plugins.update import update_plugin
 
 cancel = Event()
 result = update_plugin(
@@ -608,7 +608,7 @@ If you intentionally restore A with that explicit enable command, rerunning
 update reuses B and attempts the conditional transition again.
 
 The existing packaging workflow runs these operations from installed wheels on
-Linux 3.11–3.14, macOS 3.11/3.14 and disposable Homebrew. It retains
+Linux 3.11–3.15, macOS 3.11/3.14 and disposable Homebrew. It retains
 `update-evidence.json`, `backend-network.jsonl`, `update-summary.json` and
 `core-evidence.json`: dry-run equality, real uv failure/retry, prepare-only behavior,
 transition/repetition with uv absent, explicit rollback, original-environment and
@@ -705,7 +705,7 @@ The typed API performs the same operation without printing or exiting:
 ```python
 from pathlib import Path
 from threading import Event
-from apizr.local_plugins import uninstall_extension
+from apizr.plugins.local import uninstall_extension
 
 cancel = Event()  # Another thread can set this to cancel cooperatively.
 result = uninstall_extension(

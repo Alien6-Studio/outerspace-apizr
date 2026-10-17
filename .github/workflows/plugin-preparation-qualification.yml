@@ -1,0 +1,121 @@
+name: Plugin preparation qualification
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 6 * * 2'
+
+permissions:
+  contents: read
+
+jobs:
+  uv-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Detect an unqualified stable uv series and inconsistent development pins
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          qualification_uv_latest=$(gh api repos/astral-sh/uv/releases/latest --jq .tag_name)
+          python3 -m scripts.qualification.ci.check_uv_policy --latest "$qualification_uv_latest" --output uv-policy.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: uv-policy
+          path: uv-policy.json
+          if-no-files-found: error
+          retention-days: 14
+
+  native:
+    if: github.event_name != 'schedule'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: macos-latest, python: '3.14', uv: '0.13.0', intel: false}
+          - {os: macos-latest, python: '3.15', uv: '0.13.0', intel: false}
+          - {os: macos-latest, python: '3.14', uv: '0.13.1', intel: false}
+          - {os: macos-latest, python: '3.15', uv: '0.13.1', intel: false}
+          - {os: macos-15-intel, python: '3.14', uv: '0.13.0', intel: true}
+          - {os: macos-15-intel, python: '3.14', uv: '0.13.1', intel: true}
+          - {os: ubuntu-latest, python: '3.11', uv: '0.13.1', intel: false}
+          - {os: ubuntu-latest, python: '3.15', uv: '0.13.1', intel: false}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: ${{ matrix.uv }}
+          python-version: ${{ matrix.python }}
+      - name: Installed native core resolution and MCP, OCI, Attest preparation
+        env:
+          WITHOUT_MCP: ${{ matrix.intel && '--without-mcp' || '' }}
+        run: uv run --no-project --python "${{ matrix.python }}" python -m scripts.qualification.extensions.plugin_preparation_matrix_proof --output "$RUNNER_TEMP/preparation-native" $WITHOUT_MCP
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: preparation-${{ matrix.os }}-python-${{ matrix.python }}-uv-${{ matrix.uv }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/preparation-native/*.json
+            ${{ runner.temp }}/preparation-native/*.lock
+            ${{ runner.temp }}/preparation-native/wheels/
+            ${{ runner.temp }}/preparation-native/prepared-*/preparation.json
+            ${{ runner.temp }}/preparation-native/prepared-*/requirements.lock
+            ${{ runner.temp }}/preparation-native/intel-mcp-refusal/*.json
+            ${{ runner.temp }}/preparation-native/intel-mcp-refusal/*.lock
+
+  linux-libc:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        debian: [bookworm, trixie]
+        python: ['3.14', '3.15']
+        uv: ['0.12.0', '0.13.0', '0.13.1']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Real glibc baseline, core and all plugin closures
+        env:
+          DEBIAN: ${{ matrix.debian }}
+          PYTHON_MINOR: ${{ matrix.python }}
+          UV_VERSION: ${{ matrix.uv }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/preparation-linux"
+          libc=2.36
+          if [ "$DEBIAN" = trixie ]; then libc=2.41; fi
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/checkout:ro" -v "$RUNNER_TEMP/preparation-linux:/proof" \
+            -w /checkout -e QUALIFICATION_UV="$UV_VERSION" -e QUALIFICATION_LIBC="$libc" \
+            "python:$PYTHON_MINOR-slim-$DEBIAN" sh -ec '
+              apt-get update >/dev/null
+              apt-get install -y --no-install-recommends git ca-certificates >/dev/null
+              python -m pip install "uv==$QUALIFICATION_UV" >/dev/null
+              python -m scripts.qualification.extensions.plugin_preparation_matrix_proof --output /proof/results --expect-glibc "$QUALIFICATION_LIBC"
+            '
+          docker image inspect "python:$PYTHON_MINOR-slim-$DEBIAN" > "$RUNNER_TEMP/preparation-linux/image.json"
+      - name: Return disposable container evidence to the artifact uploader
+        if: always()
+        run: |
+          if [ -d "$RUNNER_TEMP/preparation-linux" ]; then
+            sudo chown -R "$(id -u):$(id -g)" "$RUNNER_TEMP/preparation-linux"
+          fi
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: preparation-debian-${{ matrix.debian }}-python-${{ matrix.python }}-uv-${{ matrix.uv }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/preparation-linux/image.json
+            ${{ runner.temp }}/preparation-linux/results/*.json
+            ${{ runner.temp }}/preparation-linux/results/*.lock
+            ${{ runner.temp }}/preparation-linux/results/wheels/
+            ${{ runner.temp }}/preparation-linux/results/prepared-*/preparation.json
+            ${{ runner.temp }}/preparation-linux/results/prepared-*/requirements.lock

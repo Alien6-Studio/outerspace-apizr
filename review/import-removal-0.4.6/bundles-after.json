@@ -1,0 +1,3462 @@
+{
+  "single-direct-rest": [
+    {
+      "path": "apizr-rest.json",
+      "sha256": "ebde4a7826d296d5dc818304ee948bc70e8d77e570906c5fa26612a97848cd31"
+    },
+    {
+      "path": "app.py",
+      "sha256": "477eaf7283f064352fac7fb3b801beb4838039303d14ef9962392975fc340688"
+    },
+    {
+      "path": "capability-ir.json",
+      "sha256": "b2f1baee124c6b9e532846ae7ab161a3dc1f6e1eca5aee4ee8109707fcbf04fe"
+    },
+    {
+      "path": "openapi.json",
+      "sha256": "8c735c556084dd60d1db39b036704affaff0d2478b1bb26791e51ffa9b5022ea"
+    },
+    {
+      "path": "readiness.json",
+      "sha256": "1f36d05d1e9628e5f829d775632fe08b81476b46801fc39c961d9ff674d9f7e7"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "b6720280cbeb47c0e9e9dc6b7b58c67e28610b25321019774db612b9ba3fb3d5"
+    },
+    {
+      "path": "source/alias/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source/alias/removal.py",
+      "sha256": "9f44ba9f8f3e12a15b6bf65dc45b83be8e14ad656958f0ca60947110595d8681"
+    }
+  ],
+  "single-direct-mcp": [
+    {
+      "path": "apizr-mcp.json",
+      "sha256": "2ba6c42e4733b0b185f4b93fcd61dfc1b9b2aab5b9d72a8e971eebc6c0af3e61"
+    },
+    {
+      "path": "apizr_http_admission.py",
+      "sha256": "3e3ceb585c24917999e1e461fa4141a555b6e5056dcecaa35ccc8ff06a84e11c"
+    },
+    {
+      "path": "apizr_json_budget.py",
+      "sha256": "19a3fe9b446340a70fe1b0719a6f3b0091af7c70d383888641325e5e4ec09a3d"
+    },
+    {
+      "path": "apizr_json_preflight.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_mcp_transport.py",
+      "sha256": "5bc13931b19e1c80b48a8e8649bf733e92a7cbe9ce2f8aa299fdaabf098378b9"
+    },
+    {
+      "path": "apizr_results.py",
+      "sha256": "758fb6f4ac426d39bb27c1d6a073a1db22342620af254541ba715144781e7176"
+    },
+    {
+      "path": "apizr_runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "capability-ir.json",
+      "sha256": "b2f1baee124c6b9e532846ae7ab161a3dc1f6e1eca5aee4ee8109707fcbf04fe"
+    },
+    {
+      "path": "mcp-tools.json",
+      "sha256": "a64df016812386614539e6b9b63813cfaa39574c19c7df253b6047eaab75e505"
+    },
+    {
+      "path": "readiness.json",
+      "sha256": "1f36d05d1e9628e5f829d775632fe08b81476b46801fc39c961d9ff674d9f7e7"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "92af853508dc94ec5da25d834bad8540be7df90930dbf7b4063ae94b098a4353"
+    },
+    {
+      "path": "server.py",
+      "sha256": "d2193f8ab510e2d22f0b6a9f8b8cf82fc4109d6d2eadd4f6d3f7c386245580a5"
+    },
+    {
+      "path": "source/alias/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source/alias/removal.py",
+      "sha256": "9f44ba9f8f3e12a15b6bf65dc45b83be8e14ad656958f0ca60947110595d8681"
+    }
+  ],
+  "single-local-rest": [
+    {
+      "path": "apizr-rest.json",
+      "sha256": "9c00e70cb3dc4095fb9701d5a5b1f732becc0c0ceca5555e0b099d3c3a091f8e"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/inspection.py",
+      "sha256": "fedd91eb858a583d8327572df20d428c106d58fb3846cbbc4e36404bd5a839fc"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/serialization.py",
+      "sha256": "83573f907f3677e10d2006e5d8714dedf2be6197e1b2cd3f921bb535b3e01e98"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/lowering.py",
+      "sha256": "d02b0253424c312cb6cc2081a6670670f1fcf0a441fe7d52c8a1a6dafc300bf8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "23fd7a33be1bd810ffe6df6d6f91c7fb8e93e357360a408ad4328eef7239ae47"
+    },
+    {
+      "path": "apizr_governed/execution/planner.py",
+      "sha256": "63bc70dd8dd0d617aee11691995fb03c48d5a5fa71dbe422387aef44a4346de3"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "294db144e238018e86b99666bb92149a597d0ac3f2df2d679f96f6778b0f9ef9"
+    },
+    {
+      "path": "apizr_governed/execution/worker.py",
+      "sha256": "a42be3679f991e270cc7b4432121cba16dc19f05f30afab772e7a46c8bfe2e91"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed/model.py",
+      "sha256": "b53ba6045f5fe356d54323365873fe7f16266ff9b7a8d51db4aa6bbba0d80fa5"
+    },
+    {
+      "path": "apizr_governed/governed/rest.py",
+      "sha256": "76c26e36f54308591f5531fc68cfd787a9d470cf1825e569c2afdb23fb629fc6"
+    },
+    {
+      "path": "apizr_governed/governed/runtime.py",
+      "sha256": "ef4b3ede9f62f08343c9dd48d6aee949640b75acb106573fd413a2dfdd79646a"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/planner.py",
+      "sha256": "e8aadfcbb0defc5b470a8bed11648aaee465fa03ba18dca84dd8a08845f046a0"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/schema.py",
+      "sha256": "bc166183b4c99fa525f3e2c9402c695b936a5469a36f16bbe0aca9cb48e64d3f"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/readiness/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/readiness/model.py",
+      "sha256": "ea4bcf82026809ec28f8e01b5ec58c103be1c747a10d06e5ebbc5df755678d15"
+    },
+    {
+      "path": "apizr_governed/readiness/serialization.py",
+      "sha256": "6231a0f24e39a753af12c9c3807f95c2c64c0b6104380c6140b2cd7eff4cb3bd"
+    },
+    {
+      "path": "app.py",
+      "sha256": "7354fe32f67f6378f5277f74b18e4a2225652b602866d425b62a15951feae178"
+    },
+    {
+      "path": "capability-ir.json",
+      "sha256": "b2f1baee124c6b9e532846ae7ab161a3dc1f6e1eca5aee4ee8109707fcbf04fe"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "9b6009f0dc984a26e7431e123df344f254248c65efbfb5209ab06ecab331d8aa"
+    },
+    {
+      "path": "execution/plans/f.json",
+      "sha256": "79296d488e84cd03cc64cb6fd0a01160f5d43d4627ead2109c4f3244a1da1cea"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "e8b05fb2d6f3c81bb27a3a9fe4bca7d4ab28b001b3a73c2230e19314c5201d6b"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "f33a8041a21179fb0a70efb8740165ceb99159f39afa153ee2db0f9b9bcd97df"
+    },
+    {
+      "path": "openapi.json",
+      "sha256": "8c735c556084dd60d1db39b036704affaff0d2478b1bb26791e51ffa9b5022ea"
+    },
+    {
+      "path": "readiness.json",
+      "sha256": "1f36d05d1e9628e5f829d775632fe08b81476b46801fc39c961d9ff674d9f7e7"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "701a728bfed09c7b0b3590729ccebc5a8a3ab4b7abf39dbfce4631beb91fbd3e"
+    },
+    {
+      "path": "source/alias/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source/alias/removal.py",
+      "sha256": "9f44ba9f8f3e12a15b6bf65dc45b83be8e14ad656958f0ca60947110595d8681"
+    }
+  ],
+  "single-local-mcp": [
+    {
+      "path": "apizr-mcp.json",
+      "sha256": "e78b0b95b482602894a9750e62ce39b7f27a65ed9ff65b0db096a3a84be878b3"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/inspection.py",
+      "sha256": "fedd91eb858a583d8327572df20d428c106d58fb3846cbbc4e36404bd5a839fc"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/serialization.py",
+      "sha256": "83573f907f3677e10d2006e5d8714dedf2be6197e1b2cd3f921bb535b3e01e98"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/lowering.py",
+      "sha256": "d02b0253424c312cb6cc2081a6670670f1fcf0a441fe7d52c8a1a6dafc300bf8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "23fd7a33be1bd810ffe6df6d6f91c7fb8e93e357360a408ad4328eef7239ae47"
+    },
+    {
+      "path": "apizr_governed/execution/planner.py",
+      "sha256": "63bc70dd8dd0d617aee11691995fb03c48d5a5fa71dbe422387aef44a4346de3"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "294db144e238018e86b99666bb92149a597d0ac3f2df2d679f96f6778b0f9ef9"
+    },
+    {
+      "path": "apizr_governed/execution/worker.py",
+      "sha256": "a42be3679f991e270cc7b4432121cba16dc19f05f30afab772e7a46c8bfe2e91"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/transport.py",
+      "sha256": "02da36548f45dda22cd6d1ddf87afb1226ecef122d6a49673d965fd57dac13d6"
+    },
+    {
+      "path": "apizr_governed/governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed/mcp.py",
+      "sha256": "8734115b181fc812bd04fd32ff99b5cc08b9d91b804ca10215806102498c7e33"
+    },
+    {
+      "path": "apizr_governed/governed/model.py",
+      "sha256": "b53ba6045f5fe356d54323365873fe7f16266ff9b7a8d51db4aa6bbba0d80fa5"
+    },
+    {
+      "path": "apizr_governed/governed/runtime.py",
+      "sha256": "ef4b3ede9f62f08343c9dd48d6aee949640b75acb106573fd413a2dfdd79646a"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/planner.py",
+      "sha256": "e8aadfcbb0defc5b470a8bed11648aaee465fa03ba18dca84dd8a08845f046a0"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/schema.py",
+      "sha256": "bc166183b4c99fa525f3e2c9402c695b936a5469a36f16bbe0aca9cb48e64d3f"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/readiness/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/readiness/model.py",
+      "sha256": "ea4bcf82026809ec28f8e01b5ec58c103be1c747a10d06e5ebbc5df755678d15"
+    },
+    {
+      "path": "apizr_governed/readiness/serialization.py",
+      "sha256": "6231a0f24e39a753af12c9c3807f95c2c64c0b6104380c6140b2cd7eff4cb3bd"
+    },
+    {
+      "path": "capability-ir.json",
+      "sha256": "b2f1baee124c6b9e532846ae7ab161a3dc1f6e1eca5aee4ee8109707fcbf04fe"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "8a7f73e34d91e0786029ba52a4a1516e1a0a9fa274cc776246ac7b3079eabec9"
+    },
+    {
+      "path": "execution/plans/f.json",
+      "sha256": "79296d488e84cd03cc64cb6fd0a01160f5d43d4627ead2109c4f3244a1da1cea"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "e8b05fb2d6f3c81bb27a3a9fe4bca7d4ab28b001b3a73c2230e19314c5201d6b"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "f33a8041a21179fb0a70efb8740165ceb99159f39afa153ee2db0f9b9bcd97df"
+    },
+    {
+      "path": "mcp-tools.json",
+      "sha256": "a64df016812386614539e6b9b63813cfaa39574c19c7df253b6047eaab75e505"
+    },
+    {
+      "path": "readiness.json",
+      "sha256": "1f36d05d1e9628e5f829d775632fe08b81476b46801fc39c961d9ff674d9f7e7"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "42009f4975689001d808da1e28665597a23620d34819c0b2040c95149e1fe5b1"
+    },
+    {
+      "path": "server.py",
+      "sha256": "14748be163128479d0641a1375f66e4a405dfeb2ba05b6da6ae33b8d58b83fad"
+    },
+    {
+      "path": "source/alias/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source/alias/removal.py",
+      "sha256": "9f44ba9f8f3e12a15b6bf65dc45b83be8e14ad656958f0ca60947110595d8681"
+    }
+  ],
+  "single-oci-rest": [
+    {
+      "path": "apizr-rest.json",
+      "sha256": "dbc4727232800f23f0db10a35c49d18c255abfcf5a788e3b2023027d94910509"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/inspection.py",
+      "sha256": "fedd91eb858a583d8327572df20d428c106d58fb3846cbbc4e36404bd5a839fc"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/serialization.py",
+      "sha256": "83573f907f3677e10d2006e5d8714dedf2be6197e1b2cd3f921bb535b3e01e98"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/lowering.py",
+      "sha256": "d02b0253424c312cb6cc2081a6670670f1fcf0a441fe7d52c8a1a6dafc300bf8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "23fd7a33be1bd810ffe6df6d6f91c7fb8e93e357360a408ad4328eef7239ae47"
+    },
+    {
+      "path": "apizr_governed/execution/planner.py",
+      "sha256": "63bc70dd8dd0d617aee11691995fb03c48d5a5fa71dbe422387aef44a4346de3"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "294db144e238018e86b99666bb92149a597d0ac3f2df2d679f96f6778b0f9ef9"
+    },
+    {
+      "path": "apizr_governed/execution/worker.py",
+      "sha256": "a42be3679f991e270cc7b4432121cba16dc19f05f30afab772e7a46c8bfe2e91"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed/runtime.py",
+      "sha256": "8bd42ed274563df3d5ce93ebb9c119115c319dbd6a7f2ace6220fec1b81f5d6d"
+    },
+    {
+      "path": "apizr_governed/governed_oci/__init__.py",
+      "sha256": "3b33c327e7e7b1309ecc4575ee289f764469c8be36427aca76cee981a3dfd0c2"
+    },
+    {
+      "path": "apizr_governed/governed_oci/model.py",
+      "sha256": "e78f65eb20d1b86dd0370cf3a530f2345384918481c55bb0885376056ab149fb"
+    },
+    {
+      "path": "apizr_governed/governed_oci/rest.py",
+      "sha256": "fef77e97f941b22a655d8d369c6db33e1649b44f04be21fe2214bbfb0db2a73a"
+    },
+    {
+      "path": "apizr_governed/governed_oci/runtime.py",
+      "sha256": "38443b3c11d8a44300d6681bdda19554c40c54ab8cb254315804f450fea7ad28"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/planner.py",
+      "sha256": "e8aadfcbb0defc5b470a8bed11648aaee465fa03ba18dca84dd8a08845f046a0"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/schema.py",
+      "sha256": "bc166183b4c99fa525f3e2c9402c695b936a5469a36f16bbe0aca9cb48e64d3f"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "0d9ef48a0af0f6fe91022bdfd10d6ab9e005b4a2ea64151898344121d68432be"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "2939f6222d9b38f1f3a35502099789db21072bffdaa030fcb6c857dbfe27e256"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "17a1e973aca7a032cfa783da83e1df16ca93a2e5dec54b7ce319288c3737ad38"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "d44e6084520c5cf14fe2cdb6f19cca5b929c29a1fbfd478f1baf95d23e8047b4"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "eeb468216f74e9809ccbef200f2215d5a88e905c03b1ee9a3e4801722f1939a3"
+    },
+    {
+      "path": "apizr_governed/oci/supervisor.py",
+      "sha256": "896e3e670ed4c06842badf7b2f6edf84b7e7b76f5d6a4e182023d8eaeaf12237"
+    },
+    {
+      "path": "apizr_governed/readiness/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/readiness/model.py",
+      "sha256": "ea4bcf82026809ec28f8e01b5ec58c103be1c747a10d06e5ebbc5df755678d15"
+    },
+    {
+      "path": "apizr_governed/readiness/serialization.py",
+      "sha256": "6231a0f24e39a753af12c9c3807f95c2c64c0b6104380c6140b2cd7eff4cb3bd"
+    },
+    {
+      "path": "app.py",
+      "sha256": "9278ef682d9d3c37de3ad3987e6a22765fc9838e3be36559f22edd3463c67bf3"
+    },
+    {
+      "path": "capability-ir.json",
+      "sha256": "b2f1baee124c6b9e532846ae7ab161a3dc1f6e1eca5aee4ee8109707fcbf04fe"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "e3571680513fdc5489c08014eb200e0a52729ed4f2f54c4c14b758ee3eb54029"
+    },
+    {
+      "path": "execution/plans/f.json",
+      "sha256": "fe20273f2e32ba6821cbe4bb6dfbcaa470c4c7d55d8e6fea28b64f98b604c632"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "9858b46653e31aa8a4923b0dd939eddbeeab4f081ca1c2a21e085eddd7580fcb"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "f33a8041a21179fb0a70efb8740165ceb99159f39afa153ee2db0f9b9bcd97df"
+    },
+    {
+      "path": "openapi.json",
+      "sha256": "8c735c556084dd60d1db39b036704affaff0d2478b1bb26791e51ffa9b5022ea"
+    },
+    {
+      "path": "readiness.json",
+      "sha256": "1f36d05d1e9628e5f829d775632fe08b81476b46801fc39c961d9ff674d9f7e7"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "701a728bfed09c7b0b3590729ccebc5a8a3ab4b7abf39dbfce4631beb91fbd3e"
+    },
+    {
+      "path": "source/alias/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source/alias/removal.py",
+      "sha256": "9f44ba9f8f3e12a15b6bf65dc45b83be8e14ad656958f0ca60947110595d8681"
+    }
+  ],
+  "single-oci-mcp": [
+    {
+      "path": "apizr-mcp.json",
+      "sha256": "f0c3499fe7c00abc8f18f0dd7fd9e86c5b1f9e0c2fc6c05680b74b6efa4bad6b"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/inspection.py",
+      "sha256": "fedd91eb858a583d8327572df20d428c106d58fb3846cbbc4e36404bd5a839fc"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/serialization.py",
+      "sha256": "83573f907f3677e10d2006e5d8714dedf2be6197e1b2cd3f921bb535b3e01e98"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/lowering.py",
+      "sha256": "d02b0253424c312cb6cc2081a6670670f1fcf0a441fe7d52c8a1a6dafc300bf8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "23fd7a33be1bd810ffe6df6d6f91c7fb8e93e357360a408ad4328eef7239ae47"
+    },
+    {
+      "path": "apizr_governed/execution/planner.py",
+      "sha256": "63bc70dd8dd0d617aee11691995fb03c48d5a5fa71dbe422387aef44a4346de3"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "294db144e238018e86b99666bb92149a597d0ac3f2df2d679f96f6778b0f9ef9"
+    },
+    {
+      "path": "apizr_governed/execution/worker.py",
+      "sha256": "a42be3679f991e270cc7b4432121cba16dc19f05f30afab772e7a46c8bfe2e91"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/transport.py",
+      "sha256": "02da36548f45dda22cd6d1ddf87afb1226ecef122d6a49673d965fd57dac13d6"
+    },
+    {
+      "path": "apizr_governed/governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed/runtime.py",
+      "sha256": "8bd42ed274563df3d5ce93ebb9c119115c319dbd6a7f2ace6220fec1b81f5d6d"
+    },
+    {
+      "path": "apizr_governed/governed_oci/__init__.py",
+      "sha256": "3b33c327e7e7b1309ecc4575ee289f764469c8be36427aca76cee981a3dfd0c2"
+    },
+    {
+      "path": "apizr_governed/governed_oci/mcp.py",
+      "sha256": "a61b2bf6f572ce58e9da74e5a715632de35e3cf5949c7623761ca4d2ac6c397b"
+    },
+    {
+      "path": "apizr_governed/governed_oci/model.py",
+      "sha256": "e78f65eb20d1b86dd0370cf3a530f2345384918481c55bb0885376056ab149fb"
+    },
+    {
+      "path": "apizr_governed/governed_oci/runtime.py",
+      "sha256": "38443b3c11d8a44300d6681bdda19554c40c54ab8cb254315804f450fea7ad28"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/planner.py",
+      "sha256": "e8aadfcbb0defc5b470a8bed11648aaee465fa03ba18dca84dd8a08845f046a0"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/schema.py",
+      "sha256": "bc166183b4c99fa525f3e2c9402c695b936a5469a36f16bbe0aca9cb48e64d3f"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "0d9ef48a0af0f6fe91022bdfd10d6ab9e005b4a2ea64151898344121d68432be"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "2939f6222d9b38f1f3a35502099789db21072bffdaa030fcb6c857dbfe27e256"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "17a1e973aca7a032cfa783da83e1df16ca93a2e5dec54b7ce319288c3737ad38"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "d44e6084520c5cf14fe2cdb6f19cca5b929c29a1fbfd478f1baf95d23e8047b4"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "eeb468216f74e9809ccbef200f2215d5a88e905c03b1ee9a3e4801722f1939a3"
+    },
+    {
+      "path": "apizr_governed/oci/supervisor.py",
+      "sha256": "896e3e670ed4c06842badf7b2f6edf84b7e7b76f5d6a4e182023d8eaeaf12237"
+    },
+    {
+      "path": "apizr_governed/readiness/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/readiness/model.py",
+      "sha256": "ea4bcf82026809ec28f8e01b5ec58c103be1c747a10d06e5ebbc5df755678d15"
+    },
+    {
+      "path": "apizr_governed/readiness/serialization.py",
+      "sha256": "6231a0f24e39a753af12c9c3807f95c2c64c0b6104380c6140b2cd7eff4cb3bd"
+    },
+    {
+      "path": "capability-ir.json",
+      "sha256": "b2f1baee124c6b9e532846ae7ab161a3dc1f6e1eca5aee4ee8109707fcbf04fe"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "e9cae8197d5bf60aeec9c20bdd51e503a7bb72967cd959491bbfbba1aa7852fe"
+    },
+    {
+      "path": "execution/plans/f.json",
+      "sha256": "fe20273f2e32ba6821cbe4bb6dfbcaa470c4c7d55d8e6fea28b64f98b604c632"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "9858b46653e31aa8a4923b0dd939eddbeeab4f081ca1c2a21e085eddd7580fcb"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "f33a8041a21179fb0a70efb8740165ceb99159f39afa153ee2db0f9b9bcd97df"
+    },
+    {
+      "path": "mcp-tools.json",
+      "sha256": "a64df016812386614539e6b9b63813cfaa39574c19c7df253b6047eaab75e505"
+    },
+    {
+      "path": "readiness.json",
+      "sha256": "1f36d05d1e9628e5f829d775632fe08b81476b46801fc39c961d9ff674d9f7e7"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "42009f4975689001d808da1e28665597a23620d34819c0b2040c95149e1fe5b1"
+    },
+    {
+      "path": "server.py",
+      "sha256": "d71109cf6dc2d69a70f7485f69e5fbd2f101bef4e76641a8da26602068d8d4b5"
+    },
+    {
+      "path": "source/alias/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source/alias/removal.py",
+      "sha256": "9f44ba9f8f3e12a15b6bf65dc45b83be8e14ad656958f0ca60947110595d8681"
+    }
+  ],
+  "single-deny-rest": [
+    {
+      "path": "apizr-rest.json",
+      "sha256": "e93571e16dd79b865f99aa739928a857d080669232ffa9390aea3929bbf4e4eb"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/inspection.py",
+      "sha256": "fedd91eb858a583d8327572df20d428c106d58fb3846cbbc4e36404bd5a839fc"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/serialization.py",
+      "sha256": "83573f907f3677e10d2006e5d8714dedf2be6197e1b2cd3f921bb535b3e01e98"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/lowering.py",
+      "sha256": "d02b0253424c312cb6cc2081a6670670f1fcf0a441fe7d52c8a1a6dafc300bf8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "23fd7a33be1bd810ffe6df6d6f91c7fb8e93e357360a408ad4328eef7239ae47"
+    },
+    {
+      "path": "apizr_governed/execution/planner.py",
+      "sha256": "63bc70dd8dd0d617aee11691995fb03c48d5a5fa71dbe422387aef44a4346de3"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "294db144e238018e86b99666bb92149a597d0ac3f2df2d679f96f6778b0f9ef9"
+    },
+    {
+      "path": "apizr_governed/execution/worker.py",
+      "sha256": "a42be3679f991e270cc7b4432121cba16dc19f05f30afab772e7a46c8bfe2e91"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed/runtime.py",
+      "sha256": "8bd42ed274563df3d5ce93ebb9c119115c319dbd6a7f2ace6220fec1b81f5d6d"
+    },
+    {
+      "path": "apizr_governed/governed_oci/__init__.py",
+      "sha256": "3b33c327e7e7b1309ecc4575ee289f764469c8be36427aca76cee981a3dfd0c2"
+    },
+    {
+      "path": "apizr_governed/governed_oci/model.py",
+      "sha256": "e78f65eb20d1b86dd0370cf3a530f2345384918481c55bb0885376056ab149fb"
+    },
+    {
+      "path": "apizr_governed/governed_oci/rest.py",
+      "sha256": "fef77e97f941b22a655d8d369c6db33e1649b44f04be21fe2214bbfb0db2a73a"
+    },
+    {
+      "path": "apizr_governed/governed_oci/runtime.py",
+      "sha256": "d24a742b5dc2b7b0e5217da31b953d2a02e3c7ea238a495f108d4a229b937549"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/planner.py",
+      "sha256": "e8aadfcbb0defc5b470a8bed11648aaee465fa03ba18dca84dd8a08845f046a0"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/schema.py",
+      "sha256": "bc166183b4c99fa525f3e2c9402c695b936a5469a36f16bbe0aca9cb48e64d3f"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "0d9ef48a0af0f6fe91022bdfd10d6ab9e005b4a2ea64151898344121d68432be"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "2939f6222d9b38f1f3a35502099789db21072bffdaa030fcb6c857dbfe27e256"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "17a1e973aca7a032cfa783da83e1df16ca93a2e5dec54b7ce319288c3737ad38"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "d44e6084520c5cf14fe2cdb6f19cca5b929c29a1fbfd478f1baf95d23e8047b4"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "eeb468216f74e9809ccbef200f2215d5a88e905c03b1ee9a3e4801722f1939a3"
+    },
+    {
+      "path": "apizr_governed/oci/supervisor.py",
+      "sha256": "896e3e670ed4c06842badf7b2f6edf84b7e7b76f5d6a4e182023d8eaeaf12237"
+    },
+    {
+      "path": "apizr_governed/readiness/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/readiness/model.py",
+      "sha256": "ea4bcf82026809ec28f8e01b5ec58c103be1c747a10d06e5ebbc5df755678d15"
+    },
+    {
+      "path": "apizr_governed/readiness/serialization.py",
+      "sha256": "6231a0f24e39a753af12c9c3807f95c2c64c0b6104380c6140b2cd7eff4cb3bd"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/__init__.py",
+      "sha256": "04090dac70af1dc0d80d5684b16c84ff39dc77923b89955dbc9509a6cb4dc333"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/provider.py",
+      "sha256": "5c510542102ca00c6d4953ce454f20da11c75fcbe1cd5fc21ba4957e7abf3666"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/single.py",
+      "sha256": "343dde61ae34f53608820dec4da52df4054838d78b58f69153773daca58b9a6a"
+    },
+    {
+      "path": "app.py",
+      "sha256": "9278ef682d9d3c37de3ad3987e6a22765fc9838e3be36559f22edd3463c67bf3"
+    },
+    {
+      "path": "capability-ir.json",
+      "sha256": "b2f1baee124c6b9e532846ae7ab161a3dc1f6e1eca5aee4ee8109707fcbf04fe"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "eea6af88580350aeadc6b7ced94f4588320e6cc65ad09e60670dc75b6d250e10"
+    },
+    {
+      "path": "execution/plans/f.json",
+      "sha256": "3b8811d747cc0fe17b725a9eb579e3f3de1e053574255ae600ed040d1b68b8e6"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "a17575b9333aa21f4dd19fcb47d373e6accb6bda059e740e4b2dfaa8aa377d1f"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "f33a8041a21179fb0a70efb8740165ceb99159f39afa153ee2db0f9b9bcd97df"
+    },
+    {
+      "path": "openapi.json",
+      "sha256": "8c735c556084dd60d1db39b036704affaff0d2478b1bb26791e51ffa9b5022ea"
+    },
+    {
+      "path": "readiness.json",
+      "sha256": "1f36d05d1e9628e5f829d775632fe08b81476b46801fc39c961d9ff674d9f7e7"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "701a728bfed09c7b0b3590729ccebc5a8a3ab4b7abf39dbfce4631beb91fbd3e"
+    },
+    {
+      "path": "source/alias/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source/alias/removal.py",
+      "sha256": "9f44ba9f8f3e12a15b6bf65dc45b83be8e14ad656958f0ca60947110595d8681"
+    }
+  ],
+  "single-deny-mcp": [
+    {
+      "path": "apizr-mcp.json",
+      "sha256": "9bbae452ff072c5c23132584383202e86def9803abad10781f8f6429882c8fbc"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/inspection.py",
+      "sha256": "fedd91eb858a583d8327572df20d428c106d58fb3846cbbc4e36404bd5a839fc"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/serialization.py",
+      "sha256": "83573f907f3677e10d2006e5d8714dedf2be6197e1b2cd3f921bb535b3e01e98"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/lowering.py",
+      "sha256": "d02b0253424c312cb6cc2081a6670670f1fcf0a441fe7d52c8a1a6dafc300bf8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "23fd7a33be1bd810ffe6df6d6f91c7fb8e93e357360a408ad4328eef7239ae47"
+    },
+    {
+      "path": "apizr_governed/execution/planner.py",
+      "sha256": "63bc70dd8dd0d617aee11691995fb03c48d5a5fa71dbe422387aef44a4346de3"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "294db144e238018e86b99666bb92149a597d0ac3f2df2d679f96f6778b0f9ef9"
+    },
+    {
+      "path": "apizr_governed/execution/worker.py",
+      "sha256": "a42be3679f991e270cc7b4432121cba16dc19f05f30afab772e7a46c8bfe2e91"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/transport.py",
+      "sha256": "02da36548f45dda22cd6d1ddf87afb1226ecef122d6a49673d965fd57dac13d6"
+    },
+    {
+      "path": "apizr_governed/governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed/runtime.py",
+      "sha256": "8bd42ed274563df3d5ce93ebb9c119115c319dbd6a7f2ace6220fec1b81f5d6d"
+    },
+    {
+      "path": "apizr_governed/governed_oci/__init__.py",
+      "sha256": "3b33c327e7e7b1309ecc4575ee289f764469c8be36427aca76cee981a3dfd0c2"
+    },
+    {
+      "path": "apizr_governed/governed_oci/mcp.py",
+      "sha256": "a61b2bf6f572ce58e9da74e5a715632de35e3cf5949c7623761ca4d2ac6c397b"
+    },
+    {
+      "path": "apizr_governed/governed_oci/model.py",
+      "sha256": "e78f65eb20d1b86dd0370cf3a530f2345384918481c55bb0885376056ab149fb"
+    },
+    {
+      "path": "apizr_governed/governed_oci/runtime.py",
+      "sha256": "d24a742b5dc2b7b0e5217da31b953d2a02e3c7ea238a495f108d4a229b937549"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/planner.py",
+      "sha256": "e8aadfcbb0defc5b470a8bed11648aaee465fa03ba18dca84dd8a08845f046a0"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/schema.py",
+      "sha256": "bc166183b4c99fa525f3e2c9402c695b936a5469a36f16bbe0aca9cb48e64d3f"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "0d9ef48a0af0f6fe91022bdfd10d6ab9e005b4a2ea64151898344121d68432be"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "2939f6222d9b38f1f3a35502099789db21072bffdaa030fcb6c857dbfe27e256"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "17a1e973aca7a032cfa783da83e1df16ca93a2e5dec54b7ce319288c3737ad38"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "d44e6084520c5cf14fe2cdb6f19cca5b929c29a1fbfd478f1baf95d23e8047b4"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "eeb468216f74e9809ccbef200f2215d5a88e905c03b1ee9a3e4801722f1939a3"
+    },
+    {
+      "path": "apizr_governed/oci/supervisor.py",
+      "sha256": "896e3e670ed4c06842badf7b2f6edf84b7e7b76f5d6a4e182023d8eaeaf12237"
+    },
+    {
+      "path": "apizr_governed/readiness/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/readiness/model.py",
+      "sha256": "ea4bcf82026809ec28f8e01b5ec58c103be1c747a10d06e5ebbc5df755678d15"
+    },
+    {
+      "path": "apizr_governed/readiness/serialization.py",
+      "sha256": "6231a0f24e39a753af12c9c3807f95c2c64c0b6104380c6140b2cd7eff4cb3bd"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/__init__.py",
+      "sha256": "04090dac70af1dc0d80d5684b16c84ff39dc77923b89955dbc9509a6cb4dc333"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/provider.py",
+      "sha256": "5c510542102ca00c6d4953ce454f20da11c75fcbe1cd5fc21ba4957e7abf3666"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/single.py",
+      "sha256": "343dde61ae34f53608820dec4da52df4054838d78b58f69153773daca58b9a6a"
+    },
+    {
+      "path": "capability-ir.json",
+      "sha256": "b2f1baee124c6b9e532846ae7ab161a3dc1f6e1eca5aee4ee8109707fcbf04fe"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "b5ec8181575769f0f1286136bd326e613534c0a9197a7e8a87ed2506758b7f56"
+    },
+    {
+      "path": "execution/plans/f.json",
+      "sha256": "3b8811d747cc0fe17b725a9eb579e3f3de1e053574255ae600ed040d1b68b8e6"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "a17575b9333aa21f4dd19fcb47d373e6accb6bda059e740e4b2dfaa8aa377d1f"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "f33a8041a21179fb0a70efb8740165ceb99159f39afa153ee2db0f9b9bcd97df"
+    },
+    {
+      "path": "mcp-tools.json",
+      "sha256": "a64df016812386614539e6b9b63813cfaa39574c19c7df253b6047eaab75e505"
+    },
+    {
+      "path": "readiness.json",
+      "sha256": "1f36d05d1e9628e5f829d775632fe08b81476b46801fc39c961d9ff674d9f7e7"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "42009f4975689001d808da1e28665597a23620d34819c0b2040c95149e1fe5b1"
+    },
+    {
+      "path": "server.py",
+      "sha256": "d71109cf6dc2d69a70f7485f69e5fbd2f101bef4e76641a8da26602068d8d4b5"
+    },
+    {
+      "path": "source/alias/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source/alias/removal.py",
+      "sha256": "9f44ba9f8f3e12a15b6bf65dc45b83be8e14ad656958f0ca60947110595d8681"
+    }
+  ],
+  "repository-direct-rest": [
+    {
+      "path": "apizr-bundle-provenance.json",
+      "sha256": "ae5775e59ac2a2c028d4b134cd61338ce9a6d8b25382b4f57080f5daddcca487"
+    },
+    {
+      "path": "apizr-repository-rest.json",
+      "sha256": "75a8695eafcdeb035b35b66e02341406fa8e0512dbbb94908327e9c130cbfa54"
+    },
+    {
+      "path": "apizr_http_admission.py",
+      "sha256": "3e3ceb585c24917999e1e461fa4141a555b6e5056dcecaa35ccc8ff06a84e11c"
+    },
+    {
+      "path": "apizr_json_budget.py",
+      "sha256": "19a3fe9b446340a70fe1b0719a6f3b0091af7c70d383888641325e5e4ec09a3d"
+    },
+    {
+      "path": "apizr_json_preflight.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_repository_artifacts.py",
+      "sha256": "ccbf0ce06cce729fc46248d2f24968c538ca014c5cf91ff3262d250a2921bf54"
+    },
+    {
+      "path": "apizr_repository_runtime.py",
+      "sha256": "0bb5163c831fa889f6d7b07ef8dc592f94263a041f87026ab50263292a2cc1ac"
+    },
+    {
+      "path": "apizr_results.py",
+      "sha256": "758fb6f4ac426d39bb27c1d6a073a1db22342620af254541ba715144781e7176"
+    },
+    {
+      "path": "apizr_runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "app.py",
+      "sha256": "c9c10597434709468bb0373a4fb8c07b58118035f0e3f6a95ddb31c4a8fe119a"
+    },
+    {
+      "path": "capability-catalog.json",
+      "sha256": "9c5fd4ae11d5fb347194f0c4583036b7fb53b5c7093bcf69b8092997c4cde52c"
+    },
+    {
+      "path": "capability-graph.json",
+      "sha256": "e353f65420050f0f0410e23eb1ce7d8a7fb100e80eedd9c6fb2dfe4504d1a0ba"
+    },
+    {
+      "path": "exposure-plan.json",
+      "sha256": "9863eb28b550a066c3334686109b42cb5be20b2d9cd4660d8e26449ceef4022d"
+    },
+    {
+      "path": "exposure-policy.json",
+      "sha256": "06fa3058fa18c7e613645430d1addf725d3daee76b622186aea91328bdb25cb0"
+    },
+    {
+      "path": "openapi.json",
+      "sha256": "a877a56cc42f19742f127b1c319e9e7af09358b99fd746e15bdd5670e7635bcc"
+    },
+    {
+      "path": "repository-interface.json",
+      "sha256": "c147e9b30b107570432a3b2d9382e66a32bd33ac265ffa1f53e50113d1b3c844"
+    },
+    {
+      "path": "repository-readiness.json",
+      "sha256": "0b9394ad0f1837eaa04d7f15837ab996065aa26b13a05e918b34852250976b83"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "b6720280cbeb47c0e9e9dc6b7b58c67e28610b25321019774db612b9ba3fb3d5"
+    },
+    {
+      "path": "source/shop/__init__.py",
+      "sha256": "46d7e2f0d1851c7f7c028d69f6e3d76808ee4fd93641bcad332823076645c880"
+    },
+    {
+      "path": "source/shop/admin.py",
+      "sha256": "74299f981a87e40b384596174832ec7bd2edc55b22daf03bc053003939e38a9e"
+    },
+    {
+      "path": "source/shop/api.py",
+      "sha256": "8b4e0ac0220ac1ff7fd5d2901d4b3cad98a8ceb5f9c468cae2e9ee984a72d4d7"
+    },
+    {
+      "path": "source/shop/inventory.py",
+      "sha256": "6f0effe34678e56e1bc3fa4ecbb6c0e6a121f65f4019089578cd7b59c2013301"
+    },
+    {
+      "path": "source/shop/pricing.py",
+      "sha256": "7784555292558239adc9b7a8c2187816b8ddd02229fd26d01317459d25a5c271"
+    }
+  ],
+  "repository-direct-mcp": [
+    {
+      "path": "apizr-bundle-provenance.json",
+      "sha256": "ae5775e59ac2a2c028d4b134cd61338ce9a6d8b25382b4f57080f5daddcca487"
+    },
+    {
+      "path": "apizr-repository-mcp.json",
+      "sha256": "7bb7978b4f450ad804569011cc55607f61c235c16f65a50e1e7737a76d71b12d"
+    },
+    {
+      "path": "apizr_http_admission.py",
+      "sha256": "3e3ceb585c24917999e1e461fa4141a555b6e5056dcecaa35ccc8ff06a84e11c"
+    },
+    {
+      "path": "apizr_json_budget.py",
+      "sha256": "19a3fe9b446340a70fe1b0719a6f3b0091af7c70d383888641325e5e4ec09a3d"
+    },
+    {
+      "path": "apizr_json_preflight.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_mcp_transport.py",
+      "sha256": "5bc13931b19e1c80b48a8e8649bf733e92a7cbe9ce2f8aa299fdaabf098378b9"
+    },
+    {
+      "path": "apizr_repository_artifacts.py",
+      "sha256": "ccbf0ce06cce729fc46248d2f24968c538ca014c5cf91ff3262d250a2921bf54"
+    },
+    {
+      "path": "apizr_repository_runtime.py",
+      "sha256": "0bb5163c831fa889f6d7b07ef8dc592f94263a041f87026ab50263292a2cc1ac"
+    },
+    {
+      "path": "apizr_results.py",
+      "sha256": "758fb6f4ac426d39bb27c1d6a073a1db22342620af254541ba715144781e7176"
+    },
+    {
+      "path": "apizr_runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "capability-catalog.json",
+      "sha256": "9c5fd4ae11d5fb347194f0c4583036b7fb53b5c7093bcf69b8092997c4cde52c"
+    },
+    {
+      "path": "capability-graph.json",
+      "sha256": "e353f65420050f0f0410e23eb1ce7d8a7fb100e80eedd9c6fb2dfe4504d1a0ba"
+    },
+    {
+      "path": "exposure-plan.json",
+      "sha256": "9863eb28b550a066c3334686109b42cb5be20b2d9cd4660d8e26449ceef4022d"
+    },
+    {
+      "path": "exposure-policy.json",
+      "sha256": "06fa3058fa18c7e613645430d1addf725d3daee76b622186aea91328bdb25cb0"
+    },
+    {
+      "path": "mcp-tools.json",
+      "sha256": "57535f6ba0c8b892fc9c8dd511b79f754e4240b21a56ca7298b423470dc0fc62"
+    },
+    {
+      "path": "repository-interface.json",
+      "sha256": "0bdb7743ae6a6f1d2ccf38b2cbd974bf1f8abc1004ad073abd8e8080b72784b4"
+    },
+    {
+      "path": "repository-readiness.json",
+      "sha256": "0b9394ad0f1837eaa04d7f15837ab996065aa26b13a05e918b34852250976b83"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "92af853508dc94ec5da25d834bad8540be7df90930dbf7b4063ae94b098a4353"
+    },
+    {
+      "path": "server.py",
+      "sha256": "40b2af7685a2ada32395e8a245cc6a122f3a66f7da8f86a65a8005cc1377d60b"
+    },
+    {
+      "path": "source/shop/__init__.py",
+      "sha256": "46d7e2f0d1851c7f7c028d69f6e3d76808ee4fd93641bcad332823076645c880"
+    },
+    {
+      "path": "source/shop/admin.py",
+      "sha256": "74299f981a87e40b384596174832ec7bd2edc55b22daf03bc053003939e38a9e"
+    },
+    {
+      "path": "source/shop/api.py",
+      "sha256": "8b4e0ac0220ac1ff7fd5d2901d4b3cad98a8ceb5f9c468cae2e9ee984a72d4d7"
+    },
+    {
+      "path": "source/shop/inventory.py",
+      "sha256": "6f0effe34678e56e1bc3fa4ecbb6c0e6a121f65f4019089578cd7b59c2013301"
+    },
+    {
+      "path": "source/shop/pricing.py",
+      "sha256": "7784555292558239adc9b7a8c2187816b8ddd02229fd26d01317459d25a5c271"
+    }
+  ],
+  "repository-local-rest": [
+    {
+      "path": "apizr-bundle-provenance.json",
+      "sha256": "4aeaaaf7684de94d80e097ebe6fb03b32b1ce2a3375b9e398aa04a47bba902a2"
+    },
+    {
+      "path": "apizr-repository-rest.json",
+      "sha256": "0266972ca669bd49919b752de96c0830c07a58cf34a0ac8fede23638ad4aa016"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/application.py",
+      "sha256": "f16aacdfbd06a8cc4009976eff8f165efc4c758a82f5f2e11b2ace103de1dd7c"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "16b7514dacb10b20b6e68eec52f03423e7bb884642862567f84c232a75a31f05"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "b439a8627503f29bb74fc50619beed50cb8bc4c5c660dd0a75d5da2b457e787d"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/model.py",
+      "sha256": "934ffdf782eac0e6c8e57ad4d00b4933ccc595fc282ac0589b2cd3c16658e353"
+    },
+    {
+      "path": "apizr_governed/generators/rest/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/rest/model.py",
+      "sha256": "54eac069d7ae20da63a326aa97e3e1dd6b33ee83001fb47fb9cf2054f1e0e761"
+    },
+    {
+      "path": "apizr_governed/governed_repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed_repository/model.py",
+      "sha256": "9efad8c8d9be8b07f52f716970eead3c578ac81d84b439a1754ec9fde81eb26b"
+    },
+    {
+      "path": "apizr_governed/governed_repository/rest.py",
+      "sha256": "a6a98efe65ee3a9824541897f891a46c5992b10fdcc9f27c55352815488f80b5"
+    },
+    {
+      "path": "apizr_governed/governed_repository/runtime.py",
+      "sha256": "a48e19b0424c3a54d7ecefd16f9a556c478e792fd14c891ff2e5353f0a65132a"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "1c2c88970078b55c78c407139f6ed7416375b1d6aa02513a870607cb43fe97f9"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "5c6c402568ac16abcce58e7b93c420710727a22805fad54b7362d2e36f4facb4"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "55de811e888f00d22cb4f0696318e23564b7a7e98769083390b303715cf1524e"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "275c1d560c5d11088582e824e2346cb5a8f4e4cfb678728be9efa57226718718"
+    },
+    {
+      "path": "apizr_governed/repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository/policy.py",
+      "sha256": "e19dd6640364754ded3ff7791197d83d9b8e5cbb3c459bcfac7e483953f6292c"
+    },
+    {
+      "path": "apizr_governed/repository_execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_execution/docker.py",
+      "sha256": "d2efbd972f78eecc5fa78debc6a1aae819d8692a532ad346d53a12c4a6343deb"
+    },
+    {
+      "path": "apizr_governed/repository_execution/model.py",
+      "sha256": "06a6fcd8243c9241bbf08a12d71e366541ace090e8c31ae17e8fd5e4f641c423"
+    },
+    {
+      "path": "apizr_governed/repository_execution/planner.py",
+      "sha256": "9b177651500f998cacc6d615a3c01f9f99cb2ed0bb0366e699c15126c732da71"
+    },
+    {
+      "path": "apizr_governed/repository_execution/supervisor.py",
+      "sha256": "1944b68e16a55bf347bb7f3ad6891b9e0522a2fddc0bd0295611d43251dec42b"
+    },
+    {
+      "path": "apizr_governed/repository_execution/worker.py",
+      "sha256": "151f4ec9c192319b6c00b74f65c7ac78bd1127dea719169e9b5e580f07f9d5a6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/artifacts.py",
+      "sha256": "788491c1c8d6ffed2b6b5ad95e3eed1cb7f3010ae1c02614044c928a92b8c2e6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/model.py",
+      "sha256": "f0ab45a227040492d2b1dcb3566de6914d4b960aeca46afa1efb6ee34d45b936"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/runtime.py",
+      "sha256": "57779912661f68bf5820a360050396abdd47969067cf32c42a797dd8c1d49a2d"
+    },
+    {
+      "path": "app.py",
+      "sha256": "b2a5155e2abd58ec577bf02cfe35a9c335b0de9353eb48a10a8c5c70f5962577"
+    },
+    {
+      "path": "capability-catalog.json",
+      "sha256": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
+    },
+    {
+      "path": "capability-graph.json",
+      "sha256": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "3004f8ff878d01a3978f11a18e881bff71f4045ac6176d00a6c4c76bfe4609ca"
+    },
+    {
+      "path": "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json",
+      "sha256": "bc1f80f1912f03080963b89f7591e40968507ac7c679c61133474fc87befb5e8"
+    },
+    {
+      "path": "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json",
+      "sha256": "fc2ba75ca6e282dff8f2eed2053f9a1e91e944cdc578c91a5354b8afffe30132"
+    },
+    {
+      "path": "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json",
+      "sha256": "9e273e56f154a87fee8f587f6ad18c4e5c477de7edc855fba691ddb7a86e2cde"
+    },
+    {
+      "path": "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json",
+      "sha256": "73614a2b512eaa9726985b76cf0f36d6e18453ddbecc0157da952ca8092b0d88"
+    },
+    {
+      "path": "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json",
+      "sha256": "4c104c727fdcc0841934100c354b846bd6cf3977845389d59af037dacd95eeb9"
+    },
+    {
+      "path": "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json",
+      "sha256": "dc4da74dd7a505c067cb48b146e9ead564e93bb2cb03af90c1bf9b4fc3fedf00"
+    },
+    {
+      "path": "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json",
+      "sha256": "042752e81230a86ccc41d24c5d7ba24b94ec7110af37babcc936a8a11774cbd8"
+    },
+    {
+      "path": "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json",
+      "sha256": "fb2e955ffc4c9f9f5f13bdb3453b0dcfad86d40272ec31508fa57208495a5e22"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "e8b05fb2d6f3c81bb27a3a9fe4bca7d4ab28b001b3a73c2230e19314c5201d6b"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "cf4cff342062636f06f20610abc263b41e9f448e6db115f0b66d6902c338b9d5"
+    },
+    {
+      "path": "exposure-plan.json",
+      "sha256": "2969c738c04545ea7af1d581a779f551f3d7202ee4f43cb2037bf641a10951cd"
+    },
+    {
+      "path": "exposure-policy.json",
+      "sha256": "ae8fd21bd0240d15f0938322d84fdb6f57d0ba375b17603e3540607ac6c38545"
+    },
+    {
+      "path": "openapi.json",
+      "sha256": "20faeb52c4e6a454b35aa4675c7c52c8451a0f6199875699fe806a2662e715cc"
+    },
+    {
+      "path": "repository-interface.json",
+      "sha256": "2e1764d69b73da0e3be304d2662dd9f0228e1ed23fffcaef95968744edc50a06"
+    },
+    {
+      "path": "repository-readiness.json",
+      "sha256": "782a63477f5448067ec93ed6ccb08a10a43c31a4269d80e42204654aa78dc5ff"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "701a728bfed09c7b0b3590729ccebc5a8a3ab4b7abf39dbfce4631beb91fbd3e"
+    },
+    {
+      "path": "source/sample/__init__.py",
+      "sha256": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
+    },
+    {
+      "path": "source/sample/admin.py",
+      "sha256": "3bd8b5555291d64ba09d0e617472655fa58fbb8d62c8b274f7e92df4f493bd4b"
+    },
+    {
+      "path": "source/sample/api.py",
+      "sha256": "fbe9fa3c3db171e956d07755e1613bf7ba80b85c8e9bd6ccefa411b87dae8db5"
+    },
+    {
+      "path": "source/sample/pricing.py",
+      "sha256": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+    }
+  ],
+  "repository-local-mcp": [
+    {
+      "path": "apizr-bundle-provenance.json",
+      "sha256": "4aeaaaf7684de94d80e097ebe6fb03b32b1ce2a3375b9e398aa04a47bba902a2"
+    },
+    {
+      "path": "apizr-repository-mcp.json",
+      "sha256": "465b29b7bab9bf15ac80541a3de36f6de80989bd3adbdab9fc7646c9ab459609"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/application.py",
+      "sha256": "f16aacdfbd06a8cc4009976eff8f165efc4c758a82f5f2e11b2ace103de1dd7c"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "16b7514dacb10b20b6e68eec52f03423e7bb884642862567f84c232a75a31f05"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "b439a8627503f29bb74fc50619beed50cb8bc4c5c660dd0a75d5da2b457e787d"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/model.py",
+      "sha256": "934ffdf782eac0e6c8e57ad4d00b4933ccc595fc282ac0589b2cd3c16658e353"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/transport.py",
+      "sha256": "02da36548f45dda22cd6d1ddf87afb1226ecef122d6a49673d965fd57dac13d6"
+    },
+    {
+      "path": "apizr_governed/generators/rest/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/rest/model.py",
+      "sha256": "54eac069d7ae20da63a326aa97e3e1dd6b33ee83001fb47fb9cf2054f1e0e761"
+    },
+    {
+      "path": "apizr_governed/governed_repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed_repository/mcp.py",
+      "sha256": "e32c24509bd4d20c1bd0ab05f0d6bbec4ae3e14c02b76cacc1b48489467f218a"
+    },
+    {
+      "path": "apizr_governed/governed_repository/model.py",
+      "sha256": "9efad8c8d9be8b07f52f716970eead3c578ac81d84b439a1754ec9fde81eb26b"
+    },
+    {
+      "path": "apizr_governed/governed_repository/runtime.py",
+      "sha256": "a48e19b0424c3a54d7ecefd16f9a556c478e792fd14c891ff2e5353f0a65132a"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "1c2c88970078b55c78c407139f6ed7416375b1d6aa02513a870607cb43fe97f9"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "5c6c402568ac16abcce58e7b93c420710727a22805fad54b7362d2e36f4facb4"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "55de811e888f00d22cb4f0696318e23564b7a7e98769083390b303715cf1524e"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "275c1d560c5d11088582e824e2346cb5a8f4e4cfb678728be9efa57226718718"
+    },
+    {
+      "path": "apizr_governed/repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository/policy.py",
+      "sha256": "e19dd6640364754ded3ff7791197d83d9b8e5cbb3c459bcfac7e483953f6292c"
+    },
+    {
+      "path": "apizr_governed/repository_execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_execution/docker.py",
+      "sha256": "d2efbd972f78eecc5fa78debc6a1aae819d8692a532ad346d53a12c4a6343deb"
+    },
+    {
+      "path": "apizr_governed/repository_execution/model.py",
+      "sha256": "06a6fcd8243c9241bbf08a12d71e366541ace090e8c31ae17e8fd5e4f641c423"
+    },
+    {
+      "path": "apizr_governed/repository_execution/planner.py",
+      "sha256": "9b177651500f998cacc6d615a3c01f9f99cb2ed0bb0366e699c15126c732da71"
+    },
+    {
+      "path": "apizr_governed/repository_execution/supervisor.py",
+      "sha256": "1944b68e16a55bf347bb7f3ad6891b9e0522a2fddc0bd0295611d43251dec42b"
+    },
+    {
+      "path": "apizr_governed/repository_execution/worker.py",
+      "sha256": "151f4ec9c192319b6c00b74f65c7ac78bd1127dea719169e9b5e580f07f9d5a6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/artifacts.py",
+      "sha256": "788491c1c8d6ffed2b6b5ad95e3eed1cb7f3010ae1c02614044c928a92b8c2e6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/model.py",
+      "sha256": "f0ab45a227040492d2b1dcb3566de6914d4b960aeca46afa1efb6ee34d45b936"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/runtime.py",
+      "sha256": "57779912661f68bf5820a360050396abdd47969067cf32c42a797dd8c1d49a2d"
+    },
+    {
+      "path": "capability-catalog.json",
+      "sha256": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
+    },
+    {
+      "path": "capability-graph.json",
+      "sha256": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "08bd1fc16e354caabc3febcd6b63e85841f98b85ed7ff7f6addeeca635a1edba"
+    },
+    {
+      "path": "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json",
+      "sha256": "69c298bd2efa6a3be4aac7ea8c45d7b717ad75b91bb855a47535c14388215cdf"
+    },
+    {
+      "path": "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json",
+      "sha256": "7e76d9c7a5fa26870a6ec974b9a3677d3db032194fd8ffde50ccc5817069393a"
+    },
+    {
+      "path": "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json",
+      "sha256": "2b9c655f9dd32bac6ac6b9f6c2cd2757fa3946f560dfe0ae44258b538a0dd1fe"
+    },
+    {
+      "path": "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json",
+      "sha256": "2cd791ab6c4f99dcf34b4a1abb520e6653974d8d2556f6b194a2d48f61e183d6"
+    },
+    {
+      "path": "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json",
+      "sha256": "7134bcfeb92bc34789ecfd7a15a55569e01d479bc0dfa779f044831236eb85b4"
+    },
+    {
+      "path": "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json",
+      "sha256": "3b38ea9a559c94b26089bb165ebe153571799d1b5be2b86f2eb919f0c43a6e98"
+    },
+    {
+      "path": "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json",
+      "sha256": "4dd21195b43cdabddd769e213919cada152f067616633bdf48e4b9385d0dbea0"
+    },
+    {
+      "path": "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json",
+      "sha256": "7b1e42927a7c57e438d124825d500d97cafe01249662268c9b83de2bc793c2d6"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "e8b05fb2d6f3c81bb27a3a9fe4bca7d4ab28b001b3a73c2230e19314c5201d6b"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "cf4cff342062636f06f20610abc263b41e9f448e6db115f0b66d6902c338b9d5"
+    },
+    {
+      "path": "exposure-plan.json",
+      "sha256": "57296c051a991b8dc9cd83069d2060180cbecac8c2d746e88142bc6fe75a974c"
+    },
+    {
+      "path": "exposure-policy.json",
+      "sha256": "e985bfce45471a9ce7de02de9876dae34506e3903f6158c3c39d330f99387a69"
+    },
+    {
+      "path": "mcp-tools.json",
+      "sha256": "372e07bf1c06b28151f2d37429101d9452f7f15da838b14c4da83595f40ad7b9"
+    },
+    {
+      "path": "repository-interface.json",
+      "sha256": "03ae782c9eb4bf79266edf73174f677c3abb5db3dd074bc89fad4e26cbb03695"
+    },
+    {
+      "path": "repository-readiness.json",
+      "sha256": "782a63477f5448067ec93ed6ccb08a10a43c31a4269d80e42204654aa78dc5ff"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "42009f4975689001d808da1e28665597a23620d34819c0b2040c95149e1fe5b1"
+    },
+    {
+      "path": "server.py",
+      "sha256": "291daad318d1d54ca9abc5d37e6b4f6ba67296ee36cd291b164891817aa15c42"
+    },
+    {
+      "path": "source/sample/__init__.py",
+      "sha256": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
+    },
+    {
+      "path": "source/sample/admin.py",
+      "sha256": "3bd8b5555291d64ba09d0e617472655fa58fbb8d62c8b274f7e92df4f493bd4b"
+    },
+    {
+      "path": "source/sample/api.py",
+      "sha256": "fbe9fa3c3db171e956d07755e1613bf7ba80b85c8e9bd6ccefa411b87dae8db5"
+    },
+    {
+      "path": "source/sample/pricing.py",
+      "sha256": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+    }
+  ],
+  "repository-oci-rest": [
+    {
+      "path": "apizr-bundle-provenance.json",
+      "sha256": "4aeaaaf7684de94d80e097ebe6fb03b32b1ce2a3375b9e398aa04a47bba902a2"
+    },
+    {
+      "path": "apizr-repository-rest.json",
+      "sha256": "196d8972e60d58b750c25a5c0f26a366d1736f0ed8e381bfc5eeee594990f227"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/application.py",
+      "sha256": "f16aacdfbd06a8cc4009976eff8f165efc4c758a82f5f2e11b2ace103de1dd7c"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "16b7514dacb10b20b6e68eec52f03423e7bb884642862567f84c232a75a31f05"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "b439a8627503f29bb74fc50619beed50cb8bc4c5c660dd0a75d5da2b457e787d"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/model.py",
+      "sha256": "934ffdf782eac0e6c8e57ad4d00b4933ccc595fc282ac0589b2cd3c16658e353"
+    },
+    {
+      "path": "apizr_governed/generators/rest/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/rest/model.py",
+      "sha256": "54eac069d7ae20da63a326aa97e3e1dd6b33ee83001fb47fb9cf2054f1e0e761"
+    },
+    {
+      "path": "apizr_governed/governed_repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed_repository/model.py",
+      "sha256": "9efad8c8d9be8b07f52f716970eead3c578ac81d84b439a1754ec9fde81eb26b"
+    },
+    {
+      "path": "apizr_governed/governed_repository/rest.py",
+      "sha256": "a6a98efe65ee3a9824541897f891a46c5992b10fdcc9f27c55352815488f80b5"
+    },
+    {
+      "path": "apizr_governed/governed_repository/runtime.py",
+      "sha256": "a48e19b0424c3a54d7ecefd16f9a556c478e792fd14c891ff2e5353f0a65132a"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "1c2c88970078b55c78c407139f6ed7416375b1d6aa02513a870607cb43fe97f9"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "5c6c402568ac16abcce58e7b93c420710727a22805fad54b7362d2e36f4facb4"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "55de811e888f00d22cb4f0696318e23564b7a7e98769083390b303715cf1524e"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "275c1d560c5d11088582e824e2346cb5a8f4e4cfb678728be9efa57226718718"
+    },
+    {
+      "path": "apizr_governed/repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository/policy.py",
+      "sha256": "e19dd6640364754ded3ff7791197d83d9b8e5cbb3c459bcfac7e483953f6292c"
+    },
+    {
+      "path": "apizr_governed/repository_execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_execution/docker.py",
+      "sha256": "d2efbd972f78eecc5fa78debc6a1aae819d8692a532ad346d53a12c4a6343deb"
+    },
+    {
+      "path": "apizr_governed/repository_execution/model.py",
+      "sha256": "06a6fcd8243c9241bbf08a12d71e366541ace090e8c31ae17e8fd5e4f641c423"
+    },
+    {
+      "path": "apizr_governed/repository_execution/planner.py",
+      "sha256": "9b177651500f998cacc6d615a3c01f9f99cb2ed0bb0366e699c15126c732da71"
+    },
+    {
+      "path": "apizr_governed/repository_execution/supervisor.py",
+      "sha256": "1944b68e16a55bf347bb7f3ad6891b9e0522a2fddc0bd0295611d43251dec42b"
+    },
+    {
+      "path": "apizr_governed/repository_execution/worker.py",
+      "sha256": "151f4ec9c192319b6c00b74f65c7ac78bd1127dea719169e9b5e580f07f9d5a6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/artifacts.py",
+      "sha256": "788491c1c8d6ffed2b6b5ad95e3eed1cb7f3010ae1c02614044c928a92b8c2e6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/model.py",
+      "sha256": "f0ab45a227040492d2b1dcb3566de6914d4b960aeca46afa1efb6ee34d45b936"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/runtime.py",
+      "sha256": "57779912661f68bf5820a360050396abdd47969067cf32c42a797dd8c1d49a2d"
+    },
+    {
+      "path": "app.py",
+      "sha256": "b2a5155e2abd58ec577bf02cfe35a9c335b0de9353eb48a10a8c5c70f5962577"
+    },
+    {
+      "path": "capability-catalog.json",
+      "sha256": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
+    },
+    {
+      "path": "capability-graph.json",
+      "sha256": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "efec5973c0a398bf084b661c09ed9e76a551002129732a98579df7bee6b7abe0"
+    },
+    {
+      "path": "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json",
+      "sha256": "97b2b474ef131cea1e419a8f797b3900de226ca9ade6b2b1409fdc9a27aba621"
+    },
+    {
+      "path": "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json",
+      "sha256": "cefaa50eaeec8dbfad27825f72940e85fb6566dd96c7566d1308d1fdf386bfb3"
+    },
+    {
+      "path": "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json",
+      "sha256": "10d71b815198a40fe37910261ad4c171ac0ef3746292a7d77c5a36a90bda8ebb"
+    },
+    {
+      "path": "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json",
+      "sha256": "eb543055392cc144c5c9b6e873dd27534899d3947f2b5558e496434034138abc"
+    },
+    {
+      "path": "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json",
+      "sha256": "11ac4a4566b6ae9aeb3e7b3ca72877813af3ecf19c4ee5474cd0964b9f898dba"
+    },
+    {
+      "path": "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json",
+      "sha256": "0c852c3ff7e3bf55d68ed215224ca2e10ec7e52605995480ffe92e35c9af1936"
+    },
+    {
+      "path": "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json",
+      "sha256": "319d34f01559a206cccc267b6b9b37fdef0ce5eca9bd80d5f22b6b11a1e121b1"
+    },
+    {
+      "path": "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json",
+      "sha256": "a061397f0570416ca5d0f8e7a93d4dc6a82b39a9f5bb6ec0101c03c6b2e60dab"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "9858b46653e31aa8a4923b0dd939eddbeeab4f081ca1c2a21e085eddd7580fcb"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "cf4cff342062636f06f20610abc263b41e9f448e6db115f0b66d6902c338b9d5"
+    },
+    {
+      "path": "exposure-plan.json",
+      "sha256": "7da889806b376c0a5dbc163f02026bf93d83a2427f8dd03bb20e44959f43cb90"
+    },
+    {
+      "path": "exposure-policy.json",
+      "sha256": "f51759118a4d612468d7a869669d6b00ecea461dd964d93667eed47249a04721"
+    },
+    {
+      "path": "openapi.json",
+      "sha256": "20faeb52c4e6a454b35aa4675c7c52c8451a0f6199875699fe806a2662e715cc"
+    },
+    {
+      "path": "repository-interface.json",
+      "sha256": "998da0e6f00f3a95541d9da6baff1b0961eeeabf4473ea186a0675aa256e555d"
+    },
+    {
+      "path": "repository-readiness.json",
+      "sha256": "91db7c58901247994d58e25b29e9dd6a5a55cd3b96e840a6c1fb81ca542ff2fe"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "701a728bfed09c7b0b3590729ccebc5a8a3ab4b7abf39dbfce4631beb91fbd3e"
+    },
+    {
+      "path": "source/sample/__init__.py",
+      "sha256": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
+    },
+    {
+      "path": "source/sample/admin.py",
+      "sha256": "3bd8b5555291d64ba09d0e617472655fa58fbb8d62c8b274f7e92df4f493bd4b"
+    },
+    {
+      "path": "source/sample/api.py",
+      "sha256": "fbe9fa3c3db171e956d07755e1613bf7ba80b85c8e9bd6ccefa411b87dae8db5"
+    },
+    {
+      "path": "source/sample/pricing.py",
+      "sha256": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+    }
+  ],
+  "repository-oci-mcp": [
+    {
+      "path": "apizr-bundle-provenance.json",
+      "sha256": "4aeaaaf7684de94d80e097ebe6fb03b32b1ce2a3375b9e398aa04a47bba902a2"
+    },
+    {
+      "path": "apizr-repository-mcp.json",
+      "sha256": "fd16ab27f1c76ed2ad8fcc0af7d34aeb68628934da2e82eee146f72456060847"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/application.py",
+      "sha256": "f16aacdfbd06a8cc4009976eff8f165efc4c758a82f5f2e11b2ace103de1dd7c"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "16b7514dacb10b20b6e68eec52f03423e7bb884642862567f84c232a75a31f05"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "b439a8627503f29bb74fc50619beed50cb8bc4c5c660dd0a75d5da2b457e787d"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/model.py",
+      "sha256": "934ffdf782eac0e6c8e57ad4d00b4933ccc595fc282ac0589b2cd3c16658e353"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/transport.py",
+      "sha256": "02da36548f45dda22cd6d1ddf87afb1226ecef122d6a49673d965fd57dac13d6"
+    },
+    {
+      "path": "apizr_governed/generators/rest/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/rest/model.py",
+      "sha256": "54eac069d7ae20da63a326aa97e3e1dd6b33ee83001fb47fb9cf2054f1e0e761"
+    },
+    {
+      "path": "apizr_governed/governed_repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed_repository/mcp.py",
+      "sha256": "e32c24509bd4d20c1bd0ab05f0d6bbec4ae3e14c02b76cacc1b48489467f218a"
+    },
+    {
+      "path": "apizr_governed/governed_repository/model.py",
+      "sha256": "9efad8c8d9be8b07f52f716970eead3c578ac81d84b439a1754ec9fde81eb26b"
+    },
+    {
+      "path": "apizr_governed/governed_repository/runtime.py",
+      "sha256": "a48e19b0424c3a54d7ecefd16f9a556c478e792fd14c891ff2e5353f0a65132a"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "1c2c88970078b55c78c407139f6ed7416375b1d6aa02513a870607cb43fe97f9"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "5c6c402568ac16abcce58e7b93c420710727a22805fad54b7362d2e36f4facb4"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "55de811e888f00d22cb4f0696318e23564b7a7e98769083390b303715cf1524e"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "275c1d560c5d11088582e824e2346cb5a8f4e4cfb678728be9efa57226718718"
+    },
+    {
+      "path": "apizr_governed/repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository/policy.py",
+      "sha256": "e19dd6640364754ded3ff7791197d83d9b8e5cbb3c459bcfac7e483953f6292c"
+    },
+    {
+      "path": "apizr_governed/repository_execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_execution/docker.py",
+      "sha256": "d2efbd972f78eecc5fa78debc6a1aae819d8692a532ad346d53a12c4a6343deb"
+    },
+    {
+      "path": "apizr_governed/repository_execution/model.py",
+      "sha256": "06a6fcd8243c9241bbf08a12d71e366541ace090e8c31ae17e8fd5e4f641c423"
+    },
+    {
+      "path": "apizr_governed/repository_execution/planner.py",
+      "sha256": "9b177651500f998cacc6d615a3c01f9f99cb2ed0bb0366e699c15126c732da71"
+    },
+    {
+      "path": "apizr_governed/repository_execution/supervisor.py",
+      "sha256": "1944b68e16a55bf347bb7f3ad6891b9e0522a2fddc0bd0295611d43251dec42b"
+    },
+    {
+      "path": "apizr_governed/repository_execution/worker.py",
+      "sha256": "151f4ec9c192319b6c00b74f65c7ac78bd1127dea719169e9b5e580f07f9d5a6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/artifacts.py",
+      "sha256": "788491c1c8d6ffed2b6b5ad95e3eed1cb7f3010ae1c02614044c928a92b8c2e6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/model.py",
+      "sha256": "f0ab45a227040492d2b1dcb3566de6914d4b960aeca46afa1efb6ee34d45b936"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/runtime.py",
+      "sha256": "57779912661f68bf5820a360050396abdd47969067cf32c42a797dd8c1d49a2d"
+    },
+    {
+      "path": "capability-catalog.json",
+      "sha256": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
+    },
+    {
+      "path": "capability-graph.json",
+      "sha256": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "71a5807c878431a388efd4261926f7c34f952029b2aa3c05c1e04511c7212921"
+    },
+    {
+      "path": "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json",
+      "sha256": "94711f606d9d5e35fbcc4a4c2cbc722b2a49c0de8db884237117953825b43209"
+    },
+    {
+      "path": "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json",
+      "sha256": "319f2291e6f7fd0c10e4fc9a882bbfaaec9d7372fde857f4212266a7a2f9da9a"
+    },
+    {
+      "path": "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json",
+      "sha256": "7e2dcc6c10548503691af6764e606bf814374bee1d73596aa306f2f93d27a5bf"
+    },
+    {
+      "path": "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json",
+      "sha256": "9b69070e4aa19d4a674c8148553435b34d8f257991952f5323b8c233d9c573bf"
+    },
+    {
+      "path": "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json",
+      "sha256": "627484560f32861ab6f88ac26cd4e0061b3153e195f04df6644b1e07f50efbe3"
+    },
+    {
+      "path": "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json",
+      "sha256": "12471cf957993d597688f4830aad6a0deaabd17aad734d4481643e934c47ed51"
+    },
+    {
+      "path": "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json",
+      "sha256": "737d92cae3abb89bb08b0dce53edffbe315f100e6e92d1b7f09ddbba09b52192"
+    },
+    {
+      "path": "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json",
+      "sha256": "420867554d953186100c77afd4560f3bf651b17b6e754900377ca0a77bec5712"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "9858b46653e31aa8a4923b0dd939eddbeeab4f081ca1c2a21e085eddd7580fcb"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "cf4cff342062636f06f20610abc263b41e9f448e6db115f0b66d6902c338b9d5"
+    },
+    {
+      "path": "exposure-plan.json",
+      "sha256": "6d43952577dcd202c913717f7fd8fd249c9372813a9fc43f8ad8dfe1142a30c5"
+    },
+    {
+      "path": "exposure-policy.json",
+      "sha256": "d60e85df15e62eab7ec22867e72784be860c007a96c37af080ddbad757ac71c3"
+    },
+    {
+      "path": "mcp-tools.json",
+      "sha256": "372e07bf1c06b28151f2d37429101d9452f7f15da838b14c4da83595f40ad7b9"
+    },
+    {
+      "path": "repository-interface.json",
+      "sha256": "28c79ddc84d1ee3d4e3d505935e21cb69b3262316473de65a8e728773dce045c"
+    },
+    {
+      "path": "repository-readiness.json",
+      "sha256": "91db7c58901247994d58e25b29e9dd6a5a55cd3b96e840a6c1fb81ca542ff2fe"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "42009f4975689001d808da1e28665597a23620d34819c0b2040c95149e1fe5b1"
+    },
+    {
+      "path": "server.py",
+      "sha256": "291daad318d1d54ca9abc5d37e6b4f6ba67296ee36cd291b164891817aa15c42"
+    },
+    {
+      "path": "source/sample/__init__.py",
+      "sha256": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
+    },
+    {
+      "path": "source/sample/admin.py",
+      "sha256": "3bd8b5555291d64ba09d0e617472655fa58fbb8d62c8b274f7e92df4f493bd4b"
+    },
+    {
+      "path": "source/sample/api.py",
+      "sha256": "fbe9fa3c3db171e956d07755e1613bf7ba80b85c8e9bd6ccefa411b87dae8db5"
+    },
+    {
+      "path": "source/sample/pricing.py",
+      "sha256": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+    }
+  ],
+  "repository-deny-rest": [
+    {
+      "path": "apizr-bundle-provenance.json",
+      "sha256": "4aeaaaf7684de94d80e097ebe6fb03b32b1ce2a3375b9e398aa04a47bba902a2"
+    },
+    {
+      "path": "apizr-repository-rest.json",
+      "sha256": "0c31a99b5d573070a409b2666504afebcb5ca31538e799b8aee3fa0aa283a471"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/application.py",
+      "sha256": "f16aacdfbd06a8cc4009976eff8f165efc4c758a82f5f2e11b2ace103de1dd7c"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "16b7514dacb10b20b6e68eec52f03423e7bb884642862567f84c232a75a31f05"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "b439a8627503f29bb74fc50619beed50cb8bc4c5c660dd0a75d5da2b457e787d"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/model.py",
+      "sha256": "934ffdf782eac0e6c8e57ad4d00b4933ccc595fc282ac0589b2cd3c16658e353"
+    },
+    {
+      "path": "apizr_governed/generators/rest/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/rest/model.py",
+      "sha256": "54eac069d7ae20da63a326aa97e3e1dd6b33ee83001fb47fb9cf2054f1e0e761"
+    },
+    {
+      "path": "apizr_governed/governed_repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed_repository/model.py",
+      "sha256": "9efad8c8d9be8b07f52f716970eead3c578ac81d84b439a1754ec9fde81eb26b"
+    },
+    {
+      "path": "apizr_governed/governed_repository/rest.py",
+      "sha256": "a6a98efe65ee3a9824541897f891a46c5992b10fdcc9f27c55352815488f80b5"
+    },
+    {
+      "path": "apizr_governed/governed_repository/runtime.py",
+      "sha256": "296b61b9d1eba6157c9bc176f038663943d813790ee9cbe5a5f6a959722e1203"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "1c2c88970078b55c78c407139f6ed7416375b1d6aa02513a870607cb43fe97f9"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "5c6c402568ac16abcce58e7b93c420710727a22805fad54b7362d2e36f4facb4"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "55de811e888f00d22cb4f0696318e23564b7a7e98769083390b303715cf1524e"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "275c1d560c5d11088582e824e2346cb5a8f4e4cfb678728be9efa57226718718"
+    },
+    {
+      "path": "apizr_governed/repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository/policy.py",
+      "sha256": "e19dd6640364754ded3ff7791197d83d9b8e5cbb3c459bcfac7e483953f6292c"
+    },
+    {
+      "path": "apizr_governed/repository_execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_execution/docker.py",
+      "sha256": "d2efbd972f78eecc5fa78debc6a1aae819d8692a532ad346d53a12c4a6343deb"
+    },
+    {
+      "path": "apizr_governed/repository_execution/model.py",
+      "sha256": "06a6fcd8243c9241bbf08a12d71e366541ace090e8c31ae17e8fd5e4f641c423"
+    },
+    {
+      "path": "apizr_governed/repository_execution/planner.py",
+      "sha256": "9b177651500f998cacc6d615a3c01f9f99cb2ed0bb0366e699c15126c732da71"
+    },
+    {
+      "path": "apizr_governed/repository_execution/supervisor.py",
+      "sha256": "1944b68e16a55bf347bb7f3ad6891b9e0522a2fddc0bd0295611d43251dec42b"
+    },
+    {
+      "path": "apizr_governed/repository_execution/worker.py",
+      "sha256": "151f4ec9c192319b6c00b74f65c7ac78bd1127dea719169e9b5e580f07f9d5a6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/artifacts.py",
+      "sha256": "788491c1c8d6ffed2b6b5ad95e3eed1cb7f3010ae1c02614044c928a92b8c2e6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/model.py",
+      "sha256": "f0ab45a227040492d2b1dcb3566de6914d4b960aeca46afa1efb6ee34d45b936"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/runtime.py",
+      "sha256": "57779912661f68bf5820a360050396abdd47969067cf32c42a797dd8c1d49a2d"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/__init__.py",
+      "sha256": "04090dac70af1dc0d80d5684b16c84ff39dc77923b89955dbc9509a6cb4dc333"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/provider.py",
+      "sha256": "5c510542102ca00c6d4953ce454f20da11c75fcbe1cd5fc21ba4957e7abf3666"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/repository.py",
+      "sha256": "aa7ee029eea5c5c9d2159b2d554a2d0eaf4ab343f1befc304a0d3bd3b25c5e74"
+    },
+    {
+      "path": "app.py",
+      "sha256": "b2a5155e2abd58ec577bf02cfe35a9c335b0de9353eb48a10a8c5c70f5962577"
+    },
+    {
+      "path": "capability-catalog.json",
+      "sha256": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
+    },
+    {
+      "path": "capability-graph.json",
+      "sha256": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "82c8141c07b9ad15c8473de169c09c49be33855bbf9b828be0a2bb16007458e6"
+    },
+    {
+      "path": "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json",
+      "sha256": "ffb0a6d398d16d2e0cc4b5564cb3e332dd103fc93646c1e9a2bf66b4dcad848a"
+    },
+    {
+      "path": "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json",
+      "sha256": "638044f318ac81b6ae475e1da54f17e0ca0317dde85b6142761065df5b709837"
+    },
+    {
+      "path": "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json",
+      "sha256": "ef2e7eedecc3cc7a4366361d5732af772d27875497d00d9b87bed7b1f7da9efb"
+    },
+    {
+      "path": "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json",
+      "sha256": "00bc9799a0c9bc7faa407aec37c7fa55357631936470c4461d7b7e96f274a158"
+    },
+    {
+      "path": "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json",
+      "sha256": "5c348569b257918cbfe1d93925b49d960ffb03ec8b9f579f38f3618c649bab2e"
+    },
+    {
+      "path": "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json",
+      "sha256": "03ad1bcb24a0ab588f12182b3fcfe4a9b79dcc9d2ad82ffd7441c6f981f079d7"
+    },
+    {
+      "path": "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json",
+      "sha256": "f97c65de41a19a9e9af924c8374a8d590b8949d72529b54848c40b54661f3f0d"
+    },
+    {
+      "path": "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json",
+      "sha256": "d410c440cec6c0b3de748fa7f743d5bade8e0ece2f1ee77250392ae24f6a595e"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "a17575b9333aa21f4dd19fcb47d373e6accb6bda059e740e4b2dfaa8aa377d1f"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "cf4cff342062636f06f20610abc263b41e9f448e6db115f0b66d6902c338b9d5"
+    },
+    {
+      "path": "exposure-plan.json",
+      "sha256": "7da889806b376c0a5dbc163f02026bf93d83a2427f8dd03bb20e44959f43cb90"
+    },
+    {
+      "path": "exposure-policy.json",
+      "sha256": "f51759118a4d612468d7a869669d6b00ecea461dd964d93667eed47249a04721"
+    },
+    {
+      "path": "openapi.json",
+      "sha256": "20faeb52c4e6a454b35aa4675c7c52c8451a0f6199875699fe806a2662e715cc"
+    },
+    {
+      "path": "repository-interface.json",
+      "sha256": "998da0e6f00f3a95541d9da6baff1b0961eeeabf4473ea186a0675aa256e555d"
+    },
+    {
+      "path": "repository-readiness.json",
+      "sha256": "91db7c58901247994d58e25b29e9dd6a5a55cd3b96e840a6c1fb81ca542ff2fe"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "701a728bfed09c7b0b3590729ccebc5a8a3ab4b7abf39dbfce4631beb91fbd3e"
+    },
+    {
+      "path": "source/sample/__init__.py",
+      "sha256": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
+    },
+    {
+      "path": "source/sample/admin.py",
+      "sha256": "3bd8b5555291d64ba09d0e617472655fa58fbb8d62c8b274f7e92df4f493bd4b"
+    },
+    {
+      "path": "source/sample/api.py",
+      "sha256": "fbe9fa3c3db171e956d07755e1613bf7ba80b85c8e9bd6ccefa411b87dae8db5"
+    },
+    {
+      "path": "source/sample/pricing.py",
+      "sha256": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+    }
+  ],
+  "repository-deny-mcp": [
+    {
+      "path": "apizr-bundle-provenance.json",
+      "sha256": "4aeaaaf7684de94d80e097ebe6fb03b32b1ce2a3375b9e398aa04a47bba902a2"
+    },
+    {
+      "path": "apizr-repository-mcp.json",
+      "sha256": "32acbdb359ec8fc485c297fb083d004f5d2555e5063cffd225eded867519519a"
+    },
+    {
+      "path": "apizr_governed/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/capabilities/model.py",
+      "sha256": "93e548287c5b8d1d7ac992e94b181708e4acf5eb8e5cedc4f27f1c879241d119"
+    },
+    {
+      "path": "apizr_governed/capabilities/types.py",
+      "sha256": "38d1674b909e1a146e6d46b2ba236b6d5c37919db41ff406a5b96154ee0424e1"
+    },
+    {
+      "path": "apizr_governed/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/contracts/application.py",
+      "sha256": "f16aacdfbd06a8cc4009976eff8f165efc4c758a82f5f2e11b2ace103de1dd7c"
+    },
+    {
+      "path": "apizr_governed/contracts/json_budget.py",
+      "sha256": "681958ed3d3d2d8c3e02181912d980f3c14ef448d71baac0b8a4e969db1e0ee8"
+    },
+    {
+      "path": "apizr_governed/contracts/types.py",
+      "sha256": "b56d1d7a1fb272b662cdea7168f97a2bc477f0450b64f4f4a5e3e5d35ae5ced7"
+    },
+    {
+      "path": "apizr_governed/execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/execution/invocation.py",
+      "sha256": "245e7e42ebff315b8d82b104b7b8ad345035e5869d7bafc65f6b8ff33c4293e7"
+    },
+    {
+      "path": "apizr_governed/execution/model.py",
+      "sha256": "16b7514dacb10b20b6e68eec52f03423e7bb884642862567f84c232a75a31f05"
+    },
+    {
+      "path": "apizr_governed/execution/policy.py",
+      "sha256": "63d9b00c2850e92bd81e4db60a6bf4987e73bfd8e132f64fce16dce2479df1dc"
+    },
+    {
+      "path": "apizr_governed/execution/protocol.py",
+      "sha256": "fe74b3342ae64b66008b1642ea2ab3c4fea07e756a2ff6dde2828408c70b2893"
+    },
+    {
+      "path": "apizr_governed/execution/serialization.py",
+      "sha256": "35b37e922b44882d80537c4128dd67b0af9ecababa188517756988b844a8971e"
+    },
+    {
+      "path": "apizr_governed/execution/supervisor.py",
+      "sha256": "b439a8627503f29bb74fc50619beed50cb8bc4c5c660dd0a75d5da2b457e787d"
+    },
+    {
+      "path": "apizr_governed/generators/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/model.py",
+      "sha256": "934ffdf782eac0e6c8e57ad4d00b4933ccc595fc282ac0589b2cd3c16658e353"
+    },
+    {
+      "path": "apizr_governed/generators/mcp/transport.py",
+      "sha256": "02da36548f45dda22cd6d1ddf87afb1226ecef122d6a49673d965fd57dac13d6"
+    },
+    {
+      "path": "apizr_governed/generators/rest/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/generators/rest/model.py",
+      "sha256": "54eac069d7ae20da63a326aa97e3e1dd6b33ee83001fb47fb9cf2054f1e0e761"
+    },
+    {
+      "path": "apizr_governed/governed_repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/governed_repository/mcp.py",
+      "sha256": "e32c24509bd4d20c1bd0ab05f0d6bbec4ae3e14c02b76cacc1b48489467f218a"
+    },
+    {
+      "path": "apizr_governed/governed_repository/model.py",
+      "sha256": "9efad8c8d9be8b07f52f716970eead3c578ac81d84b439a1754ec9fde81eb26b"
+    },
+    {
+      "path": "apizr_governed/governed_repository/runtime.py",
+      "sha256": "296b61b9d1eba6157c9bc176f038663943d813790ee9cbe5a5f6a959722e1203"
+    },
+    {
+      "path": "apizr_governed/interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/interfaces/http_admission.py",
+      "sha256": "9961f792ed66492919cb8f8b35cf980a3e7179332bc5272c9ff0adc53570c69b"
+    },
+    {
+      "path": "apizr_governed/interfaces/json_budget.py",
+      "sha256": "bb9b478b2d8f7d17d0a2900d16719ef033e7df6f904d263905ae472f8b774184"
+    },
+    {
+      "path": "apizr_governed/interfaces/model.py",
+      "sha256": "fa15ab266185a0cf1d362c026febfdd16d9f25384cacbefa3d5454d4ebddbcf3"
+    },
+    {
+      "path": "apizr_governed/interfaces/results.py",
+      "sha256": "4482f465b63ca75ae9a97aef589691103e246c0ecfef31c693a4d691b172c11d"
+    },
+    {
+      "path": "apizr_governed/interfaces/runtime.py",
+      "sha256": "b5ce06562f4ee78a59508ac35ffd74f08a48561ad67a100f156aa56efa538656"
+    },
+    {
+      "path": "apizr_governed/interfaces/serialization.py",
+      "sha256": "2e9ceabdb8cb84944798c3dcf0454f78f881a51b453a723c6b28795a209b79b4"
+    },
+    {
+      "path": "apizr_governed/oci/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/oci/docker.py",
+      "sha256": "1c2c88970078b55c78c407139f6ed7416375b1d6aa02513a870607cb43fe97f9"
+    },
+    {
+      "path": "apizr_governed/oci/model.py",
+      "sha256": "5c6c402568ac16abcce58e7b93c420710727a22805fad54b7362d2e36f4facb4"
+    },
+    {
+      "path": "apizr_governed/oci/planner.py",
+      "sha256": "55de811e888f00d22cb4f0696318e23564b7a7e98769083390b303715cf1524e"
+    },
+    {
+      "path": "apizr_governed/oci/provider.py",
+      "sha256": "275c1d560c5d11088582e824e2346cb5a8f4e4cfb678728be9efa57226718718"
+    },
+    {
+      "path": "apizr_governed/repository/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository/policy.py",
+      "sha256": "e19dd6640364754ded3ff7791197d83d9b8e5cbb3c459bcfac7e483953f6292c"
+    },
+    {
+      "path": "apizr_governed/repository_execution/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_execution/docker.py",
+      "sha256": "d2efbd972f78eecc5fa78debc6a1aae819d8692a532ad346d53a12c4a6343deb"
+    },
+    {
+      "path": "apizr_governed/repository_execution/model.py",
+      "sha256": "06a6fcd8243c9241bbf08a12d71e366541ace090e8c31ae17e8fd5e4f641c423"
+    },
+    {
+      "path": "apizr_governed/repository_execution/planner.py",
+      "sha256": "9b177651500f998cacc6d615a3c01f9f99cb2ed0bb0366e699c15126c732da71"
+    },
+    {
+      "path": "apizr_governed/repository_execution/supervisor.py",
+      "sha256": "1944b68e16a55bf347bb7f3ad6891b9e0522a2fddc0bd0295611d43251dec42b"
+    },
+    {
+      "path": "apizr_governed/repository_execution/worker.py",
+      "sha256": "151f4ec9c192319b6c00b74f65c7ac78bd1127dea719169e9b5e580f07f9d5a6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/artifacts.py",
+      "sha256": "788491c1c8d6ffed2b6b5ad95e3eed1cb7f3010ae1c02614044c928a92b8c2e6"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/model.py",
+      "sha256": "f0ab45a227040492d2b1dcb3566de6914d4b960aeca46afa1efb6ee34d45b936"
+    },
+    {
+      "path": "apizr_governed/repository_interfaces/runtime.py",
+      "sha256": "57779912661f68bf5820a360050396abdd47969067cf32c42a797dd8c1d49a2d"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/__init__.py",
+      "sha256": "04090dac70af1dc0d80d5684b16c84ff39dc77923b89955dbc9509a6cb4dc333"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/provider.py",
+      "sha256": "5c510542102ca00c6d4953ce454f20da11c75fcbe1cd5fc21ba4957e7abf3666"
+    },
+    {
+      "path": "apizr_governed/subprocess_guard/repository.py",
+      "sha256": "aa7ee029eea5c5c9d2159b2d554a2d0eaf4ab343f1befc304a0d3bd3b25c5e74"
+    },
+    {
+      "path": "capability-catalog.json",
+      "sha256": "d3dce179c92e89ba7a43be08fcdb55192a185f04c3b213e914bcaa3ddc5b4984"
+    },
+    {
+      "path": "capability-graph.json",
+      "sha256": "c39a8e9b65df33b0c90e3b6c073de832646537406575963fe48e513143565d81"
+    },
+    {
+      "path": "execution/bundle.json",
+      "sha256": "7bb012e1acda99aa98e903d919a49991a954a6e603f90d65ea025c72e075d3ce"
+    },
+    {
+      "path": "execution/plans/1bc5f45d29124be40c306d8e67bdbaa363b1847a5c0c53b4875a12683bf006bf.json",
+      "sha256": "9ddc6112cb3cb4deaa34d518a72459858b776cc110d3b20f272ef6022fcb0927"
+    },
+    {
+      "path": "execution/plans/662975a9b049edf04d30fef038a89c69ca3cce7c50cb474260f55cda6a46a965.json",
+      "sha256": "a75fb69b35329c075e91c52ea7b1da67943b9299e44439c10a87ac09787d24fb"
+    },
+    {
+      "path": "execution/plans/702ae94d6fc02519b1818f5256bcd5c55247e8fd5644563d542cb3cbe4f28724.json",
+      "sha256": "8f78443d7306f1c57c427e97d84b693e38baeda2667304a6dcc204fdf2103caa"
+    },
+    {
+      "path": "execution/plans/da171b745aa791974012aef8172e08c579c521bd5852844ba1cc1a5116c34e8d.json",
+      "sha256": "2530c4d2e7cc05e27a472067394d0ecbce5228e6c7746d8c74a61f47bac43e22"
+    },
+    {
+      "path": "execution/plans/e59c0ef50118ab9264b63fac191b4a873dcd7e2a8cb405251cf3d36b911c5584.json",
+      "sha256": "b8b564ece65a7e5175feaffbf739d6cf8d324a9f5500979d49e7738803715f02"
+    },
+    {
+      "path": "execution/plans/f252822130292037c8c53cd6cefbd44ee271146bbd8dab2180afe6a8df3d2bb1.json",
+      "sha256": "8233b7225ff082bf9f6c31a000351ccb61b62dd8243a1aaa4d78b70cfc3feee8"
+    },
+    {
+      "path": "execution/plans/f3a87f7a013f3e173589a83d8e3f41aa456f22602f1da9ef753b83c28262385c.json",
+      "sha256": "43ad868644a7c6f3982518154de97445a8af6f44eeb301e552c17aee5d6632df"
+    },
+    {
+      "path": "execution/plans/f78a74a24a07d89055b3ae929094934a0c62b4645d4408cedb0ba443828c4fd1.json",
+      "sha256": "03696f815ff1184e18dfdba5090268b490ed2a58cb4d2a7250c539f17c4602e1"
+    },
+    {
+      "path": "execution/policy.json",
+      "sha256": "a17575b9333aa21f4dd19fcb47d373e6accb6bda059e740e4b2dfaa8aa377d1f"
+    },
+    {
+      "path": "execution/worker.py",
+      "sha256": "cf4cff342062636f06f20610abc263b41e9f448e6db115f0b66d6902c338b9d5"
+    },
+    {
+      "path": "exposure-plan.json",
+      "sha256": "6d43952577dcd202c913717f7fd8fd249c9372813a9fc43f8ad8dfe1142a30c5"
+    },
+    {
+      "path": "exposure-policy.json",
+      "sha256": "d60e85df15e62eab7ec22867e72784be860c007a96c37af080ddbad757ac71c3"
+    },
+    {
+      "path": "mcp-tools.json",
+      "sha256": "372e07bf1c06b28151f2d37429101d9452f7f15da838b14c4da83595f40ad7b9"
+    },
+    {
+      "path": "repository-interface.json",
+      "sha256": "28c79ddc84d1ee3d4e3d505935e21cb69b3262316473de65a8e728773dce045c"
+    },
+    {
+      "path": "repository-readiness.json",
+      "sha256": "91db7c58901247994d58e25b29e9dd6a5a55cd3b96e840a6c1fb81ca542ff2fe"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "42009f4975689001d808da1e28665597a23620d34819c0b2040c95149e1fe5b1"
+    },
+    {
+      "path": "server.py",
+      "sha256": "291daad318d1d54ca9abc5d37e6b4f6ba67296ee36cd291b164891817aa15c42"
+    },
+    {
+      "path": "source/sample/__init__.py",
+      "sha256": "63b807cd49ef50605c415ecc0478687e1eca42c6b9b02b5a7b55159ab1abf24b"
+    },
+    {
+      "path": "source/sample/admin.py",
+      "sha256": "3bd8b5555291d64ba09d0e617472655fa58fbb8d62c8b274f7e92df4f493bd4b"
+    },
+    {
+      "path": "source/sample/api.py",
+      "sha256": "fbe9fa3c3db171e956d07755e1613bf7ba80b85c8e9bd6ccefa411b87dae8db5"
+    },
+    {
+      "path": "source/sample/pricing.py",
+      "sha256": "62b47156964d62a0eb24e86b1221d16a4f49a43da0956298fb3aa2b596bdb3e9"
+    }
+  ]
+}

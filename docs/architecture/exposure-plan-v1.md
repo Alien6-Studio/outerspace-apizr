@@ -105,9 +105,17 @@ configuration. Runtime binding belongs to the bundle/runtime stage.
 ## Complete evidence and fail-closed behavior
 
 Published 0.4.4 requires `graph_complete = true` and `catalog_exit_code = 0`.
-In Apizr 0.4.5, `exposure.scope.required_evidence` owns the
+In Apizr 0.4.6, `exposure.scope.required_evidence` owns the
 selected execution proof. It consumes validated, bound Catalog, Graph and
 Repository Readiness without source parsing, host lookup or execution.
+
+The entrypoint validates the complete artifacts and composes four owned parts:
+`scope_index` indexes evidence and deterministic dependency paths;
+`scope_admission` checks exact imports, bindings and required module facts;
+`scope_initialization` proves lexical import order with an iterative traversal;
+`scope_model` defines the immutable results. Per-root readiness refinement stays
+in `scope`. Their combined line and branch coverage retains the 95% floor, and
+the required-initialization mutation targets the actual admission implementation.
 
 Roots are the exact IDs left after include/include-all-ready/exclude resolution.
 A bounded, iterative closure follows `calls_capability`, `references_capability`,

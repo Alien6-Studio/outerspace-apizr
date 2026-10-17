@@ -8,11 +8,10 @@ description: Inspect an ordinary scikit-learn notebook, compare two recorded run
 Know which data, code, parameters and environment produced your result, compare
 experiments, then turn the useful Python capability into MCP or REST.
 
-This guide uses **public Apizr 0.4.5 packages**. The full notebook → Run →
-comparison → REST/MCP journey passed from fresh PyPI installations outside the
-checkout. See the [release verification](../releases/0.4.5.md#public-installation).
+Apizr **0.4.6** supports this workflow without instrumentation. For sessions,
+decorators, Jupyter and editor history, start with [your first SDK experiment](tracking.md).
 
-The [fraud detection example](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.4.5/examples/data-science/fraud-detection)
+The [fraud detection example](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.4.6/examples/data-science/fraud-detection)
 is an ordinary notebook: pandas, a small scikit-learn forest, three metrics and
 joblib model serialization. It has no Apizr import, decorator or tracking call.
 Keep the notebook unchanged throughout this guide. Only the active CSV changes
@@ -20,17 +19,28 @@ between the two runs.
 
 ## Prepare your environment
 
-Download [the complete fraud example](../downloads/fraud-detection.zip), extract
-it outside the checkout and open a shell in `fraud-detection/`. The data is
-synthetic; no customer data or external dataset is involved.
+Already using pandas and scikit-learn? Install Apizr's notebook support
+into that same Python environment. Apizr does not provide a science extra or
+install scientific packages as core dependencies.
 
-For the first inspection, install only notebook support. pandas and scikit-learn
-are not needed yet:
+For this exact reference example, use Python 3.11–3.15 on macOS or Linux and a
+fresh virtual environment. Copy the example outside the Apizr checkout. Obtain
+the verified packages and matching target export from the
+[0.4.6 release assets](https://github.com/Alien6-Studio/outerspace-apizr/releases/tag/v0.4.6).
+Extract them as `candidate/` and `target/` beside the example, then open a shell
+in `fraud-detection/`. The target must match your Python and platform.
 
 ```sh
 python3 -m venv ../science
 . ../science/bin/activate
-python -m pip install 'outerspace-apizr[notebook]==0.4.5'
+export CANDIDATE="$(cd ../candidate && pwd)"
+export TARGET="$(cd ../target && pwd)"
+export SCIENCE_WHEELHOUSE="$PWD/../science-wheels"
+python -m pip download --only-binary=:all: -r requirements.txt -d "$SCIENCE_WHEELHOUSE"
+python -m pip install --no-index \
+  --find-links "$TARGET/base" --find-links "$TARGET/extras" \
+  "$CANDIDATE/dist/outerspace_apizr-0.4.6-py3-none-any.whl[notebook,http,mcp]"
+python -m pip install --no-index --find-links "$SCIENCE_WHEELHOUSE" -r requirements.txt
 cp data/transactions-a.csv data/transactions.csv
 ```
 

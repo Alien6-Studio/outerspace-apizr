@@ -9,8 +9,8 @@ import httpx2
 import pytest
 from mcp import Client, StdioServerParameters
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.mcp import generate
-from apizr.inspection import inspect_source
 
 SOURCE = b'''def total(values: list[int], /, *, tax: int = 0):
     """Sum values and tax."""

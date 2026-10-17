@@ -10,7 +10,9 @@ import pytest
 @pytest.fixture
 def packaging(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "scripts"))
-    module = importlib.import_module("coordinated_distributions")
+    module = importlib.import_module(
+        "scripts.qualification.packaging.coordinated_distributions"
+    )
     monkeypatch.setattr(module, "source_commit", lambda: "a" * 40)
     return module
 
@@ -66,6 +68,136 @@ def test_retained_set_rejects_mismatch(packaging, tmp_path, fault):
         packaging.load(tmp_path)
 
 
+@pytest.mark.parametrize(
+    "fault",
+    [
+        None,
+        "downgrade",
+        "missing",
+        "kind",
+        "bytes",
+        "commit",
+        "dirty",
+        "fixture",
+        "reproducibility",
+        "licences",
+        "proof-files",
+    ],
+)
+def test_coordinated_vsix_is_source_bound_and_cannot_be_omitted(
+    packaging, tmp_path, fault
+):
+    from release_candidate_helpers import attach_editor
+
+    value = candidate(tmp_path, packaging)
+    value["version"] = "0.4.6"
+    for item in value["artifacts"]:
+        path = tmp_path / item["file"]
+        renamed = path.with_name(path.name.replace("0.4.0", "0.4.6"))
+        path.rename(renamed)
+    value["artifacts"] = [
+        packaging.record(p, tmp_path) for p in sorted((tmp_path / "dist").iterdir())
+    ]
+    attach_editor(tmp_path, value, packaging.ROOT)
+    snapshot = tmp_path / "release-metadata.json"
+    packaging.write(snapshot, packaging.check_release_metadata(packaging.ROOT))
+    value["release_metadata"] = packaging.record(snapshot, tmp_path)
+    proof_path = tmp_path / "editor/apizr-0.4.6.json"
+    proof = json.loads(proof_path.read_text())
+    if fault == "downgrade":
+        value["schema"] = "apizr.release-candidate/v1"
+        value["artifacts"] = value["artifacts"][:-1]
+    elif fault == "missing":
+        value["artifacts"].pop()
+    elif fault == "kind":
+        value["artifacts"][-1]["kind"] = "wheel"
+    elif fault == "bytes":
+        (tmp_path / value["artifacts"][-1]["file"]).write_bytes(b"replacement")
+    elif fault == "commit":
+        proof["source_commit"] = "b" * 40
+    elif fault == "dirty":
+        proof["source_dirty"] = True
+    elif fault == "fixture":
+        proof["qualification_fixture"] = True
+    elif fault == "reproducibility":
+        proof["repeated_build_identical"] = False
+    elif fault == "proof-files":
+        proof["files"].pop(next(iter(proof["files"])))
+    elif fault == "licences":
+        packaging.write(
+            tmp_path / "editor/dependency-licenses.json",
+            {"result": "pass", "runtime_dependencies": 0, "packages": {}},
+        )
+    packaging.write(proof_path, proof)
+    value["editor_evidence"] = [
+        packaging.record(tmp_path / i["file"], tmp_path)
+        for i in value["editor_evidence"]
+    ]
+    packaging.write(tmp_path / "candidate.json", value)
+    if fault:
+        with pytest.raises(ValueError):
+            packaging.load(tmp_path)
+    else:
+        assert packaging.load(tmp_path) == value
+        assert len(value["artifacts"]) == 9
+
+
+@pytest.mark.parametrize("fault", [None, "source", "native"])
+def test_only_locked_pure_yaml_can_be_prepared_from_source(
+    packaging, tmp_path, monkeypatch, fault
+):
+    import hashlib
+    import zipfile
+
+    house = tmp_path / "extras"
+    house.mkdir()
+    source = house / "pyyaml-6.0.3.tar.gz"
+    content = b"locked upstream source"
+    lock = tmp_path / "resolved.txt"
+    lock.write_text("pyyaml==6.0.3\n")
+    (tmp_path / "uv.lock").write_text(
+        '[[package]]\nname="pyyaml"\nversion="6.0.3"\n'
+        'sdist={hash="sha256:' + hashlib.sha256(content).hexdigest() + '"}\n'
+    )
+    monkeypatch.setattr(packaging, "ROOT", tmp_path)
+    monkeypatch.setattr(packaging.sys, "version_info", (3, 15))
+    calls = []
+
+    def prepare(*args, **kwargs):
+        calls.append(args)
+        if "download" in args:
+            assert "--require-hashes" in args and "--only-binary=:all:" in args
+            assert "--no-binary=pyyaml" in args
+            source.write_bytes(b"tampered" if fault == "source" else content)
+        else:
+            env = kwargs["env"]
+            assert env["PYYAML_FORCE_LIBYAML"] == "0"
+            assert env["CC"] == env["CXX"] == env["RUSTC"] == "/usr/bin/false"
+            with zipfile.ZipFile(house / "pyyaml-6.0.3-py3-none-any.whl", "w") as wheel:
+                wheel.writestr(
+                    "pyyaml-6.0.3.dist-info/METADATA", "Name: PyYAML\nVersion: 6.0.3\n"
+                )
+                if fault == "native":
+                    wheel.writestr("yaml/_yaml.so", b"native extension")
+        return "prepared without native compilation\n"
+
+    monkeypatch.setattr(packaging, "run", prepare)
+    if fault:
+        with pytest.raises(ValueError, match="(locked|pure-Python)"):
+            packaging.download_closure(tmp_path / "python", lock, house)
+        assert not (tmp_path / "pyyaml-build/provenance.json").exists()
+        if fault == "source":
+            assert len(calls) == 1
+    else:
+        packaging.download_closure(tmp_path / "python", lock, house)
+        assert not source.exists()
+        evidence = json.loads((tmp_path / "pyyaml-build/provenance.json").read_text())
+        assert (
+            evidence["upstream_source"]["sha256"] == hashlib.sha256(content).hexdigest()
+        )
+        assert evidence["prepared_wheel"]["file"].endswith("py3-none-any.whl")
+
+
 def test_candidate_proof_never_falls_back_to_rebuild(packaging, tmp_path, monkeypatch):
     monkeypatch.setenv("APIZR_RELEASE_SET", str(tmp_path))
     monkeypatch.delenv("APIZR_RELEASE_TARGET", raising=False)
@@ -77,7 +209,9 @@ def test_candidate_proof_never_falls_back_to_rebuild(packaging, tmp_path, monkey
 @pytest.fixture
 def publication(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "scripts"))
-    return importlib.import_module("prepare_publication")
+    return importlib.import_module(
+        "scripts.qualification.packaging.prepare_publication"
+    )
 
 
 @pytest.mark.parametrize("fault", ["different", "extra", "network"])

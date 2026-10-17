@@ -190,8 +190,8 @@ The manifest hashes every other generated artifact and links source, IR and
 readiness digests. It is content metadata, not a signature or attestation.
 
 This v1 command does not infer project dependencies or create Docker files.
-[The historical generation workflow](apizr.md) remains available through
-`apizr --script ...` and `apizr --notebook ...`, with its existing behavior.
+The historical generation workflow was removed in 0.4.6. Use the
+[migration table](../../releases/migrate-0.4.6.md#removed-generation-pipeline).
 
 See [REST generator v1](../../architecture/rest-generator-v1.md) for the exact type
 mapping, integrity checks, manifest, deterministic serialization and limitations.

@@ -82,13 +82,23 @@ def candidate_artifacts(candidate: dict, version: str, source_sha: str) -> dict:
     if any(
         candidate.get(k) != v
         for k, v in {
-            "schema": "apizr.release-candidate/v1",
             "repository": REPOSITORY,
             "version": version,
             "commit": source_sha,
         }.items()
     ):
         raise ValueError("Candidate identity mismatch")
+    if candidate.get("schema") not in {
+        "apizr.release-candidate/v1",
+        "apizr.release-candidate/v2",
+    }:
+        raise ValueError("Candidate identity mismatch")
+    if candidate["schema"] == "apizr.release-candidate/v2":
+        from scripts.qualification.packaging.check_distribution import (
+            candidate_inventory,
+        )
+
+        candidate_inventory(candidate)
     expected = {}
     for name in PACKAGES:
         filenames = {

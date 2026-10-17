@@ -9,7 +9,8 @@ import pytest
 from batch_inputs import request
 
 from apizr.capabilities.model import Digest
-from apizr.delivery import DeliveryManifest, identity
+from apizr.contracts.delivery import DeliveryManifest, identity
+from apizr.contracts.results import PushResult
 from apizr.delivery_batch import (
     BatchError,
     BatchRequest,
@@ -18,9 +19,8 @@ from apizr.delivery_batch import (
     operations,
 )
 from apizr.delivery_batch.models import MAX_DESTINATIONS
-from apizr.delivery_results import PushResult
 from apizr.extension_runtime import InvocationCancelled, PluginFailed
-from apizr.operator_policy import AuthorizationDenied
+from apizr.workspace.operator_policy import AuthorizationDenied
 
 D = Digest(algorithm="sha256", value="b" * 64)
 IMAGE = "sha256:" + "a" * 64
@@ -438,9 +438,9 @@ def test_managed_authorization_is_independent_at_every_destination_stage(
 ):
     from contextlib import contextmanager
 
-    from apizr.operator_policy import OperatorPolicy, PluginIdentity
     from apizr.plugins.local import activation
     from apizr.plugins.local.models import Installation
+    from apizr.workspace.operator_policy import OperatorPolicy, PluginIdentity
 
     batch = request(tmp_path)
     bindings = {}
@@ -483,6 +483,15 @@ def test_managed_authorization_is_independent_at_every_destination_stage(
                 grant.update(
                     expected_signer=SIGNER,
                     permissions=["registry.read", "receipt.sign", "timestamp.request"],
+                )
+            if operation in {"attest", "publish", "admit"}:
+                grant["verification"] = destination.proof.verification.model_dump(
+                    include={
+                        "tool",
+                        "expected_signer",
+                        "trust_store",
+                        "trust_store_sha256",
+                    }
                 )
             grants.append(grant)
     policy = OperatorPolicy.model_validate_json(

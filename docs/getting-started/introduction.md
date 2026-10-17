@@ -10,10 +10,18 @@ description: Choose Python functions, create a service and call them through RES
 
 <span id="introduction"></span>
 
-## Start with an experiment (0.4.5)
+Prefer a guided learning path? [Apizr Academy](../academy/index.md) orders the
+existing tutorials and explains capabilities, readiness, selection and execution.
 
-For a training script or notebook, begin by inspecting the evidence. With the
-published package installed, this first example needs no science framework:
+<span id="start-with-an-experiment-045"></span>
+
+## Start with an experiment
+
+The historical `--script`/`--notebook` FastAPI pipeline is removed in
+Apizr 0.4.6. Migrate to `apizr inspect`,
+explicit exposure selection, and `apizr generate rest` or `apizr generate mcp`.
+
+For a training script or notebook, begin by inspecting the evidence. With Apizr 0.4.6 installed, this first example needs no science framework:
 
 <!-- experiment-inspection:start-here -->
 ```sh
@@ -38,12 +46,12 @@ price and check stock. The helper functions stay private.
 For the shortest path to a working server, follow the [Quickstart](quickstart.md).
 For a research project with unfinished experiments, see
 [exposing an independent serving function](user-guide/exposure.md#work-with-unfinished-research-code)
-in Apizr 0.4.5.
+in Apizr 0.4.6.
 
 ## Install
 
 Follow [Install Apizr](install.md), then check `apizr --version` in that environment.
-The current published version is 0.4.5. You will install the generated server's
+This guide uses version 0.4.6. You will install the generated server's
 dependencies when you are ready to run it.
 
 ## Walk through a small repository
@@ -158,9 +166,8 @@ Apizr checks your code before generating a server. A function marked `READY`
 can still stay private: your selection determines what clients can call.
 
 You may see `_price` marked `CONDITIONAL` when scanning this example because it
-imports code from another file. In Apizr 0.4.5, the next readiness
-step recognizes that local helper and succeeds. Earlier 0.4.4 reports it
-as conditional. The two selected public functions can be built in both versions.
+imports code from another file. In Apizr 0.4.6, the repository readiness step recognizes that local helper
+and succeeds. The two selected public functions can be built.
 See [Repository readiness](user-guide/repository-readiness.md) for diagnostic details.
 
 Running the generated server executes your Python code with your user permissions.

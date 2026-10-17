@@ -14,9 +14,9 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 from jsonschema import Draft202012Validator
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.rest import generate, render
 from apizr.generators.rest.planner import GenerationRefused
-from apizr.inspection import inspect_source
 
 from .helpers import application
 

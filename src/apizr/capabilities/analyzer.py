@@ -7,6 +7,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
+from .instrumentation import TrackingBindings, own_yield
 from .model import (
     Availability,
     Capability,
@@ -24,6 +25,7 @@ from .model import (
     Source,
     SourceSpan,
 )
+from .source import MAX_SOURCE_BYTES, check_tree, read_source
 from .types import (
     DeclaredType,
     Evidence,
@@ -150,35 +152,18 @@ class _ModuleScope(ast.NodeVisitor):
         return True
 
 
-class _OwnYield(ast.NodeVisitor):
-    found = False
-
-    def visit_Yield(self, node: ast.Yield | ast.YieldFrom) -> None:
-        self.found = True
-
-    visit_YieldFrom = visit_Yield
-
-    def visit_FunctionDef(self, node: Function | ast.ClassDef | ast.Lambda) -> None:
-        pass
-
-    visit_AsyncFunctionDef = visit_FunctionDef
-    visit_ClassDef = visit_FunctionDef
-    visit_Lambda = visit_FunctionDef
-
-
 def _execution(node: Function) -> ExecutionForm:
-    visitor = _OwnYield()
-    for statement in node.body:
-        visitor.visit(statement)
+    generator = own_yield(node)
     if isinstance(node, ast.AsyncFunctionDef):
-        return ExecutionForm.ASYNC_GENERATOR if visitor.found else ExecutionForm.ASYNC
-    return ExecutionForm.GENERATOR if visitor.found else ExecutionForm.SYNC
+        return ExecutionForm.ASYNC_GENERATOR if generator else ExecutionForm.ASYNC
+    return ExecutionForm.GENERATOR if generator else ExecutionForm.SYNC
 
 
 class _Analyzer:
     def __init__(self, tree: ast.Module, source: Source) -> None:
         self.source = source
         self.scope = _ModuleScope(tree)
+        self.tracking = TrackingBindings(tree)
         self.diagnostics: list[Diagnostic] = []
 
     def span(self, node: ast.stmt, symbol: str) -> SourceSpan:
@@ -333,7 +318,10 @@ class _Analyzer:
                 node,
                 node.name,
             )
-        if node.decorator_list:
+        unknown_decorator = bool(
+            node.decorator_list
+        ) and not self.tracking.inert_decorator(node)
+        if unknown_decorator:
             self.diagnostic(
                 DiagnosticCode.BINDING,
                 Severity.WARNING,
@@ -341,7 +329,7 @@ class _Analyzer:
                 node,
                 node.name,
             )
-        unknown = conditional or bool(node.decorator_list)
+        unknown = conditional or unknown_decorator
         return Capability(
             id=f"python:{self.source.module}:{node.name}",
             name=node.name,
@@ -387,13 +375,18 @@ class _Analyzer:
 def inspect_source(source: str | bytes, *, module_name: str) -> CapabilityDocument:
     """Inspect source text/bytes without execution. Strings mean UTF-8 bytes."""
     module = logical_module(module_name)
+    if len(source) > MAX_SOURCE_BYTES:
+        raise ValueError("source_byte_limit")
     raw = source.encode("utf-8") if isinstance(source, str) else source
+    if len(raw) > MAX_SOURCE_BYTES:
+        raise ValueError("source_byte_limit")
     if isinstance(source, str):
         text = source
     else:
         encoding, _ = tokenize.detect_encoding(io.BytesIO(raw).readline)
         text = raw.decode(encoding)
     tree = ast.parse(text, filename="<capability-source>")
+    check_tree(tree)
     return _Analyzer(
         tree, Source(kind="python", module=module, digest=Digest.of_bytes(raw))
     ).document()
@@ -401,4 +394,4 @@ def inspect_source(source: str | bytes, *, module_name: str) -> CapabilityDocume
 
 def inspect_file(path: str | Path, *, module_name: str) -> CapabilityDocument:
     """Read exactly the explicitly supplied file, without resolving imports."""
-    return inspect_source(Path(path).read_bytes(), module_name=module_name)
+    return inspect_source(read_source(path), module_name=module_name)

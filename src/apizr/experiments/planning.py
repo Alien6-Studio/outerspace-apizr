@@ -105,7 +105,7 @@ def derive_plan(
         for values in candidates.values()
         if len(values) == 1
     )
-    controls = {
+    controls: dict[str, object] = {
         "timeout_ms": options.timeout_ms,
         "environment": "inherit" if options.inherit_environment else "clean",
         "environment_names": options.environment_names,
@@ -120,6 +120,8 @@ def derive_plan(
         "required_outputs": tuple(o.model_dump(mode="json") for o in options.outputs),
         "observation_policy": "static-bindings-and-boundary-snapshots/v1",
     }
+    if inspection.providers is not None:
+        controls["scientific_providers"] = inspection.providers.model_dump(mode="json")
     source = inspection.code.source
     return ExperimentPlan(
         subject=SourceIdentity(
