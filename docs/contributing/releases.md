@@ -289,7 +289,8 @@ retain the public comparison and signed timestamped receipt before declaring del
 
 ### Dated directory verification after authorized publication
 
-Record a dated observation for each channel in `docs/releases/0.4.6.md`, retaining
+Record a dated observation for each channel in the product’s `releases/0.4.6.md`,
+then update the corresponding website release page on `gh-pages`, retaining
 the JSON responses or a dated explanation when an API is unavailable:
 
 - Official Registry: exact version and `isLatest`; PyPI: actual archive bytes and

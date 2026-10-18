@@ -18,7 +18,7 @@ Implementations are grouped by responsibility:
 | Package | Responsibility |
 | --- | --- |
 | `scripts.qualification.ci` | Repository policy, dependencies, architecture, coverage, security and CI measurements |
-| `scripts.qualification.docs` | Site identity, publication validation and executable reader examples |
+| `scripts.qualification.examples` | Product README and frozen executable journey fixtures against installed candidate wheels |
 | `scripts.qualification.packaging` | Coordinated candidates, installed distributions, Homebrew and release evidence |
 | `scripts.qualification.extensions` | Plugin preparation, catalogues, profiles, synchronization and cleanup |
 | `scripts.qualification.interfaces` | MCP clients, schemas, REST collections and onboarding |
@@ -83,8 +83,10 @@ then push and qualify the whole batch once. Moving a proof or adding a ticket
 does not require starting another full platform matrix in the middle of that
 batch. The separate pytest performance comparison is manual only.
 
-Academy source/shot-list preparation uses
-`python3 -m scripts.qualification.docs.academy_lessons --output /absolute/new/directory`.
+Website build and publication tools live under `scripts/` in the separate
+`gh-pages` checkout; they are outside the product ownership inventory. Academy
+source/shot-list preparation runs there with
+`python3 academy/academy_lessons.py --output /absolute/new/directory`.
 See [the existing recording process](../academy/production.md); this command
 does not render or publish videos. The loopback-only
 `python3 -m scripts.qualification.interfaces.telemetry_conformance --endpoint http://127.0.0.1:8080 --output /absolute/report.json`
