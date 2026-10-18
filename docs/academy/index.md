@@ -12,9 +12,9 @@ description: Learn to build useful Python interfaces, interpret experiment evide
 
 ## From useful Python code to results you can explain
 
-A teammate gives you a Python function and a training notebook. What can you safely describe? Which function should become callable? What did an experiment actually record, and what remains unknown?
+Follow the projects and decisions actually shown in Apizr Academy: inspect Requests, expose arithmetic and colour conversions, connect an OCI/MCP image to Ollama, then review fraud and Wine experiments.
 
-Work through those questions in **12 complete lessons**. Each has an integrated video, a written explanation, a concrete exercise and a correction you can open after trying it. You need basic Python; no prior Apizr or MCP knowledge is assumed.
+Work through those questions in **12 lessons following the produced recordings**. Each has an integrated video, a written explanation, a concrete exercise and a correction you can open after trying it. Lessons I–V start with basic Python and introduce the Apizr/MCP workflow. Lessons VI–XI assume familiarity with notebooks and model evaluation; XII applies the review workflow in VS Code.
 
 [Start with lesson 1](install.md){ .md-button .md-button--primary }
 [Choose your learning path](#choose-your-learning-path){ .md-button }
@@ -23,7 +23,7 @@ Work through those questions in **12 complete lessons**. Each has an integrated 
 </div>
 
 !!! info "Choose the environment before you begin"
-    The exercises target **Apizr 0.4.6 development**, which is not a published package release. [Lesson 1](install.md) explains how to choose the documented development installation or the stable 0.4.5 alternative. Earlier videos retain their originally demonstrated version. The practice-time estimates include watching and trying the exercise; take longer whenever you need it.
+    **I–V were recorded with Apizr 0.4.3; VI–XII use the 0.4.6 development candidate**, which is not a published package release. Each lesson identifies its recorded version, chapters and exact transcript. Use [the current installation guide](../getting-started/install.md) for a new installation, or the identified recording environment to replay it. The written exercises follow the filmed case and pause questions.
 
 ## Choose your learning path
 
@@ -31,9 +31,9 @@ Work through those questions in **12 complete lessons**. Each has an integrated 
 
 <article markdown="1">
 
-### [01 · Build a service](#build-a-service)
+### [01 · Build interfaces](#build-a-service)
 
-For Python developers making a function callable by an application or an AI client. Begin with installation and inspection, make real REST and MCP calls, then understand the container handoff.
+For Python developers making a function callable by an application or an AI client. Begin with installation and inspection, make real REST and MCP calls, then follow an OCI image through an Ollama tool request.
 
 **Lessons 1–5 · 29 min of video · hands-on work at your pace**
 
@@ -61,18 +61,20 @@ For people who already work in Python, Jupyter or VS Code. Choose meaningful cap
 
 </div>
 
-## Build a service
+<span id="build-a-service"></span>
 
-Start with the shop’s price and stock calculations. Your result is a real local call, plus an explanation of what generation, execution and publication each establish.
+## Build interfaces
+
+Each video names its own source: four utility projects for installation, Requests for analysis, keon/algorithms for REST, TheAlgorithms/Python for MCP, and the Apizr shop for OCI with Ollama. The changes of repository are part of the recorded progression.
 
 <div class="apizr-academy-courses" markdown="1">
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="install/"><img src="../assets/videos/tutorial-install.jpg" alt="Lesson 1: Install Apizr in the right environment" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="install/"><img src="../assets/videos/tutorial-install.jpg" alt="Lesson 1: Install Apizr and inspect four real projects" loading="lazy" width="1280" height="720" /></a>
 
 <span id="01-install"></span>
-### 01 · [Install Apizr in the right environment](install.md)
+### 01 · [Install Apizr and inspect four real projects](install.md)
 
-Choose an installation you can explain and verify.
+Choose one installation method, identify its environment and read an actual inspection result.
 
 <p class="apizr-academy-course__time">Video 6:39 · Plan about 20 min</p>
 
@@ -80,12 +82,12 @@ Choose an installation you can explain and verify.
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="inspect/"><img src="../assets/videos/tutorial-inspect.jpg" alt="Lesson 2: Read a Python contract before running code" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="inspect/"><img src="../assets/videos/tutorial-inspect.jpg" alt="Lesson 2: Read Requests with doctor, scan and inspect" loading="lazy" width="1280" height="720" /></a>
 
 <span id="02-inspect"></span>
-### 02 · [Read a Python contract before running code](inspect.md)
+### 02 · [Read Requests with doctor, scan and inspect](inspect.md)
 
-Separate a callable description, readiness and permission.
+Separate setup checks, repository inventory and the unsupported Requests.get contract.
 
 <p class="apizr-academy-course__time">Video 4:11 · Plan about 20 min</p>
 
@@ -93,12 +95,12 @@ Separate a callable description, readiness and permission.
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="rest/"><img src="../assets/videos/tutorial-rest.jpg" alt="Lesson 3: Turn a selected function into a REST call" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="rest/"><img src="../assets/videos/tutorial-rest.jpg" alt="Lesson 3: Generate a REST API for gcd and lcm" loading="lazy" width="1280" height="720" /></a>
 
 <span id="03-rest"></span>
-### 03 · [Turn a selected function into a REST call](rest.md)
+### 03 · [Generate a REST API for gcd and lcm](rest.md)
 
-Connect Python arguments, an HTTP request and an observed response.
+Expose two functions from keon/algorithms and verify successful calls and HTTP 422.
 
 <p class="apizr-academy-course__time">Video 4:14 · Plan about 25 min</p>
 
@@ -106,12 +108,12 @@ Connect Python arguments, an HTTP request and an observed response.
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="mcp/"><img src="../assets/videos/tutorial-mcp.jpg" alt="Lesson 4: Expose the same calculation as an MCP tool" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="mcp/"><img src="../assets/videos/tutorial-mcp.jpg" alt="Lesson 4: Call RGB and HSV conversions through MCP" loading="lazy" width="1280" height="720" /></a>
 
 <span id="04-mcp"></span>
-### 04 · [Expose the same calculation as an MCP tool](mcp.md)
+### 04 · [Call RGB and HSV conversions through MCP](mcp.md)
 
-Discover and call a tool before introducing an AI client.
+Discover two generated colour-conversion tools, make real calls and read an error.
 
 <p class="apizr-academy-course__time">Video 5:09 · Plan about 25 min</p>
 
@@ -119,12 +121,12 @@ Discover and call a tool before introducing an AI client.
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="oci/"><img src="../assets/videos/tutorial-oci.jpg" alt="Lesson 5: Package a service for another machine" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="oci/"><img src="../assets/videos/tutorial-oci.jpg" alt="Lesson 5: Build an MCP image and let Ollama call pricing.total" loading="lazy" width="1280" height="720" /></a>
 
 <span id="05-oci"></span>
-### 05 · [Package a service for another machine](oci.md)
+### 05 · [Build an MCP image and let Ollama call pricing.total](oci.md)
 
-Distinguish a generated bundle, a built image and a published image.
+Follow the recorded OCI plugin build and the actual local model-to-container tool call.
 
 <p class="apizr-academy-course__time">Video 8:21 · Plan about 30 min</p>
 
@@ -138,16 +140,16 @@ Distinguish a generated bundle, a built image and a published image.
 
 ## Understand experiments
 
-Follow the synthetic fraud case through inspection, retained Runs, comparison and a selected prediction. Each lesson also offers a smaller exercise to make the evidence easier to reason about.
+Follow the synthetic fraud case through inspection, retained Runs, comparison and a selected prediction. Replay the same notebook, data changes, integrity refusals and comparison variants as the recordings.
 
 <div class="apizr-academy-courses" markdown="1">
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="experiment-inspection/"><img src="../assets/videos/tutorial-experiment-inspection.png" alt="Lesson 6: Inspect a notebook without inventing results" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="experiment-inspection/"><img src="../assets/videos/tutorial-experiment-inspection.png" alt="Lesson 6: Inspect the fraud notebook before training" loading="lazy" width="1280" height="720" /></a>
 
 <span id="06-inspect-experiment-evidence"></span>
-### 06 · [Inspect a notebook without inventing results](experiment-inspection.md)
+### 06 · [Inspect the fraud notebook before training](experiment-inspection.md)
 
-Tell source evidence from values observed during execution.
+Read static evidence, change the CSV and distinguish notebook bytes from scientific signals.
 
 <p class="apizr-academy-course__time">Video 5:54 · Plan about 20 min</p>
 
@@ -155,12 +157,12 @@ Tell source evidence from values observed during execution.
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="runs/"><img src="../assets/videos/tutorial-experiment-history.png" alt="Lesson 7: Run trusted code and read its retained evidence" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="runs/"><img src="../assets/videos/tutorial-experiment-history.png" alt="Lesson 7: Run the fraud notebook and read retained history" loading="lazy" width="1280" height="720" /></a>
 
 <span id="07-run-an-experiment-and-read-its-history"></span>
-### 07 · [Run trusted code and read its retained evidence](runs.md)
+### 07 · [Run the fraud notebook and read retained history](runs.md)
 
-Connect the intended Plan, the observed Run and the files you retain.
+Connect Plan, actual metrics and model identity, then test a corrupted store.
 
 <p class="apizr-academy-course__time">Video 6:15 · Plan about 25 min</p>
 
@@ -168,12 +170,12 @@ Connect the intended Plan, the observed Run and the files you retain.
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="comparison/"><img src="../assets/videos/tutorial-experiment-comparison.png" alt="Lesson 8: Compare Runs and interpret a metric delta" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="comparison/"><img src="../assets/videos/tutorial-experiment-comparison.png" alt="Lesson 8: Compare the two recorded fraud Runs" loading="lazy" width="1280" height="720" /></a>
 
 <span id="08-compare-experiment-runs"></span>
-### 08 · [Compare Runs and interpret a metric delta](comparison.md)
+### 08 · [Compare the two recorded fraud Runs](comparison.md)
 
-Describe observed differences without claiming they caused an improvement.
+Read material changes, the actual metric trade-off, self-comparison and reverse deltas.
 
 <p class="apizr-academy-course__time">Video 7:15 · Plan about 25 min</p>
 
@@ -181,14 +183,14 @@ Describe observed differences without claiming they caused an improvement.
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="model-serving/"><img src="../assets/videos/tutorial-experiment-exposure.png" alt="Lesson 9: Bind a reviewed model to a callable prediction" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="model-serving/"><img src="../assets/videos/tutorial-experiment-exposure.png" alt="Lesson 9: Expose the retained fraud prediction model" loading="lazy" width="1280" height="720" /></a>
 
 <span id="09-expose-a-selected-prediction"></span>
-### 09 · [Bind a reviewed model to a callable prediction](model-serving.md)
+### 09 · [Expose the retained fraud prediction model](model-serving.md)
 
-Choose exact evidence, model bytes and an interface.
+Select the Run, fraud_detection.predict, model bytes and scientific dependencies.
 
-<p class="apizr-academy-course__time">Video 6:50 · Plan about 30 min</p>
+<p class="apizr-academy-course__time">Video 6:49 · Plan about 30 min</p>
 
 [Open the lesson](model-serving.md)
 
@@ -201,27 +203,27 @@ Move from explicit Python capture to a live Jupyter kernel, then review real Win
 
 <div class="apizr-academy-courses" markdown="1">
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="python-tracking/"><img src="../assets/videos/tutorial-sdk.png" alt="Lesson 10: Choose the unit you capture in Python" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="python-tracking/"><img src="../assets/videos/tutorial-sdk.png" alt="Lesson 10: Capture the fraud holdout with sessions and decorators" loading="lazy" width="1280" height="720" /></a>
 
 <span id="10-track-python-calls"></span>
-### 10 · [Choose the unit you capture in Python](python-tracking.md)
+### 10 · [Capture the fraud holdout with sessions and decorators](python-tracking.md)
 
-Record useful observations while preserving ordinary function behaviour.
+Track actual threshold evaluations, preserve returns and inspect the failed capture.
 
-<p class="apizr-academy-course__time">Video 6:30 · Plan about 25 min</p>
+<p class="apizr-academy-course__time">Video 6:29 · Plan about 25 min</p>
 
 [Open the lesson](python-tracking.md)
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="jupyter/"><img src="../assets/videos/tutorial-jupyter.png" alt="Lesson 11: Read a notebook’s actual execution history" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="jupyter/"><img src="../assets/videos/tutorial-jupyter.png" alt="Lesson 11: Capture real Jupyter cells and the hidden calibration change" loading="lazy" width="1280" height="720" /></a>
 
 <span id="11-capture-real-jupyter-cells"></span>
-### 11 · [Read a notebook’s actual execution history](jupyter.md)
+### 11 · [Capture real Jupyter cells and the hidden calibration change](jupyter.md)
 
-Distinguish saved cells, live state and recorded cell executions.
+Read four real captures, repeat first-variant and explain the unlogged offset.
 
-<p class="apizr-academy-course__time">Video 5:56 · Plan about 25 min</p>
+<p class="apizr-academy-course__time">Video 5:55 · Plan about 25 min</p>
 
 [Open the lesson](jupyter.md)
 

@@ -1,62 +1,74 @@
 ---
-title: Read a notebook’s actual execution history
-description: Distinguish saved cells, live state and recorded cell executions.
+title: Capture real Jupyter cells and the hidden calibration change
+description: Read four real captures, repeat first-variant and explain the unlogged offset.
 lesson: 11
+recording: 11-jupyter
 ---
 
-<p class="apizr-academy-kicker">Track and review · Lesson 11 · Plan about 25 min</p>
+<p class="apizr-academy-kicker">Track and review · Lesson 11</p>
 
-# Read a notebook’s actual execution history
+# Capture real Jupyter cells and the hidden calibration change
 
-A notebook looks ordered from top to bottom, but its kernel remembers the order in which cells actually ran. A changed threshold can remain in memory even when the visible saved notebook suggests a different value.
-
-You will repeat a real captured cell and examine the new Run, its available cell identity and execution count. Treat the notebook file and the live kernel as related sources of evidence with different limits.
+The video drives a real ipykernel through a terminal. It uses the **same fraud holdout** as lesson 10, then changes an unlogged calibration offset before repeating a captured cell. It is not a recording of a Jupyter graphical frontend.
 
 !!! abstract "By the end of this lesson"
-    - Distinguish a saved notebook from its current kernel state.
-    - Recognize a repeated captured cell as a new execution.
-    - Explain what selected file and parameter evidence leaves unknown.
+    - Distinguish notebook file identity, kernel cell identity and Run identity.
+    - Predict the four retained captures, including a repeated cell.
+    - Explain the actual effect of the unlogged calibration_offset.
 
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=VqTmKCU-Auo" data-apizr-video="VqTmKCU-Auo" data-apizr-title="Track real Jupyter cell executions and hidden kernel state" aria-label="Play: Track real Jupyter cell executions and hidden kernel state">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=VqTmKCU-Auo" data-apizr-video="VqTmKCU-Auo" data-apizr-title="Capture real Jupyter cells" aria-label="Play: Track real Jupyter cell executions and hidden kernel state">
     <img src="../../assets/videos/tutorial-jupyter.png" width="1280" height="720" loading="lazy" alt="Academy Part XI: inspect real Jupyter cell executions and retained Runs" />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>
 
-English · 5:56 · The written steps below target 0.4.6 development; the recording keeps its original demonstrated version.
+<!-- recording-transcript -->
 
-## 1. Use the environment of the actual kernel
+## 1. Use the recorded notebook and holdout
 
-Install the development SDK in the interpreter selected by Jupyter, following [lesson 1](install.md). Open the [runnable capture notebook](../getting-started/tracking.md#3-use-the-same-calls-in-jupyter) and run its cells in order in a fresh exercise directory.
+Prepare `evaluation.csv` as in [lesson 10](python-tracking.md), using the `fraud-detection/` folder in the [recorded materials](../downloads/academy-recorded-examples.zip). That folder includes the actual `fraud-thresholds.ipynb`, not a substitute demonstration notebook.
 
-The same SDK calls work in the live kernel. The recording shows real ipykernel execution through a terminal; it is not a demonstration of the Jupyter graphical interface.
+For manual practice, open it with the scientific environment's Jupyter kernel, execute its code cells in order, then repeat `first-variant` after `calibration-change`. Defining the decorated function is not an evaluation call.
 
-## 2. Observe execution, rather than assuming file order
-
-List the history from that working directory and interpreter:
+**Exact terminal replay:** the recording uses the product checkout's `scripts.qualification.experiments.academy_kernel` driver. With its source root on `PYTHONPATH`, run the selected scientific interpreter using:
 
 ```sh
-apizr experiment list
-apizr experiment show RUN_ID
+python -m scripts.qualification.experiments.academy_kernel --notebook fraud-thresholds.ipynb --workspace "$APIZR_ACADEMY_KERNEL_WORKSPACE" --input evaluation.csv --pause 3
 ```
 
-Replace `RUN_ID` with an actual retained identifier. Read the capture context, available cell identity, execution count, selected parameters and observations. A frontend may not provide every piece of cell metadata. Missing evidence should remain explicit.
+Set `APIZR_ACADEMY_KERNEL_WORKSPACE` to a fresh directory outside the checkout. The driver sends the actual cells to ipykernel and then repeats `first-variant`; it checks the four resulting captures. The [recording procedure](production.md) describes the checkout/interpreter selection for this terminal driver.
 
-A saved file’s hash identifies its bytes. It does not identify all current in-memory objects. Equally, an execution count helps interpret an observed cell execution; it does not prove scientific reproducibility of the entire notebook.
+## 2. Read the four captures
+
+The retained recording shows one session, two threshold calls, then the first call again:
+
+| Captured cell | Kernel count in the recording | Threshold | Flagged rows |
+| --- | ---: | ---: | ---: |
+| `session` | 2 | 0.5 | 35 |
+| `first-variant` | 4 | 0.35 | 60 |
+| `second-variant` | 5 | 0.65 | 21 |
+| `first-variant`, repeated | 7 | 0.35 | 103 |
+
+Use `apizr experiment list` and `show` on that workspace's history. With the terminal driver, select `--store "$APIZR_ACADEMY_KERNEL_WORKSPACE/.apizr/experiments/v1"`. Your own frontend may provide different cell metadata or execution counts; read what was actually captured.
+
+## 3. Explain the calibration variant
+
+Before the repeated call, the notebook changes **`calibration_offset` from 0.0 to 0.2** in live memory without logging it. The threshold and selected CSV identity stay the same. Yet the repeated `first-variant` flags **103 rather than 60** rows; recorded recall changes from **0.6875 to approximately 0.9792**.
+
+The saved input file, cell ID and logged threshold do not identify all live kernel state. A new execution count tells you order, not the values of every in-memory object.
 
 ## Practice
 
-1. Run a captured cell, record its Run ID and available execution count, then run that same cell again.
-2. Check that a new Run exists and explain the observed counts.
-3. Change an in-memory setting in another cell. Before executing the captured cell again, predict which selected parameter or metric should reflect that change. Explain what you could still not reconstruct from the saved notebook alone.
+Use the filmed question: must the same cell ID and threshold produce the same metric after an unlogged in-memory input changes? Can the execution count tell you which values were used? Propose the missing observation.
 
 ??? success "Check your reasoning"
 
-    Repeating a captured execution creates a new Run. Its observed execution context can differ even when the visible source text is the same. Selected runtime parameters and metrics help describe the execution that actually occurred.
+    The same cell can read different live state. A new count and Run preserve a distinct execution, not a complete memory snapshot. In this case, explicitly log `calibration_offset` as a parameter and preserve the relevant source. Keep that proposed correction separate from the recording, which deliberately leaves the offset unlogged to demonstrate the limitation.
 
-    The saved notebook alone may omit the live sequence and state that led there. A Run also does not snapshot every in-memory object. Keep selected file identities, explicit parameters and those unknowns separate when interpreting or sharing results.
+<span id="1-use-the-environment-of-the-actual-kernel"></span>
+<span id="2-observe-execution-rather-than-assuming-file-order"></span>
 
 [Back to the Academy](index.md) · [Continue to the next lesson](vscode.md)

@@ -1,72 +1,81 @@
 ---
-title: Install Apizr in the right environment
-description: Choose an installation you can explain and verify.
+title: Install Apizr and inspect four real projects
+description: Choose one installation method, identify its environment and read an actual inspection result.
 lesson: 1
+recording: 01-install
 ---
 
-<p class="apizr-academy-kicker">Build a service · Lesson 01 · Plan about 20 min</p>
+<p class="apizr-academy-kicker">Build interfaces · Lesson 01</p>
 
-# Install Apizr in the right environment
+# Install Apizr and inspect four real projects
 
-A colleague sends you a notebook and says, “I installed Apizr, but the command is missing.” Another can run the command, yet the notebook cannot import the SDK. Both may have installed the package successfully. They are using different Python environments.
-
-Your first result is a working, identifiable installation. Keep the installation decision separate from the environment that will later run a generated service.
+The recording installs the same Apizr version four ways, then inspects four existing Python projects. The installation method determines how the tool is managed; the inspected source determines its readiness findings. A nonzero inspection status does not necessarily mean installation failed.
 
 !!! abstract "By the end of this lesson"
-    - Choose between a project environment and an isolated command-line tool.
-    - Check which Python and Apizr version you are actually using.
-    - Prepare the environment needed by the next lesson.
+    - Choose one of pip with venv, uv tools, pipx or Homebrew.
+    - Identify the executable and version your shell uses.
+    - Distinguish a successful installation from a source-contract diagnostic.
 
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=7J6TWqAdx4Q" data-apizr-video="7J6TWqAdx4Q" data-apizr-title="Install Apizr with pip, uv, pipx or Homebrew" aria-label="Play: Install Apizr with pip, uv, pipx or Homebrew">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=7J6TWqAdx4Q" data-apizr-video="7J6TWqAdx4Q" data-apizr-title="Install Apizr" aria-label="Play: Install Apizr with pip, uv, pipx or Homebrew">
     <img src="../../assets/videos/tutorial-install.jpg" width="480" height="360" loading="lazy" alt="Academy Part I: install Apizr" />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>
 
-English · 6:39 · The written steps below target 0.4.6 development; the recording keeps its original demonstrated version.
+<!-- recording-transcript -->
 
-## 1. Choose what needs to use Apizr
+## 1. Follow the installation you need
 
-| Your task | Installation to choose | What to verify |
+The video was recorded with **Apizr 0.4.3**, Python 3.14 and Apple Silicon. Use one method, rather than installing four competing executables. For a new installation, use the [current installation guide](../getting-started/install.md); keep its version separate from the historical commands shown in the transcript.
+
+| Recorded method | Project and revision | Inspected file |
 | --- | --- | --- |
-| Import `apizr.tracking` in a script or notebook | Install in that script or kernel’s environment | That Python can import `apizr`. |
-| Use the CLI across projects | An isolated uv tool or pipx installation | The `apizr` executable resolves to that tool. |
-| Run a generated REST or MCP service | A separate environment for its generated requirements | Its interpreter has the service’s dependencies. |
+| pip + project venv | `mahmoud/boltons`, `25.0.0` | `boltons/mathutils.py` |
+| uv tool | `more-itertools/more-itertools`, `v10.7.0` | `more_itertools/recipes.py` |
+| pipx | `python-humanize/humanize`, `4.12.3` | `src/humanize/number.py` |
+| Homebrew | `un33k/python-slugify`, `v8.0.4` | `slugify/slugify.py` |
 
-A tool installation does not add a package to every Python interpreter. Equally, activating a project environment does not install the dependencies of a generated server.
-
-## 2. Select the documented version
-
-The Academy’s written exercises target **0.4.6 development**. Follow [the development installation](../development/0.4.md#install-a-development-wheel) to build the identified source revision; 0.4.6 is not a published PyPI release. The [installation guide](../getting-started/install.md) also explains the published **0.4.5** option. Earlier recordings keep the version they originally demonstrated.
-
-After installing, keep the chosen environment active and run:
+For example, the first recorded path is:
 
 ```sh
+git clone --depth 1 --branch 25.0.0 https://github.com/mahmoud/boltons.git
+cd boltons
+python3.14 -m venv .venv
+. .venv/bin/activate
+python -m pip install outerspace-apizr==0.4.3
 apizr --version
-python -c 'import sys; print(sys.executable)'
+apizr inspect boltons/mathutils.py > inspection.txt
+sed -n '1,15p' inspection.txt
 ```
 
-For an SDK environment, also check:
+The uv and pipx paths use separate tool environments. Humanize demonstrates why you must locate a package's actual source directory. In the Homebrew segment the workstation already has Apizr, so the recorded operation is `brew reinstall`; a first installation uses `brew install`.
 
-```sh
-python -c 'import apizr; print(apizr.__file__)'
-```
+## 2. Read the result before reinstalling
 
-A version string identifies a package version. For a development build, retain the source commit too: two source revisions can declare the same version.
+The More Itertools inspection reports an unsupported generator and variadic signatures. Reinstalling the CLI cannot change that source contract. Humanize and Slugify also have conditional findings: unresolved evidence is a result to investigate, rather than an installation diagnosis.
+
+Inspection reads source without importing the inspected application. Dependencies required to run that application remain separate from the environment hosting the CLI.
 
 ## Practice
 
-1. Install using the path appropriate to your intended use.
-2. Write down the reported version, the interpreter path and whether this environment is for CLI use, SDK use or the generated service.
-3. Explain why a notebook might still report `ModuleNotFoundError` after `uv tool install` succeeds. Decide where to install the package before changing `PATH`.
+Choose one recorded installation path and inspect its matching project. Then perform the video's three final checks:
+
+```sh
+command -v apizr
+apizr --version
+apizr --help
+```
+
+Explain why an unsupported generator in `recipes.py` does not establish that uv installed Apizr incorrectly.
 
 ??? success "Check your reasoning"
 
-    An isolated tool has its own interpreter and installed packages. Your notebook uses its selected kernel. Install the SDK into that kernel environment, or deliberately select a kernel that already contains it. Changing the shell’s `PATH` alone does not install a Python import.
+    The checks identify the executable, version and available command interface. The generator finding describes the inspected Python contract. Keep the installed tool environment and the project's execution dependencies distinct; read the reason before choosing a supported interface boundary.
 
-    You are ready to continue when you can locate the executable and interpreter, identify their version and explain which environment will run the workload.
+<span id="1-choose-what-needs-to-use-apizr"></span>
+<span id="2-select-the-documented-version"></span>
 
 [Back to the Academy](index.md) · [Continue to the next lesson](inspect.md)

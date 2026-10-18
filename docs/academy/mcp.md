@@ -1,66 +1,78 @@
 ---
-title: Expose the same calculation as an MCP tool
-description: Discover and call a tool before introducing an AI client.
+title: Call RGB and HSV conversions through MCP
+description: Discover two generated colour-conversion tools, make real calls and read an error.
 lesson: 4
+recording: 04-mcp
 ---
 
-<p class="apizr-academy-kicker">Build a service · Lesson 04 · Plan about 25 min</p>
+<p class="apizr-academy-kicker">Build interfaces · Lesson 04</p>
 
-# Expose the same calculation as an MCP tool
+# Call RGB and HSV conversions through MCP
 
-A teammate wants an assistant to use the same price calculation. The business function should not change merely because the client protocol changes.
-
-You will first discover and call the tools with a Python client. This lets you observe the actual tool contract and result separately from anything an AI model might say about them.
+The video uses **TheAlgorithms/Python** to convert colours. A Python MCP client makes discovery, successful results and input errors visible without requiring a language model.
 
 !!! abstract "By the end of this lesson"
-    - Identify the tool names and input schema supplied by the server.
-    - Distinguish a tool’s result from a model-generated answer.
-    - Choose the process and interpreter an MCP client will start.
+    - Select rgb_to_hsv and hsv_to_rgb while keeping their helper private.
+    - Explain the stdio client/server lifecycle.
+    - Check the error flag before reading structured_content.
 
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=rJThRd9vq4g" data-apizr-video="rJThRd9vq4g" data-apizr-title="Generate MCP tools and call them with Python" aria-label="Play: Generate MCP tools and call them with Python">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=rJThRd9vq4g" data-apizr-video="rJThRd9vq4g" data-apizr-title="Your first MCP tools" aria-label="Play: Generate MCP tools and call them with Python">
     <img src="../../assets/videos/tutorial-mcp.jpg" width="480" height="360" loading="lazy" alt="Academy Part IV: generate and call MCP tools" />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>
 
-English · 5:09 · The written steps below target 0.4.6 development; the recording keeps its original demonstrated version.
+<!-- recording-transcript -->
 
-## 1. Reuse the shop selection
+## 1. Pin and generate the recorded module
 
-Keep the [prepared shop workspace](rest.md#1-keep-the-selection-explicit) from the previous lesson. Generate an MCP bundle for the same selected functions:
+The video uses Apizr 0.4.3 and this exact repository revision:
 
 ```sh
-apizr expose build mcp shop --operator-policy operator.json --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir build/mcp
-runtime/bin/python -m pip install -r build/mcp/requirements.txt
+git clone --depth 1 https://github.com/TheAlgorithms/Python.git
+cd Python
+git fetch --depth 1 origin ef2ecc4d34d17ce6249ba5d3f3c17822dfd7bd50
+git checkout ef2ecc4d34d17ce6249ba5d3f3c17822dfd7bd50
+apizr inspect conversions/rgb_hsv_conversion.py > inspection.txt
+apizr generate mcp conversions/rgb_hsv_conversion.py --select rgb_to_hsv,hsv_to_rgb --output-dir mcp
+uv venv --python python3.14 runtime
+uv pip install --python runtime/bin/python -r mcp/requirements.txt
 ```
 
-Inspect `build/mcp/mcp-tools.json`. Its business tools are `api.quote` and `inventory.available`. This server exposes your selected application functions. Apizr’s separate analysis MCP server inspects projects and has a different purpose.
+The inspected module has three ready functions. The selection makes the two conversions public; the comparison helper remains outside the tool list. Generating the bundle does not start its server.
 
-## 2. Observe discovery and a real call
+## 2. Use the recorded client
 
-Run the [complete Python client](../getting-started/quickstart.md#test-with-python). It starts `build/mcp/server.py` with the selected runtime interpreter, discovers the two tools and checks their structured responses.
+Download the [original call_tools.py](../downloads/academy-mcp-client.py), saving it beside `mcp/` as `call_tools.py`. This is the actual client used in the recording. Its `StdioServerParameters` selects the current runtime interpreter and the generated server. The client context performs connection and handshake before discovery or a call.
 
-For the inputs used in the REST lesson, the business values are unchanged. The MCP adapter wraps the scalar values in structured results:
-
-```json
-{"result": 25.0}
+```sh
+runtime/bin/python call_tools.py list
+runtime/bin/python call_tools.py red
+runtime/bin/python call_tools.py green
+runtime/bin/python call_tools.py invalid
 ```
 
-Tool discovery describes available operations; it does not execute the price calculation. The subsequent `call_tool` operation makes that invocation.
+| Operation | Retained response |
+| --- | --- |
+| List tools | `hsv_to_rgb`, `rgb_to_hsv` |
+| RGB red: 255, 0, 0 | `{"result": [0.0, 1.0, 1.0]}` |
+| HSV green: 120, 1, 1 | `{"result": [0, 255, 0]}` |
+| Red channel passed as a string | `is_error: True`, `structured_content: null` |
+
+These are actual server results. Tool discovery and tool invocation are separate protocol operations. A model's later prose is not a replacement for either.
 
 ## Practice
 
-1. Run discovery and confirm that exactly the two selected business tools are listed.
-2. Change the price-call inputs to `unit_price=12.5, quantity=3`. Predict the structured result, then observe it.
-3. Before configuring an AI client, identify the absolute interpreter and server paths it must start. Explain what a failed process launch tells you about the price function itself.
+Predict both colour conversions, verify that only the two selected tools are listed, and run the invalid-input case. Explain why checking only whether a response object exists would miss the error.
 
 ??? success "Check your reasoning"
 
-    The expected structured result is `{"result": 37.5}`. The protocol wrapper differs from the REST response, while the reviewed calculation is the same.
+    Red has hue 0, saturation 1 and value 1. HSV hue 120 gives RGB green. The invalid string returns an error and no structured result. Check `is_error` before interpreting `structured_content`; a completed protocol exchange can carry a failed tool call.
 
-    A wrong interpreter or server path prevents the client from starting its MCP server. It is not evidence that the business calculation returned a wrong answer. Once the Python client works, configure your chosen AI client and review its actual tool calls. Model selection and authority to invoke tools remain explicit client decisions.
+<span id="1-reuse-the-shop-selection"></span>
+<span id="2-observe-discovery-and-a-real-call"></span>
 
 [Back to the Academy](index.md) · [Continue to the next lesson](oci.md)

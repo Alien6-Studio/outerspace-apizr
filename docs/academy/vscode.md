@@ -1,6 +1,7 @@
 ---
 title: Review real experiment Runs in VS Code
 lesson: 12
+recording: 12-vscode
 description: Train on the public Wine dataset, inspect saved source and compare measured Runs in the Apizr extension.
 ---
 
@@ -22,7 +23,7 @@ description: Train on the public Wine dataset, inspect saved source and compare 
   </a>
 </div>
 
-English · 6:22. Follow the illustrated Wine lab below to reproduce the operations.
+<!-- recording-transcript -->
 
 
 Train two decision trees on the [UCI Wine dataset](https://archive.ics.uci.edu/dataset/109/wine),
@@ -114,6 +115,10 @@ In the captured execution:
 | SDK | 3 | 0.9630 | 0.9638 |
 | Jupyter | 5 | 0.9630 | 0.9638 |
 
+This Wine example records the selected input, parameters and metrics; it does not
+select a saved model artifact. A model fingerprint is therefore not available
+from these Runs merely because they contain scores.
+
 These are observations on one held-out split. Depths 3 and 5 give the same scores
 here. This comparison does not establish performance on another dataset or
 approve a deployment.
@@ -155,15 +160,20 @@ the previous execution before drawing a conclusion.
 [Tracking guide](../getting-started/tracking.md) ·
 [Example source](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/examples/tracking/wine-vscode)
 
+## Restricted Mode in the recording
+
+At **04:30**, a second dedicated profile opens the Wine workspace in Restricted Mode. The dashboard can be shown, but **Check engine** reports `workspace_untrusted` and starts no engine. This is a distinct refusal from a stale saved-source view. In manual practice, use a separate untrusted window/profile to observe it, then make any trust decision explicitly. The operator policy remains a separate boundary after workspace trust.
+
 ## Practice: explain the comparison
 
-1. Before opening a diff, compare the table’s SDK depth-3 and Jupyter depth-5 scores. Predict whether equal values establish equal model bytes.
-2. Use **Open complete JSON** to locate the two actual model and input identities. Keep the full records available when reading the dashboard’s summaries.
-3. Make a presentation-only source change and observe the stale-result indication. Explain why refreshing the history is a read operation and does not rerun training.
+1. Use the video’s pause question at **05:05**: the SDK depth-3 and Jupyter depth-5 Runs have equal rounded scores. Does that establish equal generalization? What would you check before preferring either model?
+2. Use **Open complete JSON** to read the actual input identities, parameters, capture details and missing evidence. If no model artifact was explicitly selected, do not invent a recorded model identity from the score. Repeat the notebook cell and inspect the new Run and execution count.
+3. Add an unsaved comment, as in the recording, and observe the stale-result indication. Inspect again and check that it still reads the saved file; then revert the comment. Explain why refreshing the history is a read operation and does not rerun training.
 
 ??? success "Check your reasoning"
 
-    Equal rounded accuracy and macro F1 on this one held-out split do not establish identical model bytes or equivalent generalization. Compare the actual artifact identities and the evaluation setup.
+    Equal rounded accuracy and macro F1 on this one held-out split do not establish identical model bytes or equivalent generalization. Read the actual input identities, parameters, capture details and evaluation setup.
+    A model identity remains unknown when no model artifact was selected.
 
     A history refresh reads retained records. It does not retrain, replace an old Run or silently prove that the current file is its recorded source. Read the stale-evidence explanation before choosing the next operation.
 

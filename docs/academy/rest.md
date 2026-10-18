@@ -1,69 +1,76 @@
 ---
-title: Turn a selected function into a REST call
-description: Connect Python arguments, an HTTP request and an observed response.
+title: Generate a REST API for gcd and lcm
+description: Expose two functions from keon/algorithms and verify successful calls and HTTP 422.
 lesson: 3
+recording: 03-rest
 ---
 
-<p class="apizr-academy-kicker">Build a service · Lesson 03 · Plan about 25 min</p>
+<p class="apizr-academy-kicker">Build interfaces · Lesson 03</p>
 
-# Turn a selected function into a REST call
+# Generate a REST API for gcd and lcm
 
-A browser application needs a price, not access to every function in your repository. You will expose the two reviewed shop capabilities and follow one request through to its result.
-
-The useful test is a complete call: a described endpoint, a running local server, a request with the right inputs and an observed response.
+The recording turns existing number-theory functions into two REST endpoints. It uses **keon/algorithms** and checks both arithmetic results and invalid input. This is a different repository from Requests in lesson 2.
 
 !!! abstract "By the end of this lesson"
-    - Distinguish interface generation from starting a server.
-    - Connect a JSON request to the selected Python arguments.
-    - Check the result and recognize what a local successful call leaves undecided.
+    - Select only gcd and lcm from an existing Python module.
+    - Separate generated files from the running service environment.
+    - Verify real HTTP results and a rejected request.
 
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=QdtaLoc-g6o" data-apizr-video="QdtaLoc-g6o" data-apizr-title="Generate a REST API and make HTTP calls" aria-label="Play: Generate a REST API and make HTTP calls">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=QdtaLoc-g6o" data-apizr-video="QdtaLoc-g6o" data-apizr-title="Your first REST API" aria-label="Play: Generate a REST API and make HTTP calls">
     <img src="../../assets/videos/tutorial-rest.jpg" width="480" height="360" loading="lazy" alt="Academy Part III: generate and call REST" />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>
 
-English · 4:14 · The written steps below target 0.4.6 development; the recording keeps its original demonstrated version.
+<!-- recording-transcript -->
 
-## 1. Keep the selection explicit
+## 1. Inspect the recorded arithmetic module
 
-Use the [shop workspace preparation](../getting-started/quickstart.md#prepare-an-isolated-workspace) through “Get the example and choose its public functions”. It gives you `shop/`, a separate `runtime/` environment and the three policy files. The selection contains `api.quote` and `inventory.available`; private helpers do not become extra endpoints.
-
-The readiness policy describes the eligible interface. The exposure policy selects capabilities and an execution mode. The operator policy grants analysis of this exact local directory. These files answer different questions.
-
-## 2. Generate, then run
-
-From that workspace, build the REST bundle and install its declared runtime requirements:
+With the video's Apizr 0.4.3 environment, obtain its exact source revision:
 
 ```sh
-apizr expose build rest shop --operator-policy operator.json --readiness-policy readiness-direct.json --policy exposure-direct.json --output-dir build/rest
-runtime/bin/python -m pip install -r build/rest/requirements.txt
-runtime/bin/uvicorn app:app --app-dir build/rest --host 127.0.0.1 --port 8000
+git clone --depth 1 https://github.com/keon/algorithms.git
+cd algorithms
+git fetch --depth 1 origin bd1d152f9ec7331c69be662831610b003b10fc7a
+git checkout bd1d152f9ec7331c69be662831610b003b10fc7a
+apizr inspect algorithms/math/gcd.py > inspection.txt
 ```
 
-Generation writes the adapter and its OpenAPI description. The last command actually starts the service. Direct-mode calls execute your trusted Python with the server process’s host permissions.
+Both selected functions accept two integers. Their static input contract is ready, while effects remain unknown. The recording uses direct execution after reviewing this small arithmetic module.
 
-In a second terminal, send a request:
+## 2. Generate only the selected routes
 
 ```sh
-curl --fail --silent --show-error http://127.0.0.1:8000/capabilities/api.quote   --header 'Content-Type: application/json'   --data '{"unit_price":12.5,"quantity":2}'
+apizr generate rest algorithms/math/gcd.py --select gcd,lcm --output-dir rest
+uv venv --python python3.14 runtime
+uv pip install --python runtime/bin/python -r rest/requirements.txt
+runtime/bin/uvicorn app:app --app-dir rest --host 127.0.0.1 --port 8814
 ```
 
-The expected body is `25.0`: `12.5 × 2`. Inspect `build/rest/openapi.json` and the local `/docs` page to connect the selected operation, input names and supported shapes.
+Generation writes source, adapters, OpenAPI and runtime requirements. The final command starts the server and imports the trusted source. Keep that terminal running while calling it from another terminal.
+
+## 3. Reproduce the three observed requests
+
+```sh
+curl -sS http://127.0.0.1:8814/capabilities/gcd -H 'Content-Type: application/json' -d '{"a":48,"b":18}'
+curl -sS http://127.0.0.1:8814/capabilities/lcm -H 'Content-Type: application/json' -d '{"a":8,"b":12}'
+curl -sS -o invalid.json -w 'HTTP %{http_code}\n' http://127.0.0.1:8814/capabilities/gcd -H 'Content-Type: application/json' -d '{"a":"48","b":18}'
+```
+
+The retained terminal shows **6**, **24**, then **HTTP 422** with `Value does not match the declared input type`. The string `"48"` is rejected instead of silently becoming an integer. Stop the foreground server with Ctrl+C after practising; the recording starts it in the background and stops its saved process ID.
 
 ## Practice
 
-1. Predict the result for `unit_price=12.5` and `quantity=3`, then make that call.
-2. Call the selected stock function with `stock=10` and `requested=13` using the [second quickstart request](../getting-started/quickstart.md#use-rest-instead).
-3. Explain why these local calls are insufficient evidence that a public production deployment is ready. Stop the server with Ctrl+C.
+Predict the two valid arithmetic results before calling the endpoints. Then send the invalid string input and explain where it is rejected. Check `rest/openapi.json`: which two functions became routes, and which helpers did not?
 
 ??? success "Check your reasoning"
 
-    The new price is `37.5`; the stock check returns `false`. These are observations of the selected business functions through the generated adapter.
+    The greatest common divisor of 48 and 18 is 6; the least common multiple of 8 and 12 is 24. The generated request contract rejects the string with HTTP 422. Selection exposes only gcd and lcm. A successful local call verifies this interface, while a production deployment remains a separate task.
 
-    You have exercised a local interface. Deployment, authentication, application authorization, operational limits and availability still need their own design and checks. Generating an endpoint does not settle those responsibilities.
+<span id="1-keep-the-selection-explicit"></span>
+<span id="2-generate-then-run"></span>
 
 [Back to the Academy](index.md) · [Continue to the next lesson](mcp.md)

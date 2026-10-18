@@ -3,9 +3,13 @@
 import hashlib
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+from academy_recordings import lesson_markdown, recordings  # noqa: E402
+
 RELEASE_STATE = json.loads((ROOT / "site.json").read_text())
 CRITICAL = {
     "start/index.html": "Choose your first result",
@@ -85,6 +89,7 @@ ASSETS = (
 
 
 def on_config(config):
+    recordings(ROOT)
     commit = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, timeout=10
     ).strip()
@@ -101,6 +106,10 @@ def on_config(config):
         **{k: v for k, v in RELEASE_STATE.items() if k != "schema"},
     }
     return config
+
+
+def on_page_markdown(markdown, page, config, files):
+    return lesson_markdown(markdown, page, recordings(ROOT))
 
 
 def on_post_build(config):
