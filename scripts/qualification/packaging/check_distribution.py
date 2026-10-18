@@ -100,7 +100,6 @@ def check_vsix(path: Path, project_root: Path) -> dict[str, str]:
                 "README.md",
                 "package-lock.json",
                 "tsconfig.json",
-                "media/icon.png",
                 "engine.json",
             )
         ),
@@ -109,6 +108,12 @@ def check_vsix(path: Path, project_root: Path) -> dict[str, str]:
             for p in sorted((project_root / "editors/vscode/src").glob("*.ts"))
         ),
     ]
+    extension = project_root / "editors/vscode"
+    for asset in sorted((extension / "media").rglob("*")):
+        if asset.is_file():
+            if asset.is_symlink() or asset.suffix not in {".png", ".gif"}:
+                raise ValueError("Invalid VSIX media source")
+            sources.append((asset.relative_to(extension).as_posix(), asset))
     if not any(name.startswith("src/") for name, _ in sources):
         raise ValueError("Missing extension source inventory")
     for name, source in sources:

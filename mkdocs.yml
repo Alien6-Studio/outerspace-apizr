@@ -112,6 +112,7 @@ nav:
   - The full journey: getting-started/introduction.md
   - Academy:
     - Learning paths: academy/index.md
+    - Review Runs in VS Code: academy/vscode.md
     - Capabilities: academy/capabilities.md
     - Readiness: academy/readiness.md
     - Exposure: academy/exposure.md

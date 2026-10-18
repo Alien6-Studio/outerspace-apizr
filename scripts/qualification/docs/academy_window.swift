@@ -44,7 +44,7 @@ final class Finished: NSObject, SCRecordingOutputDelegate {
     }
     func state() -> (Bool, Error?) { lock.lock(); defer { lock.unlock() }; return (done, failure) }
 }
-@main struct Capture {
+@main @MainActor struct Capture {
     static func main() async {
         do { try await run() }
         catch { fputs("Capture refused: \(error)\n", stderr); exit(1) }
@@ -63,6 +63,7 @@ final class Finished: NSObject, SCRecordingOutputDelegate {
             print("PASS exact Academy selection; missing/ambiguous/changed identities refused; no display fallback")
             return
         }
+        _ = NSApplication.shared
         if arguments == ["--request-access"] {
             print(CGRequestScreenCaptureAccess() ? "Screen capture permission available" : "Screen capture permission must be granted in macOS")
             return
@@ -78,6 +79,8 @@ final class Finished: NSObject, SCRecordingOutputDelegate {
         }
         guard arguments.count == 2, ["--preview", "--record"].contains(arguments[0]) else { throw Failure(reason: "Use --preview OUTPUT or --record RECEIPT") }
         guard let window = content.windows.first(where: { $0.windowID == selected.id }) else { throw Failure(reason: "Selected window disappeared") }
+        NSRunningApplication(processIdentifier: selected.pid)?.activate()
+        try await Task.sleep(nanoseconds: 700_000_000)
         let filter = SCContentFilter(desktopIndependentWindow: window)
         let config = SCStreamConfiguration()
         config.width = Int(window.frame.width * 2)

@@ -242,11 +242,16 @@ identify every in-memory value or setting.
 
 [Follow the written steps](../getting-started/tracking.md#3-use-the-same-calls-in-jupyter)
 
-## Next recordings
+### 12 — Review real experiment Runs in VS Code
 
-| Planned lesson | Recording | Written steps |
-| --- | --- | --- |
-| Part XII — Inspect and compare Runs in VS Code | In preparation | [VS Code guide](../reference/vscode.md) |
+**Academy Part XII — Inspect source, read measured Runs and compare results**
+· Illustrated tutorial and short GIF
 
-A planned lesson does not establish that its feature has been qualified. The
-linked guides state their current scope and limits.
+Result: train decision trees on the public Wine dataset, browse their actual
+SDK and Jupyter Runs in the extension, inspect saved source and interpret the
+canonical comparison.
+
+[![Apizr for VS Code with real Wine experiment Runs](../assets/images/vscode/experiments.png)](vscode.md)
+
+[Follow the illustrated lesson](vscode.md) ·
+[Extension settings](../reference/vscode.md)

@@ -114,10 +114,21 @@ def build(output, version=None):
         "README.md",
         "package-lock.json",
         "tsconfig.json",
-        "media/icon.png",
         "engine.json",
     ):
         payload["extension/" + filename] = (EXTENSION / filename).read_bytes()
+    for asset in sorted((EXTENSION / "media").rglob("*")):
+        if asset.is_file():
+            assert not asset.is_symlink() and asset.suffix in {".png", ".gif"}
+            payload["extension/" + asset.relative_to(EXTENSION).as_posix()] = (
+                asset.read_bytes()
+            )
+    for image in re.findall(
+        r"!\[[^\]]*\]\((media/[^)]+)\)", (EXTENSION / "README.md").read_text()
+    ):
+        assert "extension/" + image in payload, (
+            f"README image missing from VSIX: {image}"
+        )
     sources = sorted((EXTENSION / "src").glob("*.ts"))
     assert sources and {p.stem for p in sources} == {
         p.stem for p in (EXTENSION / "out").glob("*.js")
@@ -130,7 +141,7 @@ def build(output, version=None):
             )
     payload["extension.vsixmanifest"] = manifest(package)
     payload["[Content_Types].xml"] = (
-        b'<?xml version="1.0" encoding="utf-8"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension=".json" ContentType="application/json"/><Default Extension=".js" ContentType="application/javascript"/><Default Extension=".ts" ContentType="text/plain"/><Default Extension=".md" ContentType="text/markdown"/><Default Extension=".png" ContentType="image/png"/><Default Extension=".vsixmanifest" ContentType="text/xml"/></Types>\n'
+        b'<?xml version="1.0" encoding="utf-8"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension=".json" ContentType="application/json"/><Default Extension=".js" ContentType="application/javascript"/><Default Extension=".ts" ContentType="text/plain"/><Default Extension=".md" ContentType="text/markdown"/><Default Extension=".png" ContentType="image/png"/><Default Extension=".gif" ContentType="image/gif"/><Default Extension=".vsixmanifest" ContentType="text/xml"/></Types>\n'
     )
     path = output / f"apizr-{package['version']}.vsix"
     with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_STORED) as archive:

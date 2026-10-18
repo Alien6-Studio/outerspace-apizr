@@ -1,5 +1,8 @@
 # Inspect and compare in VS Code
 
+For a complete example with real data and measured Runs, follow the
+[illustrated Academy lesson](../academy/vscode.md).
+
 The **Apizr 0.4.6 extension** is developed in
 [`outerspace-apizr-vscode`](https://github.com/Alien6-Studio/outerspace-apizr-vscode)
 under GPL-3.0-or-later. VS Code 1.140 or newer is required for lossless

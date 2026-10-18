@@ -21,10 +21,15 @@ def attach_editor(directory, candidate, source):
         "README.md",
         "package-lock.json",
         "tsconfig.json",
-        "media/icon.png",
         "engine.json",
     ):
         payload["extension/" + name] = (source / "editors/vscode" / name).read_bytes()
+    extension = source / "editors/vscode"
+    for asset in (extension / "media").rglob("*"):
+        if asset.is_file():
+            payload["extension/" + asset.relative_to(extension).as_posix()] = (
+                asset.read_bytes()
+            )
     for path in (source / "editors/vscode/src").glob("*.ts"):
         payload["extension/src/" + path.name] = path.read_bytes()
         payload["extension/out/" + path.stem + ".js"] = (

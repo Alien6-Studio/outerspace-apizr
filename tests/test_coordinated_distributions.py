@@ -2,6 +2,7 @@
 
 import importlib
 import json
+import zipfile
 from pathlib import Path
 
 import pytest
@@ -140,6 +141,29 @@ def test_coordinated_vsix_is_source_bound_and_cannot_be_omitted(
     else:
         assert packaging.load(tmp_path) == value
         assert len(value["artifacts"]) == 9
+
+
+@pytest.mark.parametrize("image", ["experiments.png", "run-review.gif"])
+def test_vsix_rejects_changed_documentation_image(packaging, tmp_path, image):
+    from release_candidate_helpers import attach_editor
+
+    attach_editor(
+        tmp_path,
+        {"version": "0.4.6", "commit": "a" * 40, "artifacts": []},
+        packaging.ROOT,
+    )
+    path = tmp_path / "editor/apizr-0.4.6.vsix"
+    with zipfile.ZipFile(path) as archive:
+        payload = [(info, archive.read(info.filename)) for info in archive.infolist()]
+    with zipfile.ZipFile(path, "w") as archive:
+        for info, raw in payload:
+            if info.filename == "extension/media/screenshots/" + image:
+                raw += b"changed after review"
+            archive.writestr(info, raw)
+    with pytest.raises(
+        ValueError, match="VSIX source/notice differs: media/screenshots/"
+    ):
+        packaging.check_vsix(path, packaging.ROOT)
 
 
 @pytest.mark.parametrize("fault", [None, "source", "native"])
