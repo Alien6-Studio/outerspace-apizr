@@ -32,6 +32,7 @@ GPL-3.0-or-later.
 [Quickstart: MCP and REST calls](getting-started/quickstart.md){ .md-button .md-button--primary }
 [Notebook → prediction](getting-started/data-science.md){ .md-button }
 [Install Apizr](getting-started/install.md){ .md-button }
+[Apizr Academy](academy/index.md){ .md-button }
 
 </div>
 
