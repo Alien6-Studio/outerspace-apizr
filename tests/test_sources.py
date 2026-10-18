@@ -38,7 +38,7 @@ def test_downloads_have_an_immutable_product_source_and_verified_bytes():
 
 
 def test_academy_contains_all_published_lessons_without_preloading_youtube():
-    source = (ROOT / "docs/academy/index.md").read_text()
+    source = "\n".join(p.read_text() for p in (ROOT / "docs/academy").glob("*.md"))
     assert len(re.findall("data-apizr-video=", source)) == 13
     assert 'data-apizr-video="zkujF-thyyQ"' in source
     assert "<iframe" not in source
@@ -90,3 +90,45 @@ def test_academy_preparation_uses_only_the_frozen_site_materials(tmp_path):
     )
     assert (destination / "xii-vscode/materials/wine_experiments.py").is_file()
     assert (destination / "xi-jupyter/materials/fraud-thresholds.ipynb").is_file()
+
+
+def test_every_academy_course_teaches_with_a_video_and_corrected_practice():
+    import yaml
+
+    courses = {}
+    for path in (ROOT / "docs/academy").glob("*.md"):
+        source = path.read_text()
+        if not source.startswith("---\n"):
+            continue
+        metadata = yaml.safe_load(source.split("---", 2)[1])
+        if "lesson" not in metadata:
+            continue
+        number = metadata["lesson"]
+        assert number not in courses
+        courses[number] = path
+        assert len(re.findall('data-apizr-video="', source)) == 1, path
+        assert "By the end of this lesson" in source, path
+        assert "## Practice" in source, path
+        assert '??? success "Check your reasoning"' in source, path
+        assert "[Back to the Academy]" in source, path
+    assert set(courses) == set(range(1, 13))
+    index = (ROOT / "docs/academy/index.md").read_text()
+    assert all(f"({p.name})" in index for p in courses.values())
+    nav = yaml.safe_load((ROOT / "mkdocs.yml").read_text())["nav"]
+    assert any("Academy" in section for section in nav)
+
+
+def test_academy_python_examples_and_written_shell_scripts_parse():
+    import ast
+    import subprocess
+
+    for page in (ROOT / "docs/academy").glob("*.md"):
+        text = page.read_text()
+        for block in re.findall(r"```python\n(.*?)\n```", text, re.S):
+            ast.parse(block, filename=page.name)
+        for block in re.findall(r"```sh\n(.*?)\n```", text, re.S):
+            subprocess.run(["/bin/sh", "-n"], input=block, text=True, check=True)
+            for body in re.findall(
+                r"cat > [^\n]+\.py <<'PYTHON'\n(.*?)\nPYTHON", block, re.S
+            ):
+                ast.parse(body, filename=page.name)

@@ -53,7 +53,7 @@ window/capture identity with the actual footage. A failed or wrongly framed take
 does not qualify the lesson and must not enter the review export.
 
 The optional macOS recorder source is
-`scripts/qualification/docs/academy_window.swift` (ScreenCaptureKit, macOS 15+).
+`academy/academy_window.swift` (ScreenCaptureKit, macOS 15+).
 Compile it with `swiftc -parse-as-library -swift-version 5` and an explicit output
 path outside the checkout. Its `--self-test` checks selection without capturing.
 Capture commands refuse missing macOS authorization and never grant it silently.

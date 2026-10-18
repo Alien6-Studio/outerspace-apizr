@@ -5,13 +5,17 @@ and the [compatibility guide](../getting-started/developer-guide/releases.md).
 
 ## 0.4.6 preparation and publication boundary
 
-Prepare the README, site, installation commands and distribution metadata in
-final 0.4.6 form before building the candidates. This presentation does not
-establish that packages, tags, documentation or listings have been published.
-The maintainer requires review and validation of the GitHub branch, followed by
-its normal protected merge into `main`/`master`, before any publication to PyPI,
-Homebrew, MCP Registry, extension registries, Glama or the public documentation
-site. A successful development build is not publication authorization.
+Prepare the package READMEs, release records and distribution metadata in final
+0.4.6 form before building the candidates. This does not establish that packages,
+tags or listings have been published. The maintainer requires review and validation
+of the product branch, followed by its protected stable integration, before any
+publication to PyPI, Homebrew, MCP Registry, extension registries or Glama.
+A successful development build is not publication authorization.
+
+The website has a separate lifecycle on `gh-pages`. It can document development
+work before a package release, provided `site.json` and the visible development
+notice identify that status. A website merge neither releases a package nor
+changes the frozen package descriptions.
 
 Before candidate construction, run:
 
@@ -26,12 +30,13 @@ The version source is `pyproject.toml`. Review the inventory:
 | Frozen package descriptions | Root and three plugin `README.md` files; current feature prose, package pins and immutable `v<version>` source links |
 | Package metadata | Root and plugin `pyproject.toml`: version, internal pins, Repository, Documentation, Issues and Changelog URLs |
 | Plugin/launcher descriptors | Three `apizr-extension.json` files; `plugins/mcp/distribution/{pyproject.toml,manifest.json}` |
-| Installation and site | `docs/getting-started/install.md`, `docs/index.md`, `mkdocs.yml`, `docs/releases/<version>.md`, `CHANGELOG.md` |
+| Product release records | `releases/<version>.md`, `CHANGELOG.md` and the reviewed source pin in `policy/vscode-source.json` |
 | Forge and directories | `action.yml` and `templates/apizr.yml` defaults, `server.json` package versions, Dockerfile `SOURCE_REF=v<version>` and qualified `glama.json` ownership bytes |
 
 The retained Glama descriptor schema has no version field; bind its exact bytes
 and the tagged Dockerfile to the qualified source instead of inventing a field.
-Render and inspect all four package READMEs in the docs environment with
+Render and inspect all four package READMEs in the product environment with
+`uv sync --locked --group readme` and the metadata checker’s
 `--render <new-directory>`. Candidate construction records a SHA-256 snapshot
 before building. Rechecking the retained snapshot with `--snapshot` refuses any
 subsequent change to the inventoried files, including same-version editorial
@@ -69,6 +74,10 @@ No registry publication, credential or Python release change is authorized by
 the development build.
 
 ## Authorized 0.4.5 finalization
+
+This is the historical publication procedure. Its Documentation workflow and
+master-based website deployment predate the extraction to `gh-pages`; preserve
+their original evidence and use the current website procedure below for updates.
 
 The maintainer authorized **0.4.5 only**, conditional on every mandatory
 security/release gate. At that time, development work stayed on `0.4.5`; integration
@@ -112,9 +121,9 @@ never replace the frozen archives.
 The existing Alien6 Homebrew tap follows the immutable final core sdist and
 verified master provenance, with reviewed formula changes and a real Apple
 Silicon install. No new OCI product image or distribution channel is authorized.
-After external verification, record publication in a separate documentation PR
-to master and let the normal workflow deploy; never move the tag or push Pages
-directly. Close #279 only after all mandatory public provider evidence exists.
+After external verification, record publication in a website PR against
+`gh-pages` and let its workflow deploy the validated artifact. Never move the
+release tag. Close #279 only after all mandatory public provider evidence exists.
 
 ## 0.4.5 MCP distribution {#mcp-distribution-045}
 
@@ -280,7 +289,8 @@ retain the public comparison and signed timestamped receipt before declaring del
 
 ### Dated directory verification after authorized publication
 
-Record a dated observation for each channel in `docs/releases/0.4.6.md`, retaining
+Record a dated observation for each channel in the product’s `releases/0.4.6.md`,
+then update the corresponding website release page on `gh-pages`, retaining
 the JSON responses or a dated explanation when an API is unavailable:
 
 - Official Registry: exact version and `isLatest`; PyPI: actual archive bytes and
@@ -463,18 +473,21 @@ implementation step.
 It classifies the complete change once, builds one coordinated candidate, then
 calls the existing satellite workflows with the validated scope and immutable
 candidate artifact from the same run. All native, installed, vendor, cleanup,
-security and documentation proofs remain. Documentation examples reuse the core
+security and release-content proofs remain. Product journey fixtures reuse the core
 wheel from that candidate. The MCP caller still invokes native preparation.
 
-Security and Documentation retain their independent **master push** and manual
-entry points, and Security retains its scheduled audit. Their master publication
-and verification contracts remain unchanged. On development/PR runs, three
-small top-level result jobs retain the protected `dependencies`, `codeql` and
-`build` contexts; each requires its actual shared qualification to succeed.
-On master those result jobs have distinct `external-*` names and are skipped,
-so they cannot replace or mask the existing protected master checks. Development
-builds have read permissions; the existing documentation deploy remains restricted
-to master. Publication workflows and accepted release source refs remain separate.
+Security and Release content retain their independent **master push** and manual
+entry points; Security also retains its scheduled audit. Release content checks
+the frozen package descriptions and installed product examples without building
+or deploying the website. For versions before 0.4.6, release verification still
+requires the historical Documentation workflow on the original release source.
+
+On development/PR runs, three small top-level result jobs retain the protected
+`dependencies`, `codeql` and `build` contexts; each requires its actual shared
+qualification to succeed. On master those result jobs have distinct `external-*`
+names and are skipped, so they cannot mask the protected master checks. Product
+qualification has read permissions. Website publication is owned exclusively by
+`site.yml` on `gh-pages` and receives its Pages/OIDC permissions separately.
 
 The called workflows skip their fallback scope job when a validated caller
 supplies it. Standalone manual runs still classify their own source and build a
@@ -570,7 +583,7 @@ Python cells reduces runner contention without making that tradeoff.
 
 ## Documentation publication
 
-Documentation is independent of PyPI and follows `master`; it is not a frozen
+Documentation is independent of PyPI and follows `gh-pages`; it is not a frozen
 versioned documentation site. For the exact published source documentation, use
 the [v0.3.0 tag](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.3.0/docs).
 Release notes distinguish shipped behavior from subsequent maintenance.

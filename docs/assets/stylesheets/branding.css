@@ -230,3 +230,27 @@
     --md-scroll-margin: 4.6rem;
   }
 }
+
+/* Academy learning paths and lessons share the documentation's colour scheme. */
+.md-typeset .apizr-academy-intro {padding: 1.4rem; margin: 1.5rem 0; border: 1px solid var(--md-default-fg-color--lightest); border-radius: .65rem; background: rgba(255, 193, 7, .07);}
+.md-typeset .apizr-academy-kicker {font-size: .65rem; font-weight: 700; letter-spacing: .06em; color: var(--md-default-fg-color--light);}
+.md-typeset .apizr-academy-intro h2 {margin-top: .4rem; font-weight: 700;}
+.apizr-academy-facts {display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.3rem;}
+.apizr-academy-facts span {font-size: .7rem;}
+.apizr-academy-facts strong {display: block; font-size: 1.2rem;}
+.apizr-academy-paths, .apizr-academy-courses {display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; margin: 1rem 0 2rem;}
+.apizr-academy-paths {grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));}
+.apizr-academy-paths article {border: 1px solid var(--md-default-fg-color--lightest); border-top: .2rem solid var(--md-primary-fg-color); padding: 1rem; border-radius: .4rem;}
+.md-typeset .apizr-academy-paths h3 {margin: 0 0 .7rem; font-size: .9rem; font-weight: 700;}
+.md-typeset .apizr-academy-paths p {font-size: .75rem;}
+.md-typeset .apizr-academy-paths h3 a, .md-typeset .apizr-academy-course h3 a {color: var(--md-default-fg-color);}
+.md-typeset .apizr-academy-paths h3 a:hover, .md-typeset .apizr-academy-course h3 a:hover {text-decoration: underline;}
+.apizr-academy-course {min-width: 0; border: 1px solid var(--md-default-fg-color--lightest); border-radius: .5rem; padding: .9rem;}
+.md-typeset .apizr-academy-course h3 {margin: .8rem 0 .5rem; font-size: .9rem; font-weight: 700;}
+.apizr-academy-course__cover {display: block; overflow: hidden; border-radius: .25rem;}
+.apizr-academy-course__cover img {display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover;}
+.md-typeset .apizr-academy-course__time {font-size: .65rem; color: var(--md-default-fg-color--light);}
+.apizr-academy-course p {font-size: .75rem;}
+.apizr-academy-flow {display: flex; flex-wrap: wrap; align-items: stretch; gap: .5rem; margin: 1.5rem 0;}
+.apizr-academy-flow span {flex: 1 1 9rem; padding: .9rem; background: rgba(255, 193, 7, .08); border: 1px solid var(--md-default-fg-color--lightest); border-radius: .4rem; font-weight: 600; text-align: center;}
+@media (max-width: 600px) {.md-typeset .apizr-academy-intro {padding: 1rem;} .apizr-academy-flow {flex-direction: column;}}

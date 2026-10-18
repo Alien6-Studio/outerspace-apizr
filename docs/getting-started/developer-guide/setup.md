@@ -16,30 +16,23 @@ See [Code organization](../../architecture/code-organization.md) for CLI adapter
 core plugin management, compiler domains and the supported compatibility imports
 on the `0.4.6` development branch.
 
-Documentation, site and example changes use a separate environment under
-`tools/docs/`, without installing the checkout package or invoking Attest:
-
-```sh
-uv sync --project tools/docs --locked
-uv run --project tools/docs --locked pytest -c tools/docs/pyproject.toml tests/test_ci_scope.py tests/test_dco.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
-uv run --project tools/docs --locked mkdocs build --strict
-uv run --project tools/docs --locked python scripts/check_docs_html.py
-```
-
-See [documentation CI and publication](../../contributing/releases.md#web-only-changes)
-for the classifier boundary and installed public example checks. Mixed changes
-still require the product checks below.
+Website sources and the Academy live on the separate `gh-pages` branch, with
+an independent environment and workflow. Product examples and executable journey
+fixtures remain on `0.4.6` and run against installed candidate wheels. See
+[work on the documentation](#work-on-the-documentation) below for the website
+checkout; run the product checks from the product checkout.
 
 <span id="foundation-quality-gates"></span>
 
 ## Quality gates
 
 ```sh
-uv sync --locked
+uv sync --locked --group readme
 uv run ruff check .
 uv run ruff format --check .
 uv run pyright
 python3 scripts/check_package_architecture.py
+uv run --locked python -m scripts.qualification.packaging.vscode_source --prepare
 uv run pytest --cov --cov-report=term-missing
 uv run coverage report --include='src/apizr/capabilities/*' --fail-under=90
 uv run coverage report --include='src/apizr/readiness/*' --fail-under=90
@@ -56,7 +49,6 @@ uv run coverage report --include='src/apizr/execution/worker.py,src/apizr/execut
 uv run pre-commit run --all-files
 uv build
 uv run python scripts/smoke_wheel.py dist/*.whl
-uv run --group docs mkdocs build --strict
 uv run --group security python scripts/audit_dependencies.py
 ```
 
@@ -71,7 +63,7 @@ list). Exposure also uses strict Pyright. Generated applications are tested func
 files and subprocess execution are not included in the package coverage metric.
 
 The security audit exports the resolved `uv.lock` graph for runtime, development,
-documentation and security-tooling scopes, then runs `pip-audit --locked`. Findings
+package-description and security-tooling scopes, then runs `pip-audit --locked`. Findings
 and collection failures block the check. No advisories are automatically ignored.
 See [SECURITY.md](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/SECURITY.md)
 for private reporting and execution boundaries.
@@ -104,22 +96,26 @@ live in `tests/fixtures/notebooks/exporter/`; modern source admission, non-execu
 and mutation controls remain active. Do not regenerate goldens simply to make a
 changed implementation pass.
 
-Documentation tooling has its own environment, without installing Apizr or its
-plugins and without invoking Attest:
-
-```sh
-uv sync --project tools/docs --locked
-uv run --project tools/docs --locked pytest -c tools/docs/pyproject.toml tests/test_ci_scope.py tests/test_dco.py tests/test_docs_publication.py tests/test_site_refonte.py tests/ci/test_release_consistency.py
-uv run --project tools/docs --locked mkdocs build --strict
-uv run --project tools/docs --locked python -m scripts.qualification.docs.check_docs_html
-```
-
 ## Work on the documentation
 
+Create a sibling checkout once, then run the site commands there:
+
 ```sh
-uv run --group docs mkdocs serve
-uv run --group docs mkdocs build --strict
+git fetch origin
+git worktree add ../outerspace-apizr-site gh-pages
+cd ../outerspace-apizr-site
+uv sync --locked
+uv run --locked pytest -q
+uv run --locked mkdocs build --strict
+uv run --locked python scripts/check_html.py
+uv run --locked mkdocs serve
 ```
+
+If the worktree already exists, use it directly. Branch website changes from
+`gh-pages` and target that branch in the PR. This environment contains MkDocs and
+its checks; it does not install Apizr or its plugins. The extension source lives
+in [its own repository](https://github.com/Alien6-Studio/outerspace-apizr-vscode);
+product integration prepares only the reviewed revision in an ignored cache.
 
 Keep user workflows in **Guides**, interface details and current contracts in
 **Reference**, and maintainer tasks in **Contributing**. Keep documentation focused
@@ -129,7 +125,7 @@ Preserve published page URLs where possible. Reuse a canonical explanation with
 cross-links rather than copying it into several audience sections.
 
 The [publication workflow](../../contributing/releases.md#documentation-publication)
-deploys the documentation automatically after a merge to `master`.
+deploys the validated website artifact after a merge to `gh-pages`.
 
 The independent OCI isolation suite needs an explicitly built local worker image:
 
@@ -154,7 +150,7 @@ longer needed. See the [backend contract](../../architecture/oci-container-runti
 Repository scanner/catalog tests live in `tests/repository/` and require no Docker.
 The new package and scan CLI use strict Pyright; each compatibility job enforces
 a separate 90% branch-aware repository coverage floor. Catalog and schema goldens
-are under `tests/fixtures/catalog/` and `docs/specs/`. See the
+are under `tests/fixtures/catalog/` and `specs/` in the product checkout. See the
 [scanner contract](../../architecture/repository-scanner-v1.md) before changing discovery policy.
 
 

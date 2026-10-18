@@ -49,8 +49,8 @@ validation and `validate_run_binding` before publication.
 ## Compatibility and qualification
 
 The v1 schema exports remain unchanged. The independent v2 exports live at
-`docs/specs/apizr-experiment-plan-v2.schema.json` and
-`docs/specs/apizr-experiment-run-v2.schema.json`. Regenerate them with
+`specs/apizr-experiment-plan-v2.schema.json` in the product checkout and
+`specs/apizr-experiment-run-v2.schema.json`. Regenerate them with
 `scripts/export_experiment_schemas.py`. Frozen 0.4.5 store fixtures qualify
 `list`, `show` and `diff`, canonical bytes and original digests. The installed
 contract proof exercises both versions without optional or scientific SDKs.

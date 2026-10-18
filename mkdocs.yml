@@ -110,9 +110,24 @@ nav:
   - Initialize your project: getting-started/onboarding.md
   - Notebook to prediction: getting-started/data-science.md
   - The full journey: getting-started/introduction.md
-  - Academy:
-    - Learning paths: academy/index.md
-    - Review Runs in VS Code: academy/vscode.md
+- Academy:
+  - Start learning: academy/index.md
+  - Build a service:
+    - 01 · Install: academy/install.md
+    - 02 · Inspect: academy/inspect.md
+    - 03 · REST: academy/rest.md
+    - 04 · MCP: academy/mcp.md
+    - 05 · OCI: academy/oci.md
+  - Understand experiments:
+    - 06 · Inspect evidence: academy/experiment-inspection.md
+    - 07 · Runs and history: academy/runs.md
+    - 08 · Compare Runs: academy/comparison.md
+    - 09 · Model to serving: academy/model-serving.md
+  - Track and review:
+    - 10 · Python capture: academy/python-tracking.md
+    - 11 · Jupyter: academy/jupyter.md
+    - 12 · VS Code: academy/vscode.md
+  - Core concepts:
     - Capabilities: academy/capabilities.md
     - Readiness: academy/readiness.md
     - Exposure: academy/exposure.md
