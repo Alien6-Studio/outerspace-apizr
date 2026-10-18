@@ -3,7 +3,9 @@
 The extension is developed in the dedicated
 [`outerspace-apizr-vscode` repository](https://github.com/Alien6-Studio/outerspace-apizr-vscode),
 under GPL-3.0-or-later, with its own fast client CI. The engine repository retains
-only a generated integration snapshot at `editors/vscode/`. Its runtime npm
+only the repository/commit/hash lock in `policy/vscode-source.json`. Explicit
+preparation fetches that revision into ignored `.output/vscode-source/`; no client
+implementation is tracked in the engine repository. Its runtime npm
 dependency count is zero. The four locked build/type-declaration packages are
 checked against exact versions, SRI and licence/notice hashes in
 `policy/vscode-dependencies.json`; the complete npm audit is blocking without
@@ -11,7 +13,7 @@ dependency exclusions. `policy/vscode-distribution.json` pins Node, TypeScript
 and the CI VS Code binary and SHA-256.
 
 Develop the client in its own repository. To update the engine's integration
-snapshot, check out a clean, exact client commit and run:
+pin, check out a clean, exact client commit and run:
 
 ```sh
 python -m scripts.qualification.packaging.vscode_source --source /path/to/outerspace-apizr-vscode --commit FULL_COMMIT_SHA
@@ -23,9 +25,10 @@ retains the complete engine/client qualification without coupling ordinary clien
 development to the engine's full test suite.
 
 ```sh
-npm ci --prefix editors/vscode --ignore-scripts --no-audit --no-fund
-npm test --prefix editors/vscode
-npm audit --prefix editors/vscode --include=prod --include=dev --include=optional --include=peer --audit-level=low
+client=$(python -m scripts.qualification.packaging.vscode_source --prepare --print-directory)
+npm ci --prefix "$client" --ignore-scripts --no-audit --no-fund
+npm test --prefix "$client"
+npm audit --prefix "$client" --include=prod --include=dev --include=optional --include=peer --audit-level=low
 python -m scripts.qualification.packaging.vscode_distribution --output /absolute/vscode-dist
 ```
 
@@ -35,7 +38,9 @@ extension manifest, own TypeScript source, compiled JavaScript, lock/configurati
 README, pinned CLI descriptor and repository licence. It embeds no engine, `node_modules`, credentials,
 project files or experiment store. Sorted stored ZIP entries, fixed timestamps and
 modes make repeated builds byte-identical; the build record retains each file's
-SHA-256, archive SHA-256, source commit and tool versions.
+SHA-256, archive SHA-256, engine source commit, dedicated client commit and tool versions. Verifying a
+retained VSIX compares its source bytes to the approved hashes without fetching
+or checking out the client.
 
 The `distributions` CI job builds the VSIX alongside the eight Python archives.
 Its v2 candidate manifest retains the VSIX hash, complete ZIP inventory, source

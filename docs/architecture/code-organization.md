@@ -181,8 +181,9 @@ events never persist. Production transmission remains unavailable pending privat
 collector qualification and a subsequent release.
 
 The thin TypeScript client is owned by the dedicated `outerspace-apizr-vscode`
-repository. `editors/vscode` is its generated, commit/hash-pinned integration
-snapshot, admitted by `vscode_source` before candidate builds. `environment.ts` owns
+repository. The engine retains a commit/hash lock, and `vscode_source` prepares
+that exact client revision in ignored `.output/vscode-source/` before integration
+builds. Client implementations are not copied into the engine’s tracked sources. `environment.ts` owns
 engine selection, workspace trust and child telemetry restrictions;
 `installation.ts` owns explicit installation of the bundled pinned CLI into a
 managed environment, bounded cancellable installer processes and completion identity;

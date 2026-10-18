@@ -1,11 +1,29 @@
 ---
 title: Review real experiment Runs in VS Code
+lesson: 12
 description: Train on the public Wine dataset, inspect saved source and compare measured Runs in the Apizr extension.
 ---
 
 # XII — Review real experiment Runs in VS Code
 
-[Watch the Academy video — 6:22](index.md#12-review-real-experiment-runs-in-vs-code).
+<p class="apizr-academy-kicker">Track and review · Lesson 12 · Plan about 30 min</p>
+
+!!! abstract "By the end of this lesson"
+    - Navigate an actual Run and distinguish saved-source inspection from execution.
+    - Interpret equal measured scores without inferring identical models or generalization.
+    - Recognize stale source evidence and the Restricted Mode boundary.
+
+## Watch the lesson
+
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=zkujF-thyyQ" data-apizr-video="zkujF-thyyQ" data-apizr-title="Review real experiment Runs in VS Code" aria-label="Play: Review real experiment Runs in VS Code">
+    <img src="../../assets/videos/tutorial-vscode.png" width="1280" height="720" loading="lazy" alt="Academy Part XII: inspect saved source and compare measured Wine Runs in VS Code" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
+
+English · 6:22. Follow the illustrated Wine lab below to reproduce the operations.
+
 
 Train two decision trees on the [UCI Wine dataset](https://archive.ics.uci.edu/dataset/109/wine),
 then review their measured results in Apizr for VS Code. The dataset contains
@@ -136,3 +154,17 @@ the previous execution before drawing a conclusion.
 [Extension settings and limits](../reference/vscode.md) ·
 [Tracking guide](../getting-started/tracking.md) ·
 [Example source](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/examples/tracking/wine-vscode)
+
+## Practice: explain the comparison
+
+1. Before opening a diff, compare the table’s SDK depth-3 and Jupyter depth-5 scores. Predict whether equal values establish equal model bytes.
+2. Use **Open complete JSON** to locate the two actual model and input identities. Keep the full records available when reading the dashboard’s summaries.
+3. Make a presentation-only source change and observe the stale-result indication. Explain why refreshing the history is a read operation and does not rerun training.
+
+??? success "Check your reasoning"
+
+    Equal rounded accuracy and macro F1 on this one held-out split do not establish identical model bytes or equivalent generalization. Compare the actual artifact identities and the evaluation setup.
+
+    A history refresh reads retained records. It does not retrain, replace an old Run or silently prove that the current file is its recorded source. Read the stale-evidence explanation before choosing the next operation.
+
+[Back to the Academy](index.md) · [Continue with the tracking reference](../reference/tracking-sdk.md)
