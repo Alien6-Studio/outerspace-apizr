@@ -1155,6 +1155,199 @@
           "seconds": 0
         }
       ]
+    },
+    "XII": {
+      "hero": [
+        "Real data.",
+        "Measured Runs.",
+        "Careful review."
+      ],
+      "objective": "Distinguish saved source evidence from execution evidence, compare retained Wine Runs, and explain the limits of equal scores.",
+      "prerequisites": "Installed development VSIX and Apizr 0.4.6 scientific environment; fresh Wine example with actual SDK and Jupyter Runs; authorized window-only capture.",
+      "case": "examples/tracking/wine-vscode",
+      "subtitle": "UCI Wine \u00b7 Installed VSIX \u00b7 Apizr 0.4.6 development",
+      "scenes": [
+        {
+          "id": "intro",
+          "title": "Review real experiment Runs in VS Code",
+          "voice": "Can we explain a better score from the evidence we actually retained? In this lesson, we review decision trees trained on the public Wine dataset. You will connect Apizr to an installed Python environment, inspect saved source, and compare measured Runs inside Visual Studio Code. The goal is a defensible experiment review, with the limits still visible.",
+          "seconds": 0,
+          "section": "VS CODE / REAL WINE RUNS",
+          "repository": "Wine classification",
+          "ref": "Apizr 0.4.6 development",
+          "takeaway": "",
+          "kind": "hero"
+        },
+        {
+          "id": "map",
+          "title": "Source, execution, review",
+          "voice": "Keep three things separate. The source defines a training procedure. A Python session or a real Jupyter kernel executes it and records a Run. The extension reads that retained history through your selected engine and operator policy. Our dataset has one hundred and seventy eight samples, thirteen chemical measurements, and three cultivar classes. We use a fixed stratified seventy thirty split and seed forty two. The written guide contains the reproducible setup.",
+          "seconds": 0,
+          "section": "VS CODE / REAL WINE RUNS",
+          "repository": "Wine classification",
+          "ref": "Apizr 0.4.6 development",
+          "takeaway": "",
+          "kind": "diagram",
+          "items": [
+            [
+              "Saved source",
+              "Wine data, split and decision-tree training procedure"
+            ],
+            [
+              "Actual execution",
+              "SDK depths 1 and 3; Jupyter depth 5; one local store"
+            ],
+            [
+              "VS Code review",
+              "Inspect evidence, read Runs and compare observed values"
+            ]
+          ]
+        },
+        {
+          "id": "connect",
+          "title": "Connect an explicitly selected engine",
+          "voice": "This is the installed development extension in a dedicated Wine workspace. The example environment already contains Apizr and scikit learn. Here, Python mode points to that environment, and the operator policy allows source analysis and history reading. Run Check engine to verify the selected executable. Then open the experiment dashboard and explicitly refresh history. We have three completed Runs: two SDK sessions and one real notebook execution. Your Run digests and timestamps will differ. The extension can also offer a managed CLI installation; that does not install your scientific environment.",
+          "seconds": 48,
+          "section": "VS CODE / REAL WINE RUNS",
+          "repository": "Wine classification",
+          "ref": "Apizr 0.4.6 development",
+          "takeaway": "Select the engine and project policy, then refresh the shared local history.",
+          "capture": "connect.mp4",
+          "native_actions": [
+            "Show configured Python engine and operator policy.",
+            "Run Check engine, open the dashboard and refresh real history."
+          ]
+        },
+        {
+          "id": "inspection",
+          "title": "Inspect saved source without fitting the model",
+          "voice": "Open the Python experiment and run Inspect with Apizr. The result describes saved source; inspection does not fit a decision tree. The code records the Wine input identity, tree depth, seed, and computed metrics. Expand the Inspection view to read the evidence and source locations. Now add an unsaved comment. The view marks the previous evidence outdated. Inspecting again still reads the saved file and excludes those live edits. Revert the comment and inspect the saved file again. A current source view is useful context, but it does not recreate an earlier execution.",
+          "seconds": 53,
+          "section": "VS CODE / REAL WINE RUNS",
+          "repository": "Wine classification",
+          "ref": "Apizr 0.4.6 development",
+          "takeaway": "Saved source evidence becomes outdated after edits; inspection does not run training.",
+          "capture": "inspection.mp4",
+          "native_actions": [
+            "Inspect the saved Python file.",
+            "Add a dirty comment, observe outdated evidence and inspect saved bytes.",
+            "Revert and inspect again."
+          ]
+        },
+        {
+          "id": "history",
+          "title": "Read the Run and its recorded source",
+          "voice": "Return to the dashboard and select the depth three SDK Run. Its accuracy is zero point nine six three zero, and macro F one is zero point nine six three eight. Those values were computed on the held out split and rounded before logging. Read the capture mode and recorded parameters alongside the metrics. Open the complete JSON when you need the canonical Plan and Run. Open recorded source navigates to the current file, so compare source identity before treating it as the exact historical bytes. The notebook Run was produced by a real kernel. Notebook inspection alone does not execute its cells.",
+          "seconds": 52,
+          "section": "VS CODE / REAL WINE RUNS",
+          "repository": "Wine classification",
+          "ref": "Apizr 0.4.6 development",
+          "takeaway": "Review measured values with capture mode, inputs and parameters; retain unknowns.",
+          "capture": "history.mp4",
+          "native_actions": [
+            "Select the depth-3 SDK Run.",
+            "Read values, open complete JSON and navigate to recorded source."
+          ]
+        },
+        {
+          "id": "comparison",
+          "title": "Compare depth 1 as A with depth 3 as B",
+          "voice": "Choose Compare two Runs. Use the depth one SDK Run as A, then depth three as B. Read the canonical comparison. The observed depth changes from one to three, while the retained Wine input identity matches. Accuracy changes from zero point six one one one to zero point nine six three zero. The displayed delta is B minus A. Macro F one also improves on this split. Reverse the order and the delta changes sign. These are observations from these two executions. A matching logged input does not establish every runtime condition, and unknown evidence stays unknown.",
+          "seconds": 60,
+          "section": "VS CODE / REAL WINE RUNS",
+          "repository": "Wine classification",
+          "ref": "Apizr 0.4.6 development",
+          "takeaway": "The delta is B \u2212 A; a comparison supports an observation on this held-out split.",
+          "capture": "comparison.mp4",
+          "native_actions": [
+            "Choose depth-1 SDK as A and depth-3 SDK as B.",
+            "Read parameter change, input identity and measured deltas.",
+            "Reverse order and read the changed delta sign."
+          ]
+        },
+        {
+          "id": "restricted",
+          "title": "Restricted Mode refuses project operations",
+          "voice": "This second dedicated profile opens the same example in Restricted Mode. The extension can show its dashboard, but project operations are disabled. Try Check engine: the command reports workspace untrusted and starts no engine. Trust is an explicit decision about code you have reviewed. The operator policy remains a separate permission boundary after trust. In a trusted workspace, reading history and inspecting saved source still do not execute your experiment.",
+          "seconds": 35,
+          "section": "VS CODE / REAL WINE RUNS",
+          "repository": "Wine classification",
+          "ref": "Apizr 0.4.6 development",
+          "takeaway": "Restricted Mode refuses project commands before starting an engine.",
+          "capture": "restricted.mp4",
+          "native_actions": [
+            "Open a second isolated profile in Restricted Mode.",
+            "Attempt Check engine; retain refusal and zero active processes."
+          ]
+        },
+        {
+          "id": "exercise",
+          "title": "Equal scores: what can you conclude?",
+          "voice": "Pause here. The depth three SDK Run and the depth five Jupyter Run have the same accuracy and macro F one. Does that establish equal generalization? What would you check before preferring either model? Then repeat the notebook cell and predict what changes in history.",
+          "seconds": 24,
+          "section": "VS CODE / REAL WINE RUNS",
+          "repository": "Wine classification",
+          "ref": "Apizr 0.4.6 development",
+          "takeaway": "",
+          "kind": "exercise",
+          "items": [
+            [
+              "Interpret the tie",
+              "Same two scores on this split. What remains unproven?"
+            ],
+            [
+              "Repeat the notebook cell",
+              "Predict the Run identity, execution count and measured values."
+            ]
+          ]
+        },
+        {
+          "id": "correction",
+          "title": "A measured tie is a starting point",
+          "voice": "Equal rounded scores on one split establish a tie for those logged metrics here. They do not establish equal predictions, equal performance on new data, or a deployment decision. Check the retained parameters, input identity, capture details, and missing evidence, then evaluate further. Repeating the notebook cell produces a new Run and execution count. With this fixed procedure, the scores may repeat. Keep that new execution distinct. Connect explicitly, inspect saved source, and compare the evidence that was actually recorded.",
+          "seconds": 0,
+          "section": "VS CODE / REAL WINE RUNS",
+          "repository": "Wine classification",
+          "ref": "Apizr 0.4.6 development",
+          "takeaway": "",
+          "kind": "recap",
+          "items": [
+            [
+              "Observed here",
+              "Depths 3 and 5 tie on two rounded held-out metrics."
+            ],
+            [
+              "Still to investigate",
+              "Predictions, other splits, runtime context and deployment needs."
+            ],
+            [
+              "Repeat and review",
+              "New execution, new Run identity; refresh the same history."
+            ]
+          ]
+        }
+      ],
+      "end": {
+        "id": "end",
+        "title": "Continue with the written Wine guide",
+        "voice": "Follow the written Wine lesson for commands, dependencies and the notebook. The Apizr and extension repositories contain the example and current limits. Thank you for following Apizr Academy.",
+        "seconds": 0,
+        "section": "VS CODE / REAL WINE RUNS",
+        "repository": "Wine classification",
+        "ref": "Apizr 0.4.6 development",
+        "takeaway": "",
+        "kind": "end",
+        "items": [
+          [
+            "Apizr Academy",
+            "Alien6-Studio/outerspace-apizr"
+          ],
+          [
+            "Apizr for VS Code",
+            "Alien6-Studio/outerspace-apizr-vscode"
+          ]
+        ]
+      }
     }
   }
 }

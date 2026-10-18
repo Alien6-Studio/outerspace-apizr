@@ -5,7 +5,8 @@ Parts I–XII share the current local Academy production project under
 `.output/academy-videos/production/academy.py`; see the adjacent `README.md`
 for reconstruction, validation and manual YouTube kit commands. Published I–V
 masters retain their original recorded version and sources. Parts VI–XI use the
-0.4.6 candidate; XII remains preparation until actual native capture is approved.
+0.4.6 candidate. XII uses the real Wine example with authorized native window
+captures; its video draft remains local until publication is authorized.
 The narrator explicitly reuses Continuum Attest's local Kokoro voice:
 `af_heart`, speed `1.04`, quantized Kokoro 82M. Keep the existing Apizr colours,
 logo, terminal layout, chapter cards, captions, closing sequence and covers.
@@ -20,8 +21,9 @@ The output directory must be outside the checkout and must not already exist.
 The manifest records source and guide identities. Parts VI–X include compatible
 `production/episode.json`, `production/narration.json` and the exact guide
 commands. Part XI also includes narration and the live-kernel shot sequence.
-Part XII includes narration for native inspection, history and Restricted Mode
-scenes, its actual editor command list and shot list. Its episode metadata declares
+Part XII includes the Wine materials, narration for native inspection, history,
+comparison and Restricted Mode scenes, its actual editor command list and shot
+list. Its episode metadata declares
 `recording_interface: vscode-native-window`; these scenes require actual window
 footage and must never use a terminal recording as a substitute. Preparation does
 not establish that a recording exists.
@@ -29,7 +31,7 @@ not establish that a recording exists.
 Copy each prepared production folder into a new local recording project. Use
 the shared `prepare_voice.cjs`, `record_episode.py` and `render.py` through
 `production/academy.py`; retain the original source hashes alongside adapted
-inputs. `render` rebuilds I–XI from retained takes and narration. `record` requires
+inputs. `render` rebuilds I–XII from retained takes and narration. `record` requires
 a new project outside the checkout and an explicitly installed 0.4.6 engine. It
 prepares fresh lesson inputs and history without replacing retained masters. Select
 an isolated installed candidate engine instead of the old 0.4.3 environment, and read the
@@ -101,8 +103,11 @@ then derive that holdout before recording. They evaluate precision, recall and
 flagged volume at different thresholds. The SDK example is `thresholds.py`.
 For the live kernel, use `fraud-thresholds.ipynb` with the kernel driver's explicit
 `--input evaluation.csv`; the selected CSV hash joins the retained kernel proof.
-The notebook remains a terminal view of actual ipykernel execution. Native VS Code
-capture remains separate. Keep the existing voice, colours, typography, opener
+The notebook remains a terminal view of actual ipykernel execution. Part XII uses
+the public UCI Wine dataset, with actual held-out accuracy and
+macro F1 from SDK and Jupyter Runs. Its pause-and-answer exercise distinguishes
+equal logged scores from claims about generalization. Native VS Code capture
+remains separate. Keep the existing voice, colours, typography, opener
 and covers; add diagrams and explanations within that visual identity.
 
 Technical media checks establish readable captures, synchronized narration and
