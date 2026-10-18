@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 
 from scripts.qualification.experiments.experiment_jupyter_proof import Kernel
+from scripts.qualification.packaging.vscode_source import directory
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -226,9 +227,9 @@ def run_host(args, root, python, project, policy, *, tests=None):
         command(
             [*common, "--install-extension", args.vsix.absolute(), "--force"], cwd=root
         )
-        development = ROOT / "editors/vscode/test/driver"
+        development = directory(ROOT) / "test/driver"
     else:
-        development = ROOT / "editors/vscode"
+        development = directory(ROOT)
     host = code
     candidates = [code.parent.parent / "code"]
     if len(code.parents) > 3:
@@ -246,7 +247,7 @@ def run_host(args, root, python, project, policy, *, tests=None):
         "--disable-updates",
         "--disable-telemetry",
         "--extensionDevelopmentPath=" + str(development),
-        "--extensionTestsPath=" + str(tests or ROOT / "editors/vscode/test/host.cjs"),
+        "--extensionTestsPath=" + str(tests or directory(ROOT) / "test/host.cjs"),
     ]
     arguments[0] = host
     if not args.untrusted:

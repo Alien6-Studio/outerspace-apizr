@@ -13,6 +13,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from scripts.qualification.interfaces.vscode_proof import ROOT, command
+from scripts.qualification.packaging.vscode_source import directory
 
 
 def dockerfile(base: str, wheel: str) -> str:
@@ -35,7 +36,12 @@ def setup(root: Path) -> str:
         f"process.env.APIZR_VSCODE_PROOF={json.dumps(str(root / 'proof'))};"
         "process.env.APIZR_VSCODE_UNTRUSTED='0';try {"
         "if(vscode.env.remoteName!=='ssh-remote')throw new Error('Expected actual remote SSH extension host');"
-        "await require('/workspace/editors/vscode/test/host.cjs').run();"
+        "await require("
+        + json.dumps(
+            "/workspace/"
+            + (directory(ROOT) / "test/host.cjs").relative_to(ROOT).as_posix()
+        )
+        + ").run();"
         "}catch(e){require('fs').writeFileSync("
         + json.dumps(str(root / "proof/driver-error.json"))
         + ",JSON.stringify({message:String(e)}));}};"

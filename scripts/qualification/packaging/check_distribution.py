@@ -64,7 +64,9 @@ def check_vsix(path: Path, project_root: Path) -> dict[str, str]:
         or path.stat().st_size > 20 * 1024 * 1024
     ):
         raise ValueError("Invalid VSIX artifact")
-    package = json.loads((project_root / "editors/vscode/package.json").read_bytes())
+    from scripts.qualification.packaging.vscode_source import read_lock
+
+    lock = read_lock(project_root)
     with zipfile.ZipFile(path) as archive:
         entries = archive.infolist()
         names = {item.filename for item in entries}
@@ -83,43 +85,35 @@ def check_vsix(path: Path, project_root: Path) -> dict[str, str]:
             ):
                 raise ValueError("Unsafe VSIX member")
         payload = {name: archive.read(name) for name in names}
-    if json.loads(payload["extension/package.json"]) != package or package.get(
-        "dependencies"
-    ):
-        raise ValueError("VSIX package metadata differs from source")
-    expected = {
-        "extension/package.json",
-        "extension.vsixmanifest",
-        "[Content_Types].xml",
+    package = json.loads(payload["extension/package.json"])
+    if package.get("dependencies") or package["version"] != lock["version"]:
+        raise ValueError("VSIX package metadata differs from its pinned source")
+    expected = {"extension.vsixmanifest", "[Content_Types].xml"}
+    source_names = {
+        "package.json",
+        "LICENSE",
+        "README.md",
+        "package-lock.json",
+        "tsconfig.json",
+        "engine.json",
     }
-    sources = [
-        ("LICENSE", project_root / "LICENSE"),
-        *(
-            (name, project_root / "editors/vscode" / name)
-            for name in (
-                "README.md",
-                "package-lock.json",
-                "tsconfig.json",
-                "engine.json",
-            )
-        ),
-        *(
-            ("src/" + p.name, p)
-            for p in sorted((project_root / "editors/vscode/src").glob("*.ts"))
-        ),
-    ]
-    extension = project_root / "editors/vscode"
-    for asset in sorted((extension / "media").rglob("*")):
-        if asset.is_file():
-            if asset.is_symlink() or asset.suffix not in {".png", ".gif"}:
-                raise ValueError("Invalid VSIX media source")
-            sources.append((asset.relative_to(extension).as_posix(), asset))
-    if not any(name.startswith("src/") for name, _ in sources):
+    source_names.update(
+        name
+        for name in lock["files"]
+        if name.startswith("src/") and name.endswith(".ts")
+    )
+    source_names.update(
+        name
+        for name in lock["files"]
+        if name.startswith("media/") and Path(name).suffix in {".png", ".gif"}
+    )
+    if not any(name.startswith("src/") for name in source_names):
         raise ValueError("Missing extension source inventory")
-    for name, source in sources:
+    for name in sorted(source_names):
         member = "extension/" + name
         expected.add(member)
-        if payload.get(member) != source.read_bytes():
+        raw = payload.get(member)
+        if raw is None or hashlib.sha256(raw).hexdigest() != lock["files"].get(name):
             raise ValueError("VSIX source/notice differs: " + name)
         if name.startswith("src/"):
             expected.add("extension/out/" + Path(name).stem + ".js")

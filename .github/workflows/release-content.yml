@@ -43,6 +43,8 @@ jobs:
           version: '0.13.1'
           python-version: '3.14'
       - run: uv sync --locked --group readme
+      - name: Prepare the pinned client for coordinated metadata tests
+        run: python3 -m scripts.qualification.packaging.vscode_source --prepare
       - name: Test release metadata, DCO and qualification routing
         run: uv run --locked pytest tests/test_release_metadata.py tests/test_ci_scope.py tests/test_dco.py tests/ci/test_release_consistency.py
       - name: Render and validate the four package descriptions

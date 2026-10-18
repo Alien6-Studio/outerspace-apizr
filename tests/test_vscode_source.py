@@ -10,10 +10,20 @@ from scripts.qualification.packaging import vscode_source as source
 
 @pytest.fixture
 def snapshot(tmp_path):
-    directory = tmp_path / "editors/vscode/src"
+    directory = tmp_path / ".output/vscode-source" / ("a" * 40) / "src"
     directory.mkdir(parents=True)
     (directory / "extension.ts").write_text("export const client = true;\n")
+    for name, value in {
+        "package.json": {"version": "0.4.6"},
+        "package-lock.json": {
+            "version": "0.4.6",
+            "packages": {"": {"version": "0.4.6"}},
+        },
+        "engine.json": {"version": "0.4.6"},
+    }.items():
+        (directory.parent / name).write_text(json.dumps(value))
     lock = {
+        "version": "0.4.6",
         "schema_version": "apizr.vscode-source/v1",
         "repository": source.REPOSITORY,
         "commit": "a" * 40,
@@ -28,7 +38,7 @@ def snapshot(tmp_path):
     "fault", [None, "edit", "add", "remove", "repository", "floating"]
 )
 def test_snapshot_refuses_local_forks_and_unpinned_sources(snapshot, fault):
-    directory = snapshot / "editors/vscode/src"
+    directory = source.directory(snapshot) / "src"
     if fault == "edit":
         (directory / "extension.ts").write_text("// independent implementation\n")
     elif fault == "add":
@@ -54,7 +64,18 @@ def test_snapshot_refuses_local_forks_and_unpinned_sources(snapshot, fault):
 
 def test_build_outputs_do_not_change_pinned_client_identity(snapshot):
     for name in ["out", "node_modules", "dist"]:
-        directory = snapshot / "editors/vscode" / name
+        directory = source.directory(snapshot) / name
         directory.mkdir()
         (directory / "local.js").write_text("// local build\n")
     assert source.verify(snapshot)["commit"] == "a" * 40
+
+
+def test_prepared_cache_is_verified_without_fetching(snapshot, monkeypatch):
+    def forbidden(*args, **kwargs):
+        raise AssertionError("Prepared-source verification must not access the network")
+
+    monkeypatch.setattr(source.subprocess, "run", forbidden)
+    assert source.prepare(snapshot)["commit"] == "a" * 40
+    (source.directory(snapshot) / "src/extension.ts").write_text("// changed")
+    with pytest.raises(ValueError, match="snapshot"):
+        source.prepare(snapshot)

@@ -83,6 +83,7 @@ def test_retained_set_rejects_mismatch(packaging, tmp_path, fault):
         "reproducibility",
         "licences",
         "proof-files",
+        "client-source",
     ],
 )
 def test_coordinated_vsix_is_source_bound_and_cannot_be_omitted(
@@ -116,6 +117,8 @@ def test_coordinated_vsix_is_source_bound_and_cannot_be_omitted(
         (tmp_path / value["artifacts"][-1]["file"]).write_bytes(b"replacement")
     elif fault == "commit":
         proof["source_commit"] = "b" * 40
+    elif fault == "client-source":
+        proof["client_source"]["commit"] = "b" * 40
     elif fault == "dirty":
         proof["source_dirty"] = True
     elif fault == "fixture":
@@ -375,3 +378,27 @@ def test_dependency_export_rejects_unrecorded_or_changed_files(
     else:
         assert packaging.copy_closure("mcp", destination)
         assert (destination / wheel.name).read_bytes() == wheel.read_bytes()
+
+
+def test_vsix_source_admission_is_offline_without_a_checkout(
+    packaging, tmp_path, monkeypatch
+):
+    from release_candidate_helpers import attach_editor
+
+    from scripts.qualification.packaging import vscode_source
+
+    attach_editor(
+        tmp_path,
+        {"version": "0.4.6", "commit": "a" * 40, "artifacts": []},
+        packaging.ROOT,
+    )
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError(
+            "Verifying retained VSIX bytes must not need a source checkout or fetch"
+        )
+
+    monkeypatch.setattr(vscode_source, "directory", forbidden)
+    monkeypatch.setattr(vscode_source.subprocess, "run", forbidden)
+    files = packaging.check_vsix(tmp_path / "editor/apizr-0.4.6.vsix", packaging.ROOT)
+    assert "extension/src/extension.ts" in files

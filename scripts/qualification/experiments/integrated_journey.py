@@ -21,6 +21,7 @@ from scripts.qualification.experiments.qualify_data_science_journey import (
     serving_checks,
     write,
 )
+from scripts.qualification.packaging.vscode_source import directory
 
 
 def prepare_kernel(python, output):
@@ -522,7 +523,7 @@ runpy.run_module('apizr.cli',run_name='__main__')
             python,
             project,
             policy,
-            tests=ROOT / "editors/vscode/test/journey.cjs",
+            tests=directory(ROOT) / "test/journey.cjs",
         )
     result = {
         "status": "passed",

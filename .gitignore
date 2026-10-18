@@ -168,9 +168,6 @@ cython_debug/
 
 .ruff_cache/
 node_modules/
-/editors/vscode/out/
-/editors/vscode/*.vsix
-/editors/vscode/.vscode-test/
 
 # CI verification evidence
 coverage.json

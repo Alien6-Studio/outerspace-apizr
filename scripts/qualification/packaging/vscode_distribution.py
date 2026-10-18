@@ -9,8 +9,10 @@ import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 
+from scripts.qualification.packaging.vscode_source import directory, verify
+
 ROOT = Path(__file__).resolve().parents[3]
-EXTENSION = ROOT / "editors/vscode"
+EXTENSION = directory(ROOT)
 VSX = "http://schemas.microsoft.com/developer/vsx-schema/2011"
 
 
@@ -190,7 +192,12 @@ def main():
     subprocess.run(compiler, cwd=ROOT, check=True)
     build(output, args.fixture_version)
     assert path.read_bytes() == first
+    client = verify(ROOT)
     proof = {
+        "client_source": {
+            "repository": client["repository"],
+            "commit": client["commit"],
+        },
         "schema_version": "apizr.vscode-build/v1",
         "result": "pass",
         "vsix": path.name,

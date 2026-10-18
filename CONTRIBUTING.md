@@ -91,11 +91,12 @@ git switch -c feature/my-change origin/0.4.6
 Fork the repository if needed. Install uv and run:
 
 ```bash
-uv sync --locked --group docs
+uv sync --locked --group readme
 uv run pre-commit install
 uv run ruff check .
 uv run ruff format --check .
 uv run pyright
+uv run --locked python -m scripts.qualification.packaging.vscode_source --prepare
 uv run pytest --cov --cov-report=term-missing
 uv build
 uv run --group docs mkdocs build --strict

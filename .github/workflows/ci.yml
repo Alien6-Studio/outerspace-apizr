@@ -39,9 +39,13 @@ jobs:
           version: '0.13.1'
           python-version: '3.14'
       - run: uv sync --locked
-      - run: npm ci --prefix editors/vscode --ignore-scripts --no-audit --no-fund
+      - name: Prepare the immutable client from its dedicated repository
+        run: |
+          client=$(python3 -m scripts.qualification.packaging.vscode_source --prepare --print-directory)
+          echo "APIZR_VSCODE_SOURCE=$client" >> "$GITHUB_ENV"
+      - run: npm ci --prefix "$APIZR_VSCODE_SOURCE" --ignore-scripts --no-audit --no-fund
       - name: Audit every extension dependency before candidate build
-        run: npm audit --prefix editors/vscode --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > "$RUNNER_TEMP/vscode-node-audit.json"
+        run: npm audit --prefix "$APIZR_VSCODE_SOURCE" --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > "$RUNNER_TEMP/vscode-node-audit.json"
       - name: Build the four wheels, four sdists and coordinated VSIX
         run: |
           uv run --locked python -m scripts.qualification.packaging.coordinated_distributions build --candidate "$RUNNER_TEMP/candidate"
@@ -271,6 +275,9 @@ jobs:
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
         if: env.PRODUCT_CHECKS != 'false'
+      - name: Prepare the pinned client for coordinated archive tests
+        if: env.PRODUCT_CHECKS != 'false'
+        run: python3 -m scripts.qualification.packaging.vscode_source --prepare
       - run: uv run --locked pytest -n auto --maxprocesses=2 --dist=loadfile --max-worker-restart=0 --cov --cov-report=term-missing --cov-report=json:coverage.json --cov-report=xml:coverage.xml --junitxml=tests.xml
         if: env.PRODUCT_CHECKS != 'false'
       - name: Protect selected evidence line and branch coverage separately
@@ -357,6 +364,9 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
         if: env.PRODUCT_CHECKS != 'false'
+      - name: Prepare the pinned client for coordinated archive tests
+        if: env.PRODUCT_CHECKS != 'false'
+        run: python3 -m scripts.qualification.packaging.vscode_source --prepare
       - run: uv run --locked pytest -n auto --maxprocesses=2 --dist=loadfile --max-worker-restart=0 --cov --cov-report=term-missing --cov-report=json:coverage.json --junitxml=tests.xml
         if: env.PRODUCT_CHECKS != 'false'
       - name: Protect selected evidence line and branch coverage separately
@@ -783,10 +793,14 @@ jobs:
           name: release-candidate
           path: ${{ runner.temp }}/vscode-candidate
       - run: uv sync --locked --group jupyter-qualification --extra notebook
-      - run: npm ci --prefix editors/vscode --ignore-scripts --no-audit --no-fund
-      - run: npm test --prefix editors/vscode
+      - name: Prepare the immutable client from its dedicated repository
+        run: |
+          client=$(python3 -m scripts.qualification.packaging.vscode_source --prepare --print-directory)
+          echo "APIZR_VSCODE_SOURCE=$client" >> "$GITHUB_ENV"
+      - run: npm ci --prefix "$APIZR_VSCODE_SOURCE" --ignore-scripts --no-audit --no-fund
+      - run: npm test --prefix "$APIZR_VSCODE_SOURCE"
       - name: Audit the complete extension Node tree, without exclusions
-        run: npm audit --prefix editors/vscode --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > "$RUNNER_TEMP/vscode-node-audit.json"
+        run: npm audit --prefix "$APIZR_VSCODE_SOURCE" --json --include=prod --include=dev --include=optional --include=peer --audit-level=low > "$RUNNER_TEMP/vscode-node-audit.json"
       - name: Reuse the coordinated VSIX; build only the historical update fixture
         run: |
           mkdir "$RUNNER_TEMP/vscode-dist"

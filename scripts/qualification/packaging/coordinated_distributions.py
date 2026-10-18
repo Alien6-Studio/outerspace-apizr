@@ -163,11 +163,16 @@ def verify_editor(root, manifest, project_root=ROOT):
     path = root / next(iter(editor_files))
     files = check_vsix(path, project_root)
     proof = json.loads(path.with_suffix(".json").read_text())
+    from scripts.qualification.packaging.vscode_source import read_lock
+
+    client = read_lock(project_root)
     toolchain = json.loads(
         (project_root / "policy/vscode-distribution.json").read_text()
     )
     if (
-        proof.get("schema_version") != "apizr.vscode-build/v1"
+        proof.get("client_source")
+        != {"repository": client["repository"], "commit": client["commit"]}
+        or proof.get("schema_version") != "apizr.vscode-build/v1"
         or proof.get("result") != "pass"
         or proof.get("source_commit") != manifest["commit"]
         or proof.get("source_dirty") is not False

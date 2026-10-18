@@ -53,21 +53,6 @@ def inventory(version):
             "policy/vscode-dependencies.json",
             "policy/vscode-distribution.json",
             "policy/vscode-source.json",
-            *(
-                "editors/vscode/" + name
-                for name in (
-                    "package.json",
-                    "package-lock.json",
-                    "README.md",
-                    "tsconfig.json",
-                    "media/icon.png",
-                    "engine.json",
-                )
-            ),
-            *(
-                p.relative_to(ROOT).as_posix()
-                for p in (ROOT / "editors/vscode/src").glob("*.ts")
-            ),
             "plugins/mcp/distribution/manifest.json",
             "plugins/mcp/distribution/pyproject.toml",
             *(
@@ -133,16 +118,10 @@ def check(root=ROOT, *, release=False, ref=None):
             raise ValueError("Release metadata disagrees with pyproject.toml")
         public = version
     errors, descriptions = [], []
-    editor = json.loads((root / "editors/vscode/package.json").read_text())
-    editor_lock = json.loads((root / "editors/vscode/package-lock.json").read_text())
-    editor_engine = json.loads((root / "editors/vscode/engine.json").read_text())
-    if (
-        editor["version"] != version
-        or editor_lock.get("version") != version
-        or editor_lock["packages"][""]["version"] != version
-        or editor_engine["version"] != version
-    ):
-        errors.append("VS Code: uncoordinated package/lock version")
+    from scripts.qualification.packaging.vscode_source import read_lock
+
+    if read_lock(root)["version"] != version:
+        errors.append("VS Code: uncoordinated pinned client version")
     for directory in PROJECTS:
         project_root = root / directory
         project = tomllib.loads((project_root / "pyproject.toml").read_text())[

@@ -40,5 +40,6 @@
     "test/json.test.cjs": "484e19235887fa4d5a5e78d15e48006c6056b95e79cf66b000a2023120b935cb",
     "test/workbench.test.cjs": "2f3fd1ba7eba8cca04e9803ca94766d82583cf6e505ba9aa7b2da57f1f8ba3ed",
     "tsconfig.json": "85a798203430007d068a00f0a37cc491884ff8ee96369ffde455e391a2b0df41"
-  }
+  },
+  "version": "0.4.6"
 }

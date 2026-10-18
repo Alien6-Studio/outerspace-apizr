@@ -4,13 +4,18 @@ import json
 import zipfile
 
 from scripts.qualification.packaging.coordinated_distributions import record, write
-from scripts.qualification.packaging.vscode_distribution import digest, manifest
+from scripts.qualification.packaging.vscode_distribution import ROOT, digest, manifest
+from scripts.qualification.packaging.vscode_source import directory as client_directory
 
 
 def attach_editor(directory, candidate, source):
     editor = directory / "editor"
     editor.mkdir()
-    package = json.loads((source / "editors/vscode/package.json").read_text())
+    extension = client_directory(ROOT)
+    assert json.loads((source / "policy/vscode-source.json").read_text()) == json.loads(
+        (ROOT / "policy/vscode-source.json").read_text()
+    )
+    package = json.loads((extension / "package.json").read_text())
     payload = {
         "extension/package.json": (json.dumps(package, indent=2) + "\n").encode(),
         "extension.vsixmanifest": manifest(package),
@@ -23,14 +28,13 @@ def attach_editor(directory, candidate, source):
         "tsconfig.json",
         "engine.json",
     ):
-        payload["extension/" + name] = (source / "editors/vscode" / name).read_bytes()
-    extension = source / "editors/vscode"
+        payload["extension/" + name] = (extension / name).read_bytes()
     for asset in (extension / "media").rglob("*"):
         if asset.is_file():
             payload["extension/" + asset.relative_to(extension).as_posix()] = (
                 asset.read_bytes()
             )
-    for path in (source / "editors/vscode/src").glob("*.ts"):
+    for path in (extension / "src").glob("*.ts"):
         payload["extension/src/" + path.name] = path.read_bytes()
         payload["extension/out/" + path.stem + ".js"] = (
             b"// non-executable test fixture\n"
@@ -46,6 +50,10 @@ def attach_editor(directory, candidate, source):
         path.with_suffix(".json"),
         {
             "schema_version": "apizr.vscode-build/v1",
+            "client_source": {
+                key: json.loads((source / "policy/vscode-source.json").read_text())[key]
+                for key in ("repository", "commit")
+            },
             "result": "pass",
             "vsix": path.name,
             "sha256": digest(path.read_bytes()),
