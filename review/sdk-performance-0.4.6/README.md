@@ -75,7 +75,7 @@ file reads and inert imports/served calls. Six targeted security mutations are
 killed. No dependency or security floor was relaxed.
 
 Run `scripts.qualification.experiments.benchmark_engine` as documented in
-[the engine baseline](../../docs/architecture/engine-performance.md). Use
+[the engine baseline](https://apizr.outerspace.sh/architecture/engine-performance/). Use
 `--repeats 5 --history-sizes 10` for this SDK-focused measurement; the full history
 sizes remain available. To repeat the separate cold comparison, create a clean
 read-only worktree at the before commit and call the benchmark's

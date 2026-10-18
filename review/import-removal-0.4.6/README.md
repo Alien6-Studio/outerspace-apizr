@@ -13,7 +13,7 @@ does not establish external usage.
 
 ## Deprecation and structural gate
 
-The [complete migration table](../../docs/releases/removed-imports-0.4.6.md)
+The [complete migration table](../../releases/removed-imports-0.4.6.md)
 documents deprecation followed by removal within this development line. The signal
 is documentation-only: introducing import-time warnings immediately before
 removal would expand forwarding machinery and alter lazy import behavior. The

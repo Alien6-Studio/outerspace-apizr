@@ -35,9 +35,9 @@ repos:
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
     hooks:
       - id: trailing-whitespace
-        exclude: ^(LICENSE$|overrides/|src/apizr/.*/templates/)
+        exclude: ^(LICENSE$|src/apizr/.*/templates/)
       - id: end-of-file-fixer
-        exclude: ^(LICENSE$|overrides/|src/apizr/.*/templates/)
+        exclude: ^(LICENSE$|src/apizr/.*/templates/)
       - id: check-yaml
         args: [--allow-multiple-documents]
       - id: check-toml
@@ -45,5 +45,5 @@ repos:
       - id: detect-private-key
       - id: check-added-large-files
         args: [--maxkb=1024, --enforce-all]
-        # Existing documentation artwork and the generated universal lock are intentional.
-        exclude: ^(uv\.lock|docs/assets/images/(apizr-teaser-01|illustration)\.png)$
+        # The generated universal lock is intentional.
+        exclude: ^uv\.lock$

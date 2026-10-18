@@ -1,4 +1,4 @@
-# Normative ownership inventory. See docs/architecture/code-organization.md.
+# Normative ownership inventory. See https://apizr.outerspace.sh/architecture/code-organization/.
 schema_version = 1
 
 [packages.""]

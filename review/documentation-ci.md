@@ -1,4 +1,8 @@
-# Cycle documentaire indépendant
+# Cycle documentaire indépendant — compte rendu historique
+
+Le site a depuis été extrait sur `gh-pages` ; les commandes `tools/docs/`
+ci-dessous décrivent l’ancienne organisation. Les instructions actuelles sont dans
+[le README du site](https://github.com/Alien6-Studio/outerspace-apizr/blob/gh-pages/README.md).
 
 Une révision du site comprenant `mkdocs.yml`, le README, les outils de build ou
 les exemples déclenchait toute la qualification produit. La PR du guide
@@ -27,7 +31,7 @@ GitHub est donc complète.
 
 ## Environnement et contrôles
 
-[`tools/docs/`](../tools/docs/README.md) est un projet uv virtuel, avec un lockfile,
+[`tools/docs/` au moment de cet audit](https://github.com/Alien6-Studio/outerspace-apizr/blob/54e6c13fe8f2bed62f4ac52a0024002df113df19/tools/docs/README.md) est un projet uv virtuel, avec un lockfile,
 une venv et une configuration pytest séparés. Il possède 43 entrées verrouillées,
 dont le projet virtuel ; les 42 dépendances reprennent les versions, sources et
 hashes d’archives déjà revus dans le lock racine. Un test bloque tout ajout ou

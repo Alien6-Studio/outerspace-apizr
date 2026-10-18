@@ -70,7 +70,7 @@ dev = [
   "httptools>=0.9,<1",
   "uvloop>=0.23,<1; sys_platform != 'win32' and sys_platform != 'cygwin' and platform_python_implementation == 'CPython'",
   "websockets>=17,<18",
-    # Retain the reviewed security floor for notebook/documentation templates.
+    # Retain the reviewed security floor for notebook templates.
     "jinja2>=3.1.6,<4",
     "python-multipart>=0.0.31,<1",
     "PyYAML>=6.0.2,<7",
@@ -116,7 +116,7 @@ markers = ["serial: real shared Docker worker boundary; requires -n 0 when confi
 target-version = "py311"
 # Executed CI notebooks are immutable evidence; their source bytes bind Runs.
 # They are validated with nbformat and canonical record/digest checks on intake.
-extend-exclude = ["tests/fixtures", "overrides", "review/hosted-journey-0.4.6/*/executed.ipynb"]
+extend-exclude = ["tests/fixtures", "review/hosted-journey-0.4.6/*/executed.ipynb"]
 force-exclude = true
 
 [tool.ruff.lint]

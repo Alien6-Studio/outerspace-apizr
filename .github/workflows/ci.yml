@@ -254,9 +254,9 @@ jobs:
     env:
       PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
     steps:
-      - name: Web-only change; product tests are not needed
+      - name: Prose-only change; product tests are not needed
         if: env.PRODUCT_CHECKS == 'false'
-        run: echo "Web-only change; validated by quality and Documentation."
+        run: echo "Product prose change; contribution and release-content checks remain."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: env.PRODUCT_CHECKS != 'false'
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
@@ -351,9 +351,9 @@ jobs:
     env:
       PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
     steps:
-      - name: Web-only change; product tests are not needed
+      - name: Prose-only change; product tests are not needed
         if: env.PRODUCT_CHECKS == 'false'
-        run: echo "Web-only change; validated by quality and Documentation."
+        run: echo "Product prose change; contribution and release-content checks remain."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: env.PRODUCT_CHECKS != 'false'
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
@@ -457,9 +457,9 @@ jobs:
     env:
       PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
     steps:
-      - name: Web-only change; product tests are not needed
+      - name: Prose-only change; product tests are not needed
         if: env.PRODUCT_CHECKS == 'false'
-        run: echo "Web-only change; validated by quality and Documentation."
+        run: echo "Product prose change; contribution and release-content checks remain."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: env.PRODUCT_CHECKS != 'false'
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0

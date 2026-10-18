@@ -12,7 +12,7 @@ standalone FastAPI commands, Python renderer calls and HTTP generation converge
 there. Its 263 pipeline/HTTP/plugin/characterization tests passed before removal.
 The final tree removes these retired implementations and their dedicated tests.
 
-The [migration table](../../docs/releases/migrate-0.4.6.md#removed-generation-pipeline)
+The [migration table](../../releases/migrate-0.4.6.md#removed-generation-pipeline)
 records each CLI, Python, HTTP, YAML and extension entrypoint and its replacement.
 The removed trees are `apizr.modules` (CodeAnalyzr, FastApizr and Dockerizr),
 `apizr.legacy`, and `apizr.extensions`, including i18n and templates. The six

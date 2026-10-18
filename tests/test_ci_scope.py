@@ -1,4 +1,4 @@
-"""Documentation routing must retain product qualification for mixed changes."""
+"""Product prose routing must retain qualification for executable examples and tooling."""
 
 import importlib.util
 import json
@@ -65,48 +65,16 @@ def pr_event(base, head):
 @pytest.mark.parametrize(
     "name,examples",
     [
-        ("docs/index.md", "false"),
-        ("docs/nested/page with\na newline.md", "false"),
-        ("docs/assets/stylesheets/branding.css", "false"),
-        ("docs/assets/javascripts/video.js", "false"),
-        ("docs/assets/videos/demo.mp4", "false"),
-        ("docs/assets/images/logo.png", "false"),
-        ("overrides/partials/source.html", "false"),
         ("README.md", "true"),
         ("CHANGELOG.md", "false"),
         ("CONTRIBUTING.md", "false"),
-        ("mkdocs.yml", "true"),
-        ("docs/CNAME", "false"),
-        ("docs/robots.txt", "false"),
-        ("docs/assets/videos/uv-install.tape", "true"),
-        ("docs/examples/operator.json", "true"),
-        ("tools/docs/pyproject.toml", "false"),
-        ("tools/docs/uv.lock", "false"),
-        ("scripts/docs_build.py", "true"),
-        ("scripts/check_docs_html.py", "false"),
-        ("scripts/check_docs_site.py", "false"),
-        ("scripts/smoke_examples.py", "true"),
-        ("scripts/smoke_readme.py", "true"),
-        ("scripts/public_example_packages.py", "true"),
-        ("scripts/typed_dict_proof.py", "true"),
-        ("tools/docs/README.md", "false"),
-        ("tests/test_docs_publication.py", "false"),
-        ("tests/test_site_refonte.py", "false"),
+        ("CODE_OF_CONDUCT.md", "false"),
+        ("SECURITY.md", "false"),
         ("review/architecture-guide.md", "false"),
-        ("review/site-refonte/page-migration.json", "false"),
-        ("examples/repository-shop/quote-service/src/api.py", "true"),
-        ("examples/data-science/fraud-detection/fraud_detection.ipynb", "true"),
-        ("examples/extension-probe/pyproject.toml", "true"),
-        ("docs/start/index.md", "true"),
-        ("docs/examples/business-quote.md", "true"),
-        ("docs/developer-guide/compiler.md", "true"),
-        ("docs/user-guide/select-functions.md", "true"),
-        ("docs/operations-guide/local-service.md", "true"),
-        ("docs/getting-started/data-science.md", "true"),
-        *[(name, "true") for name in sorted(scope.EXAMPLE_PAGES)],
+        ("review/nested/report with\na newline.md", "false"),
     ],
 )
-def test_web_changes_use_only_relevant_checks(repo, name, examples):
+def test_product_prose_uses_only_relevant_checks(repo, name, examples):
     base = git(repo, "rev-parse", "HEAD")
     head = commit(repo, name)
     for kind, payload in (
@@ -150,14 +118,14 @@ def test_web_changes_use_only_relevant_checks(repo, name, examples):
 def test_mixed_pr_keeps_full_qualification_even_after_a_final_docs_commit(repo, name):
     base = git(repo, "rev-parse", "HEAD")
     commit(repo, name, "changed")
-    head = commit(repo, "docs/index.md")
+    head = commit(repo, "CONTRIBUTING.md")
     assert scope.classify("pull_request", pr_event(base, head))["product"] == "true"
 
 
 def test_pr_uses_merge_base_not_unrelated_target_changes(repo):
     base = git(repo, "rev-parse", "HEAD")
     git(repo, "checkout", "-qb", "web")
-    head = commit(repo, "docs/index.md")
+    head = commit(repo, "CONTRIBUTING.md")
     git(repo, "checkout", "-q", "master")
     new_base = commit(repo, "src/product.py", "unrelated target change")
     assert new_base != base
@@ -177,9 +145,9 @@ def test_moving_product_into_docs_still_requires_product_checks(repo):
     )
 
 
-def test_deleted_web_page_can_use_web_checks(repo):
-    base = commit(repo, "docs/obsolete.md")
-    git(repo, "rm", "-q", "docs/obsolete.md")
+def test_deleted_prose_can_use_focused_checks(repo):
+    base = commit(repo, "review/obsolete.md")
+    git(repo, "rm", "-q", "review/obsolete.md")
     git(repo, "commit", "-qm", "delete")
     assert (
         scope.classify("push", event(base, git(repo, "rev-parse", "HEAD")))["product"]
@@ -189,9 +157,9 @@ def test_deleted_web_page_can_use_web_checks(repo):
 
 @pytest.mark.parametrize("mode", ["symlink", "executable"])
 @pytest.mark.parametrize(
-    "name", ["docs/index.md", "examples/fixture.py", "scripts/docs_build.py"]
+    "name", ["CONTRIBUTING.md", "examples/fixture.py", "scripts/smoke_readme.py"]
 )
-def test_non_regular_web_paths_require_full_checks(repo, mode, name):
+def test_non_regular_prose_paths_require_full_checks(repo, mode, name):
     base = git(repo, "rev-parse", "HEAD")
     path = repo / name
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -231,7 +199,7 @@ def test_missing_empty_manual_and_release_comparisons_run_full_checks(repo):
         ("workflow_dispatch", {}),
         ("schedule", {}),
     ]
-    head = commit(repo, "docs/index.md")
+    head = commit(repo, "CONTRIBUTING.md")
     release_pr = pr_event(sha, head)
     release_pr["pull_request"]["base"]["ref"] = "release/0.5"
     cases += [
@@ -244,11 +212,11 @@ def test_missing_empty_manual_and_release_comparisons_run_full_checks(repo):
 
 
 @pytest.mark.parametrize("branch_creation", [False, True])
-def test_official_development_push_qualifies_even_web_only_changes(
+def test_official_development_push_qualifies_even_prose_only_changes(
     repo, branch_creation
 ):
     base = git(repo, "rev-parse", "HEAD")
-    head = commit(repo, "docs/index.md")
+    head = commit(repo, "CONTRIBUTING.md")
     assert scope.classify("push", event(base, head))["product"] == "false"
     payload = event("0" * 40 if branch_creation else base, head)
     payload["ref"] = "refs/heads/0.4.6"
@@ -271,7 +239,7 @@ def test_cli_invalid_event_defaults_to_full_checks(repo, monkeypatch):
     assert "product=true\nexamples=true\n" in output.read_text()
 
 
-def test_required_matrix_checks_are_emitted_for_web_changes():
+def test_required_matrix_checks_are_emitted_for_prose_changes():
     # A job-level false condition is evaluated before matrix expansion and can
     # leave the required version-specific contexts missing. Gate steps instead.
     workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
@@ -289,19 +257,19 @@ def test_required_matrix_checks_are_emitted_for_web_changes():
     assert workflow["jobs"]["quality"]["if"] == "${{ !cancelled() }}"
 
 
-def test_documentation_allowlist_excludes_published_implementation():
-    # Textual root metadata may use the documentation path; implementation,
+def test_prose_allowlist_excludes_published_implementation():
+    # Textual root metadata may use the prose path; implementation,
     # package configuration, license and plugin sources still require product CI.
     import tomllib
 
     project = tomllib.loads((ROOT / "pyproject.toml").read_text())
     paths = project["tool"]["hatch"]["build"]["targets"]["sdist"]["include"]
     assert {
-        path.lstrip("/") for path in paths if scope.documentation_path(path.lstrip("/"))
+        path.lstrip("/") for path in paths if scope.prose_path(path.lstrip("/"))
     } == {"README.md", "CHANGELOG.md"}
 
 
-def test_complete_site_revision_uses_documentation_checks(repo):
+def test_site_paths_and_product_example_tools_cannot_use_the_prose_shortcut(repo):
     base = git(repo, "rev-parse", "HEAD")
     for name in (
         "README.md",
@@ -316,8 +284,37 @@ def test_complete_site_revision_uses_documentation_checks(repo):
         commit(repo, name)
     head = git(repo, "rev-parse", "HEAD")
     result = scope.classify("pull_request", pr_event(base, head))
-    assert result["product"] == "false"
-    assert result["examples"] == "true"
+    assert result["product"] == result["examples"] == "true"
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "docs/index.md",
+        "mkdocs.yml",
+        "docs/assets/javascripts/video.js",
+        "overrides/partials/source.html",
+        "tools/docs/pyproject.toml",
+        "scripts/qualification/docs/docs_build.py",
+        "scripts/smoke_readme.py",
+        "scripts/qualification/examples/smoke_examples.py",
+        "examples/repository-shop/quote-service/src/api.py",
+        "examples/data-science/fraud-detection/fraud_detection.ipynb",
+        "specs/apizr-capability-v1.schema.json",
+        "tests/fixtures/qualified-guides/getting-started/quickstart.md",
+        "releases/0.4.6.md",
+        "policy/vscode-source.json",
+    ],
+)
+def test_website_paths_and_executable_product_inputs_require_full_checks(repo, name):
+    base = git(repo, "rev-parse", "HEAD")
+    head = commit(repo, name)
+    for kind, payload in (
+        ("push", event(base, head)),
+        ("pull_request", pr_event(base, head)),
+    ):
+        result = scope.classify(kind, payload)
+        assert result["product"] == result["examples"] == "true"
 
 
 def test_all_pr_qualification_workflows_share_the_scope_gate():
@@ -337,7 +334,7 @@ def test_all_pr_qualification_workflows_share_the_scope_gate():
 
 def test_scope_summary_and_outputs(repo, monkeypatch):
     base = git(repo, "rev-parse", "HEAD")
-    head = commit(repo, "docs/index.md")
+    head = commit(repo, "CONTRIBUTING.md")
     payload, output, summary = repo / "event.json", repo / "output", repo / "summary"
     payload.write_text(json.dumps(event(base, head)))
     for key, value in {
@@ -349,12 +346,12 @@ def test_scope_summary_and_outputs(repo, monkeypatch):
         monkeypatch.setenv(key, str(value))
     scope.main()
     assert "product=false\nexamples=false\n" in output.read_text()
-    assert "Only documentation, site tooling or examples changed" in summary.read_text()
+    assert "Only product prose changed" in summary.read_text()
 
 
 @pytest.mark.parametrize(
     "paths",
-    [("src/product.py",), ("docs/index.md",), ("docs/index.md", "src/product.py")],
+    [("src/product.py",), ("CONTRIBUTING.md",), ("CONTRIBUTING.md", "src/product.py")],
 )
 @pytest.mark.parametrize("prior_success", [False, True])
 def test_bound_step_conditions_preserve_scope_and_failure_behavior(
@@ -378,7 +375,7 @@ def test_bound_step_conditions_preserve_scope_and_failure_behavior(
             )
             selected = predicate and ("always()" in condition or prior_success)
             web_placeholder = (
-                step.get("name") == "Web-only change; product tests are not needed"
+                step.get("name") == "Prose-only change; product tests are not needed"
             )
             should_run = product == "false" if web_placeholder else product != "false"
             is_upload = step.get("uses", "").startswith("actions/upload-artifact@")
@@ -395,6 +392,20 @@ def test_website_and_product_release_qualification_are_separate():
     assert not (ROOT / "mkdocs.yml").exists()
     assert not (ROOT / "docs").exists()
     assert not (ROOT / "overrides").exists()
+    assert not (ROOT / "tools/docs").exists()
+    assert not (ROOT / "scripts/qualification/docs").exists()
+    assert not (ROOT / "editors").exists()
+    for path in (ROOT / ".github/workflows").glob("*.y*ml"):
+        product_workflow = yaml.safe_load(path.read_text())
+        commands = "\n".join(
+            step.get("run", "")
+            for job in product_workflow["jobs"].values()
+            for step in job.get("steps", [])
+        )
+        assert not any(
+            retired in commands
+            for retired in ("mkdocs", "ghp_import", "docs_build", "check_docs_")
+        ), path
     content = json.dumps(workflow)
     assert "mkdocs build" not in content and "ghp_import" not in content
     assert "pages: write" not in content

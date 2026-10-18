@@ -10,7 +10,7 @@ The producer identity is `example.literal-accuracy` version `1`; the wheel is
 Build with `uv build --wheel examples/scientific-provider`, then install and
 activate the wheel through `apizr plugins install` and `apizr plugins activate`
 using the ordinary local extension workflow. See
-`docs/reference/scientific-providers.md` for the explicit selection JSON.
+[scientific providers](https://apizr.outerspace.sh/reference/scientific-providers/) for the explicit selection JSON.
 Describing or invoking this extension executes its trusted code in the extension
 environment. It never writes to the evidence store.
 

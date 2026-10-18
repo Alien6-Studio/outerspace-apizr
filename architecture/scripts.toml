@@ -911,8 +911,8 @@ gate = "Qualify standalone documented examples without product checkout imports.
 canonical = "scripts/qualification/examples/public_example_packages.py"
 standalone = false
 workflows = []
-ci_blocking = true
-evidence = ["stdout/stderr (workflow step log)"]
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
 
 [files."scripts/qualification/__init__.py"]
 group = "entrypoints"
@@ -2246,8 +2246,8 @@ gate = "Qualify standalone documented examples without product checkout imports.
 canonical = "scripts/qualification/examples/smoke_examples.py"
 standalone = false
 workflows = []
-ci_blocking = true
-evidence = ["stdout/stderr (workflow step log)"]
+ci_blocking = false
+evidence = ["stdout/stderr (manual developer command)"]
 
 [files."scripts/smoke_experiment_docs.py"]
 group = "experiments"

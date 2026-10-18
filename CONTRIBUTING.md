@@ -74,7 +74,7 @@ The current development line is the official `0.4.6` branch. Branch from it and
 target it for product fixes. Stable `master`, immutable release
 tags and published archives stay outside development changes. The maintainer
 must validate the branch and complete its protected integration before separately
-authorizing a release. A merge alone never publishes a package or site.
+authorizing a release. A product merge alone never publishes a package.
 See [release governance](https://apizr.outerspace.sh/contributing/release-branches/).
 
 Website sources and the Academy live on `gh-pages`, with their own locked
@@ -99,13 +99,12 @@ uv run pyright
 uv run --locked python -m scripts.qualification.packaging.vscode_source --prepare
 uv run pytest --cov --cov-report=term-missing
 uv build
-uv run --group docs mkdocs build --strict
 uv run pre-commit run --all-files
 uv run python scripts/smoke_container.py --python-version 3.11
 ```
 
 The Docker check requires Docker. See [development and checks](https://apizr.outerspace.sh/getting-started/developer-guide/setup/) for wheel
-validation and the dependency audit. Python 3.11–3.14 remains supported. Use Python 3.11 or
+validation and the dependency audit. Python 3.11–3.15 remains supported. Use Python 3.11 or
 newer for security tooling. Ruff formats repository code; Black is a runtime
 notebook-formatting dependency and is not the repository formatter.
 

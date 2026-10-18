@@ -1,6 +1,6 @@
 # Fraud detection: one notebook, two datasets, two interfaces
 
-Follow the [Data Scientist quickstart](../../../docs/getting-started/data-science.md)
+Follow the [Data Scientist quickstart](https://apizr.outerspace.sh/getting-started/data-science/)
 using Apizr 0.4.6.
 
 The notebook uses pandas, a modest Random Forest and ordinary joblib serialization.

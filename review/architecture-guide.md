@@ -23,12 +23,12 @@ de conservation des médias, consentements et anciens liens restent actifs.
 
 | Sujet | Sources relues |
 | --- | --- |
-| Composants et dépendances | [Inventaire des packages](../architecture/packages.toml), [organisation du code](../docs/architecture/code-organization.md), [compilateur public](../docs/reference/compiler-api.md), [MCP d’analyse](../docs/reference/apizr-mcp-server.md) |
-| Découverte, sélection, génération | [scanner](../src/apizr/repository/scanner.py), [planner](../src/apizr/exposure/planner.py), [compilation](../src/apizr/workspace/compiler.py), [bundle](../docs/architecture/repository-bundle-v1.md) |
-| Plan, Run et ressources | [pont expérimental](../src/apizr/experiments/exposure.py), [contrat des preuves](../docs/architecture/experiment-evidence-v1.md), [exposition](../docs/getting-started/user-guide/experiment-exposure.md) |
-| Transport, import et worker | [runtime de dépôt](../docs/architecture/governed-repository-runtime.md), [transport gouverné](../docs/architecture/governed-transport-runtime-v1.md), [profil strict](../docs/architecture/subprocess-deny.md) |
-| Extensions et autorité | [invocation moderne](../docs/reference/extension-invocation.md), [politique opérateur](../docs/reference/operator-policy.md) |
-| Images et preuves de livraison | [identités](../docs/architecture/delivery-identities.md), [plugin OCI](../docs/reference/oci-service-plugin.md), [Attest](../docs/reference/attest-delivery-plugin.md) |
+| Composants et dépendances | [Inventaire des packages](../architecture/packages.toml), [organisation du code](https://apizr.outerspace.sh/architecture/code-organization/), [compilateur public](https://apizr.outerspace.sh/reference/compiler-api/), [MCP d’analyse](https://apizr.outerspace.sh/reference/apizr-mcp-server/) |
+| Découverte, sélection, génération | [scanner](../src/apizr/repository/scanner.py), [planner](../src/apizr/exposure/planner.py), [compilation](../src/apizr/workspace/compiler.py), [bundle](https://apizr.outerspace.sh/architecture/repository-bundle-v1/) |
+| Plan, Run et ressources | [pont expérimental](../src/apizr/experiments/exposure.py), [contrat des preuves](https://apizr.outerspace.sh/architecture/experiment-evidence-v1/), [exposition](https://apizr.outerspace.sh/getting-started/user-guide/experiment-exposure/) |
+| Transport, import et worker | [runtime de dépôt](https://apizr.outerspace.sh/architecture/governed-repository-runtime/), [transport gouverné](https://apizr.outerspace.sh/architecture/governed-transport-runtime-v1/), [profil strict](https://apizr.outerspace.sh/architecture/subprocess-deny/) |
+| Extensions et autorité | [invocation moderne](https://apizr.outerspace.sh/reference/extension-invocation/), [politique opérateur](https://apizr.outerspace.sh/reference/operator-policy/) |
+| Images et preuves de livraison | [identités](https://apizr.outerspace.sh/architecture/delivery-identities/), [plugin OCI](https://apizr.outerspace.sh/reference/oci-service-plugin/), [Attest](https://apizr.outerspace.sh/reference/attest-delivery-plugin/) |
 
 Le chemin direct conserve l’absence de Run obligatoire. Les deux usages MCP,
 les helpers privés, les limites de l’exécution locale, le conteneur de service

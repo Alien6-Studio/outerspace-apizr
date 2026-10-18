@@ -1,4 +1,4 @@
-"""Route documentation independently; a mixed or uncertain diff runs product CI."""
+"""Route product prose changes; website qualification belongs to gh-pages."""
 
 import json
 import os
@@ -6,96 +6,20 @@ import re
 import subprocess
 from pathlib import Path, PurePosixPath
 
-EXAMPLE_PAGES = {
-    "docs/getting-started/introduction.md",
-    "docs/getting-started/quickstart.md",
-    "docs/getting-started/quickstart-0.4.md",
-    "docs/getting-started/migrate-0.4.md",
-    "docs/getting-started/user-guide/inspect.md",
-    "docs/getting-started/user-guide/exposure.md",
-    "docs/development/0.4.md",
-    "docs/reference/operator-policy.md",
-}
-DOCUMENTATION_FILES = {
-    "scripts/qualification/docs/docs_build.py",
-    "scripts/qualification/docs/check_docs_html.py",
-    "scripts/qualification/docs/check_docs_site.py",
-    "scripts/qualification/examples/smoke_readme.py",
-    "scripts/qualification/examples/smoke_examples.py",
-    "scripts/qualification/examples/public_example_packages.py",
+PROSE_FILES = {
     "README.md",
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "CODE_OF_CONDUCT.md",
     "SECURITY.md",
-    "mkdocs.yml",
-    "docs/CNAME",
-    "docs/robots.txt",
-    "tools/docs/pyproject.toml",
-    "tools/docs/uv.lock",
-    "tools/docs/README.md",
-    "scripts/docs_build.py",
-    "scripts/check_docs_html.py",
-    "scripts/check_docs_site.py",
-    "scripts/smoke_readme.py",
-    "scripts/smoke_examples.py",
-    "scripts/public_example_packages.py",
-    "scripts/typed_dict_proof.py",
-    "tests/test_docs_publication.py",
-    "tests/test_site_refonte.py",
-}
-EXAMPLE_TOOLS = {
-    "scripts/qualification/docs/docs_build.py",
-    "scripts/qualification/examples/smoke_readme.py",
-    "scripts/qualification/examples/smoke_examples.py",
-    "scripts/qualification/examples/public_example_packages.py",
-    "README.md",
-    "mkdocs.yml",
-    "scripts/docs_build.py",
-    "scripts/smoke_readme.py",
-    "scripts/smoke_examples.py",
-    "scripts/public_example_packages.py",
-    "scripts/typed_dict_proof.py",
-}
-MEDIA_SUFFIXES = {
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".gif",
-    ".svg",
-    ".webp",
-    ".ico",
-    ".mp4",
-    ".webm",
 }
 
 
-def documentation_path(name: str) -> bool:
+def prose_path(name: str) -> bool:
     path = PurePosixPath(name)
     if str(path) != name or path.is_absolute() or ".." in path.parts:
         return False
-    if name in DOCUMENTATION_FILES or name.startswith("examples/"):
-        return True
-    if name.startswith("review/") and path.suffix == ".md":
-        return True
-    if name.startswith("review/site-refonte/") and path.suffix in {
-        ".csv",
-        ".json",
-        ".txt",
-    }:
-        return True
-    # Published JSON schemas are contracts, not just documentation assets.
-    if name.startswith("docs/examples/") and path.suffix == ".json":
-        return True
-    if name.startswith("docs/") and path.suffix == ".md":
-        return True
-    if name.startswith(("docs/assets/images/", "docs/assets/videos/")):
-        return path.suffix in MEDIA_SUFFIXES or path.suffix == ".tape"
-    if name.startswith("docs/assets/stylesheets/") and path.suffix == ".css":
-        return True
-    if name.startswith("docs/assets/javascripts/") and path.suffix == ".js":
-        return True
-    return name.startswith("overrides/") and path.suffix == ".html"
+    return name in PROSE_FILES or (name.startswith("review/") and path.suffix == ".md")
 
 
 def git(*args: str) -> bytes:
@@ -103,7 +27,7 @@ def git(*args: str) -> bytes:
 
 
 def changed_files(base: str, head: str) -> list[tuple[str, str, str]]:
-    # No rename detection: both sides of a move must qualify as documentation.
+    # No rename detection: both sides of a move must qualify as product prose.
     # Raw NUL records preserve unusual filenames and expose symlinks/submodules.
     raw = git("diff", "--no-ext-diff", "--no-renames", "--raw", "-z", base, head, "--")
     if not raw:
@@ -149,32 +73,17 @@ def classify(event_name: str, event: dict) -> dict[str, str]:
             base = git("merge-base", base, head).decode("ascii").strip()
         changes = changed_files(base, head)
         if not changes or any(
-            not documentation_path(name)
+            not prose_path(name)
             or old not in {"000000", "100644"}
             or new not in {"000000", "100644"}
             for name, old, new in changes
         ):
             return full
-        examples = any(
-            name in EXAMPLE_PAGES | EXAMPLE_TOOLS
-            or name.startswith(
-                (
-                    "docs/examples/",
-                    "docs/start/",
-                    "docs/developer-guide/",
-                    "docs/user-guide/",
-                    "docs/operations-guide/",
-                    "examples/",
-                )
-            )
-            or name == "docs/getting-started/data-science.md"
-            or name == "docs/assets/videos/uv-install.tape"
-            for name, _, _ in changes
-        )
+        examples = any(name == "README.md" for name, _, _ in changes)
         return {
             "product": "false",
             "examples": str(examples).lower(),
-            "reason": "Only documentation, site tooling or examples changed",
+            "reason": "Only product prose changed",
         }
     except (KeyError, TypeError, ValueError, OSError, subprocess.SubprocessError):
         return full | {"reason": "Comparison unavailable; full qualification required"}
@@ -196,7 +105,7 @@ def main() -> None:
         with Path(summary).open("a") as stream:
             stream.write(
                 f"{result['reason']}. Product checks: **{result['product']}**; "
-                f"documentation examples: **{result['examples']}**.\n"
+                f"installed product examples: **{result['examples']}**.\n"
             )
 
 

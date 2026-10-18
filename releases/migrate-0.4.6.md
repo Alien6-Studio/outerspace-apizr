@@ -52,11 +52,11 @@ with the modern compiler; the historical generator's output is not its contract.
 The old complex-notebook YAML and pipeline-plugin examples were retired; use the
 ordinary data-science notebook, SDK/Jupyter guide and independent provider example.
 
-See [inspection](../getting-started/user-guide/inspect.md),
-[exposure](../getting-started/user-guide/exposure.md),
-[compiler Python API](../reference/compiler-api.md),
-[notebook conversion](../modules/notebook-transformr.md) and
-[plugin management](../reference/plugin-authors.md).
+See [inspection](https://apizr.outerspace.sh/getting-started/user-guide/inspect/),
+[exposure](https://apizr.outerspace.sh/getting-started/user-guide/exposure/),
+[compiler Python API](https://apizr.outerspace.sh/reference/compiler-api/),
+[notebook conversion](https://apizr.outerspace.sh/modules/notebook-transformr/) and
+[plugin management](https://apizr.outerspace.sh/reference/plugin-authors/).
 
 ## Removed Python compatibility imports
 
@@ -68,5 +68,5 @@ self-contained; newly generated governed bundles have new source paths and hashe
 Versioned evidence, public interface declarations and direct bundle bytes remain
 unchanged. No compatibility import hook or warning stub is installed.
 
-Start with the [SDK quickstart](../getting-started/tracking.md), or retain the
-[ordinary notebook path](../getting-started/data-science.md) without instrumentation.
+Start with the [SDK quickstart](https://apizr.outerspace.sh/getting-started/tracking/), or retain the
+[ordinary notebook path](https://apizr.outerspace.sh/getting-started/data-science/) without instrumentation.

@@ -148,10 +148,10 @@ def main() -> None:
             if plugin["version"] != version:
                 raise ValueError("Uncoordinated distribution versions")
     verified_runs = {}
-    for workflow in (
-        "security.yml",
-        "mkdocs.yaml" if Version(version) < Version("0.4.6") else "release-content.yml",
-    ):
+    content_workflow = (
+        "mkdocs.yaml" if Version(version) < Version("0.4.6") else "release-content.yml"
+    )
+    for workflow in ("security.yml", content_workflow):
         runs = github(
             f"actions/workflows/{workflow}/runs?head_sha={sha}&event=push&per_page=100"
         )["workflow_runs"]
@@ -196,7 +196,7 @@ def main() -> None:
     if args.preflight:
         print("Preflight only: no tag, upload or publication authorization")
     print(
-        f"Verified {version}, {sha}, CI run {args.run_id}, Security, Documentation"
+        f"Verified {version}, {sha}, CI run {args.run_id}, Security, {content_workflow}"
         + (
             "; public artifact comparison required"
             if args.source_only

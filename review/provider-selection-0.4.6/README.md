@@ -23,7 +23,7 @@ portable report validation, bounded configuration, external occurrence locations
 and history without provider invocation. The selection/result and immutable
 source-binding checks also have designated security mutants.
 
-See `docs/reference/scientific-providers.md` for the CLI/Python API, exact
+See [scientific providers](https://apizr.outerspace.sh/reference/scientific-providers/) for the CLI/Python API, exact
 diagnostics and limits. Provider provenance is retained in the Plan's existing
 finite execution controls and bound by the Run's Plan digest. Frozen historical
 Plan/Run schemas and canonical fixture bytes are unchanged.

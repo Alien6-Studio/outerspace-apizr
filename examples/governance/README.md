@@ -12,4 +12,4 @@ code, and verifies the exported evidence against its selected bundle digests.
 
 This is a local example, not a registry or Trunx end-to-end test. For the CI
 handoff, immutable OCI consumption, external decision boundary and the separate
-registry qualification, see `docs/reference/external-governance.md`.
+registry qualification, see [external governance](https://apizr.outerspace.sh/reference/external-governance/).

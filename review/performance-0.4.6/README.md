@@ -93,7 +93,7 @@ these reports. Binary profiles remain in local/CI evidence, rather than Git.
 
 ## Regression policy and reproduction
 
-[Method and budgets](../../docs/architecture/engine-performance.md) distinguish
+[Method and budgets](https://apizr.outerspace.sh/architecture/engine-performance/) distinguish
 informational wall-time tolerances from blocking artifact-admission, traversal,
 canonical-output, corruption and resource-budget regressions. Initial timing
 review threshold: twice each baseline median plus 50 ms, on the same fixture and

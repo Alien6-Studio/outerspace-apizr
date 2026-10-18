@@ -894,15 +894,11 @@ def test_current_tracked_tree_keeps_oss_product_scope():
     # History is intentionally ignored.
     excluded = bytes.fromhex("7472756e78")
     documented_boundary = {
-        "docs/reference/external-governance.md",
-        "docs/releases/0.4.4.md",
+        "releases/0.4.4.md",
         "examples/governance/README.md",
         "tests/fixtures/qualified-guides/index.md",
-        "docs/contributing/verification.md",
         # Reader handoff chapters describe the existing external boundary only.
         "tests/fixtures/qualified-guides/examples/verified-delivery.md",
-        "docs/operations-guide/delivery.md",
-        "docs/reference/concepts.md",
         # Review records retain original anchors and their normative source links.
         "review/site-refonte/feature-coverage.md",
         "review/site-refonte/page-migration.csv",
