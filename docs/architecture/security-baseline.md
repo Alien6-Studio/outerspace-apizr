@@ -182,6 +182,10 @@ See the PR checks for hosted matrix, container and CodeQL execution evidence.
 
 ## Reproduction
 
+The commands below reproduce the historical product audit. The website now has
+its own `gh-pages` checkout; run its MkDocs and HTML checks there as described in
+[development and checks](../getting-started/developer-guide/setup.md#work-on-the-documentation).
+
 ```bash
 uv sync --locked
 uv run ruff check .
@@ -190,7 +194,6 @@ uv run pyright
 uv run pytest --cov --cov-report=term-missing
 uv build
 uv run pre-commit run --all-files
-uv run --group docs mkdocs build --strict
 uv run python scripts/smoke_wheel.py dist/*.whl --python 3.11
 uv run python scripts/smoke_wheel.py dist/*.whl --python 3.14
 uv run python scripts/smoke_container.py --python-version 3.11

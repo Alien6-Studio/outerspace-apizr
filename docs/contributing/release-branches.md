@@ -8,9 +8,14 @@ SHA, as described in [development qualification](releases.md#automatic-developme
 Manual reruns remain available and are recorded separately.
 
 Existing master/PR routing and publication protections are preserved. Development
-pushes produce previews; protected master provenance and documentation deployment
-conditions remain distinct from branch qualification. No release tag or public
+pushes produce previews; protected product provenance and the independent `gh-pages` website deployment
+remain distinct from branch qualification. No release tag or public
 distribution follows from a development push.
+
+Website sources and their build/deployment workflow live only on `gh-pages`.
+Product branches retain the package descriptions, release records, schemas and
+executable qualification fixtures. The current release verifier requires Release
+content for 0.4.6 onward and the original Documentation workflow for older releases.
 
 ## Historical stable integration record
 
@@ -151,6 +156,11 @@ The `archive-evidence` job uploads only after manual publication verification.
 No new workflow, secret, environment or registry is introduced.
 
 ## Actual protections detected
+
+This subsection records the earlier release-line audit. Retired ruleset targets
+and the master-based website environment below are historical; the current
+website is protected separately on `gh-pages`, and `github-pages` now allows only
+that branch. Check GitHub for current enforcement before integrating a release.
 
 At this audit, master is protected by active ruleset **23727291**,
 [Protect default branch](https://github.com/Alien6-Studio/outerspace-apizr/rules/23727291),

@@ -87,7 +87,8 @@ Do not publish the raw VS Code profile: its transport logs contain session token
 Dev Containers and other remote transports remain unqualified.
 
 The existing required `build` and `dependencies` checks also require this job for
-product changes. Web-only routing skips it and still builds documentation. The
+product changes. Product prose routing skips it while retaining contribution and package-description checks.
+Website changes are qualified separately on `gh-pages`. The
 existing `codeql` context retains Python and JavaScript/TypeScript SARIF; GitHub's
 default Python/Actions alerts remain enabled without duplicate SARIF uploads.
 
