@@ -1,0 +1,2092 @@
+{
+  "limitations": [
+    "Reviews admit unmodified dependencies for the existing Apizr runtime/development/documentation/security and Homebrew build-only uses. Apizr wheel and sdist do not vendor these packages.",
+    "Evidence is one SHA-256-verified locked source archive per version, except pywin32 (one locked wheel). Other wheel hashes are bound to the review but their contents were not exhaustively inspected.",
+    "This is a Python package/license-notice inventory, not a file-level legal audit or a complete SBOM for native libraries, transitive Cargo/npm code, OS packages, nested wheels, or dynamically downloaded tooling.",
+    "Before distributing containers, vendored packages, modified third-party code or additional documentation assets, review the exact contents and fulfill source, notice, attribution, font and trademark obligations. This gate alone does not authorize those distributions.",
+    "An SPDX expression describes the identified component scope, not every byte of every upstream archive. Upstream test-fixture dummy licenses and unused documentation are retained as evidence, not silently treated as the package license."
+  ],
+  "packages": [
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "86bad5758c7859ba06251f8f12eee885eca31369923dfb2b87a7c13c3634d870"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "b4c0ae8ef04f7059f96ce5bbe0467f9fe6f6d81bbe13517701dfeb961fb4d0b6"
+          ],
+          "expression": "Unicode-3.0",
+          "scope": "Unicode locale data; retain the Unicode notice."
+        }
+      ],
+      "distribution_fingerprint": "6aa6f0df6b6f946a1fc8cd56496a52ec9580c383056ed816fd5f9e198bbba69c",
+      "evidence_archive": {
+        "hash": "sha256:b80b99a14bd085fcacfa15c9165f651fbb3406e66cc603abf11c5750937c992d",
+        "url": "https://files.pythonhosted.org/packages/7d/b2/51899539b6ceeeb420d40ed3cd4b7a40519404f9baf3d4ac99dc413a834b/babel-2.18.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "babel-2.18.0/LICENSE",
+          "sha256": "86bad5758c7859ba06251f8f12eee885eca31369923dfb2b87a7c13c3634d870"
+        },
+        {
+          "path": "babel-2.18.0/babel/locale-data/LICENSE.unicode",
+          "sha256": "b4c0ae8ef04f7059f96ce5bbe0467f9fe6f6d81bbe13517701dfeb961fb4d0b6"
+        },
+        {
+          "path": "babel-2.18.0/docs/_themes/LICENSE",
+          "sha256": "9c1e620a5cf8e74fe81c1fd4c55e9cc0b189fc04e677cfc7ef915de746c3f59e"
+        }
+      ],
+      "name": "babel",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "2.18.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "c1127b4363b735b7898a7127396ff7e4faa48e58d221c5d9dc616533f811a25c"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "0d96e68d626e6dc1a595000cfa62ff0b901199067188c566cf81c4e006994416"
+          ],
+          "expression": "Unicode-DFS-2016",
+          "scope": "Unicode data used by the generation tools, under Exhibit 1 data/software terms; this does not grant rights to mirror the Unicode website or modify its terms."
+        }
+      ],
+      "distribution_fingerprint": "d00a19375e8e7c3d2a9dd7bb233ad7dd55460fb3d72f5a099b9ba2bdca5eb34c",
+      "evidence_archive": {
+        "hash": "sha256:f86d9312df3ebae1241758af80809a319cafa1d8f32189edfb242c9aa55573b6",
+        "url": "https://files.pythonhosted.org/packages/68/bc/c4b75b0279b2cf9e208c7dea5755a452d158a32abe1b7330824ff1127e86/backrefs-8.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "backrefs-8.1/LICENSE.md",
+          "sha256": "c1127b4363b735b7898a7127396ff7e4faa48e58d221c5d9dc616533f811a25c"
+        },
+        {
+          "path": "backrefs-8.1/docs/src/markdown/about/license.md",
+          "sha256": "1180657bb59f8f5ed1f89801de3269d334b279c4ae1583e9ab09b6019c39a682"
+        },
+        {
+          "path": "backrefs-8.1/tools/unicodedata/LICENSE",
+          "sha256": "0d96e68d626e6dc1a595000cfa62ff0b901199067188c566cf81c4e006994416"
+        }
+      ],
+      "name": "backrefs",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission. Website lock restricts the archive set to supported Python versions; every retained archive and license evidence is identical to the product review at f59e1ddd0f96acfc8e83ea91f147bcb4b3268b65.",
+      "status": "reviewed",
+      "version": "8.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "5ea0cdf8cfc824b446cccf597ff6518c3607a659e9804bc75f1261f9c6ac4ada"
+          ],
+          "expression": "BSD-2-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "dc117a3b76bcedba3c5a42e8f78153c21fec384cf394d96549a01cbd49d4baa4",
+      "evidence_archive": {
+        "hash": "sha256:60cbc4bad079753721d32649545505362c754e121570ada4658b852a3a318d95",
+        "url": "https://files.pythonhosted.org/packages/c4/cf/85379f13b76f3a69bca86b60237978af17d6aa0bc5998978c3b8cf05abb2/boolean_py-5.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "boolean_py-5.0/LICENSE.txt",
+          "sha256": "5ea0cdf8cfc824b446cccf597ff6518c3607a659e9804bc75f1261f9c6ac4ada"
+        }
+      ],
+      "name": "boolean-py",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "5.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "ecc2fab8fe941c5bfbf89fd44833809ee2c0a8df4071e3df3d360a177838434e",
+      "evidence_archive": {
+        "hash": "sha256:e6220afafa4c22a47dd0badb319f84475d79108100d04e26e8542ef7d3ab05a1",
+        "url": "https://files.pythonhosted.org/packages/2d/f6/c972b32d80760fb79d6b9eeb0b3010a46b89c0b23cf6329417ff7886cd22/cachecontrol-0.14.4.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "cachecontrol-0.14.4/LICENSE.txt",
+          "sha256": "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b"
+        }
+      ],
+      "name": "cachecontrol",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "0.14.4"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+          ],
+          "expression": "MPL-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "3ea9a0808286c6fb5511a8b3637ff004e0360116cab0fcfb9231b5019665230d",
+      "evidence_archive": {
+        "hash": "sha256:741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55",
+        "url": "https://files.pythonhosted.org/packages/a3/c2/24167ea9858356b47a87a50d39908bfdb72ceeefe0041586e704e5376b3a/certifi-2026.7.22.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "certifi-2026.7.22/LICENSE",
+          "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+        }
+      ],
+      "name": "certifi",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "2026.7.22"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "01fc3f8031a672b3f5d7d8ac262e432f3ea812809f5697d6bc5b270bf6446561"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "d0519c9c6420179969545b6029a5ccc2d04250b06a6c66da5b58dea49b4222c3",
+      "evidence_archive": {
+        "hash": "sha256:d5b1034354820651caa73ede66a6294d6e95c1b00acc5e9b098e917404669132",
+        "url": "https://files.pythonhosted.org/packages/4e/b5/721b8799b04bf9afe054a3899c6cf4e880fcf8563cc71c15610242490a0c/cfgv-3.5.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "cfgv-3.5.0/LICENSE",
+          "sha256": "01fc3f8031a672b3f5d7d8ac262e432f3ea812809f5697d6bc5b270bf6446561"
+        }
+      ],
+      "name": "cfgv",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "3.5.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "6d0d41bfe170ac6c7dc248c9a63e254d0fb45a60d50a8257d0af92c6e249b887"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "7bb076f2caa548b82a0d29aafca0bfef3968cd4e91ea94bb4e510e7cd166b61c",
+      "evidence_archive": {
+        "hash": "sha256:39de2a259fc954455c57274dc94c79d5842774e1247a016aff30bc0efed0f4ef",
+        "url": "https://files.pythonhosted.org/packages/33/1c/f41d4e74c28ab327ff3acd36053f7ea506c55872d7a90b0fa71aa3ab0c89/charset_normalizer-3.5.2.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "charset_normalizer-3.5.2/LICENSE",
+          "sha256": "6d0d41bfe170ac6c7dc248c9a63e254d0fb45a60d50a8257d0af92c6e249b887"
+        },
+        {
+          "path": "charset_normalizer-3.5.2/data/NOTICE.md",
+          "sha256": "0cb3efcfd8f7a02a337e98dc3de4b0b57424d7208a332b26e7deb8cb94c13922"
+        }
+      ],
+      "name": "charset-normalizer",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission. Website lock restricts the archive set to supported Python versions; every retained archive and license evidence is identical to the product review at f59e1ddd0f96acfc8e83ea91f147bcb4b3268b65.",
+      "status": "reviewed",
+      "version": "3.5.2"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "9a8ad106a394e853bfe21f42f4e72d592819a22805d991b5f3275029292b658d"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "7e59bb80636cc96bd104883d556a370d11e12afb18673a3d3c6dd730a6457379",
+      "evidence_archive": {
+        "hash": "sha256:ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34",
+        "url": "https://files.pythonhosted.org/packages/c7/0e/7fa0ef50764b67090eca4114772a2abf8b6148198475e54c660b97caeee6/click-8.5.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "click-8.5.0/LICENSE.txt",
+          "sha256": "9a8ad106a394e853bfe21f42f4e72d592819a22805d991b5f3275029292b658d"
+        },
+        {
+          "path": "click-8.5.0/docs/license.md",
+          "sha256": "b4aa3a8b0dfd4c8cea97ea65b3f19ef54bd280665533478f35c0a5d205a7d341"
+        }
+      ],
+      "name": "click",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "8.5.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "cac35c02686e5d04a5a7140bfb3b36e73aed496656e891102e428886d7930318"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "415ccd57d6532b1caa006c3df4e84714584981acd00a978e57a234740ad0b9cb",
+      "evidence_archive": {
+        "hash": "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44",
+        "url": "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "colorama-0.4.6/LICENSE.txt",
+          "sha256": "cac35c02686e5d04a5a7140bfb3b36e73aed496656e891102e428886d7930318"
+        }
+      ],
+      "name": "colorama",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "0.4.6"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "c11778d756bb407446c1fd053b4dc70db4a48894b7d3bf08baee0192c9ae41ef",
+      "evidence_archive": {
+        "hash": "sha256:16767c4039de90c04e9f03348f8f0ed4b8ff842eaa7eefcad3a95685f970dacf",
+        "url": "https://files.pythonhosted.org/packages/17/40/6509e6cfd7f2f3255501690f46375fdd224949e21fd1e96f4f4c8a9041b1/cyclonedx_python_lib-11.12.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "cyclonedx_python_lib-11.12.0/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "cyclonedx_python_lib-11.12.0/NOTICE",
+          "sha256": "1c3bd67b96888a4ca25f3a94683d929b3f66d7e4cdfe6c04d24f16501a9375c3"
+        }
+      ],
+      "name": "cyclonedx-python-lib",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "11.12.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "b80ce9da8c42a1f91079627fbbe2bf27210ae108a0ffe5f077d5b08e076c24c8"
+          ],
+          "expression": "PSF-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "e9216351b8baeacc185307217a5dcd7fefb71d15635d6f778d9aa1cccff7cafe",
+      "evidence_archive": {
+        "hash": "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69",
+        "url": "https://files.pythonhosted.org/packages/0f/d5/c66da9b79e5bdb124974bfe172b4daf3c984ebd9c2a06e2b8a4dc7331c72/defusedxml-0.7.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "defusedxml-0.7.1/LICENSE",
+          "sha256": "b80ce9da8c42a1f91079627fbbe2bf27210ae108a0ffe5f077d5b08e076c24c8"
+        }
+      ],
+      "name": "defusedxml",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "0.7.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d"
+          ],
+          "expression": "Python-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "49ecd8ad117fc9ec5c34e5579945e509c3f5b23e31fc3cf89fe15cc633b16384",
+      "evidence_archive": {
+        "hash": "sha256:f152097224a0ae24be5a0f6bae1b9359af82133bce63f98a95f86cae1aede9ed",
+        "url": "https://files.pythonhosted.org/packages/c9/02/bd72be9134d25ed783ecbbc38a539ffaefbf90c78418c7fb7229600dbac7/distlib-0.4.3.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "distlib-0.4.3/LICENSE.txt",
+          "sha256": "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d"
+        },
+        {
+          "path": "distlib-0.4.3/tests/minimext/LICENSE",
+          "sha256": "e8562d2559d7c193f030620d061ecd92cfddc18e2823df0944a69a4359fedde4"
+        },
+        {
+          "path": "distlib-0.4.3/tests/test_testdist-0.1/LICENSE",
+          "sha256": "3a0a3ea81fe0b379e877e8bfbd0ea78d08d2e9552282422bc39440fcb0a64a4f"
+        },
+        {
+          "path": "distlib-0.4.3/tests/testdist-0.1/LICENSE",
+          "sha256": "3a0a3ea81fe0b379e877e8bfbd0ea78d08d2e9552282422bc39440fcb0a64a4f"
+        },
+        {
+          "path": "distlib-0.4.3/tests/testsrc/LICENSE",
+          "sha256": "e8562d2559d7c193f030620d061ecd92cfddc18e2823df0944a69a4359fedde4"
+        }
+      ],
+      "name": "distlib",
+      "notes": "Complete historical Python license retained. Dummy LICENSE files in upstream test fixtures are not licenses of the distlib implementation.",
+      "status": "reviewed",
+      "version": "0.4.3"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "608c89d5060ae9921adccf3236695bc654a9946e12323ef6c021dfa04e294d48"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "e495e60bc48852c29393182293fe6373607a8e4c293331c3dddbcbde328bc605",
+      "evidence_archive": {
+        "hash": "sha256:7a60906c75227cf04d0c273afadc8219400f11aeb13cc69591d4f6cdc6c8036e",
+        "url": "https://files.pythonhosted.org/packages/f4/a9/1af41b37c3279712b22cdc63aac78a52432202b6fe1f9666a2a3d2831fb4/filelock-4.2.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "filelock-4.2.0/LICENSE",
+          "sha256": "608c89d5060ae9921adccf3236695bc654a9946e12323ef6c021dfa04e294d48"
+        },
+        {
+          "path": "filelock-4.2.0/docs/license.rst",
+          "sha256": "feec665d3f93b49689f5a94040c514454bb8aeea2ca9f8edf58f6ab7536f8298"
+        }
+      ],
+      "name": "filelock",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "4.2.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "0bc8ffb45f26edd1cd0de4f50425ae2cb46c58c6d8ac113984d4120be355afa9"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "946d2adfffafd9ef1e041f5600776b5528f05811b28b0e4c6a177306b3d056d0",
+      "evidence_archive": {
+        "hash": "sha256:9c535c4c61193c2df8871222567d7fd7e5014d835f97dc7b7439069e2413d343",
+        "url": "https://files.pythonhosted.org/packages/d9/29/d40217cbe2f6b1359e00c6c307bb3fc876ba74068cbab3dde77f03ca0dc4/ghp-import-2.1.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "ghp-import-2.1.0/LICENSE",
+          "sha256": "0bc8ffb45f26edd1cd0de4f50425ae2cb46c58c6d8ac113984d4120be355afa9"
+        }
+      ],
+      "name": "ghp-import",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "2.1.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "edbc2ad3b7084fac873e1b1b450fd370d914eb97f7f31263b4ff65f47dc10c43"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "56e8099af5da7d9524217ad0667ca3d88157163998831d8e2fc15f268a17e0ef",
+      "evidence_archive": {
+        "hash": "sha256:ad729860a923858d26917c2f4fb0a1d83d27a75b1e090c06440c573f048f3285",
+        "url": "https://files.pythonhosted.org/packages/53/35/d70c0006c7cee65999ea94a6273e60b2094f600a3d8b71b04318253fc643/identify-2.6.20.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "identify-2.6.20/LICENSE",
+          "sha256": "edbc2ad3b7084fac873e1b1b450fd370d914eb97f7f31263b4ff65f47dc10c43"
+        }
+      ],
+      "name": "identify",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "2.6.20"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "c3ae2f9b560095130b8ffd0fc68a091ec73f29c65beca8283d723dac72bea2b0",
+      "evidence_archive": {
+        "hash": "sha256:a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44",
+        "url": "https://files.pythonhosted.org/packages/f5/08/8eea9d4b8302028f3abb2c0813953f7aec26d33b7a8960ed760e65ff29fa/idna-3.20.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "idna-3.20/LICENSE.md",
+          "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+        }
+      ],
+      "name": "idna",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "3.20"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "3409fa91f7ace557894632676656e32264fe5ef7581535725dc9a23774551bd4"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "7c9595a4a7753d0f826ee0b5296044b2de67b1098281ab82d6522f0e1ff6b0ba",
+      "evidence_archive": {
+        "hash": "sha256:67f4b9c50da0dedf52af349e7749a80a9057a5031199791b906c3bb3ae878960",
+        "url": "https://files.pythonhosted.org/packages/01/e1/2069291243c926a2ff1cd706c7f3eeb9b62144bf60f77c9fb9ff2fb26bd3/iniconfig-2.3.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "iniconfig-2.3.1/LICENSE",
+          "sha256": "3409fa91f7ace557894632676656e32264fe5ef7581535725dc9a23774551bd4"
+        }
+      ],
+      "name": "iniconfig",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "2.3.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "3b49dcee4105eb37bac10faf1be260408fe85d252b8e9df2e0979fc1e094437b"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "e97113490afa5ad57babab0736a9221958c6265a116b62c7ec4c1f2e52eefd95",
+      "evidence_archive": {
+        "hash": "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d",
+        "url": "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "jinja2-3.1.6/LICENSE.txt",
+          "sha256": "3b49dcee4105eb37bac10faf1be260408fe85d252b8e9df2e0979fc1e094437b"
+        }
+      ],
+      "name": "jinja2",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "3.1.6"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "2a82ac9bbc3e3ee066908381e8d373896db5a6025d083fbd59692fe9ccfb9111",
+            "fb5ce1f2dbd2bedc01fad9507be71ca19ec37b4d6f8dfb9516fbfefee410d85d"
+          ],
+          "expression": "CC-BY-4.0",
+          "scope": "License-index data; retain attribution, source and license notices."
+        },
+        {
+          "evidence_sha256": [
+            "75d79cccf1fc302cb4a99bd32aac8bd4fc80926b15d31f0ba994d16cdf844032"
+          ],
+          "expression": "LicenseRef-Pyahocorasick-Public-Domain",
+          "scope": "The upstream ABOUT file dedicates the copied pure-Python algorithm to the public domain; retain its provenance."
+        },
+        {
+          "evidence_sha256": [
+            "bccaa8b6c09f94e81f06696e179dbe058464bbdfbc823b6d49cada1d71e84ac3"
+          ],
+          "expression": "MIT",
+          "scope": "Development helper copies have individual ABOUT notices; retain them."
+        }
+      ],
+      "distribution_fingerprint": "e34c624be81d0770f2a2828dbaf42a6fb04c8e5bd9f728e5201a1e1825924ce1",
+      "evidence_archive": {
+        "hash": "sha256:73448f0aacd8d0808895bdc4b2c8e01a8d67646e4188f887375398c761f340fd",
+        "url": "https://files.pythonhosted.org/packages/40/71/d89bb0e71b1415453980fd32315f2a037aad9f7f70f695c7cec7035feb13/license_expression-30.4.4.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "license_expression-30.4.4/NOTICE",
+          "sha256": "ef97db07e32f6e5d34363461acf5acc7d72db924533bce3d9f3b87046313363c"
+        },
+        {
+          "path": "license_expression-30.4.4/apache-2.0.LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "license_expression-30.4.4/etc/ci/macports-ci.ABOUT",
+          "sha256": "317451974b7a37abd381fb793af731c37271b92775a35d4b7f95257911764141"
+        },
+        {
+          "path": "license_expression-30.4.4/etc/ci/mit.LICENSE",
+          "sha256": "bccaa8b6c09f94e81f06696e179dbe058464bbdfbc823b6d49cada1d71e84ac3"
+        },
+        {
+          "path": "license_expression-30.4.4/etc/scripts/gen_pypi_simple.py.ABOUT",
+          "sha256": "bedfec455e4f6e195ea72177beff68380ec997f5133d87d6203af844c0d0fcf2"
+        },
+        {
+          "path": "license_expression-30.4.4/etc/scripts/test_utils_pip_compatibility_tags.py.ABOUT",
+          "sha256": "7e12588ef8c2eef35380a9330d4d15588adee0e7a4ab8bd9930aaf0c430f14fe"
+        },
+        {
+          "path": "license_expression-30.4.4/etc/scripts/test_utils_pypi_supported_tags.py.ABOUT",
+          "sha256": "98a3396cd1dc92a14b796664d7129961f197afd955e5ebd35e7bc32fb3a02a7a"
+        },
+        {
+          "path": "license_expression-30.4.4/etc/scripts/utils_pip_compatibility_tags.py.ABOUT",
+          "sha256": "bfd3c404b2d0187d5c26e254ed278777bab86f6962dff1ce4e5be0b10a0cb91c"
+        },
+        {
+          "path": "license_expression-30.4.4/etc/scripts/utils_pypi_supported_tags.py.ABOUT",
+          "sha256": "9dd2759104babbb71a6262dce9756734874a7e99ef1a329ea71a668502562720"
+        },
+        {
+          "path": "license_expression-30.4.4/etc/scripts/utils_thirdparty.py.ABOUT",
+          "sha256": "256040fc8dceb13f4c60a8f1de5cd568b657827e2277fb59238b1845fc9bb787"
+        },
+        {
+          "path": "license_expression-30.4.4/license-expression.ABOUT",
+          "sha256": "837f84685873260f6470ce4c44ecf7df286d6a01e854bdbc2f49150e192c54cb"
+        },
+        {
+          "path": "license_expression-30.4.4/src/license_expression/_pyahocorasick.ABOUT",
+          "sha256": "75d79cccf1fc302cb4a99bd32aac8bd4fc80926b15d31f0ba994d16cdf844032"
+        },
+        {
+          "path": "license_expression-30.4.4/src/license_expression/data/cc-by-4.0.LICENSE",
+          "sha256": "2a82ac9bbc3e3ee066908381e8d373896db5a6025d083fbd59692fe9ccfb9111"
+        },
+        {
+          "path": "license_expression-30.4.4/src/license_expression/data/license_key_index.json.ABOUT",
+          "sha256": "fb5ce1f2dbd2bedc01fad9507be71ca19ec37b4d6f8dfb9516fbfefee410d85d"
+        }
+      ],
+      "name": "license-expression",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "30.4.4"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "7ba4eb6d10b32b2d11dce13821340351cdbbb30ba8ccc67841db2ffd86e79aca"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "3399f99fb64062c9d714b6530288dae730cbdc8439b676fd782e3930e9dc28e0",
+      "evidence_archive": {
+        "hash": "sha256:496f4f80f9ebd3395a04c8ec9595c40bbe8ec19e9c67d21fe071a1643e876606",
+        "url": "https://files.pythonhosted.org/packages/4e/d4/f3f4b6ed70b7c7608fa026ff3bbe59ace9b1ebca43d8ae4886c87c95e81d/markdown-3.11.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "markdown-3.11.1/LICENSE.md",
+          "sha256": "7ba4eb6d10b32b2d11dce13821340351cdbbb30ba8ccc67841db2ffd86e79aca"
+        }
+      ],
+      "name": "markdown",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "3.11.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "4a2260d6e2cd0f5a151a1e86dbfe7d3ed552b1e2beabf9941c1ba5c49cbce484"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "31b81c79930720d0b7c1305db88de6511d0dc5af82b701330db7b2cd4aaa1883",
+      "evidence_archive": {
+        "hash": "sha256:04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49",
+        "url": "https://files.pythonhosted.org/packages/06/ff/7841249c247aa650a76b9ee4bbaeae59370dc8bfd2f6c01f3630c35eb134/markdown_it_py-4.2.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "markdown_it_py-4.2.0/LICENSE",
+          "sha256": "4a2260d6e2cd0f5a151a1e86dbfe7d3ed552b1e2beabf9941c1ba5c49cbce484"
+        },
+        {
+          "path": "markdown_it_py-4.2.0/LICENSE.markdown-it",
+          "sha256": "792c48c5a849a15fdf9e37e8bcf9e6d1dd13b32b46c642a748a0a46a9919d473"
+        }
+      ],
+      "name": "markdown-it-py",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "4.2.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "489a8e1108509ed98a37bb983e11e0f7e1d31f0bd8f99a79c8448e7ff37d07ea"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "5d574bdf35302509adb4e041917f5b8b0dc8dac70cb312ece70e33c3c87944a7",
+      "evidence_archive": {
+        "hash": "sha256:2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6",
+        "url": "https://files.pythonhosted.org/packages/38/9b/e422a865e1d5d57d0e509b4e0bf1c1a70a7f6382c29a5aa428df994c8bc8/markupsafe-3.0.4.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "markupsafe-3.0.4/LICENSE.txt",
+          "sha256": "489a8e1108509ed98a37bb983e11e0f7e1d31f0bd8f99a79c8448e7ff37d07ea"
+        },
+        {
+          "path": "markupsafe-3.0.4/docs/license.rst",
+          "sha256": "6fc7e80b75b5999783a328d90976a2585e0956c4a348c3c888453938ceca742d"
+        }
+      ],
+      "name": "markupsafe",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission. Website lock restricts the archive set to supported Python versions; every retained archive and license evidence is identical to the product review at f59e1ddd0f96acfc8e83ea91f147bcb4b3268b65.",
+      "status": "reviewed",
+      "version": "3.0.4"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "7c605df6e28667a9603118e98274f64a49ce3eed0d26fccce9534a345e0ef955"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "1f1df1e6b543567e6e75f94e5db3783ddd237df4487d22be6a204fa84b11aef9",
+      "evidence_archive": {
+        "hash": "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba",
+        "url": "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "mdurl-0.1.2/LICENSE",
+          "sha256": "7c605df6e28667a9603118e98274f64a49ce3eed0d26fccce9534a345e0ef955"
+        }
+      ],
+      "name": "mdurl",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "0.1.2"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "11592bd9d56693c987da849c075d636690916d01a47ca234a14bbcf0fe176b37"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "72bcc626b75f4bac1194c5629e9c620119d25efa2d10af24e8b52a18d7117905",
+      "evidence_archive": {
+        "hash": "sha256:0096d52e9dad9939c3d975a774666af186eda617e6ca84df4c94dec30004f2a8",
+        "url": "https://files.pythonhosted.org/packages/3a/41/580bb4006e3ed0361b8151a01d324fb03f420815446c7def45d02f74c270/mergedeep-1.3.4.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "mergedeep-1.3.4/LICENSE",
+          "sha256": "11592bd9d56693c987da849c075d636690916d01a47ca234a14bbcf0fe176b37"
+        }
+      ],
+      "name": "mergedeep",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "1.3.4"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "26041bd625fc39411dc4b32748216236931c904adb90c2b3e0ba697090a5d54e"
+          ],
+          "expression": "BSD-2-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "3293f891bfd92495fb870ac022590e94626e9b77dc7148fcd5105d2a7ec9034e",
+      "evidence_archive": {
+        "hash": "sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2",
+        "url": "https://files.pythonhosted.org/packages/bc/c6/bbd4f061bd16b378247f12953ffcb04786a618ce5e904b8c5a01a0309061/mkdocs-1.6.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "mkdocs-1.6.1/LICENSE",
+          "sha256": "26041bd625fc39411dc4b32748216236931c904adb90c2b3e0ba697090a5d54e"
+        }
+      ],
+      "name": "mkdocs",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "1.6.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "e5024bae9b4ecadda35184e20282a81cb25164620d2ffb0261e6da3249aab7b2"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "d2e988300820d4dc40b456b5dcd181a385c7e975ef5fc2b6cc5223906efd95e3",
+      "evidence_archive": {
+        "hash": "sha256:8ee8d5f316cdbbb2834bc1df6e69c08fe769a83e040060de26d3c19fad3599a1",
+        "url": "https://files.pythonhosted.org/packages/ce/25/b3cccb187655b9393572bde9b09261d267c3bf2f2cdabe347673be5976a6/mkdocs_get_deps-0.2.2.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "mkdocs_get_deps-0.2.2/LICENSE.md",
+          "sha256": "e5024bae9b4ecadda35184e20282a81cb25164620d2ffb0261e6da3249aab7b2"
+        }
+      ],
+      "name": "mkdocs-get-deps",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "0.2.2"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "e1150f26b4c0f872627b39fda49ae3bd850304f2f7f3171ae0531c1f8f4dd078"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "329f24fdba0c57714d7d202d30a74767feac6907685ee24f0abbf1bd47581a07"
+          ],
+          "expression": "CC-BY-4.0 AND OFL-1.1 AND MIT",
+          "scope": "Font Awesome icons, fonts and code respectively; preserve attribution; do not sell fonts alone or use reserved names for modified fonts."
+        },
+        {
+          "evidence_sha256": [
+            "3bae6305bcaa6d10219b999f65c342034c2d40b1c0e8567fa08605e73ccba829"
+          ],
+          "expression": "Apache-2.0 AND MIT",
+          "scope": "Pictogrammers collection-level notice; individual icon licenses and trademarks remain applicable. This permits unmodified tool use, not arbitrary redistribution of its full icon catalogue."
+        },
+        {
+          "evidence_sha256": [
+            "9046848b63a5c92bff14e4accca80bd987e0623b74adf9226ce5198d312b79d5"
+          ],
+          "expression": "CC0-1.0",
+          "scope": "Simple Icons artwork; brands retain their trademarks and may have additional brand-use restrictions."
+        }
+      ],
+      "distribution_fingerprint": "fb1bc82840016e2f8d0c127d22a62d1c5a9f788db307e4b15386810d1c00d9e2",
+      "evidence_archive": {
+        "hash": "sha256:c0649c065b1b0512d60aad8c10f947f8e455284475239b364b610f2deb4d0855",
+        "url": "https://files.pythonhosted.org/packages/f1/cd/c05d3a530ba7934f144fb45f7203cd236adc25c7bdcc34673d202f4b0278/mkdocs_material-9.7.7.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "mkdocs_material-9.7.7/material/templates/.icons/fontawesome/LICENSE.txt",
+          "sha256": "329f24fdba0c57714d7d202d30a74767feac6907685ee24f0abbf1bd47581a07"
+        },
+        {
+          "path": "mkdocs_material-9.7.7/material/templates/.icons/material/LICENSE",
+          "sha256": "3bae6305bcaa6d10219b999f65c342034c2d40b1c0e8567fa08605e73ccba829"
+        },
+        {
+          "path": "mkdocs_material-9.7.7/material/templates/.icons/octicons/LICENSE",
+          "sha256": "3d8b9d9254e7aa7517ed5abc8df3a4bc230081a613e8e872fb6558e8759c9040"
+        },
+        {
+          "path": "mkdocs_material-9.7.7/material/templates/.icons/simple/LICENSE.md",
+          "sha256": "9046848b63a5c92bff14e4accca80bd987e0623b74adf9226ce5198d312b79d5"
+        },
+        {
+          "path": "mkdocs_material-9.7.7/LICENSE",
+          "sha256": "e1150f26b4c0f872627b39fda49ae3bd850304f2f7f3171ae0531c1f8f4dd078"
+        }
+      ],
+      "name": "mkdocs-material",
+      "notes": "MIT theme code with distinct asset notices. Keep attribution on generated documentation; check individual icon/brand rights before selecting additional icons. No blanket approval of every brand mark in the catalogue.",
+      "status": "reviewed",
+      "version": "9.7.7"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "b3cc149031d83ec272ace499e62217c5066e0200a5560d818d90cdc7bc05403c"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "13ecc32829d8a9cb134b51d4755fe0384cacda90f7575079fd633b052af171c3",
+      "evidence_archive": {
+        "hash": "sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443",
+        "url": "https://files.pythonhosted.org/packages/79/9b/9b4c96d6593b2a541e1cb8b34899a6d021d208bb357042823d4d2cabdbe7/mkdocs_material_extensions-1.3.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "mkdocs_material_extensions-1.3.1/LICENSE.md",
+          "sha256": "b3cc149031d83ec272ace499e62217c5066e0200a5560d818d90cdc7bc05403c"
+        }
+      ],
+      "name": "mkdocs-material-extensions",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "1.3.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "5abbfd98b45c41168d5a3e792a1eb218d3106f4c4b58e75b446466f3dcd52ad2",
+      "evidence_archive": {
+        "hash": "sha256:32edb81a2b5eb7cd7c9d941b2bfbbb082fd2cd09e0e725930316af6b708db186",
+        "url": "https://files.pythonhosted.org/packages/0a/e7/bb605a7bab2d8425a64b3fa762b39dc1bf1c7e3f11ba6fb5413d6db0ff8c/msgpack-1.2.3.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "msgpack-1.2.3/COPYING",
+          "sha256": "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427"
+        }
+      ],
+      "name": "msgpack",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission. Website lock restricts the archive set to supported Python versions; every retained archive and license evidence is identical to the product review at f59e1ddd0f96acfc8e83ea91f147bcb4b3268b65.",
+      "status": "reviewed",
+      "version": "1.2.3"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "606faf42d48b54d539dae99db6fecd48544535587e27275b319a3f36113cb6fa"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "5d7fb53edd562533c2c73ba36734a274a956a300e299b0d5021f7ae022c3e956",
+      "evidence_archive": {
+        "hash": "sha256:3ce8fe5b71d16e8af7039ca65257354100bc772965d6bc549070649e53b1b146",
+        "url": "https://files.pythonhosted.org/packages/9a/8e/105de02c1322cfada6d9710d9146ef8026419d433c9d08359a2d35805811/nodeenv-1.11.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "nodeenv-1.11.0/LICENSE",
+          "sha256": "606faf42d48b54d539dae99db6fecd48544535587e27275b319a3f36113cb6fa"
+        },
+        {
+          "path": "nodeenv-1.11.0/debian-upstream/copyright",
+          "sha256": "606faf42d48b54d539dae99db6fecd48544535587e27275b319a3f36113cb6fa"
+        }
+      ],
+      "name": "nodeenv",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "1.11.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "8e442c79545ac0c0a1a2cf0cf213312a45826acd6cdc6af223447dd5f708ee5d"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "f81980b44d4489cb49ab1c9836b7ca1371f679cb264e30acb32915f753b24931",
+      "evidence_archive": {
+        "hash": "sha256:1252ce3a102372ca6f86eb968e16f9014c4ba511c5c37d95a7f023e2ca6e5c25",
+        "url": "https://files.pythonhosted.org/packages/f5/d6/3b5a4e3cfaef7a53869a26ceb034d1ff5e5c27c814ce77260a96d50ab7bb/packageurl_python-0.17.6.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "packageurl_python-0.17.6/mit.LICENSE",
+          "sha256": "8e442c79545ac0c0a1a2cf0cf213312a45826acd6cdc6af223447dd5f708ee5d"
+        }
+      ],
+      "name": "packageurl-python",
+      "notes": "MIT text is in mit.LICENSE, not a conventional root LICENSE filename.",
+      "status": "reviewed",
+      "version": "0.17.6"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+          ],
+          "expression": "Apache-2.0 OR BSD-2-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "0850e2355c2da92254648b95687cbfcf1219ae28372dcd607baf786066226366",
+      "evidence_archive": {
+        "hash": "sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79",
+        "url": "https://files.pythonhosted.org/packages/7d/fa/3944b40b07da9ce895c0e6303a5ab7d53da063554f534556b134a54d6093/packaging-26.3.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "packaging-26.3/LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "path": "packaging-26.3/LICENSE.APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "packaging-26.3/LICENSE.BSD",
+          "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+        }
+      ],
+      "name": "packaging",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "26.3"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "352e5b276922f2e362931bbed2dcd2e94331a45b6a41a1b465a8300addcc1553"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "e153290fde03e9f4f73a3cb2ede93d2f71c94fa21bc5a647716837523aa18462",
+      "evidence_archive": {
+        "hash": "sha256:22bd083ab41e1a8b4f3690544afb2c60c25e5c9a63a30fa2f483f6c60c8e5945",
+        "url": "https://files.pythonhosted.org/packages/ec/46/68dde5b6bc00c1296ec6466ab27dddede6aec9af1b99090e1107091b3b84/paginate-0.5.7.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "paginate-0.5.7/LICENSE",
+          "sha256": "352e5b276922f2e362931bbed2dcd2e94331a45b6a41a1b465a8300addcc1553"
+        }
+      ],
+      "name": "paginate",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "0.5.7"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+          ],
+          "expression": "MPL-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "2976293f14a43b7c4030b3b14ed30e622363800167b8bf61ca4952a3a199d6f0",
+      "evidence_archive": {
+        "hash": "sha256:17db5ecd524104a120e173814c90367a96a98d07c45b2e10c2f3919fff91bf5a",
+        "url": "https://files.pythonhosted.org/packages/5a/82/42f767fc1c1143d6fd36efb827202a2d997a375e160a71eb2888a925aac1/pathspec-1.1.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pathspec-1.1.1/LICENSE",
+          "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+        }
+      ],
+      "name": "pathspec",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "1.1.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "634300a669d49aeae65b12c6c48c924c51a4cdf3d1ff086dc3456dc8bcaa2104"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b",
+            "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+            "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686",
+            "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04",
+            "1b22b049b5267d6dfc23a67bf4a84d8ec04b9fdfb1a51d360e42b4342c8b4154",
+            "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6",
+            "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca",
+            "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427",
+            "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d",
+            "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741",
+            "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b",
+            "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17",
+            "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5",
+            "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe",
+            "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48",
+            "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14",
+            "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15",
+            "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7",
+            "f388fd38cad13112c1dc0f669bbe80e7f84541edbafb72f3030d2ca7642c3c9d"
+          ],
+          "expression": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MPL-2.0 AND Python-2.0",
+          "scope": "Vendored libraries retain their own notices, including certifi CA data under MPL and distlib historical Python notices; do not strip these on redistribution."
+        }
+      ],
+      "distribution_fingerprint": "a9ff594db044be47f9fea940de5a5a93ac11e76e87a081cb093009f59b6a5e33",
+      "evidence_archive": {
+        "hash": "sha256:f6ad667e89a1fe78046c8f13232b247200f5258d7828f3f7883d660878e0813f",
+        "url": "https://files.pythonhosted.org/packages/ae/15/4500e320e6b101ec3b719ae85b697d9940b6cda672bc555bd6016fc60c6f/pip-26.2.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pip-26.2.1/LICENSE.txt",
+          "sha256": "634300a669d49aeae65b12c6c48c924c51a4cdf3d1ff086dc3456dc8bcaa2104"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/cachecontrol/LICENSE.txt",
+          "sha256": "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/certifi/LICENSE",
+          "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/distlib/LICENSE.txt",
+          "sha256": "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/distro/LICENSE",
+          "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/idna/LICENSE.md",
+          "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/msgpack/COPYING",
+          "sha256": "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/packaging/LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/packaging/LICENSE.APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/packaging/LICENSE.BSD",
+          "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/pkg_resources/LICENSE",
+          "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/platformdirs/LICENSE",
+          "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/pygments/LICENSE",
+          "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/pyproject_hooks/LICENSE",
+          "sha256": "1b22b049b5267d6dfc23a67bf4a84d8ec04b9fdfb1a51d360e42b4342c8b4154"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/requests/LICENSE",
+          "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/resolvelib/LICENSE",
+          "sha256": "f388fd38cad13112c1dc0f669bbe80e7f84541edbafb72f3030d2ca7642c3c9d"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/rich/LICENSE",
+          "sha256": "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/tomli/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/tomli_w/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/truststore/LICENSE",
+          "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca"
+        },
+        {
+          "path": "pip-26.2.1/src/pip/_vendor/urllib3/LICENSE.txt",
+          "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+        }
+      ],
+      "name": "pip",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "26.2.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "14ed54990120efea26042269885df36e1b53db858bf04b40c8cfc8c5e12f6fb1"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "20856e415087adcd790dabc0628101d755bd544462a0100e5104d2ebd5f420d0",
+      "evidence_archive": {
+        "hash": "sha256:14dea05d7b3b68f4c7582213e3ae8932bbba8e1f754bf06b95263d5fa6ab4363",
+        "url": "https://files.pythonhosted.org/packages/fc/08/47dfc28aa16ef0dbc38dd7c6e4fe24d124c3ed3a722a4a3e5021584a588c/pip_api-0.0.35.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pip_api-0.0.35/LICENSE",
+          "sha256": "14ed54990120efea26042269885df36e1b53db858bf04b40c8cfc8c5e12f6fb1"
+        }
+      ],
+      "name": "pip-api",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "0.0.35"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "c70feb66a51983f21e1983281d61ea6018d8d25c3122127c6ce9e9285695dc50",
+      "evidence_archive": {
+        "hash": "sha256:1eb4565d19ebe5d48996f4b770b4d2b32887e12cb12cfa637f1a064011b55ffc",
+        "url": "https://files.pythonhosted.org/packages/66/a4/f21d5f0a0edabcbce31560b73c7c5a6f72ae87af4236fd1069c8f59a353d/pip_audit-2.10.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pip_audit-2.10.1/LICENSE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        }
+      ],
+      "name": "pip-audit",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "2.10.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "18081c2c82771ca09d99d08cdac405924309e09fd19b16f1eea59cbc6ab809ed",
+            "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Copied helpers/tests have their own permissive notices in addition to MIT package code."
+        }
+      ],
+      "distribution_fingerprint": "4e18841bc8674013ef7e2df0477c0777f374cf74139fc1b0f32dc9ae5b233461",
+      "evidence_archive": {
+        "hash": "sha256:b4fa3a7a0be38243123cf9d1f3518da10c51bdb165a2b2985566247f9155a7d3",
+        "url": "https://files.pythonhosted.org/packages/5e/2a/63b574101850e7f7b306ddbdb02cb294380d37948140eecd468fae392b54/pip-requirements-parser-32.0.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pip-requirements-parser-32.0.1/LICENSE",
+          "sha256": "18081c2c82771ca09d99d08cdac405924309e09fd19b16f1eea59cbc6ab809ed"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/apache-2.0.LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/etc/ci/macports-ci.ABOUT",
+          "sha256": "317451974b7a37abd381fb793af731c37271b92775a35d4b7f95257911764141"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/etc/ci/mit.LICENSE",
+          "sha256": "bccaa8b6c09f94e81f06696e179dbe058464bbdfbc823b6d49cada1d71e84ac3"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/etc/scripts/gen_pypi_simple.py.ABOUT",
+          "sha256": "bedfec455e4f6e195ea72177beff68380ec997f5133d87d6203af844c0d0fcf2"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/etc/scripts/test_utils_pip_compatibility_tags.py.ABOUT",
+          "sha256": "7e12588ef8c2eef35380a9330d4d15588adee0e7a4ab8bd9930aaf0c430f14fe"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/etc/scripts/test_utils_pypi_supported_tags.py.ABOUT",
+          "sha256": "98a3396cd1dc92a14b796664d7129961f197afd955e5ebd35e7bc32fb3a02a7a"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/etc/scripts/utils_pip_compatibility_tags.py.ABOUT",
+          "sha256": "bfd3c404b2d0187d5c26e254ed278777bab86f6962dff1ce4e5be0b10a0cb91c"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/etc/scripts/utils_pypi_supported_tags.py.ABOUT",
+          "sha256": "9dd2759104babbb71a6262dce9756734874a7e99ef1a329ea71a668502562720"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/etc/scripts/utils_thirdparty.py.ABOUT",
+          "sha256": "256040fc8dceb13f4c60a8f1de5cd568b657827e2277fb59238b1845fc9bb787"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/mit.LICENSE",
+          "sha256": "18081c2c82771ca09d99d08cdac405924309e09fd19b16f1eea59cbc6ab809ed"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/src/packaging_legacy_version.py.ABOUT",
+          "sha256": "fe6e6bc5b654cb4fab2a40d5e29bee4ba80213a79fe538f99b77bb62c513e71e"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/src/packaging_legacy_version.py.LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/tests/test_dparse.py.LICENSE",
+          "sha256": "e46110a72fdf1ac8261e5f97f5b8a36e8be44265a89852ed5fa692971c90e64a"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/tests/test_packaging_legacy_version.py.ABOUT",
+          "sha256": "ed9a6eabd87e7ab650b5009367e1a3015c10d518f1bef960f689742afd2d19fc"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/tests/test_packaging_legacy_version.py.LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/tests/test_pip_api_parse_requirements.py.LICENSE",
+          "sha256": "14ed54990120efea26042269885df36e1b53db858bf04b40c8cfc8c5e12f6fb1"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/tests/test_requirements_detector_detection.py.LICENSE",
+          "sha256": "e78f28382ac236a42dcbc16caaaaf2e76da55ddc67053a8bcb3aabdfc72df9cc"
+        },
+        {
+          "path": "pip-requirements-parser-32.0.1/tests/test_requirements_parser.py.LICENSE",
+          "sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1"
+        }
+      ],
+      "name": "pip-requirements-parser",
+      "notes": "MIT package code, Apache and MIT copied helpers/tests with individual ABOUT records. Preserve them; upstream test corpora are not incorporated into Apizr.",
+      "status": "reviewed",
+      "version": "32.0.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "6ec241520393dc7ce72162078333126f093bc562348b46e9b4727252053a42c8"
+          ],
+          "expression": "BSD-2-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "a28e36e9cffb046c8e7f303ee501f487448bd225fb4ad14bc7160169a8f29291",
+      "evidence_archive": {
+        "hash": "sha256:ffb78b5bf9ffc3b7b5bc04893972b673c8ee96f1407f3ea9bc48003bdfa85302",
+        "url": "https://files.pythonhosted.org/packages/c6/84/b895ccc22affc8b75c7f33aae67eb3575b58efe7d696e31b01298fefc27b/plantuml_markdown-3.11.3.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "plantuml_markdown-3.11.3/LICENSE",
+          "sha256": "6ec241520393dc7ce72162078333126f093bc562348b46e9b4727252053a42c8"
+        }
+      ],
+      "name": "plantuml-markdown",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components. Re-reviewed the hash-verified 3.11.3 source archive; all preserved license and attribution texts are byte-identical to the previously reviewed version.",
+      "status": "reviewed",
+      "version": "3.11.3"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "7b566e0617dfa13456deccd2e567e11559cbbdd03eb2ffd67b9106309dee52ca",
+      "evidence_archive": {
+        "hash": "sha256:1aa0b0d3f224c1f07c295121e312a5a24a180d6ae5a8425ea1784b3e3863e9c0",
+        "url": "https://files.pythonhosted.org/packages/80/a8/66d45abadff219e36e2a824181b8f6a67e7ed4572934d6252c71c29d5731/platformdirs-4.13.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "platformdirs-4.13.0/LICENSE",
+          "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+        }
+      ],
+      "name": "platformdirs",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "4.13.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "d6b65e6c213a5d0b577911d34d6e5949b9f59d76c238c5071a2f3fc16cfb2606"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "995dd6375f4fa2fc3c840e76782cbb52072b927f45c4d517a047d26e1d1fac6f",
+      "evidence_archive": {
+        "hash": "sha256:d1eaa46ebb595891b860ab086b4d09c8588af65ebd4361b8e8f4bb8920b90ba8",
+        "url": "https://files.pythonhosted.org/packages/bf/db/7fc19e6f2dc92a966727031389fc2e08b558f0f25eb7403c1119ad4713cd/pluggy-1.7.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pluggy-1.7.0/LICENSE",
+          "sha256": "d6b65e6c213a5d0b577911d34d6e5949b9f59d76c238c5071a2f3fc16cfb2606"
+        }
+      ],
+      "name": "pluggy",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "1.7.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "ea2ca27cba7cc35822d95a46d59bcd3cc88e196592e6390d1949a359ffc990e8"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "6e7525261cde93874a58ea2c4883437aaade5e08d145b10dedee5c3bb2679737",
+      "evidence_archive": {
+        "hash": "sha256:1f3deee12b914c8fa184bd2b5953391c2e4f36763e403d4a23dc9983fa7c6e86",
+        "url": "https://files.pythonhosted.org/packages/3a/c3/6965c2690ddce885ec75121572d065a5b94c5a5d8d3e657927ecda9fd715/pre_commit-4.7.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pre_commit-4.7.0/LICENSE",
+          "sha256": "ea2ca27cba7cc35822d95a46d59bcd3cc88e196592e6390d1949a359ffc990e8"
+        }
+      ],
+      "name": "pre-commit",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "4.7.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "6ecba4dd14789b9d7d19a147121ae15d4d46423a0400a6403d96166d1bf6d7f3",
+      "evidence_archive": {
+        "hash": "sha256:9d5db56154a867a9b897c0163b33a793c804c80cee984116d02d49e4578fc103",
+        "url": "https://files.pythonhosted.org/packages/73/21/d250cfca8ff30c2e5a7447bc13861541126ce9bd4426cd5d0c9f08b5547d/py_serializable-2.1.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "py_serializable-2.1.0/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        }
+      ],
+      "name": "py-serializable",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "2.1.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+          ],
+          "expression": "BSD-2-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "809ea08ebada94001c16c889a725e2e58ae9c054add8c6487d7a6dd382ccacc8",
+      "evidence_archive": {
+        "hash": "sha256:610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c",
+        "url": "https://files.pythonhosted.org/packages/49/2e/ced460408999b33da6b31b0021b0f37d329e202d4169aeb164493778f25b/pygments-2.21.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pygments-2.21.0/LICENSE",
+          "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+        }
+      ],
+      "name": "pygments",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "2.21.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "e6645f914fbae5bc557419fcafbeab9e375897e8274c54e2b177953e9354f93e"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "e6645f914fbae5bc557419fcafbeab9e375897e8274c54e2b177953e9354f93e"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Python Markdown-derived extensions, in addition to MIT code and emoji indices."
+        }
+      ],
+      "distribution_fingerprint": "3289f7d3cec5e0f43907c8ea3449e4842b07f000f85d662a88c22e6067620574",
+      "evidence_archive": {
+        "hash": "sha256:a7f2a4e0bc60c6e6babfa7922cfb3b01cd640eb00fb208f3c582e12bae00ea67",
+        "url": "https://files.pythonhosted.org/packages/f3/fe/ac50ee24a80a1b344e643f6fb626063cc7041b978cd1dd9a7f9963ae1cd1/pymdown_extensions-12.3.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pymdown_extensions-12.3/LICENSE.md",
+          "sha256": "e6645f914fbae5bc557419fcafbeab9e375897e8274c54e2b177953e9354f93e"
+        },
+        {
+          "path": "pymdown_extensions-12.3/docs/src/markdown/about/license.md",
+          "sha256": "08ed1e49a9de2d78306524157eabc68bb64b9b4cdbfcb97ac83896369a3cf682"
+        }
+      ],
+      "name": "pymdown-extensions",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "12.3"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "a5425f9dc14ac74d4c5f0b679e941f2442e32cca7452a4418d5b1a49893ebe4e"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "4f8d66e8c7d3c72f68547710c31059e5feb22461403405e3b5790bb01c322a30",
+      "evidence_archive": {
+        "hash": "sha256:928ae7e20211f3b6f3915a72f06a0cfd29ab9d24279dd6346b6b1a7146397d36",
+        "url": "https://files.pythonhosted.org/packages/e4/11/b213bebff182584360cb8d17c72c1677fec5c5c228de439e63bcf8ab1c8f/pyparsing-3.3.3.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pyparsing-3.3.3/LICENSE",
+          "sha256": "a5425f9dc14ac74d4c5f0b679e941f2442e32cca7452a4418d5b1a49893ebe4e"
+        }
+      ],
+      "name": "pyparsing",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "3.3.3"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "ca836a5f9ecca3b2f350230faa20a48fb8b145653b5568d784862df864706b9b"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "d955e5c5709e06de3171e513ce33a64d27567883e1dfde0f12cf05a387d2fc11",
+      "evidence_archive": {
+        "hash": "sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313",
+        "url": "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pytest-9.1.1/LICENSE",
+          "sha256": "ca836a5f9ecca3b2f350230faa20a48fb8b145653b5568d784862df864706b9b"
+        }
+      ],
+      "name": "pytest",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "9.1.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "ba00f51a0d92823b5a1cde27d8b5b9d2321e67ed8da9bc163eff96d5e17e577e"
+          ],
+          "expression": "BSD-3-Clause",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "da862da11b02466843d11f38aefcac04a20e8ac56b76b2c1204cfe531fe1e079",
+      "evidence_archive": {
+        "hash": "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3",
+        "url": "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee498c46e004a0eb49bc148f2fd230864601a86dcf6db/python-dateutil-2.9.0.post0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "python-dateutil-2.9.0.post0/LICENSE",
+          "sha256": "ba00f51a0d92823b5a1cde27d8b5b9d2321e67ed8da9bc163eff96d5e17e577e"
+        }
+      ],
+      "name": "python-dateutil",
+      "notes": "The bundled LICENSE explicitly applies BSD-3-Clause to all code, including code also covered by Apache-2.0; the review selects that option.",
+      "status": "reviewed",
+      "version": "2.9.0.post0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "90e25e1faf2a4aaea8d95ee8e7f5738b052a1acc0c9c58068101f931a86bd588"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "fc20fbe4ddf722cf52ae4e1f557434477bb5a235994bfd83ebf10fbac8cb17fa",
+      "evidence_archive": {
+        "hash": "sha256:cd1738ca1d37c86ef9d0b654dd46fcee1e41c97c6add12575e8501ced39afdb4",
+        "url": "https://files.pythonhosted.org/packages/b0/73/54993df8fc57e906dc9b7e01d1d9b0b2d3eb0ce3190639e33dccb12853f7/python_discovery-1.6.2.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "python_discovery-1.6.2/LICENSE",
+          "sha256": "90e25e1faf2a4aaea8d95ee8e7f5738b052a1acc0c9c58068101f931a86bd588"
+        }
+      ],
+      "name": "python-discovery",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "status": "reviewed",
+      "version": "1.6.2"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "568ee4cf62b1fc1d301c877b87f323434e1a8053f94544ae931cad0eee3bda1c",
+      "evidence_archive": {
+        "hash": "sha256:d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f",
+        "url": "https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pyyaml-6.0.3/LICENSE",
+          "sha256": "8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4"
+        }
+      ],
+      "name": "pyyaml",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "6.0.3"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "75a5994afa284b67e6e66d7f83d2d39e729736511491b3d309ea7a064cbde3ce"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "1fa43c17633f28124c1c43a9e7014947c0bc485e3b9e2174d69c1412023bbf57",
+      "evidence_archive": {
+        "hash": "sha256:2eb38b75a2d21ee0475d6d97ec19c63287a7e140231e4214969d0eac923cd7ff",
+        "url": "https://files.pythonhosted.org/packages/eb/2e/79c822141bfd05a853236b504869ebc6b70159afc570e1d5a20641782eaa/pyyaml_env_tag-1.1.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "pyyaml_env_tag-1.1/LICENSE",
+          "sha256": "75a5994afa284b67e6e66d7f83d2d39e729736511491b3d309ea7a064cbde3ce"
+        }
+      ],
+      "name": "pyyaml-env-tag",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "1.1"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "b91acdda54dad8709fc21207ee73087acb729a2614254bd772fc6bdb4d3f649c",
+      "evidence_archive": {
+        "hash": "sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed",
+        "url": "https://files.pythonhosted.org/packages/ac/c3/e2a2b89f2d3e2179abd6d00ebd70bff6273f37fb3e0cc209f48b39d00cbf/requests-2.34.2.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "requests-2.34.2/LICENSE",
+          "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+        },
+        {
+          "path": "requests-2.34.2/NOTICE",
+          "sha256": "f5110972dedad2b4e9d314518daf3b7d72d6e02e499acd802181de6f74571dcc"
+        }
+      ],
+      "name": "requests",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "2.34.2"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "3d0543eb483e7320225a8a4d60ac44e9476709ad84c976ab37479cd3d2e1b9a8",
+      "evidence_archive": {
+        "hash": "sha256:edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36",
+        "url": "https://files.pythonhosted.org/packages/c0/8f/0722ca900cc807c13a6a0c696dacf35430f72e0ec571c4275d2371fca3e9/rich-15.0.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "rich-15.0.0/LICENSE",
+          "sha256": "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15"
+        }
+      ],
+      "name": "rich",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "15.0.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe",
+            "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6",
+            "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+          ],
+          "expression": "Apache-2.0 AND MIT",
+          "scope": "Vendored annotate-snippets and typeshed; root LICENSE also enumerates copied permissive code."
+        },
+        {
+          "evidence_sha256": [
+            "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+            "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
+          ],
+          "expression": "Apache-2.0 AND MIT",
+          "scope": "Vendored ruff_unicode_names2 and its generator; retain both complete code notices."
+        },
+        {
+          "evidence_sha256": [
+            "f858d5fab15f87699a92876e78d7699a92bdb116b57bf64bf6778c374b5cb0fe"
+          ],
+          "expression": "Unicode-3.0",
+          "scope": "Unicode name data bundled in ruff_unicode_names2; checked against https://spdx.org/licenses/Unicode-3.0.html, retain its complete notice."
+        }
+      ],
+      "distribution_fingerprint": "c6eed393573a69f6a478efee1a37f32392bc3d88d47d2e94b72e4192bba18ae7",
+      "evidence_archive": {
+        "hash": "sha256:5cd03240d8208a557c2a9655a5cb07ebe36aa6bb35065f97d48c1f6adef5a322",
+        "url": "https://files.pythonhosted.org/packages/e9/a7/70debb024dfacda67b8e560cc7511f52b34b9348a8cc8c1ec23036dcd51d/ruff-0.17.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "ruff-0.17.0/LICENSE",
+          "sha256": "2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_annotate_snippets/LICENSE-APACHE",
+          "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_annotate_snippets/LICENSE-MIT",
+          "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2/LICENSE-MIT",
+          "sha256": "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2/data/LICENSE-UNICODE",
+          "sha256": "f858d5fab15f87699a92876e78d7699a92bdb116b57bf64bf6778c374b5cb0fe"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2_generator/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ruff_unicode_names2_generator/LICENSE-MIT",
+          "sha256": "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
+        },
+        {
+          "path": "ruff-0.17.0/crates/ty_vendored/vendor/typeshed/LICENSE",
+          "sha256": "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe"
+        }
+      ],
+      "name": "ruff",
+      "notes": "Reviewed the hash-verified source archive, unchanged primary and annotate-snippets/typeshed notices, and the newly bundled unicode_names2 code and Unicode data notices. All license expressions are already allowed by the existing policy. Preserve complete notices; native binary and other nested dependency redistribution remain outside this source-notice review.",
+      "status": "reviewed",
+      "version": "0.17.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "4375ba20e2b9c6c4e7cad2940a628fd90e95cc3d50ee92aae755715d8ba1fbd0"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "c5240b9150c30d000db0c2799305817ccb94f3201b05625a44c435b0f9f4a301",
+      "evidence_archive": {
+        "hash": "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81",
+        "url": "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "six-1.17.0/LICENSE",
+          "sha256": "4375ba20e2b9c6c4e7cad2940a628fd90e95cc3d50ee92aae755715d8ba1fbd0"
+        }
+      ],
+      "name": "six",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "1.17.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "1db7cae7fce6452e2e608e401a0f953e0133e4c2d75db69fb8ae851d2086f5b6"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "4454c8dd3c0f2b3e00d438c6cd0016964c83b44d2f1c7202503e9b7a3b4a50f1",
+      "evidence_archive": {
+        "hash": "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88",
+        "url": "https://files.pythonhosted.org/packages/e8/c4/ba2f8066cceb6f23394729afe52f3bf7adec04bf9ed2c820b39e19299111/sortedcontainers-2.4.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "sortedcontainers-2.4.0/LICENSE",
+          "sha256": "1db7cae7fce6452e2e608e401a0f953e0133e4c2d75db69fb8ae851d2086f5b6"
+        }
+      ],
+      "name": "sortedcontainers",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "2.4.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "f59ef78d37a0e9ba090ffaccdb6e6f60e65c3d67ac622985168b3921de6c7979",
+      "evidence_archive": {
+        "hash": "sha256:264507556cd8b8c8e7c6ee037cdf443a463f03f4c958e57195e3d369711b8ff6",
+        "url": "https://files.pythonhosted.org/packages/b0/78/9ad63712633ed3ab5cc1a648d863d7e7da371e9425e209555a0fe711b695/tomli-2.5.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "tomli-2.5.0/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        }
+      ],
+      "name": "tomli",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission. Website lock restricts the archive set to supported Python versions; every retained archive and license evidence is identical to the product review at f59e1ddd0f96acfc8e83ea91f147bcb4b3268b65.",
+      "status": "reviewed",
+      "version": "2.5.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "194e10b978a93a2122a35a6fbe5f47dc599060da88587237083d379fbfd6c88c",
+      "evidence_archive": {
+        "hash": "sha256:2dd14fac5a47c27be9cd4c976af5a12d87fb1f0b4512f81d69cce3b35ae25021",
+        "url": "https://files.pythonhosted.org/packages/19/75/241269d1da26b624c0d5e110e8149093c759b7a286138f4efd61a60e75fe/tomli_w-1.2.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "tomli_w-1.2.0/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        }
+      ],
+      "name": "tomli-w",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "1.2.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+          ],
+          "expression": "Python-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "0819c5124188f4051f7722a3e243e443a873e29eaa28827af83d8f92e9b80cfd",
+      "evidence_archive": {
+        "hash": "sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5",
+        "url": "https://files.pythonhosted.org/packages/f6/cc/6253133b5bb138fc3306cebfbda2c520f545d36b5be2c7255cc528bb45d6/typing_extensions-4.16.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "typing_extensions-4.16.0/LICENSE",
+          "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+        }
+      ],
+      "name": "typing-extensions",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "4.16.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "2a780b9844502416c0bcae9e152d79c2e831c595aa8bf2f267b4880070204dbc",
+      "evidence_archive": {
+        "hash": "sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63",
+        "url": "https://files.pythonhosted.org/packages/e3/05/b17359e1cefb4f909b5e40b1b90a496d987258916dbbf88e842c729f510e/urllib3-2.8.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "urllib3-2.8.0/LICENSE.txt",
+          "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+        }
+      ],
+      "name": "urllib3",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "2.8.0"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "38ef740a641ff08df082680e98ab30d09badccee9e5fb686bce21212f3a663f0"
+          ],
+          "expression": "MIT",
+          "scope": "Primary project code in the reviewed archive."
+        },
+        {
+          "evidence_sha256": [
+            "0e51b915e26da42c998b274c1a81804c5f9eea5ca49d69da2f96418872590825"
+          ],
+          "expression": "MIT",
+          "scope": "Unmodified bundled pip/setuptools wheels retain their own nested notices; this top-level notice does not enumerate their transitive code."
+        }
+      ],
+      "distribution_fingerprint": "71e41905e52e1a340eb7794431938d6c008d2d07337654b025c13eb0f0868c0e",
+      "evidence_archive": {
+        "hash": "sha256:5f427d56f39eb7e7447d641dd4b7ab1e9c92793f498f35f26da2e4972c5546ae",
+        "url": "https://files.pythonhosted.org/packages/dc/3f/935cf1757643381fb7f7cc98197b4bc119223d9c2cf37dc3b03ad2a4455f/virtualenv-21.14.7.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "virtualenv-21.14.7/LICENSE",
+          "sha256": "38ef740a641ff08df082680e98ab30d09badccee9e5fb686bce21212f3a663f0"
+        },
+        {
+          "path": "virtualenv-21.14.7/THIRD-PARTY-NOTICES.md",
+          "sha256": "0e51b915e26da42c998b274c1a81804c5f9eea5ca49d69da2f96418872590825"
+        }
+      ],
+      "name": "virtualenv",
+      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission. The MIT copyright year becomes 2020-present; bundled-wheel notice and scope are unchanged.",
+      "status": "reviewed",
+      "version": "21.14.7"
+    },
+    {
+      "components": [
+        {
+          "evidence_sha256": [
+            "39f081828db6f94c70123fa4fb30c1bce3e215a8fdece53a49991fe076a69c08",
+            "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+          ],
+          "expression": "Apache-2.0",
+          "scope": "Primary project code in the reviewed archive."
+        }
+      ],
+      "distribution_fingerprint": "fa4aedac7c30f5b7c2b644c766f792261dfd3105ef1bc63f36fc315f038bb87c",
+      "evidence_archive": {
+        "hash": "sha256:9ddf7c82fda3ae8e24decda1338ede66e1c99883db93711d8fb941eaa2d8c282",
+        "url": "https://files.pythonhosted.org/packages/db/7d/7f3d619e951c88ed75c6037b246ddcf2d322812ee8ea189be89511721d54/watchdog-6.0.0.tar.gz"
+      },
+      "license_files": [
+        {
+          "path": "watchdog-6.0.0/COPYING",
+          "sha256": "39f081828db6f94c70123fa4fb30c1bce3e215a8fdece53a49991fe076a69c08"
+        },
+        {
+          "path": "watchdog-6.0.0/LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "name": "watchdog",
+      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "status": "reviewed",
+      "version": "6.0.0"
+    }
+  ],
+  "review_date": "2026-10-15",
+  "review_method": "Archive license text and attribution review prepared with Codex; adopted through the protected pull-request process. No legal certification or independent human review is asserted.",
+  "schema_version": 1,
+  "scope": "locked-dependency-use-with-upstream-notices"
+}

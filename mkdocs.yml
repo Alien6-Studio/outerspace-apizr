@@ -1,0 +1,285 @@
+site_name: OuterSpace Apizr
+site_url: https://apizr.outerspace.sh
+site_author: Ludovic FERNANDEZ, Alien6
+site_description: >-
+  Inspect Python code, share selected functions through REST or MCP, and record or compare experiments when useful.
+
+hooks:
+  - scripts/build.py
+
+# Repository
+repo_name: alien6-studio/outerspace-apizr
+repo_url: https://github.com/alien6-studio/outerspace-apizr
+
+# Copyright
+copyright: >-
+  Copyright &copy; 2023–2026 Alien6 ·
+  <a href="#__consent">Cookie settings</a>
+
+theme:
+  name: material
+  custom_dir: overrides
+  logo: assets/images/logo.png
+  icon:
+    repo: fontawesome/brands/github-alt
+  palette:
+    - scheme: default
+      primary: amber
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: amber
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  # System fonts avoid third-party requests before consent or video playback.
+  font: false
+  favicon: assets/images/favicon.png
+  features:
+    - content.code.copy
+    - content.tooltips
+    - header.autohide
+    - navigation.footer
+    - navigation.indexes
+    - navigation.tabs
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+
+extra:
+  generator: false
+  analytics:
+    provider: google
+    property: G-MX4P2Y5EG4
+  consent:
+    title: Cookie consent
+    description: >-
+      Optional Google Analytics cookies measure documentation visits. Optional
+      GitHub requests show repository statistics. Optional Product Hunt requests
+      display the homepage badge. These stay off until you choose them. You can reject them or change your choice at any time.
+    actions:
+      - accept
+      - reject
+      - manage
+    cookies:
+      analytics:
+        name: Google Analytics
+        checked: false
+      github:
+        name: GitHub repository statistics
+        checked: false
+      producthunt:
+        name: Product Hunt badge
+        checked: false
+
+validation:
+  links:
+    not_found: warn
+    anchors: warn
+
+extra_css:
+  - assets/stylesheets/branding.css
+extra_javascript:
+  - assets/javascripts/video.js
+  - assets/javascripts/feedback.js
+
+# Reader paths and a dedicated architecture guide; home is available through the logo.
+nav:
+- Start here:
+  - Choose your path: start/index.md
+  - Install Apizr: getting-started/install.md
+  - Make your first calls: getting-started/quickstart.md
+  - Initialize your project: getting-started/onboarding.md
+  - Notebook to prediction: getting-started/data-science.md
+  - The full journey: getting-started/introduction.md
+  - Academy:
+    - Learning paths: academy/index.md
+    - Review Runs in VS Code: academy/vscode.md
+    - Capabilities: academy/capabilities.md
+    - Readiness: academy/readiness.md
+    - Exposure: academy/exposure.md
+    - Execution: academy/execution.md
+    - Interfaces: academy/interfaces.md
+- Examples:
+  - Choose an example: examples/index.md
+  - Compare fraud experiments: examples/compare-fraud.md
+  - Share a prediction: examples/share-prediction.md
+  - Share a business quote: examples/business-quote.md
+  - Calculate a delivery route: examples/logistics-tool.md
+  - Reuse unfinished research: examples/research-serving.md
+  - Hand over a service image: examples/verified-delivery.md
+- User guide:
+  - Work with your Python code: user-guide/index.md
+  - Inspect an experiment: getting-started/user-guide/experiment-inspection.md
+  - Run trusted code and keep history: getting-started/user-guide/experiment-runs.md
+  - Compare two runs: getting-started/user-guide/experiment-comparison.md
+  - Choose what becomes public: user-guide/select-functions.md
+  - Share a selected experiment: getting-started/user-guide/experiment-exposure.md
+  - Call a REST service: getting-started/user-guide/rest.md
+  - Call an MCP tool: getting-started/user-guide/mcp.md
+  - Notebooks, files and dependencies: user-guide/notebooks.md
+  - Fix a refused function: user-guide/troubleshooting.md
+  - Record a script or notebook: getting-started/tracking.md
+- Developer guide:
+  - Build with Apizr: developer-guide/index.md
+  - Prepare functions and modules: developer-guide/functions.md
+  - Compile with the public Python API: developer-guide/compiler.md
+  - Consume HTTP and MCP: developer-guide/clients.md
+  - Validate and generate in CI: getting-started/user-guide/ci-integrations.md
+  - Export client collections: getting-started/user-guide/client-collections.md
+  - Regenerate safely: developer-guide/regeneration.md
+  - Extend Apizr: developer-guide/extensions.md
+- Operations guide:
+  - Operate generated services: operations-guide/index.md
+  - Environments and permissions: operations-guide/environments.md
+  - Start, verify and stop a service: operations-guide/local-service.md
+  - Choose execution controls: operations-guide/execution.md
+  - Build and deliver an image: operations-guide/delivery.md
+  - Preserve configuration and evidence: operations-guide/evidence.md
+  - Diagnose failures: operations-guide/troubleshooting.md
+- Architecture guide:
+  - Understand the architecture: architecture/index.md
+  - Follow the whole system: architecture/overview.md
+  - Components and responsibilities: architecture/system-boundaries.md
+  - From source to interfaces: architecture/compilation-flow.md
+  - Experiments and artifact identities: architecture/experiments-and-artifacts.md
+  - Request and execution boundaries: architecture/execution-boundaries.md
+  - Extensions and service delivery: architecture/extensions-and-delivery.md
+  - Static compilation contracts:
+    - Repository Scanner and Catalog: architecture/repository-scanner-v1.md
+    - Capability IR: architecture/capability-ir-v1.md
+    - Capability Graph: architecture/capability-graph-v1.md
+    - Static readiness: architecture/capability-readiness-v1.md
+    - Repository Readiness: architecture/repository-readiness-v1.md
+    - Exposure Plan: architecture/exposure-plan-v1.md
+    - Repository Bundle: architecture/repository-bundle-v1.md
+  - Experiment evidence contracts:
+    - Experiment evidence: architecture/experiment-evidence-v1.md
+    - Experiment inputs: guides/experiment-inputs.md
+    - Seeds and environment evidence: guides/experiment-randomness-environment.md
+    - Metrics and output artifacts: guides/experiment-results.md
+  - Generation and execution contracts:
+    - REST generator: architecture/rest-generator-v1.md
+    - MCP generator: architecture/mcp-generator-v1.md
+    - Execution Policy: architecture/execution-policy-v1.md
+    - OCI container execution: architecture/oci-container-runtime-v1.md
+    - Governed repository execution: architecture/governed-repository-runtime.md
+    - Governed REST and MCP: architecture/governed-transport-runtime-v1.md
+    - OCI-governed REST and MCP: architecture/governed-oci-transports-v2.md
+    - Subprocess deny: architecture/subprocess-deny.md
+  - Integrity and security contracts:
+    - Delivery identities: architecture/delivery-identities.md
+    - Artifact principles: architecture/artifact-principles.md
+    - Security baseline: architecture/security-baseline.md
+  - Capture and providers:
+    - Experiment evidence v2: architecture/experiment-evidence-v2.md
+    - Tracking SDK: architecture/tracking-sdk-v1.md
+    - Scientific providers: architecture/scientific-providers-v1.md
+  - Transport admission: architecture/transport-admission.md
+  - Engine performance: architecture/engine-performance.md
+  - Code organization: architecture/code-organization.md
+  - Workspace contract: architecture/workspace-contract.md
+- Reference:
+  - Commands, APIs and formats: reference/index.md
+  - Concepts and limits: reference/concepts.md
+  - Command workflows:
+    - Inventory source: getting-started/user-guide/scan.md
+    - Inspect relationships: getting-started/user-guide/graph.md
+    - Inspect one source: getting-started/user-guide/inspect.md
+    - Assess readiness: getting-started/user-guide/repository-readiness.md
+    - Plan and build repository interfaces: getting-started/user-guide/exposure.md
+    - Execute one function: getting-started/user-guide/execute.md
+    - Project configuration: getting-started/user-guide/project.md
+  - Public Python compiler API: reference/compiler-api.md
+  - Extension invocation API: reference/extension-invocation.md
+  - Operator permissions: reference/operator-policy.md
+  - Git sources: reference/git-sources.md
+  - SSH Git sources: reference/git-ssh.md
+  - Plugins and delivery contracts:
+    - Install and manage extensions: reference/local-extensions.md
+    - Prepare plugin profiles: reference/plugin-preparation.md
+    - Catalog profiles: reference/plugin-catalog.md
+    - Project plugin locks: reference/project-plugin-locks.md
+    - Analysis MCP server: reference/apizr-mcp-server.md
+    - OCI service images: reference/oci-service-plugin.md
+    - Attest delivery proofs: reference/attest-delivery-plugin.md
+    - Attest OCI artifacts: reference/attest-oci-artifacts.md
+    - Proof-required admission: reference/delivery-admission.md
+    - External governance: reference/external-governance.md
+    - Multi-destination delivery: reference/multi-destination-delivery.md
+  - Compatibility notes: getting-started/developer-guide/releases.md
+  - Legacy pipeline — compatibility:
+    - Generate a legacy API and container: getting-started/user-guide/apizr.md
+    - Legacy standalone commands:
+      - Analyze Python: getting-started/user-guide/code-analyzr.md
+      - Generate FastAPI: getting-started/user-guide/fast-apizr.md
+      - Generate Docker files: getting-started/user-guide/dockerizr.md
+    - Legacy pipeline components:
+      - Notebook conversion: modules/notebook-transformr.md
+      - Python analysis: modules/code-analyzr.md
+      - FastAPI generation: modules/fast-apizr.md
+      - Docker generation: modules/dockerizr.md
+    - Legacy HTTP generation service:
+      - Service and project upload: apis/apizr-api.md
+      - Python analysis endpoint: apis/code-analyzr-api.md
+      - FastAPI generation endpoint: apis/fast-apizr-api.md
+      - Notebook conversion endpoint: apis/notebook-transformr-api.md
+      - Docker generation endpoints: apis/dockerizr-api.md
+    - Pipeline plugins: getting-started/developer-guide/plugins.md
+    - Behavior contract: architecture/legacy-behavior-contract.md
+  - Releases:
+    - 0.4.5: releases/0.4.5.md
+    - 0.4.4: releases/0.4.4.md
+    - 0.4.3: releases/0.4.3.md
+    - 0.4.2: releases/0.4.2.md
+    - 0.4.1: releases/0.4.1.md
+    - 0.4.0rc1 (RC): releases/0.4.0.md
+    - 0.3.0: releases/0.3.0.md
+    - 0.2.1: releases/0.2.1.md
+    - 0.2.0: releases/0.2.0.md
+    - 0.4.6: releases/0.4.6.md
+    - Migrate to 0.4.6: releases/migrate-0.4.6.md
+    - Removed Python imports: releases/removed-imports-0.4.6.md
+  - Contributing:
+    - Overview: about/CONTRIBUTING.md
+    - Build from source: development/0.4.md
+    - Development and checks: getting-started/developer-guide/setup.md
+    - Package an extension: reference/plugin-authors.md
+    - Publication and documentation cutover: contributing/publish-0.4.md
+    - Extension packaging ADR: architecture/extension-packaging-v04.md
+    - Code organization: architecture/code-organization.md
+    - Release branch governance: contributing/release-branches.md
+    - Publish a release: contributing/releases.md
+    - MCP distribution qualification: contributing/mcp-distribution.md
+    - Verify builds and releases: contributing/verification.md
+    - Managed Attest identity: contributing/attest.md
+    - Dependency maintenance: contributing/dependencies.md
+    - Homebrew build inputs: contributing/homebrew-build-inputs.md
+    - Code of conduct: about/CODE_OF_CONDUCT.md
+    - License: about/LICENSE.md
+    - Plugin preparation qualification: contributing/preparation-qualification.md
+    - Qualification scripts: contributing/qualification-scripts.md
+    - VS Code distribution: contributing/vscode-distribution.md
+  - Tracking SDK: reference/tracking-sdk.md
+  - Scientific providers: reference/scientific-providers.md
+  - VS Code extension: reference/vscode.md
+  - Editor protocol: reference/editor-contract.md
+  - Local telemetry: about/telemetry.md

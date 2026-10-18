@@ -1,0 +1,189 @@
+"""Verify exact generated content, then wait boundedly for Pages and public HTTPS.
+
+The probe is a killable child: DNS, TLS and a slow body cannot exceed the parent's
+remaining total deadline. There is no HTTP/insecure fallback or redirect following.
+"""
+
+import argparse
+import hashlib
+import http.client
+import json
+import re
+import ssl
+import subprocess
+import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+from urllib.parse import urlsplit
+
+MAX_BYTES = 8 * 1024 * 1024
+
+
+def marker_at(site: Path) -> dict:
+    marker = json.loads((site / "build-info.json").read_bytes())
+    if (
+        marker.get("schema") != "apizr.website-build/v1"
+        or marker.get("source_branch") != "gh-pages"
+        or not re.fullmatch(r"[0-9a-f]{40}", marker.get("source_commit", ""))
+        or not re.fullmatch(r"[0-9a-f]{40}", marker.get("product_source_commit", ""))
+        or marker.get("documentation_status") not in {"stable", "development"}
+        or not isinstance(marker.get("source_dirty"), bool)
+        or not isinstance(marker.get("files"), dict)
+        or not marker["files"]
+    ):
+        raise ValueError("Invalid website build marker")
+    for name, digest in marker["files"].items():
+        path = Path(name)
+        if (
+            path.is_absolute()
+            or ".." in path.parts
+            or not re.fullmatch(r"[0-9a-f]{64}", digest)
+            or hashlib.sha256((site / path).read_bytes()).hexdigest() != digest
+        ):
+            raise ValueError(f"Invalid local build fingerprint: {name}")
+    return marker
+
+
+def source_marker(site: Path, source_commit: str | None = None) -> dict:
+    """Check retained build identity without authorizing candidate deployment."""
+    marker = marker_at(site)
+    if marker["source_dirty"]:
+        raise ValueError("Refusing to confirm a deployment built from a dirty checkout")
+    if source_commit is not None and marker["source_commit"] != source_commit:
+        raise ValueError("Retained site does not match the expected source commit")
+    return marker
+
+
+def publication_marker(site: Path, source_commit: str | None = None) -> dict:
+    marker = source_marker(site, source_commit)
+    return marker
+
+
+def read_https(base: str, name: str, ca_file: str | None = None) -> bytes:
+    url = urlsplit(base)
+    if (
+        url.scheme != "https"
+        or not url.hostname
+        or url.username
+        or url.password
+        or url.query
+        or url.fragment
+    ):
+        raise ValueError("An explicit HTTPS site URL without credentials is required")
+    context = ssl.create_default_context(cafile=ca_file)
+    connection = http.client.HTTPSConnection(
+        url.hostname, url.port, timeout=10, context=context
+    )
+    try:
+        connection.request(
+            "GET",
+            url.path.rstrip("/") + "/" + name,
+            headers={"Cache-Control": "no-cache", "Accept-Encoding": "identity"},
+        )
+        response = connection.getresponse()
+        if response.status != 200:
+            raise ValueError(f"{name}: HTTPS status {response.status} (no redirects)")
+        data = response.read(MAX_BYTES + 1)
+        if len(data) > MAX_BYTES:
+            raise ValueError(f"{name}: response exceeds {MAX_BYTES} bytes")
+        return data
+    finally:
+        connection.close()
+
+
+def probe(site: Path, base: str, ca_file: str | None = None) -> None:
+    expected = marker_at(site)
+    observed = json.loads(read_https(base, "build-info.json", ca_file))
+    if observed != expected:
+        raise ValueError(
+            "Public marker mismatch: expected source "
+            f"{expected['source_commit']}, observed {observed.get('source_commit')}; "
+            "a newer deployment is not confirmation of this one"
+        )
+
+    def verify_file(item):
+        name, digest = item
+        data = read_https(base, name, ca_file)
+        if hashlib.sha256(data).hexdigest() != digest:
+            raise ValueError(f"Public content mismatch: {name}")
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for _ in pool.map(verify_file, expected["files"].items()):
+            pass
+    # Catch a deployment switching during the page/asset reads as well.
+    if json.loads(read_https(base, "build-info.json", ca_file)) != expected:
+        raise ValueError("Public marker changed during verification")
+
+
+def wait_for_site(args) -> None:
+    marker = publication_marker(args.site, getattr(args, "source_commit", None))
+    deadline = time.monotonic() + args.timeout
+    attempt = 0
+    last_error = "No attempt completed"
+    while time.monotonic() < deadline:
+        attempt += 1
+        try:
+            command = [
+                sys.executable,
+                str(Path(__file__).resolve()),
+                "--probe",
+                "--site",
+                str(args.site),
+                "--url",
+                args.url,
+            ]
+            if args.ca_file:
+                command += ["--ca-file", args.ca_file]
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                timeout=min(45, max(0.01, deadline - time.monotonic())),
+            )
+            if result.returncode:
+                raise ValueError(result.stderr.strip())
+            print(
+                f"Verified public source {marker['source_commit']} "
+                f"(website), exact HTTPS bytes"
+            )
+            return
+        except (ValueError, subprocess.SubprocessError) as error:
+            last_error = str(error)
+            print(f"Attempt {attempt}: {last_error}", flush=True)
+        time.sleep(min(5, max(0, deadline - time.monotonic())))
+    raise ValueError(f"Publication not confirmed within {args.timeout}s: {last_error}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--site", type=Path, default=Path("site"))
+    parser.add_argument("--url", default="https://apizr.outerspace.sh/")
+    parser.add_argument("--timeout", type=int, default=600)
+    parser.add_argument("--ca-file", help="Explicit CA for a disposable HTTPS fixture")
+    parser.add_argument(
+        "--source-commit", help="Require this exact source in the retained site"
+    )
+    parser.add_argument(
+        "--check-local",
+        action="store_true",
+        help="Validate publication inputs without network or deployment",
+    )
+    parser.add_argument("--probe", action="store_true", help=argparse.SUPPRESS)
+    args = parser.parse_args()
+    if not 1 <= args.timeout <= 900:
+        parser.error("timeout must be between 1 and 900 seconds")
+    try:
+        if args.check_local:
+            publication_marker(args.site, args.source_commit)
+        elif args.probe:
+            probe(args.site, args.url, args.ca_file)
+        else:
+            wait_for_site(args)
+    except (ValueError, OSError, http.client.HTTPException) as error:
+        print(f"Documentation verification failed: {error}", file=sys.stderr)
+        raise SystemExit(1) from None
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,687 @@
+# Publishing a release
+
+This is the maintainer procedure. Users should follow [The full journey](../getting-started/introduction.md)
+and the [compatibility guide](../getting-started/developer-guide/releases.md).
+
+## 0.4.6 preparation and publication boundary
+
+Prepare the README, site, installation commands and distribution metadata in
+final 0.4.6 form before building the candidates. This presentation does not
+establish that packages, tags, documentation or listings have been published.
+The maintainer requires review and validation of the GitHub branch, followed by
+its normal protected merge into `main`/`master`, before any publication to PyPI,
+Homebrew, MCP Registry, extension registries, Glama or the public documentation
+site. A successful development build is not publication authorization.
+
+Before candidate construction, run:
+
+```sh
+uv run --locked python -m scripts.qualification.packaging.check_release_metadata --release
+```
+
+The version source is `pyproject.toml`. Review the inventory:
+
+| Surface | Files and statements |
+| --- | --- |
+| Frozen package descriptions | Root and three plugin `README.md` files; current feature prose, package pins and immutable `v<version>` source links |
+| Package metadata | Root and plugin `pyproject.toml`: version, internal pins, Repository, Documentation, Issues and Changelog URLs |
+| Plugin/launcher descriptors | Three `apizr-extension.json` files; `plugins/mcp/distribution/{pyproject.toml,manifest.json}` |
+| Installation and site | `docs/getting-started/install.md`, `docs/index.md`, `mkdocs.yml`, `docs/releases/<version>.md`, `CHANGELOG.md` |
+| Forge and directories | `action.yml` and `templates/apizr.yml` defaults, `server.json` package versions, Dockerfile `SOURCE_REF=v<version>` and qualified `glama.json` ownership bytes |
+
+The retained Glama descriptor schema has no version field; bind its exact bytes
+and the tagged Dockerfile to the qualified source instead of inventing a field.
+Render and inspect all four package READMEs in the docs environment with
+`--render <new-directory>`. Candidate construction records a SHA-256 snapshot
+before building. Rechecking the retained snapshot with `--snapshot` refuses any
+subsequent change to the inventoried files, including same-version editorial
+changes. Such a change requires a new candidate and renewed qualification.
+
+Before any later, explicitly authorized publication dispatch or Glama re-index,
+use the original CI candidate inventory against the exact tagged source:
+
+```sh
+python3 -m scripts.qualification.packaging.check_release_metadata --release \
+  --source-root release-source --candidate metadata-candidate --dist dist
+```
+
+This binds the source commit, original pre-build snapshot, all eight archive
+identities, frozen README bytes and package URLs. PyPI preflight runs it before
+any upload. MCP publication and the Glama/Smithery verification path require the
+already-published protected release, download its original snapshot and archives,
+and compare actual public PyPI bytes before any registry/re-index action.
+The PyPI post-publication job also runs the checker with `--public` and retains
+`public-release-metadata.json`. Only historical 0.4.4/0.4.5 releases predate this
+snapshot contract; a missing policy or snapshot on later versions fails closed.
+Review the four retained rendered READMEs before building. An editorial change
+requires a new candidate; public verification checks the frozen bytes. Executing
+these publication paths still requires the maintainer's authorization and the
+protected release source described above.
+
+## VS Code distribution preparation for 0.4.6
+
+The [VSIX build and qualification procedure](vscode-distribution.md) prepares
+the proposed `alien6-studio.apizr` identity and a source-including, reproducible
+archive. Marketplace/Open VSX publisher ownership must be verified separately.
+Publication requires explicit maintainer authorization of the exact qualified
+VSIX/hash and completion of the remaining milestone qualification.
+No registry publication, credential or Python release change is authorized by
+the development build.
+
+## Authorized 0.4.5 finalization
+
+The maintainer authorized **0.4.5 only**, conditional on every mandatory
+security/release gate. At that time, development work stayed on `0.4.5`; integration
+used the normal protected PR into `master`. The exact resulting master commit must have
+successful push CI, Security and Documentation. The verifier requires all six
+release targets, distributions, release-delivery, provenance and release-assets,
+plus the actual Node audit step in the required Security dependencies job.
+The master push stages final provenance-bound assets for exactly 0.4.4/0.4.5;
+PR/manual builds and future versions remain previews. The Homebrew publication
+renderer now authorizes only 0.4.5; existing published Formulae stay immutable.
+
+Documentation qualifies the exact clean candidate source but skips deployment
+until the separate post-release documentation commit declares a verified stable
+release. Its later deployment still requires the exact retained stable marker
+and uses a normal fast-forward Pages push, preserving history without force.
+Historical version policies remain unchanged; 0.4.6 remains refused.
+
+[Security blocker #280](https://github.com/Alien6-Studio/outerspace-apizr/issues/280)
+must be closed with a committed safe lock, zero critical/high/moderate findings,
+and Linux/macOS functional collection evidence before publication. Install the
+exact Node lock with lifecycle scripts disabled and retain the unfiltered audit
+JSON with the release security evidence. A stale default-branch alert does not
+prove a corrected development lock is vulnerable; compare the actual versions
+and retain both states. Never dismiss an applicable alert to release.
+
+Freeze the original four wheels/four sdists from protected master CI, their
+checksums, candidate manifest, six target exports, delivery evidence, signed
+provenance and release-assets. Create immutable `v0.4.5` only after all gates pass.
+Create the reviewed GitHub Release as a **draft**, attach the frozen archives,
+then dispatch `publish-pypi.yml` on that tag with `release_tag=v0.4.5`, the exact
+`ci_run_id`, and `package=all`. Preserve environment approvals, OIDC, exact-byte
+staging and public-byte comparison. Keep the draft until the workflow has attached
+the PyPI comparison and Attest evidence and fresh public installations plus the
+documented notebook → Run → REST/MCP journey have passed. Then publish the final,
+non-prerelease GitHub Release before MCP Registry/Homebrew publication.
+[GitHub immutable releases](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases)
+require all assets to be attached before publication; the existing 0.4.4 release
+used this order. Never disable immutability to add evidence afterwards. Rebuilds
+never replace the frozen archives.
+
+The existing Alien6 Homebrew tap follows the immutable final core sdist and
+verified master provenance, with reviewed formula changes and a real Apple
+Silicon install. No new OCI product image or distribution channel is authorized.
+After external verification, record publication in a separate documentation PR
+to master and let the normal workflow deploy; never move the tag or push Pages
+directly. Close #279 only after all mandatory public provider evidence exists.
+
+## 0.4.5 MCP distribution {#mcp-distribution-045}
+
+Phase A prepared this sequence without publication. Its execution is now
+authorized conditionally by the maintainer; authorization is not evidence that
+any publication or external verification has succeeded. [MCP distribution qualification](mcp-distribution.md) records the
+current contracts and external limitations. Ordinary CI does not wait for indexes.
+
+1. Qualify the exact final source SHA and retain all release artifacts/evidence.
+2. Merge, tag and create the release only under separate explicit authorization.
+3. Publish the qualified public Python artifacts through the protected procedure.
+4. Verify the core and MCP PyPI archive identities against the retained candidate.
+5. Dispatch `Publish MCP Registry` separately with that immutable release tag and
+   full source SHA. Its preflight binds clean source, protected master ancestry,
+   GitHub Release assets, public PyPI hashes, ownership marker and descriptor.
+6. Verify Official Registry 0.4.5 and the exact configuration contract.
+7. Wait for Glama indexing, or use its permitted re-index/claim path only if authorized.
+8. Verify Glama's actual metadata/tool surface, recording API limitations and manual
+   schema-page evidence rather than silently accepting stale metadata.
+9. Complete the supported Smithery MCPB listing/submission and configuration flow.
+10. Verify its package/repository/version, tools, bundle and actual client installation.
+11. Verify MCPfinder sees the release across the expected primary sources.
+12. Retain dated external reports and unresolved propagation in the release record.
+
+Official Registry is the canonical registry source. Glama and Smithery add
+discovery/client presentation; they do not establish package artifact identity.
+Do not close #279 merely because Phase A or Python publication has completed.
+
+<span id="finalizing-044"></span>
+
+## Completed 0.4.4 finalization
+
+The protected procedure below completed for source
+`46c573d7f808f8d491cde1062d474b145288697f`, tag `v0.4.4`, CI `37222486067`
+and publisher `37223902790`. The [release record](../releases/0.4.4.md) retains
+public hashes, independent receipt/install verification and the separate
+Homebrew and external integration qualification boundaries. Do not replay this completed package
+publication or replace its archives.
+
+The [0.4.4 release record](../releases/0.4.4.md) defines the reviewed policy:
+**0.4.4 only, from protected master, on the exact final source commit**. Complete
+PR #247 review and all required checks, merge through the protected squash path,
+then require successful push CI, Security and Documentation on that merge SHA.
+Record the full SHA, CI run and all eight hashes before creating `v0.4.4`.
+The earlier frozen candidate archives and evidence remain unchanged; retain the
+final CI's separately built and fully qualified set in a distinct directory.
+
+The coordinated verifier also requires successful provenance and release-assets
+jobs for 0.4.4. PR/manual runs, other refs, an unprotected source and incomplete
+qualification cannot authorize it. Keep all existing signature, branch, tag,
+coverage and protected `pypi` receipt/publication checks. Use the manual workflow
+with the selected tag and CI run; publish the original bytes, compare public
+hashes and verify fresh installations outside checkout before declaring success.
+Stage verified release assets without the preview flag only on a protected
+0.4.4 master push. This does not itself publish anything. Publish the matching
+MCP Registry descriptor separately after the package/release verification, with
+explicit immutable tag and full source SHA inputs. Regenerate the official
+Homebrew tap from the immutable final core sdist and signed master provenance;
+complete its own reviewed audit and real Apple Silicon installation before
+merging the tap update.
+
+<span id="current-published-baseline"></span>
+
+## Historical 0.4.4 published baseline
+
+The historical stable release was **0.4.4** for the core and all three plugins,
+source `46c573d7f808f8d491cde1062d474b145288697f`. Publication is complete.
+The original archives from protected master CI `37222486067` were published
+by workflow `37223902790`; all eight public files match the qualified bytes.
+See the [release record](../releases/0.4.4.md). Master integration and documentation
+commits preserve the released product but never replace its immutable source.
+That integration targeted `master`; current development uses `0.4.6`.
+
+The **0.4.1rc1** and **0.4.0rc1** prereleases remain immutable history. The earlier
+core-only 0.4.0 upload was incomplete and removed; no coordinated final 0.4.0
+exists. **RC2 NOT REQUIRED:** the 0.4.1 finalization changed versions and
+documentation without changing runtime behavior, and the final archives were
+independently qualified and publicly verified.
+
+The immutable `v0.4.2rc1` prerelease was published and verified from
+`e8bd1166eff98a3766ec586c6a36c2f58ac14853`; publication #231 is complete.
+Corrective `0.4.2rc2` was qualified at
+`3e58c7969129e368a21f8188b12c94ab3059b421` after the first final qualification
+exposed a worker-pipe cleanup failure. PR #234 fixes pipe closure on cleanup errors.
+Final `0.4.2` is published with no runtime or third-party dependency change from
+that qualified RC2. Tracking #232 retains the failed run, corrective qualification,
+exact final source and verified publication evidence.
+See the [0.4.2 release record](../releases/0.4.2.md).
+
+## Completed 0.4.3 qualification
+
+The coordinated **0.4.3** core and all three plugins are published and verified.
+The [release record](../releases/0.4.3.md) identifies the exact protected source,
+successful qualification and publication runs, and public-byte comparison.
+The original four wheels, four sdists, target exports, delivery evidence and
+signed provenance remain immutable. Do not replay qualification or package
+publication for this completed release. PR builds remain previews.
+
+Official MCP Registry publication is independent of the package workflow.
+The completed 0.4.3 directory publication used `Publish MCP Registry` with
+`v0.4.3` and its recorded source SHA. The workflow verifies the public release and matching
+`server.json`, then authenticates with the repository's GitHub Actions OIDC
+identity. The public PyPI launcher and package ownership marker have passed
+validation. No personal token or rebuild is required.
+
+## Retain and publish one coordinated artifact set
+
+Before building a release-line candidate, complete the dependency freeze:
+
+- [ ] Refresh runtime, optional and development dependencies within the reviewed
+  bounds; record any deliberate hold or constraint change.
+- [ ] Review the exact locked source/archive hashes and upstream notices. Pass
+  source, licence, all Python audit scopes and the unfiltered client-tool Node
+  audit; qualify the corresponding development Homebrew build inputs and Formula.
+- [ ] Commit the reviewed `uv.lock` and policy together before building from the
+  exact clean source. Retain that lock with the candidate and its SBOMs.
+- [ ] Use that same committed lock for final qualification and publication.
+  A subsequent dependency or notice change requires a new candidate and renewed
+  qualification; never re-resolve dependencies during publication or replace
+  the retained candidate archives.
+
+CI builds four wheels, four sdists and one source-including VSIX in the
+`distributions` job. The v2 candidate manifest records all nine artifacts and
+their kinds, sizes and SHA-256 digests, plus the VSIX reproducibility and licence
+reports. The editor job consumes those exact VSIX bytes; only the synthetic
+historical update fixture is built there. Independent sdist reconstructions and
+the repeated VSIX compilation are tests and never replace selected candidates.
+Retain `release-candidate`, all eight `release-target-*` exports, `release-editor`, `release-delivery`,
+`build-attestations` and `release-assets`. The latter is only an Actions artifact,
+not an automatic upload to a GitHub release. PR previews lack signed provenance
+and cannot authorize publication.
+
+The completed 0.4.1 qualification selected the successful protected
+**release/0.4.1 push** run on the exact source commit, plus successful Security
+and Documentation runs on that same branch and commit. The signer recorded
+that protected ref in the retained evidence. The old branch can be retired
+without changing that evidence identity.
+
+The publication verifier explicitly permits `0.4.4` and `0.4.5` from protected
+`master`; the historical
+`0.4.3` / `release/0.4.3` policy remains unchanged and must not be replayed.
+Unintended versions and refs are refused. Development builds alone do not
+authorize publication. Releases through 0.4.0rc1 retain `master` provenance; published
+0.4.1 retains `refs/heads/release/0.4.1` provenance.
+
+Qualification includes Linux CPython 3.11–3.15, macOS 3.11/3.14/3.15 and disposable
+registry/TSA/ORAS fixtures. Target reports record architecture, patch version,
+bytes and timing samples. The protected-master signer waits for editor
+qualification and includes the VSIX as a provenance subject. The complete
+validation archive also retains the editor logs, executed notebook, bundles,
+Node audit and source-bound build/licence records. Runtime SBOM attestations cover the core distributions;
+plugin dependency identities remain in target inventories. Disposable worker
+image identities are test evidence, not official published images.
+
+Publication stays manual and requires explicit authorization of the exact
+version, source, CI run and original hashes. Trusted Publishing must be configured
+for all four projects. The workflow uploads **core → OCI → MCP → Attest**,
+requires separate protected receipt/publication approvals, and compares downloaded
+public archives with the original eight files. Existing bytes must match exactly;
+missing files alone are staged. No rebuild, overwrite or `skip-existing` is allowed.
+Network/access errors never mean absence. Verify fresh public installations and
+retain the public comparison and signed timestamped receipt before declaring delivery.
+
+### Dated directory verification after authorized publication
+
+Record a dated observation for each channel in `docs/releases/0.4.6.md`, retaining
+the JSON responses or a dated explanation when an API is unavailable:
+
+- Official Registry: exact version and `isLatest`; PyPI: actual archive bytes and
+  rendered README without development wording.
+- Glama: request a re-evaluation only when authorized, then observe its actual
+  score date and schema coverage. A request alone is not evidence of refresh.
+- MCPLookup: observed version and observation date; Smithery: completed listing
+  or the explicit decision not to pursue it.
+- TensorBlock and punkpeye awesome lists: observed submission/listing state;
+  MCPfinder: observed snapshot date, including a stale or unavailable result.
+- README directory badges: retain only claims supported by those observations;
+  annotate or remove stale badges. Archive these observations with the release.
+
+These are post-publication checks. Preparing this checklist never contacts a
+publication endpoint, requests indexing or authorizes distribution.
+
+For first-time plugin publishers, PyPI allows only one pending publisher for an
+identical repository/workflow/environment configuration. Register and publish one
+package at a time using the exact `package` input, then finish with `package: all`
+to archive release-wide evidence. These prerequisites do not authorize a new upload.
+Completed 0.4.0rc1, 0.4.1rc1, 0.4.1, 0.4.2rc1, 0.4.2 and 0.4.3 deliveries must not be dispatched again.
+
+## Published 0.3.0
+
+**0.3.0 was published on 22 September 2026** from commit
+`43f5626fe9e26b018aa323abd83b9611f7b2aba9`, tagged `v0.3.0`.
+Publication reused the exact master CI `35735875051` distributions. The managed
+receipt and Trusted Publishing workflow passed; public PyPI bytes were compared
+with the CI files. See the [release record and hashes](../releases/0.3.0.md#verified-delivery).
+Keep this tag and its distributions unchanged. The protected procedure below applies
+to a future explicitly authorized release.
+
+## Published releases and verification builds
+
+**0.2.0 was published on 21 September 2026**, from commit
+`31997407010d6e38f99970d0b3b319135a0d5d15`, tagged `v0.2.0`.
+Keep that tag and its PyPI/GitHub distributions unchanged. See the
+[release notes](../releases/0.2.0.md) for the shipped scope.
+
+The later commits that still declared `0.2.0` produced verification artifacts:
+sharing a version number did not make them the published files, and they must
+not replace those files. **0.2.1 was published on 21 September 2026**, from
+`8ab471de436b1ca92a3b213c40402c5241926d5a`, tagged `v0.2.1`.
+Its [maintenance notes](../releases/0.2.1.md) record the verified delivery and
+signed timestamped receipt. Keep its tag and distributions unchanged too. Build attestations
+apply only to their exact subjects and source commit.
+
+The procedure below is for a future **explicitly authorized release**. Prepare
+each new version through a separate release PR; version metadata alone does not
+mean publication has occurred. Published historical versions remain immutable.
+Recovery of a partial coordinated publication requires the original approved
+archives and exact comparison; it never permits replacing public bytes.
+
+<span id="pypi-ownership"></span>
+
+## Ownership and one-time setup
+
+Verify **Owner** access to the existing `outerspace-apizr` PyPI project. Do not
+rename/recreate it because an organization was removed; individual project
+permissions and organization membership are separate.
+
+Configure a [PyPI Trusted Publisher](https://docs.pypi.org/trusted-publishers/adding-a-publisher/)
+for the existing project, with these exact fields:
+
+| Field | Value |
+| --- | --- |
+| GitHub owner | `Alien6-Studio` |
+| Repository | `outerspace-apizr` |
+| Workflow filename | `publish-pypi.yml` |
+| Environment | `pypi` |
+
+The GitHub `pypi` environment must require maintainer review and allow only release
+tags matching `v*`. Publishing uses OIDC, not a stored PyPI token. A workflow file
+alone does **not** establish PyPI ownership or configure this trust relationship;
+verify the publisher in PyPI before dispatching. TestPyPI is a separate service
+and publisher and is not part of this workflow.
+
+## Release procedure
+
+The steps below record the completed **0.4.1** procedure and its original source
+line. Do not replay publication after retiring that branch. Qualification and
+publication of 0.4.2 use the reviewed `release/0.4.2` version/ref policy;
+creating a branch alone does not authorize publication.
+
+1. Prepare a PR with current README, release notes, compatibility guidance and package
+   metadata. `pyproject.toml` is the version source; installed application/CLI
+   versions come from distribution metadata. Use the explicitly authorized,
+   previously unpublished version; align its release notes and changelog.
+2. Merge the candidate preparation PR into protected `release/0.4.1` after
+   **all** required checks pass. Wait for CI, Security and Documentation to pass
+   again on that exact release-line merge commit. Do not integrate into `master`
+   yet. Do not disable a gate, lower a coverage floor or use an admin bypass.
+3. From that successful **release/0.4.1 push CI run**, download `python-distributions`
+   and `distribution-checksums`, plus `release-candidate`, every `release-target-*`
+   export and `release-delivery`. The distributions job builds all eight archives
+   once. Target jobs install those exact wheels outside checkout. OCI jobs build
+   their disposable images from the retained core/plugin wheels; image identities
+   and package hashes describe different artifacts.
+4. Review the actual archived README/metadata and hashes. Optionally run
+   `uvx twine check --strict dist/*` locally. Preserve the CI run ID and commit SHA
+   in the release record. Never rebuild on a laptop for the upload.
+5. Check [PyPI release history](https://pypi.org/project/outerspace-apizr/#history)
+   immediately before publication. Versions and filenames are immutable. If
+   the target version already exists, inspect it. The coordinated recovery path
+   accepts only byte-identical approved files; never overwrite, silently skip files,
+   or automatically choose another version.
+6. Create `v<version>` on that exact verified merge commit. Release tags are protected
+   against deletion/force updates. Prepare the GitHub release notes from
+   the reviewed notes for that version and attach the eight reviewed archives, checksums and target exports.
+7. Explicitly dispatch **Publish PyPI** on the tag, passing the verified release-line
+   `ci_run_id`. Its verification job checks tag/version/commit, successful coordinated CI,
+   Security and Documentation runs, public artifact state, archive
+   metadata and original checksums. It downloads and forwards the same bytes;
+   there is no rebuild. Approve the protected `pypi` receipt job after review.
+8. The receipt job signs and RFC 3161 timestamps those exact distributions and
+   evidence with the managed Apizr identity. Signature, expected identity,
+   timestamp and recomputation must all pass; missing keys or timestamp service
+   failures stop delivery. Review its receipt before approving the protected
+   publication job. The isolated publication job downloads the verified artifacts and exchanges
+   its GitHub identity with PyPI using the pinned PyPA action. Only this job has
+   `id-token: write`; it does not check out or execute repository source. A
+   failed/partial upload requires inspection of PyPI state before any retry.
+9. Verify PyPI metadata, rendered README and file SHA-256 values against the
+   reviewed artifacts. Install `outerspace-apizr==<version>` from PyPI in a fresh
+   environment outside checkout and run the CLI/example smoke. Record the actual
+   publication date, release links and hashes; update the changelog's `Unreleased`
+   label through a follow-up documentation PR if publication has completed.
+
+Example deliberate dispatch from the verified release checkout, after the new
+tag exists and checks are green. Set `REVIEWED_RELEASE_RUN_ID` to the reviewed
+successful release-line push CI run ID. **Never dispatch the closed 0.4.0 or
+already-published 0.4.0rc1 delivery.**
+
+```sh
+RELEASE_VERSION=$(python -c 'import pathlib, tomllib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"])')
+gh workflow run publish-pypi.yml --ref "v${RELEASE_VERSION}" \
+  -f release_tag="v${RELEASE_VERSION}" -f ci_run_id="$REVIEWED_RELEASE_RUN_ID"
+```
+
+Publication is never triggered by an ordinary branch push or PR. The workflow
+must be present on the default branch before its first manual dispatch.
+
+## Release checklist
+
+Complete against the final commit; historical green runs are not sufficient.
+
+- [ ] All four versions, tag and built metadata agree; public files are absent or byte-identical to the approved set.
+- [ ] README and installation guide are final before candidate build; rendered previews and frozen archive metadata match the reviewed source.
+- [ ] The retained metadata snapshot passes again before each authorized publication dispatch; no README or metadata changed after candidate construction.
+- [ ] Ruff, Pyright and pre-commit pass.
+- [ ] Python 3.11–3.15 tests and every package coverage floor pass.
+- [ ] Wheel/sdist content and hashes are reviewed; installed-wheel smoke passes.
+- [ ] Legacy container matrix and mandatory `oci-isolation` pass unchanged.
+- [ ] Dependency audit, CodeQL and strict MkDocs build pass.
+- [ ] License inventory/policy and preserved notices cover the exact universal lock.
+- [ ] Open issues are classified and no release blocker remains unresolved.
+- [ ] Roll development-cycle references in the architecture guide and
+      contributor documentation forward to the next development branch.
+- [ ] Ownership, Trusted Publisher and protected `pypi` environment are verified.
+- [ ] The tag identifies the exact verified source commit and CI artifact run (protected master for 0.4.4).
+- [ ] Managed Attest identity, signature, RFC 3161 timestamp and recomputation pass
+      for the exact delivery; receipt and public verification material are archived.
+- [ ] PyPI file hashes and fresh index installation are verified after publication.
+
+## Development iteration and PR qualification
+
+On the `0.4.6` development line, implement several related milestone tickets
+locally before pushing. Run focused checks while the batch evolves, including
+the mandatory package architecture gate before commits. Do not wait for a full
+matrix between individual tickets and do not push each ticket separately: one
+push starts the complete qualification of the batch. The complete platform
+matrix, coverage/security floors and final release qualification remain required.
+Dependency refreshes include their lock, licence inventory and Homebrew identity
+in the same batch. Qualification closes the batch, rather than interrupting each
+implementation step.
+
+### Automatic development qualification
+
+`CI` is the single automatic entry point for development pushes and pull requests.
+It classifies the complete change once, builds one coordinated candidate, then
+calls the existing satellite workflows with the validated scope and immutable
+candidate artifact from the same run. All native, installed, vendor, cleanup,
+security and documentation proofs remain. Documentation examples reuse the core
+wheel from that candidate. The MCP caller still invokes native preparation.
+
+Security and Documentation retain their independent **master push** and manual
+entry points, and Security retains its scheduled audit. Their master publication
+and verification contracts remain unchanged. On development/PR runs, three
+small top-level result jobs retain the protected `dependencies`, `codeql` and
+`build` contexts; each requires its actual shared qualification to succeed.
+On master those result jobs have distinct `external-*` names and are skipped,
+so they cannot replace or mask the existing protected master checks. Development
+builds have read permissions; the existing documentation deploy remains restricted
+to master. Publication workflows and accepted release source refs remain separate.
+
+The called workflows skip their fallback scope job when a validated caller
+supplies it. Standalone manual runs still classify their own source and build a
+candidate if needed. Shared candidates use the caller's checked-out GitHub SHA,
+including the synthetic merge commit for PR qualification; consumers verify the
+manifest/source identity before using its wheel bytes. No artifact from another
+workflow run or source is selected implicitly.
+
+Retain the source SHA, run ID, event, attempt and all job conclusions from the
+orchestrating CI run. A green subset is not qualification. PR supersession uses
+the root workflow/PR group, while each called workflow has its own literal group
+prefix; reusable calls must never share the caller's `github.workflow` group and
+cancel one another. PR artifacts retain seven days and qualification artifacts
+90 days. The existing documentation deployment serialization remains unchanged.
+
+A deliberate same-source cost comparison can dispatch CI with
+`qualification_layout=independent`, then `shared`, on the same development ref.
+The control restores independent scope decisions, candidate builds and the docs
+wheel build while retaining the same proofs, thresholds and job graph. Normal
+pushes always share inputs. This comparison is opt-in: it must not add a second
+full matrix to ordinary development batches. Record runner time and wall-clock
+from completed runs before claiming an orchestration gain.
+
+`Pytest performance comparison` is now manual only. Its accepted #296 measurement
+is retained; moving or maintaining the benchmark must not automatically run four
+more full suites. A deliberate serial/parallel comparison remains separate from
+qualification of the complete batch.
+
+Dependabot's development configuration groups compatible minor/patch uv updates
+and groups monthly Actions updates, including CodeQL init/analyze together. It
+does not modify the ten existing master-targeted PRs or authorize their merge.
+Scanner consolidation still needs to preserve the explicit protected `codeql`
+context and native alert publication. Development work never changes master
+protection implicitly.
+
+### Parallel full-suite qualification
+
+The four Linux compatibility jobs and both macOS full-suite jobs use
+`-n auto --maxprocesses=2 --dist=loadfile --max-worker-restart=0`. Each worker
+collects the complete test directory with its nested fixtures; file scheduling
+keeps module fixtures together without rewriting test identities. The cap of two
+limits competing process starts in deadline-sensitive tests. Worker crashes fail
+the run without automatic restart. Local serial reproduction uses `-n 0`.
+
+Pytest-cov combines worker data into the existing `.coverage`, `coverage.json`
+and Linux `coverage.xml`; JUnit remains `tests.xml`. All 23 compatibility coverage
+commands and the two macOS coverage commands remain in place, including the
+global, legacy, domain and selected line/branch floors. Artifact names and the
+17 protected check contexts are unchanged.
+
+The resource audit for parallel execution is:
+
+| Resource | Isolation and scheduling |
+| --- | --- |
+| HTTP/TLS and SSH fixtures | Loopback port 0, per-test keys/configuration, temporary roots and owned process groups; parallel allowed |
+| Unix sockets, agents, fake OCI daemons | Unique temporary directories and socket paths; parallel allowed |
+| Environment/import/working-directory mutations | Confined to a worker process or a disposable source copy; file fixtures remain together |
+| Real Docker worker integration (`worker_image` fixture) | Explicit `serial` marker, including dependent fixtures; `APIZR_TEST_OCI_IMAGE` rejects distributed pytest before opening the image inventory |
+
+No tests are deselected for parallel runs. The real Docker and repeated kernel
+boundary cases stay in the existing serial `oci-isolation` job with its image,
+coverage gates and repetitions unchanged. Their ordinary full-suite skips remain
+visible when no worker image is configured.
+
+`scripts/benchmark_pytest.py --output /absolute/new/directory` runs serial then
+parallel on the same checkout, interpreter, lock and runner. It retains both
+JUnit/JSON/XML reports, logs, commands, durations, source SHA and lock digest.
+Every compatibility coverage gate runs against each independent coverage data
+file. It rejects changed test identities, multiplicities or pass/skip outcomes,
+failed/incomplete reports, and a duration reduction below 40%. The dedicated
+workflow measures Python 3.14 on Ubuntu and macOS. One ordered pair is a bounded
+comparison, not a statistical estimate: the second run may benefit from caches,
+and runner load can vary. Read its retained summary before claiming a measured
+gain; historical runs on different commits are not the before/after pair.
+
+Satellite workflows retain these distinct macOS proofs while removing six
+redundant Python 3.11 cells:
+
+| Satellite job | Retained macOS Python | Removed cell and remaining evidence |
+| --- | --- | --- |
+| MCP stdio | 3.14 | 3.11; all four Linux versions plus full-suite and installed-target macOS 3.11 remain |
+| MCP generated recovery | 3.11 | None; already one macOS version, retains its fixed stdio/HTTP recovery series |
+| Extension cleanup and Git/worker cleanup | 3.14 | One 3.11 cell each; Linux 3.11/3.14 and all 25 repetitions per remaining cell remain |
+| Extension packaging | 3.14 | 3.11; Linux 3.11–3.15, macOS Homebrew and installed candidates remain |
+| Client collections | 3.14 | 3.11; Linux 3.11/3.14 and actual vendor-tool validation remain |
+| Onboarding | 3.14 | 3.11; Linux 3.11/3.14 with real bash/zsh/fish and installed proofs remain |
+
+The main macOS 3.11/3.14 full suites and installed-target jobs remain. Native
+preparation's ARM/Intel and libc-specific proofs are distinct and unchanged.
+Cleanup keeps 25 macOS samples: process-group, pipe and SSH cleanup are OS-sensitive
+and a single pass would discard repeated native evidence. Removing duplicate
+Python cells reduces runner contention without making that tradeoff.
+
+## Documentation publication
+
+Documentation is independent of PyPI and follows `master`; it is not a frozen
+versioned documentation site. For the exact published source documentation, use
+the [v0.3.0 tag](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.3.0/docs).
+Release notes distinguish shipped behavior from subsequent maintenance.
+Material's native repository component displays the latest GitHub release tag,
+stars and forks using `repo_url` and `repo_name`. On desktop it appears beside
+the search bar; on mobile it appears in the navigation drawer. GitHub requests
+remain subject to the site's optional GitHub consent setting. No release number
+is hard-coded in the theme, and no header override is needed. See
+[Material's repository documentation](https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/).
+
+Website sources live on `gh-pages`. Product code, schemas and release records
+stay on product branches. GitHub Pages serves the validated workflow artifact at
+[apizr.outerspace.sh](https://apizr.outerspace.sh/).
+
+### Web-only changes
+
+Open website PRs against `gh-pages`. The branch has its own `pyproject.toml` and
+`uv.lock`; it never installs or builds Apizr. DCO declarations, Ruff, dependency
+source/license/vulnerability checks, publication tests, strict MkDocs construction
+and HTML validation run before deployment. Python packages and the extension
+follow their separate protected release process.
+
+`site.json` declares the documented version, published version and immutable
+product source revision. Development documentation remains visibly marked.
+`downloads.json` binds frozen example archives to that revision. Product branches
+retain executable journey fixtures and run them against installed candidate
+wheels; changing those fixtures requires product qualification.
+
+For local website commands, see the
+[website README](https://github.com/Alien6-Studio/outerspace-apizr/blob/gh-pages/README.md).
+
+### Build once and verify publication
+
+A push to `gh-pages` validates the site and uploads the exact `github-pages`
+artifact. A serialized deployment uses that artifact without rebuilding. A queued
+source superseded by a newer branch head does not deploy. PRs never deploy.
+Only the deployment job receives Pages and OIDC write permissions; no job writes
+generated HTML back to the branch.
+
+`build-info.json` records the website source commit, clean-build state, product
+revision, publication status and output file hashes. The footer links to it.
+The final check compares the expected marker and exact public HTTPS bytes,
+including Academy pages and media. TLS/hostname validation remains enabled;
+redirects, stale or mixed deployments and mismatched files fail. Probe subprocesses
+bound DNS, connection and body reads, with a 600-second propagation deadline.
+This verifies the observed publication; it is not continuous uptime monitoring.
+
+## Repository protections
+
+The following describes the **configured master protections**. Previous
+release-line rulesets are recorded in the
+[historical release audit](release-branches.md#actual-protections-detected).
+
+Apizr follows the same protection model as `Alien6-Studio/continuum-attest`:
+PR-only changes, no force push/deletion or bypass actors, signed commits on the
+default branch, resolved review threads, and required up-to-date checks. GitHub
+squash merging provides a verified merge commit, but the commits introduced by
+the PR must also have verified signatures. An unsigned source commit can block
+a squash merge even when every check passes. This applies to web-only PRs too.
+Create signed source commits using a registered signing identity or GitHub signed
+commit creation; keep the DCO trailer consistent with the actual commit author.
+See [GitHub signature requirements](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches#require-signed-commits).
+The original 14 gates remain
+required, including `oci-isolation`; additional macOS and security-mutation gates
+protect the expanded validation matrix. Coverage floors are documented in the
+[verification guide](verification.md).
+
+GitHub Actions defaults to read-only permissions and cannot approve PR reviews.
+Individual deployment jobs explicitly declare necessary write permissions.
+Release tags cannot be deleted or force-updated. CODEOWNERS requests maintainer
+review of external contributions; as with the reference repository, mandatory
+independent PR approval remains zero while there is one active owner. This is
+not a claim of independent human review. The publication environment has a
+separate maintainer approval gate. There is one active maintainer: self-review of
+publication remains possible, and no independent source review is claimed. Branch
+bypass rules and environment administrator bypass are separate settings.
+Dependabot proposes uv and Actions updates for review.
+
+Secret scanning, push protection, dependency security updates and private
+vulnerability reporting remain enabled. None substitutes for source review.
+
+## Site analytics review
+
+Google Analytics was removed for 0.2.1 after the maintainer's decision in #73.
+The site no longer has an Analytics provider or property configured. Optional
+GitHub statistics remain unchecked by default. The consent panel provides accept,
+reject and settings controls, and the footer exposes a persistent **Cookie settings**
+link. Verify a clean browser and a previously stored Analytics opt-in: neither
+should load Analytics. Test rejection and explicit GitHub opt-in separately.
+The original hero and bee logo remain part of the site. Google Fonts makes
+separate requests; the optional consent controls apply to GitHub statistics.
+
+## Additional evidence for future releases
+
+Before publication, download and inspect `build-attestations` from the exact CI run
+and `dependency-audit` from its verified Security run. The publication workflow
+requires valid signed provenance for the wheel, sdist and `ci-evidence.tar.gz`, then
+preserves the evidence on the existing GitHub release. See the
+[verification guide](verification.md) for contents, commands and limitations.
+Never attach a later build's attestation to the original 0.2.0 files as if it were
+produced by the original build. Never replace the original distributions or tag.
+
+## Social link previews
+
+The site serves a static 1200 × 630 PNG at
+[`assets/images/social-card.png`](../assets/images/social-card.png). All pages include
+[Open Graph metadata](https://ogp.me/) and a Twitter large-image card in their HTML
+head, with the page title, description and absolute canonical URL. The homepage uses
+the same metadata through its custom layout. Crawlers do not need JavaScript, cookies
+or an authenticated request to read the metadata or image.
+
+After deployment, verify the homepage and a nested documentation URL, then use
+[LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) for links that
+LinkedIn has already cached. Other networks also control their own preview caches.

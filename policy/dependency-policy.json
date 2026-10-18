@@ -1,0 +1,67 @@
+{
+  "allowed_licenses": [
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "CC0-1.0",
+    "ISC",
+    "MIT",
+    "MIT-0",
+    "MPL-2.0",
+    "PSF-2.0",
+    "Python-2.0",
+    "Unicode-3.0",
+    "Unicode-DFS-2016"
+  ],
+  "denied_packages": [
+    {
+      "name": "sklearn",
+      "reason": "Deprecated install-time placeholder; use the actual scikit-learn distribution after review.",
+      "reference": "https://pypi.org/project/sklearn/"
+    },
+    {
+      "name": "tensorflow-gpu",
+      "reason": "Removed install-time placeholder; use the maintained tensorflow distribution after review.",
+      "reference": "https://pypi.org/project/tensorflow-gpu/"
+    }
+  ],
+  "exceptions": [
+    {
+      "evidence_sha256": [
+        "2a82ac9bbc3e3ee066908381e8d373896db5a6025d083fbd59692fe9ccfb9111",
+        "fb5ce1f2dbd2bedc01fad9507be71ca19ec37b4d6f8dfb9516fbfefee410d85d"
+      ],
+      "licenses": [
+        "CC-BY-4.0"
+      ],
+      "name": "license-expression",
+      "reason": "License-index data; retain attribution, source and license notices.",
+      "version": "30.4.4"
+    },
+    {
+      "evidence_sha256": [
+        "75d79cccf1fc302cb4a99bd32aac8bd4fc80926b15d31f0ba994d16cdf844032"
+      ],
+      "licenses": [
+        "LicenseRef-Pyahocorasick-Public-Domain"
+      ],
+      "name": "license-expression",
+      "reason": "The upstream ABOUT file dedicates the copied pure-Python algorithm to the public domain; retain its provenance.",
+      "version": "30.4.4"
+    },
+    {
+      "evidence_sha256": [
+        "329f24fdba0c57714d7d202d30a74767feac6907685ee24f0abbf1bd47581a07"
+      ],
+      "licenses": [
+        "CC-BY-4.0",
+        "OFL-1.1"
+      ],
+      "name": "mkdocs-material",
+      "reason": "Font Awesome icons, fonts and code respectively; preserve attribution; do not sell fonts alone or use reserved names for modified fonts.",
+      "version": "9.7.7"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "locked-dependency-use-with-upstream-notices"
+}

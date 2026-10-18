@@ -1,0 +1,7 @@
+{
+  "schema": "apizr.website/v1",
+  "product_source_commit": "f59e1ddd0f96acfc8e83ea91f147bcb4b3268b65",
+  "documented_version": "0.4.6",
+  "published_version": "0.4.5",
+  "documentation_status": "development"
+}

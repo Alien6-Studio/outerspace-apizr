@@ -1,0 +1,115 @@
+{
+  "$defs": {
+    "ProducerIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "ProducerIdentity",
+      "type": "object"
+    },
+    "ProviderChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/ProducerIdentity"
+        },
+        "capabilities": {
+          "default": [
+            "input_reads",
+            "metric_signals",
+            "output_candidates",
+            "randomness_controls"
+          ],
+          "items": {
+            "enum": [
+              "metric_signals",
+              "output_candidates",
+              "randomness_controls",
+              "input_reads"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extension"
+        }
+      },
+      "required": [
+        "identity"
+      ],
+      "title": "ProviderChoice",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.provider-selection/v1",
+      "default": "apizr.provider-selection/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "providers": {
+      "default": [
+        {
+          "identity": {
+            "name": "apizr.builtin",
+            "version": "1"
+          },
+          "capabilities": [
+            "input_reads",
+            "metric_signals",
+            "output_candidates",
+            "randomness_controls"
+          ],
+          "enabled": true,
+          "extension": null
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/ProviderChoice"
+      },
+      "maxItems": 16,
+      "title": "Providers",
+      "type": "array"
+    }
+  },
+  "title": "ProviderSelection",
+  "type": "object"
+}

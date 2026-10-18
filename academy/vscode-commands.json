@@ -1,0 +1,41 @@
+{
+  "version": "0.4.6",
+  "contributes": {
+    "commands": [
+      {
+        "command": "apizr.selectEngine",
+        "title": "Apizr: Select engine",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.checkEngine",
+        "title": "Apizr: Check engine",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.inspect",
+        "title": "Apizr: Inspect with Apizr",
+        "enablement": "isWorkspaceTrusted",
+        "icon": "$(search)"
+      },
+      {
+        "command": "apizr.refreshRuns",
+        "title": "Apizr: Refresh runs",
+        "enablement": "isWorkspaceTrusted",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "apizr.showRun",
+        "title": "Apizr: Show Run",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "apizr.compareRuns",
+        "title": "Apizr: Compare two Runs",
+        "enablement": "isWorkspaceTrusted",
+        "icon": "$(git-compare)"
+      }
+    ]
+  },
+  "product_source_commit": "f59e1ddd0f96acfc8e83ea91f147bcb4b3268b65"
+}

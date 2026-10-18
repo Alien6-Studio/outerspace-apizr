@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: uv
+    directory: "/"
+    target-branch: gh-pages
+    schedule:
+      interval: weekly
+    groups:
+      website-tooling:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: "/"
+    target-branch: gh-pages
+    schedule:
+      interval: monthly
+    groups:
+      website-actions:
+        patterns: ["*"]
