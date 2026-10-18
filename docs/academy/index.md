@@ -244,14 +244,18 @@ identify every in-memory value or setting.
 
 ### 12 — Review real experiment Runs in VS Code
 
-**Academy Part XII — Inspect source, read measured Runs and compare results**
-· Illustrated tutorial and short GIF
+**Academy Part XII — Review real experiment Runs in VS Code** · 6:22
 
 Result: train decision trees on the public Wine dataset, browse their actual
 SDK and Jupyter Runs in the extension, inspect saved source and interpret the
 canonical comparison.
 
-[![Apizr for VS Code with real Wine experiment Runs](../assets/images/vscode/experiments.png)](vscode.md)
+<div class="apizr-demo-video">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=zkujF-thyyQ" data-apizr-video="zkujF-thyyQ" data-apizr-title="Review real experiment Runs in VS Code" aria-label="Play: Review real experiment Runs in VS Code">
+    <img src="../assets/videos/tutorial-vscode.png" width="1280" height="720" loading="lazy" alt="Academy Part XII: inspect saved source and compare measured Wine Runs in VS Code" />
+    <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
+  </a>
+</div>
 
 [Follow the illustrated lesson](vscode.md) ·
 [Extension settings](../reference/vscode.md)

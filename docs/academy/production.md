@@ -5,8 +5,9 @@ Parts I–XII share the current local Academy production project under
 `.output/academy-videos/production/academy.py`; see the adjacent `README.md`
 for reconstruction, validation and manual YouTube kit commands. Published I–V
 masters retain their original recorded version and sources. Parts VI–XI use the
-0.4.6 candidate. XII uses the real Wine example with authorized native window
-captures; its video draft remains local until publication is authorized.
+0.4.6 candidate. The published [Part XII recording](https://www.youtube.com/watch?v=zkujF-thyyQ)
+uses the real Wine example and native VS Code window captures. The Academy index
+records its public link and 6:22 duration; this does not declare Apizr 0.4.6 released.
 The narrator explicitly reuses Continuum Attest's local Kokoro voice:
 `af_heart`, speed `1.04`, quantized Kokoro 82M. Keep the existing Apizr colours,
 logo, terminal layout, chapter cards, captions, closing sequence and covers.

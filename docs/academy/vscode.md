@@ -5,6 +5,8 @@ description: Train on the public Wine dataset, inspect saved source and compare 
 
 # XII — Review real experiment Runs in VS Code
 
+[Watch the Academy video — 6:22](index.md#12-review-real-experiment-runs-in-vs-code).
+
 Train two decision trees on the [UCI Wine dataset](https://archive.ics.uci.edu/dataset/109/wine),
 then review their measured results in Apizr for VS Code. The dataset contains
 178 real wine samples, 13 chemical measurements and three cultivar classes;
