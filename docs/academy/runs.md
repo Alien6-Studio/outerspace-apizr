@@ -1,21 +1,20 @@
 ---
-title: Run trusted code and read its retained evidence
-description: Connect the intended Plan, the observed Run and the files you retain.
+title: Run the fraud notebook and read retained history
+description: Connect Plan, actual metrics and model identity, then test a corrupted store.
 lesson: 7
+recording: 07-history
 ---
 
-<p class="apizr-academy-kicker">Understand experiments · Lesson 07 · Plan about 25 min</p>
+<p class="apizr-academy-kicker">Understand experiments · Lesson 07</p>
 
-# Run trusted code and read its retained evidence
+# Run the fraud notebook and read retained history
 
-You have reviewed the source and decided to execute it. Later, someone asks which computation produced a model file. A filename is insufficient; you need the intended execution, its observed outcome and the identity of selected files.
-
-You will run a tiny standard-library workload, read its retained record, and then deliberately separate an artifact’s recorded identity from the continued availability of its bytes.
+The video executes the reviewed fraud notebook and asks which data and settings produced its saved model. It then replaces the current CSV and deliberately damages a disposable copy of the evidence store.
 
 !!! abstract "By the end of this lesson"
-    - Distinguish a Plan from runtime observations in a Run.
-    - Find a retained Run by its identifier and inspect its outcome.
-    - Explain why a recorded model fingerprint is not an artifact backup.
+    - Separate the intended Plan from observed Run evidence.
+    - Read a retained Run by its exact identity.
+    - Explain artifact retention and the recorded integrity refusal.
 
 ## Watch the lesson
 
@@ -26,43 +25,54 @@ You will run a tiny standard-library workload, read its retained record, and the
   </a>
 </div>
 
-English · 6:15 · The written steps below target 0.4.6 development; the recording keeps its original demonstrated version.
+<!-- recording-transcript -->
 
-## 1. Execute a complete, trusted workload
+## 1. Execute the reviewed workload
 
-`experiment run` executes trusted code with the host access of its environment. A fresh process does not make it a filesystem or network sandbox. Use a fresh directory for this example:
+Use a fresh `fraud-detection/` copy from the [recorded source materials](../downloads/academy-recorded-examples.zip), with cohort A active. Install the notebook's scientific requirements in the selected [development environment](../getting-started/data-science.md). The process executes trusted code with host access; Apizr does not install pandas or scikit-learn for it.
 
 ```sh
-cat > local_run.py <<'PYTHON'
-from pathlib import Path
-mean = sum([2, 4, 6]) / 3
-Path("model.json").write_text('{"mean": 4.0}\n')
-PYTHON
-RUN=$(apizr experiment run local_run.py --metric mean=mean --output model=model.json --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
+apizr experiment run fraud_detection.ipynb --output model=artifacts/model.joblib --format json > run-a.json
+python lab.py run run-a.json
 apizr experiment list
-apizr experiment show "$RUN"
+RUN_A=$(python -c 'import json; print(json.load(open("run-a.json"))["run_digest"])')
+apizr experiment show "$RUN_A" --format json > retained-a.json
+python lab.py run retained-a.json
 ```
 
-The metric selector asks for the final `mean` binding. The output selector asks for `model.json` after success. Their names make the required observations explicit.
+The Plan identifies intended source, inputs and controls. The Run contains the observed outcome, metrics and selected output identity. Read parameter origins rather than assuming every source candidate or declared seed became a runtime observation. Success means this execution completed; precision, recall and AUC still require interpretation.
 
-<div class="apizr-academy-flow" role="group" aria-label="Plan and observation"><span>Plan: source and controls</span><span>Execute trusted code</span><span>Run: status and observations</span></div>
+## 2. Replace the CSV without rewriting Run A
 
-## 2. Read what was retained
+```sh
+cp data/transactions-b.csv data/transactions.csv
+python lab.py retain
+apizr experiment show "$RUN_A" --format json > retained-a-after.json
+```
 
-The Plan records intended identities and execution controls. The Run adds observed status and evidence. The local history stores the record, including selected output fingerprints; it does not store a copy of every output file.
+The file at the same path now has different bytes. The retained record remains bound to the input of A. Its fingerprints identify data and the selected model; they do not archive either file's contents.
 
-A failed Run is also an outcome worth reading. Do not infer success from the mere presence of a Run ID. See the [history guide](../getting-started/user-guide/experiment-runs.md) for status and failure codes.
+## 3. Test the recorded integrity boundary
+
+Work on a copied store, keeping the original history untouched:
+
+```sh
+cp -R .apizr/experiments/v1 damaged-store
+printf ' ' >> "damaged-store/runs/$RUN_A.json"
+apizr experiment show "$RUN_A" --store damaged-store --format json > refused.json 2> refused.log
+```
+
+The final command is expected to be refused with exit 2: syntactically readable JSON can still violate canonical bytes and the stored identity. This demonstrates local evidence integrity, not a signature or independent authorization.
 
 ## Practice
 
-1. Locate the `mean` observation and explain why its value is `4.0`.
-2. Keep the Run ID, then replace `model.json` with different bytes. Read the earlier Run again.
-3. Decide what you would need to retain to serve the originally selected model later.
+Answer the video's artifact-retention question. If tomorrow's training overwrites `model.joblib`, can `show` restore A's model? What must another engineer preserve to serve exactly that model later?
 
 ??? success "Check your reasoning"
 
-    The earlier record still identifies the original selected output. It has not become a record of the replacement file, and reading it cannot restore the original bytes.
+    The record cannot recreate overwritten model bytes. Retain the actual selected model and needed input bytes through your artifact-retention process, alongside the Run. Their hashes let you check identity; the copied-store refusal shows why altering a retained record is not a valid way to change its evidence.
 
-    Retain the actual model artifact under your own storage policy as well as its record. To serve it later, you need those matching bytes, the reviewed source and the required runtime dependencies. An artifact’s hash answers an identity question, not a storage or availability question.
+<span id="1-execute-a-complete-trusted-workload"></span>
+<span id="2-read-what-was-retained"></span>
 
 [Back to the Academy](index.md) · [Continue to the next lesson](comparison.md)

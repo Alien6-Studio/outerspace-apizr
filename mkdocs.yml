@@ -112,20 +112,20 @@ nav:
   - The full journey: getting-started/introduction.md
 - Academy:
   - Start learning: academy/index.md
-  - Build a service:
-    - 01 · Install: academy/install.md
-    - 02 · Inspect: academy/inspect.md
-    - 03 · REST: academy/rest.md
-    - 04 · MCP: academy/mcp.md
-    - 05 · OCI: academy/oci.md
+  - Build interfaces:
+    - "01 · Install Apizr and inspect four real projects": academy/install.md
+    - "02 · Read Requests with doctor, scan and inspect": academy/inspect.md
+    - "03 · Generate a REST API for gcd and lcm": academy/rest.md
+    - "04 · Call RGB and HSV conversions through MCP": academy/mcp.md
+    - "05 · Build an MCP image and let Ollama call pricing.total": academy/oci.md
   - Understand experiments:
-    - 06 · Inspect evidence: academy/experiment-inspection.md
-    - 07 · Runs and history: academy/runs.md
-    - 08 · Compare Runs: academy/comparison.md
-    - 09 · Model to serving: academy/model-serving.md
+    - "06 · Inspect the fraud notebook before training": academy/experiment-inspection.md
+    - "07 · Run the fraud notebook and read retained history": academy/runs.md
+    - "08 · Compare the two recorded fraud Runs": academy/comparison.md
+    - "09 · Expose the retained fraud prediction model": academy/model-serving.md
   - Track and review:
-    - 10 · Python capture: academy/python-tracking.md
-    - 11 · Jupyter: academy/jupyter.md
+    - "10 · Capture the fraud holdout with sessions and decorators": academy/python-tracking.md
+    - "11 · Capture real Jupyter cells and the hidden calibration change": academy/jupyter.md
     - 12 · VS Code: academy/vscode.md
   - Core concepts:
     - Capabilities: academy/capabilities.md

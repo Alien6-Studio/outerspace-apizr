@@ -1,0 +1,1934 @@
+{
+  "schema": "apizr.academy-recordings/v1",
+  "advanced_engine_source_commit": "38ca8a65b79e373a78bd598f27116ad1f0d272fc",
+  "lessons": [
+    {
+      "number": 1,
+      "id": "01-install",
+      "page": "academy/install.md",
+      "title": "Install Apizr",
+      "recording_version": "0.4.3",
+      "duration": "6:39",
+      "duration_seconds": 399.1055,
+      "video_id": "7J6TWqAdx4Q",
+      "sources": {
+        "movie_sha256": "88aabbc5d78d2c5af54d721f65f6bd46fc731e18c0b959d9fb575f30f200f8df",
+        "narration_sha256": "50c81987b1e3d02e0e2f97a6d4bb23f667d1e0ae21cb5ff9e659a893eb0bcc04",
+        "subtitles_sha256": "2ef39765acbf28ddd39188f3520aef6e15a42b2d525b37d15e99c9024bc065b1",
+        "transcript_sha256": "4539f5b17d6c850873de203d863a59022b6ef74b305e8ddf07f822a7bf9d4c12"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "Install Apizr. Understand your setup.",
+          "narration": "Let us install Apizr in a real Bash terminal. We will try four installation methods, then inspect Python code from four different GitHub projects. Choose the method that fits your workflow.",
+          "commands": []
+        },
+        {
+          "time": "00:14",
+          "seconds": 14,
+          "title": "Choose where the tool lives.",
+          "narration": "Use one of these methods, not all four. Pip with a virtual environment keeps the tool inside a project. U V and pip X manage a separate tool environment. Homebrew manages the application on your Mac. These recordings use Apizr version zero point four point three, on Apple Silicon, with Python three point fourteen. The Python methods support versions three point eleven through three point fourteen. Install your chosen package manager first.",
+          "commands": []
+        },
+        {
+          "time": "00:46",
+          "seconds": 46,
+          "title": "01 / pip + venv",
+          "narration": "First, let us clone Boltons, a collection of Python utilities. We select a release tag so the example is reproducible. Inside the checkout, create a virtual environment with a supported Python version. Activate it in this shell. Now install outerspace Apizr with Python dash m pip. That uses the pip belonging to the active environment. Finally, check the version. When returning to this project, activate the same environment again.",
+          "commands": [
+            {
+              "text": "git clone --depth 1 --branch 25.0.0 https://github.com/mahmoud/boltons.git",
+              "expected_exit": 0
+            },
+            {
+              "text": "cd boltons",
+              "expected_exit": 0
+            },
+            {
+              "text": "python3.14 -m venv .venv",
+              "expected_exit": 0
+            },
+            {
+              "text": "source .venv/bin/activate",
+              "expected_exit": 0
+            },
+            {
+              "text": "python -m pip install outerspace-apizr==0.4.3",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr --version",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:25",
+          "seconds": 85,
+          "title": "Read the code before exposing it.",
+          "narration": "Here is the origin and the exact revision of our Boltons checkout. Let us inspect its math utilities and save the report. We display just the opening lines to keep them readable. Apizr identifies three functions. Conditional means that the analysis has unresolved questions. It does not mean the installation failed. Inspect reads the source without importing or executing the project.",
+          "commands": [
+            {
+              "text": "git remote get-url origin",
+              "expected_exit": 0
+            },
+            {
+              "text": "git rev-parse --short HEAD",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr inspect boltons/mathutils.py > inspection.txt",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '1,15p' inspection.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:55",
+          "seconds": 115,
+          "title": "A tool can live outside your project.",
+          "narration": "With U V, the tool gets its own managed environment. Your project can use a different environment for its dependencies. We will try this arrangement with More Itertools, a library of building blocks for working with iterables.",
+          "commands": []
+        },
+        {
+          "time": "02:11",
+          "seconds": 131,
+          "title": "02 / uv tool install",
+          "narration": "Check that U V is installed. Then ask it to install outerspace Apizr using Python three point fourteen. The tool environment is created automatically. Check the Apizr version before cloning the example. We now clone a tagged More Itertools release. This checkout does not need an activated project environment just to run the Apizr command.",
+          "commands": [
+            {
+              "text": "uv --version",
+              "expected_exit": 0
+            },
+            {
+              "text": "uv tool install --python python3.14 outerspace-apizr==0.4.3",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr --version",
+              "expected_exit": 0
+            },
+            {
+              "text": "git clone --depth 1 --branch v10.7.0 https://github.com/more-itertools/more-itertools.git",
+              "expected_exit": 0
+            },
+            {
+              "text": "cd more-itertools",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:40",
+          "seconds": 160,
+          "title": "A working tool can report unsupported code.",
+          "narration": "Now inspect the recipes module. This inspection returns a nonzero status because the report contains diagnostics. The first capability shown is a generator, marked unsupported by this interface contract. The report also explains other limitations, including variadic signatures. Reinstalling Apizr would not change these findings. Reading the report is the next step; automatically exposing the entire library is not.",
+          "commands": [
+            {
+              "text": "apizr inspect more_itertools/recipes.py > inspection.txt",
+              "expected_exit": 1
+            },
+            {
+              "text": "echo $?",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '1,15p' inspection.txt",
+              "expected_exit": 0
+            },
+            {
+              "text": "tail -n 10 inspection.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:14",
+          "seconds": 194,
+          "title": "Already using pipx?",
+          "narration": "Pip X offers the same useful separation: an isolated Python application that you can call from different projects. For this example, we will use Humanize, which formats values for people to read.",
+          "commands": []
+        },
+        {
+          "time": "03:29",
+          "seconds": 209,
+          "title": "03 / pipx install",
+          "narration": "Check pip X, then install the same Apizr package and version. Select a supported Python interpreter explicitly. Pip X creates the environment and exposes the command. Our tool directory is already on the shell path; follow pip X setup instructions if yours is not. Verify the version, then clone the tagged Humanize release.",
+          "commands": [
+            {
+              "text": "pipx --version",
+              "expected_exit": 0
+            },
+            {
+              "text": "pipx install --python python3.14 outerspace-apizr==0.4.3",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr --version",
+              "expected_exit": 0
+            },
+            {
+              "text": "git clone --depth 1 --branch 4.12.3 https://github.com/python-humanize/humanize.git",
+              "expected_exit": 0
+            },
+            {
+              "text": "cd humanize",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:00",
+          "seconds": 240,
+          "title": "Find the actual Python source.",
+          "narration": "Humanize uses a source directory layout. The number module lives under source, then humanize. We can inspect that file directly without installing Humanize into the Apizr environment. Nine functions are identified. The report flags unresolved imports and other conditions. The tool environment and the dependencies needed to run this project are separate concerns.",
+          "commands": [
+            {
+              "text": "ls src/humanize",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr inspect src/humanize/number.py > inspection.txt",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '1,18p' inspection.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:28",
+          "seconds": 268,
+          "title": "Let Homebrew manage the installation.",
+          "narration": "On a supported Apple Silicon Mac, add the official Alien six Studio tap, then use brew install with the Apizr formula. This workstation already has Apizr, so the recording uses brew reinstall instead. It is a real reinstall of the existing version. A new machine would use install.",
+          "commands": []
+        },
+        {
+          "time": "04:49",
+          "seconds": 289,
+          "title": "04 / Homebrew — recorded reinstall",
+          "narration": "The official tap provides the formula. We inspect its package information, then reinstall Apizr. Homebrew manages the Python runtime and dependencies for this method. Read the version actually reported on your machine: the tap can change after a tutorial is recorded. Once the reinstall completes, we verify the command. Our fourth example will be Python Slugify, a library that turns text into URL friendly slugs.",
+          "commands": [
+            {
+              "text": "brew tap alien6-studio/tap",
+              "expected_exit": 0
+            },
+            {
+              "text": "brew info alien6-studio/tap/apizr",
+              "expected_exit": 0
+            },
+            {
+              "text": "brew reinstall alien6-studio/tap/apizr",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr --version",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "05:28",
+          "seconds": 328,
+          "title": "The same inspection, another installation.",
+          "narration": "Let us clone the tagged Python Slugify release and inspect its main module. Two functions are identified. The conditional result points to unresolved details in this source file. Notice that the inspection command is the same after a Homebrew installation. The installation method decides how the tool is managed, while the source code determines the analysis result.",
+          "commands": [
+            {
+              "text": "git clone --depth 1 --branch v8.0.4 https://github.com/un33k/python-slugify.git",
+              "expected_exit": 0
+            },
+            {
+              "text": "cd python-slugify",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr inspect slugify/slugify.py > inspection.txt",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '1,18p' inspection.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "05:59",
+          "seconds": 359,
+          "title": "Three checks before the next step.",
+          "narration": "Choose one installation method. Check which executable your shell will run with command dash v Apizr, then verify its version and help. Keep the tool environment distinct from your project runtime. These examples only inspect source code. Generating an interface and running it are separate steps, with their own requirements. The next tutorial can start from those inspection results.",
+          "commands": []
+        },
+        {
+          "time": "06:26",
+          "seconds": 386,
+          "title": "Installed. Verified. Ready to inspect.",
+          "narration": "You now have four ways to install Apizr, and a first inspection of real Python code. Keep the method that fits your workflow, and use the report to decide what comes next.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "id": "02-understand",
+      "page": "academy/inspect.md",
+      "title": "Read your Python project",
+      "recording_version": "0.4.3",
+      "duration": "4:11",
+      "duration_seconds": 250.904833,
+      "video_id": "Ypgp8fCof0E",
+      "sources": {
+        "movie_sha256": "d23bfa725317f43cd69bb9a8a16340d3d59f43e4a94c3c611ffec674edbcefcd",
+        "narration_sha256": "8e934495164cb54982e764fa1cf9590c442fe95cb194e2be4058b15d0a2bdd7a",
+        "subtitles_sha256": "0d33f74e521b5cec77af25ec3fc36875af9ddc950553498abf1bc74565de267c",
+        "transcript_sha256": "ad17803b408bb80a801e0aeee70a04cdf3f5a17b27b81106aed4cae9c3982f93"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "Read your code before exposing it.",
+          "narration": "Apizr is installed. Now let us understand what it can see in a real Python project. We will use Requests to separate three questions: is the setup correct, what code exists, and which functions have a supported interface contract?",
+          "commands": []
+        },
+        {
+          "time": "00:17",
+          "seconds": 17,
+          "title": "Three commands. Three different questions.",
+          "narration": "Doctor checks the local setup. Scan inventories a repository. Inspect focuses on one source file and explains its interface contract. These analysis steps do not run the target project. A successful setup check does not mean every function can become an endpoint.",
+          "commands": []
+        },
+        {
+          "time": "00:36",
+          "seconds": 36,
+          "title": "Start from a known repository revision.",
+          "narration": "Clone the Requests release shown here and enter the checkout. The release tag and commit identify the exact source we are studying. Requests keeps its Python package under the source directory. We will scope the analysis to that directory instead of scanning examples and tests.",
+          "commands": [
+            {
+              "text": "git clone --depth 1 --branch v2.32.5 https://github.com/psf/requests.git",
+              "expected_exit": 0
+            },
+            {
+              "text": "cd requests",
+              "expected_exit": 0
+            },
+            {
+              "text": "git rev-parse --short HEAD",
+              "expected_exit": 0
+            },
+            {
+              "text": "ls src/requests",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:03",
+          "seconds": 63,
+          "title": "Initialize the project, then read the configuration.",
+          "narration": "Initialize Apizr with source as the source root. This writes the project configuration and policy files. Open the configuration to see the selected root. Initialization does not choose public functions. Its local operator policy grants source analysis for this exact checkout path, so moving the project requires reviewing that grant.",
+          "commands": [
+            {
+              "text": "apizr init . --source-root src",
+              "expected_exit": 0
+            },
+            {
+              "text": "cat apizr.toml",
+              "expected_exit": 0
+            },
+            {
+              "text": "ls .apizr/policies",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:31",
+          "seconds": 91,
+          "title": "Check preparation with doctor.",
+          "narration": "Pass the project file and operator policy explicitly to doctor. It checks Python, Apizr, the source directories and the policies. The warning about an empty selection is expected: we have not selected any functions. Doctor confirms this preparation without scanning the source or repairing anything automatically.",
+          "commands": [
+            {
+              "text": "apizr doctor --project apizr.toml --operator-policy .apizr/operator.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:57",
+          "seconds": 117,
+          "title": "Inventory the source, then read the summary.",
+          "narration": "Scan the checkout with the same source root and the explicit analysis policy. Save the report so we can read its summary. In this revision, eighteen source files are inspected, with sixty four capabilities and seventy five assessments. The categories include conditional and unsupported results. This is evidence to review, not a list of functions to publish automatically.",
+          "commands": [
+            {
+              "text": "apizr scan . --source-root src --operator-policy .apizr/operator.json > scan.txt",
+              "expected_exit": 1
+            },
+            {
+              "text": "echo $?",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '1,13p' scan.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:30",
+          "seconds": 150,
+          "title": "Read the state, then read the reason.",
+          "narration": "Ready means the static evidence supports an interface contract. Conditional means some questions remain unresolved. Unsupported means this contract does not support the pattern. Ambiguous means the analysis cannot identify one coherent callable. These states describe interface evidence; they do not certify that executing the code is safe.",
+          "commands": []
+        },
+        {
+          "time": "02:55",
+          "seconds": 175,
+          "title": "Why Requests.get is not a fixed interface.",
+          "narration": "Look at the get function. It accepts arbitrary keyword arguments. Now inspect this file and read the assessment for get. Apizr reports unsupported, with a reason code for variadic input. Requests is a useful library; this particular signature does not define the fixed input contract that this generator requires.",
+          "commands": [
+            {
+              "text": "sed -n '62,73p' src/requests/api.py",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr inspect src/requests/api.py > inspection.txt",
+              "expected_exit": 1
+            },
+            {
+              "text": "sed -n '15,21p' inspection.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:26",
+          "seconds": 206,
+          "title": "Selection does not bypass readiness.",
+          "narration": "Selecting only get does not change its signature. Let us try generation and read the refusal. No bundle is created. The useful next step is to design a deliberate, supported function boundary and inspect it. Avoid changing dependencies or reinstalling the tool to solve a source contract problem.",
+          "commands": [
+            {
+              "text": "apizr generate rest src/requests/api.py --select get --output-dir rejected",
+              "expected_exit": 1
+            },
+            {
+              "text": "test ! -e rejected && printf 'No bundle created\\n'",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:52",
+          "seconds": 232,
+          "title": "Next: turn a ready function into an API.",
+          "narration": "You can now verify the setup, locate the source, and explain an inspection result. In the next episode, we will use a different repository, select ready functions, generate a REST application, and make real HTTP calls.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "03-rest",
+      "page": "academy/rest.md",
+      "title": "Your first REST API",
+      "recording_version": "0.4.3",
+      "duration": "4:14",
+      "duration_seconds": 254.002833,
+      "video_id": "QdtaLoc-g6o",
+      "sources": {
+        "movie_sha256": "b66f913f5072250950d97ed07ae3b61d13ff7446f99dc5fb0bb8b2a9ff1ae163",
+        "narration_sha256": "59e2745bb46e589fb4072824a308c805da466be2c82e4323415f5754809bca46",
+        "subtitles_sha256": "6cba40ed3b5f7cdcf59485e6ead80c3ee2af5fe84a365c85d1aaa31946efce32",
+        "transcript_sha256": "eafd9844a8b6a22383e94ee29558acca2e4ba3c0876349378a9e863e3882b23b"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "From a Python function to a real HTTP response.",
+          "narration": "Let us turn existing Python functions into a REST API with Apizr. We will use the algorithms repository by Keon, generate only two endpoints, start the application locally, and verify both successful calls and invalid input.",
+          "commands": []
+        },
+        {
+          "time": "00:18",
+          "seconds": 18,
+          "title": "A small, explicit function boundary.",
+          "narration": "Our example calculates the greatest common divisor and least common multiple. Both functions accept two integers. That gives us a clear JSON request contract. We will expose those two functions and keep the other helpers out of the public interface.",
+          "commands": []
+        },
+        {
+          "time": "00:36",
+          "seconds": 36,
+          "title": "Pin the source you are going to inspect.",
+          "narration": "Clone the algorithms repository, then check out the commit used for this recording. A commit identifier keeps the example reproducible as the project evolves. Locate the number theory module. We will use its existing source file without changing the functions or copying them into a new framework.",
+          "commands": [
+            {
+              "text": "git clone --depth 1 https://github.com/keon/algorithms.git",
+              "expected_exit": 0
+            },
+            {
+              "text": "cd algorithms",
+              "expected_exit": 0
+            },
+            {
+              "text": "git fetch --depth 1 origin bd1d152f9ec7331c69be662831610b003b10fc7a",
+              "expected_exit": 0
+            },
+            {
+              "text": "git checkout bd1d152f9ec7331c69be662831610b003b10fc7a",
+              "expected_exit": 0
+            },
+            {
+              "text": "git rev-parse --short HEAD",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '17,29p' algorithms/math/gcd.py",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:04",
+          "seconds": 64,
+          "title": "Verify that the selected functions are ready.",
+          "narration": "Inspect the number theory module and read the first assessment. The function is ready and can generate an interface. The inputs are integers, while effects remain unknown. Readiness supports generation; it is not permission to execute arbitrary code. We reviewed this small arithmetic module before using direct execution.",
+          "commands": [
+            {
+              "text": "apizr inspect algorithms/math/gcd.py > inspection.txt",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '1,23p' inspection.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:33",
+          "seconds": 93,
+          "title": "Generate only gcd and lcm.",
+          "narration": "Generate a REST bundle from that file and explicitly select G C D and L C M. Use a new output directory. The generated files include the application, source, input contracts, OpenAPI document and runtime requirements. Listing the OpenAPI paths confirms that only the two selected functions have public routes.",
+          "commands": [
+            {
+              "text": "apizr generate rest algorithms/math/gcd.py --select gcd,lcm --output-dir rest",
+              "expected_exit": 0
+            },
+            {
+              "text": "ls rest",
+              "expected_exit": 0
+            },
+            {
+              "text": "python3.14 -c 'import json; print(*json.load(open(\"rest/openapi.json\"))[\"paths\"], sep=\"\\n\")'",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:06",
+          "seconds": 126,
+          "title": "Generating and running are separate steps.",
+          "narration": "Generation reads the source and writes the bundle. Starting the direct mode server imports that source. The runtime uses the bundle requirements in a separate environment. For this example, the arithmetic code needs no additional third party library. A different project may have its own runtime dependencies.",
+          "commands": []
+        },
+        {
+          "time": "02:28",
+          "seconds": 148,
+          "title": "Install the generated runtime requirements.",
+          "narration": "Create a separate runtime environment with U V, then install the requirements generated by Apizr. These are the server dependencies. Keeping them separate makes it clear which environment builds the bundle and which one runs it. We can now launch Uvicorn from this runtime environment.",
+          "commands": [
+            {
+              "text": "uv venv --python python3.14 runtime",
+              "expected_exit": 0
+            },
+            {
+              "text": "uv pip install --python runtime/bin/python -r rest/requirements.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:56",
+          "seconds": 176,
+          "title": "Start locally. Call it. Check validation.",
+          "narration": "Start the server on the loopback address, saving its log. The health endpoint confirms it is listening. Now send forty eight and eighteen to the greatest common divisor endpoint. The response is six. Next, eight and twelve produce a least common multiple of twenty four. If we send a string where an integer is required, the interface rejects it with HTTP four twenty two. The arithmetic function is not asked to silently convert that string. Finally, stop the local server.",
+          "commands": [
+            {
+              "text": "runtime/bin/uvicorn app:app --app-dir rest --host 127.0.0.1 --port 8814 > server.log 2>&1 &",
+              "expected_exit": 0
+            },
+            {
+              "text": "server_pid=$!",
+              "expected_exit": 0
+            },
+            {
+              "text": "curl -sS http://127.0.0.1:8814/health; echo",
+              "expected_exit": 0
+            },
+            {
+              "text": "curl -sS http://127.0.0.1:8814/capabilities/gcd -H 'Content-Type: application/json' -d '{\"a\":48,\"b\":18}'; echo",
+              "expected_exit": 0
+            },
+            {
+              "text": "curl -sS http://127.0.0.1:8814/capabilities/lcm -H 'Content-Type: application/json' -d '{\"a\":8,\"b\":12}'; echo",
+              "expected_exit": 0
+            },
+            {
+              "text": "curl -sS -o invalid.json -w 'HTTP %{http_code}\\n' http://127.0.0.1:8814/capabilities/gcd -H 'Content-Type: application/json' -d '{\"a\":\"48\",\"b\":18}'",
+              "expected_exit": 0
+            },
+            {
+              "text": "cat invalid.json; echo",
+              "expected_exit": 0
+            },
+            {
+              "text": "kill \"$server_pid\"",
+              "expected_exit": 0
+            },
+            {
+              "text": "tail -n 3 server.log",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:51",
+          "seconds": 231,
+          "title": "Existing Python. A selected, callable interface.",
+          "narration": "You have generated and called a real REST interface around existing Python code. The selection controls which functions are public, and the generated input contract checks requests. This is a local demonstration, not a deployment. Next, we will use another repository to make tools callable through MCP.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "04-mcp",
+      "page": "academy/mcp.md",
+      "title": "Your first MCP tools",
+      "recording_version": "0.4.3",
+      "duration": "5:09",
+      "duration_seconds": 309.004833,
+      "video_id": "rJThRd9vq4g",
+      "sources": {
+        "movie_sha256": "6c57b660946ec42686c2d9e86c308bcc3b0dfd4b06ba67e4d0ca816c957b0bc0",
+        "narration_sha256": "ed59eb6bfdcd41e3a97160ac9db966d0df7369a1b5f042563564866a26e5b0f9",
+        "subtitles_sha256": "179c5fe0892567a8509a9054f356ac4b79fab378a847ae99ad6222d9f46e6390",
+        "transcript_sha256": "256d686fb9921dc8a8fa6f03ef7b293aef3fc9cc381d3421589866f3c45b6eeb"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "Turn existing Python into callable MCP tools.",
+          "narration": "In this episode, we will generate MCP tools from existing Python code and call them through the official Python client. Our example converts colors between R G B and H S V. You will see the actual tool list, returned values, and an invalid input response.",
+          "commands": []
+        },
+        {
+          "time": "00:19",
+          "seconds": 19,
+          "title": "One color. Two representations.",
+          "narration": "R G B represents red using two hundred fifty five, zero, zero. H S V represents the same color using hue zero, saturation one, and value one. We will expose both conversion directions from The Algorithms Python repository. A comparison helper will remain outside the tool list.",
+          "commands": []
+        },
+        {
+          "time": "00:41",
+          "seconds": 41,
+          "title": "Pin the project and locate the conversion module.",
+          "narration": "Clone The Algorithms Python repository and check out the recorded commit. Locate the color conversion module under conversions. This is existing Python source with ordinary function declarations. We do not add MCP decorators or rewrite the arithmetic to fit a server framework.",
+          "commands": [
+            {
+              "text": "git clone --depth 1 https://github.com/TheAlgorithms/Python.git",
+              "expected_exit": 0
+            },
+            {
+              "text": "cd Python",
+              "expected_exit": 0
+            },
+            {
+              "text": "git fetch --depth 1 origin ef2ecc4d34d17ce6249ba5d3f3c17822dfd7bd50",
+              "expected_exit": 0
+            },
+            {
+              "text": "git checkout ef2ecc4d34d17ce6249ba5d3f3c17822dfd7bd50",
+              "expected_exit": 0
+            },
+            {
+              "text": "git rev-parse --short HEAD",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '14,23p' conversions/rgb_hsv_conversion.py",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:17",
+          "seconds": 77,
+          "title": "Inspect the contract before generation.",
+          "narration": "Inspect the module and save the report. Its three functions have ready input contracts. We will expose two conversion functions, leaving the comparison helper private. This readiness result concerns the interface. The direct mode runtime will execute trusted source, so we have also reviewed the conversion code itself.",
+          "commands": [
+            {
+              "text": "apizr inspect conversions/rgb_hsv_conversion.py > inspection.txt",
+              "expected_exit": 0
+            },
+            {
+              "text": "grep -E '^[a-z_]+$|readiness:|can generate interface:' inspection.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:46",
+          "seconds": 106,
+          "title": "Generate an MCP bundle with an explicit selection.",
+          "narration": "Generate the MCP bundle, selecting only R G B to H S V and H S V to R G B. The output includes a server, the original source, tool definitions and runtime requirements. The tool definitions describe what a client can call. Generating these files does not start the server or make a tool call.",
+          "commands": [
+            {
+              "text": "apizr generate mcp conversions/rgb_hsv_conversion.py --select rgb_to_hsv,hsv_to_rgb --output-dir mcp",
+              "expected_exit": 0
+            },
+            {
+              "text": "ls mcp",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:16",
+          "seconds": 136,
+          "title": "The client starts the local server.",
+          "narration": "We will use standard input and output transport. The Python client launches the generated server, completes the protocol handshake, lists the tools, and sends a call with named arguments. This verifies the same tool boundary an MCP compatible application can use. No language model account is needed for this test.",
+          "commands": []
+        },
+        {
+          "time": "02:39",
+          "seconds": 159,
+          "title": "Prepare the MCP runtime.",
+          "narration": "Create the runtime environment and install the bundle requirements. They include the MCP Python SDK, so the same runtime can run our test client and the generated server. Apizr itself is not needed inside this environment. We will keep the test client beside the generated bundle.",
+          "commands": [
+            {
+              "text": "uv venv --python python3.14 runtime",
+              "expected_exit": 0
+            },
+            {
+              "text": "uv pip install --python runtime/bin/python -r mcp/requirements.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:07",
+          "seconds": 187,
+          "title": "A small client makes the protocol exchange explicit.",
+          "narration": "Save this client as call tools dot py. The server parameters point to the generated server and select standard input and output transport. Entering the client context connects and negotiates the protocol. Listing tools and calling a tool are separate operations. Always check is error before using the structured result.",
+          "commands": [
+            {
+              "text": "sed -n '1,14p' call_tools.py",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '15,28p' call_tools.py",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:41",
+          "seconds": 221,
+          "title": "List the tools and make two real calls.",
+          "narration": "Ask the running server for its tools. Only the two selected conversions are listed. Now convert red from R G B to H S V. The returned object contains a result list with zero, one, one. Convert a green H S V value in the other direction and read zero, two hundred fifty five, zero. These are actual server responses, not values inferred by an assistant.",
+          "commands": [
+            {
+              "text": "runtime/bin/python call_tools.py list",
+              "expected_exit": 0
+            },
+            {
+              "text": "runtime/bin/python call_tools.py red",
+              "expected_exit": 0
+            },
+            {
+              "text": "runtime/bin/python call_tools.py green",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:18",
+          "seconds": 258,
+          "title": "Check the error flag before using a result.",
+          "narration": "Finally, send a string for the red channel, which requires an integer. The call returns an error and no structured result. The client checks that flag instead of treating every response as success. Input validation and the function execution result are both part of a useful integration test.",
+          "commands": [
+            {
+              "text": "runtime/bin/python call_tools.py invalid",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:44",
+          "seconds": 284,
+          "title": "Python functions, verified as MCP tools.",
+          "narration": "You have inspected existing code, selected two tools, generated a server, and verified real MCP calls. To connect an application, use its MCP configuration with the same runtime Python, generated server, and standard input and output transport. Keep the returned tool results as your evidence that the integration works.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "05-oci-ollama",
+      "page": "academy/oci.md",
+      "title": "Generate an OCI image. Call MCP with Ollama.",
+      "recording_version": "0.4.3",
+      "duration": "8:21",
+      "duration_seconds": 500.5065,
+      "video_id": "_PwRZeBN1fM",
+      "sources": {
+        "movie_sha256": "eb3a2683da186758d8d8c2097961c8e9020e1b8f77f26736519d044dc7e59781",
+        "narration_sha256": "df2e5fb71496126a20fa1bca0c4ad23cdfb9fef9ac8cea13e1cf1079b553aa82",
+        "subtitles_sha256": "d84f5f9d3bde2111e38d1fa229a87e66ae94c2848412bb77e0242d906b16c4ba",
+        "transcript_sha256": "53043f3f22459fef1b67e3072554445bd1fa7bf6c5da87a0dfb232dc5af680ca"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "Generate the image. Let Ollama use the tool.",
+          "narration": "Apizr can generate an O C I service image. In this tutorial, we will use its O C I plugin to build an image containing a generated MCP server. Then a local Ollama model will request a tool, and use the actual result returned by that container.",
+          "commands": []
+        },
+        {
+          "time": "00:22",
+          "seconds": 22,
+          "title": "Four steps from Python to a model response.",
+          "narration": "Our source is the shop example in the public Apizr repository. Apizr first generates a repository MCP bundle. Its O C I plugin turns that bundle into a container image. A small Python client connects the container to Ollama. The model chooses a tool call; the Python function runs inside the container.",
+          "commands": []
+        },
+        {
+          "time": "00:47",
+          "seconds": 47,
+          "title": "Prepare the tools before recording the workflow.",
+          "narration": "We use Apizr zero point four point three, Python three point fourteen, Docker with Buildx, and a running local Ollama server. The existing Qwen three Coder model supports tool calling. Plugin wheels and their hashes are already downloaded. Keep the plugin store outside the source checkout and outside the core environment.",
+          "commands": []
+        },
+        {
+          "time": "01:10",
+          "seconds": 70,
+          "title": "Use a fixed GitHub release and inspect the source.",
+          "narration": "Clone the recorded Apizr release into a source directory. The repository shop example contains a small price calculation with a fixed input contract. Read it, then inspect it with Apizr. We will expose only the total function. The example needs no additional business library inside the generated runtime.",
+          "commands": [
+            {
+              "text": "git clone --depth 1 --branch v0.4.3 https://github.com/Alien6-Studio/outerspace-apizr.git source",
+              "expected_exit": 0
+            },
+            {
+              "text": "git -C source rev-parse --short HEAD",
+              "expected_exit": 0
+            },
+            {
+              "text": "cat source/examples/repository-shop/pricing.py",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr inspect source/examples/repository-shop/pricing.py",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:44",
+          "seconds": 104,
+          "title": "Install and activate the OCI plugin explicitly.",
+          "narration": "Use the downloaded wheel, its verified digest, and the complete dependency lock to install the O C I plugin into a separate store. Installation is offline. Now enable the installed version. Installing and activating the plugin do not grant permission to build an image. We will create that specific build grant after preparing the inputs.",
+          "commands": [
+            {
+              "text": "plugin_sha=5b3f8905c1191f076379083a6c063cb2a9796eede40b277551a6e4acb478e27b",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr plugins install plugin-wheels/outerspace_apizr_oci-0.4.3-py3-none-any.whl --sha256 \"$plugin_sha\" --requirements plugin.lock --wheelhouse plugin-wheels --plugins-dir \"$PWD/plugins\"",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr plugins enable outerspace-apizr-oci --version 0.4.3 --plugins-dir \"$PWD/plugins\"",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:20",
+          "seconds": 140,
+          "title": "Select the public function and direct execution.",
+          "narration": "Initialize the shop project to create its local analysis grant. The two prepared policies explicitly choose direct execution and select pricing total as the only public MCP capability. Direct execution means the service will run this reviewed Python code. Other functions in the shop project remain outside the tool interface.",
+          "commands": [
+            {
+              "text": "apizr init source/examples/repository-shop",
+              "expected_exit": 0
+            },
+            {
+              "text": "cat readiness.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "cat exposure.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:56",
+          "seconds": 176,
+          "title": "Generate the repository MCP bundle.",
+          "narration": "Ask Apizr to build the MCP exposure from the shop directory, using the analysis grant and both policies. This repository bundle is the input required by the O C I plugin. A single file generation example from the earlier episode uses a different bundle format. Read the generated runtime requirements before preparing the image.",
+          "commands": [
+            {
+              "text": "apizr expose build mcp source/examples/repository-shop --operator-policy source/examples/repository-shop/.apizr/operator.json --readiness-policy readiness.json --policy exposure.json --output-dir mcp-bundle",
+              "expected_exit": 0
+            },
+            {
+              "text": "ls mcp-bundle",
+              "expected_exit": 0
+            },
+            {
+              "text": "cat mcp-bundle/requirements.txt",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:32",
+          "seconds": 212,
+          "title": "The image is built from explicit inputs.",
+          "narration": "The builder needs a Python base image pinned by digest, a target platform, and Linux wheels with exact hashes. The preparation helper downloads the generated server requirements using the target Python image. It writes the wheel lock, build request, and matching operator grant. The helper prepares inputs; Apizr performs the image build.",
+          "commands": []
+        },
+        {
+          "time": "03:57",
+          "seconds": 237,
+          "title": "Prepare the target runtime and build request.",
+          "narration": "Check the digest of our existing Python base image. Run the preparation helper. Package downloads happen here, before image construction. The helper records the complete wheel set for Linux ARM sixty four. It then writes the build request and a grant tied to this plugin, these input paths, this base image, and this local output tag.",
+          "commands": [
+            {
+              "text": "docker image inspect python:3.14-slim --format '{{index .RepoDigests 0}}'",
+              "expected_exit": 0
+            },
+            {
+              "text": "python prepare_build.py",
+              "expected_exit": 0
+            },
+            {
+              "text": "python -c 'import json; d=json.load(open(\"build.json\")); print({k:d[k] for k in (\"interface\",\"platform\",\"tag\")})'",
+              "expected_exit": 0
+            },
+            {
+              "text": "python -c 'import json; g=json.load(open(\"build-operator.json\"))[\"grants\"][0]; print(g[\"operation\"], g[\"permissions\"]); print(g[\"plugin\"][\"name\"], g[\"plugin\"][\"version\"])'",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:39",
+          "seconds": 279,
+          "title": "Apizr generates the OCI service image.",
+          "narration": "This is the image generation command: Apizr plugins run, outerspace Apizr O C I, build. Pass the prepared request, operator policy and plugin store. The plugin generates the Dockerfile and invokes the container builder. Save its complete response, then read the result fields. Published is false because this operation creates a local image.",
+          "commands": [
+            {
+              "text": "apizr plugins run outerspace-apizr-oci build --arguments build.json --operator-policy build-operator.json --plugins-dir \"$PWD/plugins\" --timeout-ms 360000 > build-result.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python -c 'import json; r=json.load(open(\"build-result.json\"))[\"result\"]; print(json.dumps({k:r[k] for k in (\"tag\",\"platform\",\"image_id\",\"published\")}, indent=2))'",
+              "expected_exit": 0
+            },
+            {
+              "text": "docker image inspect apizr-academy:05-shop-mcp --format 'User={{.Config.User}}'",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "05:26",
+          "seconds": 326,
+          "title": "Ollama tool calling meets MCP through a client.",
+          "narration": "Ollama accepts function tool definitions through its chat API. Our client discovers the MCP tools and passes those schemas to the model. When the model requests pricing total, the client forwards the arguments through MCP, then returns the tool result to Ollama. This bridge is a small tutorial program, separate from Apizr image generation.",
+          "commands": []
+        },
+        {
+          "time": "05:52",
+          "seconds": 352,
+          "title": "Connect over container standard input and output.",
+          "narration": "Install the MCP Python client into its own environment. Read the server configuration: Docker runs the generated image with interactive standard input, without a terminal allocation. The MCP client starts and connects to the container. List the tools to verify that the generated image exposes pricing total and its input schema.",
+          "commands": [
+            {
+              "text": "uv venv --python python3.14 client",
+              "expected_exit": 0
+            },
+            {
+              "text": "uv pip install --python client/bin/python 'mcp==2.3.0'",
+              "expected_exit": 0
+            },
+            {
+              "text": "sed -n '25,35p' ollama_mcp.py",
+              "expected_exit": 0
+            },
+            {
+              "text": "client/bin/python ollama_mcp.py list",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "06:33",
+          "seconds": 393,
+          "title": "Watch Ollama request the actual container tool.",
+          "narration": "Run the bridge with a question about seven items at nineteen point five each. Watch the model request pricing total with named arguments. The client sends that request to the generated MCP server inside the container. The server returns a successful result of one hundred thirty six point five. Ollama receives that result and writes the final sentence.",
+          "commands": [
+            {
+              "text": "client/bin/python ollama_mcp.py",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "07:22",
+          "seconds": 442,
+          "title": "Keep the machine-readable evidence.",
+          "narration": "The bridge also saves the real model responses and MCP results. Read that trace to verify the tool name, arguments and returned value. Compare the image identity in the Apizr build result with Docker inspection. These checks connect the generated artifact to the tool call that we just observed.",
+          "commands": [
+            {
+              "text": "python -c 'import json; t=json.load(open(\"ollama-trace.json\")); print(json.dumps(t[\"results\"], indent=2)); print(t[\"answer\"])'",
+              "expected_exit": 0
+            },
+            {
+              "text": "python verify_image.py",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "07:52",
+          "seconds": 472,
+          "title": "Python → Apizr image → MCP → Ollama.",
+          "narration": "You have generated an O C I image with Apizr, connected to its MCP server, and verified a real local model tool call. The example uses a small price function so the infrastructure is easy to understand. For your own project, begin with reviewed source, an explicit public selection, and the runtime dependencies that project actually needs.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "06-inspection",
+      "page": "academy/experiment-inspection.md",
+      "title": "Inspect experiment evidence",
+      "recording_version": "0.4.6",
+      "duration": "5:54",
+      "duration_seconds": 353.8035,
+      "video_id": "9P5F42RYCRs",
+      "sources": {
+        "movie_sha256": "3e32e7dddaaa2843e506e27c141acc7b7e9f26f27ba9f2691fd25d872ba60247",
+        "narration_sha256": "b75098e8a31e9d951db33b7310c4446f482be2e915fbe4af3dceb9277007e276",
+        "subtitles_sha256": "64e1f626fd2be21155dd96aef9752475381b91c55d60f8eb2036e895e52a4125",
+        "transcript_sha256": "ff7729386a1f4892fab1114ed2cd2723c9557c8c4871c4922a517eea36828d8f"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "A notebook arrives for review",
+          "narration": "A colleague sends you a fraud detection notebook and asks whether its result is ready to share. Before spending time on another training run, what can you establish from the notebook itself? We will inspect the real example in this repository: synthetic transactions, a random forest, a held-out test split, three metrics and a saved prediction model. By the end, you will distinguish a source finding from an observed result and explain one missing piece of evidence.",
+          "commands": []
+        },
+        {
+          "time": "00:30",
+          "seconds": 30,
+          "title": "From source to a review decision",
+          "narration": "Imagine that the notebook names a ROC AUC calculation and fixes random state to forty two. Does reading that source establish an AUC value? Does the seed establish that the experiment has been reproduced? Keep your answers in mind. Our question is practical: which facts can we use for review now, and which facts require a separately chosen execution?",
+          "commands": []
+        },
+        {
+          "time": "00:56",
+          "seconds": 56,
+          "title": "Read the experiment, not a shell script",
+          "narration": "Start with the scientific workflow rather than the command list. The active CSV is the training input. The split reserves a quarter of the rows for evaluation. Twenty four trees and maximum depth five are the visible hyperparameters. Both the split and the forest name a seed. The main guard separates training from prediction. Notice that these are statements in source; we have not loaded the CSV into pandas or fitted a model.",
+          "commands": [
+            {
+              "text": "python lab.py source settings",
+              "expected_exit": 0
+            },
+            {
+              "text": "test ! -e artifacts/model.joblib && echo \"No trained model in this fresh copy\"",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:47",
+          "seconds": 107,
+          "title": "Inspect once; read the eight evidence states",
+          "narration": "We now ask Apizr to inspect the saved notebook and retain its JSON report. The second command is a teaching projection of that actual file; the complete report remains on disk. Read the execution line first: not executed. Parameters can be captured as static candidates while metrics and outputs remain partial. Captured does not mean scientifically verified. The data section can also remain partial because the model loader contains a dynamic path. A known CSV and an unresolved reference can coexist.",
+          "commands": [
+            {
+              "text": "apizr experiment inspect fraud_detection.ipynb --format json > inspection-a.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py inspection inspection-a.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:37",
+          "seconds": 157,
+          "title": "Read each state in its evidence context",
+          "narration": "Use three different questions. For data, ask which exact bytes were identified. For parameters, ask whether the value came from source or from execution. For a metric, ask whether we found a calculation or actually observed its value. This prevents a common mistake: treating a visually complete report as an experiment that has already run. The source location is your way back to the notebook when a finding needs explanation.",
+          "commands": []
+        },
+        {
+          "time": "03:07",
+          "seconds": 187,
+          "title": "Same filename; different data",
+          "narration": "We replace only the active CSV with the second committed synthetic cohort and inspect again. Before reading the comparison, predict which facts should change. The notebook and its hyperparameters have not been edited. The path is still data slash transactions dot CSV, but its bytes differ because the synthetic label rule differs. The new input digest should expose that change. Neither inspection creates a model or an observed AUC. A familiar filename is not a data version.",
+          "commands": [
+            {
+              "text": "cp data/transactions-b.csv data/transactions.csv",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment inspect fraud_detection.ipynb --format json > inspection-b.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py inspect-change",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:58",
+          "seconds": 238,
+          "title": "Variant: notebook bytes versus scientific signals",
+          "narration": "For an advanced review, distinguish raw notebook identity from the identity of its scientific signals. We deliberately change stored execution counts and presentation metadata without changing any executable cell text. These are fixture edits, not kernel execution. Inspect again and compare both digests. Raw bytes should differ, while the signal digest should remain stable. This lets you explain why a notebook file change need not be a changed scientific signal. Neither identity establishes that the cell actually executed.",
+          "commands": [
+            {
+              "text": "python lab.py presentation",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment inspect fraud_detection.ipynb --format json > presentation.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py signal-check",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:53",
+          "seconds": 293,
+          "title": "Your turn: can we report an AUC?",
+          "narration": "Pause the lesson. A colleague sees captured parameters, a seed and a recognized AUC call, then writes: the model achieved a reproducible score. Identify two unsupported parts of that sentence. Then name the next operation you would choose, and the environment you would need.",
+          "commands": []
+        },
+        {
+          "time": "05:13",
+          "seconds": 313,
+          "title": "Answer: evidence determines the next action",
+          "narration": "No AUC value has been observed, because inspection never executed the notebook. A declared seed also does not establish a reproduced outcome across environments. If we trust the notebook, the next step is an explicit experiment Run in the Python environment containing its scientific dependencies. Keep the inspection as a review starting point. We will use that distinction in the next lesson when a Plan becomes a retained Run.",
+          "commands": []
+        },
+        {
+          "time": "05:43",
+          "seconds": 343,
+          "title": "Continue with the written guide",
+          "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "07-history",
+      "page": "academy/runs.md",
+      "title": "Run an experiment and read its history",
+      "recording_version": "0.4.6",
+      "duration": "6:15",
+      "duration_seconds": 374.805167,
+      "video_id": "XHszreGQhMY",
+      "sources": {
+        "movie_sha256": "0a42fabeaa8f3dff1961e7dfea536a9d958edf1c1bb52a4859ed8f042c48b45d",
+        "narration_sha256": "7d3cbb8adda128e31899aba4985fb0d8aa06bd0c3ef17306854f2abb195895af",
+        "subtitles_sha256": "7e404d743400995ecf99e68e9081946dfce524d60a2b6467cee7e463a51675cd",
+        "transcript_sha256": "24c01747ad8ab98eb90ef4186730af704d56b31ae2217b7b9a10ebc41f242002"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "What produced this model file?",
+          "narration": "You have reviewed the fraud notebook. Now your colleague asks which data and settings produced the saved model on your disk. A model filename alone cannot answer that. In this lesson we execute the trusted notebook and read a retained experiment record. We will connect the intended setup, the observed metrics and the selected model identity, then check what happens when the current CSV is replaced.",
+          "commands": []
+        },
+        {
+          "time": "00:27",
+          "seconds": 27,
+          "title": "Plan, execution, Run",
+          "narration": "Think of the lifecycle as three separate steps. A Plan identifies the intended source, inputs and controls. A fresh local Python process executes the workload in the selected environment. The Run records observed facts, including status, selected metrics and output fingerprints. The process has host access, so this is the point at which trusting the notebook matters. Apizr does not install pandas or scikit-learn for you.",
+          "commands": []
+        },
+        {
+          "time": "00:58",
+          "seconds": 58,
+          "title": "Execute the reviewed notebook",
+          "narration": "Read the command before running it. Experiment run selects the saved notebook. The output option gives the model a stable logical name and points to its actual file. JSON goes into run a dot JSON so that later commands can use the exact Run identity. During execution the forest is trained and its held-out metrics are calculated. A successful exit says that this execution completed; model quality still needs scientific interpretation.",
+          "commands": [
+            {
+              "text": "apizr experiment run fraud_detection.ipynb --output model=artifacts/model.joblib --format json > run-a.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py run run-a.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:03",
+          "seconds": 123,
+          "title": "Intended values and observed values",
+          "narration": "Do not merge the Plan and Run into one undifferentiated configuration. A parameter candidate in source and a runtime parameter observation answer different questions. Likewise, a seed in the Plan is not automatically an observed seed in the Run. Look for origin and missing evidence rather than filling the gap yourself. The worker Python and package versions describe the execution environment; requirements text alone describes a specification.",
+          "commands": []
+        },
+        {
+          "time": "02:36",
+          "seconds": 156,
+          "title": "Read the retained record by identity",
+          "narration": "List helps discover the retained Run, while show selects one exact identity. We save the complete record and display a short projection so that each line remains readable. Find the three observed metric values, the input digest and the selected model digest. These values come from this actual execution. Precision and recall describe different errors; neither can be replaced by the label successful. Keep the complete JSON when a reviewer needs more than this projection.",
+          "commands": [
+            {
+              "text": "apizr experiment list",
+              "expected_exit": 0
+            },
+            {
+              "text": "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])')",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment show \"$RUN_A\" --format json > retained-a.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py run retained-a.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:26",
+          "seconds": 206,
+          "title": "Does history silently follow the current CSV?",
+          "narration": "Now we deliberately replace the current CSV with cohort B without rerunning the notebook. Predict the effect on Run A. The retained input identity stays tied to A, while the file at the same path now has another digest. This is why a content identity matters. The local history records evidence; it is not a dataset archive or a model registry. If the underlying bytes are overwritten, the recorded digest does not recreate them.",
+          "commands": [
+            {
+              "text": "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])')",
+              "expected_exit": 0
+            },
+            {
+              "text": "cp data/transactions-b.csv data/transactions.csv",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py retain",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment show \"$RUN_A\" --format json > retained-a-after.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:17",
+          "seconds": 257,
+          "title": "Variant: altered retained evidence is refused",
+          "narration": "Now test the integrity boundary instead of trusting a happy-path report. We copy the local store and append whitespace to one retained Run in that disposable copy. The JSON may still be syntactically readable, but its bytes no longer match the canonical record and filename identity. Show must refuse it. The original history remains available. This demonstrates byte integrity of retained local evidence, not a signed attestation or authorization for another user to trust the experiment.",
+          "commands": [
+            {
+              "text": "cp -R .apizr/experiments/v1 damaged-store",
+              "expected_exit": 0
+            },
+            {
+              "text": "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])'); printf \" \" >> \"damaged-store/runs/$RUN_A.json\"",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment show \"$RUN_A\" --store damaged-store --format json > refused.json 2> refused.log",
+              "expected_exit": 2
+            },
+            {
+              "text": "python lab.py refusal",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "05:12",
+          "seconds": 312,
+          "title": "Your turn: what should you preserve?",
+          "narration": "Pause and answer. You have a Run digest and a selected model fingerprint. Tomorrow you overwrite the model file. Can show restore the previous model? What should you retain separately if another engineer must serve that exact model later? Explain the difference between identifying an artifact and storing the artifact bytes.",
+          "commands": []
+        },
+        {
+          "time": "05:35",
+          "seconds": 335,
+          "title": "A Run is a reviewable execution record",
+          "narration": "Show cannot recreate overwritten model bytes. Keep the selected data and model through your own artifact retention process when they must be reused. The Run lets you verify which identities and observations were recorded, and it refuses corrupt retained evidence. You can now explain what produced this observed result and what must be preserved alongside it. Next we record cohort B and compare the two histories.",
+          "commands": []
+        },
+        {
+          "time": "06:04",
+          "seconds": 364,
+          "title": "Continue with the written guide",
+          "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "08-comparison",
+      "page": "academy/comparison.md",
+      "title": "Compare experiment Runs",
+      "recording_version": "0.4.6",
+      "duration": "7:15",
+      "duration_seconds": 434.504167,
+      "video_id": "uu01blkTRRg",
+      "sources": {
+        "movie_sha256": "9728c6c1a4d0d7d8e0300fdc20715fb1c93332734109e492b5a78ef0bddb1b73",
+        "narration_sha256": "065d596684a4d77b7c16a90773b6e019bce70dece30a1d669044b1b694e74a23",
+        "subtitles_sha256": "1b5830476a7abeaed611d63362da1ab72111eae1f6eb6aa548aa1afaf02ef077",
+        "transcript_sha256": "ba848fc85bc57d4d8a03e2837954dd70404ed369299d20acd5df1311db6967af"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "A different score is the start of an investigation",
+          "narration": "Your colleague sees another AUC and asks whether the new model is better. We will compare two actual fraud detection Runs. The notebook, forest settings and seed stay fixed; the active synthetic data changes. Our goal is to find the recorded differences, interpret the metric direction, and state what further evidence would be needed before choosing a model.",
+          "commands": []
+        },
+        {
+          "time": "00:24",
+          "seconds": 24,
+          "title": "Write the comparison question first",
+          "narration": "Before running anything, make the comparison question explicit. We expect the input content identity to change, while the source and declared parameters should agree. Observed scores and the saved model may change as a consequence of execution. That expectation is a hypothesis to check against the records. The two synthetic cohorts have identical feature rows but different fraud-label rules, so they are not an unchanged benchmark.",
+          "commands": []
+        },
+        {
+          "time": "00:54",
+          "seconds": 54,
+          "title": "Record baseline A",
+          "narration": "We begin with the first cohort in a fresh local project and retain a real baseline Run. The metric values are measured from the held-out split, rather than assigned as constants in a toy script. Read the model and input fingerprints alongside the numbers. This is the evidence we will compare with B. Writing A down before changing data prevents the current working directory from becoming our only memory of the experiment.",
+          "commands": [
+            {
+              "text": "apizr experiment run fraud_detection.ipynb --output model=artifacts/model.joblib --format json > run-a.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py run run-a.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:56",
+          "seconds": 116,
+          "title": "Change the cohort; retain B",
+          "narration": "Replace only the active CSV, then run the same notebook with the same output selection. The active model path is reused, but the two retained Runs keep their recorded identities. Before looking at the diff, notice the experimental limitation: changing the label rule changes the task being evaluated. Even if one score rises, this setup does not establish an improvement against a fixed real-world evaluation target.",
+          "commands": [
+            {
+              "text": "cp data/transactions-b.csv data/transactions.csv",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment run fraud_detection.ipynb --output model=artifacts/model.joblib --format json > run-b.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py run run-b.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:01",
+          "seconds": 181,
+          "title": "Separate material evidence from observed results",
+          "narration": "We select the exact two Run digests and ask for the canonical diff. Read material evidence first: does the input reference match while its content changes? Do intended and observed parameter values agree? Then read the results: metric values and their B minus A deltas. Unknown is its own state. It does not mean same, and it should not be silently counted as unchanged. The projection shows actual diff fields; the full report remains available.",
+          "commands": [
+            {
+              "text": "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])'); RUN_B=$(python -c 'import json; print(json.load(open(\"run-b.json\"))[\"run_digest\"])')",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment diff \"$RUN_A\" \"$RUN_B\" --format json > comparison.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py comparison comparison.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:00",
+          "seconds": 240,
+          "title": "Read the actual metric trade-off",
+          "narration": "Read AUC, precision and recall side by side in the actual retained comparison. Each row shows A, B and the B minus A delta. A metric direction is not a universal quality ranking: precision and recall answer different error questions, while AUC summarizes ranking across thresholds. More importantly, these cohorts use different label rules. A defensible conclusion names those changed inputs and observed results; a model-quality decision still needs a stable evaluation protocol, an appropriate test population and error analysis.",
+          "commands": []
+        },
+        {
+          "time": "04:39",
+          "seconds": 279,
+          "title": "Variant: compare a Run with itself",
+          "narration": "An advanced comparison must preserve unknown evidence even in a self-comparison. Predict what happens when A is compared with A. Known numeric metric deltas should be zero. But the absence of a runtime seed observation does not become evidence that the seed was observed merely because the two record identities match. Read the actual unknown facet count and the parameter states. Identity equality and field-level knowledge are different concepts; your review should preserve both.",
+          "commands": [
+            {
+              "text": "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])')",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment diff \"$RUN_A\" \"$RUN_A\" --format json > self-comparison.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py comparison self-comparison.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "05:34",
+          "seconds": 334,
+          "title": "Your turn: reverse the comparison",
+          "narration": "Pause and predict. If we swap A and B, what should happen to a numeric delta? What should happen to a material content difference? Would two missing observations suddenly become known? Write the expected result, then watch the same canonical comparison in the reverse direction.",
+          "commands": []
+        },
+        {
+          "time": "05:54",
+          "seconds": 354,
+          "title": "Check the prediction against the real reverse diff",
+          "narration": "The reverse comparison is a useful reading check. Comparable numeric deltas change sign because the subtraction direction changes. Different recorded content still differs. Missing evidence stays unknown rather than becoming a match. Read the actual result before accepting your prediction. This simple check teaches you how to read a comparison rather than memorizing a particular score from this machine.",
+          "commands": [
+            {
+              "text": "RUN_A=$(python -c 'import json; print(json.load(open(\"run-a.json\"))[\"run_digest\"])'); RUN_B=$(python -c 'import json; print(json.load(open(\"run-b.json\"))[\"run_digest\"])')",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment diff \"$RUN_B\" \"$RUN_A\" --format json > reverse.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py comparison reverse.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "06:38",
+          "seconds": 398,
+          "title": "From a score to a review question",
+          "narration": "We have compared two measured model Runs, separated material and result changes, and checked the direction of the diff. Keep this habit: state the question, hold an appropriate baseline, inspect evidence origins and explain the remaining uncertainty. The next lesson makes another explicit choice: which retained prediction and which model bytes should be included in an interface?",
+          "commands": []
+        },
+        {
+          "time": "07:04",
+          "seconds": 424,
+          "title": "Continue with the written guide",
+          "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "id": "09-exposure",
+      "page": "academy/model-serving.md",
+      "title": "Expose a selected prediction",
+      "recording_version": "0.4.6",
+      "duration": "6:49",
+      "duration_seconds": 409.103167,
+      "video_id": "s68H9yhNWgk",
+      "sources": {
+        "movie_sha256": "0e070159892be27d703737fa60d4f130848aea378727244fc60a23a0aae013a5",
+        "narration_sha256": "66cbe5703fc7f05cff505b4bfcaf26130731a5a3aa871af1fc2428bc5abb6b7d",
+        "subtitles_sha256": "3352242acba77f253c2504dc5da14f3ff6ddaa06ba01d62f2c9b700ee0c039c8",
+        "transcript_sha256": "ebc7c12e1b56a3c65091958ee046ceea876348bcbb2c96320dd257be65eaa4d6"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "Share prediction without rerunning training",
+          "narration": "An application team wants to call the fraud model. Giving them the whole notebook leaves important questions unanswered: which Run, which model, which function and which dependencies? We will use a successful Run from the same example to generate one selected prediction interface. By the end you will explain why a training artifact, a serving selection and a deployment are different things.",
+          "commands": []
+        },
+        {
+          "time": "00:26",
+          "seconds": 26,
+          "title": "Draw the serving boundary first",
+          "narration": "The notebook trains inside a main guard and defines prediction separately. Importing the prediction module must not retrain the forest. The prediction needs the selected model, joblib, scikit-learn and the feature-order helper. Pandas belongs to training here. These concrete dependencies are more useful than exposing every callable found in a repository. Our public surface will be one prediction accepting a typed transaction.",
+          "commands": []
+        },
+        {
+          "time": "00:56",
+          "seconds": 56,
+          "title": "Inspect what predict really needs",
+          "narration": "Read the actual predict function. It loads the saved model and uses the shared helper to construct the feature row in the expected order. The transaction has an amount, a velocity, a foreign-transaction flag and account age. The return carries a classification and probability. These are ordinary workload choices; Apizr does not invent the prediction logic. The main guard keeps training out of module import, while dependencies still need explicit serving evidence.",
+          "commands": [
+            {
+              "text": "python lab.py source predict",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py source settings",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:54",
+          "seconds": 114,
+          "title": "Retain the model that will be selected",
+          "narration": "For this independent lesson we start from a fresh copy, select cohort B and execute the reviewed notebook. We give the model its explicit logical name. Read the retained output identity before generation: this is the artifact we intend to bind. The training marker helps us distinguish an experiment-side file from a serving selection. Generating the interfaces later must not be treated as a new training run.",
+          "commands": [
+            {
+              "text": "cp data/transactions-b.csv data/transactions.csv",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment run fraud_detection.ipynb --output model=artifacts/model.joblib --format json > run-b.json",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py run run-b.json",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:00",
+          "seconds": 180,
+          "title": "Four choices you must be able to explain",
+          "narration": "Name the four choices before typing the expose command. The Run digest selects retained evidence. The capability identifier selects prediction. The artifact name selects the recorded model bytes. The dependency wheelhouse supplies evidence for the external packages. Conditional allowance acknowledges that external code remains opaque; it is not a certificate of safe initialization. Missing or stale required evidence is a reason to stop and investigate.",
+          "commands": []
+        },
+        {
+          "time": "03:34",
+          "seconds": 214,
+          "title": "Generate the two explicit bindings",
+          "narration": "We create a narrow operator grant for this copied local project. Expose then selects the Run, prediction capability, model and scientific dependencies. The interface option changes between REST and MCP, while the selected Run stays the same. These commands create local bundles. They do not start a server or contact a registry. Keep the complete generated reports so that a reviewer can inspect the actual selection and its dependency evidence.",
+          "commands": [
+            {
+              "text": "python -c 'import json; from pathlib import Path; Path(\"operator.json\").write_text(json.dumps({\"schema\":\"apizr.operator-policy/v1\",\"grants\":[{\"adapter\":\"repository\",\"operation\":\"analyze\",\"target\":{\"kind\":\"local\",\"root\":str(Path.cwd())},\"permissions\":[\"source.analyze\"]}]}))'",
+              "expected_exit": 0
+            },
+            {
+              "text": "RUN_B=$(python -c 'import json; print(json.load(open(\"run-b.json\"))[\"run_digest\"])')",
+              "expected_exit": 0
+            },
+            {
+              "text": "for interface in rest mcp; do apizr experiment expose \"$RUN_B\" --root . --operator-policy operator.json --capability python:fraud_detection:predict --interface \"$interface\" --artifact model --dependency scikit-learn --dependency joblib --dependency-wheelhouse \"$SCIENCE_WHEELHOUSE\" --allow-conditional --output-dir \"bundles/$interface\" > \"$interface-exposure.json\"; done",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py binding",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:46",
+          "seconds": 286,
+          "title": "Variant: replaced model bytes block exposure",
+          "narration": "Test the binding against a stale artifact, not just a valid model. We save the selected model, then deliberately alter the bytes at its current path. The original Run still identifies the old model. Expose must refuse the mismatch instead of binding the new bytes under the old evidence. We read the actual refusal and restore the selected bytes, checking their digest. This is why an artifact path, an artifact identity and a retained artifact copy are three separate operational concerns.",
+          "commands": [
+            {
+              "text": "RUN_B=$(python -c 'import json; print(json.load(open(\"run-b.json\"))[\"run_digest\"])')",
+              "expected_exit": 0
+            },
+            {
+              "text": "cp artifacts/model.joblib artifacts/original-model.joblib; printf \"altered\" >> artifacts/model.joblib",
+              "expected_exit": 0
+            },
+            {
+              "text": "apizr experiment expose \"$RUN_B\" --root . --operator-policy operator.json --capability python:fraud_detection:predict --interface rest --artifact model --dependency scikit-learn --dependency joblib --dependency-wheelhouse \"$SCIENCE_WHEELHOUSE\" --allow-conditional --output-dir bundles/stale > refused.json 2> refused.log",
+              "expected_exit": 2
+            },
+            {
+              "text": "python lab.py refusal",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py restore-model",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "05:41",
+          "seconds": 341,
+          "title": "Your turn: a newer model appears at the path",
+          "narration": "Pause here. Another training run overwrites model dot joblib after the selected Run was recorded. Should the original Run silently pick up that newer model when exposed? Which fact would you compare before continuing? Also explain why training completed dot text should not become a serving dependency merely because it exists in the experiment folder.",
+          "commands": []
+        },
+        {
+          "time": "06:07",
+          "seconds": 367,
+          "title": "Bind evidence before you discuss deployment",
+          "narration": "A different file at the same path is not the selected recorded model. Preserve and verify the intended bytes instead of silently substituting a newer artifact. Only selected serving artifacts belong in the binding. REST and MCP describe two interfaces around this selection; real calls, runtime isolation, operations and deployment need their own qualification. You now have a reviewable handoff with a clear serving boundary.",
+          "commands": []
+        },
+        {
+          "time": "06:39",
+          "seconds": 399,
+          "title": "Continue with the written guide",
+          "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "id": "10-sdk",
+      "page": "academy/python-tracking.md",
+      "title": "Capture Python calls with sessions and decorators",
+      "recording_version": "0.4.6",
+      "duration": "6:29",
+      "duration_seconds": 389.002833,
+      "video_id": "Cge2-6L5cSE",
+      "sources": {
+        "movie_sha256": "a1473f4d5d218bf9ec1cc0b6f3c145de6e121c4dbfdc9bed7c2fd205f0e1dc9a",
+        "narration_sha256": "a3c04cb14e5ad883466958d99f9714884d42338e965b8dd462f92e6282e75d2a",
+        "subtitles_sha256": "0c62c8602ec74e8eca1d92de284cd891eccd73e521056b26f141f6bf378bf86b",
+        "transcript_sha256": "e5c5d564f74095809e87f2901b02d7156fdc4e879605869252e5fa49c34c44db"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "The same model can make different review queues",
+          "narration": "The fraud model emits a probability. Your team must choose when to flag a transaction for review. A lower threshold can flag more transactions, while precision and recall describe different mistakes. In this lesson we evaluate a real held-out synthetic sample from our trained forest. We will capture one evaluation block with a session, then compare two ordinary function calls with a decorator.",
+          "commands": []
+        },
+        {
+          "time": "00:27",
+          "seconds": 27,
+          "title": "Decide what one Run should mean",
+          "narration": "Choose the unit you want to review. A session suits a block with several operations and observations. A decorator suits repeated function calls, where each call becomes a Run. In both cases explicitly select parameters, inputs and metrics. Tracking should preserve your function return and exception behavior. It does not infer every meaningful variable in your program or decide which metric the business should optimize.",
+          "commands": []
+        },
+        {
+          "time": "00:56",
+          "seconds": 56,
+          "title": "Inspect the held-out sample and metric calculation",
+          "narration": "The preparation step has trained the same example in this fresh copy and retained its baseline Run. Now we derive the exact held-out rows using the notebook split and saved model. Evaluation dot CSV contains labels and the actual predicted probabilities. Our small evaluator counts true positives, false positives and false negatives, then computes precision and recall. Unlike a hard-coded score, these values depend on the selected sample and threshold. The sample remains synthetic and is not a production benchmark.",
+          "commands": [
+            {
+              "text": "python lab.py prepare-holdout",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py source evaluate",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "01:57",
+          "seconds": 117,
+          "title": "Record a block with named evidence",
+          "narration": "Read the session code first. The input call fingerprints the actual evaluation file. The parameter call records threshold zero point five, and the loop records the observed metric values. Run the code, then read the returned result and retained Run identity. The distinction matters: the return is still an ordinary Python value used by your program; the record is the evidence you chose to retain for later review.",
+          "commands": [
+            {
+              "text": "python lab.py source session_example",
+              "expected_exit": 0
+            },
+            {
+              "text": "python thresholds.py session",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:51",
+          "seconds": 171,
+          "title": "Why report precision and recall together?",
+          "narration": "Precision asks how many flagged rows were actually labelled fraudulent. Recall asks how many labelled fraudulent rows were found. The flagged count describes review volume in this particular sample. Changing a threshold can trade one concern against another, so a single best score is not enough to define a review policy. These metrics are observed values over selected data, and the data identity is part of their interpretation.",
+          "commands": []
+        },
+        {
+          "time": "03:22",
+          "seconds": 202,
+          "title": "Compare two calls; keep their normal results",
+          "narration": "The decorator selects threshold from the function arguments. Each call logs the same input file and its observed metrics. We call thresholds zero point three five and zero point six five, and verify that tracking leaves their ordinary return values unchanged. Before reading the output, predict which call should flag at least as many rows. Compare the recorded precision and recall rather than assuming that either threshold is automatically preferable.",
+          "commands": [
+            {
+              "text": "python lab.py source tracked_evaluate",
+              "expected_exit": 0
+            },
+            {
+              "text": "python thresholds.py calls",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py history",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "04:24",
+          "seconds": 264,
+          "title": "Variant: failed capture preserves the exception",
+          "narration": "A useful SDK integration must survive failures without changing program behavior. This evaluation deliberately logs a partial observation, then raises a synthetic ValueError. The caller catches that same exception outside the decorated function. We check the retained failed Run and verify that its exception message is absent from the record. Failure status and explicitly logged observations can be useful evidence; a complete traceback is not silently made part of the experiment. This is also why successful function returns alone are an incomplete qualification of a tracking integration.",
+          "commands": [
+            {
+              "text": "python lab.py source failed_review",
+              "expected_exit": 0
+            },
+            {
+              "text": "python thresholds.py failure",
+              "expected_exit": 0
+            },
+            {
+              "text": "python lab.py failure-check",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "05:20",
+          "seconds": 320,
+          "title": "Your turn: an in-memory array replaces the file",
+          "narration": "Pause and explain what changes if the program logs only an input name for an in-memory array, instead of identifying evaluation dot CSV. Does that input name fingerprint its contents? Would an unchanged name establish that two evaluations used the same values? Then decide what evidence you would record for a review that must compare actual input content.",
+          "commands": []
+        },
+        {
+          "time": "05:46",
+          "seconds": 346,
+          "title": "Capture the evidence your decision needs",
+          "narration": "An input name alone does not establish an in-memory content identity. A selected local file can be fingerprinted, as in this lesson; other unknowns must stay visible. Choose a session for a block or a decorator for repeated calls, and keep the same input definition when comparing their outcomes. The SDK makes these observations reviewable without selecting your threshold policy. Next we use these same evaluation ideas in a real live kernel.",
+          "commands": []
+        },
+        {
+          "time": "06:18",
+          "seconds": 378,
+          "title": "Continue with the written guide",
+          "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "id": "11-jupyter",
+      "page": "academy/jupyter.md",
+      "title": "Capture real Jupyter cells",
+      "recording_version": "0.4.6",
+      "duration": "5:55",
+      "duration_seconds": 355.200833,
+      "video_id": "VqTmKCU-Auo",
+      "sources": {
+        "movie_sha256": "349f3f6c0f5382d331fdc10521bc25e054474f39ff3944aa2c19476183fbbff5",
+        "narration_sha256": "db81cb133e632e6cd8a3d864cfede3ba1c53fb69a7ad6a1c1ddba349926affd6",
+        "subtitles_sha256": "5f8edcfba0f56c100a074209fc7dbcdf9837b0aa423444b5ac9e05827c72b6e7",
+        "transcript_sha256": "cf6fc465a4917df155a5bf8c8c27dda84fbfc18b845822834e1e5cdcbf088311"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "The notebook screen is not the whole execution history",
+          "narration": "In a notebook you can rerun a cell after changing a threshold or changing kernel state. The visible output is then only the latest display for that cell. How do you review the actual calls you made? We use the same fraud holdout evaluation from the SDK lesson inside a real installed ipykernel. We will repeat a cell and inspect the retained evidence rather than relying on its position on screen.",
+          "commands": []
+        },
+        {
+          "time": "00:28",
+          "seconds": 28,
+          "title": "Three identities to keep separate",
+          "narration": "A saved notebook has a file identity. A running cell has an identity supplied by its frontend and an execution count assigned by the kernel. An experiment Run has its own retained digest. These identities answer different questions. Repeating a cell can keep its cell identifier while advancing execution count and creating another Run. It does not establish that the notebook was saved or that all earlier cells were executed in order.",
+          "commands": []
+        },
+        {
+          "time": "00:59",
+          "seconds": 59,
+          "title": "Predict the number of retained captures",
+          "narration": "Our notebook loads the real evaluation sample, captures one evaluation session, defines a decorated evaluator and calls it at two thresholds. We then repeat the first call cell. Predict how many Runs should remain: defining a function is not an evaluation call. Also predict whether the repeated cell will share its identifier, its execution count and its Run digest. We will check these distinctions against actual kernel messages.",
+          "commands": []
+        },
+        {
+          "time": "01:30",
+          "seconds": 90,
+          "title": "Execute the actual cells and repeat a call",
+          "narration": "This recording sends the prepared notebook cells to a real ipykernel using the candidate interpreter. The displayed source and outputs are actual kernel messages. Watch the session result, the two threshold evaluations and the repeated first variant. Our capture is a terminal view of that live kernel, not a recording of a notebook frontend. We keep the original cell identifiers and record each returned execution count so that the repetition can be verified afterwards.",
+          "commands": [
+            {
+              "text": "python -m scripts.qualification.experiments.academy_kernel --notebook fraud-thresholds.ipynb --workspace \"$APIZR_ACADEMY_KERNEL_WORKSPACE\" --input evaluation.csv --pause 3",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "02:45",
+          "seconds": 165,
+          "title": "Read cell evidence in the shared history",
+          "narration": "Now read the store created by those kernel executions. We expect one session capture and three decorated-call captures. Find the first variant cell twice: its cell identifier is the same, while its execution count differs. The metrics remain observations of the selected evaluation file and threshold. Separate Runs keep the history of repeated work instead of replacing the previous cell display.",
+          "commands": [
+            {
+              "text": "apizr experiment list --store \"$APIZR_ACADEMY_KERNEL_WORKSPACE/.apizr/experiments/v1\"",
+              "expected_exit": 0
+            },
+            {
+              "text": "(cd \"$APIZR_ACADEMY_KERNEL_WORKSPACE\" && python \"$APIZR_ACADEMY_LAB\" history)",
+              "expected_exit": 0
+            }
+          ]
+        },
+        {
+          "time": "03:40",
+          "seconds": 220,
+          "title": "Variant: the unlogged calibration offset",
+          "narration": "The final notebook cell deliberately changes a calibration offset in live memory before the first variant is repeated. Its threshold and selected CSV identity stay the same, but the classification calculation reads that changed offset. Read the two actual results from the repeated cell. Cell identity plus an input file digest is not a complete kernel-state snapshot. The correction is practical: explicitly log calibration offset as a parameter and preserve the relevant source, rather than claiming that matching cell identifiers establish equivalent executions.",
+          "commands": []
+        },
+        {
+          "time": "04:21",
+          "seconds": 261,
+          "title": "What this does not reveal about kernel state",
+          "narration": "Execution counts tell you about order in this kernel; they are not a complete snapshot of memory. A repeated cell may read variables created earlier or modified elsewhere. Logging the evaluation file gives us content evidence for that selected input, but does not turn every live object into a verified snapshot. A saved notebook can also differ from the currently executing cell. Keep these limits explicit when explaining a result to a colleague.",
+          "commands": []
+        },
+        {
+          "time": "04:53",
+          "seconds": 293,
+          "title": "Your turn: same cell, same result?",
+          "narration": "Pause and answer. You rerun the same cell identifier with the same threshold but have changed an unlogged in-memory array. Must the metric stay the same? Does a new execution count tell you which array values were used? Explain what you would log or preserve to make that comparison useful.",
+          "commands": []
+        },
+        {
+          "time": "05:13",
+          "seconds": 313,
+          "title": "Review the execution, not just the latest display",
+          "narration": "The same cell can produce another result when its live inputs differ. Its execution count alone cannot identify those values. Our real notebook example produces four retained captures, including two executions of the first variant cell. You can now read the shared history without confusing a cell, its latest display and a saved file. The VS Code lesson uses the same retained evidence; its native recording remains a separate task.",
+          "commands": []
+        },
+        {
+          "time": "05:45",
+          "seconds": 345,
+          "title": "Continue with the written guide",
+          "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
+          "commands": []
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "id": "12-vscode",
+      "page": "academy/vscode.md",
+      "title": "Review real experiment Runs in VS Code",
+      "recording_version": "0.4.6",
+      "duration": "6:22",
+      "duration_seconds": 381.5005,
+      "video_id": "zkujF-thyyQ",
+      "sources": {
+        "movie_sha256": "256b57de1cb258adb7001db324e28269bb65a54de016226f7ffe6468bb9ce307",
+        "narration_sha256": "518fefc42ddd639929bc20bb049aed27039c4dc03e4827834cbf5c8bd4f87b29",
+        "subtitles_sha256": "5b53009dfc9525c724453129750c68d2bdc9a99a89edd9fd52c194c86181c850",
+        "transcript_sha256": "39cc8f899249d1dfb92b52350bde4dd65335ccb0d3071f05ebeff7df8c1f069c"
+      },
+      "chapters": [
+        {
+          "time": "00:00",
+          "seconds": 0,
+          "title": "Review real experiment Runs in VS Code",
+          "narration": "Can we explain a better score from the evidence we actually retained? In this lesson, we review decision trees trained on the public Wine dataset. You will connect Apizr to an installed Python environment, inspect saved source, and compare measured Runs inside Visual Studio Code. The goal is a defensible experiment review, with the limits still visible.",
+          "commands": []
+        },
+        {
+          "time": "00:24",
+          "seconds": 24,
+          "title": "Source, execution, review",
+          "narration": "Keep three things separate. The source defines a training procedure. A Python session or a real Jupyter kernel executes it and records a Run. The extension reads that retained history through your selected engine and operator policy. Our dataset has one hundred and seventy eight samples, thirteen chemical measurements, and three cultivar classes. We use a fixed stratified seventy thirty split and seed forty two. The written guide contains the reproducible setup.",
+          "commands": []
+        },
+        {
+          "time": "00:57",
+          "seconds": 57,
+          "title": "Connect an explicitly selected engine",
+          "narration": "This is the installed development extension in a dedicated Wine workspace. The example environment already contains Apizr and scikit learn. Here, Python mode points to that environment, and the operator policy allows source analysis and history reading. Run Check engine to verify the selected executable. Then open the experiment dashboard and explicitly refresh history. We have three completed Runs: two SDK sessions and one real notebook execution. Your Run digests and timestamps will differ. The extension can also offer a managed CLI installation; that does not install your scientific environment.",
+          "commands": []
+        },
+        {
+          "time": "01:45",
+          "seconds": 105,
+          "title": "Inspect saved source without fitting the model",
+          "narration": "Open the Python experiment and run Inspect with Apizr. The result describes saved source; inspection does not fit a decision tree. The code records the Wine input identity, tree depth, seed, and computed metrics. Expand the Inspection view to read the evidence and source locations. Now add an unsaved comment. The view marks the previous evidence outdated. Inspecting again still reads the saved file and excludes those live edits. Revert the comment and inspect the saved file again. A current source view is useful context, but it does not recreate an earlier execution.",
+          "commands": []
+        },
+        {
+          "time": "02:38",
+          "seconds": 158,
+          "title": "Read the Run and its recorded source",
+          "narration": "Return to the dashboard and select the depth three SDK Run. Its accuracy is zero point nine six three zero, and macro F one is zero point nine six three eight. Those values were computed on the held out split and rounded before logging. Read the capture mode and recorded parameters alongside the metrics. Open the complete JSON when you need the canonical Plan and Run. Open recorded source navigates to the current file, so compare source identity before treating it as the exact historical bytes. The notebook Run was produced by a real kernel. Notebook inspection alone does not execute its cells.",
+          "commands": []
+        },
+        {
+          "time": "03:30",
+          "seconds": 210,
+          "title": "Compare depth 1 as A with depth 3 as B",
+          "narration": "Choose Compare two Runs. Use the depth one SDK Run as A, then depth three as B. Read the canonical comparison. The observed depth changes from one to three, while the retained Wine input identity matches. Accuracy changes from zero point six one one one to zero point nine six three zero. The displayed delta is B minus A. Macro F one also improves on this split. Reverse the order and the delta changes sign. These are observations from these two executions. A matching logged input does not establish every runtime condition, and unknown evidence stays unknown.",
+          "commands": []
+        },
+        {
+          "time": "04:30",
+          "seconds": 270,
+          "title": "Restricted Mode refuses project operations",
+          "narration": "This second dedicated profile opens the same example in Restricted Mode. The extension can show its dashboard, but project operations are disabled. Try Check engine: the command reports workspace untrusted and starts no engine. Trust is an explicit decision about code you have reviewed. The operator policy remains a separate permission boundary after trust. In a trusted workspace, reading history and inspecting saved source still do not execute your experiment.",
+          "commands": []
+        },
+        {
+          "time": "05:05",
+          "seconds": 305,
+          "title": "Equal scores: what can you conclude?",
+          "narration": "Pause here. The depth three SDK Run and the depth five Jupyter Run have the same accuracy and macro F one. Does that establish equal generalization? What would you check before preferring either model? Then repeat the notebook cell and predict what changes in history.",
+          "commands": []
+        },
+        {
+          "time": "05:29",
+          "seconds": 329,
+          "title": "A measured tie is a starting point",
+          "narration": "Equal rounded scores on one split establish a tie for those logged metrics here. They do not establish equal predictions, equal performance on new data, or a deployment decision. Check the retained parameters, input identity, capture details, and missing evidence, then evaluate further. Repeating the notebook cell produces a new Run and execution count. With this fixed procedure, the scores may repeat. Keep that new execution distinct. Connect explicitly, inspect saved source, and compare the evidence that was actually recorded.",
+          "commands": []
+        },
+        {
+          "time": "06:06",
+          "seconds": 366,
+          "title": "Continue with the written Wine guide",
+          "narration": "Follow the written Wine lesson for commands, dependencies and the notebook. The Apizr and extension repositories contain the example and current limits. Thank you for following Apizr Academy.",
+          "commands": []
+        }
+      ]
+    }
+  ],
+  "downloads": {
+    "downloads/academy-recorded-examples.zip": "e8942b30be9e89ac3200cf07a418dc5f8fb6564c2123a7358f8f7c966d2d16a3",
+    "downloads/academy-mcp-client.py": "aac27f2e55a8c6cf6d873e39bee315a6f9418bc90702ad898d0c9dde7230b749",
+    "downloads/academy-oci-ollama.zip": "9f02d1fd4661734169909c3c0f35e1dea81646c54f05d7640e3cf6e142e4dc1a"
+  }
+}

@@ -1,69 +1,74 @@
 ---
-title: Read a Python contract before running code
-description: Separate a callable description, readiness and permission.
+title: Read Requests with doctor, scan and inspect
+description: Separate setup checks, repository inventory and the unsupported Requests.get contract.
 lesson: 2
+recording: 02-understand
 ---
 
-<p class="apizr-academy-kicker">Build a service · Lesson 02 · Plan about 20 min</p>
+<p class="apizr-academy-kicker">Build interfaces · Lesson 02</p>
 
-# Read a Python contract before running code
+# Read Requests with doctor, scan and inspect
 
-You want to expose a small price calculation. Before starting a server, you need to know what the function accepts and whether Apizr can describe its interface. You do not need to execute the application to answer that first question.
-
-This lesson follows the chain from a Python declaration to a capability and its readiness reasons. A positive readiness decision is one input to your next choice; it does not make that choice for you.
+The video uses **Requests**, not a newly written pricing function. It asks three separate questions: is the local setup prepared, what source exists, and which contracts can this interface generator support?
 
 !!! abstract "By the end of this lesson"
-    - Identify a capability’s name, inputs and return description.
-    - Read a readiness reason and decide what to change.
-    - Explain why inspection, selection and execution are separate actions.
+    - Use doctor, scan and inspect for their distinct purposes.
+    - Read a readiness state with its concrete reason.
+    - Explain why selecting Requests.get does not remove its variadic signature.
 
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Ypgp8fCof0E" data-apizr-video="Ypgp8fCof0E" data-apizr-title="Inspect a project and understand readiness" aria-label="Play: Inspect a project and understand readiness">
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Ypgp8fCof0E" data-apizr-video="Ypgp8fCof0E" data-apizr-title="Read your Python project" aria-label="Play: Inspect a project and understand readiness">
     <img src="../../assets/videos/tutorial-inspect.jpg" width="480" height="360" loading="lazy" alt="Academy Part II: inspect a project" />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>
 
-English · 4:11 · The written steps below target 0.4.6 development; the recording keeps its original demonstrated version.
+<!-- recording-transcript -->
 
-## 1. Start with a small contract
+## 1. Pin Requests and prepare its source root
 
-Save this as `pricing.py` in a fresh exercise directory:
-
-```python
-def quote(unit_price: float, quantity: int) -> float:
-    return unit_price * quantity
-```
-
-Inspect the declaration:
+The recorded checkout is `psf/requests` at `v2.32.5`, analysed with Apizr 0.4.3. Follow it in a fresh directory:
 
 ```sh
-apizr inspect pricing.py
-apizr inspect pricing.py --format json
+git clone --depth 1 --branch v2.32.5 https://github.com/psf/requests.git
+cd requests
+apizr init . --source-root src
+cat apizr.toml
+apizr doctor --project apizr.toml --operator-policy .apizr/operator.json
 ```
 
-Read the capability name, parameter types, return annotation and readiness reasons. Inspection reads source; it does not call `quote`. The return annotation describes the expected shape, rather than proving that the implementation returns a correct price.
+`init` writes configuration and a local analysis grant. It does not select public capabilities. Doctor's empty-selection warning is expected at this point. It checks preparation without scanning or repairing the project automatically.
 
-<div class="apizr-academy-flow" role="group" aria-label="Three separate decisions"><span>Describe the function</span><span>Read eligibility reasons</span><span>Select an interface</span></div>
+## 2. Inventory, then explain one refusal
 
-## 2. Follow the reason, rather than a colour
+```sh
+apizr scan . --source-root src --operator-policy .apizr/operator.json > scan.txt
+apizr inspect src/requests/api.py > inspection.txt
+```
 
-A `ready` function has enough static evidence for the supported ordinary value interface. A conditional binding needs investigation; an unsupported shape needs a suitable adapter or a different callable. For example, a generator produces a stream rather than the single ordinary value expected here.
+These recorded analyses return diagnostics and may exit nonzero; read their saved reports. The recording's summary contains **18 source files, 64 capabilities and 75 assessments**. Those are observations of this revision and tool version, not fixed counts for all Requests releases.
 
-A helper needed to implement `quote` can be included in a bundle without receiving its own public operation. This distinction matters when your project grows beyond a single file.
+`requests.get` accepts arbitrary keyword arguments. The report marks its contract unsupported with a variadic-input reason. Ready, conditional, unsupported and ambiguous describe interface evidence; none certifies that execution is safe.
+
+The next recorded command deliberately tests whether selection can bypass that finding:
+
+```sh
+apizr generate rest src/requests/api.py --select get --output-dir rejected
+```
+
+It is refused and creates no bundle. A deliberate fixed-contract wrapper would be a separate design exercise, not something demonstrated in this video.
 
 ## Practice
 
-1. Inspect `pricing.py` and locate the declaration of `quantity`.
-2. Change the function’s body to return `"not a price"`, keeping the `-> float` annotation. Inspect it again. Has the annotation become a runtime test?
-3. Restore the calculation. In a separate file, write a generator with `yield` and inspect its reasons. Explain why an ordinary REST operation should not silently pretend that this is the same contract.
+Read `get` in `src/requests/api.py`, find its readiness reason, and explain the expected generation refusal. Identify which of doctor, scan and inspect answers each of these questions: valid setup, repository contents, and the contract of this file.
 
 ??? success "Check your reasoning"
 
-    Inspection retains the declared contract and its limitations. An annotation is not evidence that the implementation obeys it on every path. A generation eligibility decision also does not authorize execution or prove scientific correctness.
+    Doctor checks setup, scan inventories the selected source root, and inspect explains the file's supported contracts. Selecting `get` narrows the selection but leaves `**kwargs` unchanged. The useful next action is to design and review a supported boundary, rather than reinstalling Apizr or treating all discovered functions as public endpoints.
 
-    The generator requires streaming semantics that the ordinary value adapter does not define. Read the specific reason instead of removing the refusal. Keep the ordinary calculation for the next exercises.
+<span id="1-start-with-a-small-contract"></span>
+<span id="2-follow-the-reason-rather-than-a-colour"></span>
 
 [Back to the Academy](index.md) · [Continue to the next lesson](rest.md)
