@@ -324,9 +324,7 @@ def test_published_delivery_schemas(name):
         "bundle-provenance": BundleProvenance,
     }[name]
     schema = json.loads(
-        (
-            Path(__file__).parents[2] / f"docs/specs/apizr-{name}-v1.schema.json"
-        ).read_bytes()
+        (Path(__file__).parents[2] / f"specs/apizr-{name}-v1.schema.json").read_bytes()
     )
     assert schema == model.model_json_schema()
     Draft202012Validator.check_schema(schema)

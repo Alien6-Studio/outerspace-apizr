@@ -20,7 +20,7 @@ FIXTURES = Path(__file__).resolve().parents[1] / "fixtures/experiments/exposure"
 def test_bridge_schema_and_new_canonical_goldens(tmp_path):
     schema_path = (
         Path(__file__).resolve().parents[2]
-        / "docs/specs/apizr-experiment-exposure-v1.schema.json"
+        / "specs/apizr-experiment-exposure-v1.schema.json"
     )
     schema = json.loads(schema_path.read_bytes())
     assert schema == ExperimentExposureBinding.model_json_schema()

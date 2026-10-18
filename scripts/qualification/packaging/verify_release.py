@@ -11,6 +11,8 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+from packaging.version import Version
+
 REPOSITORY = "Alien6-Studio/outerspace-apizr"
 
 
@@ -146,7 +148,10 @@ def main() -> None:
             if plugin["version"] != version:
                 raise ValueError("Uncoordinated distribution versions")
     verified_runs = {}
-    for workflow in ("security.yml", "mkdocs.yaml"):
+    for workflow in (
+        "security.yml",
+        "mkdocs.yaml" if Version(version) < Version("0.4.6") else "release-content.yml",
+    ):
         runs = github(
             f"actions/workflows/{workflow}/runs?head_sha={sha}&event=push&per_page=100"
         )["workflow_runs"]

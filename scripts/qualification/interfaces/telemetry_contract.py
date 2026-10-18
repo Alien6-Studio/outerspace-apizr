@@ -62,8 +62,7 @@ def main() -> None:
     args = parser.parse_args()
     if args.export_schema:
         path = (
-            Path(__file__).resolve().parents[3]
-            / "docs/specs/apizr-telemetry-v1.schema.json"
+            Path(__file__).resolve().parents[3] / "specs/apizr-telemetry-v1.schema.json"
         )
         path.write_text(
             json.dumps(UsageReport.model_json_schema(), indent=2) + "\n",

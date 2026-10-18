@@ -84,7 +84,7 @@ def test_reusable_groups_cannot_cancel_the_caller_or_each_other():
 def test_documentation_examples_survive_web_only_routing_without_product_build(
     product, examples, distribution, expected
 ):
-    job = load("ci.yml")["jobs"]["mkdocs-qualification"]
+    job = load("ci.yml")["jobs"]["metadata-qualification"]
     assert (
         allows(job["if"], product=product, examples=examples, distribution=distribution)
         is expected
@@ -175,7 +175,7 @@ def test_shared_candidates_stay_in_the_same_run_and_bind_to_the_checkout():
         "forge-integrations-qualification",
         "homebrew-formula-qualification",
         "homebrew-build-inputs-qualification",
-        "mkdocs-qualification",
+        "metadata-qualification",
     ):
         caller = ci["jobs"][key]
         assert "distributions" in caller["needs"]
@@ -199,18 +199,15 @@ def test_shared_candidates_stay_in_the_same_run_and_bind_to_the_checkout():
 
 
 def test_master_security_publication_and_development_read_permissions_stay_separate():
-    docs = load("mkdocs.yaml")
+    docs = load("release-content.yml")
     security = load("security.yml")
     for workflow in (docs, security):
         events = workflow.get("on", workflow.get(True, {}))
         assert events["push"] == {"branches": ["master"]}
     assert "schedule" in security.get("on", security.get(True, {}))
     assert docs["jobs"]["build"]["permissions"] == {"contents": "read"}
-    assert "github.ref == 'refs/heads/master'" in docs["jobs"]["deploy"]["if"]
-    assert docs["jobs"]["deploy"]["concurrency"] == {
-        "group": "documentation-publication",
-        "cancel-in-progress": False,
-    }
+    assert "deploy" not in docs["jobs"]
+    assert docs["permissions"] == {"contents": "read"}
 
 
 @pytest.mark.parametrize(

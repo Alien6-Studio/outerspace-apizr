@@ -167,7 +167,8 @@ def test_environment_variable_changes_not_evidence(monkeypatch, pair, capsys):
 
 def test_documented_randomness_example():
     page = (
-        Path(__file__).parents[2] / "docs/guides/experiment-randomness-environment.md"
+        Path(__file__).parents[2]
+        / "tests/fixtures/qualified-guides/guides/experiment-randomness-environment.md"
     ).read_text()
     code = (
         page.split("<!-- executable-randomness-example -->", 1)[1]

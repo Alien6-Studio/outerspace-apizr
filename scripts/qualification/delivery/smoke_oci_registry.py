@@ -376,7 +376,7 @@ PY
         if result.returncode:
             raise RuntimeError("installed registry proof failed; see proof.log")
         if args.artifacts:
-            from scripts.qualification.docs.smoke_readme import delivery_results
+            from scripts.qualification.examples.smoke_readme import delivery_results
 
             delivery_results(args.output)
         print(

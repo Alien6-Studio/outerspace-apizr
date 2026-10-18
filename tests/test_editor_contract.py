@@ -304,7 +304,7 @@ def test_exported_editor_schemas_match_the_canonical_models():
         ("capabilities", EngineCapabilities),
     ):
         schema = json.loads(
-            (ROOT / f"docs/specs/apizr-editor-{name}-v1.schema.json").read_text()
+            (ROOT / f"specs/apizr-editor-{name}-v1.schema.json").read_text()
         )
         assert schema == model.model_json_schema()
 

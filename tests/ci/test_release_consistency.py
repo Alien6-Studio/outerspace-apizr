@@ -1,7 +1,7 @@
 """Hold every public version surface to the declared release state.
 
-scripts/docs_build.py:RELEASE_STATE is the single declaration of what is
-published. The 0.4.5 publication shipped stale candidate wording to PyPI and
+policy/release-metadata.toml declares the prepared product version independently
+of the website. The 0.4.5 publication shipped stale candidate wording to PyPI and
 left forge defaults, the site navigation and the install recording behind
 because nothing bound those surfaces to the declaration. These tests make the
 release flip atomic: the change that declares a version stable must also move
@@ -9,15 +9,18 @@ every surface that names it, before any tag is cut.
 """
 
 import re
-import runpy
 import tomllib
 from pathlib import Path
 
 import yaml
-from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).resolve().parents[2]
-STATE = runpy.run_path(str(qualification_script("docs_build")))["RELEASE_STATE"]
+release = tomllib.loads((ROOT / "policy/release-metadata.toml").read_text())["release"]
+STATE = {
+    "target_version": release["version"],
+    "stable_release": release["stable_version"],
+    "status": release["status"],
+}
 STABLE = STATE["stable_release"]
 TARGET = STATE["target_version"]
 
@@ -28,12 +31,7 @@ PACKAGING_READMES = {
 }
 VERSIONED_SURFACES = {
     **PACKAGING_READMES,
-    "mkdocs.yml": (ROOT / "mkdocs.yml").read_text(),
     "SECURITY.md": (ROOT / "SECURITY.md").read_text(),
-    **{
-        path.relative_to(ROOT).as_posix(): path.read_text()
-        for path in sorted(ROOT.glob("docs/**/*.md"))
-    },
 }
 
 
@@ -57,7 +55,7 @@ def test_forge_defaults_pin_the_prepared_target_release():
 def test_install_surfaces_follow_prepared_and_recorded_release_identities():
     install = f"uv tool install outerspace-apizr=={TARGET}"
     assert install in README
-    tape = (ROOT / "docs/assets/videos/uv-install.tape").read_text()
+    tape = (ROOT / "tests/fixtures/qualified-guides/uv-install.tape").read_text()
     assert f"uv tool install outerspace-apizr=={STABLE}" in tape
     # Preserve the historical installation recording while preparing final text.
     # Its pinned source is independent from any future publication authorization.
@@ -72,10 +70,7 @@ def test_security_policy_names_the_current_line():
 
 
 def test_navigation_and_release_record_match_the_declaration():
-    assert (ROOT / f"docs/releases/{TARGET}.md").is_file()
-    nav = (ROOT / "mkdocs.yml").read_text()
-    if STATE["status"] == "stable":
-        assert f"- {STABLE}: releases/{STABLE}.md" in nav
+    assert (ROOT / f"releases/{TARGET}.md").is_file()
 
 
 def test_no_surface_still_calls_the_stable_release_a_candidate():

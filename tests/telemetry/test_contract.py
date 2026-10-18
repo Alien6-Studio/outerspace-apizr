@@ -80,7 +80,7 @@ def test_byte_boundary_encoding_and_forged_models():
 
 
 def test_public_schema_export_and_acceptance():
-    path = ROOT / "docs/specs/apizr-telemetry-v1.schema.json"
+    path = ROOT / "specs/apizr-telemetry-v1.schema.json"
     before = path.read_bytes()
     subprocess.run(
         [

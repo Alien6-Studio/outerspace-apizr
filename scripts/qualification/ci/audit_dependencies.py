@@ -15,7 +15,7 @@ SCOPES = {
     "runtime-http": ["--no-default-groups", "--extra", "http"],
     "runtime-mcp": ["--no-default-groups", "--extra", "mcp"],
     "development": ["--only-group", "dev"],
-    "documentation": ["--only-group", "docs"],
+    "documentation": ["--only-group", "readme"],
     "security-tooling": ["--only-group", "security"],
     "homebrew-build": ["--only-group", "homebrew-build"],
 }

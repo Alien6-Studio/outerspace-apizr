@@ -1,4 +1,4 @@
-"""Compatibility CLI for scripts.qualification.docs.smoke_readme."""
+"""Compatibility CLI for scripts.qualification.examples.smoke_readme."""
 
 import runpy
 import sys
@@ -10,12 +10,12 @@ if __name__ == "__main__":
     runpy.run_path(
         str(
             Path(__file__).resolve().parents[1]
-            / "scripts/qualification/docs/smoke_readme.py"
+            / "scripts/qualification/examples/smoke_readme.py"
         ),
         run_name="__main__",
     )
 else:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    _implementation = import_module("scripts.qualification.docs.smoke_readme")
+    _implementation = import_module("scripts.qualification.examples.smoke_readme")
     sys.modules[__name__] = _implementation
     globals().update(vars(_implementation))

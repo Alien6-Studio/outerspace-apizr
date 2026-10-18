@@ -14,15 +14,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 PAGES = (
     "README.md",
-    "docs/getting-started/introduction.md",
-    "docs/getting-started/quickstart.md",
-    "docs/getting-started/user-guide/experiment-inspection.md",
+    "tests/fixtures/qualified-guides/getting-started/introduction.md",
+    "tests/fixtures/qualified-guides/getting-started/quickstart.md",
+    "tests/fixtures/qualified-guides/getting-started/user-guide/experiment-inspection.md",
 )
 
 
 def tracking_examples(cli: Path, root: Path, env: dict[str, str]) -> dict:
     """Run the public SDK guide verbatim with the installed candidate interpreter."""
-    page = ROOT / "docs/getting-started/tracking.md"
+    page = ROOT / "tests/fixtures/qualified-guides/getting-started/tracking.md"
     blocks = dict(
         re.findall(
             r"<!-- tracking-journey:([a-z-]+) -->\s*```sh\n(.*?)\n```",
@@ -142,8 +142,8 @@ def main() -> None:
         for index, page in enumerate(
             (
                 "README.md",
-                "docs/getting-started/quickstart.md",
-                "docs/getting-started/user-guide/experiment-runs.md",
+                "tests/fixtures/qualified-guides/getting-started/quickstart.md",
+                "tests/fixtures/qualified-guides/getting-started/user-guide/experiment-runs.md",
             )
         ):
             root = Path(directory) / f"runs-{index}"
@@ -187,8 +187,8 @@ def main() -> None:
         for index, page in enumerate(
             (
                 "README.md",
-                "docs/getting-started/quickstart.md",
-                "docs/getting-started/user-guide/experiment-comparison.md",
+                "tests/fixtures/qualified-guides/getting-started/quickstart.md",
+                "tests/fixtures/qualified-guides/getting-started/user-guide/experiment-comparison.md",
             )
         ):
             root = Path(directory) / f"diff-{index}"
@@ -233,7 +233,7 @@ def main() -> None:
                 "blocks": len(blocks),
                 "example_sha256": sha256(blocks[0].encode()).hexdigest(),
             }
-        page = "docs/getting-started/user-guide/experiment-exposure.md"
+        page = "tests/fixtures/qualified-guides/getting-started/user-guide/experiment-exposure.md"
         root = Path(directory) / "exposure"
         root.mkdir()
         blocks = re.findall(
@@ -262,8 +262,8 @@ def main() -> None:
             "blocks": len(blocks),
             "example_sha256": sha256(blocks[0].encode()).hexdigest(),
         }
-        results["docs/getting-started/tracking.md"] = tracking_examples(
-            cli, Path(directory) / "tracking", env
+        results["tests/fixtures/qualified-guides/getting-started/tracking.md"] = (
+            tracking_examples(cli, Path(directory) / "tracking", env)
         )
     args.output.write_text(json.dumps(results, indent=2) + "\n")
 

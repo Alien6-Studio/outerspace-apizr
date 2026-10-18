@@ -18,7 +18,7 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[3]
 CORPUS = ROOT / "tests/fixtures/telemetry/conformance.json"
-SCHEMA = ROOT / "docs/specs/apizr-telemetry-v1.schema.json"
+SCHEMA = ROOT / "specs/apizr-telemetry-v1.schema.json"
 MAX_BYTES = 16384
 
 

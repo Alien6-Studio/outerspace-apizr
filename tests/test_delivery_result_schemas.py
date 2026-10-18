@@ -34,7 +34,7 @@ def test_published_result_schema_matches_v1_contract(model):
     name = (
         schema["properties"]["schema"]["default"].replace(".", "-", 1).replace("/", "-")
     )
-    path = Path(__file__).parents[1] / "docs/specs" / (name + ".schema.json")
+    path = Path(__file__).parents[1] / "specs" / (name + ".schema.json")
     assert json.loads(path.read_text()) == schema
     Draft202012Validator.check_schema(schema)
 

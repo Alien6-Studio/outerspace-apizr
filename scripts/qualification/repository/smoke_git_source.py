@@ -132,7 +132,8 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
                 files(root / ("local-" + interface)),
             )
         docs = (
-            Path(__file__).resolve().parents[3] / "docs/reference/git-sources.md"
+            Path(__file__).resolve().parents[3]
+            / "tests/fixtures/qualified-guides/reference/git-sources.md"
         ).read_text()
         example = docs.split("```python\n", 1)[1].split("```", 1)[0]
         guard = """import sys, importlib.metadata

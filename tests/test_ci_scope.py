@@ -85,9 +85,9 @@ def pr_event(base, head):
         ("scripts/docs_build.py", "true"),
         ("scripts/check_docs_html.py", "false"),
         ("scripts/check_docs_site.py", "false"),
-        ("scripts/smoke_site_examples.py", "true"),
+        ("scripts/smoke_examples.py", "true"),
         ("scripts/smoke_readme.py", "true"),
-        ("scripts/site_example_packages.py", "true"),
+        ("scripts/public_example_packages.py", "true"),
         ("scripts/typed_dict_proof.py", "true"),
         ("tools/docs/README.md", "false"),
         ("tests/test_docs_publication.py", "false"),
@@ -320,90 +320,6 @@ def test_complete_site_revision_uses_documentation_checks(repo):
     assert result["examples"] == "true"
 
 
-def test_docs_jobs_do_not_install_or_build_the_product_for_docs_only_changes():
-    import tomllib
-
-    manifest = tomllib.loads((ROOT / "tools/docs/pyproject.toml").read_text())
-    assert manifest["tool"]["uv"]["package"] is False
-    lock = tomllib.loads((ROOT / "tools/docs/uv.lock").read_text())
-    assert not any(
-        p["name"].startswith(
-            ("outerspace-apizr", "apizr-oci", "apizr-attest", "apizr-mcp")
-        )
-        for p in lock["package"]
-    )
-    workflow = yaml.safe_load((ROOT / ".github/workflows/mkdocs.yaml").read_text())
-    for job in ("build", "deploy"):
-        for step in workflow["jobs"][job]["steps"]:
-            command = step.get("run", "")
-            if "uv run" in command or "uv sync" in command:
-                assert "--project tools/docs --locked" in command
-            if "uv build" in command:
-                assert "needs.scope.outputs.product) != 'false'" in step["if"]
-    tooling = next(
-        s
-        for s in workflow["jobs"]["build"]["steps"]
-        if "tests/test_ci_scope.py" in s.get("run", "") and "pytest" in s.get("run", "")
-    )
-    assert "if" not in tooling
-    assert any(
-        "--project tools/docs --locked ruff check" in step.get("run", "")
-        for step in workflow["jobs"]["build"]["steps"]
-    )
-    dco = next(
-        s
-        for s in workflow["jobs"]["build"]["steps"]
-        if "pytest -c tools/docs/pyproject.toml tests/test_dco.py" in s.get("run", "")
-    )
-    assert "if" not in dco
-    assert workflow["jobs"]["build"]["steps"].index(dco) < workflow["jobs"]["build"][
-        "steps"
-    ].index(tooling)
-    public_examples = next(
-        s
-        for s in workflow["jobs"]["build"]["steps"]
-        if s.get("name") == "Install published examples only for documentation changes"
-    )
-    assert "needs.scope.outputs.product) == 'false'" in public_examples["if"]
-    assert "needs.scope.outputs.examples) != 'false'" in public_examples["if"]
-    assert "outerspace-apizr[http,mcp]==$version" in public_examples["run"]
-    assert "uv build" not in public_examples["run"]
-    examples = next(
-        s
-        for s in workflow["jobs"]["build"]["steps"]
-        if s.get("name")
-        == "Check current installed documentation examples outside the checkout"
-    )
-    assert '--example-python "$RUNNER_TEMP/docs-dev/bin/python"' in examples["run"]
-    ci = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
-    for step in ci["jobs"]["quality"]["steps"]:
-        command = step.get("run", "")
-        if "uv " in command or step.get("uses") == "./.github/actions/install-attest":
-            assert step["if"] == "env.PRODUCT_CHECKS != 'false'"
-
-
-def test_docs_dependencies_keep_reviewed_sources_versions_and_archive_hashes():
-    # The isolated environment reuses reviewed versions. A new dependency or
-    # version must first pass the existing root source/license/security policy.
-    import tomllib
-
-    reviewed = {
-        (p["name"], p["version"]): p
-        for p in tomllib.loads((ROOT / "uv.lock").read_text())["package"]
-    }
-    locked = tomllib.loads((ROOT / "tools/docs/uv.lock").read_text())["package"]
-    for package in locked:
-        if package["name"] == "apizr-documentation":
-            assert package["source"] == {"virtual": "."}
-            continue
-        original = reviewed[(package["name"], package["version"])]
-        assert package["source"] == original["source"]
-        assert package.get("sdist") == original.get("sdist")
-        assert {(w["url"], w["hash"]) for w in package.get("wheels", [])} <= {
-            (w["url"], w["hash"]) for w in original.get("wheels", [])
-        }
-
-
 def test_all_pr_qualification_workflows_share_the_scope_gate():
     for path in (ROOT / ".github/workflows").glob("*.y*ml"):
         workflow = yaml.safe_load(path.read_text())
@@ -468,3 +384,20 @@ def test_bound_step_conditions_preserve_scope_and_failure_behavior(
             is_upload = step.get("uses", "").startswith("actions/upload-artifact@")
             assert ("always()" in condition) == is_upload
             assert selected == (should_run and (is_upload or prior_success))
+
+
+def test_website_and_product_release_qualification_are_separate():
+    workflow = yaml.safe_load(
+        (ROOT / ".github/workflows/release-content.yml").read_text()
+    )
+    assert workflow["permissions"] == {"contents": "read"}
+    assert "deploy" not in workflow["jobs"]
+    assert not (ROOT / "mkdocs.yml").exists()
+    assert not (ROOT / "docs").exists()
+    assert not (ROOT / "overrides").exists()
+    content = json.dumps(workflow)
+    assert "mkdocs build" not in content and "ghp_import" not in content
+    assert "pages: write" not in content
+    assert "check_release_metadata" in content
+    assert "smoke_readme" in content
+    assert "smoke_examples" in content

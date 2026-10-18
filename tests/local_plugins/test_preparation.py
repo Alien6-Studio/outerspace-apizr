@@ -261,7 +261,7 @@ def test_preparation_result_schema_matches_documented_contract(
     schema = json.loads(
         (
             Path(__file__).resolve().parents[2]
-            / "docs/specs/apizr-plugin-preparation-v1.schema.json"
+            / "specs/apizr-plugin-preparation-v1.schema.json"
         ).read_text()
     )
     assert schema == PreparationResult.model_json_schema()

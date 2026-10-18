@@ -81,7 +81,7 @@ and final dependency security in #280.
 - Coordinate core, MCP, OCI and Attest metadata and internal pins at
   0.4.5, with a first-class Data Scientist guide. GitHub and PyPI publication,
   exact public bytes and fresh installations are verified. MCP distribution qualification is complete in #279; see the
-  [release record](docs/releases/0.4.5.md).
+  [release record](releases/0.4.5.md).
 
 - Bridge a validated successful Experiment Run to existing Repository Readiness
   and Exposure planning with `experiment expose`, explicit capability/interface

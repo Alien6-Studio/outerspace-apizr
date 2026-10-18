@@ -253,7 +253,7 @@ def test_text_order_specifics_and_concise_sample(tmp_path):
 def test_committed_schema_parity():
     root = FIXTURE.parents[3]
     committed = json.loads(
-        (root / "docs/specs/apizr-experiment-inspection-v1.schema.json").read_text()
+        (root / "specs/apizr-experiment-inspection-v1.schema.json").read_text()
     )
     assert committed == ExperimentInspection.model_json_schema()
 

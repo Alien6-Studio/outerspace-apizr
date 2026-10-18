@@ -28,7 +28,9 @@ REPO = Path(__file__).resolve().parents[3]
 
 def documented_inputs(root: Path, store: str) -> dict:
     """A new user's project/grant comes only from the websiteUrl documentation."""
-    guide = (REPO / "docs/reference/apizr-mcp-server.md").read_text()
+    guide = (
+        REPO / "tests/fixtures/qualified-guides/reference/apizr-mcp-server.md"
+    ).read_text()
     examples = dict(
         re.findall(
             r"<!-- registry-fixture:([^ ]+) -->\n```\w+\n(.*?)\n```", guide, re.DOTALL

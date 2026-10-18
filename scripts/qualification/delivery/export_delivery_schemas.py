@@ -23,7 +23,7 @@ MODELS = (
 
 
 def main() -> None:
-    root = Path(__file__).resolve().parents[3] / "docs/specs"
+    root = Path(__file__).resolve().parents[3] / "specs"
     for model in MODELS:
         schema = model.model_json_schema()
         name = (

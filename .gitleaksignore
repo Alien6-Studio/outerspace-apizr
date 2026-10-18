@@ -32,3 +32,7 @@ tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:9
 # Exact current generator-golden entries, verified against the portable source.
 tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:12
 tests/fixtures/governed-repository/direct-baseline.json:generic-api-key:37
+
+# SHA-256 file fingerprints in the frozen guide provenance; no credentials.
+tests/fixtures/qualified-guides/provenance.json:generic-api-key:28
+tests/fixtures/qualified-guides/provenance.json:generic-api-key:29

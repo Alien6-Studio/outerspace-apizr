@@ -30,7 +30,7 @@ from apizr.scientific_providers.contracts.selection import (
 
 
 def main() -> None:
-    root = Path(__file__).resolve().parents[3] / "docs/specs"
+    root = Path(__file__).resolve().parents[3] / "specs"
     for name, model in (
         ("provider-selection", ProviderSelection),
         ("scientific-providers", ProviderReport),

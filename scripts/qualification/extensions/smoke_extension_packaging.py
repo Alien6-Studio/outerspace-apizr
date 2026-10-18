@@ -379,7 +379,9 @@ def main() -> None:
         work,
         env,
     )
-    documentation = (REPO / "docs/reference/project-plugin-locks.md").read_text()
+    documentation = (
+        REPO / "tests/fixtures/qualified-guides/reference/project-plugin-locks.md"
+    ).read_text()
     commands = (
         documentation.split("<!-- smoke:project-plugin-lock -->", 1)[1]
         .split("```sh\n", 1)[1]

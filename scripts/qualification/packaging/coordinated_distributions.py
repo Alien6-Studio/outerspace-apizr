@@ -518,7 +518,9 @@ def target_root() -> Path | None:
 
 def copy_closure(name: str, destination: Path) -> bool:
     """Explicit proof input: fail on mismatches, never silently fall back to building."""
-    from scripts.qualification.docs.site_example_packages import copy_public_closure
+    from scripts.qualification.examples.public_example_packages import (
+        copy_public_closure,
+    )
 
     if copy_public_closure(name, destination):
         return True

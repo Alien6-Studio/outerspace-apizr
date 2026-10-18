@@ -97,9 +97,10 @@ def project_example(
             for p in expected.rglob("*")
             if p.is_file()
         }
-    documentation = (checkout / "docs/getting-started/user-guide/project.md").read_text(
-        encoding="utf-8"
-    )
+    documentation = (
+        checkout
+        / "tests/fixtures/qualified-guides/getting-started/user-guide/project.md"
+    ).read_text(encoding="utf-8")
     probe(
         documentation.split("```python\n", 1)[1].split("```", 1)[0]
         + """
@@ -279,7 +280,7 @@ def main():
                 # discovery even if an environment accidentally provides them.
                 documentation = (
                     Path(__file__).resolve().parents[3]
-                    / "docs/reference/compiler-api.md"
+                    / "tests/fixtures/qualified-guides/reference/compiler-api.md"
                 ).read_text(encoding="utf-8")
                 example = documentation.split("```python\n", 1)[1].split("```", 1)[0]
                 probe(

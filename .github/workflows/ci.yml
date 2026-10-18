@@ -197,8 +197,8 @@ jobs:
           version: '0.13.1'
           python-version: '3.14'
           enable-cache: true
-      # Type-check the site hook with its declared documentation dependencies.
-      - run: uv sync --locked --group docs
+      # Render package README files with their declared dependency.
+      - run: uv sync --locked --group readme
         if: env.PRODUCT_CHECKS != 'false'
       - name: Check DCO declarations for new contributions
         if: github.event_name == 'pull_request' || github.event_name == 'push'
@@ -752,15 +752,12 @@ jobs:
       product: ${{ fromJSON(needs.scope.outputs.product) }}
       examples: ${{ fromJSON(needs.scope.outputs.examples) }}
 
-  mkdocs-qualification:
+  metadata-qualification:
     needs: [scope, distributions]
     if: ${{ !cancelled() && github.ref != 'refs/heads/master' && needs.scope.result == 'success' && (needs.distributions.result == 'success' || (needs.scope.outputs.product == 'false' && needs.distributions.result == 'skipped')) }}
-    # Upper bound for the existing master-only deploy job. The called build
-    # explicitly has contents: read; this caller never runs on master.
     permissions:
-      contents: write
-      pages: read
-    uses: ./.github/workflows/mkdocs.yaml
+      contents: read
+    uses: ./.github/workflows/release-content.yml
     with:
       scope_ready: ${{ inputs.qualification_layout != 'independent' }}
       product: ${{ fromJSON(needs.scope.outputs.product) }}
@@ -886,7 +883,7 @@ jobs:
 
   build:
     name: ${{ github.ref == 'refs/heads/master' && 'external-build' || 'build' }}
-    needs: [scope, mkdocs-qualification, vscode]
+    needs: [scope, metadata-qualification, vscode]
     if: ${{ !cancelled() && github.ref != 'refs/heads/master' }}
     runs-on: ubuntu-latest
     steps:
@@ -894,7 +891,7 @@ jobs:
         env:
           SCOPE_RESULT: ${{ needs.scope.result }}
           PRODUCT_CHECKS: ${{ needs.scope.outputs.product }}
-          QUALIFICATION_RESULT: ${{ needs.mkdocs-qualification.result }}
+          QUALIFICATION_RESULT: ${{ needs.metadata-qualification.result }}
           VSCODE_RESULT: ${{ needs.vscode.result }}
         run: |
           test "$SCOPE_RESULT" = success

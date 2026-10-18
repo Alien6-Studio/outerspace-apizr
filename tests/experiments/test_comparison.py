@@ -367,7 +367,7 @@ def test_strict_immutable_schema_and_bounds(monkeypatch):
     schema = json.loads(
         (
             Path(__file__).resolve().parents[2]
-            / "docs/specs/apizr-experiment-diff-v1.schema.json"
+            / "specs/apizr-experiment-diff-v1.schema.json"
         ).read_bytes()
     )
     assert schema == ExperimentDiff.model_json_schema()

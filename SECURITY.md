@@ -4,7 +4,7 @@
 
 Security fixes target the maintained 0.4.x line. Apizr 0.4.6 and generated targets
 support **Python 3.11–3.15**. Use a supported interpreter and keep dependencies updated.
-See the [compatibility notes](docs/getting-started/developer-guide/releases.md).
+See the [compatibility notes](https://apizr.outerspace.sh/getting-started/developer-guide/releases/).
 
 The current resolved runtime and tooling graphs pass the vulnerability audit.
 This is a dated database result, not a guarantee of vulnerability-free software;
@@ -68,7 +68,7 @@ own Electron services.
 
 Original 0.4.5 Plan/Run bytes, canonical show/export and comparison remain
 readable without a store rewrite. New v2 records are not a promise of backward
-reading by 0.4.5. See the [migration guide](docs/releases/migrate-0.4.6.md) and
+reading by 0.4.5. See the [migration guide](releases/migrate-0.4.6.md) and
 [retained trust-boundary evidence](review/journey-trust-0.4.6/README.md).
 
 ## Automated checks

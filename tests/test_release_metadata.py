@@ -38,11 +38,6 @@ def release(source):
             "```sh\nuv tool install outerspace-apizr==0.4.6\n```\n\n"
             f"[Source]({gate.REPOSITORY}/tree/v0.4.6/)\n"
         )
-    (root / "docs/getting-started/install.md").write_text(
-        "# Install Apizr\n\nInstall Apizr 0.4.6.\n\n"
-        "```sh\npython -m pip install outerspace-apizr==0.4.6\n```\n"
-        "Observe `outerspace-apizr 0.4.6`.\n"
-    )
     docker = root / "Dockerfile"
     docker.write_text(
         docker.read_text().replace("ARG SOURCE_REF=0.4.6", "ARG SOURCE_REF=v0.4.6")
@@ -64,11 +59,10 @@ def development(release):
         "plugins/oci/README.md",
         "plugins/attest/README.md",
         "plugins/mcp/README.md",
-        "docs/getting-started/install.md",
     ):
         path = root / name
         path.write_text("<!-- apizr-development: 0.4.6 -->\n" + path.read_text())
-    for name in ("CHANGELOG.md", "docs/releases/0.4.6.md"):
+    for name in ("CHANGELOG.md", "releases/0.4.6.md"):
         path = root / name
         path.write_text(path.read_text().replace("# 0.4.5", "# 0.4.6"))
     (root / "Dockerfile").write_text(
@@ -130,8 +124,6 @@ def test_complete_release_metadata_passes_without_publication_authorization(rele
         ("plugins/mcp/README.md", "\nuvx outerspace-apizr-mcp@0.4.5\n"),
         ("plugins/oci/README.md", "\nApizr 0.4.3 is the stable baseline.\n"),
         ("plugins/attest/README.md", "\nThis release candidate adds receipts.\n"),
-        ("docs/getting-started/install.md", "\nObserve outerspace-apizr 0.4.5.\n"),
-        ("docs/getting-started/install.md", "\n${APIZR_VERSION:-0.4.5}\n"),
     ],
 )
 def test_old_prose_pins_and_mutable_links_block_release(release, path, text):
@@ -163,7 +155,7 @@ def test_old_prose_pins_and_mutable_links_block_release(release, path, text):
         ("templates/apizr.yml", "default: 0.4.6", "default: 0.4.5"),
         ("Dockerfile", "ARG SOURCE_REF=v0.4.6", "ARG SOURCE_REF=master"),
         ("CHANGELOG.md", "## 0.4.6", "## 0.4.5"),
-        ("docs/releases/0.4.6.md", "# 0.4.6", "# 0.4.5"),
+        ("releases/0.4.6.md", "# 0.4.6", "# 0.4.5"),
     ],
 )
 def test_each_public_surface_rejects_version_drift(release, name, old, new):

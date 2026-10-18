@@ -39,8 +39,7 @@ def inventory(version):
             POLICY,
             "README.md",
             "pyproject.toml",
-            "docs/getting-started/install.md",
-            f"docs/releases/{version}.md",
+            f"releases/{version}.md",
             "Dockerfile",
             "glama.json",
             "action.yml",
@@ -50,8 +49,6 @@ def inventory(version):
             "examples/governance/README.md",
             "server.json",
             "CHANGELOG.md",
-            "docs/index.md",
-            "mkdocs.yml",
             "LICENSE",
             "policy/vscode-dependencies.json",
             "policy/vscode-distribution.json",
@@ -177,7 +174,6 @@ def check(root=ROOT, *, release=False, ref=None):
                     errors.append(f"{directory}/pyproject.toml: stale {dependency} pin")
         readme = project_root / project["readme"]
         descriptions.append(readme.relative_to(root).as_posix())
-    descriptions.append("docs/getting-started/install.md")
     for name in descriptions:
         text = (root / name).read_text()
         allowed = {public, target} if development else {version}
@@ -258,7 +254,7 @@ def check(root=ROOT, *, release=False, ref=None):
         errors.append("CHANGELOG.md: missing target release entry")
     if not re.search(
         r"^# " + re.escape(target) + r"(?:\s|$)",
-        (root / f"docs/releases/{target}.md").read_text(),
+        (root / f"releases/{target}.md").read_text(),
         re.M,
     ):
         errors.append("Release record does not identify the target version")

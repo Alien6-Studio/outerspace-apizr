@@ -94,7 +94,7 @@ def scenario(transport, case):
     elif case in {"build", "attest", "push", "publish"}:
         all_grants = json.loads(
             (
-                Path(__file__).resolve().parents[2] / "docs/examples/operator.json"
+                Path(__file__).resolve().parents[2] / "specs/examples/operator.json"
             ).read_bytes()
         )
         raw["grants"] = [g for g in all_grants["grants"] if g["operation"] == case]
@@ -326,7 +326,7 @@ def test_git_rule_strict_and_separate_from_plugin_rights():
 def test_complete_documented_git_policy(transport):
     path = (
         Path(__file__).resolve().parents[2]
-        / f"docs/examples/operator-git-{transport}.json"
+        / f"specs/examples/operator-git-{transport}.json"
     )
     selected = OperatorPolicy.model_validate_json(path.read_bytes())
     assert len(selected.grants) == 2

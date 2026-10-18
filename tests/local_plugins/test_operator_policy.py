@@ -636,7 +636,7 @@ def test_authorized_cli_and_policy_do_not_replace_activation(
 
 def test_complete_documented_policy():
     selected = load_operator_policy(
-        Path(__file__).parents[2] / "docs/examples/operator.json"
+        Path(__file__).parents[2] / "specs/examples/operator.json"
     )
     assert {(g.plugin.name, g.operation) for g in selected.grants} == {
         ("outerspace-apizr-oci", "push"),

@@ -89,14 +89,24 @@ def test_preparation_is_qualified_by_mcp_without_a_second_push_run():
 
 def test_dependabot_groups_compatible_updates_and_all_codeql_steps():
     settings = yaml.safe_load((ROOT / ".github/dependabot.yml").read_text())
-    updates = {item["package-ecosystem"]: item for item in settings["updates"]}
-    assert updates["uv"]["groups"] == {
+    updates = {
+        (item["package-ecosystem"], item.get("target-branch")): item
+        for item in settings["updates"]
+    }
+    assert updates[("uv", None)]["groups"] == {
         "compatible-updates": {"update-types": ["minor", "patch"]}
     }
-    assert updates["github-actions"]["schedule"]["interval"] == "monthly"
-    assert updates["github-actions"]["groups"] == {
+    assert updates[("github-actions", None)]["schedule"]["interval"] == "monthly"
+    assert updates[("github-actions", None)]["groups"] == {
         "action-updates": {"patterns": ["*"]}
     }
+    assert updates[("uv", "gh-pages")]["groups"] == {
+        "website-tooling": {"update-types": ["minor", "patch"]}
+    }
+    assert updates[("github-actions", "gh-pages")]["groups"] == {
+        "website-actions": {"patterns": ["*"]}
+    }
+    assert all(item["directory"] == "/" for item in updates.values())
 
 
 def test_final_candidate_includes_one_shared_editor_and_signed_evidence():

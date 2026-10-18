@@ -41,7 +41,9 @@ def measure(command: list[str], cwd: Path, env: dict[str, str]) -> list[float]:
 
 def documented(name: str, cwd: Path, env: dict[str, str]) -> None:
     """Execute the installation page's shell block without rewriting its commands."""
-    page = (ROOT / "docs/getting-started/install.md").read_text()
+    page = (
+        ROOT / "tests/fixtures/qualified-guides/getting-started/install.md"
+    ).read_text()
     blocks = dict(
         re.findall(r"<!-- install:([a-z]+) -->\s*```sh\n(.*?)```", page, re.S)
     )

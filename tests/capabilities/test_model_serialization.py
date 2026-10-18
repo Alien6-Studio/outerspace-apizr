@@ -44,7 +44,7 @@ def test_reviewed_golden_and_json_round_trip():
 
 
 def test_committed_schema_matches_the_model():
-    committed = (ROOT / "docs/specs/apizr-capability-v1.schema.json").read_text()
+    committed = (ROOT / "specs/apizr-capability-v1.schema.json").read_text()
     assert (
         committed
         == json.dumps(CapabilityDocument.model_json_schema(), indent=2, sort_keys=True)

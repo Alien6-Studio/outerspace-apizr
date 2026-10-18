@@ -103,7 +103,7 @@ def test_provenance_records_current_installed_generator():
     ],
 )
 def test_published_schemas(name, model):
-    schema = json.loads((ROOT / f"docs/specs/apizr-{name}-v1.schema.json").read_bytes())
+    schema = json.loads((ROOT / f"specs/apizr-{name}-v1.schema.json").read_bytes())
     assert schema == model.model_json_schema()
     Draft202012Validator.check_schema(schema)
     target = "mcp" if name == "repository-mcp" else "rest"

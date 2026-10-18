@@ -135,7 +135,10 @@ def sign_delivery(
         for name in ("attest.yaml", "receipt.yaml", "delivery"):
             archive.add(workspace / name, arcname=name)
         archive.add(source_root / ".attest/trust", arcname="trust")
-        archive.add(source_root / "docs/contributing/attest.md", arcname="README.md")
+        archive.add(
+            source_root / "tests/fixtures/qualified-guides/contributing/attest.md",
+            arcname="README.md",
+        )
 
 
 def main() -> None:

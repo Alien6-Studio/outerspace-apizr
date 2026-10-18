@@ -1,4 +1,4 @@
-.PHONY: install test lint format build docs typecheck coverage audit all
+.PHONY: install test lint format build typecheck coverage audit all
 
 install:
 	uv sync --locked
@@ -17,8 +17,6 @@ format:
 build:
 	uv build
 
-docs:
-	uv run --group docs mkdocs build --strict
 
 typecheck:
 	uv run --locked pyright

@@ -21,7 +21,9 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 def proof(cli: Path, python: Path, output: Path | None = None) -> dict:
-    guide = (ROOT / "docs/getting-started/user-guide/inspect.md").read_text()
+    guide = (
+        ROOT / "tests/fixtures/qualified-guides/getting-started/user-guide/inspect.md"
+    ).read_text()
     example = re.search(
         r"<!-- typed-dict:example -->\s*```python\n(.*?)```", guide, re.S
     )

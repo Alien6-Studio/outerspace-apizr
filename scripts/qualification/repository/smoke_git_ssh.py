@@ -138,7 +138,8 @@ def exercise(python: Path, cli: Path, work: Path) -> None:
                 files(root / f"remote-{interface}"), files(root / f"local-{interface}")
             )
         docs = (
-            Path(__file__).resolve().parents[3] / "docs/reference/git-ssh.md"
+            Path(__file__).resolve().parents[3]
+            / "tests/fixtures/qualified-guides/reference/git-ssh.md"
         ).read_text()
         example = docs.split("```python\n", 1)[1].split("```", 1)[0]
         guard = """import sys, importlib.metadata

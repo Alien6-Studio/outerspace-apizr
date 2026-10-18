@@ -20,7 +20,7 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[3]
 EXAMPLE = ROOT / "examples/data-science/fraud-detection"
-GUIDE = ROOT / "docs/getting-started/data-science.md"
+GUIDE = ROOT / "tests/fixtures/qualified-guides/getting-started/data-science.md"
 PACKAGES = ("outerspace-apizr", "pandas", "numpy", "scipy", "scikit-learn", "joblib")
 PAYLOAD = {
     "transaction": {

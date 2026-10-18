@@ -843,16 +843,14 @@ def test_workflows_separate_release_validation_from_external_publication():
     triggers = workflows["ci.yml"]["on"]
     assert triggers["push"]["branches"] == ["master", "0.4.6"]
     assert not triggers["pull_request"]  # No target-branch or path exclusions.
-    for name in ("security.yml", "mkdocs.yaml"):
+    for name in ("security.yml", "release-content.yml"):
         triggers = workflows[name]["on"]
         assert triggers["push"]["branches"] == ["master"]
         assert "pull_request" not in triggers
         assert "workflow_call" in triggers
-    docs = workflows["mkdocs.yaml"]["jobs"]
-    assert (
-        docs["deploy"]["if"]
-        == "github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build.outputs.publishable == 'true'"
-    )
+    content = workflows["release-content.yml"]
+    assert "deploy" not in content["jobs"]
+    assert content["permissions"] == {"contents": "read"}
     for name in ("publish-pypi.yml", "publish-mcp.yml", "verify-mcp-distribution.yml"):
         assert set(workflows[name]["on"]) == {"workflow_dispatch"}
     for name in (
@@ -899,10 +897,10 @@ def test_current_tracked_tree_keeps_oss_product_scope():
         "docs/reference/external-governance.md",
         "docs/releases/0.4.4.md",
         "examples/governance/README.md",
-        "docs/index.md",
+        "tests/fixtures/qualified-guides/index.md",
         "docs/contributing/verification.md",
         # Reader handoff chapters describe the existing external boundary only.
-        "docs/examples/verified-delivery.md",
+        "tests/fixtures/qualified-guides/examples/verified-delivery.md",
         "docs/operations-guide/delivery.md",
         "docs/reference/concepts.md",
         # Review records retain original anchors and their normative source links.

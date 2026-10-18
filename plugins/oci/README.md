@@ -7,7 +7,7 @@ Build REST/MCP service images and explicitly publish a verified image.
 This optional Apizr plugin runs in its own Python environment. Use the
 [installation guide](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile)
 to choose the matching catalog profile and verified target artifacts. The
-[release record](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/docs/releases/0.4.6.md) describes the
+[release record](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/releases/0.4.6.md) describes the
 functionality and validation for **Apizr 0.4.6**.
 
 Installation does not activate a plugin or authorize its operations. Enable the

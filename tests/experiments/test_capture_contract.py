@@ -92,7 +92,7 @@ def test_v2_schema_parity(name, model, encode):
     plan, run = pair()
     value = plan if name == "plan" else run
     schema = json.loads(
-        (ROOT / f"docs/specs/apizr-experiment-{name}-v2.schema.json").read_bytes()
+        (ROOT / f"specs/apizr-experiment-{name}-v2.schema.json").read_bytes()
     )
     assert schema == model.model_json_schema()
     Draft202012Validator.check_schema(schema)

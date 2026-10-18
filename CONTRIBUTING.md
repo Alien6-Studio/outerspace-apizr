@@ -71,20 +71,17 @@ resulting author is `Your Name <your-email>`, not the GitHub login.
 ## Development workflow
 
 The current development line is the official `0.4.6` branch. Branch from it and
-target it for product fixes and documentation. Stable `master`, immutable release
+target it for product fixes. Stable `master`, immutable release
 tags and published archives stay outside development changes. The maintainer
 must validate the branch and complete its protected integration before separately
 authorizing a release. A merge alone never publishes a package or site.
-See [release governance](docs/contributing/release-branches.md).
+See [release governance](https://apizr.outerspace.sh/contributing/release-branches/).
 
-Documentation, site and example changes use an independent CI environment in
-`tools/docs/`: contribution and file-integrity checks, focused tooling tests,
-strict site construction, HTML validation and examples against published wheels.
-Product, root dependency, packaging and workflow changes retain full qualification.
-The [documentation publication guide](docs/contributing/releases.md#web-only-changes)
-defines the routing boundary and guarded stable-site deployment. Pushes to the
-pre-release `0.4.6` line retain full product qualification, including candidate
-examples; local documentation checks still use the independent environment.
+Website sources and the Academy live on `gh-pages`, with their own locked
+environment, checks and GitHub Pages deployment. Open website PRs against that
+branch. Product examples, schemas, release records and executable qualification
+fixtures stay on the product branches and retain product qualification.
+See the [website workflow](https://github.com/Alien6-Studio/outerspace-apizr/blob/gh-pages/README.md).
 
 ```sh
 git fetch origin
@@ -106,7 +103,7 @@ uv run pre-commit run --all-files
 uv run python scripts/smoke_container.py --python-version 3.11
 ```
 
-The Docker check requires Docker. See [development and checks](docs/getting-started/developer-guide/setup.md) for wheel
+The Docker check requires Docker. See [development and checks](https://apizr.outerspace.sh/getting-started/developer-guide/setup/) for wheel
 validation and the dependency audit. Python 3.11–3.14 remains supported. Use Python 3.11 or
 newer for security tooling. Ruff formats repository code; Black is a runtime
 notebook-formatting dependency and is not the repository formatter.
@@ -126,7 +123,7 @@ Contributions retain [GPL-3.0-or-later](LICENSE). Participation follows the
 [Code of Conduct](CODE_OF_CONDUCT.md).
 
 
-Dependency changes must follow the [source, vulnerability and license review policy](docs/contributing/dependencies.md).
+Dependency changes must follow the [source, vulnerability and license review policy](https://apizr.outerspace.sh/contributing/dependencies/).
 Security-sensitive changes must pass `uv run --locked python scripts/security_mutations.py`;
 it runs in a disposable copy and fails if a selected protection can be removed
 without its designated test detecting the regression.
