@@ -11,7 +11,7 @@ experiments, then turn the useful Python capability into MCP or REST.
 Apizr **0.4.6** supports this workflow without instrumentation. For sessions,
 decorators, Jupyter and editor history, start with [your first SDK experiment](tracking.md).
 
-The [fraud detection example](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.4.6/examples/data-science/fraud-detection)
+The [fraud detection example](https://github.com/Alien6-Studio/outerspace-apizr/tree/f59e1ddd0f96acfc8e83ea91f147bcb4b3268b65/examples/data-science/fraud-detection)
 is an ordinary notebook: pandas, a small scikit-learn forest, three metrics and
 joblib model serialization. It has no Apizr import, decorator or tracking call.
 Keep the notebook unchanged throughout this guide. Only the active CSV changes
