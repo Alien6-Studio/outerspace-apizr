@@ -140,11 +140,9 @@ claiming a new observation time. SDK logging observes the file at the explicit
 call; source capture observes entry. Existing CLI before/after workload reads are
 unchanged. Environment-specification reads and durable publication remain bounded.
 
-The [SDK measurement report](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/review/sdk-performance-0.4.6)
-retains before/after samples from the [engine baseline](engine-performance.md),
-plus call profiles and source identities. Small timing movements on shared
-machines are informational; import isolation, exact byte boundaries, no logging
-JSON copies, fresh file observations and corruption detection have blocking tests.
+Use the [engine benchmark](engine-performance.md) to measure SDK costs for a
+selected source and environment. Import isolation, exact byte boundaries, fresh
+file observations and corruption detection also have blocking tests.
 
 ## License
 

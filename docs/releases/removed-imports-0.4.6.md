@@ -148,7 +148,6 @@ artifact hashes and enclosing manifests. It does not rewrite retained evidence.
 | `repository_interfaces/model.py` | Repository local/OCI/strict closures. Recheck application declarations and real REST/MCP repository workers. |
 | `subprocess_guard/single.py` | Strict single-source OCI bridge only. Recheck subprocess denial and its transport closures. |
 
-The [qualification record](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/review/import-removal-0.4.6)
-retains before/after digests for all 16 single-source/repository × direct/local/OCI/strict
-× REST/MCP modes. Installed-wheel, independent plugin and container proofs qualify
-the new source closure. See the [general migration guide](migrate-0.4.6.md).
+The qualification suite covers all 16 single-source/repository × direct/local/OCI/strict
+× REST/MCP modes, installed wheels, independent plugins and containers.
+See the [general migration guide](migrate-0.4.6.md).
