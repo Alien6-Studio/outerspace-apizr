@@ -57,8 +57,9 @@ Publisher; tags and published archives must remain unchanged.
 
 After publication, install the package in a clean environment. Check its version,
 run an example and compare the public file hashes with the approved artifacts.
-Record the publication results in the release notes. Homebrew, MCP registries
-and extension registries have their own publication steps.
+Check that versioned source links and release-asset URLs resolve to the published
+tag and original archives. Record the publication results in the release notes.
+Homebrew, MCP registries and extension registries have their own publication steps.
 
 If publication only partly succeeds, inspect the public state before retrying.
 Reuse the approved files; do not replace an existing release with a rebuilt one.

@@ -41,7 +41,7 @@ For manual practice, open it with the scientific environment's Jupyter kernel, e
 python -m scripts.qualification.experiments.academy_kernel --notebook fraud-thresholds.ipynb --workspace "$APIZR_ACADEMY_KERNEL_WORKSPACE" --input evaluation.csv --pause 3
 ```
 
-Set `APIZR_ACADEMY_KERNEL_WORKSPACE` to a fresh directory outside the checkout. The driver sends the actual cells to ipykernel and then repeats `first-variant`; it checks the four resulting captures. The [recording procedure](production.md) describes the checkout/interpreter selection for this terminal driver.
+Set `APIZR_ACADEMY_KERNEL_WORKSPACE` to a fresh directory outside the checkout. The driver sends the actual cells to ipykernel and then repeats `first-variant`; it checks the four resulting captures.
 
 ## 2. Read the four captures
 

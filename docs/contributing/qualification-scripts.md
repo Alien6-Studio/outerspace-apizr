@@ -87,8 +87,8 @@ Website build and publication tools live under `scripts/` in the separate
 `gh-pages` checkout; they are outside the product ownership inventory. Academy
 source/shot-list preparation runs there with
 `python3 academy/academy_lessons.py --output /absolute/new/directory`.
-See [the existing recording process](../academy/production.md); this command
-does not render or publish videos. The loopback-only
+This command prepares lesson inputs; it does not render or publish videos.
+The loopback-only
 `python3 -m scripts.qualification.interfaces.telemetry_conformance --endpoint http://127.0.0.1:8080 --output /absolute/report.json`
 checks a disposable receiver against the public synthetic corpus. It never
 qualifies production hosting, storage or retention.
