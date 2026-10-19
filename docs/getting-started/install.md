@@ -5,8 +5,6 @@ description: Install Apizr with pip, uv, pipx or Homebrew, then add optional plu
 
 # Install Apizr
 
-
-
 Install **Apizr 0.4.6**, then follow the [Quickstart](quickstart.md) to make your
 first REST or MCP calls. The core is enough for that example; plugins are optional.
 
@@ -78,26 +76,17 @@ brew install alien6-studio/tap/apizr
 apizr --version
 ```
 
-You should see `outerspace-apizr 0.4.6`. The Formula uses Homebrew Python 3.15.
-Its installation is tested on hosted Apple Silicon; Intel macOS and Linux
-Homebrew runtime are not qualified. See the
-[release record](../releases/0.4.6.md#validation) for details.
+You should see `outerspace-apizr 0.4.6`. Homebrew uses Python 3.15 and is
+qualified on Apple Silicon.
+On other systems, use pip, uv or pipx.
+
+<details markdown="1">
+<summary>Optional plugins: project analysis, OCI and delivery</summary>
 
 ## Add optional plugin profiles
 
-| You want to… | Install |
-| --- | --- |
-| Inspect Python and generate REST/MCP interfaces | Core only |
-| Let an MCP client analyze a project with Apizr | `mcp` profile |
-| Build and publish a service image | `oci` profile |
-| Deliver an image with an Attest receipt | `delivery` profile |
-
-Plugins live in their own environments. Keep all selected core/plugin versions
-at **0.4.6**. Install **uv 0.13.1** separately and check `uv --version` before
-installing or syncing plugins. This also applies to Homebrew installations.
-
-Plugin preparation accepts stable uv 0.12.x and 0.13.x; CI qualifies with
-**0.13.1**. See the [native preparation policy](../contributing/preparation-qualification.md).
+Plugins use isolated environments. Keep the core and selected plugins at
+**0.4.6**. Install **uv 0.13.1** and check `uv --version` before adding plugins.
 
 <span id="install-the-published-release"></span>
 <span id="evaluate-the-040-candidate"></span>
@@ -162,6 +151,8 @@ provides a complete project, operator grant and client configuration. The
 guides explain explicit image publication and signing permissions. These are
 trusted programs running with user rights, not a universal sandbox.
 
+</details>
+
 <details markdown="1">
 <summary>Offline core installation with pip, uv or pipx</summary>
 
@@ -207,6 +198,9 @@ for tool installations use that reported Apizr executable instead.
 
 </details>
 
+<details markdown="1">
+<summary>Offline release targets</summary>
+
 ## Supported targets
 
 Apizr 0.4.6 uses the following dependency exports for offline
@@ -224,6 +218,8 @@ macOS compatibility claim.
 | macOS arm64 | 3.11 | `apizr-0.4.6-macos-arm64-cpython-3.11.*.tar.gz` |
 | macOS arm64 | 3.14 | `apizr-0.4.6-macos-arm64-cpython-3.14.*.tar.gz` |
 | macOS arm64 | 3.15 | `apizr-0.4.6-macos-arm64-cpython-3.15.*.tar.gz` |
+
+</details>
 
 ## Develop from source
 
