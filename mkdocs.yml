@@ -297,4 +297,4 @@ nav:
   - Scientific providers: reference/scientific-providers.md
   - VS Code extension: reference/vscode.md
   - Editor protocol: reference/editor-contract.md
-  - Local telemetry: about/telemetry.md
+  - Telemetry and privacy: about/telemetry.md

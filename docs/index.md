@@ -11,18 +11,8 @@ description: Understand and compare Python experiments, then turn selected noteb
 
 # Understand Python work and share what matters
 
-Inspect scripts and notebooks without running them. Record and compare trusted
-experiments when you need evidence. Make selected existing functions available
-through REST or MCP, directly or from a reviewed experiment.
-
-Your calculation stays in Python. You choose the public functions and execution
-boundary; Apizr generates the interface and retains its documented evidence.
-MCP (Model Context Protocol) lets tool clients discover and call those functions.
-
-Working on a training script or notebook? **Apizr 0.4.6 development** lets you inspect, run and compare experiments, then expose an
-explicitly selected prediction function. Know which data, code, parameters and
-environment produced your result. Start with the
-[Data Scientist quickstart](getting-started/data-science.md).
+Inspect Python scripts and notebooks, track experiments and compare results.
+Share selected functions through REST APIs or MCP tools.
 
 **[Apizr 0.4.6](releases/0.4.6.md).** Python 3.11–3.15 · Open source,
 GPL-3.0-or-later.
@@ -102,8 +92,8 @@ Find exact commands, APIs, formats and compatibility details.
 </section>
 </div>
 
-See [Install Apizr](getting-started/install.md) for package availability and
-optional profiles, or [the current release record](releases/0.4.6.md) for its qualification and publication status. [Historical releases](releases/0.4.1.md) retain their original context.
+[Installation and package availability](getting-started/install.md) ·
+[What’s new](releases/0.4.6.md) · [Release history](releases/0.4.1.md)
 
   <section class="apizr-demo-section md-typeset" aria-labelledby="watch-apizr-in-action">
     <div class="apizr-demo-section__inner">
@@ -142,24 +132,17 @@ optional profiles, or [the current release record](releases/0.4.6.md) for its qu
 <span id="discover-understand-assess"></span>
 <span id="select-expose"></span>
 
-Apizr scans code without executing it and tells you which functions it can turn
-into an interface. You choose which ones become public. Their private helpers
-can be included without becoming endpoints or tools.
-
-The generated **bundle** contains the server, its API or tool definitions and the
-source it needs. Start with [REST endpoints](getting-started/quickstart.md#use-rest-instead)
-or [MCP tools](getting-started/quickstart.md#generate-the-mcp-bundle), then use
-[your own repository](getting-started/onboarding.md).
+Choose the functions clients can call; their helpers stay private. Generate
+[REST endpoints](getting-started/quickstart.md#use-rest-instead) or
+[MCP tools](getting-started/quickstart.md#generate-the-mcp-bundle), then
+continue with [your own project](getting-started/onboarding.md).
 
 ## Decide how calls execute
 
 <span id="execute-with-an-explicit-boundary"></span>
 
-The Quickstart runs trusted functions inside the generated server. For fresh
-workers, timeouts or container execution, continue with
-[execution policies](getting-started/user-guide/execute.md). Running a generated
-server executes your Python code; static analysis does not make unfamiliar code
-safe to run.
+The Quickstart runs trusted code in the server process. For workers, timeouts
+or containers, see [execution options](getting-started/user-guide/execute.md).
 
 <span id="find-the-right-server-and-guide"></span>
 

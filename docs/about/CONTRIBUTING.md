@@ -86,3 +86,10 @@ The website and Academy use the **`gh-pages`** branch. For a website PR, start
 your branch from `upstream/gh-pages`, follow its
 [README](https://github.com/Alien6-Studio/outerspace-apizr/blob/gh-pages/README.md)
 and choose `gh-pages` as the PR base.
+
+## Keep documentation simple
+
+Lead with the user’s task, one working example and its expected result.
+Link to reference material for advanced options; avoid repeated explanations,
+test logs and implementation history in user guides. Public privacy information
+covers consent, data and user guarantees; deployment details stay private.

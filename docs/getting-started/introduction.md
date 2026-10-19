@@ -17,11 +17,7 @@ existing tutorials and explains capabilities, readiness, selection and execution
 
 ## Start with an experiment
 
-The historical `--script`/`--notebook` FastAPI pipeline is removed in
-Apizr 0.4.6. Migrate to `apizr inspect`,
-explicit exposure selection, and `apizr generate rest` or `apizr generate mcp`.
-
-For a training script or notebook, begin by inspecting the evidence. With Apizr 0.4.6 installed, this first example needs no science framework:
+With Apizr installed, inspect a script without running it:
 
 <!-- experiment-inspection:start-here -->
 ```sh
@@ -29,19 +25,14 @@ printf 'learning_rate = 0.05\n' > example.py
 apizr experiment inspect example.py
 ```
 
-The report shows all eight evidence sections. Parameters is captured as a static
-candidate; absent data, randomness and runtime facts remain unknown. Continue with
-the [full experiment example](user-guide/experiment-inspection.md), including
-notebook installation and JSON output. Inspection never means the experiment ran.
+The report finds `learning_rate = 0.05` under Parameters. Runtime facts remain
+unknown. See [experiment inspection](user-guide/experiment-inspection.md) for
+notebooks and JSON output.
 
 ## Start with functions to expose
 
-Apizr lets an application or an AI assistant call functions from your Python
-project. You choose the functions. Apizr creates either a REST service, called
-over HTTP, or an MCP server, called by a compatible AI client.
-
-The example below creates a small shop service with two operations: calculate a
-price and check stock. The helper functions stay private.
+This example shares two Python functions through REST and MCP: calculate a
+price and check stock. Helper functions stay private.
 
 For the shortest path to a working server, follow the [Quickstart](quickstart.md).
 For a research project with unfinished experiments, see
@@ -165,10 +156,9 @@ For MCP, the generated server offers the same two operations. Follow the
 Apizr checks your code before generating a server. A function marked `READY`
 can still stay private: your selection determines what clients can call.
 
-You may see `_price` marked `CONDITIONAL` when scanning this example because it
-imports code from another file. In Apizr 0.4.6, the repository readiness step recognizes that local helper
-and succeeds. The two selected public functions can be built.
-See [Repository readiness](user-guide/repository-readiness.md) for diagnostic details.
+Repository readiness resolves the local pricing helper. See
+[readiness diagnostics](user-guide/repository-readiness.md) if your own code
+cannot be built.
 
 Running the generated server executes your Python code with your user permissions.
 Use code you trust. This example runs calls in the server process; if you need a
