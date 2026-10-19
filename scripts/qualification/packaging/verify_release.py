@@ -36,9 +36,27 @@ def qualification_branch(version: str) -> str:
         return "release/0.4.2"
     if version == "0.4.3":
         return "release/0.4.3"
-    if version in {"0.4.4", "0.4.5"}:
+    if version in {"0.4.4", "0.4.5", "0.4.6"}:
         return "master"
     raise ValueError("No authorized qualification branch for this version")
+
+
+def run_jobs(run_id: int) -> list[dict]:
+    """Inspect the complete latest attempt, including gates after job 100."""
+    path = f"actions/runs/{run_id}/jobs?per_page=100"
+    response = github(path)
+    jobs = response["jobs"]
+    total = response.get("total_count", len(jobs))
+    page = 2
+    while len(jobs) < total:
+        following = github(f"{path}&page={page}")["jobs"]
+        if not following:
+            raise ValueError("Incomplete qualification job inventory")
+        jobs.extend(following)
+        page += 1
+    if len(jobs) != total:
+        raise ValueError("Ambiguous qualification job inventory")
+    return jobs
 
 
 def validate_run(run: dict, sha: str, workflow: str, branch: str = "master") -> None:
@@ -114,12 +132,12 @@ def main() -> None:
         )
     branch = qualification_branch(version)
     validate_run(github(f"actions/runs/{args.run_id}"), sha, "ci.yml", branch)
-    if branch != "master" or version in {"0.4.4", "0.4.5"}:
+    if branch != "master" or version in {"0.4.4", "0.4.5", "0.4.6"}:
         source = github("branches/" + urllib.parse.quote(branch, safe=""))
         if source.get("protected") is not True:
             raise ValueError("Release qualification branch must be protected")
     if args.coordinated:
-        jobs = github(f"actions/runs/{args.run_id}/jobs?per_page=100")["jobs"]
+        jobs = run_jobs(args.run_id)
         expected_jobs = {
             "distributions",
             "release-delivery",
@@ -135,8 +153,16 @@ def main() -> None:
                 )
             ),
         }
-        if version in {"0.4.4", "0.4.5"}:
+        if version in {"0.4.4", "0.4.5", "0.4.6"}:
             expected_jobs.update({"provenance", "release-assets"})
+        if version == "0.4.6":
+            expected_jobs.update(
+                {
+                    "release-target (ubuntu-latest, 3.15)",
+                    "release-target (macos-latest, 3.15)",
+                    "vscode",
+                }
+            )
         for name in expected_jobs:
             selected_jobs = [job for job in jobs if job["name"] == name]
             if len(selected_jobs) != 1 or selected_jobs[0]["conclusion"] != "success":
@@ -161,8 +187,8 @@ def main() -> None:
         selected = max(runs, key=lambda run: run["id"])
         validate_run(selected, sha, workflow, branch)
         verified_runs[workflow] = int(selected["id"])
-        if version == "0.4.5" and workflow == "security.yml":
-            jobs = github(f"actions/runs/{selected['id']}/jobs?per_page=100")["jobs"]
+        if version in {"0.4.5", "0.4.6"} and workflow == "security.yml":
+            jobs = run_jobs(selected["id"])
             dependencies = [job for job in jobs if job["name"] == "dependencies"]
             if len(dependencies) != 1 or dependencies[0]["conclusion"] != "success":
                 raise ValueError("Missing successful Node dependency security gate")

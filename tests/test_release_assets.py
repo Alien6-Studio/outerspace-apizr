@@ -137,13 +137,14 @@ def inputs(root, assets, version="0.4.0", *, development=False):
         "0.4.3",
         "0.4.4",
         "0.4.5",
+        "0.4.6",
     ],
 )
 def test_stage_preserves_bytes_and_uses_recorded_unique_names(
     assets, tmp_path, monkeypatch, version
 ):
     downloads = tmp_path / "downloads"
-    targets = inputs(downloads, assets, version)
+    targets = inputs(downloads, assets, version, development=version == "0.4.6")
     calls = []
     monkeypatch.setattr(
         assets.subprocess, "run", lambda command, **kw: calls.append(command)
@@ -160,7 +161,7 @@ def test_stage_preserves_bytes_and_uses_recorded_unique_names(
     ]
     manifest = json.loads((output / "release-assets.json").read_text())
     assert "human publication approval still required" in manifest["status"]
-    assert len(manifest["artifacts"]) == 24
+    assert len(manifest["artifacts"]) == (32 if version == "0.4.6" else 24)
     for target in targets:
         _, suffix = assets.inspect_target(
             target / "target-export.tar.gz", {"commit": "a" * 40}
