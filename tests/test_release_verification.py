@@ -30,6 +30,18 @@ def test_verified_source_run():
     release.validate_run(valid_run(), "abc", "ci.yml")
 
 
+@pytest.mark.parametrize("fault", ["truncated", "overfull"])
+def test_incomplete_job_pages_cannot_authorize_publication(monkeypatch, fault):
+    def github(path):
+        if "&page=" not in path:
+            return {"total_count": 2, "jobs": [{"name": "first"}]}
+        return {"jobs": [] if fault == "truncated" else [{}, {}]}
+
+    monkeypatch.setattr(release, "github", github)
+    with pytest.raises(ValueError, match="qualification job inventory"):
+        release.run_jobs(123)
+
+
 @pytest.mark.parametrize(
     "field,value",
     [
@@ -249,6 +261,7 @@ def test_publication_reuses_reviewed_artifacts_and_requires_verified_receipt():
         "0.4.3",
         "0.4.4",
         "0.4.5",
+        "0.4.6",
     ],
 )
 @pytest.mark.parametrize("resume", [False, True])
@@ -289,9 +302,22 @@ def test_coordinated_release_requires_every_exact_target(
         ]
         for python in versions
     ]
-    if release_version in {"0.4.4", "0.4.5"}:
+    if release_version in {"0.4.4", "0.4.5", "0.4.6"}:
         names.extend(["provenance", "release-assets"])
+    if release_version == "0.4.6":
+        names.extend(
+            [
+                "release-target (ubuntu-latest, 3.15)",
+                "release-target (macos-latest, 3.15)",
+                "vscode",
+            ]
+        )
     jobs = [{"name": name, "conclusion": "success"} for name in names]
+    if release_version == "0.4.6":
+        jobs = [
+            {"name": f"unrelated-{index}", "conclusion": "success"}
+            for index in range(101 - len(jobs))
+        ] + jobs
     if fault == "missing":
         jobs.pop()
     elif fault == "pending":
@@ -322,6 +348,11 @@ def test_coordinated_release_requires_every_exact_target(
                 ]
             }
         if "/jobs?" in path:
+            if release_version == "0.4.6":
+                return {
+                    "total_count": len(jobs),
+                    "jobs": jobs[100:] if "&page=2" in path else jobs[:100],
+                }
             return {"jobs": jobs}
         if path == "actions/runs/123":
             return valid_run(branch)
@@ -548,7 +579,8 @@ def test_closed_04_publications_fail_before_network(tmp_path, monkeypatch, versi
         "0.4.3rc1",
         "0.4.4rc1",
         "0.4.5rc1",
-        "0.4.6",
+        "0.4.6rc1",
+        "0.4.7",
         "0.5.0",
         "0.4.1.dev0",
         "0.4.1rc0",
@@ -768,7 +800,7 @@ def test_043_preflight_binds_all_gates_to_protected_release_line(
         "fork",
     ],
 )
-@pytest.mark.parametrize("version", ["0.4.4", "0.4.5"])
+@pytest.mark.parametrize("version", ["0.4.4", "0.4.5", "0.4.6"])
 def test_final_preflight_requires_exact_protected_master_source(
     tmp_path, monkeypatch, fault, version
 ):
@@ -817,7 +849,10 @@ def test_final_preflight_requires_exact_protected_master_source(
         run.update(id=10, path=".github/workflows/" + workflow)
         if (fault, workflow) in {
             ("security_branch", "security.yml"),
-            ("docs_branch", "mkdocs.yaml"),
+            (
+                "docs_branch",
+                "release-content.yml" if version == "0.4.6" else "mkdocs.yaml",
+            ),
         }:
             run["head_branch"] = "release/0.4.4"
         if fault == "newer_failed":
@@ -926,20 +961,30 @@ def test_current_tracked_tree_keeps_oss_product_scope():
         "node_audit_failed",
         "node_audit_skipped",
         "node_audit_duplicate",
+        "release-target (ubuntu-latest, 3.15)",
+        "release-target (macos-latest, 3.15)",
+        "vscode",
     ],
 )
-def test_045_release_requires_provenance_assets_and_actual_node_audit(
-    tmp_path, monkeypatch, fault
+@pytest.mark.parametrize("version", ["0.4.5", "0.4.6"])
+def test_final_release_requires_all_delivery_and_actual_node_audit_gates(
+    tmp_path, monkeypatch, fault, version
 ):
     import sys
 
+    if version == "0.4.5" and fault in {
+        "release-target (ubuntu-latest, 3.15)",
+        "release-target (macos-latest, 3.15)",
+        "vscode",
+    }:
+        pytest.skip("These gates were introduced in 0.4.6")
     for folder in [
         tmp_path,
         *(tmp_path / "plugins" / p for p in ("oci", "mcp", "attest")),
     ]:
         folder.mkdir(parents=True, exist_ok=True)
         (folder / "pyproject.toml").write_text(
-            '[project]\nname="outerspace-apizr"\nversion="0.4.5"\n'
+            f'[project]\nname="outerspace-apizr"\nversion="{version}"\n'
         )
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(
@@ -969,6 +1014,14 @@ def test_045_release_requires_provenance_assets_and_actual_node_audit(
                 ]
                 for py in versions
             ]
+            if version == "0.4.6":
+                names.extend(
+                    [
+                        "release-target (ubuntu-latest, 3.15)",
+                        "release-target (macos-latest, 3.15)",
+                        "vscode",
+                    ]
+                )
             return {
                 "jobs": [
                     {"name": name, "conclusion": "success"}
@@ -998,7 +1051,10 @@ def test_045_release_requires_provenance_assets_and_actual_node_audit(
         run = {**valid_run(), "id": 10, "path": ".github/workflows/" + workflow}
         if (fault, workflow) in {
             ("security_failed", "security.yml"),
-            ("docs_failed", "mkdocs.yaml"),
+            (
+                "docs_failed",
+                "release-content.yml" if version == "0.4.6" else "mkdocs.yaml",
+            ),
         }:
             run["conclusion"] = "failure"
         return {"workflow_runs": [run]}
