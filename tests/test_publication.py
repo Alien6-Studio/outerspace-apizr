@@ -270,8 +270,15 @@ def test_manifest_cannot_escape_site(site, name):
         checker.marker_at(site)
 
 
-def test_website_publication_is_independent_of_product_release(site):
-    marker = checker.publication_marker(site)
-    assert marker["documentation_status"] == "development"
-    assert marker["published_version"] != marker["documented_version"]
-    assert marker["source_branch"] == "gh-pages"
+@pytest.mark.parametrize(
+    "status,published", [("development", "0.4.5"), ("stable", "0.4.6")]
+)
+def test_website_publication_is_independent_of_product_release(site, status, published):
+    path = site / "build-info.json"
+    marker = json.loads(path.read_text())
+    marker.update(documentation_status=status, published_version=published)
+    path.write_text(json.dumps(marker))
+    checked = checker.publication_marker(site)
+    assert checked["documentation_status"] == status
+    assert checked["published_version"] == published
+    assert checked["source_branch"] == "gh-pages"
