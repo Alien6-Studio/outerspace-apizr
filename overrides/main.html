@@ -2,6 +2,15 @@
 
 {% block extrahead %}
   {{ super() }}
+  {# Material's session cache survives a release; refetch through its native widget. #}
+  <script>
+    try {
+      const facts = __md_get("__source", sessionStorage);
+      if (facts && facts.version !== {{ ("v" ~ config.extra.docs_build.published_version) | tojson }}) {
+        __md_set("__source", null, sessionStorage);
+      }
+    } catch (_) { /* Storage may be unavailable; Material can still fetch facts. */ }
+  </script>
   <link rel="describedby" type="application/json" href="{{ 'build-info.json' | url }}" />
   <meta name="apizr-source-commit" content="{{ config.extra.docs_build.source_commit }}" />
   <meta name="apizr-docs-status" content="{{ config.extra.docs_build.status }}" />
