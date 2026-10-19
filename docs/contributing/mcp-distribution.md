@@ -1,18 +1,15 @@
 ---
 title: MCP distribution qualification
-description: Offline evidence and deferred external verification for the official Apizr MCP plugin.
+description: Local qualification and public verification of the official Apizr MCP plugin.
 ---
 
 # MCP distribution qualification
 
-This is the **0.4.5 pre-release** contract for
+This guide covers distribution of the official **0.4.6** MCP plugin,
 `io.github.Alien6-Studio/outerspace-apizr`, supplied by `outerspace-apizr-mcp`.
-It covers the official plugin, not generated business servers. Tracking is
-[#279](https://github.com/Alien6-Studio/outerspace-apizr/issues/279): the originally
-requested number #270 was already occupied by an unrelated merged pull request.
-Phase A qualifies local metadata, configuration and distribution mechanisms.
-Phase B remains pending separate release authorization and actual external evidence.
-Neither a local check nor a prepared bundle means an index has accepted 0.4.5.
+Generated business servers have their own contracts. Local qualification and
+external directory acceptance are verified separately; a prepared bundle alone
+is not proof of publication.
 
 Users start at [Registry installation](../reference/apizr-mcp-server.md#registry-installation).
 All three explicit inputs remain required, with no defaults: a selected project,
@@ -113,7 +110,7 @@ remains a separate Phase B check.
 Build the deterministic local bundle without submission:
 
 ```sh
-uv run --locked python scripts/build_mcp_bundle.py --output /tmp/outerspace-apizr-0.4.5.mcpb
+uv run --locked python scripts/build_mcp_bundle.py --output /tmp/outerspace-apizr-0.4.6.mcpb
 ```
 
 This is a separate launcher wrapper, not a new Python publication or a substitute
@@ -146,7 +143,7 @@ unsupported response or malformed payload is never reported as absence or succes
 No polling loop is needed: maintainers may rerun this explicit read-only step as
 propagation progresses, retaining each timestamped report.
 
-- **PyPI:** require both core and MCP 0.4.5, the exact qualified wheel/sdist hashes,
+- **PyPI:** require both core and MCP 0.4.6, the exact qualified wheel/sdist hashes,
   non-yanked files and the MCP namespace marker. Package version alone is insufficient.
 - **Official Registry:** require the exact active name/version, repository, PyPI
   package, stdio transport and released configuration/metadata. Differences fail
@@ -156,7 +153,7 @@ propagation progresses, retaining each timestamped report.
   or package/version. Compare available fields, then review the public
   [schema page](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/schema)
   for additional exposed fields and retain dated evidence. API-only verification
-  cannot establish a complete 0.4.5 pass. Missing credentials stay unverified.
+  cannot establish a complete 0.4.6 pass. Missing credentials stay unverified.
   Reports using its data credit and link Glama. Any ownership claim or indexing
   action requires the separate Phase B authorization.
 - **Smithery:** use `SMITHERY_API_KEY` to read the actual qualified listing and
@@ -180,7 +177,7 @@ come only from GitHub Actions secrets in its read-only verification step. The CL
 does not consume these keys outside Actions. Keys are neither printed nor retained
 in artifacts. Ordinary CI has no directory keys, queries or propagation waits.
 The manual workflow retains incomplete reports and exits nonzero while evidence
-is missing; it is not executed during Phase A.
+is missing; it does not run during ordinary CI.
 
 ## Additional directories
 
@@ -210,6 +207,6 @@ The publisher's own online `validate` follows this preflight, then the separatel
 authorized publish step. Normal Phase A CI exercises guards with offline fixtures;
 it does not dispatch that workflow.
 
-Follow the [eventual release sequence](releases.md#mcp-distribution-045) only after
-separate authorization. Keep #279 open until the release and all required Phase B
-external evidence, including any manual Glama/Smithery follow-up, are complete.
+Follow the [release sequence](releases.md#dated-directory-verification-after-authorized-publication)
+with maintainer authorization. Retain dated public verification with the release;
+record missing credentials or delayed directory propagation explicitly.
