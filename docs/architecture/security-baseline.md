@@ -3,10 +3,9 @@
 ## 0.4.6 development journey qualification
 
 The current journey adds explicit SDK sessions, static provider selection and a
-thin VS Code client. The retained
-[trust-boundary qualification](https://github.com/Alien6-Studio/outerspace-apizr/tree/0.4.6/review/journey-trust-0.4.6)
-records installed-candidate paths, historical source identities, positive controls,
-network counts, executable documentation and the security mutation results.
+thin VS Code client. The qualification suite exercises the boundaries below
+against installed candidates. See the
+[verification guide](../contributing/verification.md) for the checks and artifacts.
 
 | Boundary | Enforced behavior and proof |
 | --- | --- |

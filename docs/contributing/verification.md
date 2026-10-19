@@ -347,8 +347,9 @@ provenance remain available in the
 [0.4.4 release](https://github.com/Alien6-Studio/outerspace-apizr/releases/tag/v0.4.4).
 Obsolete local candidate and final qualification workspaces are no longer kept in
 the development checkout. Current local evidence belongs in
-`release-evidence/0.4.6/`; versioned review records remain in `review/`. Independent
-sdist rebuilds are tests and never replace selected upload bytes.
+`release-evidence/0.4.6/`, which is ignored by Git. Hosted qualification reports
+belong to their CI run artifacts. Independent sdist rebuilds are tests and never
+replace selected upload bytes.
 
 ### Trunx integration qualification
 
