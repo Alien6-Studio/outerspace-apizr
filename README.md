@@ -1,5 +1,10 @@
 # OuterSpace Apizr
 
+This is the **0.4.6 development branch**. The examples below require this
+checkout; follow “Install this branch” below to try them. For the published
+package, follow “Install the published version” and the
+[release history](https://github.com/Alien6-Studio/outerspace-apizr/releases).
+
 Understand and compare data-science experiments. Connect selected Python
 functions to AI agents through MCP, or expose them as REST APIs.
 
@@ -17,17 +22,17 @@ for version-specific functionality, compatibility and verified publication.
 The journey is Python code → discover/select capabilities → expose as REST/MCP
 → optionally deliver as OCI.
 
-Apizr **0.4.6** brings experiment tracking, Jupyter capture and a VS Code extension
-to the core and three optional plugins.
+This branch prepares **Apizr 0.4.6** across the core and three optional plugins,
+with experiment tracking, Jupyter capture and a VS Code extension.
 Its notebook → Runs → prediction journey and structured REST/MCP inputs are
-recorded in the [release notes](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/releases/0.4.6.md).
+recorded in the [release notes](https://github.com/Alien6-Studio/outerspace-apizr/blob/a2458323332aec107f12de80e0f5b9a2d69153be/releases/0.4.6.md).
 
 **Apizr 0.4.6: Python 3.11–3.15** · GPL-3.0-or-later.
 
 Apizr **0.4.6** lets you record and compare
 experiments, then explicitly select a prediction function for REST or MCP.
 Know which data, code, parameters and environment produced your result.
-[Try the ordinary scikit-learn notebook](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.4.6/examples/data-science/fraud-detection).
+[Try the ordinary scikit-learn notebook](https://github.com/Alien6-Studio/outerspace-apizr/tree/a2458323332aec107f12de80e0f5b9a2d69153be/examples/data-science/fraud-detection).
 
 Apizr **0.4.6** also recognizes supported Python `TypedDict` model
 payloads as shared, nested JSON inputs for REST and MCP. See the
@@ -40,23 +45,42 @@ function with `view="detail", capability_id="python:model:predict"`. The
 explains dependency evidence, pagination and localized exposure refusals.
 
 [![PyPI version](https://img.shields.io/pypi/v/outerspace-apizr.svg?cacheSeconds=300)](https://pypi.org/project/outerspace-apizr/)
-[![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml)
-[![Security](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml)
+[![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=0.4.6)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml?query=branch%3A0.4.6)
+[![Security](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml/badge.svg?branch=0.4.6)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml?query=branch%3A0.4.6)
 [![Documentation](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/site.yml/badge.svg?branch=gh-pages)](https://apizr.outerspace.sh/)
-[![Python](https://img.shields.io/badge/python-3.11%E2%80%933.15-blue.svg)](https://pypi.org/project/outerspace-apizr/)
+[![Python](https://img.shields.io/badge/python-3.11%E2%80%933.15-blue.svg)](https://github.com/Alien6-Studio/outerspace-apizr/blob/a2458323332aec107f12de80e0f5b9a2d69153be/pyproject.toml)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://apizr.outerspace.sh/about/LICENSE/)
 [![OuterSpace Apizr MCP server – quality and maintenance score on Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/badges/score.svg)](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr)
 [![MCPLookup Trust Index: silver, 80 out of 100](https://mcplookup.com/badge/io.github.Alien6-Studio/outerspace-apizr?embed=a6d68610-7a46-4689-8add-e364a971ddbf)](https://mcplookup.com/badge/go/a6d68610-7a46-4689-8add-e364a971ddbf/io.github.Alien6-Studio/outerspace-apizr)
 
-## Install with uv
+## Install this branch
 
 With [uv](https://docs.astral.sh/uv/getting-started/installation/) and Python 3.11–3.15 installed:
 
 ```sh
-uv tool install outerspace-apizr==0.4.6
+git clone --branch 0.4.6 --single-branch https://github.com/Alien6-Studio/outerspace-apizr.git apizr-source
+cd apizr-source
+uv tool install .
+apizr --version
 ```
 
-![Install Apizr with uv](https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/54e6c13fe8f2bed62f4ac52a0024002df113df19/docs/assets/videos/uv-install.gif)
+The executable reports `outerspace-apizr 0.4.6` from the selected checkout.
+See [development and checks](https://apizr.outerspace.sh/getting-started/developer-guide/setup/)
+to contribute or run the test suite.
+
+## Install the published version
+
+For the released package, use uv with Python 3.11–3.14:
+
+```sh
+uv tool install --python 3.14 outerspace-apizr
+apizr --version
+```
+
+The PyPI badge above identifies the published version. Use the source installation
+above for the development examples in this README.
+
+![Install the published Apizr package with uv](https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr/7258759818b61b7f9ed0732fcdb4672894de8ff0/docs/assets/videos/uv-install.gif)
 
 Installation walkthrough recorded with 0.4.5.
 
@@ -200,7 +224,7 @@ Apizr also exports verified REST bundles to
 [Postman, Bruno and Insomnia collections](https://apizr.outerspace.sh/getting-started/user-guide/client-collections/),
 with deterministic files and safe local regeneration.
 
-The [0.4.6 migration guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/releases/migrate-0.4.6.md#removed-generation-pipeline)
+The [0.4.6 migration guide](https://github.com/Alien6-Studio/outerspace-apizr/blob/a2458323332aec107f12de80e0f5b9a2d69153be/releases/migrate-0.4.6.md#removed-generation-pipeline)
 replaces historical CLI, HTTP and pipeline-plugin flows. Notebook conversion
 remains available through `apizr.notebooks` and the `notebook` extra.
 

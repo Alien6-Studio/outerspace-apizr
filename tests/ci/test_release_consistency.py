@@ -54,7 +54,14 @@ def test_forge_defaults_pin_the_prepared_target_release():
 
 def test_install_surfaces_follow_prepared_and_recorded_release_identities():
     install = f"uv tool install outerspace-apizr=={TARGET}"
-    assert install in README
+    if STATE["status"] == "stable":
+        assert install in README
+        assert "development branch" not in README
+    else:
+        assert f"**{TARGET} development branch**" in README
+        assert f"git clone --branch {TARGET} --single-branch" in README
+        assert "uv tool install ." in README
+        assert install not in README
     tape = (ROOT / "tests/fixtures/qualified-guides/uv-install.tape").read_text()
     assert f"uv tool install outerspace-apizr=={STABLE}" in tape
     # Preserve the historical installation recording while preparing final text.
