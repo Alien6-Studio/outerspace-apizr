@@ -899,10 +899,6 @@ def test_current_tracked_tree_keeps_oss_product_scope():
         "tests/fixtures/qualified-guides/index.md",
         # Reader handoff chapters describe the existing external boundary only.
         "tests/fixtures/qualified-guides/examples/verified-delivery.md",
-        # Review records retain original anchors and their normative source links.
-        "review/site-refonte/feature-coverage.md",
-        "review/site-refonte/page-migration.csv",
-        "review/site-refonte/page-migration.json",
     }
     tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=root)
     matches = [

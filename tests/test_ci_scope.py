@@ -69,8 +69,6 @@ def pr_event(base, head):
         ("CONTRIBUTING.md", "false"),
         ("CODE_OF_CONDUCT.md", "false"),
         ("SECURITY.md", "false"),
-        ("review/architecture-guide.md", "false"),
-        ("review/nested/report with\na newline.md", "false"),
     ],
 )
 def test_product_prose_uses_only_relevant_checks(repo, name, examples):
@@ -109,8 +107,9 @@ def test_product_prose_uses_only_relevant_checks(repo, name, examples):
         ".github/workflows/mkdocs.yaml",
         ".github/actions/install-attest/action.yml",
         "tools/docs/hook.py",
-        "review/tool.py",
-        "review/unknown.json",
+        "notes/tool.py",
+        "notes/unknown.json",
+        "notes/report with\na newline.md",
         "unknown.txt",
     ],
 )
@@ -145,8 +144,8 @@ def test_moving_product_into_docs_still_requires_product_checks(repo):
 
 
 def test_deleted_prose_can_use_focused_checks(repo):
-    base = commit(repo, "review/obsolete.md")
-    git(repo, "rm", "-q", "review/obsolete.md")
+    base = commit(repo, "CONTRIBUTING.md")
+    git(repo, "rm", "-q", "CONTRIBUTING.md")
     git(repo, "commit", "-qm", "delete")
     assert (
         scope.classify("push", event(base, git(repo, "rev-parse", "HEAD")))["product"]
@@ -277,8 +276,8 @@ def test_site_paths_and_product_example_tools_cannot_use_the_prose_shortcut(repo
         "scripts/docs_build.py",
         "scripts/check_docs_html.py",
         "tests/test_site_refonte.py",
-        "review/site-refonte/page-migration.json",
-        "review/architecture-guide.md",
+        "tests/fixtures/page-migration.json",
+        "architecture/guide.md",
     ):
         commit(repo, name)
     head = git(repo, "rev-parse", "HEAD")

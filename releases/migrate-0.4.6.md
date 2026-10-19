@@ -19,11 +19,10 @@ both record versions. Do not edit stored JSON to change a schema number or diges
 Corrupted, mismatched or incomplete records are refused. Back up the complete
 store before any manual filesystem maintenance.
 
-The [retained compatibility proof](https://github.com/Alien6-Studio/outerspace-apizr/tree/v0.4.6/review/journey-trust-0.4.6)
-uses real v1 Runs captured by 0.4.5 and canonical show/diff reference outputs
-produced by the exact `v0.4.5` tagged source. It checks
+Compatibility tests use real v1 Runs captured by 0.4.5 and canonical show/diff reference outputs
+produced by the exact `v0.4.5` tagged source. They check
 Plan/Run admission, canonical show/export and diff, without producer invocation.
-It does not assert that an older engine can read new v2 records.
+An older engine is not guaranteed to read new v2 records.
 
 ## Removed generation pipeline
 

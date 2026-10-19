@@ -1,6 +1,7 @@
 """Canonical installed imports, retired-path absence and one-way boundaries."""
 
 import importlib
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -8,16 +9,14 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-REMOVED = __import__("json").loads(
-    (ROOT / "review/import-removal-0.4.6/inventory.json").read_text()
-)["removed"]
+REMOVED = json.loads((ROOT / "tests/fixtures/removed-imports.json").read_text())
 
 
-@pytest.mark.parametrize("entry", REMOVED, ids=lambda entry: entry["old"])
-def test_canonical_targets_work_and_retired_paths_are_absent(entry):
-    assert importlib.import_module(entry["target"]).__name__ == entry["target"]
+@pytest.mark.parametrize("old,target", REMOVED.items(), ids=REMOVED)
+def test_canonical_targets_work_and_retired_paths_are_absent(old, target):
+    assert importlib.import_module(target).__name__ == target
     with pytest.raises(ModuleNotFoundError):
-        importlib.import_module(entry["old"])
+        importlib.import_module(old)
 
 
 def test_namespace_imports_remain_lazy_and_cli_module_entrypoint_works():

@@ -4,7 +4,7 @@ import json
 import os
 import re
 import subprocess
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 PROSE_FILES = {
     "README.md",
@@ -15,10 +15,7 @@ PROSE_FILES = {
 
 
 def prose_path(name: str) -> bool:
-    path = PurePosixPath(name)
-    if str(path) != name or path.is_absolute() or ".." in path.parts:
-        return False
-    return name in PROSE_FILES or (name.startswith("review/") and path.suffix == ".md")
+    return name in PROSE_FILES
 
 
 def git(*args: str) -> bytes:

@@ -210,13 +210,14 @@ def main():
             command("--help")
             command("inspect", source / "sample.py", "--ir")
             if extra == "base":
-                retired = json.loads(
-                    (
-                        Path(__file__).resolve().parents[3]
-                        / "review/import-removal-0.4.6/inventory.json"
-                    ).read_text()
-                )["removed"]
-                pairs = [(entry["old"], entry["target"]) for entry in retired]
+                pairs = list(
+                    json.loads(
+                        (
+                            Path(__file__).resolve().parents[3]
+                            / "tests/fixtures/removed-imports.json"
+                        ).read_text()
+                    ).items()
+                )
                 probe(
                     "import importlib\n"
                     f"for old, target in {pairs!r}:\n"

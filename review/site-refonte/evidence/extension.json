@@ -1,7 +1,0 @@
-{
-  "version": "0.4.5",
-  "python": "3.11.14",
-  "extension_installed_separately": true,
-  "describe_message": "demo extension reached",
-  "unknown_operation_error": "plugin_failed"
-}

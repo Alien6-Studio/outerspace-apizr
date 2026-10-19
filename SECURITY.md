@@ -68,8 +68,7 @@ own Electron services.
 
 Original 0.4.5 Plan/Run bytes, canonical show/export and comparison remain
 readable without a store rewrite. New v2 records are not a promise of backward
-reading by 0.4.5. See the [migration guide](releases/migrate-0.4.6.md) and
-[retained trust-boundary evidence](review/journey-trust-0.4.6/README.md).
+reading by 0.4.5. See the [migration guide](releases/migrate-0.4.6.md).
 
 ## Automated checks
 

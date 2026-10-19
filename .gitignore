@@ -164,6 +164,7 @@ cython_debug/
 node_modules/
 
 # CI verification evidence
+/review/
 coverage.json
 tests.xml
 oci-tests.xml
