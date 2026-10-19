@@ -19,33 +19,21 @@ between the two runs.
 
 ## Prepare your environment
 
-Already using pandas and scikit-learn? Install Apizr's notebook support
-into that same Python environment. Apizr does not provide a science extra or
-install scientific packages as core dependencies.
+Use Python 3.11–3.15 on macOS or Linux. Download and unzip the
+[fraud detection example](../downloads/fraud-detection.zip), then open a terminal
+in its `fraud-detection/` directory.
 
-For this exact reference example, use Python 3.11–3.15 on macOS or Linux and a
-fresh virtual environment. Copy the example outside the Apizr checkout. Obtain
-the verified packages and matching target export from the
-[0.4.6 release assets](https://github.com/Alien6-Studio/outerspace-apizr/releases/tag/v0.4.6).
-Extract them as `candidate/` and `target/` beside the example, then open a shell
-in `fraud-detection/`. The target must match your Python and platform.
+Create an environment and install Apizr with the notebook's dependencies:
 
 ```sh
 python3 -m venv ../science
 . ../science/bin/activate
-export CANDIDATE="$(cd ../candidate && pwd)"
-export TARGET="$(cd ../target && pwd)"
-export SCIENCE_WHEELHOUSE="$PWD/../science-wheels"
-python -m pip download --only-binary=:all: -r requirements.txt -d "$SCIENCE_WHEELHOUSE"
-python -m pip install --no-index \
-  --find-links "$TARGET/base" --find-links "$TARGET/extras" \
-  "$CANDIDATE/dist/outerspace_apizr-0.4.6-py3-none-any.whl[notebook,http,mcp]"
-python -m pip install --no-index --find-links "$SCIENCE_WHEELHOUSE" -r requirements.txt
+python -m pip install 'outerspace-apizr[notebook,http,mcp]==0.4.6' -r requirements.txt
 cp data/transactions-a.csv data/transactions.csv
 ```
 
-If you already have a scientific environment, use its interpreter for the Run
-steps below. An isolated CLI tool environment does not inherit that environment.
+Keep this terminal open for the following steps. If you already have a scientific
+environment, install Apizr there instead.
 
 ## 1. Inspect without running
 
@@ -68,31 +56,6 @@ Parameters — CAPTURED
   max_depth = 5 (cell 1, line 8)
   Static candidates, not runtime parameters.
 ```
-
-## Prepare to execute the notebook
-
-The first report is useful before scientific installation. To execute this exact
-example, prepare its pinned workload dependencies and retain compatible public
-wheels for the later service. These are pip/venv preparation operations; Apizr
-inspection never downloads packages.
-
-```sh
-export TARGET="$PWD/../apizr-runtime"
-export SCIENCE_WHEELHOUSE="$PWD/../science-wheels"
-mkdir -p "$TARGET/base" "$TARGET/extras"
-python -m pip download --index-url https://pypi.org/simple --only-binary=:all: \
-  'outerspace-apizr[notebook,http,mcp]==0.4.5' -d "$TARGET/base"
-python -m pip download --index-url https://pypi.org/simple --only-binary=:all: \
-  -r requirements.txt -d "$SCIENCE_WHEELHOUSE"
-python -m pip install --no-index --find-links "$TARGET/base" \
-  'outerspace-apizr[notebook,http,mcp]==0.4.5'
-python -m pip install --no-index --find-links "$SCIENCE_WHEELHOUSE" -r requirements.txt
-export BUNDLES="$PWD/../prediction-bundles"
-```
-
-The generated prediction service later uses a separate environment and the
-retained wheels. See [notebooks and dependencies](../user-guide/notebooks.md)
-for the four environment boundaries.
 
 ## 2. Record Run A
 
@@ -153,16 +116,33 @@ The recorded data identity and observed metrics changed. This comparison does
 not establish that one caused the other. The source, parameters, seed and
 environment specification should agree; unknown observations remain unknown.
 
+## Prepare to share the prediction
+
+The first six steps let you review and compare the notebook. Continue below
+when you want another application to call its prediction function.
+
+Download the dependency wheels once. The generated service will use these same
+versions in a separate environment:
+
+```sh
+export TARGET="$PWD/../apizr-runtime"
+export SCIENCE_WHEELHOUSE="$PWD/../science-wheels"
+export BUNDLES="$PWD/../prediction-bundles"
+mkdir -p "$TARGET/base" "$TARGET/extras"
+python -m pip download --only-binary=:all: \
+  'outerspace-apizr[notebook,http,mcp]==0.4.6' -d "$TARGET/base"
+python -m pip download --only-binary=:all: \
+  -r requirements.txt -d "$SCIENCE_WHEELHOUSE"
+```
+
 ## 7. Select the prediction from Run B
 
 Explicitly choose the Run, capability, model artifact and serving dependencies.
 `predict` needs joblib and scikit-learn; pandas is used only during training.
 
-The wheelhouse supplies evidence that the selected, versioned distributions
-provide the external imports. Apizr inspects wheel members without importing
-them. `--allow-conditional` acknowledges that external code remains opaque:
-wheel membership does not prove safe initialization or successful invocation.
-Missing, ambiguous or unsupported required dependencies still block exposure.
+Apizr checks the downloaded packages to find the imports needed by `predict`.
+Use `--allow-conditional` only after reviewing these dependencies: Apizr can
+identify their files, but cannot establish whether third-party code is safe.
 
 Authorize reading this local example with a narrowly scoped operator file:
 
@@ -300,3 +280,5 @@ interface; organizational promotion and deployment remain separate decisions.
 Continue with [experiment evidence](user-guide/experiment-runs.md),
 [comparison](user-guide/experiment-comparison.md) or
 [serving integrity](user-guide/experiment-exposure.md).
+
+<span id="prepare-to-execute-the-notebook"></span>

@@ -5,101 +5,8 @@ description: Generate your first REST API or MCP server from Python, run it loca
 
 # Make your first MCP and REST calls
 
-For Apizr 0.4.6 sessions, decorated calls and Jupyter, use the
-[SDK quickstart](tracking.md).
-
-Working with a training notebook? Follow the [Data Scientist quickstart](data-science.md)
-for the 0.4.6 release: inspect, record two Runs, compare and serve a prediction.
-
-
 <span id="inspect-a-training-script-first-045"></span>
-
-## Inspect a training script first
-
-With Apizr 0.4.6 installed, start with experiment
-evidence before building a service. This example requires only Apizr's core:
-
-<!-- experiment-inspection:quickstart -->
-```sh
-cat > example.py <<'PY'
-from sklearn.metrics import roc_auc_score
-
-learning_rate = 0.05
-roc_auc_score(labels, predictions)
-PY
-apizr experiment inspect example.py
-```
-
-Parameters shows a static candidate; Metrics shows a recognized call with its value
-unobserved. Undefined names and an absent sklearn installation are fine because
-inspection does not execute the file. See the [experiment guide](user-guide/experiment-inspection.md)
-for data fingerprints, notebooks and all eight sections.
-
 <span id="run-a-trusted-experiment-045"></span>
-
-## Run a trusted experiment
-
-`inspect` never executes your code. **`run` executes trusted code in a fresh
-process with host filesystem, network and subprocess access. It is not a security
-sandbox.** Use a complete workload with its dependencies already installed in the
-same environment as Apizr. This separate example needs only the standard library:
-
-<!-- experiment-run:quickstart -->
-```sh
-cat > local_run.py <<'PY'
-from pathlib import Path
-mean = sum([2, 4, 6]) / 3
-Path("model.json").write_text('{"mean": 4.0}\n')
-PY
-apizr experiment inspect local_run.py
-RUN=$(apizr experiment run local_run.py --metric mean=mean --output model=model.json --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
-apizr experiment list
-apizr experiment show "$RUN"
-```
-
-The Run records the actual `mean` binding and the output's byte identity. The
-local store contains evidence JSON, not a copy of the model. See
-[running experiments](user-guide/experiment-runs.md) for notebooks, inputs,
-timeouts, failed Runs and the difference between intent and observation.
-
-
-### Inspect → Run → Compare
-
-“My ROC AUC changed. What else changed between these runs?” This core-only
-example records two trusted local runs, then compares their saved evidence.
-
-<!-- experiment-diff:quickstart -->
-```sh
-cat > compare_train.py <<'PYTHON'
-max_depth = 8
-score = 0.91
-PYTHON
-apizr experiment inspect compare_train.py
-A=$(apizr experiment run compare_train.py --metric roc_auc=score --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
-cat > compare_train.py <<'PYTHON'
-max_depth = 12
-score = 0.92
-PYTHON
-B=$(apizr experiment run compare_train.py --metric roc_auc=score --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["run_digest"])')
-apizr experiment list
-apizr experiment diff "$A" "$B"
-rm compare_train.py
-apizr experiment diff "$A" "$B" --format json > comparison.json
-```
-
-`A → B` means evidence added in B or removed from A; numeric deltas are `B - A`.
-`show` reads one Run; `diff` compares two Runs from the same validated local store.
-Comparison still works after deleting the source. Unknown observations remain unknown.
-Apizr identifies recorded differences; it does not prove which one caused the metric change.
-Read the [comparison guide](user-guide/experiment-comparison.md) for data, environment and output evidence.
-
-After reviewing a successful Run, use `experiment expose RUN --capability ID
---interface rest|mcp --output-dir DIR` with explicit source authority. Select
-resources with `--artifact NAME` and dependencies with `--dependency DISTRIBUTION`;
-the recorded bytes and versions bind the resulting bundle. Repository Readiness
-still decides eligibility. See [Experiment → serving](user-guide/experiment-exposure.md).
-
-## Make a service from functions
 
 Turn two Python functions into a local service. You will calculate a price
 (`12.5 × 2 = 25.0`) and check stock (`3 ≤ 10` gives `true`).
@@ -107,7 +14,7 @@ Prepare the example once, then choose **[REST](#use-rest-instead)** or
 **[MCP](#use-mcp)**. No plugin, Docker or AI account is needed for REST or the
 Python MCP client.
 
-## Prepare an isolated workspace
+## 1. Prepare your workspace
 
 [Install Apizr](install.md) with the pip instructions and keep `core/` activated.
 You need Python 3.11–3.15, `curl`, a POSIX shell on macOS/Linux and internet access
@@ -124,7 +31,7 @@ python3 -m venv runtime
 `apizr --version` should report `outerspace-apizr 0.4.6`. The new `runtime/`
 environment will hold the generated server's dependencies separately from Apizr.
 
-## Get the example and choose its public functions
+## 2. Get the example
 
 Download the three files from the
 [recorded shop example](https://github.com/Alien6-Studio/outerspace-apizr/tree/37259eaf0a231d747f1ae0eb2f7ce94b2a2b306f/examples/repository-shop):
@@ -185,7 +92,7 @@ operator grant for its own root.
 
 </details>
 
-## Choose your interface
+## 3. Choose your interface
 
 [Use REST](#use-rest-instead){ .md-button .md-button--primary }
 [Use MCP](#use-mcp){ .md-button }
@@ -357,3 +264,13 @@ or the [exposure guide](user-guide/exposure.md) for repository configuration.
 For Apizr 0.4.6, your selected function can use statically resolvable
 [private helpers in other modules](user-guide/exposure.md#use-private-helpers-from-the-same-repository)
 without exposing those helpers.
+
+Working with experiments instead? Start with [the notebook guide](data-science.md) or [Python and Jupyter tracking](tracking.md).
+
+<span id="choose-your-interface"></span>
+<span id="get-the-example-and-choose-its-public-functions"></span>
+<span id="inspect-a-training-script-first"></span>
+<span id="inspect-run-compare"></span>
+<span id="make-a-service-from-functions"></span>
+<span id="prepare-an-isolated-workspace"></span>
+<span id="run-a-trusted-experiment"></span>
