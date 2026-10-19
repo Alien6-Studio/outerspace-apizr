@@ -15,6 +15,7 @@ from apizr_oci.snapshot import read
 from apizr.contracts.delivery import MANIFEST_FILE, DeliveryManifest, identity
 from apizr.plugins.local.store import installation_lock
 from apizr.repository.serialization import canonical_bytes
+from apizr.workspace.verification import trust_files, trust_identity
 
 from .model import (
     AttestError,
@@ -88,33 +89,23 @@ def tool(request: Common, work: Path, deadline: float) -> Path:
     return executable
 
 
-def trust_snapshot(source: Path, target: Path, proof: Path | None = None) -> None:
+def trust_snapshot(
+    source: Path,
+    target: Path,
+    proof: Path | None = None,
+    expected_sha256: str | None = None,
+) -> None:
     if proof is not None and source.resolve().is_relative_to(proof.resolve()):
         raise AttestError("independent_trust_required")
-    # Only public keys, the native policy and pinned TSA certificates. No fallback
-    # to workspace keys or a receipt-supplied store. Never modify the source.
+    try:
+        files = trust_files(source)
+    except (OSError, ValueError):
+        raise AttestError("invalid_trust_store") from None
+    if expected_sha256 is not None and trust_identity(files) != expected_sha256:
+        raise AttestError("trust_store_mismatch")
     target.mkdir(mode=0o700)
-    total = 0
-    count = 0
-    for parent, suffix in ((source, ""), (source / "tsa", "tsa/")):
-        if suffix and not parent.exists():
-            continue
-        if parent.is_symlink() or not parent.is_dir():
-            raise AttestError("invalid_trust_store")
-        for path in parent.iterdir():
-            if not suffix and path.name == "tsa":
-                continue
-            count += 1
-            if count > 128 or not (
-                path.suffix == (".crt" if suffix else ".pub")
-                or (not suffix and path.name == "trust.toml")
-            ):
-                raise AttestError("invalid_trust_store")
-            raw = read(source, suffix + path.name, min(MAX_FILE, 4 * MAX_FILE - total))
-            total += len(raw)
-            if b"PRIVATE KEY" in raw:
-                raise AttestError("invalid_trust_store")
-            write(target / suffix / path.name, raw)
+    for name, raw in files.items():
+        write(target / name, raw)
 
 
 def results(build_raw: bytes, push_raw: bytes, reference: str):
@@ -289,7 +280,7 @@ def execute_verify(request: VerifyRequest, work: Path) -> DeliveryResult:
     proof = work / "proof"
     snapshot(source, proof)
     trust = work / "trust"
-    trust_snapshot(Path(request.trust_store), trust, source)
+    trust_snapshot(Path(request.trust_store), trust, source, request.trust_store_sha256)
     executable = tool(request, work, deadline)
     return verified(request, executable, proof, trust, deadline)
 
@@ -299,9 +290,9 @@ def execute_attest(request: AttestRequest, work: Path) -> DeliveryResult:
     output = Path(request.output_dir)
     if os.path.lexists(output):
         raise AttestError("proof_already_exists")
-    executable = tool(request, work, deadline)
     trust = work / "trust"
-    trust_snapshot(Path(request.trust_store), trust, output)
+    trust_snapshot(Path(request.trust_store), trust, output, request.trust_store_sha256)
+    executable = tool(request, work, deadline)
     build, pushed = results(
         file_bytes(request.build_result),
         file_bytes(request.push_result),

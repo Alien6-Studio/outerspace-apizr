@@ -1,8 +1,11 @@
 # Workload dependencies, separate from Apizr and its optional transport packages.
-# One exact binary-wheel set for Python 3.11–3.14.
+# Exact binary-wheel sets; preserve the established 3.11–3.14 numerical stack.
+# Python 3.15 needs the newer NumPy/SciPy wheel series.
 pandas==3.0.6
-numpy==2.4.6
-scipy==1.17.1
+numpy==2.4.6; python_version < "3.15"
+numpy==2.5.4; python_version >= "3.15"
+scipy==1.17.1; python_version < "3.15"
+scipy==1.18.1; python_version >= "3.15"
 scikit-learn==1.9.1
 joblib==1.6.0
 cloudpickle==3.1.2

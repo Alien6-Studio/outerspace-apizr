@@ -1,19 +1,44 @@
 name: MCP server plugin
 
 on:
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   workflow_dispatch:
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: MCP server plugin-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
+
+  preparation-qualification:
+    needs: scope
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
+    uses: ./.github/workflows/plugin-preparation-qualification.yml
 
   stdio:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -24,27 +49,28 @@ jobs:
           - {os: ubuntu-latest, python: '3.12'}
           - {os: ubuntu-latest, python: '3.13'}
           - {os: ubuntu-latest, python: '3.14'}
-          - {os: macos-latest, python: '3.11'}
+          - {os: ubuntu-latest, python: '3.15'}
           - {os: macos-latest, python: '3.14'}
+          - {os: macos-latest, python: '3.15'}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: ${{ matrix.python }}
       - run: uv sync --locked
       - name: Separate plugin branch coverage
         run: uv run --locked pytest tests/test_mcp_cli.py tests/test_mcp_session.py tests/mcp_plugin --cov=apizr_mcp --cov-report=term-missing --cov-report=json:mcp-coverage.json --junitxml=mcp-tests.xml
-      - name: Installed core, plugin and official stdio client
-        run: uv run --locked python scripts/smoke_mcp_server.py --output "$RUNNER_TEMP/mcp-proof"
+      - name: Installed core/plugin, official stdio client and experiment-history CLI parity
+        run: uv run --locked python -m scripts.qualification.interfaces.smoke_mcp_server --output "$RUNNER_TEMP/mcp-proof"
       - name: Catalog profiles and separate closures without network access
-        run: uv run --locked python scripts/run_catalog_offline_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/catalog-offline.log" 2>&1
+        run: uv run --locked python -m scripts.qualification.extensions.run_catalog_offline_proof "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/catalog-offline.log" 2>&1
       - name: Installed protocol proof without network access
         if: runner.os == 'Linux'
         run: |
           sudo unshare --net --setgid "$(id -g)" --setuid "$(id -u)" \
             env PYTHONDONTWRITEBYTECODE=1 "$RUNNER_TEMP/mcp-proof/client/bin/python" \
-            scripts/mcp_client_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/network-isolated.log" 2>&1
+            scripts/qualification/interfaces/mcp_client_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/network-isolated.log" 2>&1
           sudo unshare --net --setgid "$(id -g)" --setuid "$(id -u)" \
             env PYTHONDONTWRITEBYTECODE=1 "$RUNNER_TEMP/mcp-proof/client/bin/python" \
             scripts/mcp_schema_proof.py "$RUNNER_TEMP/mcp-proof" > "$RUNNER_TEMP/mcp-proof/schema-network-isolated.log" 2>&1
@@ -53,11 +79,11 @@ jobs:
           "$RUNNER_TEMP/mcp-proof/client/bin/python" -B
           scripts/mcp_uninstall_proof.py "$RUNNER_TEMP/mcp-proof"
           > "$RUNNER_TEMP/mcp-proof/uninstall.log" 2>&1
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: mcp-stdio-${{ matrix.os }}-python-${{ matrix.python }}
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: |
             mcp-tests.xml
@@ -74,22 +100,22 @@ jobs:
 
   preparation-intel:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 15
     runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: '3.14'
       - name: Installed preparation refuses the locked wheel unavailable on Intel
-        run: uv run --no-project python scripts/plugin_preparation_intel_proof.py --output "$RUNNER_TEMP/preparation-intel"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        run: uv run --no-project --python 3.14 python -m scripts.qualification.extensions.plugin_preparation_intel_proof --output "$RUNNER_TEMP/preparation-intel"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: preparation-macos-intel-python-3.14
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: |
             ${{ runner.temp }}/preparation-intel/*.json
@@ -98,7 +124,7 @@ jobs:
 
   generated-recovery:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -108,17 +134,17 @@ jobs:
         python: ['3.11']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: ${{ matrix.python }}
       - run: uv sync --locked
       - name: Fixed generated-business-MCP recovery series (stdio and HTTP)
-        run: uv run --locked python scripts/repeat_mcp_transports.py --output "$RUNNER_TEMP/mcp-recovery"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        run: uv run --locked python -m scripts.qualification.interfaces.repeat_mcp_transports --output "$RUNNER_TEMP/mcp-recovery"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: mcp-recovery-${{ matrix.os }}-python-${{ matrix.python }}
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: ${{ runner.temp }}/mcp-recovery

@@ -68,9 +68,6 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-
 # PyBuilder
 .pybuilder/
 target/
@@ -142,9 +139,6 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
-/site
-
 # mypy
 .mypy_cache/
 .dmypy.json
@@ -167,8 +161,10 @@ cython_debug/
 #.idea/
 
 .ruff_cache/
+node_modules/
 
 # CI verification evidence
+/review/
 coverage.json
 tests.xml
 oci-tests.xml

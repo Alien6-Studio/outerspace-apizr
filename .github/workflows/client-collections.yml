@@ -1,21 +1,39 @@
 name: Client collections
 
 on:
-  push:
-    branches: [feature/client-collections]
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   workflow_dispatch:
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: Client collections-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   native-formats:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -24,15 +42,14 @@ jobs:
         include:
           - {os: ubuntu-latest, python: '3.11'}
           - {os: ubuntu-latest, python: '3.14'}
-          - {os: macos-latest, python: '3.11'}
           - {os: macos-latest, python: '3.14'}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: ${{ matrix.python }}
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22.22.2'
       - run: uv sync --locked
@@ -47,19 +64,19 @@ jobs:
       - name: Reviewed vendor dependency compatibility
         run: node scripts/client_collection_tools/check-compatibility.cjs > client-tools-compatibility.json
       - name: Checksum-pinned Inso CLI
-        run: uv run --locked python scripts/prepare_client_tools.py "$RUNNER_TEMP/inso"
+        run: uv run --locked python -m scripts.qualification.interfaces.prepare_client_tools "$RUNNER_TEMP/inso"
       - name: Installed wheel, official native validation and real source-free execution
         run: >-
-          uv run --locked python scripts/client_collections_proof.py
+          uv run --locked python -m scripts.qualification.interfaces.client_collections_proof
           --output "$RUNNER_TEMP/client-collections-proof"
           --tools scripts/client_collection_tools
           --postman scripts/client_collection_tools/node_modules/.bin/postman
           --inso "$RUNNER_TEMP/inso/inso"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: client-collections-${{ matrix.os }}-${{ matrix.python }}
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
           if-no-files-found: error
           path: |
             clients-tests.xml

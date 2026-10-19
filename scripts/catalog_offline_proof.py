@@ -1,115 +1,22 @@
-"""Installed catalog inspection/export and separate closures under OS network denial."""
+"""Compatibility CLI for scripts.qualification.extensions.catalog_offline_proof."""
 
-import json
-import socket
-import subprocess
+import runpy
 import sys
+from importlib import import_module
 from pathlib import Path
 
-from apizr.cli.commands.plugins import main
-from apizr.plugins.catalog import load_catalog, resolve_profile
-from apizr.plugins.local import list_extensions
-from apizr.plugins.lock import check_lock
-from apizr.plugins.sync import sync_plugins
-
-
-def snapshot(root):
-    import hashlib
-
-    return {
-        str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
-        for p in root.rglob("*")
-        if p.is_file()
-    }
-
-
-def main_script():
-    root = Path(sys.argv[1])
-    core = root / "core"
-    before = snapshot(core)
-    active = (
-        Path(json.loads((root / "installed.json").read_text())["store"])
-        / "activations.json"
-    ).read_bytes()
-    house = root / "wheels"
-    path = root / "catalog/catalogue.json"
-    catalog = load_catalog(path)
-    store = root / "catalog-offline-store"
-    plans = {}
-
-    def forbidden(*args, **kwargs):
-        raise AssertionError("catalog executed a process or accessed the network")
-
-    popen, network = subprocess.Popen, socket.socket
-    try:
-        subprocess.Popen = forbidden
-        socket.socket = forbidden
-        assert main(["catalog", "list", "--catalog", str(path), "--json"]) == 0
-        for entry in catalog.entries:
-            assert (
-                main(
-                    [
-                        "catalog",
-                        "show",
-                        entry.wheel.name,
-                        "--version",
-                        entry.wheel.version,
-                        "--catalog",
-                        str(path),
-                        "--json",
-                    ]
-                )
-                == 0
-            )
-        for profile in catalog.profiles:
-            plan = root / ("offline-" + profile.name)
-            resolve_profile(catalog, profile.name, house, plan)
-            assert check_lock(
-                plan / "apizr.toml", plan / "apizr.plugins.lock.json", house
-            ).valid
-            plans[profile.name] = plan
-    finally:
-        subprocess.Popen, socket.socket = popen, network
-    assert not store.exists() and snapshot(core) == before
-    for plan in plans.values():
-        result = sync_plugins(
-            plan / "apizr.toml",
-            plan / "apizr.plugins.lock.json",
-            house,
-            directory=store,
-        )
-        assert result.exit_code == 0, result
-    records = list_extensions(directory=store).installations
-    assert len(records) == 3 and len({r.environment_id for r in records}) == 3
-    assert not list_extensions(directory=store, active=True).installations
-    closures = {r.name: [d.name for d in r.dependencies] for r in records}
-    assert "outerspace-apizr-oci" in closures["outerspace-apizr-attest"]
-    assert (
-        "mcp" in closures["outerspace-apizr-mcp"]
-        and "mcp" not in closures["outerspace-apizr-oci"]
-    )
-    assert (
-        snapshot(core) == before
-        and (
-            Path(json.loads((root / "installed.json").read_text())["store"])
-            / "activations.json"
-        ).read_bytes()
-        == active
-    )
-    # This file is evidence only. Installation does not qualify business operations;
-    # the existing real MCP and Docker/Attest proofs exercise those separately.
-    (root / "catalog-offline.json").write_text(
-        json.dumps(
-            {
-                "success": True,
-                "closures": closures,
-                "core_unchanged": True,
-                "activations_unchanged": True,
-                "network_denied": True,
-            }
-        )
-    )
-
-
 if __name__ == "__main__":
-    main_script()
+    runpy.run_path(
+        str(
+            Path(__file__).resolve().parents[1]
+            / "scripts/qualification/extensions/catalog_offline_proof.py"
+        ),
+        run_name="__main__",
+    )
+else:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    _implementation = import_module(
+        "scripts.qualification.extensions.catalog_offline_proof"
+    )
+    sys.modules[__name__] = _implementation
+    globals().update(vars(_implementation))

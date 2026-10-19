@@ -1,8 +1,8 @@
 [project]
 name = "outerspace-apizr"
-version = "0.4.5"
+version = "0.4.6"
 description = "Compile Python codebases into discoverable, typed and governable capabilities."
-requires-python = ">=3.11,<3.15"
+requires-python = ">=3.11,<3.16"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
@@ -13,6 +13,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Topic :: Software Development :: Code Generators",
 ]
 authors = [
@@ -22,6 +23,7 @@ authors = [
 dependencies = ["pydantic>=2.12,<3"]
 
 [project.optional-dependencies]
+# Ordered native wheel selection uses packaging 26.3's native-Linux-first tags.
 preparation = ["packaging>=26.3,<27"]
 clients = ["PyYAML>=6.0.2,<7"]
 notebook = [
@@ -32,26 +34,19 @@ notebook = [
 http = [
   "fastapi>=0.141,<1",
   "starlette>=1.3.1",
-  "uvicorn[standard]>=0.30,<1",
+  "uvicorn>=0.30,<1",
+  "httptools>=0.9,<1",
+  "uvloop>=0.23,<1; sys_platform != 'win32' and sys_platform != 'cygwin' and platform_python_implementation == 'CPython'",
+  "websockets>=17,<18",
   "python-multipart>=0.0.31,<1",
 ]
 mcp = [
   "mcp>=2.2,<3",
   "starlette>=1.3.1",
-  "uvicorn[standard]>=0.30,<1",
-]
-legacy = [
-  "nbconvert>=7.17.1,<8",
-  "ipython>=9,<10",
-  "black>=26.3.1,<27",
-  "fastapi>=0.141,<1",
-  "starlette>=1.3.1",
-  "uvicorn[standard]>=0.30,<1",
-  "jinja2>=3.1.6,<4",
-  "python-multipart>=0.0.31,<1",
-  "PyYAML>=6.0.2,<7",
-  "questionary>=2.0.1,<3",
-  "packaging>=24,<27",
+  "uvicorn>=0.30,<1",
+  "httptools>=0.9,<1",
+  "uvloop>=0.23,<1; sys_platform != 'win32' and sys_platform != 'cygwin' and platform_python_implementation == 'CPython'",
+  "websockets>=17,<18",
 ]
 
 [project.scripts]
@@ -61,6 +56,7 @@ apizr = "apizr.cli:main"
 Repository = "https://github.com/Alien6-Studio/outerspace-apizr"
 Documentation = "https://apizr.outerspace.sh/"
 Issues = "https://github.com/Alien6-Studio/outerspace-apizr/issues"
+Releases = "https://github.com/Alien6-Studio/outerspace-apizr/releases"
 
 [dependency-groups]
 dev = [
@@ -70,14 +66,19 @@ dev = [
     "black>=26.3.1,<27",
     "fastapi>=0.141,<1",
     "starlette>=1.3.1",
-    "uvicorn[standard]>=0.30,<1",
+    "uvicorn>=0.30,<1",
+  "httptools>=0.9,<1",
+  "uvloop>=0.23,<1; sys_platform != 'win32' and sys_platform != 'cygwin' and platform_python_implementation == 'CPython'",
+  "websockets>=17,<18",
+    # Retain the reviewed security floor for notebook templates.
     "jinja2>=3.1.6,<4",
     "python-multipart>=0.0.31,<1",
     "PyYAML>=6.0.2,<7",
-    "questionary>=2.0.1,<3",
-    "packaging>=24,<27",
+    # Qualify preparation with the same tag ordering users install.
+    "packaging>=26.3,<27",
     "pytest>=9.0.3,<10",
     "pytest-cov>=7,<8",
+    "pytest-xdist>=3.8,<4",
     "httpx>=0.28,<1",
     "ruff>=0.11,<1",
     "pyright>=1.1.400,<2",
@@ -86,9 +87,11 @@ dev = [
     "mcp>=2.2,<3",
     "pytest-timeout>=2.4,<3",
     "jsonschema>=4.23,<5",
+    { include-group = "jupyter-qualification" },
 ]
+jupyter-qualification = ["ipykernel>=7.4,<8", "jupyter-client>=8.10,<9"]
 security = ["pip-audit>=2.9,<3"]
-docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5,<10", "plantuml-markdown>=3.10,<4"]
+readme = ["markdown>=3.7,<4"]
 homebrew-build = ["hatchling==1.32.4"]
 
 [build-system]
@@ -98,16 +101,21 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/apizr"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"src/apizr/py.typed" = "apizr/py.typed"
+
 [tool.hatch.build.targets.sdist]
-include = ["/src/apizr", "/pyproject.toml", "/README.md", "/CHANGELOG.md", "/LICENSE"]
+include = ["/src/apizr", "/pyproject.toml", "/README.md", "/LICENSE"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --cov-config=pyproject.toml"
+markers = ["serial: real shared Docker worker boundary; requires -n 0 when configured"]
 
 [tool.ruff]
 target-version = "py311"
-extend-exclude = ["tests/fixtures", "overrides"]
+# Golden fixtures preserve exact source and artifact bytes.
+extend-exclude = ["tests/fixtures"]
 force-exclude = true
 
 [tool.ruff.lint]
@@ -120,7 +128,7 @@ select = ["E4", "E7", "E9", "F", "I", "B", "C4", "PIE", "RUF100"]
 include = ["src/apizr", "scripts", "plugins/oci/src", "plugins/attest/src", "plugins/mcp/src"]
 extraPaths = ["src", "plugins/oci/src", "plugins/attest/src", "plugins/mcp/src"]
 typeCheckingMode = "standard"
-strict = ["src/apizr/experiments", "src/apizr/repository_views", "plugins/mcp/src/apizr_mcp/model.py", "src/apizr/contracts/types.py", "src/apizr/contracts/lowering.py", "src/apizr/contracts/delivery.py", "src/apizr/contracts/distribution.py", "src/apizr/workspace/operator_policy.py", "src/apizr/contracts/publication.py", "src/apizr/git_source", "src/apizr/cli/commands/git_source.py", "src/apizr/plugins/local", "src/apizr/plugins/artifacts", "src/apizr/plugins/preparation", "src/apizr/cli/commands/plugins.py", "src/apizr/cli/commands/plugin_preparation.py", "src/apizr/extension_runtime", "src/apizr/workspace/project.py", "src/apizr/workspace/compiler.py", "src/apizr/subprocess_guard", "src/apizr/repository_execution", "src/apizr/governed_repository", "src/apizr/repository_interfaces", "src/apizr/exposure", "src/apizr/cli/commands/exposure.py", "src/apizr/capabilities", "src/apizr/readiness", "src/apizr/generators/rest", "src/apizr/interfaces", "src/apizr/generators/mcp", "src/apizr/execution", "src/apizr/governed", "src/apizr/oci", "src/apizr/governed_oci", "src/apizr/repository", "src/apizr/cli/commands/scan.py", "src/apizr/graph", "src/apizr/cli/commands/graph.py", "src/apizr/repository_readiness", "src/apizr/cli/commands/repository_readiness.py", "src/apizr/cli/commands/readiness.py", "src/apizr/cli/commands/repository.py"]
+strict = ["src/apizr/telemetry", "src/apizr/scientific_providers", "src/apizr/tracking", "src/apizr/experiments", "src/apizr/repository_views", "plugins/mcp/src/apizr_mcp/model.py", "src/apizr/contracts/types.py", "src/apizr/contracts/lowering.py", "src/apizr/contracts/delivery.py", "src/apizr/contracts/distribution.py", "src/apizr/workspace/operator_policy.py", "src/apizr/contracts/publication.py", "src/apizr/git_source", "src/apizr/cli/commands/git_source.py", "src/apizr/plugins/local", "src/apizr/plugins/artifacts", "src/apizr/plugins/preparation", "src/apizr/cli/commands/plugins.py", "src/apizr/cli/commands/plugin_preparation.py", "src/apizr/extension_runtime", "src/apizr/workspace/project.py", "src/apizr/workspace/compiler.py", "src/apizr/subprocess_guard", "src/apizr/repository_execution", "src/apizr/governed_repository", "src/apizr/repository_interfaces", "src/apizr/exposure", "src/apizr/cli/commands/exposure.py", "src/apizr/capabilities", "src/apizr/readiness", "src/apizr/generators/rest", "src/apizr/interfaces", "src/apizr/generators/mcp", "src/apizr/execution", "src/apizr/governed", "src/apizr/oci", "src/apizr/governed_oci", "src/apizr/repository", "src/apizr/cli/commands/scan.py", "src/apizr/graph", "src/apizr/cli/commands/graph.py", "src/apizr/repository_readiness", "src/apizr/cli/commands/repository_readiness.py", "src/apizr/cli/commands/readiness.py", "src/apizr/cli/commands/repository.py"]
 pythonVersion = "3.11"
 
 [tool.coverage.run]
@@ -130,7 +138,7 @@ branch = true
 [tool.coverage.report]
 show_missing = true
 precision = 2
-# Release CI measured 90.65–90.99% across Python 3.11–3.14, including legacy.
+# Global branch-aware floor; domain coverage gates remain independent.
 fail_under = 90
 
 [tool.ruff.lint.flake8-bugbear]
