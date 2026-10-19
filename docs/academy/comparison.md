@@ -1,5 +1,5 @@
 ---
-title: Compare the two recorded fraud Runs
+title: "The score moved. What else changed?"
 description: Read material changes, the actual metric trade-off, self-comparison and reverse deltas.
 lesson: 8
 recording: 08-comparison
@@ -7,7 +7,9 @@ recording: 08-comparison
 
 <p class="apizr-academy-kicker">Understand experiments · Lesson 08</p>
 
-# Compare the two recorded fraud Runs
+<span id="compare-the-two-recorded-fraud-runs"></span>
+
+# The score moved. What else changed?
 
 The recording keeps the notebook, forest settings and seed fixed while switching between two synthetic cohorts. Their feature rows match but their fraud-label rules differ. This is a comparison-reading exercise, not an unchanged benchmark proving a better model.
 
@@ -19,8 +21,8 @@ The recording keeps the notebook, forest settings and seed fixed while switching
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=uu01blkTRRg" data-apizr-video="uu01blkTRRg" data-apizr-title="Compare experiment Runs" aria-label="Play: Compare experiment Runs: data, models and metrics">
-    <img src="../../assets/videos/tutorial-experiment-comparison.png" width="1280" height="720" loading="lazy" alt="Academy Part VIII: compare actual data identities and metric deltas" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=uu01blkTRRg" data-apizr-video="uu01blkTRRg" data-apizr-title="The score moved. What else changed?" aria-label="Play: The score moved. What else changed?">
+    <img src="../../assets/videos/academy-08-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 08: The score moved. What else changed?" />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

@@ -1,5 +1,5 @@
 ---
-title: Install Apizr and inspect four real projects
+title: "Install Apizr. Understand your setup."
 description: Choose one installation method, identify its environment and read an actual inspection result.
 lesson: 1
 recording: 01-install
@@ -7,7 +7,9 @@ recording: 01-install
 
 <p class="apizr-academy-kicker">Build interfaces · Lesson 01</p>
 
-# Install Apizr and inspect four real projects
+<span id="install-apizr-and-inspect-four-real-projects"></span>
+
+# Install Apizr. Understand your setup.
 
 The recording installs the same Apizr version four ways, then inspects four existing Python projects. The installation method determines how the tool is managed; the inspected source determines its readiness findings. A nonzero inspection status does not necessarily mean installation failed.
 
@@ -19,8 +21,8 @@ The recording installs the same Apizr version four ways, then inspects four exis
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=7J6TWqAdx4Q" data-apizr-video="7J6TWqAdx4Q" data-apizr-title="Install Apizr" aria-label="Play: Install Apizr with pip, uv, pipx or Homebrew">
-    <img src="../../assets/videos/tutorial-install.jpg" width="480" height="360" loading="lazy" alt="Academy Part I: install Apizr" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=7J6TWqAdx4Q" data-apizr-video="7J6TWqAdx4Q" data-apizr-title="Install Apizr. Understand your setup." aria-label="Play: Install Apizr. Understand your setup.">
+    <img src="../../assets/videos/academy-01-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 01: Install Apizr. Understand your setup." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

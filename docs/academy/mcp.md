@@ -1,5 +1,5 @@
 ---
-title: Call RGB and HSV conversions through MCP
+title: "Existing Python. Real MCP tools."
 description: Discover two generated colour-conversion tools, make real calls and read an error.
 lesson: 4
 recording: 04-mcp
@@ -7,7 +7,9 @@ recording: 04-mcp
 
 <p class="apizr-academy-kicker">Build interfaces · Lesson 04</p>
 
-# Call RGB and HSV conversions through MCP
+<span id="call-rgb-and-hsv-conversions-through-mcp"></span>
+
+# Existing Python. Real MCP tools.
 
 The video uses **TheAlgorithms/Python** to convert colours. A Python MCP client makes discovery, successful results and input errors visible without requiring a language model.
 
@@ -19,8 +21,8 @@ The video uses **TheAlgorithms/Python** to convert colours. A Python MCP client 
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=rJThRd9vq4g" data-apizr-video="rJThRd9vq4g" data-apizr-title="Your first MCP tools" aria-label="Play: Generate MCP tools and call them with Python">
-    <img src="../../assets/videos/tutorial-mcp.jpg" width="480" height="360" loading="lazy" alt="Academy Part IV: generate and call MCP tools" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=rJThRd9vq4g" data-apizr-video="rJThRd9vq4g" data-apizr-title="Existing Python. Real MCP tools." aria-label="Play: Existing Python. Real MCP tools.">
+    <img src="../../assets/videos/academy-04-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 04: Existing Python. Real MCP tools." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

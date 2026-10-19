@@ -1,5 +1,5 @@
 ---
-title: Capture real Jupyter cells and the hidden calibration change
+title: "A cell reruns. What does history mean?"
 description: Read four real captures, repeat first-variant and explain the unlogged offset.
 lesson: 11
 recording: 11-jupyter
@@ -7,7 +7,9 @@ recording: 11-jupyter
 
 <p class="apizr-academy-kicker">Track and review · Lesson 11</p>
 
-# Capture real Jupyter cells and the hidden calibration change
+<span id="capture-real-jupyter-cells-and-the-hidden-calibration-change"></span>
+
+# A cell reruns. What does history mean?
 
 The video drives a real ipykernel through a terminal. It uses the **same fraud holdout** as lesson 10, then changes an unlogged calibration offset before repeating a captured cell. It is not a recording of a Jupyter graphical frontend.
 
@@ -19,8 +21,8 @@ The video drives a real ipykernel through a terminal. It uses the **same fraud h
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=VqTmKCU-Auo" data-apizr-video="VqTmKCU-Auo" data-apizr-title="Capture real Jupyter cells" aria-label="Play: Track real Jupyter cell executions and hidden kernel state">
-    <img src="../../assets/videos/tutorial-jupyter.png" width="1280" height="720" loading="lazy" alt="Academy Part XI: inspect real Jupyter cell executions and retained Runs" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=VqTmKCU-Auo" data-apizr-video="VqTmKCU-Auo" data-apizr-title="A cell reruns. What does history mean?" aria-label="Play: A cell reruns. What does history mean?">
+    <img src="../../assets/videos/academy-11-youtube.jpg" width="480" height="360" loading="lazy" alt="Lesson 11: A cell reruns. What does history mean?" />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

@@ -69,10 +69,10 @@ Each video names its own source: four utility projects for installation, Request
 
 <div class="apizr-academy-courses" markdown="1">
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="install/"><img src="../assets/videos/tutorial-install.jpg" alt="Lesson 1: Install Apizr and inspect four real projects" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="install/"><img src="../assets/videos/academy-01-youtube.jpg" alt="Lesson 01: Install Apizr. Understand your setup." loading="lazy" width="1280" height="720" /></a>
 
 <span id="01-install"></span>
-### 01 · [Install Apizr and inspect four real projects](install.md)
+### 01 · [Install Apizr. Understand your setup.](install.md)
 
 Choose one installation method, identify its environment and read an actual inspection result.
 
@@ -82,10 +82,10 @@ Choose one installation method, identify its environment and read an actual insp
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="inspect/"><img src="../assets/videos/tutorial-inspect.jpg" alt="Lesson 2: Read Requests with doctor, scan and inspect" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="inspect/"><img src="../assets/videos/academy-02-youtube.jpg" alt="Lesson 02: Read your code. Understand the contract." loading="lazy" width="1280" height="720" /></a>
 
 <span id="02-inspect"></span>
-### 02 · [Read Requests with doctor, scan and inspect](inspect.md)
+### 02 · [Read your code. Understand the contract.](inspect.md)
 
 Separate setup checks, repository inventory and the unsupported Requests.get contract.
 
@@ -95,10 +95,10 @@ Separate setup checks, repository inventory and the unsupported Requests.get con
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="rest/"><img src="../assets/videos/tutorial-rest.jpg" alt="Lesson 3: Generate a REST API for gcd and lcm" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="rest/"><img src="../assets/videos/academy-03-youtube.jpg" alt="Lesson 03: Existing Python. A real REST API." loading="lazy" width="1280" height="720" /></a>
 
 <span id="03-rest"></span>
-### 03 · [Generate a REST API for gcd and lcm](rest.md)
+### 03 · [Existing Python. A real REST API.](rest.md)
 
 Expose two functions from keon/algorithms and verify successful calls and HTTP 422.
 
@@ -108,10 +108,10 @@ Expose two functions from keon/algorithms and verify successful calls and HTTP 4
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="mcp/"><img src="../assets/videos/tutorial-mcp.jpg" alt="Lesson 4: Call RGB and HSV conversions through MCP" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="mcp/"><img src="../assets/videos/academy-04-youtube.jpg" alt="Lesson 04: Existing Python. Real MCP tools." loading="lazy" width="1280" height="720" /></a>
 
 <span id="04-mcp"></span>
-### 04 · [Call RGB and HSV conversions through MCP](mcp.md)
+### 04 · [Existing Python. Real MCP tools.](mcp.md)
 
 Discover two generated colour-conversion tools, make real calls and read an error.
 
@@ -121,10 +121,10 @@ Discover two generated colour-conversion tools, make real calls and read an erro
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="oci/"><img src="../assets/videos/tutorial-oci.jpg" alt="Lesson 5: Build an MCP image and let Ollama call pricing.total" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="oci/"><img src="../assets/videos/academy-05-youtube.jpg" alt="Lesson 05: Generate an image. Expose MCP. Call it with Ollama." loading="lazy" width="1280" height="720" /></a>
 
 <span id="05-oci"></span>
-### 05 · [Build an MCP image and let Ollama call pricing.total](oci.md)
+### 05 · [Generate an image. Expose MCP. Call it with Ollama.](oci.md)
 
 Follow the recorded OCI plugin build and the actual local model-to-container tool call.
 
@@ -144,10 +144,10 @@ Follow the synthetic fraud case through inspection, retained Runs, comparison an
 
 <div class="apizr-academy-courses" markdown="1">
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="experiment-inspection/"><img src="../assets/videos/tutorial-experiment-inspection.png" alt="Lesson 6: Inspect the fraud notebook before training" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="experiment-inspection/"><img src="../assets/videos/academy-06-youtube.jpg" alt="Lesson 06: Before training, what do we actually know?" loading="lazy" width="480" height="360" /></a>
 
 <span id="06-inspect-experiment-evidence"></span>
-### 06 · [Inspect the fraud notebook before training](experiment-inspection.md)
+### 06 · [Before training, what do we actually know?](experiment-inspection.md)
 
 Read static evidence, change the CSV and distinguish notebook bytes from scientific signals.
 
@@ -157,10 +157,10 @@ Read static evidence, change the CSV and distinguish notebook bytes from scienti
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="runs/"><img src="../assets/videos/tutorial-experiment-history.png" alt="Lesson 7: Run the fraud notebook and read retained history" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="runs/"><img src="../assets/videos/academy-07-youtube.jpg" alt="Lesson 07: From intention to an observed experiment Run." loading="lazy" width="480" height="360" /></a>
 
 <span id="07-run-an-experiment-and-read-its-history"></span>
-### 07 · [Run the fraud notebook and read retained history](runs.md)
+### 07 · [From intention to an observed experiment Run.](runs.md)
 
 Connect Plan, actual metrics and model identity, then test a corrupted store.
 
@@ -170,10 +170,10 @@ Connect Plan, actual metrics and model identity, then test a corrupted store.
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="comparison/"><img src="../assets/videos/tutorial-experiment-comparison.png" alt="Lesson 8: Compare the two recorded fraud Runs" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="comparison/"><img src="../assets/videos/academy-08-youtube.jpg" alt="Lesson 08: The score moved. What else changed?" loading="lazy" width="1280" height="720" /></a>
 
 <span id="08-compare-experiment-runs"></span>
-### 08 · [Compare the two recorded fraud Runs](comparison.md)
+### 08 · [The score moved. What else changed?](comparison.md)
 
 Read material changes, the actual metric trade-off, self-comparison and reverse deltas.
 
@@ -183,10 +183,10 @@ Read material changes, the actual metric trade-off, self-comparison and reverse 
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="model-serving/"><img src="../assets/videos/tutorial-experiment-exposure.png" alt="Lesson 9: Expose the retained fraud prediction model" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="model-serving/"><img src="../assets/videos/academy-09-youtube.jpg" alt="Lesson 09: From a Run to one selected prediction." loading="lazy" width="480" height="360" /></a>
 
 <span id="09-expose-a-selected-prediction"></span>
-### 09 · [Expose the retained fraud prediction model](model-serving.md)
+### 09 · [From a Run to one selected prediction.](model-serving.md)
 
 Select the Run, fraud_detection.predict, model bytes and scientific dependencies.
 
@@ -203,10 +203,10 @@ Move from explicit Python capture to a live Jupyter kernel, then review real Win
 
 <div class="apizr-academy-courses" markdown="1">
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="python-tracking/"><img src="../assets/videos/tutorial-sdk.png" alt="Lesson 10: Capture the fraud holdout with sessions and decorators" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="python-tracking/"><img src="../assets/videos/academy-10-youtube.jpg" alt="Lesson 10: One model. Two thresholds. Explicit observations." loading="lazy" width="1280" height="720" /></a>
 
 <span id="10-track-python-calls"></span>
-### 10 · [Capture the fraud holdout with sessions and decorators](python-tracking.md)
+### 10 · [One model. Two thresholds. Explicit observations.](python-tracking.md)
 
 Track actual threshold evaluations, preserve returns and inspect the failed capture.
 
@@ -216,10 +216,10 @@ Track actual threshold evaluations, preserve returns and inspect the failed capt
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="jupyter/"><img src="../assets/videos/tutorial-jupyter.png" alt="Lesson 11: Capture real Jupyter cells and the hidden calibration change" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="jupyter/"><img src="../assets/videos/academy-11-youtube.jpg" alt="Lesson 11: A cell reruns. What does history mean?" loading="lazy" width="480" height="360" /></a>
 
 <span id="11-capture-real-jupyter-cells"></span>
-### 11 · [Capture real Jupyter cells and the hidden calibration change](jupyter.md)
+### 11 · [A cell reruns. What does history mean?](jupyter.md)
 
 Read four real captures, repeat first-variant and explain the unlogged offset.
 
@@ -229,10 +229,10 @@ Read four real captures, repeat first-variant and explain the unlogged offset.
 
 </article>
 <article class="apizr-academy-course" markdown="1">
-<a class="apizr-academy-course__cover" href="vscode/"><img src="../assets/videos/tutorial-vscode.png" alt="Lesson 12: Review real experiment Runs in VS Code" loading="lazy" width="1280" height="720" /></a>
+<a class="apizr-academy-course__cover" href="vscode/"><img src="../assets/videos/academy-12-youtube.jpg" alt="Lesson 12: Real data. Measured Runs. Careful review." loading="lazy" width="1280" height="720" /></a>
 
 <span id="12-review-real-experiment-runs-in-vs-code"></span>
-### 12 · [Review real experiment Runs in VS Code](vscode.md)
+### 12 · [Real data. Measured Runs. Careful review.](vscode.md)
 
 Read recorded source, compare measured Wine Runs and recognize stale evidence.
 

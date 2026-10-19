@@ -1,5 +1,5 @@
 ---
-title: Expose the retained fraud prediction model
+title: "From a Run to one selected prediction."
 description: Select the Run, fraud_detection.predict, model bytes and scientific dependencies.
 lesson: 9
 recording: 09-exposure
@@ -7,7 +7,9 @@ recording: 09-exposure
 
 <p class="apizr-academy-kicker">Understand experiments · Lesson 09</p>
 
-# Expose the retained fraud prediction model
+<span id="expose-the-retained-fraud-prediction-model"></span>
+
+# From a Run to one selected prediction.
 
 The application team wants a fraud prediction, not another training run. The video separates the notebook's training path from its typed prediction function and binds the exact retained model to REST and MCP.
 
@@ -19,8 +21,8 @@ The application team wants a fraud prediction, not another training run. The vid
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=s68H9yhNWgk" data-apizr-video="s68H9yhNWgk" data-apizr-title="Expose a selected prediction" aria-label="Play: Bind a retained model to REST and MCP">
-    <img src="../../assets/videos/tutorial-experiment-exposure.png" width="1280" height="720" loading="lazy" alt="Academy Part IX: bind a selected model to local REST and MCP bundles" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=s68H9yhNWgk" data-apizr-video="s68H9yhNWgk" data-apizr-title="From a Run to one selected prediction." aria-label="Play: From a Run to one selected prediction.">
+    <img src="../../assets/videos/academy-09-youtube.jpg" width="480" height="360" loading="lazy" alt="Lesson 09: From a Run to one selected prediction." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

@@ -19,6 +19,22 @@ def recordings(root: Path) -> dict:
     for record in lessons:
         if not re.fullmatch(r"[\w-]{11}", record["video_id"]):
             raise ValueError("Invalid recorded video identity")
+        thumbnail = record["thumbnail"]
+        if (
+            thumbnail["path"]
+            != f"assets/videos/academy-{record['number']:02}-youtube.jpg"
+            or not re.fullmatch(
+                rf"https://i\.ytimg\.com/vi/{re.escape(record['video_id'])}/(?:maxresdefault|hqdefault)\.jpg",
+                thumbnail["source_url"],
+            )
+        ):
+            raise ValueError("Thumbnail does not belong to this published video")
+        image = (root / "docs" / thumbnail["path"]).read_bytes()
+        if (
+            image[:2] != b"\xff\xd8"
+            or hashlib.sha256(image).hexdigest() != thumbnail["sha256"]
+        ):
+            raise ValueError("Published video thumbnail changed")
         if not record["chapters"]:
             raise ValueError("Missing recorded chapters")
         times = [c["seconds"] for c in record["chapters"]]
@@ -53,8 +69,12 @@ def lesson_markdown(markdown: str, page, catalogue: dict) -> str:
     record = matches[0]
     if (
         page.meta.get("lesson") != record["number"]
+        or page.meta.get("title") != record["title"]
+        or re.findall(r"^# (.+)$", markdown, re.MULTILINE) != [record["title"]]
         or page.file.src_uri != record["page"]
         or re.findall(r'data-apizr-video="([^"]+)"', markdown) != [record["video_id"]]
+        or re.findall(r'data-apizr-title="([^"]+)"', markdown) != [record["title"]]
+        or f'src="../../{record["thumbnail"]["path"]}"' not in markdown
         or markdown.count("<!-- recording-transcript -->") != 1
     ):
         raise ValueError(f"Course, video and recording do not agree: {identity}")

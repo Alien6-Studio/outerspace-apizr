@@ -67,8 +67,8 @@ easier to follow for a first try because it keeps an explicit `core/` directory.
 Compare the installation methods and check which Apizr executable you are using. The Homebrew segment shows a reinstall; for a fresh setup, use the install command below.
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=7J6TWqAdx4Q" data-apizr-video="7J6TWqAdx4Q" data-apizr-title="Install Apizr with pip, uv, pipx or Homebrew" aria-label="Play: Install Apizr with pip, uv, pipx or Homebrew">
-    <img src="../../assets/videos/tutorial-install.jpg" width="480" height="360" loading="lazy" alt="Install Apizr with pip, uv, pipx or Homebrew — Alien6 Studio tutorial" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=7J6TWqAdx4Q" data-apizr-video="7J6TWqAdx4Q" data-apizr-title="Install Apizr. Understand your setup." aria-label="Play: Install Apizr. Understand your setup.">
+    <img src="../../assets/videos/academy-01-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 01: Install Apizr. Understand your setup." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

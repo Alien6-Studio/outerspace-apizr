@@ -1,5 +1,5 @@
 ---
-title: Read Requests with doctor, scan and inspect
+title: "Read your code. Understand the contract."
 description: Separate setup checks, repository inventory and the unsupported Requests.get contract.
 lesson: 2
 recording: 02-understand
@@ -7,7 +7,9 @@ recording: 02-understand
 
 <p class="apizr-academy-kicker">Build interfaces · Lesson 02</p>
 
-# Read Requests with doctor, scan and inspect
+<span id="read-requests-with-doctor-scan-and-inspect"></span>
+
+# Read your code. Understand the contract.
 
 The video uses **Requests**, not a newly written pricing function. It asks three separate questions: is the local setup prepared, what source exists, and which contracts can this interface generator support?
 
@@ -19,8 +21,8 @@ The video uses **Requests**, not a newly written pricing function. It asks three
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Ypgp8fCof0E" data-apizr-video="Ypgp8fCof0E" data-apizr-title="Read your Python project" aria-label="Play: Inspect a project and understand readiness">
-    <img src="../../assets/videos/tutorial-inspect.jpg" width="480" height="360" loading="lazy" alt="Academy Part II: inspect a project" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Ypgp8fCof0E" data-apizr-video="Ypgp8fCof0E" data-apizr-title="Read your code. Understand the contract." aria-label="Play: Read your code. Understand the contract.">
+    <img src="../../assets/videos/academy-02-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 02: Read your code. Understand the contract." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>
