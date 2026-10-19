@@ -8,9 +8,8 @@ The **Apizr 0.4.6 extension** is developed in
 under GPL-3.0-or-later. VS Code 1.140 or newer is required for lossless
 numeric-token rendering; 64-bit integers and original float tokens are preserved. It uses an installed Apizr 0.4.6 engine supporting
 `apizr.editor/v1`.
-The extension is not automatically published to Marketplace or Open VSX.
 
-Install the qualified VSIX using **Extensions → Install from VSIX**, open your
+Install [Apizr from the Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=alien6-studio.apizr), open your
 trusted native project folder and accept **Install CLI**. This first-use setup
 installs the matching CLI with notebook support into extension-owned storage,
 then selects it automatically. Python 3.11–3.15 must be available in this extension

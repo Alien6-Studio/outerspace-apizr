@@ -92,22 +92,13 @@ Website changes are qualified separately on `gh-pages`. The
 existing `codeql` context retains Python and JavaScript/TypeScript SARIF; GitHub's
 default Python/Actions alerts remain enabled without duplicate SARIF uploads.
 
-## Publication is a separate authorized operation
+## Publication
 
-The dedicated repository owns extension development and packaging. Its current
-`0.4.6` branch is prepared for maintainer review; creating that repository does
-not authorize Marketplace/Open VSX publication or a release of the Python engine.
+The dedicated repository owns extension development and packaging. The
+[Marketplace extension](https://marketplace.visualstudio.com/items?itemName=alien6-studio.apizr)
+is published by **Alien6 Studio** (`alien6-studio`).
 
-`alien6-studio.apizr` is the **proposed development identity** in `package.json`,
-not a claim that a Marketplace/Open VSX publisher has been reserved or verified.
-Before any publication, a maintainer must separately authorize the release, verify
-publisher ownership on each registry, approve the exact clean-source VSIX/hash and
-complete the remaining milestone qualification. Registry credentials belong
-outside the repository and CI artifacts.
-
-Marketplace and Open VSX can use the same manifest/VSIX; their publisher setup,
-authentication and publication are independent decisions. No `vsce publish`,
-`ovsx publish`, tag-triggered publication or registry credential is added here.
-Python release versions, tags and publication workflows remain separate.
-The reviewed VSIX is included in the common release attachments and protected
-CI provenance; this preparation does not enable registry publication.
+Publish the exact qualified VSIX after maintainer approval and after its matching
+CLI is available on PyPI. Keep the VSIX, source commit, checksums and build evidence
+in the GitHub release. Registry credentials stay outside the repository and artifacts.
+Open VSX publication is separate.
