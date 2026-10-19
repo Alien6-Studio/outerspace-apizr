@@ -2,9 +2,10 @@
 
 # Telemetry and privacy
 
-**Apizr 0.4.6 sends no telemetry.** Optional local counters let you preview
-approved operations. They are off by default in the CLI and Python. In VS Code,
-they follow the editor’s telemetry permission and can be disabled separately.
+**Telemetry is optional.** The VS Code companion can send bounded usage counts
+when the editor permits telemetry. Set `apizr.telemetry.enabled` to `false` to
+disable it. Apizr 0.4.6 CLI and Python keep their optional counters local and
+off by default.
 
 <span id="approved-policy"></span>
 
@@ -23,8 +24,9 @@ retention:
   identifier, source code, paths, experiment data, parameters, metrics or
   error messages.
 - **No profiling:** counts describe operations, not people or installations.
-- **Limited retention:** counters exist only for the current command or capture
-  scope. They are discarded when it ends or when you disable telemetry.
+- **Local controls:** counters exist only for the current command or capture
+  scope. Pending extension reports stay in memory and are discarded on opt-out
+  or editor shutdown; reports are never written to disk.
 
 <span id="receiving-contract-and-reusable-conformance-fixtures"></span>
 
@@ -62,4 +64,7 @@ the capture scope.
 In VS Code, `apizr.telemetry.enabled` defaults to `true`. Collection still
 requires VS Code’s telemetry permission and telemetry level `all`. Set the Apizr
 setting to `false` to opt out. Disabling either control clears the preview and
-prevents collection; a saved CLI opt-out also remains effective.
+prevents collection and cancels pending sends; a saved CLI opt-out also remains
+effective for reports produced by the engine. Delivery failures do not interrupt
+your work. **Apizr: Telemetry status** shows whether sending is enabled and the
+last delivery result.

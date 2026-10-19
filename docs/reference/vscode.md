@@ -94,13 +94,16 @@ invented; a Run's kernel cell identity does not necessarily contain an index.
 
 ## Usage controls and supported environments
 
-**Apizr: Telemetry status / Enable local usage counters / Disable usage counters /
+**Apizr: Telemetry status / Enable usage telemetry / Disable usage counters /
 Preview usage report** implement the [approved policy](../about/telemetry.md).
 Local counters are enabled by default when VS Code permits usage telemetry.
 Set `apizr.telemetry.enabled` to `false` to opt out. Every child receives the
 stricter decision, including an existing CLI opt-out. The
-preview shows the engine's exact bounded payload; there is no production sender.
-No source, path, metric or Run identity is included in a usage report.
+preview shows the engine’s bounded payload. The extension sends approved
+operation/outcome counts without blocking editor operations. Disabling telemetry
+cancels pending sends; reports are never written to disk or retried. Status
+shows whether delivery is enabled and its last result. No source, path, metric
+or Run identity is included in a usage report.
 
 Native macOS qualification runs the real installed extension in clean trusted
 and untrusted profiles; the CI job qualifies native Linux with the same candidate
