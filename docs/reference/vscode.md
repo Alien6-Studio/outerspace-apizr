@@ -96,8 +96,9 @@ invented; a Run's kernel cell identity does not necessarily contain an index.
 
 **Apizr: Telemetry status / Enable local usage counters / Disable usage counters /
 Preview usage report** implement the [approved policy](../about/telemetry.md).
-The separate global Apizr opt-in and VS Code's global usage-telemetry permission
-must both allow collection. Every child receives the stricter decision. The
+Local counters are enabled by default when VS Code permits usage telemetry.
+Set `apizr.telemetry.enabled` to `false` to opt out. Every child receives the
+stricter decision, including an existing CLI opt-out. The
 preview shows the engine's exact bounded payload; there is no production sender.
 No source, path, metric or Run identity is included in a usage report.
 

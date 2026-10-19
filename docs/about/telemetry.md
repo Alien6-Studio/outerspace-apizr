@@ -2,8 +2,9 @@
 
 # Telemetry and privacy
 
-**Telemetry is optional and off by default. Apizr 0.4.6 sends no telemetry.**
-Enabling it only counts approved operations in memory and lets you preview them.
+**Apizr 0.4.6 sends no telemetry.** Optional local counters let you preview
+approved operations. They are off by default in the CLI and Python. In VS Code,
+they follow the editor’s telemetry permission and can be disabled separately.
 
 <span id="approved-policy"></span>
 
@@ -11,7 +12,7 @@ Enabling it only counts approved operations in memory and lets you preview them.
 
 Alien6 Studio is responsible for Apizr's telemetry policy. It follows the
 [GDPR](https://www.cnil.fr/fr/conformite-rgpd-information-des-personnes-et-transparence)
-principles of explicit consent, purpose limitation, data minimization and limited
+principles of transparency, purpose limitation, data minimization and limited
 retention:
 
 - **Your choice:** enabling telemetry is optional; disabling it clears the counters.
@@ -58,6 +59,7 @@ A saved opt-out takes precedence over `APIZR_TELEMETRY=1`.
 In Python, use `apizr.telemetry.capture()` and inspect `usage.preview()` inside
 the capture scope.
 
-In VS Code, telemetry requires both the separate `apizr.telemetry.enabled`
-setting and VS Code's telemetry level `all`. Disabling either clears the preview
-and prevents collection.
+In VS Code, `apizr.telemetry.enabled` defaults to `true`. Collection still
+requires VS Code’s telemetry permission and telemetry level `all`. Set the Apizr
+setting to `false` to opt out. Disabling either control clears the preview and
+prevents collection; a saved CLI opt-out also remains effective.
