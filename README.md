@@ -51,6 +51,7 @@ explains how this works across a project.
 
 Start with a training script or notebook you want to understand:
 
+<!-- experiment-inspection:readme -->
 ```sh
 apizr experiment inspect train.py
 ```

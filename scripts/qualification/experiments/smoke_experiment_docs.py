@@ -141,7 +141,6 @@ def main() -> None:
             }
         for index, page in enumerate(
             (
-                "README.md",
                 "tests/fixtures/qualified-guides/getting-started/quickstart.md",
                 "tests/fixtures/qualified-guides/getting-started/user-guide/experiment-runs.md",
             )
@@ -186,7 +185,6 @@ def main() -> None:
             }
         for index, page in enumerate(
             (
-                "README.md",
                 "tests/fixtures/qualified-guides/getting-started/quickstart.md",
                 "tests/fixtures/qualified-guides/getting-started/user-guide/experiment-comparison.md",
             )
