@@ -406,9 +406,7 @@ def test_golden_relocation_canonical_and_schemas(tmp_path):
         (ExposurePolicy, policy_value, "exposure-policy"),
         (ExposurePlan, result, "exposure-plan"),
     ):
-        schema = json.loads(
-            (ROOT / f"docs/specs/apizr-{name}-v1.schema.json").read_bytes()
-        )
+        schema = json.loads((ROOT / f"specs/apizr-{name}-v1.schema.json").read_bytes())
         assert schema == model.model_json_schema()
         Draft202012Validator.check_schema(schema)
         Draft202012Validator(schema).validate(value.model_dump(mode="json"))

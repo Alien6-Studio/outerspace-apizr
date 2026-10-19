@@ -13,6 +13,7 @@ import pytest
 import yaml
 from repository_interfaces.conftest import evidence
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.capabilities.model import Digest
 from apizr.client_collections import (
     ClientCollection,
@@ -35,7 +36,6 @@ from apizr.client_collections.model import (
 )
 from apizr.client_collections.planner import example_value
 from apizr.generators.rest import generate
-from apizr.inspection import inspect_source
 from apizr.interfaces.model import TypeSpec
 from apizr.interfaces.schema import json_schema
 from apizr.interfaces.serialization import json_bytes
@@ -544,7 +544,7 @@ def test_lazy_extra(bundle, monkeypatch):
 
 
 def test_cli_refusal_and_cancellation(bundle, tmp_path, capsys, monkeypatch):
-    from apizr import clients_cli
+    from apizr.cli.commands import clients as clients_cli
 
     args = [
         "export",
@@ -613,15 +613,15 @@ def test_required_artifact_and_rehashed_route(bundle, tmp_path):
 
 
 def test_no_analysis_or_execution(bundle, monkeypatch):
+    import apizr.capabilities.inspection
     import apizr.exposure
-    import apizr.inspection
     import apizr.readiness
     import apizr.repository
 
     def forbidden(*args, **kwargs):
         raise AssertionError("source analysis/execution is forbidden")
 
-    monkeypatch.setattr(apizr.inspection, "inspect_source", forbidden)
+    monkeypatch.setattr(apizr.capabilities.inspection, "inspect_source", forbidden)
     monkeypatch.setattr(apizr.readiness, "assess", forbidden)
     monkeypatch.setattr(apizr.exposure, "plan_exposure", forbidden)
     monkeypatch.setattr(apizr.repository, "scan_sources", forbidden)

@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from apizr.inspection import inspect_source
+from apizr.capabilities.inspection import inspect_source
 from apizr.readiness.model import Code, State
 
 

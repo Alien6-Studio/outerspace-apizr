@@ -14,7 +14,7 @@ import pytest
 from apizr.cli import main
 from apizr.git_source import AcquisitionLimits, acquire_snapshot
 from apizr.git_source.contracts import GitTarget
-from apizr.operator_policy import (
+from apizr.workspace.operator_policy import (
     AuthorizationDenied,
     OperatorPolicy,
     decide_git,
@@ -94,7 +94,7 @@ def scenario(transport, case):
     elif case in {"build", "attest", "push", "publish"}:
         all_grants = json.loads(
             (
-                Path(__file__).resolve().parents[2] / "docs/examples/operator.json"
+                Path(__file__).resolve().parents[2] / "specs/examples/operator.json"
             ).read_bytes()
         )
         raw["grants"] = [g for g in all_grants["grants"] if g["operation"] == case]
@@ -286,7 +286,7 @@ def test_ca_refusal_and_typed_object_revalidation(monkeypatch):
 
 
 def test_snapshot_keeps_captured_parameters(remote, tls, scratch, monkeypatch):
-    import apizr.operator_policy as operator
+    import apizr.workspace.operator_policy as operator
 
     url, _, commit = remote
     kwargs = {"subdir": "service", "ca_file": tls[0], "limits": AcquisitionLimits()}
@@ -326,7 +326,7 @@ def test_git_rule_strict_and_separate_from_plugin_rights():
 def test_complete_documented_git_policy(transport):
     path = (
         Path(__file__).resolve().parents[2]
-        / f"docs/examples/operator-git-{transport}.json"
+        / f"specs/examples/operator-git-{transport}.json"
     )
     selected = OperatorPolicy.model_validate_json(path.read_bytes())
     assert len(selected.grants) == 2
@@ -378,7 +378,7 @@ def test_addresses_are_not_equated(left, right):
 
 
 def test_relative_trust_references_captured_without_resolving(tmp_path, monkeypatch):
-    import apizr.operator_policy as operator
+    import apizr.workspace.operator_policy as operator
 
     monkeypatch.chdir(tmp_path)
     selected = policy(

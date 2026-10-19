@@ -12,8 +12,8 @@ from pathlib import Path
 import pytest
 from analysis_authorization import analysis_policy
 
-from apizr import mcp_cli
 from apizr.cli import main
+from apizr.cli.commands import mcp as mcp_cli
 from apizr.plugins.local import enable_extension, install_extension
 from apizr.plugins.lock import LockError, check_lock, create_lock, operations
 from apizr.workspace.files import read_regular

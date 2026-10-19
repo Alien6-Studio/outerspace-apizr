@@ -4,8 +4,8 @@ from types import SimpleNamespace
 
 import pytest
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.rest import generate
-from apizr.inspection import inspect_source
 
 from .helpers import application
 

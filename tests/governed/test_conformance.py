@@ -8,6 +8,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 from mcp import Client
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.cli.commands.execute import main as execute_cli
 from apizr.execution import ExecutionPolicy
 from apizr.generators.mcp import generate as generate_mcp
@@ -16,7 +17,6 @@ from apizr.generators.rest import generate as generate_rest
 from apizr.generators.rest.runtime import create_app as direct_rest
 from apizr.governed.mcp import create_server as governed_mcp
 from apizr.governed.rest import create_app as governed_rest
-from apizr.inspection import inspect_source
 
 from .helpers import SOURCE, bundle, manifest
 

@@ -6,8 +6,8 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.rest import render
-from apizr.inspection import inspect_source
 
 from .helpers import application
 

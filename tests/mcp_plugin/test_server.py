@@ -5,8 +5,8 @@ from types import SimpleNamespace
 import anyio
 import pytest
 from apizr_mcp import server
-from apizr_mcp.model import Job, ServerLimits
-from apizr_mcp.worker import calculate
+from apizr_mcp.model import HistoryJob, Job, ServerLimits
+from apizr_mcp.worker import calculate, calculate_history
 from mcp import Client
 
 from apizr.extension_runtime import (
@@ -22,9 +22,13 @@ def setup(project, monkeypatch, limits=None, invoke=None):
 
     def normal(python, module, operation, arguments, **kwargs):
         assert kwargs["environment"] == {}
-        assert module == "apizr_mcp" and operation == "calculate"
+        assert module == "apizr_mcp" and operation in {"calculate", "history"}
         return SimpleNamespace(
-            result=calculate(Job.model_validate_json(json.dumps(arguments)))
+            result=calculate_history(
+                HistoryJob.model_validate_json(json.dumps(arguments))
+            )
+            if operation == "history"
+            else calculate(Job.model_validate_json(json.dumps(arguments)))
         )
 
     monkeypatch.setattr(server, "invoke_extension", invoke or normal)
@@ -38,7 +42,7 @@ def test_sdk_tools_validation_errors_and_business_results(project, monkeypatch):
     async def exercise():
         async with Client(app) as client:
             tools = (await client.list_tools()).tools
-            assert len(tools) == 3
+            assert len(tools) == 6
             assert all(
                 t.annotations.read_only_hint and t.annotations.destructive_hint is False
                 for t in tools
@@ -293,7 +297,7 @@ def test_serve_lifecycle_with_official_session(project, monkeypatch):
                 tasks.start_soon(server.serve, project[1], ServerLimits())
                 async with ClientSession(read_client, to_server) as client:
                     await client.initialize()
-                    assert len((await client.list_tools()).tools) == 3
+                    assert len((await client.list_tools()).tools) == 6
                     assert not (await client.call_tool("apizr_readiness", {})).is_error
                 end[0].set()
 
@@ -319,7 +323,7 @@ def test_server_entrypoint_validation_and_interrupt(project, monkeypatch, capsys
 
 
 def test_session_scope_and_authority_cannot_be_expanded(project, monkeypatch):
-    from apizr.operator_policy import OperatorPolicy
+    from apizr.workspace.operator_policy import OperatorPolicy
 
     calculations, app = setup(project, monkeypatch)
     original = calculations.scope

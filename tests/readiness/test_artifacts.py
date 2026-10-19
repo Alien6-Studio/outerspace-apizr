@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from apizr.capabilities import CapabilityDocument, canonical_bytes, document_digest
 from apizr.capabilities import inspect_source as capabilities
-from apizr.inspection import Inspection, inspect_source, json_bytes
+from apizr.capabilities.inspection import Inspection, inspect_source, json_bytes
 from apizr.readiness import ReadinessReport, assess, report_digest
 from apizr.readiness import canonical_bytes as readiness_bytes
 from apizr.readiness.model import Code, Dimension, Reason, State
@@ -17,14 +17,12 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_ir_schema_documentation_and_canonical_digest_are_pinned_to_v1():
     expected = {
-        "docs/specs/apizr-capability-v1.schema.json": "2f0be4b7dd3183e40cc6e53967c711e25d354fa49cd35ebdc363bfde4e17f0b0",
+        "specs/apizr-capability-v1.schema.json": "2f0be4b7dd3183e40cc6e53967c711e25d354fa49cd35ebdc363bfde4e17f0b0",
         "tests/fixtures/capability_ir/v1/basic.json": "f16af83a24e631823c364beeea15500672355f5b1ddfdd89ec0536bb4facb28c",
     }
     for path, digest in expected.items():
         assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == digest
-    schema = json.loads(
-        (ROOT / "docs/specs/apizr-capability-v1.schema.json").read_bytes()
-    )
+    schema = json.loads((ROOT / "specs/apizr-capability-v1.schema.json").read_bytes())
     for field in ("algorithm", "value"):
         assert schema["$defs"]["Digest"]["properties"][field].pop("description")
     # #268 adds only these two annotations to the original v1 schema. Keep its
@@ -44,7 +42,7 @@ def test_ir_schema_documentation_and_canonical_digest_are_pinned_to_v1():
         == "60902677ce6b84838694d47b70b995f7d3020fca0f3ab876052e73f149fc1846"
     )
     assert (
-        json.loads((ROOT / "docs/specs/apizr-capability-v1.schema.json").read_bytes())
+        json.loads((ROOT / "specs/apizr-capability-v1.schema.json").read_bytes())
         == CapabilityDocument.model_json_schema()
     )
 

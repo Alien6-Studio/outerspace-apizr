@@ -229,9 +229,9 @@ def test_host_network_is_not_falsely_isolated():
 
 
 def test_real_worker_source_tampering_and_binding_conflict(tmp_path):
+    from apizr.capabilities.inspection import inspect_source
     from apizr.execution import ExecutionPolicy, plan
     from apizr.execution.protocol import encode, frame
-    from apizr.inspection import inspect_source
 
     from .helpers import request_root
 

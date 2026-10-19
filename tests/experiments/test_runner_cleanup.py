@@ -25,6 +25,75 @@ from apizr.experiments.store import DEFAULT_STORE
 pytestmark = pytest.mark.timeout(25)
 
 
+def test_exited_worker_with_inherited_pipe_cleans_live_descendant(
+    tmp_path, monkeypatch
+):
+    """A complete reply must not hang behind a descendant holding worker stdout."""
+    from apizr.execution.protocol import frame
+    from apizr.experiments.model import EnvironmentEvidence
+    from apizr.experiments.run_protocol import WorkerFinished, WorkerStarted
+
+    from .test_worker_protocol import request
+
+    identity = tmp_path / "identity"
+    heartbeat = tmp_path / "heartbeat"
+    payload = b"".join(
+        frame(message.model_dump_json().encode())
+        for message in (
+            WorkerStarted(environment=EnvironmentEvidence()),
+            WorkerFinished(status="success"),
+        )
+    )
+    script = f"""import json, os, sys, time
+from pathlib import Path
+sys.stdin.buffer.read()
+ready, notify = os.pipe()
+if os.fork() == 0:
+    os.close(ready)
+    Path({str(identity)!r}).write_text(json.dumps({{"pid": os.getpid(), "pgid": os.getpgrp()}}))
+    Path({str(heartbeat)!r}).write_text(str(time.monotonic()))
+    os.write(notify, b'x')
+    os.close(notify)
+    while True:
+        Path({str(heartbeat)!r}).write_text(str(time.monotonic()))
+        time.sleep(.02)
+os.close(notify)
+assert os.read(ready, 1) == b'x'
+os.close(ready)
+os.write(1, {payload!r})
+os._exit(0)
+"""
+    popen, kill_group = subprocess.Popen, runner.kill_group
+    cleanup = []
+    processes = []
+
+    def spawn(command, **kwargs):
+        if not kwargs.get("start_new_session"):
+            return popen(command, **kwargs)
+        process = popen([sys.executable, "-I", "-c", script], **kwargs)
+        processes.append(process)
+        return process
+
+    def observe(process):
+        try:
+            child = json.loads(identity.read_text())
+            cleanup.append((process.poll(), process_state(child["pid"])))
+        finally:
+            kill_group(process)
+
+    monkeypatch.setattr(runner.subprocess, "Popen", spawn)
+    monkeypatch.setattr(runner, "kill_group", observe)
+    result = runner._exchange(request(), tmp_path, RunOptions(timeout_ms=5000))
+    assert result.status == "success"
+    assert cleanup[0][0] == 0
+    state = cleanup[0][1]
+    assert state and not state["state"].startswith("Z")
+    child = json.loads(identity.read_text())
+    assert state["pgid"] == child["pgid"] == processes[0].pid
+    wait_for_terminal_process(child["pid"], child["pgid"], heartbeat)
+    assert processes[0].stdin.closed and processes[0].stdout.closed
+
+
 @pytest.mark.parametrize("finish", ["success", "timeout", "cancel"])
 def test_synchronized_descendant_group_cleanup(tmp_path, monkeypatch, request, finish):
     marker = tmp_path / "identity"

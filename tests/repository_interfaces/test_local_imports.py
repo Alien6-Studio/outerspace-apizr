@@ -14,11 +14,10 @@ from analysis_authorization import analysis_policy
 from governed.helpers import SERVER, http_server
 from mcp import Client, StdioServerParameters
 
-from apizr.compiler import prepare_exposure, render_bundle
+from apizr.capabilities.inspection import inspect_source
 from apizr.execution.policy import ExecutionPolicy
 from apizr.exposure import ExposurePolicy, ExposureRefused, plan_exposure
 from apizr.graph import build_graph
-from apizr.inspection import inspect_source
 from apizr.interfaces.planner import GenerationRefused, invocation_contract, plan
 from apizr.repository import scan_sources
 from apizr.repository_execution.planner import worker_plan
@@ -35,6 +34,7 @@ from apizr.repository_readiness.eligibility import (
     can_generate_interface,
     interface_state,
 )
+from apizr.workspace.compiler import prepare_exposure, render_bundle
 
 from .conftest import evidence
 
@@ -499,8 +499,8 @@ def test_analysis_and_generation_never_execute_project_or_probe_runtime(tmp_path
         (tmp_path / path).write_bytes(content)
     probe = """import sys, json
 from pathlib import Path
-from apizr.compiler import prepare_exposure, render_bundle
-from apizr.operator_policy import OperatorPolicy
+from apizr.workspace.compiler import prepare_exposure, render_bundle
+from apizr.workspace.operator_policy import OperatorPolicy
 from apizr.exposure import ExposurePolicy
 from apizr.repository_readiness import RepositoryReadinessPolicy
 root = Path(sys.argv[1]).resolve()

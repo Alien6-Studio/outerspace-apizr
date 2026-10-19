@@ -2,9 +2,9 @@ import json
 import sys
 from contextlib import contextmanager
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.mcp import generate
 from apizr.generators.mcp.runtime import create_server
-from apizr.inspection import inspect_source
 
 
 @contextmanager

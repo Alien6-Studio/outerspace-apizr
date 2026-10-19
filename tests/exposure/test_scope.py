@@ -542,8 +542,8 @@ def test_scope_has_no_source_reanalysis_host_lookup_or_execution(monkeypatch):
     import importlib.util
     import socket
 
+    import apizr.capabilities.inspection as inspection
     import apizr.graph.builder as builder
-    import apizr.inspection as inspection
 
     monkeypatch.setattr(ast, "parse", forbidden)
     monkeypatch.setattr(Path, "read_bytes", forbidden)

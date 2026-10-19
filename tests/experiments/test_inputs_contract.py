@@ -148,7 +148,10 @@ def test_260_exact_canonical_bytes_unchanged(name, model, serialize, expected):
 
 
 def test_documented_input_example_runs():
-    page = (Path(__file__).parents[2] / "docs/guides/experiment-inputs.md").read_text()
+    page = (
+        Path(__file__).parents[2]
+        / "tests/fixtures/qualified-guides/guides/experiment-inputs.md"
+    ).read_text()
     code = (
         page.split("<!-- executable-input-example -->", 1)[1]
         .split("```python\n", 1)[1]

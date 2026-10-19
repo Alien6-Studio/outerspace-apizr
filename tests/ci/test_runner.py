@@ -10,12 +10,12 @@ from analysis_authorization import analysis_policy
 from apizr.ci import CIError, CIResult, execute
 from apizr.ci.runner import analysis_authority
 from apizr.cli.commands.ci import main
-from apizr.compiler import prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy, plan_bytes
 from apizr.onboarding.diagnostics import doctor
-from apizr.operator_policy import decide_analysis
 from apizr.repository_readiness import RepositoryReadinessPolicy, report_bytes
+from apizr.workspace.compiler import prepare_exposure, render_bundle
 from apizr.workspace.files import absolute_path
+from apizr.workspace.operator_policy import decide_analysis
 from apizr.workspace.project import load_project
 
 

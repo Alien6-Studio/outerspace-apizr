@@ -11,8 +11,16 @@ from pathlib import Path
 import pytest
 
 from apizr.cli import main
+from apizr.contracts.publication import PublishRequest, PushRequest
 from apizr.extension_runtime import Limits, SizeLimitExceeded
-from apizr.operator_policy import (
+from apizr.plugins.local import (
+    activation,
+    enable_extension,
+    install_extension,
+    run_extension,
+)
+from apizr.plugins.local.models import Installation
+from apizr.workspace.operator_policy import (
     MAX_POLICY_BYTES,
     AuthorizationDenied,
     OperatorPolicy,
@@ -21,14 +29,6 @@ from apizr.operator_policy import (
     load_operator_policy,
     repository_name,
 )
-from apizr.plugins.local import (
-    activation,
-    enable_extension,
-    install_extension,
-    run_extension,
-)
-from apizr.plugins.local.models import Installation
-from apizr.publication_contracts import PublishRequest, PushRequest
 
 pytestmark = pytest.mark.timeout(30)
 REPOSITORY = "registry.example:5443/team/service"
@@ -92,6 +92,7 @@ def arguments(operation):
         "expected_reference": REPOSITORY + "@sha256:" + "a" * 64,
         "expected_signer": "b" * 64,
         "trust_store": "/proof/trust",
+        "trust_store_sha256": "f" * 64,
         "proof_dir": "/proof/signed",
         "tool": {
             "executable": "/native/attest",
@@ -163,6 +164,11 @@ def document(binding, operation="push", repository=REPOSITORY):
             "receipt.sign",
             "timestamp.request",
         ]
+    if operation in {"attest", "publish", "admit"}:
+        result["grants"][0]["verification"] = {
+            k: arguments(operation)[k]
+            for k in ("tool", "expected_signer", "trust_store", "trust_store_sha256")
+        }
     return result
 
 
@@ -485,7 +491,7 @@ def test_other_operations_preserve_current_scope(operation):
 
 def test_core_import_does_not_load_plugins_or_optional_sdks(tmp_path):
     source = """import sys
-from apizr.operator_policy import OperatorPolicy, decide
+from apizr.workspace.operator_policy import OperatorPolicy, decide
 from apizr.plugins.local import run_extension
 assert not any(n.split('.')[0] in {'apizr_oci','apizr_attest','apizr_mcp','docker','mcp','fastapi','oras'} for n in sys.modules)
 """
@@ -577,11 +583,11 @@ def test_shared_publication_models_are_the_plugin_contracts():
     from apizr_oci.model import BuildRequest as PluginBuild
     from apizr_oci.model import PushRequest as PluginPush
 
-    from apizr.publication_contracts import BuildRequest
+    from apizr.contracts.publication import BuildRequest
 
     assert PluginBuild is BuildRequest
     assert PluginPush is PushRequest
-    from apizr.publication_contracts import AttestRequest
+    from apizr.contracts.publication import AttestRequest
 
     assert PluginAttest is AttestRequest
     assert PluginPublish is PublishRequest
@@ -630,7 +636,7 @@ def test_authorized_cli_and_policy_do_not_replace_activation(
 
 def test_complete_documented_policy():
     selected = load_operator_policy(
-        Path(__file__).parents[2] / "docs/examples/operator.json"
+        Path(__file__).parents[2] / "specs/examples/operator.json"
     )
     assert {(g.plugin.name, g.operation) for g in selected.grants} == {
         ("outerspace-apizr-oci", "push"),

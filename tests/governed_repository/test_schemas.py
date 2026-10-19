@@ -27,7 +27,7 @@ MODELS = {
 
 @pytest.mark.parametrize("name,model", MODELS.items())
 def test_committed_schema_matches_model(name, model):
-    actual = json.loads((ROOT / "docs/specs" / f"{name}.schema.json").read_bytes())
+    actual = json.loads((ROOT / "specs" / f"{name}.schema.json").read_bytes())
     assert actual == model.model_json_schema()
     Draft202012Validator.check_schema(actual)
 

@@ -3,10 +3,10 @@ import sys
 
 import pytest
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.capabilities.model import Digest
 from apizr.generators.mcp import generate, plan, render
 from apizr.generators.mcp.runtime import create_server
-from apizr.inspection import inspect_source
 from apizr.interfaces.planner import GenerationRefused
 from apizr.readiness import report_digest
 from apizr.readiness.model import Code, Dimension, Reason

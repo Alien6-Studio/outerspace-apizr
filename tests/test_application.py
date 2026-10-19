@@ -12,16 +12,20 @@ import pytest
 from analysis_authorization import analysis_policy, authorized_main
 from pydantic import ValidationError
 
-from apizr.application import ApplicationConfig, ApplicationInputs, ApplicationResource
-from apizr.application_resources import capture_resources
 from apizr.capabilities.model import Digest
-from apizr.compiler import prepare_exposure, render_bundle
+from apizr.contracts.application import (
+    ApplicationConfig,
+    ApplicationInputs,
+    ApplicationResource,
+)
 from apizr.execution.policy import ExecutionPolicy
 from apizr.exposure import ExposurePolicy, ExposureRefused
-from apizr.operator_policy import AuthorizationDenied
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_interfaces.runtime import load_bundle, validate_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy
+from apizr.workspace.application_resources import capture_resources
+from apizr.workspace.compiler import prepare_exposure, render_bundle
+from apizr.workspace.operator_policy import AuthorizationDenied
 from apizr.workspace.project import load_project
 
 EXAMPLE = Path(__file__).parents[1] / "examples/application-inputs"
@@ -148,11 +152,15 @@ def test_resource_files_refuse_unsafe_inputs(tmp_path, monkeypatch, fault):
         os.link(resource, root / "alias")
         paths.append("alias")
     elif fault == "large":
-        monkeypatch.setattr("apizr.application_resources.MAX_RESOURCE_BYTES", 3)
+        monkeypatch.setattr(
+            "apizr.workspace.application_resources.MAX_RESOURCE_BYTES", 3
+        )
     else:
         (root / "second").write_bytes(b"data")
         paths.append("second")
-        monkeypatch.setattr("apizr.application_resources.MAX_APPLICATION_BYTES", 5)
+        monkeypatch.setattr(
+            "apizr.workspace.application_resources.MAX_APPLICATION_BYTES", 5
+        )
     with pytest.raises((ValueError, OSError)):
         capture_resources(
             root, ApplicationConfig(resources=tuple(paths)), analysis_policy(root)

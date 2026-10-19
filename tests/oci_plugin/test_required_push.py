@@ -7,7 +7,7 @@ from apizr_oci.delivery import delivery_plan
 from apizr_oci.model import BuildError
 from apizr_oci.push import promote_verified, push
 
-from apizr.delivery import PLAN_LABEL, PROOF_LABEL, DeliveryManifest, identity
+from apizr.contracts.delivery import PLAN_LABEL, PROOF_LABEL, DeliveryManifest, identity
 
 from . import test_build, test_delivery, test_push
 
@@ -147,7 +147,7 @@ def test_promotion_refusals_and_uncertainty(gated, tmp_path, monkeypatch, fault)
 def test_read_only_observation_and_digest_resume_never_upload(gated, tmp_path):
     from apizr_oci.observe import observe_delivery
 
-    from apizr.publication_contracts import ObserveRequest
+    from apizr.contracts.publication import ObserveRequest
 
     request, calls, remote, _ = gated
     result = push(request, workspace=tmp_path)
@@ -199,7 +199,7 @@ def test_observation_refuses_conflicts_and_does_not_claim_unknown_state(
 ):
     from apizr_oci import observe as mod
 
-    from apizr.publication_contracts import ObserveRequest
+    from apizr.contracts.publication import ObserveRequest
 
     request, _, _, _ = gated
     pushed = push(request, workspace=tmp_path)

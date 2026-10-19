@@ -10,9 +10,9 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 from mcp import Client
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.generators.mcp import generate, render
 from apizr.generators.mcp.runtime import create_server
-from apizr.inspection import inspect_source
 from apizr.interfaces.planner import GenerationRefused
 
 from .helpers import server_bundle

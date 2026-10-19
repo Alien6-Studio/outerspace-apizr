@@ -7,7 +7,7 @@ import nbformat
 import pytest
 from analysis_authorization import authorized_main as main
 
-from apizr.inspection import inspect_file, inspect_source, json_bytes
+from apizr.capabilities.inspection import inspect_file, inspect_source, json_bytes
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -97,7 +97,6 @@ def test_missing_file_and_explicit_identity_override(tmp_path, capsys):
 @pytest.mark.parametrize(
     "args",
     [
-        [],
         ["inspect"],
         ["inspect", "x.py", "--ir", "--format", "json"],
         ["inspect", "x.py", "--format", "yaml"],
@@ -110,10 +109,11 @@ def test_argument_errors_exit_2(args, capsys):
     assert "Traceback" not in capsys.readouterr().err
 
 
-def test_help_preserves_old_options_and_discovers_inspection(capsys):
+def test_help_describes_supported_inspection_without_retired_options(capsys):
     assert main(["--help"]) == 0
     out = capsys.readouterr().out
-    assert "--script" in out and "--notebook" in out and "apizr inspect" in out
+    assert "--script" not in out and "--notebook" not in out
+    assert "apizr inspect" in out
     with pytest.raises(SystemExit) as error:
         main(["inspect", "--help"])
     assert error.value.code == 0
@@ -141,34 +141,6 @@ def test_notebook_magics_are_operational_errors(tmp_path, capsys):
     )
     assert main(["inspect", str(path)]) == 2
     assert "magics" in capsys.readouterr().err
-
-
-@pytest.mark.parametrize("kind", ["script", "notebook"])
-def test_legacy_console_routing_generates_identical_artifacts(tmp_path, capsys, kind):
-    from apizr.main import main as legacy
-
-    source = tmp_path / ("business.py" if kind == "script" else "business.ipynb")
-    code = "def value(x: int = 1) -> int: return x\n"
-    if kind == "script":
-        source.write_text(code)
-    else:
-        nbformat.write(
-            nbformat.v4.new_notebook(cells=[nbformat.v4.new_code_cell(code)]), source
-        )
-    args = [f"--{kind}", str(source), "--force", "--python-version", "3.11"]
-    assert main([*args, "--output-dir", str(tmp_path / "new")]) == 0
-    capsys.readouterr()
-    legacy([*args, "--output-dir", str(tmp_path / "legacy")])
-    capsys.readouterr()
-
-    def contents(directory):
-        return {
-            str(p.relative_to(directory)): p.read_bytes()
-            for p in directory.rglob("*")
-            if p.is_file()
-        }
-
-    assert contents(tmp_path / "new") == contents(tmp_path / "legacy")
 
 
 def test_python_module_cli_works_outside_checkout(tmp_path):

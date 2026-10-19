@@ -51,7 +51,7 @@ def test_reviewed_graph_and_schemas():
         schema = model.model_json_schema()
         assert schema == json.loads(
             (
-                Path(__file__).parents[2] / f"docs/specs/apizr-{name}-v1.schema.json"
+                Path(__file__).parents[2] / f"specs/apizr-{name}-v1.schema.json"
             ).read_bytes()
         )
         Draft202012Validator.check_schema(schema)

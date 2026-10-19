@@ -7,12 +7,12 @@ from hypothesis import strategies as st
 from pydantic import ValidationError
 
 from apizr.capabilities import canonical_bytes as ir_bytes
+from apizr.capabilities.inspection import Inspection, inspect_source
 from apizr.capabilities.types import declared_type
-from apizr.contract_lowering import ContractError, lower
-from apizr.contract_types import ObjectField, TypeSpec
+from apizr.contracts.lowering import ContractError, lower
+from apizr.contracts.types import ObjectField, TypeSpec
 from apizr.generators.mcp.generator import render as mcp
 from apizr.generators.rest.generator import render as rest
-from apizr.inspection import Inspection, inspect_source
 from apizr.interfaces.planner import GenerationRefused, plan
 from apizr.interfaces.schema import json_schema
 from apizr.readiness import canonical_bytes as readiness_bytes

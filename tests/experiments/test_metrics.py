@@ -16,8 +16,8 @@ from apizr.experiments import (
     MetricSignal,
     capture_metric,
     discover_metrics,
-    metrics,
 )
+from apizr.scientific_providers.builtin import metrics
 
 
 @pytest.mark.parametrize(

@@ -75,7 +75,7 @@ def audit(event,args):
     if event=="open" and isinstance(args[0],str) and args[0].startswith(root) and args[2] & (os.O_WRONLY|os.O_RDWR|os.O_CREAT|os.O_TRUNC): raise AssertionError("repository write")
 sys.addaudithook(audit)
 from pathlib import Path
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 operator = load_operator_policy(Path(sys.argv[-1]))
 from apizr.repository import scan,catalog_bytes
 result=scan(root, operator_policy=operator)

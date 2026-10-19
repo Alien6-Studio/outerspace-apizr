@@ -9,10 +9,10 @@ from oci.helpers import IMAGE, planned
 from oci.test_provider import HOST, IMAGE_INFO
 from repository_execution.helpers import planned as repository_planned
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.capabilities.model import Digest
 from apizr.execution.policy import PolicyRefused, Subprocess
 from apizr.execution.serialization import digest
-from apizr.inspection import inspect_source
 from apizr.oci.docker import DockerProvider
 from apizr.oci.model import ContainerResult, ExecutionPolicyV2
 from apizr.oci.provider import ProviderError

@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -12,7 +13,7 @@ from analysis_authorization import analysis_policy
 from analysis_authorization import authorized_main as main
 from pydantic import ValidationError
 
-from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
+from apizr.contracts.application import ApplicationConfig
 from apizr.execution.policy import ExecutionPolicy, PolicyRefused
 from apizr.exposure import ExposurePolicy, ExposureRefused, plan_bytes, refusal_report
 from apizr.graph import GraphPolicy
@@ -21,9 +22,78 @@ from apizr.repository import ScanPolicy
 from apizr.repository_interfaces import BundleRefused
 from apizr.repository_interfaces.output import write_bundle
 from apizr.repository_readiness import RepositoryReadinessPolicy, report_bytes
+from apizr.workspace.compiler import assess_readiness, prepare_exposure, render_bundle
 
 FIXTURES = Path(__file__).parent / "fixtures"
 IMAGE = RuntimeImage(image="sha256:" + "0" * 64, platform="linux/amd64")
+
+
+def test_prepared_context_owns_source_and_resource_snapshots(tmp_path):
+    root = project(tmp_path)
+    (root / "message.txt").write_bytes(b"reviewed resource")
+    prepared = prepare_exposure(
+        root,
+        operator_policy=analysis_policy(root),
+        policy=exposure_policy(),
+        readiness_policy=readiness_policy(),
+        application=ApplicationConfig(resources=("message.txt",)),
+    )
+    sources = dict(prepared.evidence.sources)
+    resources = dict(prepared.resources)
+    retained = replace(
+        prepared,
+        evidence=replace(prepared.evidence, sources=sources),
+        resources=resources,
+    )
+    expected = {
+        interface: render_bundle(retained, interface=interface)
+        for interface in ("rest", "mcp")
+    }
+    sources["sample.py"] = b"raise RuntimeError('changed')\n"
+    resources.clear()
+    shutil.rmtree(root)
+    for interface in ("rest", "mcp"):
+        assert render_bundle(retained, interface=interface) == expected[interface]
+    for payload in (retained.evidence.sources, retained.resources):
+        with pytest.raises(TypeError):
+            payload["injected"] = b"changed"
+
+
+def test_prepared_dependency_archives_are_owned_without_certifying_them(tmp_path):
+    root = project(tmp_path)
+    prepared = prepare_exposure(
+        root,
+        operator_policy=analysis_policy(root),
+        policy=exposure_policy(),
+        readiness_policy=readiness_policy(),
+    )
+    archives = {"unverified.whl": b"not a verified wheel"}
+    retained = replace(prepared, dependency_archives=archives)
+    archives.clear()
+    assert retained.dependency_archives == {"unverified.whl": b"not a verified wheel"}
+    with pytest.raises(TypeError):
+        retained.dependency_archives["other.whl"] = b"injected"
+    with pytest.raises(ValueError):
+        render_bundle(retained, interface="rest")
+
+
+@pytest.mark.parametrize("field", ["sources", "resources", "dependency_archives"])
+@pytest.mark.parametrize("payload", [{"file": bytearray(b"mutable")}, {1: b"bytes"}])
+def test_prepared_context_rejects_untyped_payloads(tmp_path, field, payload):
+    root = project(tmp_path)
+    prepared = prepare_exposure(
+        root,
+        operator_policy=analysis_policy(root),
+        policy=exposure_policy(),
+        readiness_policy=readiness_policy(),
+    )
+    updates = (
+        {"evidence": replace(prepared.evidence, sources=payload)}
+        if field == "sources"
+        else {field: payload}
+    )
+    with pytest.raises(TypeError, match="string paths and bytes"):
+        replace(prepared, **updates)
 
 
 def exposure_policy(mode="direct", selected=("python:sample:add",)):
@@ -371,12 +441,12 @@ def audit(event, args):
         raise AssertionError("source write")
 sys.addaudithook(audit)
 from pathlib import Path
-from apizr.operator_policy import load_operator_policy
+from apizr.workspace.operator_policy import load_operator_policy
 operator = load_operator_policy(Path(sys.argv[-1]))
 import importlib.metadata
 def forbidden(*args, **kwargs): raise AssertionError("plugin discovery")
 importlib.metadata.entry_points = forbidden
-from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
+from apizr.workspace.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.repository_readiness import RepositoryReadinessPolicy
 assess_readiness(root, operator_policy=operator)
