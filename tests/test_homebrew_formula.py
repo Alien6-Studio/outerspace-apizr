@@ -16,9 +16,9 @@ tool = runpy.run_path(str(qualification_script("homebrew_formula")))
 SHA = "a" * 40
 
 
-def candidate(tmp_path):
+def candidate(tmp_path, version="0.4.6"):
     root = tmp_path / "candidate"
-    source = root / "dist/outerspace_apizr-0.4.5.tar.gz"
+    source = root / f"dist/outerspace_apizr-{version}.tar.gz"
     source.parent.mkdir(parents=True)
     source.write_bytes(b"exact source fixture")
     sha = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -28,7 +28,7 @@ def candidate(tmp_path):
                 "schema": "apizr.release-candidate/v1",
                 "repository": "Alien6-Studio/outerspace-apizr",
                 "commit": SHA,
-                "version": "0.4.5",
+                "version": version,
                 "artifacts": [
                     {
                         "file": "dist/" + source.name,
@@ -43,12 +43,8 @@ def candidate(tmp_path):
 
 
 def test_development_lock_does_not_reauthorize_published_045(tmp_path):
-    root, source, sha = candidate(tmp_path)
-    assert (
-        tool["BUILD_MANIFEST"]
-        == "1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd"
-    )
-    with pytest.raises(ValueError, match="Reviewed build-input identity changed"):
+    root, source, sha = candidate(tmp_path, version="0.4.5")
+    with pytest.raises(ValueError, match="no Homebrew publication authorization"):
         tool["render"](
             root,
             SHA,
@@ -126,7 +122,7 @@ def test_renderer_rejects_changed_candidate_without_output(tmp_path, change):
         "https://github.com/Alien6-Studio/outerspace-apizr/actions/runs/1/artifacts/2",
         "https://example.com/apizr.tar.gz",
         "https://github.com/Alien6-Studio/outerspace-apizr/archive/refs/heads/main.tar.gz",
-        "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.5/outerspace_apizr-0.4.5.tar.gz",
+        "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace_apizr-0.4.6.tar.gz",
     ],
 )
 def test_unsigned_or_arbitrary_publication_source_is_rejected(tmp_path, url):
@@ -155,12 +151,8 @@ def test_qualification_cannot_accept_publication_overrides(tmp_path):
 def test_publication_binds_verified_evidence_and_immutable_asset(
     tmp_path, monkeypatch, change
 ):
-    frozen = json.loads(
-        (ROOT / "tests/fixtures/homebrew/published-0.4.5-build-inputs.json").read_text()
-    )
-    monkeypatch.setitem(tool["render"].__globals__, "manifest", lambda *a: frozen)
     root, source, sha = candidate(tmp_path)
-    url = f"https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.5/{source.name}"
+    url = f"https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/{source.name}"
     evidence, bundle = tmp_path / "evidence.tar.gz", tmp_path / "bundle.json"
     bundle.write_text("test signature boundary")
     with tarfile.open(evidence, "w:gz") as archive:
@@ -218,7 +210,7 @@ def test_publication_binds_verified_evidence_and_immutable_asset(
     ]
 
 
-@pytest.mark.parametrize("version", ["0.4.3", "0.4.4", "0.4.6", "0.4.7"])
+@pytest.mark.parametrize("version", ["0.4.3", "0.4.4", "0.4.5", "0.4.7"])
 def test_retired_or_future_candidate_does_not_reopen_publication(tmp_path, version):
     root, old_source, _ = candidate(tmp_path)
     source = old_source.with_name(f"outerspace_apizr-{version}.tar.gz")

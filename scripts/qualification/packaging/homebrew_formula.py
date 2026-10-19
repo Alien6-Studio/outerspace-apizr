@@ -17,10 +17,10 @@ from scripts.qualification.packaging.prepare_release_assets import bound_file
 
 ROOT = Path(__file__).resolve().parents[3]
 REPOSITORY = "Alien6-Studio/outerspace-apizr"
-VERSION = "0.4.5"
-BUILD_MANIFEST = "1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd"
+VERSION = "0.4.6"
+BUILD_MANIFEST = "b91848bc80e8664c783ccb1a103caaa9aeff14be5b0c678384ca5a86d54e0371"
 QUALIFICATION_BUILD_MANIFEST = (
-    "c24d81938719818209210242c01a1f41c5c1b215806b5dcbdda2ac68c88ff556"
+    "b91848bc80e8664c783ccb1a103caaa9aeff14be5b0c678384ca5a86d54e0371"
 )
 
 
