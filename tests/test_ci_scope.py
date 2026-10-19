@@ -66,7 +66,6 @@ def pr_event(base, head):
     "name,examples",
     [
         ("README.md", "true"),
-        ("CHANGELOG.md", "false"),
         ("CONTRIBUTING.md", "false"),
         ("CODE_OF_CONDUCT.md", "false"),
         ("SECURITY.md", "false"),
@@ -266,7 +265,7 @@ def test_prose_allowlist_excludes_published_implementation():
     paths = project["tool"]["hatch"]["build"]["targets"]["sdist"]["include"]
     assert {
         path.lstrip("/") for path in paths if scope.prose_path(path.lstrip("/"))
-    } == {"README.md", "CHANGELOG.md"}
+    } == {"README.md"}
 
 
 def test_site_paths_and_product_example_tools_cannot_use_the_prose_shortcut(repo):

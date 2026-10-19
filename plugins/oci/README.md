@@ -1,18 +1,15 @@
-# outerspace-apizr-oci
+# Apizr OCI plugin
 
-Apizr **0.4.6**: use the matching core and plugin versions together.
+Build a container image from your generated REST or MCP service, then publish
+it to a registry when you are ready to share it.
 
-Build REST/MCP service images and explicitly publish a verified image.
+Use **Apizr 0.4.6** with the matching plugin version. Follow the
+[installation guide](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile),
+then [build your first service image](https://apizr.outerspace.sh/reference/oci-service-plugin/).
 
-This optional Apizr plugin runs in its own Python environment. Use the
-[installation guide](https://apizr.outerspace.sh/getting-started/install/#choose-a-plugin-profile)
-to choose the matching catalog profile and verified target artifacts. The
-[release record](https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/releases/0.4.6.md) describes the
-functionality and validation for **Apizr 0.4.6**.
+The plugin has its own Python environment. After installation, enable it and
+give it the permissions needed to build or publish. Existing project settings
+and permissions are kept until you change them.
 
-Installation does not activate a plugin or authorize its operations. Enable the
-chosen version explicitly and supply the required operator policy. Existing
-locks, activations and permissions are not migrated automatically.
-
-See the [plugin guide](https://apizr.outerspace.sh/reference/oci-service-plugin/).
-Python 3.11–3.15. GPL-3.0-or-later; the full license is included.
+Python 3.11–3.15 · GPL-3.0-or-later ·
+[Release notes](https://github.com/Alien6-Studio/outerspace-apizr/releases)

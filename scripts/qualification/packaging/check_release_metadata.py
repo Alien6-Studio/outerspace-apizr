@@ -25,7 +25,7 @@ URLS = {
     "Repository": REPOSITORY,
     "Documentation": "https://apizr.outerspace.sh/",
     "Issues": REPOSITORY + "/issues",
-    "Changelog": REPOSITORY + "/blob/v{version}/CHANGELOG.md",
+    "Releases": REPOSITORY + "/releases",
 }
 
 
@@ -48,7 +48,6 @@ def inventory(version):
             "examples/data-science/fraud-detection/README.md",
             "examples/governance/README.md",
             "server.json",
-            "CHANGELOG.md",
             "LICENSE",
             "policy/vscode-dependencies.json",
             "policy/vscode-distribution.json",
@@ -225,12 +224,6 @@ def check(root=ROOT, *, release=False, ref=None):
         errors.append("glama.json: missing retained ownership contract")
     # The retained Glama schema has no version property. Bind the descriptor bytes
     # with the recipe and qualified source instead of inventing a version field.
-    if not re.search(
-        r"^## " + re.escape(target) + r"(?:\s|$)",
-        (root / "CHANGELOG.md").read_text(),
-        re.M,
-    ):
-        errors.append("CHANGELOG.md: missing target release entry")
     if not re.search(
         r"^# " + re.escape(target) + r"(?:\s|$)",
         (root / f"releases/{target}.md").read_text(),

@@ -56,7 +56,7 @@ apizr = "apizr.cli:main"
 Repository = "https://github.com/Alien6-Studio/outerspace-apizr"
 Documentation = "https://apizr.outerspace.sh/"
 Issues = "https://github.com/Alien6-Studio/outerspace-apizr/issues"
-Changelog = "https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/CHANGELOG.md"
+Releases = "https://github.com/Alien6-Studio/outerspace-apizr/releases"
 
 [dependency-groups]
 dev = [
@@ -105,7 +105,7 @@ packages = ["src/apizr"]
 "src/apizr/py.typed" = "apizr/py.typed"
 
 [tool.hatch.build.targets.sdist]
-include = ["/src/apizr", "/pyproject.toml", "/README.md", "/CHANGELOG.md", "/LICENSE"]
+include = ["/src/apizr", "/pyproject.toml", "/README.md", "/LICENSE"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -177,7 +177,6 @@ def check(directory: Path, project_root: Path) -> dict[str, str]:
             allowed = {
                 "pyproject.toml",
                 "README.md",
-                "CHANGELOG.md",
                 "LICENSE",
                 "PKG-INFO",
                 ".gitignore",  # Hatchling includes its standard VCS exclusion file.

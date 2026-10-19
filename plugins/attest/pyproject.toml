@@ -13,7 +13,7 @@ dependencies = ["outerspace-apizr-oci==0.4.6"]
 Repository = "https://github.com/Alien6-Studio/outerspace-apizr"
 Documentation = "https://apizr.outerspace.sh/"
 Issues = "https://github.com/Alien6-Studio/outerspace-apizr/issues"
-Changelog = "https://github.com/Alien6-Studio/outerspace-apizr/blob/v0.4.6/CHANGELOG.md"
+Releases = "https://github.com/Alien6-Studio/outerspace-apizr/releases"
 
 [build-system]
 requires = ["hatchling>=1.27,<2"]

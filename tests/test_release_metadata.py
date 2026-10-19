@@ -62,7 +62,7 @@ def development(release):
     ):
         path = root / name
         path.write_text("<!-- apizr-development: 0.4.6 -->\n" + path.read_text())
-    for name in ("CHANGELOG.md", "releases/0.4.6.md"):
+    for name in ("releases/0.4.6.md",):
         path = root / name
         path.write_text(path.read_text().replace("# 0.4.5", "# 0.4.6"))
     (root / "Dockerfile").write_text(
@@ -148,13 +148,12 @@ def test_old_prose_pins_and_mutable_links_block_release(release, path, text):
             "outerspace-apizr-oci==0.4.5",
         ),
         ("plugins/mcp/pyproject.toml", "Issues = ", "WrongIssues = "),
-        ("plugins/oci/pyproject.toml", "v0.4.6/CHANGELOG", "v0.4.5/CHANGELOG"),
+        ("plugins/oci/pyproject.toml", "Releases = ", "WrongReleases = "),
         ("plugins/attest/apizr-extension.json", '"0.4.6"', '"0.4.5"'),
         ("server.json", '"version": "0.4.6"', '"version": "0.4.5"'),
         ("action.yml", "default: 0.4.6", "default: 0.4.5"),
         ("templates/apizr.yml", "default: 0.4.6", "default: 0.4.5"),
         ("Dockerfile", "ARG SOURCE_REF=v0.4.6", "ARG SOURCE_REF=master"),
-        ("CHANGELOG.md", "## 0.4.6", "## 0.4.5"),
         ("releases/0.4.6.md", "# 0.4.6", "# 0.4.5"),
     ],
 )
