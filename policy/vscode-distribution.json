@@ -9,7 +9,7 @@
       "sha256": "d32031e9e213d59532af3cf32fcb8b357a1cdd10417967b4f5b5ba30436dc0dc"
     }
   },
-  "publication": "Prepared only; no Marketplace/Open VSX publication job or credentials. Publisher identity requires independent authorization.",
+  "publication": "Publisher alien6-studio is registered. Marketplace publication remains manual and subject to final maintainer review; no publishing credentials or workflow are configured.",
   "remote_ssh": {
     "extension": "ms-vscode-remote.remote-ssh",
     "version": "0.128.0",
