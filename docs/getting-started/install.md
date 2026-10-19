@@ -5,25 +5,12 @@ description: Install Apizr with pip, uv, pipx or Homebrew, then add optional plu
 
 # Install Apizr
 
-!!! info "0.4.6 development documentation"
-    Apizr 0.4.6 is not published. Versioned installation commands on this page
-    describe that upcoming release. For the published package, use
-    `uv tool install outerspace-apizr==0.4.5`. To run the 0.4.6 examples now,
-    [build the selected development source](../development/0.4.md#install-a-development-wheel).
 
 
 Install **Apizr 0.4.6**, then follow the [Quickstart](quickstart.md) to make your
 first REST or MCP calls. The core is enough for that example; plugins are optional.
 
-## Data scientist
-
-Already have a Python environment with pandas and scikit-learn? Install Apizr's
-notebook support into that environment, then start with `apizr experiment inspect`.
-The [Data Scientist quickstart](data-science.md) explains installation of
-**Apizr 0.4.6** and walks through an unchanged
-notebook, two datasets, comparison and real REST/MCP prediction calls.
-Scientific libraries are your workload dependencies; no analysis plugin is needed.
-The installation commands below use version 0.4.6.
+Working in a notebook? The [Data Scientist quickstart](data-science.md) installs Apizr in your existing scientific environment.
 
 ## Install the core
 
@@ -51,6 +38,8 @@ Install Apizr as an isolated command-line tool with **one** of:
 ```sh
 uv tool install outerspace-apizr==0.4.6
 ```
+
+![Install Apizr 0.4.6 with uv](../assets/videos/uv-install-0.4.6.gif)
 
 ```sh
 pipx install outerspace-apizr==0.4.6
@@ -241,10 +230,11 @@ macOS compatibility claim.
 Contributors should follow [development and checks](developer-guide/setup.md).
 [Manual wheel preparation](../development/0.4.md#install-a-development-wheel)
 and the guides' advanced sections remain available for custom evaluation builds.
-Those builds have their own identities and cannot replace approved release bytes.
 Review [plugin locks](../reference/project-plugin-locks.md) and
 [operator permissions](../reference/operator-policy.md) before replacing
 development locks, grants or activations.
 
 For publication status and changes in this version, see the
 [0.4.6 release notes](../releases/0.4.6.md).
+
+<span id="data-scientist"></span>

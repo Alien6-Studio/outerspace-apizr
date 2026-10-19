@@ -94,51 +94,19 @@ then use `apizr experiment list` from the notebook's working directory and the
 same environment. Re-executing a cell produces a new Run, retaining its execution
 count and cell identity when the frontend supplies one.
 
-The installed-candidate qualification executes this exact notebook in a real
-ipykernel and retains its SHA-256. The qualified kernel versions and frontend
-limits are listed in the [Jupyter reference](../reference/tracking-sdk.md#live-jupyter-captures-046-development).
+For supported kernel versions and frontend limits, see the [Jupyter reference](../reference/tracking-sdk.md#live-jupyter-captures-046-development).
 In-memory notebook observations do not establish a saved source or serving
 binding. For an eligible saved prediction function, follow
 [exposure from SDK evidence](../reference/tracking-sdk.md#expose-an-observed-python-source).
 Exposure validates recorded evidence and never reruns training.
 
-## 4. Choose static recognition and privacy settings
+## Recognition and privacy settings
 
-Static providers apply when you inspect source or use `experiment run`. SDK
-logging records your explicit observations independently. List the built-in
-provider, then inspect with its recognition disabled:
+The SDK records the values you choose to log. To change how Apizr recognizes
+scientific libraries during source inspection, see
+[scientific providers](../reference/scientific-providers.md).
+Read [telemetry and privacy](../about/telemetry.md) before enabling optional telemetry.
 
-<!-- tracking-journey:providers -->
-```sh
-apizr providers list --format json > providers.json
-python - <<'PY'
-import json
-from pathlib import Path
-Path("disabled.json").write_text(json.dumps({
-    "schema_version": "apizr.provider-selection/v1",
-    "providers": [{"identity": {"name": "apizr.builtin", "version": "1"},
-                   "enabled": False}]
-}))
-Path("model.py").write_text("score = 0.75\n")
-PY
-apizr experiment inspect model.py --providers disabled.json --format json > inspection.json
-```
-
-The report says `provider_disabled` and its scientific evidence remains unknown.
-Earlier Runs stay readable. The [provider guide](../reference/scientific-providers.md)
-explains precedence, limits and the separately packaged alternative provider.
-
-Telemetry is off by default. This preview makes the opt-out explicit:
-
-<!-- tracking-journey:telemetry -->
-```sh
-APIZR_TELEMETRY=0 apizr telemetry preview
-```
-
-It reports disabled collection, no events and unavailable transmission. With
-explicit opt-in, only bounded coarse counters live in process memory; no
-parameters, metrics, paths, source or traces enter the payload. There is no
-production sender in 0.4.6. See the [approved telemetry policy](../about/telemetry.md).
 
 ## 5. Open the history in VS Code
 
@@ -152,3 +120,5 @@ stale. No training is started by inspecting or browsing history.
 See [migration from 0.4.5](../releases/migrate-0.4.6.md) for store, CLI and
 compatibility details, and [Academy experiment lessons](../academy/index.md#experiment-path-recordings-coming-later)
 for the recordings and their written guides.
+
+<span id="4-choose-static-recognition-and-privacy-settings"></span>
