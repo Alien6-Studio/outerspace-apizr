@@ -7,8 +7,12 @@ Apizr **0.4.6** supports Python **3.11–3.15** on macOS and Linux.
 
 [![PyPI](https://img.shields.io/pypi/v/outerspace-apizr.svg)](https://pypi.org/project/outerspace-apizr/)
 [![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml?query=branch%3Amaster)
+[![Security](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/security.yml?query=branch%3Amaster)
 [![Documentation](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/site.yml/badge.svg?branch=gh-pages)](https://apizr.outerspace.sh/)
+[![Python](https://img.shields.io/badge/python-3.11%E2%80%933.15-blue.svg)](https://pypi.org/project/outerspace-apizr/)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://apizr.outerspace.sh/about/LICENSE/)
+[![Apizr MCP server on Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/badges/score.svg)](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr)
+[![MCPLookup Trust Index](https://mcplookup.com/badge/io.github.Alien6-Studio/outerspace-apizr?embed=a6d68610-7a46-4689-8add-e364a971ddbf)](https://mcplookup.com/badge/go/a6d68610-7a46-4689-8add-e364a971ddbf/io.github.Alien6-Studio/outerspace-apizr)
 
 ## Install
 
