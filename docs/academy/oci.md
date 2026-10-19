@@ -1,5 +1,5 @@
 ---
-title: Build an MCP image and let Ollama call pricing.total
+title: "Generate an image. Expose MCP. Call it with Ollama."
 description: Follow the recorded OCI plugin build and the actual local model-to-container tool call.
 lesson: 5
 recording: 05-oci-ollama
@@ -7,7 +7,9 @@ recording: 05-oci-ollama
 
 <p class="apizr-academy-kicker">Build interfaces · Lesson 05</p>
 
-# Build an MCP image and let Ollama call pricing.total
+<span id="build-an-mcp-image-and-let-ollama-call-pricingtotal"></span>
+
+# Generate an image. Expose MCP. Call it with Ollama.
 
 This video joins four concrete components: the repository shop, Apizr's OCI plugin, a generated MCP container and a small Ollama bridge. Its result is a real tool request for **7 items at 19.5**, returning **136.5**.
 
@@ -19,8 +21,8 @@ This video joins four concrete components: the repository shop, Apizr's OCI plug
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=_PwRZeBN1fM" data-apizr-video="_PwRZeBN1fM" data-apizr-title="Generate an OCI image. Call MCP with Ollama." aria-label="Play: Build an OCI image and call its MCP tool with Ollama">
-    <img src="../../assets/videos/tutorial-oci.jpg" width="480" height="360" loading="lazy" alt="Academy Part V: build an OCI service image" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=_PwRZeBN1fM" data-apizr-video="_PwRZeBN1fM" data-apizr-title="Generate an image. Expose MCP. Call it with Ollama." aria-label="Play: Generate an image. Expose MCP. Call it with Ollama.">
+    <img src="../../assets/videos/academy-05-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 05: Generate an image. Expose MCP. Call it with Ollama." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

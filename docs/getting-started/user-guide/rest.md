@@ -19,8 +19,8 @@ your selected source. Generation does not run the source.
 Expose gcd and lcm from keon/algorithms, start the server and try successful requests and an invalid input.
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=QdtaLoc-g6o" data-apizr-video="QdtaLoc-g6o" data-apizr-title="Generate a REST API and make HTTP calls" aria-label="Play: Generate a REST API and make HTTP calls">
-    <img src="../../../assets/videos/tutorial-rest.jpg" width="480" height="360" loading="lazy" alt="Generate a REST API and make HTTP calls — Alien6 Studio tutorial" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=QdtaLoc-g6o" data-apizr-video="QdtaLoc-g6o" data-apizr-title="Existing Python. A real REST API." aria-label="Play: Existing Python. A real REST API.">
+    <img src="../../../assets/videos/academy-03-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 03: Existing Python. A real REST API." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

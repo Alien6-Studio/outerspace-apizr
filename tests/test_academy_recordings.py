@@ -3,6 +3,7 @@
 import copy
 import importlib.util
 import json
+import re
 import shutil
 from pathlib import Path
 from types import SimpleNamespace
@@ -43,7 +44,20 @@ def test_all_produced_recordings_have_their_original_narration_and_distinct_cour
                 assert all(line in rendered for line in command["text"].splitlines())
 
 
-@pytest.mark.parametrize("change", ["video", "page", "number", "identity", "missing"])
+@pytest.mark.parametrize(
+    "change",
+    [
+        "video",
+        "page",
+        "number",
+        "identity",
+        "missing",
+        "title",
+        "heading",
+        "cover",
+        "player_title",
+    ],
+)
 def test_a_reused_video_or_an_unrelated_course_is_rejected(change):
     catalogue = module.recordings(ROOT)
     record = catalogue["lessons"][3]  # The produced RGB/HSV MCP lesson.
@@ -56,19 +70,37 @@ def test_a_reused_video_or_an_unrelated_course_is_rejected(change):
         page.meta["lesson"] = 3
     elif change == "identity":
         page.meta["recording"] = "invented-recording"
-    else:
+    elif change == "missing":
         del page.meta["recording"]
+    elif change == "title":
+        page.meta["title"] = "An unrelated lesson title"
+    elif change == "heading":
+        source = source.replace("# " + record["title"], "# Another title")
+    elif change == "cover":
+        source = source.replace(
+            record["thumbnail"]["path"], catalogue["lessons"][2]["thumbnail"]["path"]
+        )
+    else:
+        source = source.replace(
+            'data-apizr-title="' + record["title"] + '"',
+            'data-apizr-title="Another video title"',
+        )
     with pytest.raises(ValueError):
         module.lesson_markdown(source, page, catalogue)
 
 
 @pytest.mark.parametrize(
-    "corruption", ["download", "duplicate", "timeline", "narration"]
+    "corruption", ["download", "duplicate", "timeline", "narration", "cover"]
 )
 def test_missing_or_altered_recording_inputs_stop_the_build(tmp_path, corruption):
     original = module.recordings(ROOT)
     catalogue = copy.deepcopy(original)
     (tmp_path / "academy").mkdir()
+    for record in catalogue["lessons"]:
+        name = record["thumbnail"]["path"]
+        target = tmp_path / "docs" / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / "docs" / name, target)
     for name in catalogue["downloads"]:
         target = tmp_path / "docs" / name
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -80,11 +112,49 @@ def test_missing_or_altered_recording_inputs_stop_the_build(tmp_path, corruption
         catalogue["lessons"][3]["video_id"] = catalogue["lessons"][2]["video_id"]
     elif corruption == "timeline":
         catalogue["lessons"][3]["chapters"][1]["seconds"] = 0
-    else:
+    elif corruption == "narration":
         catalogue["lessons"][3]["chapters"][0]["narration"] = ""
+    else:
+        (tmp_path / "docs" / catalogue["lessons"][3]["thumbnail"]["path"]).write_bytes(
+            b"An unrelated cover"
+        )
     (tmp_path / "academy/recordings.json").write_text(json.dumps(catalogue))
     with pytest.raises(ValueError):
         module.recordings(tmp_path)
+
+
+def test_menu_cards_and_players_use_the_filmed_title_and_existing_thumbnail():
+    catalogue = module.recordings(ROOT)
+    nav = yaml.safe_load((ROOT / "mkdocs.yml").read_text())["nav"]
+
+    def labels(entries):
+        for entry in entries:
+            for label, value in entry.items():
+                if isinstance(value, list):
+                    yield from labels(value)
+                else:
+                    yield value, label
+
+    menu = dict(labels(nav))
+    index = (ROOT / "docs/academy/index.md").read_text()
+    cards = re.findall(
+        r'<article class="apizr-academy-course"[^>]*>(.*?)</article>', index, re.DOTALL
+    )
+    assert len(cards) == len(catalogue["lessons"]) == 12
+    for record, card in zip(catalogue["lessons"], cards, strict=True):
+        title = f"{record['number']:02} · {record['title']}"
+        assert menu[record["page"]] == title
+        assert f"### {record['number']:02} · [{record['title']}]" in card
+        image = dict(re.findall(r'(\w+)="([^"]*)"', re.search(r"<img [^>]+>", card)[0]))
+        thumbnail = record["thumbnail"]
+        assert image["src"] == "../" + thumbnail["path"]
+        assert image["alt"] == f"Lesson {record['number']:02}: {record['title']}"
+        assert (int(image["width"]), int(image["height"])) == (
+            thumbnail["width"],
+            thumbnail["height"],
+        )
+        source, page = page_for(record)
+        module.lesson_markdown(source, page, catalogue)
 
 
 @pytest.mark.parametrize(

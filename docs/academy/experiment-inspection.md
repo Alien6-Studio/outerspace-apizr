@@ -1,5 +1,5 @@
 ---
-title: Inspect the fraud notebook before training
+title: "Before training, what do we actually know?"
 description: Read static evidence, change the CSV and distinguish notebook bytes from scientific signals.
 lesson: 6
 recording: 06-inspection
@@ -7,7 +7,9 @@ recording: 06-inspection
 
 <p class="apizr-academy-kicker">Understand experiments · Lesson 06</p>
 
-# Inspect the fraud notebook before training
+<span id="inspect-the-fraud-notebook-before-training"></span>
+
+# Before training, what do we actually know?
 
 The recording reviews the committed **synthetic fraud notebook**: a random forest, a held-out split, three metrics and a saved prediction model. It asks what can be established before training, then tests two different kinds of file change.
 
@@ -19,8 +21,8 @@ The recording reviews the committed **synthetic fraud notebook**: a random fores
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=9P5F42RYCRs" data-apizr-video="9P5F42RYCRs" data-apizr-title="Inspect experiment evidence" aria-label="Play: Inspect a machine learning notebook without running it">
-    <img src="../../assets/videos/tutorial-experiment-inspection.png" width="1280" height="720" loading="lazy" alt="Academy Part VI: inspect experiment evidence before training" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=9P5F42RYCRs" data-apizr-video="9P5F42RYCRs" data-apizr-title="Before training, what do we actually know?" aria-label="Play: Before training, what do we actually know?">
+    <img src="../../assets/videos/academy-06-youtube.jpg" width="480" height="360" loading="lazy" alt="Lesson 06: Before training, what do we actually know?" />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

@@ -113,20 +113,20 @@ nav:
 - Academy:
   - Start learning: academy/index.md
   - Build interfaces:
-    - "01 · Install Apizr and inspect four real projects": academy/install.md
-    - "02 · Read Requests with doctor, scan and inspect": academy/inspect.md
-    - "03 · Generate a REST API for gcd and lcm": academy/rest.md
-    - "04 · Call RGB and HSV conversions through MCP": academy/mcp.md
-    - "05 · Build an MCP image and let Ollama call pricing.total": academy/oci.md
+    - "01 · Install Apizr. Understand your setup.": academy/install.md
+    - "02 · Read your code. Understand the contract.": academy/inspect.md
+    - "03 · Existing Python. A real REST API.": academy/rest.md
+    - "04 · Existing Python. Real MCP tools.": academy/mcp.md
+    - "05 · Generate an image. Expose MCP. Call it with Ollama.": academy/oci.md
   - Understand experiments:
-    - "06 · Inspect the fraud notebook before training": academy/experiment-inspection.md
-    - "07 · Run the fraud notebook and read retained history": academy/runs.md
-    - "08 · Compare the two recorded fraud Runs": academy/comparison.md
-    - "09 · Expose the retained fraud prediction model": academy/model-serving.md
+    - "06 · Before training, what do we actually know?": academy/experiment-inspection.md
+    - "07 · From intention to an observed experiment Run.": academy/runs.md
+    - "08 · The score moved. What else changed?": academy/comparison.md
+    - "09 · From a Run to one selected prediction.": academy/model-serving.md
   - Track and review:
-    - "10 · Capture the fraud holdout with sessions and decorators": academy/python-tracking.md
-    - "11 · Capture real Jupyter cells and the hidden calibration change": academy/jupyter.md
-    - 12 · VS Code: academy/vscode.md
+    - "10 · One model. Two thresholds. Explicit observations.": academy/python-tracking.md
+    - "11 · A cell reruns. What does history mean?": academy/jupyter.md
+    - "12 · Real data. Measured Runs. Careful review.": academy/vscode.md
   - Core concepts:
     - Capabilities: academy/capabilities.md
     - Readiness: academy/readiness.md

@@ -79,13 +79,8 @@ ASSETS = (
     "downloads/research-serving.zip",
     "downloads/extension-probe.zip",
     "downloads/verified-delivery.zip",
-    "assets/videos/tutorial-install.jpg",
-    "assets/videos/tutorial-inspect.jpg",
-    "assets/videos/tutorial-rest.jpg",
-    "assets/videos/tutorial-mcp.jpg",
-    "assets/videos/tutorial-oci.jpg",
     "assets/javascripts/feedback.js",
-)
+) + tuple(r["thumbnail"]["path"] for r in recordings(ROOT)["lessons"])
 
 
 def on_config(config):

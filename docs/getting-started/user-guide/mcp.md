@@ -20,8 +20,8 @@ when a client calls them.
 Expose color conversions from TheAlgorithms/Python, discover the tools and handle their results with the official MCP Python client.
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=rJThRd9vq4g" data-apizr-video="rJThRd9vq4g" data-apizr-title="Generate MCP tools and call them with Python" aria-label="Play: Generate MCP tools and call them with Python">
-    <img src="../../../assets/videos/tutorial-mcp.jpg" width="480" height="360" loading="lazy" alt="Generate MCP tools and call them with Python — Alien6 Studio tutorial" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=rJThRd9vq4g" data-apizr-video="rJThRd9vq4g" data-apizr-title="Existing Python. Real MCP tools." aria-label="Play: Existing Python. Real MCP tools.">
+    <img src="../../../assets/videos/academy-04-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 04: Existing Python. Real MCP tools." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

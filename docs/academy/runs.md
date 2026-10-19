@@ -1,5 +1,5 @@
 ---
-title: Run the fraud notebook and read retained history
+title: "From intention to an observed experiment Run."
 description: Connect Plan, actual metrics and model identity, then test a corrupted store.
 lesson: 7
 recording: 07-history
@@ -7,7 +7,9 @@ recording: 07-history
 
 <p class="apizr-academy-kicker">Understand experiments · Lesson 07</p>
 
-# Run the fraud notebook and read retained history
+<span id="run-the-fraud-notebook-and-read-retained-history"></span>
+
+# From intention to an observed experiment Run.
 
 The video executes the reviewed fraud notebook and asks which data and settings produced its saved model. It then replaces the current CSV and deliberately damages a disposable copy of the evidence store.
 
@@ -19,8 +21,8 @@ The video executes the reviewed fraud notebook and asks which data and settings 
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=XHszreGQhMY" data-apizr-video="XHszreGQhMY" data-apizr-title="Run an experiment and read its history" aria-label="Play: Run an experiment and read its history">
-    <img src="../../assets/videos/tutorial-experiment-history.png" width="1280" height="720" loading="lazy" alt="Academy Part VII: connect an actual experiment Run to retained evidence" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=XHszreGQhMY" data-apizr-video="XHszreGQhMY" data-apizr-title="From intention to an observed experiment Run." aria-label="Play: From intention to an observed experiment Run.">
+    <img src="../../assets/videos/academy-07-youtube.jpg" width="480" height="360" loading="lazy" alt="Lesson 07: From intention to an observed experiment Run." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

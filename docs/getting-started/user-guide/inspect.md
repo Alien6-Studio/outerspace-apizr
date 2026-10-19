@@ -32,8 +32,8 @@ fit within the byte budget; excessive collections or nesting are refused.
 Follow doctor, scan and inspect on the Requests project, then understand why a function can be refused.
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Ypgp8fCof0E" data-apizr-video="Ypgp8fCof0E" data-apizr-title="Inspect a project and understand readiness" aria-label="Play: Inspect a project and understand readiness">
-    <img src="../../../assets/videos/tutorial-inspect.jpg" width="480" height="360" loading="lazy" alt="Inspect a project and understand readiness — Alien6 Studio tutorial" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Ypgp8fCof0E" data-apizr-video="Ypgp8fCof0E" data-apizr-title="Read your code. Understand the contract." aria-label="Play: Read your code. Understand the contract.">
+    <img src="../../../assets/videos/academy-02-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 02: Read your code. Understand the contract." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

@@ -6,7 +6,7 @@
       "number": 1,
       "id": "01-install",
       "page": "academy/install.md",
-      "title": "Install Apizr",
+      "title": "Install Apizr. Understand your setup.",
       "recording_version": "0.4.3",
       "duration": "6:39",
       "duration_seconds": 399.1055,
@@ -271,13 +271,21 @@
           "narration": "You now have four ways to install Apizr, and a first inspection of real Python code. Keep the method that fits your workflow, and use the report to decide what comes next.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-01-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/7J6TWqAdx4Q/maxresdefault.jpg",
+        "sha256": "f1d80a23843e18c4b29a9d42e09c052eda57c6d4c6a3ea838749262dd7a198e0",
+        "width": 1280,
+        "height": 720
+      },
+      "published_title": "OuterSpace Apizr Academy - Part I"
     },
     {
       "number": 2,
       "id": "02-understand",
       "page": "academy/inspect.md",
-      "title": "Read your Python project",
+      "title": "Read your code. Understand the contract.",
       "recording_version": "0.4.3",
       "duration": "4:11",
       "duration_seconds": 250.904833,
@@ -429,13 +437,21 @@
           "narration": "You can now verify the setup, locate the source, and explain an inspection result. In the next episode, we will use a different repository, select ready functions, generate a REST application, and make real HTTP calls.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-02-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/Ypgp8fCof0E/maxresdefault.jpg",
+        "sha256": "2cade9b6759db7e12f751cf5f7b96011fa4a1205572f6beb7568df5edf447cbe",
+        "width": 1280,
+        "height": 720
+      },
+      "published_title": "OuterSpace Apizr Academy - Part II"
     },
     {
       "number": 3,
       "id": "03-rest",
       "page": "academy/rest.md",
-      "title": "Your first REST API",
+      "title": "Existing Python. A real REST API.",
       "recording_version": "0.4.3",
       "duration": "4:14",
       "duration_seconds": 254.002833,
@@ -603,13 +619,21 @@
           "narration": "You have generated and called a real REST interface around existing Python code. The selection controls which functions are public, and the generated input contract checks requests. This is a local demonstration, not a deployment. Next, we will use another repository to make tools callable through MCP.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-03-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/QdtaLoc-g6o/maxresdefault.jpg",
+        "sha256": "c2491040e0a9d1c3c15d8ec1d96781d6d53fc71cb4102d6800ab2907425a09b9",
+        "width": 1280,
+        "height": 720
+      },
+      "published_title": "OuterSpace Apizr Academy - Part III"
     },
     {
       "number": 4,
       "id": "04-mcp",
       "page": "academy/mcp.md",
-      "title": "Your first MCP tools",
+      "title": "Existing Python. Real MCP tools.",
       "recording_version": "0.4.3",
       "duration": "5:09",
       "duration_seconds": 309.004833,
@@ -777,13 +801,21 @@
           "narration": "You have inspected existing code, selected two tools, generated a server, and verified real MCP calls. To connect an application, use its MCP configuration with the same runtime Python, generated server, and standard input and output transport. Keep the returned tool results as your evidence that the integration works.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-04-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/rJThRd9vq4g/maxresdefault.jpg",
+        "sha256": "89fb21525a6cea0ff0f4220a758a2312735483ad346011041cca0d7aafcde0e9",
+        "width": 1280,
+        "height": 720
+      },
+      "published_title": "OuterSpace Apizr Academy - Part IV"
     },
     {
       "number": 5,
       "id": "05-oci-ollama",
       "page": "academy/oci.md",
-      "title": "Generate an OCI image. Call MCP with Ollama.",
+      "title": "Generate an image. Expose MCP. Call it with Ollama.",
       "recording_version": "0.4.3",
       "duration": "8:21",
       "duration_seconds": 500.5065,
@@ -1017,13 +1049,21 @@
           "narration": "You have generated an O C I image with Apizr, connected to its MCP server, and verified a real local model tool call. The example uses a small price function so the infrastructure is easy to understand. For your own project, begin with reviewed source, an explicit public selection, and the runtime dependencies that project actually needs.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-05-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/_PwRZeBN1fM/maxresdefault.jpg",
+        "sha256": "f7344a1e9b4685f59f3c7e32e31c1caf8e1e647eafd5f6d0bbdea49b1121d18a",
+        "width": 1280,
+        "height": 720
+      },
+      "published_title": "OuterSpace Apizr Academy - Part V"
     },
     {
       "number": 6,
       "id": "06-inspection",
       "page": "academy/experiment-inspection.md",
-      "title": "Inspect experiment evidence",
+      "title": "Before training, what do we actually know?",
       "recording_version": "0.4.6",
       "duration": "5:54",
       "duration_seconds": 353.8035,
@@ -1149,13 +1189,21 @@
           "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-06-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/9P5F42RYCRs/hqdefault.jpg",
+        "sha256": "6ea393d7be274f7537254c422a2feffeecee15e791120b945467251e2db02c47",
+        "width": 480,
+        "height": 360
+      },
+      "published_title": "OuterSpace Apizr Academy - Part VI"
     },
     {
       "number": 7,
       "id": "07-history",
       "page": "academy/runs.md",
-      "title": "Run an experiment and read its history",
+      "title": "From intention to an observed experiment Run.",
       "recording_version": "0.4.6",
       "duration": "6:15",
       "duration_seconds": 374.805167,
@@ -1297,13 +1345,21 @@
           "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-07-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/XHszreGQhMY/hqdefault.jpg",
+        "sha256": "841e288ccc8b5f8fd1439c260580de2c7049ff4a9c927c617b6c3d79928b71ba",
+        "width": 480,
+        "height": 360
+      },
+      "published_title": "OuterSpace Apizr Academy - Part VII"
     },
     {
       "number": 8,
       "id": "08-comparison",
       "page": "academy/comparison.md",
-      "title": "Compare experiment Runs",
+      "title": "The score moved. What else changed?",
       "recording_version": "0.4.6",
       "duration": "7:15",
       "duration_seconds": 434.504167,
@@ -1453,13 +1509,21 @@
           "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-08-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/uu01blkTRRg/maxresdefault.jpg",
+        "sha256": "39516ae073850623d909a434e4afd61f83acde853442d1ba586f16b4e2771a90",
+        "width": 1280,
+        "height": 720
+      },
+      "published_title": "OuterSpace Apizr Academy - Part VIII"
     },
     {
       "number": 9,
       "id": "09-exposure",
       "page": "academy/model-serving.md",
-      "title": "Expose a selected prediction",
+      "title": "From a Run to one selected prediction.",
       "recording_version": "0.4.6",
       "duration": "6:49",
       "duration_seconds": 409.103167,
@@ -1601,13 +1665,21 @@
           "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-09-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/s68H9yhNWgk/hqdefault.jpg",
+        "sha256": "4eb016b8db7bf346115471a2d1537544e2984281da72adf5d4343f0bd91b0ca6",
+        "width": 480,
+        "height": 360
+      },
+      "published_title": "OuterSpace Apizr Academy - Part IX"
     },
     {
       "number": 10,
       "id": "10-sdk",
       "page": "academy/python-tracking.md",
-      "title": "Capture Python calls with sessions and decorators",
+      "title": "One model. Two thresholds. Explicit observations.",
       "recording_version": "0.4.6",
       "duration": "6:29",
       "duration_seconds": 389.002833,
@@ -1733,13 +1805,21 @@
           "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-10-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/Cge2-6L5cSE/maxresdefault.jpg",
+        "sha256": "e20fbb0860379b5b995ba2391a12df8407d7ef5d26f855bf4a88308f658b4967",
+        "width": 1280,
+        "height": 720
+      },
+      "published_title": "OuterSpace Apizr Academy - Part X"
     },
     {
       "number": 11,
       "id": "11-jupyter",
       "page": "academy/jupyter.md",
-      "title": "Capture real Jupyter cells",
+      "title": "A cell reruns. What does history mean?",
       "recording_version": "0.4.6",
       "duration": "5:55",
       "duration_seconds": 355.200833,
@@ -1835,13 +1915,21 @@
           "narration": "The current written guide remains authoritative. Continue there for the detailed steps. Thank you for following Apizr Academy.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-11-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/VqTmKCU-Auo/hqdefault.jpg",
+        "sha256": "9305e1b67f01b735f56a04426a9e78f5168cd1504305845f005c9dd925a7f78e",
+        "width": 480,
+        "height": 360
+      },
+      "published_title": "OuterSpace Apizr Academy - Part XI"
     },
     {
       "number": 12,
       "id": "12-vscode",
       "page": "academy/vscode.md",
-      "title": "Review real experiment Runs in VS Code",
+      "title": "Real data. Measured Runs. Careful review.",
       "recording_version": "0.4.6",
       "duration": "6:22",
       "duration_seconds": 381.5005,
@@ -1923,7 +2011,15 @@
           "narration": "Follow the written Wine lesson for commands, dependencies and the notebook. The Apizr and extension repositories contain the example and current limits. Thank you for following Apizr Academy.",
           "commands": []
         }
-      ]
+      ],
+      "thumbnail": {
+        "path": "assets/videos/academy-12-youtube.jpg",
+        "source_url": "https://i.ytimg.com/vi/zkujF-thyyQ/maxresdefault.jpg",
+        "sha256": "9fcda02ed8e8ed79a37def5a1af8b68e8616e0b04f1ab0c862758e7b2f2a3e42",
+        "width": 1280,
+        "height": 720
+      },
+      "published_title": "OuterSpace Apizr Academy - Part XII"
     }
   ],
   "downloads": {

@@ -19,8 +19,8 @@ the minimal Apizr environment does not acquire Docker, REST or MCP dependencies.
 Follow a repository MCP bundle into an image, then use a small Python bridge to connect a local Ollama model to the container tool. The recording uses the 0.4.3 shop example; follow this guide for current commands.
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=_PwRZeBN1fM" data-apizr-video="_PwRZeBN1fM" data-apizr-title="Build an OCI image and call its MCP tool with Ollama" aria-label="Play: Build an OCI image and call its MCP tool with Ollama">
-    <img src="../../assets/videos/tutorial-oci.jpg" width="480" height="360" loading="lazy" alt="Build an OCI image and call its MCP tool with Ollama — Alien6 Studio tutorial" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=_PwRZeBN1fM" data-apizr-video="_PwRZeBN1fM" data-apizr-title="Generate an image. Expose MCP. Call it with Ollama." aria-label="Play: Generate an image. Expose MCP. Call it with Ollama.">
+    <img src="../../assets/videos/academy-05-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 05: Generate an image. Expose MCP. Call it with Ollama." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

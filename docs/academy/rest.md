@@ -1,5 +1,5 @@
 ---
-title: Generate a REST API for gcd and lcm
+title: "Existing Python. A real REST API."
 description: Expose two functions from keon/algorithms and verify successful calls and HTTP 422.
 lesson: 3
 recording: 03-rest
@@ -7,7 +7,9 @@ recording: 03-rest
 
 <p class="apizr-academy-kicker">Build interfaces · Lesson 03</p>
 
-# Generate a REST API for gcd and lcm
+<span id="generate-a-rest-api-for-gcd-and-lcm"></span>
+
+# Existing Python. A real REST API.
 
 The recording turns existing number-theory functions into two REST endpoints. It uses **keon/algorithms** and checks both arithmetic results and invalid input. This is a different repository from Requests in lesson 2.
 
@@ -19,8 +21,8 @@ The recording turns existing number-theory functions into two REST endpoints. It
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=QdtaLoc-g6o" data-apizr-video="QdtaLoc-g6o" data-apizr-title="Your first REST API" aria-label="Play: Generate a REST API and make HTTP calls">
-    <img src="../../assets/videos/tutorial-rest.jpg" width="480" height="360" loading="lazy" alt="Academy Part III: generate and call REST" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=QdtaLoc-g6o" data-apizr-video="QdtaLoc-g6o" data-apizr-title="Existing Python. A real REST API." aria-label="Play: Existing Python. A real REST API.">
+    <img src="../../assets/videos/academy-03-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 03: Existing Python. A real REST API." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

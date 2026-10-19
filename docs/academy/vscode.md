@@ -1,11 +1,13 @@
 ---
-title: Review real experiment Runs in VS Code
+title: "Real data. Measured Runs. Careful review."
 lesson: 12
 recording: 12-vscode
 description: Train on the public Wine dataset, inspect saved source and compare measured Runs in the Apizr extension.
 ---
 
-# XII — Review real experiment Runs in VS Code
+<span id="xii-review-real-experiment-runs-in-vs-code"></span>
+
+# Real data. Measured Runs. Careful review.
 
 <p class="apizr-academy-kicker">Track and review · Lesson 12 · Plan about 30 min</p>
 
@@ -17,8 +19,8 @@ description: Train on the public Wine dataset, inspect saved source and compare 
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=zkujF-thyyQ" data-apizr-video="zkujF-thyyQ" data-apizr-title="Review real experiment Runs in VS Code" aria-label="Play: Review real experiment Runs in VS Code">
-    <img src="../../assets/videos/tutorial-vscode.png" width="1280" height="720" loading="lazy" alt="Academy Part XII: inspect saved source and compare measured Wine Runs in VS Code" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=zkujF-thyyQ" data-apizr-video="zkujF-thyyQ" data-apizr-title="Real data. Measured Runs. Careful review." aria-label="Play: Real data. Measured Runs. Careful review.">
+    <img src="../../assets/videos/academy-12-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 12: Real data. Measured Runs. Careful review." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>

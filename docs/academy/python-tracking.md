@@ -1,5 +1,5 @@
 ---
-title: Capture the fraud holdout with sessions and decorators
+title: "One model. Two thresholds. Explicit observations."
 description: Track actual threshold evaluations, preserve returns and inspect the failed capture.
 lesson: 10
 recording: 10-sdk
@@ -7,7 +7,9 @@ recording: 10-sdk
 
 <p class="apizr-academy-kicker">Track and review · Lesson 10</p>
 
-# Capture the fraud holdout with sessions and decorators
+<span id="capture-the-fraud-holdout-with-sessions-and-decorators"></span>
+
+# One model. Two thresholds. Explicit observations.
 
 The recorded lab evaluates **120 held-out synthetic rows**, using probabilities from the actual trained fraud forest. It records precision, recall and flagged volume, first for a block and then for repeated function calls.
 
@@ -19,8 +21,8 @@ The recorded lab evaluates **120 held-out synthetic rows**, using probabilities 
 ## Watch the lesson
 
 <div class="apizr-demo-video">
-  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Cge2-6L5cSE" data-apizr-video="Cge2-6L5cSE" data-apizr-title="Capture Python calls with sessions and decorators" aria-label="Play: Track Python calls with sessions and decorators">
-    <img src="../../assets/videos/tutorial-sdk.png" width="1280" height="720" loading="lazy" alt="Academy Part X: track real Python evaluations with sessions and decorators" />
+  <a class="apizr-demo-video__cover" href="https://www.youtube.com/watch?v=Cge2-6L5cSE" data-apizr-video="Cge2-6L5cSE" data-apizr-title="One model. Two thresholds. Explicit observations." aria-label="Play: One model. Two thresholds. Explicit observations.">
+    <img src="../../assets/videos/academy-10-youtube.jpg" width="1280" height="720" loading="lazy" alt="Lesson 10: One model. Two thresholds. Explicit observations." />
     <span class="apizr-demo-video__play"><span aria-hidden="true">▶</span> Watch the tutorial</span>
   </a>
 </div>
