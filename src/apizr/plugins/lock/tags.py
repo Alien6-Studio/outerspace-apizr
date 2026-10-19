@@ -56,7 +56,9 @@ def wheel_matches(filename: str, target: Target) -> bool:
         threaded = "t-" in target.abi
         abis.add("cp" + major + minor + ("t" if threaded else ""))
         # Stable ABI wheels apply to CPython >= their minimum, excluding free-threaded.
-        if abi == "abi3" and not threaded:
+        # PEP 803 wheels can compress abi3 and abi3t in the same filename.
+        # A regular interpreter admits the abi3 member, never abi3t alone.
+        if "abi3" in abi.split(".") and not threaded:
             abis.add("abi3")
             tags.update("cp3" + str(v) for v in range(2, int(minor) + 1))
     return bool(

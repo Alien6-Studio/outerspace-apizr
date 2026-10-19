@@ -8,7 +8,7 @@ use ``apizr.repository_interfaces.output.write_bundle`` to publish files safely.
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from apizr.capabilities.model import Digest
 from apizr.contracts.application import (
@@ -45,7 +45,10 @@ class PreparedExposure:
     """In-memory context, not a new serialized contract.
 
     Retains the exact discovery bytes with the existing evidence, independent
-    readiness assessment, explicit exposure policy and canonical plan.
+    readiness assessment, explicit exposure policy and canonical plan. Byte
+    mappings are copied and made read-only, including on direct construction or
+    dataclass replacement. Construction grants no authority and does not certify
+    evidence linkage: rendering revalidates the existing canonical contracts.
     """
 
     evidence: RepositoryEvidence
@@ -58,6 +61,33 @@ class PreparedExposure:
     dependency_archives: Mapping[str, bytes] = field(
         default_factory=lambda: dict[str, bytes]()
     )
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self,
+            "evidence",
+            RepositoryEvidence(
+                self.evidence.catalog,
+                self.evidence.graph,
+                _retained_bytes(self.evidence.sources),
+            ),
+        )
+        object.__setattr__(self, "resources", _retained_bytes(self.resources))
+        object.__setattr__(
+            self, "dependency_archives", _retained_bytes(self.dependency_archives)
+        )
+
+
+def _retained_bytes(values: Mapping[str, bytes]) -> Mapping[str, bytes]:
+    snapshot = dict(values)
+    # Python callers can supply unchecked values despite the public annotations.
+    unchecked = cast(Mapping[object, object], snapshot)
+    if any(
+        not isinstance(path, str) or not isinstance(data, bytes)
+        for path, data in unchecked.items()
+    ):
+        raise TypeError("Prepared exposure payloads require string paths and bytes")
+    return MappingProxyType(snapshot)
 
 
 def assess_readiness(
@@ -152,7 +182,7 @@ def prepare_exposure(
             repository_digest=artifacts.catalog.repository_digest,
         )
     return PreparedExposure(
-        artifacts, readiness, policy, plan, inputs, MappingProxyType(resources), source
+        artifacts, readiness, policy, plan, inputs, resources, source
     )
 
 

@@ -1,0 +1,76 @@
+{
+  "$defs": {
+    "UsageEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "enum": [
+            "inspect",
+            "history_list",
+            "history_show",
+            "history_diff",
+            "capture_session",
+            "generate_rest",
+            "generate_mcp"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "success",
+            "refused",
+            "failed"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "count": {
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "operation",
+        "outcome",
+        "count"
+      ],
+      "title": "UsageEvent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.telemetry/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "context": {
+      "enum": [
+        "cli",
+        "sdk",
+        "vscode"
+      ],
+      "title": "Context",
+      "type": "string"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/UsageEvent"
+      },
+      "maxItems": 32,
+      "title": "Events",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "context",
+    "events"
+  ],
+  "title": "UsageReport",
+  "type": "object"
+}

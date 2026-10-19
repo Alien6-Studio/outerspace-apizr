@@ -366,7 +366,8 @@ def test_documented_argument_files_validate():
     from pathlib import Path
 
     text = (
-        Path(__file__).resolve().parents[2] / "docs/reference/attest-oci-artifacts.md"
+        Path(__file__).resolve().parents[2]
+        / "tests/fixtures/qualified-guides/reference/attest-oci-artifacts.md"
     ).read_text()
     documents = re.findall(r"```json\n(.*?)\n```", text, re.S)
     assert len(documents) == 3

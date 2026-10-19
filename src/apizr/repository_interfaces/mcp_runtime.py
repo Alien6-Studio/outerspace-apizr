@@ -2,14 +2,12 @@
 
 import argparse
 import asyncio
-import json
 from functools import partial
 from pathlib import Path
 
 import anyio
 import uvicorn
 from mcp.server import Server, ServerRequestContext
-from mcp.server.stdio import stdio_server
 from mcp.types import (
     CallToolRequestParams,
     CallToolResult,
@@ -19,6 +17,7 @@ from mcp.types import (
     Tool,
 )
 
+from apizr.generators.mcp.transport import BoundedServer, stdio_server, tool_result
 from apizr.interfaces.results import finite_json_value as result_value
 from apizr.interfaces.results import normalize_result_for_json
 from apizr.interfaces.runtime import (
@@ -86,27 +85,11 @@ def create_server(
                     partial(function, *args, **kwargs)
                 )
             value = normalize_result_for_json(result)
-            # MCP structuredContent must be an object on every supported protocol.
-            value = value if isinstance(value, dict) else {"result": value}
-            return CallToolResult(
-                content=[
-                    TextContent(
-                        type="text",
-                        text=json.dumps(
-                            value,
-                            ensure_ascii=False,
-                            sort_keys=True,
-                            separators=(",", ":"),
-                            allow_nan=False,
-                        ),
-                    )
-                ],
-                structured_content=value,
-            )
+            return tool_result(value)
         except Exception:
             return tool_error("Tool execution failed")
 
-    return Server(
+    return BoundedServer(
         "Apizr MCP",
         version="apizr.repository-mcp/v1",
         on_list_tools=list_tools,
@@ -133,5 +116,7 @@ def main(expected: dict[str, str] | None = None) -> None:
         asyncio.run(serve_stdio(server))
     else:
         uvicorn.run(
-            server.streamable_http_app(host=args.host), host=args.host, port=args.port
+            server.streamable_http_app(host=args.host),
+            host=args.host,
+            port=args.port,
         )

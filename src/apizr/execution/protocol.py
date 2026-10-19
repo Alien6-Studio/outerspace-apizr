@@ -6,6 +6,8 @@ from typing import BinaryIO
 
 from pydantic import ConfigDict, JsonValue, TypeAdapter
 
+from apizr.interfaces.json_budget import JsonBudget, preflight
+
 MAX_REQUEST_BYTES = 64 * 1024 * 1024
 JSON_VALUE: TypeAdapter[JsonValue] = TypeAdapter(
     JsonValue, config=ConfigDict(allow_inf_nan=False)
@@ -21,11 +23,18 @@ class SizeExceeded(ProtocolError):
 
 
 def finite_json(value: object) -> JsonValue:
+    JsonBudget().visit(value)
     return JSON_VALUE.validate_python(value, strict=True)
 
 
 def encode(value: object, limit: int) -> bytes:
     result = bytearray()
+    try:
+        JsonBudget(max_bytes=limit - 1).visit(value)
+    except ValueError as error:
+        if str(error) == "json_byte_limit":
+            raise SizeExceeded("frame_size") from None
+        raise
     value = finite_json(value)
     encoder = json.JSONEncoder(
         ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False
@@ -57,7 +66,7 @@ def decode(data: bytes, limit: int) -> JsonValue:
     length = size(data[:8], limit)
     if len(data) != 8 + length:
         raise ProtocolError("invalid_frame_length")
-    return finite_json(json.loads(data[8:]))
+    return finite_json(json.loads(preflight(data[8:], max_bytes=limit)))
 
 
 def read_frame(stream: BinaryIO, limit: int) -> JsonValue:

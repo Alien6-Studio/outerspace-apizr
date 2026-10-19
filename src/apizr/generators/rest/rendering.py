@@ -7,6 +7,8 @@ The existing golden manifest pins the complete result, including adapter bytes.
 
 from importlib.resources import files
 
+from apizr.interfaces.embedding import inline_admission_source
+
 
 def runtime_source() -> str:
     package = files("apizr.generators.rest")
@@ -33,6 +35,8 @@ def runtime_source() -> str:
     return (
         package.joinpath("templates/preamble.txt").read_text(encoding="utf-8")
         + "\n"
+        + inline_admission_source()
+        + "\n\n"
         + body.rstrip()
         + "\n\n\n"
         + transport[transport.index("def create_app(") :]

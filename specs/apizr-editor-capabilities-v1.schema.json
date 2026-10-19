@@ -1,0 +1,238 @@
+{
+  "$defs": {
+    "OperationCapability": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "capabilities",
+            "inspect",
+            "experiment_list",
+            "experiment_show",
+            "experiment_diff",
+            "plan_exposure"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "result_schemas": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Result Schemas",
+          "type": "array"
+        },
+        "required_permissions": {
+          "items": {
+            "enum": [
+              "source.analyze",
+              "experiments.read"
+            ],
+            "type": "string"
+          },
+          "title": "Required Permissions",
+          "type": "array"
+        },
+        "read_only": {
+          "const": true,
+          "default": true,
+          "title": "Read Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "result_schemas",
+        "required_permissions"
+      ],
+      "title": "OperationCapability",
+      "type": "object"
+    },
+    "ProducerIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "ProducerIdentity",
+      "type": "object"
+    },
+    "ProviderDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "apizr.scientific-provider/v1",
+          "default": "apizr.scientific-provider/v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "identity": {
+          "$ref": "#/$defs/ProducerIdentity"
+        },
+        "capabilities": {
+          "items": {
+            "enum": [
+              "metric_signals",
+              "output_candidates",
+              "randomness_controls",
+              "input_reads"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "limits": {
+          "$ref": "#/$defs/ProviderLimits",
+          "default": {
+            "max_source_bytes": 1048576,
+            "max_ast_nodes": 100000,
+            "max_ast_depth": 128,
+            "max_evidence": 256,
+            "max_diagnostics": 512,
+            "max_result_bytes": 1048576
+          }
+        },
+        "observation": {
+          "const": "static-only",
+          "default": "static-only",
+          "title": "Observation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identity",
+        "capabilities"
+      ],
+      "title": "ProviderDescriptor",
+      "type": "object"
+    },
+    "ProviderLimits": {
+      "additionalProperties": false,
+      "description": "Declarative ceilings, always at or below core hard bounds.",
+      "properties": {
+        "max_source_bytes": {
+          "default": 1048576,
+          "maximum": 1048576,
+          "minimum": 1,
+          "title": "Max Source Bytes",
+          "type": "integer"
+        },
+        "max_ast_nodes": {
+          "default": 100000,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Max Ast Nodes",
+          "type": "integer"
+        },
+        "max_ast_depth": {
+          "default": 128,
+          "maximum": 128,
+          "minimum": 1,
+          "title": "Max Ast Depth",
+          "type": "integer"
+        },
+        "max_evidence": {
+          "default": 256,
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Max Evidence",
+          "type": "integer"
+        },
+        "max_diagnostics": {
+          "default": 512,
+          "maximum": 512,
+          "minimum": 1,
+          "title": "Max Diagnostics",
+          "type": "integer"
+        },
+        "max_result_bytes": {
+          "default": 1048576,
+          "maximum": 1048576,
+          "minimum": 1,
+          "title": "Max Result Bytes",
+          "type": "integer"
+        }
+      },
+      "title": "ProviderLimits",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.editor-capabilities/v1",
+      "default": "apizr.editor-capabilities/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "protocol": {
+      "const": "apizr.editor/v1",
+      "default": "apizr.editor/v1",
+      "title": "Protocol",
+      "type": "string"
+    },
+    "engine_version": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "operations": {
+      "items": {
+        "$ref": "#/$defs/OperationCapability"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "title": "Operations",
+      "type": "array"
+    },
+    "providers": {
+      "items": {
+        "$ref": "#/$defs/ProviderDescriptor"
+      },
+      "maxItems": 128,
+      "title": "Providers",
+      "type": "array"
+    },
+    "max_request_bytes": {
+      "const": 65536,
+      "default": 65536,
+      "title": "Max Request Bytes",
+      "type": "integer"
+    },
+    "max_response_bytes": {
+      "const": 4194304,
+      "default": 4194304,
+      "title": "Max Response Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "engine_version",
+    "operations",
+    "providers"
+  ],
+  "title": "EngineCapabilities",
+  "type": "object"
+}

@@ -14,6 +14,5 @@ from pathlib import Path
 from typing import Literal, NotRequired, TypeAlias, TypedDict
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool

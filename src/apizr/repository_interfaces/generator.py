@@ -3,6 +3,7 @@
 from collections.abc import Mapping
 from importlib.resources import files
 
+from apizr.capabilities.instrumentation import is_tracking_import
 from apizr.capabilities.model import Digest
 from apizr.contracts.application import ApplicationInputs
 from apizr.contracts.delivery import (
@@ -22,6 +23,7 @@ from apizr.generators.rest.generator import REQUIREMENTS as REST_REQUIREMENTS
 from apizr.generators.rest.model import Endpoint
 from apizr.generators.rest.schema import openapi
 from apizr.graph import Graph, graph_bytes
+from apizr.interfaces.embedding import admission_files, portable_imports
 from apizr.interfaces.schema import request_schema
 from apizr.interfaces.serialization import json_bytes
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
@@ -29,12 +31,13 @@ from apizr.repository import Catalog, catalog_bytes
 from apizr.repository.serialization import canonical_bytes
 from apizr.repository_readiness import RepositoryReadinessReport, report_bytes
 
+from .artifacts import check_bundle
 from .model import MCPManifest, RestManifest
 from .planner import BundleRefused, plan_repository_interface
 
 
 def template(name: str) -> bytes:
-    source = (
+    source = portable_imports(
         files("apizr.repository_interfaces").joinpath(name).read_text(encoding="utf-8")
     )
     return (
@@ -44,6 +47,14 @@ def template(name: str) -> bytes:
         .replace(
             "from apizr.repository_interfaces.runtime import",
             "from apizr_repository_runtime import",
+        )
+        .replace(
+            "from apizr.repository_interfaces.artifacts import",
+            "from apizr_repository_artifacts import",
+        )
+        .replace(
+            "from apizr.contracts.json_budget import",
+            "from apizr_json_preflight import",
         )
         .encode("utf-8")
     )
@@ -108,10 +119,15 @@ def render_repository_bundle(
         "exposure-policy.json": policy_bytes(policy),
         "exposure-plan.json": plan_bytes(exposure),
         "apizr_repository_runtime.py": template("runtime.py"),
+        "apizr_repository_artifacts.py": template("artifacts.py"),
+        "apizr_json_preflight.py": files("apizr.contracts")
+        .joinpath("json_budget.py")
+        .read_bytes(),
         "apizr_runtime.py": files("apizr.interfaces")
         .joinpath("runtime.py")
         .read_bytes(),
     }
+    artifacts.update(admission_files(interface))
     artifacts.update({s.bundle_path: sources[s.source_path] for s in contract.sources})
     if application is not None:
         artifacts["application-requirements.txt"] = application.requirements()
@@ -126,6 +142,18 @@ def render_repository_bundle(
     artifacts[PROVENANCE_FILE] = canonical_bytes(provenance)
     provenance_digest = Digest.of_bytes(artifacts[PROVENANCE_FILE])
     pin = repr(contract_digest.model_dump())
+    served = (
+        b"import os\nos.environ['APIZR_SERVED_PROCESS'] = '1'\n\n"
+        if any(
+            is_tracking_import(
+                module=d.declared_module,
+                names=tuple(n.name for n in d.names),
+                relative_level=d.relative_level,
+            )
+            for d in graph.imports
+        )
+        else b""
+    )
     endpoints = tuple(
         Endpoint(**c.invocation.model_dump(), route="/capabilities/" + c.public_name)
         for c in contract.capabilities
@@ -149,7 +177,8 @@ def render_repository_bundle(
         }
         artifacts["openapi.json"] = json_bytes(document)
         artifacts["app.py"] = (
-            template("rest_runtime.py")
+            served
+            + template("rest_runtime.py")
             + f"\n\napp = create_app(Path(__file__).resolve().parent, {pin})\n".encode()
         )
         manifest = RestManifest(
@@ -166,15 +195,6 @@ def render_repository_bundle(
         )
     else:
         artifacts["requirements.txt"] = MCP_REQUIREMENTS
-        artifacts["apizr_results.py"] = (
-            files("apizr.interfaces")
-            .joinpath("results.py")
-            .read_text(encoding="utf-8")
-            .replace(
-                "from apizr.interfaces.runtime import", "from apizr_runtime import"
-            )
-            .encode("utf-8")
-        )
         artifacts["mcp-tools.json"] = json_bytes(
             {
                 "schema_version": "apizr.repository-mcp/v1",
@@ -195,7 +215,8 @@ def render_repository_bundle(
             }
         )
         artifacts["server.py"] = (
-            template("mcp_runtime.py").replace(
+            served
+            + template("mcp_runtime.py").replace(
                 b"from apizr.interfaces.results import", b"from apizr_results import"
             )
             + f'\n\nif __name__ == "__main__":\n    main({pin})\n'.encode()
@@ -217,4 +238,5 @@ def render_repository_bundle(
         from apizr.governed_repository.embedding import govern
 
         return govern(artifacts, execution_policy, runtime_image, interface)
+    check_bundle(artifacts)
     return dict(sorted(artifacts.items()))

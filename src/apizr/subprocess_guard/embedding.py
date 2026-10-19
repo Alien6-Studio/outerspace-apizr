@@ -1,4 +1,4 @@
-"""Opt-in strict bridge files, leaving all existing allow bundle bytes untouched."""
+"""Opt-in strict bridge files over the canonical autonomous runtime closure."""
 
 from apizr.governed.embedding import source
 

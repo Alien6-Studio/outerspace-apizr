@@ -3,9 +3,9 @@
 import json
 
 from apizr.capabilities.model import Digest
-from apizr.delivery import DeliveryManifest, DeliveryPlan, identity
+from apizr.contracts.delivery import DeliveryManifest, DeliveryPlan, identity
+from apizr.contracts.results import BuildResult
 from apizr.delivery_batch import BatchRequest
-from apizr.delivery_results import BuildResult
 
 D = Digest(algorithm="sha256", value="b" * 64)
 IMAGE = "sha256:" + "a" * 64
@@ -64,6 +64,7 @@ def request(tmp_path, required=True, count=3):
                     "verification": {
                         "expected_signer": SIGNER,
                         "trust_store": "/private/trust",
+                        "trust_store_sha256": "c" * 64,
                         "tool": {
                             "executable": "/private/attest",
                             "version": "0.1.0",

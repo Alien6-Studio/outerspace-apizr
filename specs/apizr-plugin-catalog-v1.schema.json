@@ -1,0 +1,374 @@
+{
+  "$defs": {
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+          "title": "Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "filename": {
+          "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.+!-]{0,240}\\.whl$",
+          "title": "Filename",
+          "type": "string"
+        },
+        "size": {
+          "exclusiveMinimum": 0,
+          "maximum": 67108864,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "sha256",
+        "filename",
+        "size"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "Compatibility": {
+      "additionalProperties": false,
+      "properties": {
+        "apizr_version": {
+          "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+          "title": "Apizr Version",
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "development",
+            "published"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/Target"
+        }
+      },
+      "required": [
+        "apizr_version",
+        "channel",
+        "target"
+      ],
+      "title": "Compatibility",
+      "type": "object"
+    },
+    "Entry": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "manifest": {
+          "$ref": "#/$defs/Manifest"
+        },
+        "wheel": {
+          "$ref": "#/$defs/Artifact"
+        },
+        "dependencies": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Artifact"
+          },
+          "maxItems": 127,
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "requirements": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Requirements"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "compatibility": {
+          "$ref": "#/$defs/Compatibility"
+        },
+        "prerequisites": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Prerequisite"
+          },
+          "maxItems": 16,
+          "title": "Prerequisites",
+          "type": "array"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "description",
+        "manifest",
+        "wheel",
+        "compatibility",
+        "provenance"
+      ],
+      "title": "Entry",
+      "type": "object"
+    },
+    "Identity": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "Identity",
+      "type": "object"
+    },
+    "Manifest": {
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "apizr.extension-manifest/v1",
+          "title": "Schema",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9][A-Za-z0-9.!+_]{0,127}$",
+          "title": "Version",
+          "type": "string"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "protocol": {
+          "const": "apizr.extension/v1",
+          "title": "Protocol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "name",
+        "version",
+        "module",
+        "protocol"
+      ],
+      "title": "Manifest",
+      "type": "object"
+    },
+    "Prerequisite": {
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "pattern": "^[A-Za-z][A-Za-z0-9 /.-]{0,63}$",
+          "title": "Tool",
+          "type": "string"
+        },
+        "operations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Operations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "tool",
+        "operations"
+      ],
+      "title": "Prerequisite",
+      "type": "object"
+    },
+    "Profile": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "plugins": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Plugins",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "plugins"
+      ],
+      "title": "Profile",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "repository": {
+          "maxLength": 512,
+          "pattern": "^https://[^\\s?#]+$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Commit",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "development",
+            "published"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "publication": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication"
+        }
+      },
+      "required": [
+        "repository",
+        "commit",
+        "status"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Requirements": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "source_sha256"
+      ],
+      "title": "Requirements",
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "implementation": {
+          "maxLength": 64,
+          "title": "Implementation",
+          "type": "string"
+        },
+        "python": {
+          "pattern": "^3\\.[0-9]+\\.[0-9]+$",
+          "title": "Python",
+          "type": "string"
+        },
+        "platform": {
+          "maxLength": 128,
+          "title": "Platform",
+          "type": "string"
+        },
+        "machine": {
+          "maxLength": 64,
+          "title": "Machine",
+          "type": "string"
+        },
+        "abi": {
+          "maxLength": 128,
+          "title": "Abi",
+          "type": "string"
+        }
+      },
+      "required": [
+        "implementation",
+        "python",
+        "platform",
+        "machine",
+        "abi"
+      ],
+      "title": "Target",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.plugin-catalog/v1",
+      "default": "apizr.plugin-catalog/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/Entry"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "title": "Entries",
+      "type": "array"
+    },
+    "profiles": {
+      "items": {
+        "$ref": "#/$defs/Profile"
+      },
+      "maxItems": 32,
+      "title": "Profiles",
+      "type": "array"
+    }
+  },
+  "required": [
+    "entries",
+    "profiles"
+  ],
+  "title": "Catalog",
+  "type": "object"
+}

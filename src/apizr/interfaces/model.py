@@ -4,8 +4,8 @@ from typing import Literal
 
 from apizr.capabilities.model import ParameterKind
 from apizr.capabilities.types import ValueModel
-from apizr.contract_types import Scalar as Scalar
-from apizr.contract_types import TypeSpec
+from apizr.contracts.types import Scalar as Scalar
+from apizr.contracts.types import TypeSpec
 
 
 class Input(ValueModel):

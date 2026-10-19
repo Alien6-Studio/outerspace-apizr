@@ -7,6 +7,7 @@ from typing import Annotated, Self, cast
 
 from pydantic import Field, model_validator
 
+from apizr.contracts.json_budget import preflight_json
 from apizr.experiments._lexical import MAX_SOURCE_BYTES, bounded_tree
 from apizr.experiments.model import ExperimentValue, Reference
 
@@ -72,7 +73,9 @@ def code_cells(raw: bytes) -> NotebookSource:
     subsequence are retained. Counts, outputs and markdown never enter this source.
     The unchanged exporter subsequently validates full notebook structure.
     """
-    decoded: object = json.loads(raw)
+    decoded: object = json.loads(
+        preflight_json(raw, max_bytes=16 * 1024 * 1024, max_nodes=100_000, max_depth=64)
+    )
     if not isinstance(decoded, dict):
         raise ValueError("notebook_cells_invalid")
     notebook = cast(dict[str, object], decoded)

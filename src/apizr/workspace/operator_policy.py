@@ -21,6 +21,8 @@ from apizr.contracts.publication import (
     ObserveRequest,
     PublishRequest,
     PushRequest,
+    VerificationInputs,
+    VerificationTarget,
     digest_reference,
 )
 from apizr.extension_runtime.protocol import unique_object
@@ -49,12 +51,14 @@ Code = Literal[
     "operator_permissions_denied",
     "operator_key_denied",
     "operator_tsa_denied",
+    "operator_verification_denied",
     "operator_build_denied",
     "operator_git_source_denied",
     "operator_analysis_denied",
     "operator_source_invalid",
     "operator_source_unavailable",
     "operator_source_changed",
+    "operator_history_denied",
 ]
 
 
@@ -112,6 +116,9 @@ class Grant(Model):
     operation: Literal["push", "publish", "admit", "observe"]
     repository: str
     permissions: tuple[Permission, ...] = Field(min_length=1, max_length=2)
+    verification: VerificationTarget | None = Field(
+        default=None, exclude_if=lambda v: v is None
+    )
 
     _repository = field_validator("repository")(repository_name)
 
@@ -152,6 +159,9 @@ class SigningGrant(Model):
     expected_signer: Digest
     key_file: str
     tsa_url: str
+    verification: VerificationTarget | None = Field(
+        default=None, exclude_if=lambda v: v is None
+    )
     permissions: tuple[
         Literal["registry.read", "receipt.sign", "timestamp.request"], ...
     ] = Field(min_length=1, max_length=3)
@@ -207,12 +217,31 @@ class AnalysisGrant(Model):
     permissions: tuple[Literal["source.analyze"], ...] = Field(max_length=1)
 
 
+class HistoryGrant(Model):
+    """Read one exact project's selected local experiment store; grants no execution."""
+
+    adapter: Literal["experiments"]
+    operation: Literal["history.read"]
+    target: LocalTarget
+    store: str = ".apizr/experiments/v1"
+    permissions: tuple[Literal["experiments.read"], ...] = Field(max_length=1)
+
+    @field_validator("store")
+    @classmethod
+    def relative_store(cls, value: str) -> str:
+        from pydantic import TypeAdapter
+
+        from apizr.experiments.model import Reference
+
+        return TypeAdapter[str](Reference).validate_python(value, strict=True)
+
+
 class OperatorPolicy(Model):
     model_config = ConfigDict(serialize_by_alias=True)
     schema_version: Literal["apizr.operator-policy/v1"] = Field(alias="schema")
     grants: tuple[
         Annotated[
-            Grant | SigningGrant | BuildGrant | GitGrant | AnalysisGrant,
+            Grant | SigningGrant | BuildGrant | GitGrant | AnalysisGrant | HistoryGrant,
             Field(discriminator="operation"),
         ],
         ...,
@@ -310,6 +339,7 @@ def decide(
     building: BuildTarget | None = None
     repository: str | None = None
     signing: AttestRequest | None = None
+    verification: VerificationInputs | None = None
     authority: tuple[str, str, int, str] | None = None
     try:
         raw_arguments = encode(arguments, MAX_REQUEST_BYTES)
@@ -326,15 +356,18 @@ def decide(
             repository = repository_name(request.destination.rsplit(":", 1)[0])
         elif operation == "admit":
             admission = AdmitRequest.model_validate_json(raw_arguments, strict=True)
+            verification = admission
             repository = repository_name(admission.destination.rsplit(":", 1)[0])
         elif operation == "attest":
             signing = AttestRequest.model_validate_json(raw_arguments, strict=True)
+            verification = signing
             repository = repository_name(
                 digest_reference(signing.expected_reference).split("@")[0]
             )
             authority = tsa_identity(signing.tsa_url)
         else:
             proof = PublishRequest.model_validate_json(raw_arguments, strict=True)
+            verification = proof
             repository = repository_name(
                 digest_reference(proof.expected_reference).split("@")[0]
             )
@@ -344,7 +377,8 @@ def decide(
     grants = [
         g
         for g in policy.grants
-        if not isinstance(g, (GitGrant, AnalysisGrant)) and g.plugin == identity
+        if not isinstance(g, (GitGrant, AnalysisGrant, HistoryGrant))
+        and g.plugin == identity
     ]
     if not grants:
         return Decision(allowed=False, code="operator_identity_denied")
@@ -386,6 +420,13 @@ def decide(
         ]
         if not signing_grants:
             return Decision(allowed=False, code="operator_tsa_denied")
+        try:
+            target = VerificationTarget.from_request(signing)
+        except ValueError:
+            return Decision(allowed=False, code="operator_verification_denied")
+        signing_grants = [g for g in signing_grants if g.verification == target]
+        if not signing_grants:
+            return Decision(allowed=False, code="operator_verification_denied")
         allowed = any(
             set(g.permissions) == {"registry.read", "receipt.sign", "timestamp.request"}
             for g in signing_grants
@@ -394,6 +435,16 @@ def decide(
             allowed=allowed,
             code="authorized" if allowed else "operator_permissions_denied",
         )
+    if verification is not None:
+        try:
+            target = VerificationTarget.from_request(verification)
+        except ValueError:
+            return Decision(allowed=False, code="operator_verification_denied")
+        grants = [
+            g for g in grants if isinstance(g, Grant) and g.verification == target
+        ]
+        if not grants:
+            return Decision(allowed=False, code="operator_verification_denied")
     required = (
         {"registry.read"}
         if operation == "observe"
@@ -474,5 +525,30 @@ def decide_analysis(
     if not grants:
         return Decision(allowed=False, code="operator_analysis_denied")
     if not any(g.permissions == ("source.analyze",) for g in grants):
+        return Decision(allowed=False, code="operator_permissions_denied")
+    return Decision(allowed=True, code="authorized")
+
+
+def decide_history(
+    policy: OperatorPolicy | None, target: LocalTarget, store: str
+) -> Decision:
+    """Pure admission for one exact local store; source grants do not imply this right."""
+    if policy is None:
+        return Decision(allowed=False, code="operator_policy_required")
+    try:
+        policy = _validated_policy(policy)
+        target = LocalTarget.model_validate_json(target.model_dump_json(), strict=True)
+        store = HistoryGrant.relative_store(store)
+    except AuthorizationDenied as error:
+        return error.decision
+    except (ValueError, TypeError, AttributeError, RecursionError):
+        return Decision(allowed=False, code="operator_source_invalid")
+    grants = [g for g in policy.grants if isinstance(g, HistoryGrant)]
+    if not grants:
+        return Decision(allowed=False, code="operator_operation_denied")
+    grants = [g for g in grants if g.target == target and g.store == store]
+    if not grants:
+        return Decision(allowed=False, code="operator_history_denied")
+    if not any(g.permissions == ("experiments.read",) for g in grants):
         return Decision(allowed=False, code="operator_permissions_denied")
     return Decision(allowed=True, code="authorized")

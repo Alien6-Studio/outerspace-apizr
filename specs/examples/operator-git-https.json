@@ -1,0 +1,34 @@
+{
+  "schema": "apizr.operator-policy/v1",
+  "grants": [
+    {
+      "adapter": "git",
+      "operation": "fetch",
+      "permissions": [
+        "git.fetch"
+      ],
+      "target": {
+        "transport": "https",
+        "repository": "https://git.example/team/project.git",
+        "reference": "refs/heads/main",
+        "subdir": "src",
+        "ca_file": null,
+        "ssh_agent_socket": null,
+        "ssh_known_hosts": null
+      }
+    },
+    {
+      "adapter": "repository",
+      "operation": "analyze",
+      "target": {
+        "kind": "git",
+        "repository": "https://git.example/team/project.git",
+        "reference": "refs/heads/main",
+        "subdir": "src"
+      },
+      "permissions": [
+        "source.analyze"
+      ]
+    }
+  ]
+}

@@ -1,1 +1,0 @@
-"""OuterSpace Apizr components."""

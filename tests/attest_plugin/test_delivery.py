@@ -13,6 +13,8 @@ from apizr_attest.process import run
 from apizr_oci.model import BuildError
 from apizr_oci.observe import Observation
 
+from apizr.workspace.verification import trust_files, trust_identity
+
 
 def documents(tmp_path):
     raw = delivery.canonical(
@@ -285,6 +287,66 @@ def test_independent_bounded_public_trust(tmp_path, fault):
         )
 
 
+@pytest.mark.parametrize("operation", ["attest", "verify", "publish-admit"])
+def test_changed_trust_refused_before_verifier_or_key_access(
+    tmp_path, monkeypatch, operation
+):
+    from apizr_attest import artifacts
+
+    request, *_ = documents(tmp_path)
+    pinned = trust_identity(trust_files(Path(request.trust_store)))
+    (Path(request.trust_store) / "attacker.pub").write_bytes(b"substituted public key")
+    request = request.model_copy(update={"trust_store_sha256": pinned})
+    work = tmp_path / "work"
+    work.mkdir()
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("effect before trust identity validation")
+
+    monkeypatch.setattr(delivery, "tool", forbidden)
+    monkeypatch.setattr(artifacts, "tool", forbidden)
+    monkeypatch.setattr(delivery, "file_bytes", forbidden)
+    monkeypatch.setattr(delivery, "observe", forbidden)
+    monkeypatch.setattr(delivery, "snapshot", lambda *args: None)
+    with pytest.raises(AttestError, match="^trust_store_mismatch$"):
+        if operation == "attest":
+            delivery.execute_attest(request, work)
+        elif operation == "verify":
+            verify = VerifyRequest.model_validate(
+                {
+                    k: v
+                    for k, v in request.model_dump(by_alias=True).items()
+                    if k in VerifyRequest.model_fields or k == "schema"
+                }
+                | {
+                    "schema": "apizr.verify-delivery/v1",
+                    "proof_dir": str(tmp_path / "proof"),
+                }
+            )
+            delivery.execute_verify(verify, work)
+        else:
+            artifacts.check_proof(
+                request,
+                work,
+                tmp_path / "proof",
+                time.monotonic() + 10,
+                tmp_path / "proof",
+            )
+    assert not (work / "trust").exists()
+    assert not Path(request.output_dir).exists()
+
+
+def test_trust_snapshot_uses_the_validated_bytes_after_source_changes(tmp_path):
+    source, target = tmp_path / "source", tmp_path / "copy"
+    source.mkdir()
+    (source / "signer.pub").write_bytes(b"reviewed key")
+    pinned = trust_identity(trust_files(source))
+    delivery.trust_snapshot(source, target, expected_sha256=pinned)
+    (source / "signer.pub").write_bytes(b"substituted key")
+    assert (target / "signer.pub").read_bytes() == b"reviewed key"
+    assert trust_identity(trust_files(target)) == pinned
+
+
 @pytest.mark.parametrize(
     "value",
     [
@@ -444,7 +506,7 @@ def test_python_api_uses_cancellable_runtime(tmp_path, monkeypatch):
 @pytest.fixture
 def transversal(mocked):
     from apizr.capabilities.model import Digest
-    from apizr.delivery import DeliveryManifest, DeliveryPlan, identity
+    from apizr.contracts.delivery import DeliveryManifest, DeliveryPlan, identity
 
     digest = Digest.of_bytes(b"reviewed unit evidence").model_dump(mode="json")
     fields = (
@@ -496,7 +558,7 @@ def transversal(mocked):
 
 
 def test_transversal_export_and_offline_linkage(transversal, tmp_path):
-    from apizr.delivery import identity
+    from apizr.contracts.delivery import identity
 
     work = tmp_path / "work"
     work.mkdir()

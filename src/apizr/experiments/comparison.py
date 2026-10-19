@@ -8,12 +8,15 @@ scores; exact Plan identity and timing are context, not counted facets.
 from collections.abc import Callable, Iterable
 from enum import Enum
 from math import isfinite
+from pathlib import Path
 from typing import Annotated, Literal, TypeVar
 
-from pydantic import Field
+from pydantic import Field, TypeAdapter
 
 from apizr.contracts.distribution import Digest
 from apizr.contracts.json import encode
+from apizr.experiments.capture_model import CallParameter, CaptureIdentity, CaptureMode
+from apizr.experiments.history import select_runs
 from apizr.experiments.model import (
     EnvironmentEvidence,
     EnvironmentValue,
@@ -28,7 +31,17 @@ from apizr.experiments.model import (
     RandomnessControl,
     SourceIdentity,
 )
-from apizr.experiments.store import RunRecord
+from apizr.experiments.store import (
+    Record,
+    RunRecord,
+    RunRecordV2,
+    record_source,
+    validate_record,
+)
+from apizr.scientific_providers.contracts.selection import (
+    ProviderReport,
+    read_provenance,
+)
 
 MAX_DIFF_BYTES = 32 * 1024 * 1024
 
@@ -44,6 +57,18 @@ class ChangeState(str, Enum):
 class SourceChange(ExperimentValue):
     a: SourceIdentity
     b: SourceIdentity
+    state: ChangeState
+    kind: ChangeState
+    reference: ChangeState
+    digest: ChangeState
+    executable_digest: ChangeState
+    module: ChangeState
+    capability_id: ChangeState
+
+
+class SourceChangeV2(ExperimentValue):
+    a: SourceIdentity | None
+    b: SourceIdentity | None
     state: ChangeState
     kind: ChangeState
     reference: ChangeState
@@ -147,6 +172,12 @@ class DifferenceCounts(ExperimentValue):
     unknown: Count
 
 
+class ProviderChange(ExperimentValue):
+    a: ProviderReport | None
+    b: ProviderReport | None
+    state: ChangeState
+
+
 class ExperimentDiff(ExperimentValue):
     schema_version: Literal["apizr.experiment-diff/v1"] = "apizr.experiment-diff/v1"
     run_a_digest: Digest
@@ -166,6 +197,59 @@ class ExperimentDiff(ExperimentValue):
     outputs: Annotated[tuple[OutputChange, ...], Field(max_length=512)]
     material_counts: DifferenceCounts
     result_counts: DifferenceCounts
+    providers: ProviderChange | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+
+
+class CaptureChange(ExperimentValue):
+    mode_a: CaptureMode
+    mode_b: CaptureMode
+    a: CaptureIdentity | None
+    b: CaptureIdentity | None
+    mode_state: ChangeState
+    identity_state: ChangeState
+
+
+class CallParameterChange(ExperimentValue):
+    name: Name
+    a: CallParameter | None
+    b: CallParameter | None
+    state: ChangeState
+    type_state: ChangeState
+
+
+class ExperimentDiffV2(ExperimentValue):
+    schema_version: Literal["apizr.experiment-diff/v2"] = "apizr.experiment-diff/v2"
+    run_a_digest: Digest
+    run_b_digest: Digest
+    plan_a_digest: Digest
+    plan_b_digest: Digest
+    plan_state: ChangeState
+    source: SourceChangeV2
+    serving: ChangeState
+    data: Annotated[tuple[InputChange, ...], Field(max_length=1024)]
+    parameters: Annotated[tuple[ParameterChange, ...], Field(max_length=1024)]
+    randomness: Annotated[tuple[RandomnessChange, ...], Field(max_length=512)]
+    planned_environment: EnvironmentChange
+    observed_environment: EnvironmentChange
+    status: StatusChange
+    metrics: Annotated[tuple[MetricChange, ...], Field(max_length=512)]
+    outputs: Annotated[tuple[OutputChange, ...], Field(max_length=512)]
+    material_counts: DifferenceCounts
+    result_counts: DifferenceCounts
+    providers: ProviderChange | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+
+    capture: CaptureChange
+    call_parameters: Annotated[tuple[CallParameterChange, ...], Field(max_length=512)]
+
+
+Diff = ExperimentDiff | ExperimentDiffV2
+_DIFF: TypeAdapter[Diff] = TypeAdapter(
+    Annotated[Diff, Field(discriminator="schema_version")]
+)
 
 
 def _exact(a: object, b: object) -> ChangeState:
@@ -303,23 +387,51 @@ def _counts(states: tuple[ChangeState, ...]) -> DifferenceCounts:
     )
 
 
-def compare_runs(a: RunRecord, b: RunRecord) -> ExperimentDiff:
+def compare_runs(a: Record, b: Record) -> Diff:
     """Revalidate exact Run/Plan bindings, then compare A → B with zero I/O."""
-    a = RunRecord.model_validate(a)
-    b = RunRecord.model_validate(b)
-    x, y = a.run.subject, b.run.subject
-    serving = _evidence_identity(x.capability_id, y.capability_id)
-    source = SourceChange(
-        a=x,
-        b=y,
-        state=_evidence(x, y),
-        kind=_exact(x.kind, y.kind),
-        reference=_exact(x.reference, y.reference),
-        digest=_exact(x.digest, y.digest),
-        executable_digest=_known(x.executable_digest, y.executable_digest),
-        module=_known(x.module, y.module),
-        capability_id=serving,
+    a = validate_record(a)
+    b = validate_record(b)
+    return _compare_runs(a, b)
+
+
+def compare_stored_runs(path: Path, run_a: str, run_b: str) -> Diff:
+    """Compare after one complete store validation; preserve all global refusals."""
+    a, b = select_runs(path, (run_a, run_b))
+    return _compare_runs(a, b)
+
+
+def _compare_runs(a: Record, b: Record) -> Diff:
+    x, y = record_source(a), record_source(b)
+    serving = _evidence_identity(
+        x.capability_id if x else None, y.capability_id if y else None
     )
+    if isinstance(a, RunRecord) and isinstance(b, RunRecord):
+        assert x is not None and y is not None
+        source: SourceChange | SourceChangeV2 = SourceChange(
+            a=x,
+            b=y,
+            state=_evidence(x, y),
+            kind=_exact(x.kind, y.kind),
+            reference=_exact(x.reference, y.reference),
+            digest=_exact(x.digest, y.digest),
+            executable_digest=_known(x.executable_digest, y.executable_digest),
+            module=_known(x.module, y.module),
+            capability_id=serving,
+        )
+    else:
+        source = SourceChangeV2(
+            a=x,
+            b=y,
+            state=_evidence(x, y) if x and y else ChangeState.UNKNOWN,
+            kind=_known(x.kind if x else None, y.kind if y else None),
+            reference=_known(x.reference if x else None, y.reference if y else None),
+            digest=_known(x.digest if x else None, y.digest if y else None),
+            executable_digest=_known(
+                x.executable_digest if x else None, y.executable_digest if y else None
+            ),
+            module=_known(x.module if x else None, y.module if y else None),
+            capability_id=serving,
+        )
     data = tuple(
         InputChange(
             name=name,
@@ -410,27 +522,108 @@ def compare_runs(a: RunRecord, b: RunRecord) -> ExperimentDiff:
         *_environment_states(planned_environment),
         *_environment_states(observed_environment),
     )
-    result = ExperimentDiff(
-        run_a_digest=a.run_digest,
-        run_b_digest=b.run_digest,
-        plan_a_digest=a.plan_digest,
-        plan_b_digest=b.plan_digest,
-        plan_state=_exact(a.plan_digest, b.plan_digest),
-        source=source,
-        serving=serving,
-        data=data,
-        parameters=parameters,
-        randomness=randomness,
-        planned_environment=planned_environment,
-        observed_environment=observed_environment,
-        status=status,
-        metrics=metrics,
-        outputs=outputs,
-        material_counts=_counts(material),
-        result_counts=_counts(
+    fields: dict[str, object] = {
+        "run_a_digest": a.run_digest,
+        "run_b_digest": b.run_digest,
+        "plan_a_digest": a.plan_digest,
+        "plan_b_digest": b.plan_digest,
+        "plan_state": _exact(a.plan_digest, b.plan_digest),
+        "source": source,
+        "serving": serving,
+        "data": data,
+        "parameters": parameters,
+        "randomness": randomness,
+        "planned_environment": planned_environment,
+        "observed_environment": observed_environment,
+        "status": status,
+        "metrics": metrics,
+        "outputs": outputs,
+        "material_counts": _counts(material),
+        "result_counts": _counts(
             (status.state, *(m.state for m in metrics), *(o.state for o in outputs))
         ),
-    )
+    }
+    if isinstance(source, SourceChange):
+        fields["schema_version"] = "apizr.experiment-diff/v1"
+    else:
+        capture_a = a.run.capture if isinstance(a, RunRecordV2) else None
+        capture_b = b.run.capture if isinstance(b, RunRecordV2) else None
+        mode_a = (
+            capture_a.mode
+            if capture_a
+            else (
+                CaptureMode.CLI_RUN
+                if a.plan.execution.kind == "trusted-local-process"
+                else CaptureMode.UNKNOWN
+            )
+        )
+        mode_b = (
+            capture_b.mode
+            if capture_b
+            else (
+                CaptureMode.CLI_RUN
+                if b.plan.execution.kind == "trusted-local-process"
+                else CaptureMode.UNKNOWN
+            )
+        )
+        capture = CaptureChange(
+            mode_a=mode_a,
+            mode_b=mode_b,
+            a=capture_a,
+            b=capture_b,
+            mode_state=_exact(mode_a, mode_b)
+            if CaptureMode.UNKNOWN not in (mode_a, mode_b)
+            else ChangeState.UNKNOWN,
+            identity_state=_evidence(capture_a, capture_b)
+            if capture_a and capture_b
+            else ChangeState.UNKNOWN,
+        )
+        calls = tuple(
+            CallParameterChange(
+                name=name,
+                a=x,
+                b=y,
+                state=(
+                    _membership(x, y)
+                    if x is None or y is None
+                    else ChangeState.UNKNOWN
+                    if EvidenceOrigin.UNKNOWN in (x.origin, y.origin)
+                    else _evidence(x, y)
+                ),
+                type_state=_known(
+                    x.value_type if x else None, y.value_type if y else None
+                ),
+            )
+            for name, (x, y) in _joined(
+                lambda item: item.name,
+                a.run.call_parameters if isinstance(a, RunRecordV2) else (),
+                b.run.call_parameters if isinstance(b, RunRecordV2) else (),
+            )
+        )
+        fields.update(
+            schema_version="apizr.experiment-diff/v2",
+            capture=capture,
+            call_parameters=calls,
+            material_counts=_counts(
+                (
+                    *material,
+                    capture.mode_state,
+                    capture.identity_state,
+                    *(item.state for item in calls),
+                )
+            ),
+        )
+    providers_a = read_provenance(a.plan.execution.controls)
+    providers_b = read_provenance(b.plan.execution.controls)
+    if providers_a is not None or providers_b is not None:
+        fields["providers"] = ProviderChange(
+            a=providers_a,
+            b=providers_b,
+            state=ChangeState.UNKNOWN
+            if providers_a is None or providers_b is None
+            else _evidence(providers_a, providers_b),
+        )
+    result = _DIFF.validate_python(fields)
     diff_bytes(result)  # Bound the derived view even when each input is bounded.
     return result
 
@@ -439,8 +632,6 @@ def _evidence_identity(a: str | None, b: str | None) -> ChangeState:
     return _membership(a, b) if a is None or b is None else _exact(a, b)
 
 
-def diff_bytes(value: ExperimentDiff) -> bytes:
+def diff_bytes(value: Diff) -> bytes:
     """Canonical UTF-8 JSON with a final newline; no separate diff identity."""
-    return encode(
-        ExperimentDiff.model_validate(value).model_dump(mode="json"), MAX_DIFF_BYTES
-    )
+    return encode(_DIFF.validate_python(value).model_dump(mode="json"), MAX_DIFF_BYTES)

@@ -5,7 +5,7 @@ import os
 import stat
 from pathlib import Path
 
-from pydantic import ConfigDict
+from pydantic import ConfigDict, model_validator
 
 from apizr.capabilities.types import ValueModel
 from apizr.contracts.analysis import PinnedRoot
@@ -22,6 +22,12 @@ MAX_SESSION_BYTES = 1048576
 
 
 class Scope(ValueModel):
+    """Private session snapshot of settings, root identity and explicit authority.
+
+    This worker handoff is not project configuration or a public wire schema.
+    The pinned inode restricts an operator grant; it never replaces that grant.
+    """
+
     model_config = ConfigDict(extra="forbid", frozen=True, strict=True)
     root: str
     device: int
@@ -31,6 +37,11 @@ class Scope(ValueModel):
     readiness: RepositoryReadinessPolicy
     exposure: ExposurePolicy | None
     operator_policy: OperatorPolicy | None
+
+    @model_validator(mode="after")
+    def pinned_source(self) -> "Scope":
+        self.source()
+        return self
 
     def source(self) -> PinnedRoot:
         return PinnedRoot(root=self.root, device=self.device, inode=self.inode)
@@ -49,6 +60,7 @@ def read_session(descriptor: int) -> Scope:
         raw = stream.read(MAX_SESSION_BYTES + 1)
     if len(raw) > MAX_SESSION_BYTES:
         raise ValueError("session_too_large")
+    json.loads(raw, object_pairs_hook=unique_object)
     scope = Scope.model_validate_json(raw, strict=True)
     check_scope(scope)
     return scope

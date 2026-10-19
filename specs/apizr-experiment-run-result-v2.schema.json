@@ -1,0 +1,577 @@
+{
+  "$defs": {
+    "CallParameter": {
+      "additionalProperties": false,
+      "description": "Selected JSON or an explicit unknown value with its bounded type name.",
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "value_type": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value Type"
+        },
+        "origin": {
+          "enum": [
+            "runtime",
+            "unknown"
+          ],
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin"
+      ],
+      "title": "CallParameter",
+      "type": "object"
+    },
+    "CaptureIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "$ref": "#/$defs/CaptureMode"
+        },
+        "producer": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Producer",
+          "type": "string"
+        },
+        "producer_version": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Producer Version",
+          "type": "string"
+        },
+        "function": {
+          "$ref": "#/$defs/FunctionBinding",
+          "default": {
+            "module": null,
+            "qualified_name": null,
+            "definition_id": null,
+            "source_digest": null,
+            "origin": "unknown"
+          }
+        },
+        "cell": {
+          "$ref": "#/$defs/CellIdentity",
+          "default": {
+            "cell_id": null,
+            "execution_count": null,
+            "source_digest": null,
+            "origin": "unknown"
+          }
+        },
+        "selected_parameters": {
+          "default": [],
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 256,
+          "title": "Selected Parameters",
+          "type": "array"
+        }
+      },
+      "required": [
+        "mode",
+        "producer",
+        "producer_version"
+      ],
+      "title": "CaptureIdentity",
+      "type": "object"
+    },
+    "CaptureMode": {
+      "enum": [
+        "cli_run",
+        "sdk_session",
+        "decorated_call",
+        "jupyter_cell",
+        "unknown"
+      ],
+      "title": "CaptureMode",
+      "type": "string"
+    },
+    "CellIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "cell_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell Id"
+        },
+        "execution_count": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Execution Count"
+        },
+        "source_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Digest"
+        },
+        "origin": {
+          "default": "unknown",
+          "enum": [
+            "runtime",
+            "unknown"
+          ],
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "title": "CellIdentity",
+      "type": "object"
+    },
+    "EvidenceOrigin": {
+      "enum": [
+        "declared",
+        "static",
+        "runtime",
+        "unknown"
+      ],
+      "title": "EvidenceOrigin",
+      "type": "string"
+    },
+    "FrozenJSON": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "maxLength": 8192,
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/FrozenJSON"
+          },
+          "maxItems": 1024,
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/FrozenJSON"
+          },
+          "maxProperties": 1024,
+          "propertyNames": {
+            "maxLength": 256
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "FunctionBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "module": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Module"
+        },
+        "qualified_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Qualified Name"
+        },
+        "definition_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Definition Id"
+        },
+        "source_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Digest"
+        },
+        "origin": {
+          "default": "unknown",
+          "enum": [
+            "runtime",
+            "unknown"
+          ],
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "title": "FunctionBinding",
+      "type": "object"
+    },
+    "Metric": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "origin": {
+          "const": "runtime",
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin"
+      ],
+      "title": "Metric",
+      "type": "object"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FrozenJSON"
+        },
+        "origin": {
+          "$ref": "#/$defs/EvidenceOrigin"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "origin"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "SourceEvidence": {
+      "additionalProperties": false,
+      "description": "A source identity is absent when no source bytes have been observed.",
+      "properties": {
+        "identity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "origin": {
+          "default": "unknown",
+          "enum": [
+            "runtime",
+            "unknown"
+          ],
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "title": "SourceEvidence",
+      "type": "object"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "python",
+            "notebook"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "executable_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Executable Digest"
+        },
+        "module": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Module"
+        },
+        "capability_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "^[^\\s/\\\\]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Id"
+        }
+      },
+      "required": [
+        "kind",
+        "reference",
+        "digest"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "apizr.experiment-run-result/v2",
+      "default": "apizr.experiment-run-result/v2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "run_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run Digest",
+      "type": "string"
+    },
+    "plan_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Digest",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "success",
+        "failed",
+        "cancelled"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SourceIdentity"
+        },
+        {
+          "$ref": "#/$defs/SourceEvidence"
+        }
+      ],
+      "title": "Source"
+    },
+    "capture": {
+      "$ref": "#/$defs/CaptureIdentity"
+    },
+    "execution_id": {
+      "anyOf": [
+        {
+          "maxLength": 32,
+          "minLength": 32,
+          "pattern": "^[0-9a-f]{32}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Execution Id"
+    },
+    "started_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Started At"
+    },
+    "metrics": {
+      "maximum": 256,
+      "minimum": 0,
+      "title": "Metrics",
+      "type": "integer"
+    },
+    "outputs": {
+      "maximum": 256,
+      "minimum": 0,
+      "title": "Outputs",
+      "type": "integer"
+    },
+    "parameters": {
+      "items": {
+        "$ref": "#/$defs/Parameter"
+      },
+      "maxItems": 256,
+      "title": "Parameters",
+      "type": "array"
+    },
+    "call_parameters": {
+      "items": {
+        "$ref": "#/$defs/CallParameter"
+      },
+      "maxItems": 256,
+      "title": "Call Parameters",
+      "type": "array"
+    },
+    "recorded_metrics": {
+      "items": {
+        "$ref": "#/$defs/Metric"
+      },
+      "maxItems": 256,
+      "title": "Recorded Metrics",
+      "type": "array"
+    }
+  },
+  "required": [
+    "run_digest",
+    "plan_digest",
+    "status",
+    "source",
+    "capture",
+    "execution_id",
+    "started_at",
+    "metrics",
+    "outputs",
+    "parameters",
+    "call_parameters",
+    "recorded_metrics"
+  ],
+  "title": "RunSummaryV2",
+  "type": "object"
+}

@@ -4,9 +4,9 @@ from typing import Literal, Self
 
 from pydantic import Field, field_validator, model_validator
 
-from apizr.application import ApplicationInputs
 from apizr.capabilities.model import Digest
 from apizr.capabilities.types import ValueModel, logical_module
+from apizr.contracts.application import ApplicationInputs
 from apizr.exposure.policy import Interface
 from apizr.generators.mcp.model import Protocol, ToolContract
 from apizr.generators.rest.model import Endpoint
