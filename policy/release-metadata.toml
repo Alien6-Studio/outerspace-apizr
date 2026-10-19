@@ -2,5 +2,5 @@ schema_version = 1
 
 [release]
 version = "0.4.6"
-status = "release-candidate"
-stable_version = "0.4.5"
+status = "stable"
+stable_version = "0.4.6"

@@ -6,7 +6,7 @@ scripts and notebooks, record experiments, and compare their results.
 Apizr **0.4.6** supports Python **3.11–3.15** on macOS and Linux.
 
 [![PyPI](https://img.shields.io/pypi/v/outerspace-apizr.svg)](https://pypi.org/project/outerspace-apizr/)
-[![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=0.4.6)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml?query=branch%3A0.4.6)
+[![CI](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Documentation](https://github.com/Alien6-Studio/outerspace-apizr/actions/workflows/site.yml/badge.svg?branch=gh-pages)](https://apizr.outerspace.sh/)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://apizr.outerspace.sh/about/LICENSE/)
 

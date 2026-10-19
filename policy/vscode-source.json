@@ -1,7 +1,7 @@
 {
   "schema_version": "apizr.vscode-source/v1",
   "repository": "https://github.com/Alien6-Studio/outerspace-apizr-vscode.git",
-  "commit": "2d3f8a052ef0aea5779319423eaf4cdd2487258d",
+  "commit": "47494a5b77a5bf3d8694485b5280437d1b81f7f8",
   "version": "0.4.6",
   "files": {
     ".github/dependabot.yml": "5cf15f2c0af33783566cd08b19bcac727e5c9e50ad417fe7608f42d0303d54f3",
@@ -10,7 +10,7 @@
     "CHANGELOG.md": "c4215ea09f732f7788a7a4dce83ce536c1133f71eb8de1ae2271e3b704dbe69c",
     "CONTRIBUTING.md": "d4c14dd25da07dd5431dcd0510a1c35216ff651130a4ce3908418d1231b1ce6a",
     "LICENSE": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
-    "README.md": "a4b8f3dd84269e8fceab364ffc0df520552a4771cdc9fd82bf54c29f5094cbc5",
+    "README.md": "04e755eb31b2ae94b0c358d520528c239519a26e7b5eac94f347aebc3dc5efc9",
     "SECURITY.md": "79f7aad882aaafbd6985f4b384310956054097f3543700f085a509ce270c8e06",
     "engine.json": "8f920e4a9210d90b7b03923a83181277f811d2f1d8b1da9dabfcf35052f56428",
     "media/icon.png": "e35a12ff65c89e0e43d8b7b9d8921bf97f45924c2e1a67395ce4ef1f4cc29328",
