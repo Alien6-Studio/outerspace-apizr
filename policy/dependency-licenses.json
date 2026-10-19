@@ -1812,53 +1812,53 @@
           "scope": "Unicode name data bundled in ruff_unicode_names2; checked against https://spdx.org/licenses/Unicode-3.0.html, retain its complete notice."
         }
       ],
-      "distribution_fingerprint": "c6eed393573a69f6a478efee1a37f32392bc3d88d47d2e94b72e4192bba18ae7",
+      "distribution_fingerprint": "e9c1143058c3099e375bdc1a084332babc053f8931d22cd1bec1b0f56e27e67c",
       "evidence_archive": {
-        "hash": "sha256:5cd03240d8208a557c2a9655a5cb07ebe36aa6bb35065f97d48c1f6adef5a322",
-        "url": "https://files.pythonhosted.org/packages/e9/a7/70debb024dfacda67b8e560cc7511f52b34b9348a8cc8c1ec23036dcd51d/ruff-0.17.0.tar.gz"
+        "hash": "sha256:5bb796c5112e9fb9527f2ef2faa0a130d6312d19de92bcfaddd70dbb2d41020f",
+        "url": "https://files.pythonhosted.org/packages/f9/e7/e6d5749983b020e6cb1055abec0a6f361a8e94f0184cdcf56d4760995f02/ruff-0.17.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "ruff-0.17.0/LICENSE",
+          "path": "ruff-0.17.1/LICENSE",
           "sha256": "2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18"
         },
         {
-          "path": "ruff-0.17.0/crates/ruff_annotate_snippets/LICENSE-APACHE",
+          "path": "ruff-0.17.1/crates/ruff_annotate_snippets/LICENSE-APACHE",
           "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
         },
         {
-          "path": "ruff-0.17.0/crates/ruff_annotate_snippets/LICENSE-MIT",
+          "path": "ruff-0.17.1/crates/ruff_annotate_snippets/LICENSE-MIT",
           "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
         },
         {
-          "path": "ruff-0.17.0/crates/ruff_unicode_names2/LICENSE-APACHE",
+          "path": "ruff-0.17.1/crates/ruff_unicode_names2/LICENSE-APACHE",
           "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
         },
         {
-          "path": "ruff-0.17.0/crates/ruff_unicode_names2/LICENSE-MIT",
+          "path": "ruff-0.17.1/crates/ruff_unicode_names2/LICENSE-MIT",
           "sha256": "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
         },
         {
-          "path": "ruff-0.17.0/crates/ruff_unicode_names2/data/LICENSE-UNICODE",
+          "path": "ruff-0.17.1/crates/ruff_unicode_names2/data/LICENSE-UNICODE",
           "sha256": "f858d5fab15f87699a92876e78d7699a92bdb116b57bf64bf6778c374b5cb0fe"
         },
         {
-          "path": "ruff-0.17.0/crates/ruff_unicode_names2_generator/LICENSE-APACHE",
+          "path": "ruff-0.17.1/crates/ruff_unicode_names2_generator/LICENSE-APACHE",
           "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
         },
         {
-          "path": "ruff-0.17.0/crates/ruff_unicode_names2_generator/LICENSE-MIT",
+          "path": "ruff-0.17.1/crates/ruff_unicode_names2_generator/LICENSE-MIT",
           "sha256": "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
         },
         {
-          "path": "ruff-0.17.0/crates/ty_vendored/vendor/typeshed/LICENSE",
+          "path": "ruff-0.17.1/crates/ty_vendored/vendor/typeshed/LICENSE",
           "sha256": "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe"
         }
       ],
       "name": "ruff",
       "notes": "Reviewed the hash-verified source archive, unchanged primary and annotate-snippets/typeshed notices, and the newly bundled unicode_names2 code and Unicode data notices. All license expressions are already allowed by the existing policy. Preserve complete notices; native binary and other nested dependency redistribution remain outside this source-notice review.",
       "status": "reviewed",
-      "version": "0.17.0"
+      "version": "0.17.1"
     },
     {
       "components": [
@@ -2085,7 +2085,7 @@
       "version": "6.0.0"
     }
   ],
-  "review_date": "2026-10-15",
+  "review_date": "2026-10-19",
   "review_method": "Archive license text and attribution review prepared with Codex; adopted through the protected pull-request process. No legal certification or independent human review is asserted.",
   "schema_version": 1,
   "scope": "locked-dependency-use-with-upstream-notices"
