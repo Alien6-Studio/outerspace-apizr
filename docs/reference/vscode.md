@@ -18,11 +18,9 @@ host. No download starts until you accept the setup action; Restricted Mode
 cannot install or start the engine. **Apizr: Open CLI terminal** opens a terminal
 with that CLI on its path. Project environments and notebook kernels are separate.
 
-The current development descriptor pins an exact official Git commit, so this
-setup also requires Git. It does not attempt to download an unpublished 0.4.6
-package from PyPI. Switching the descriptor to a published version remains a
-separate release decision. **Apizr: Select engine** can instead select your own
-Python environment or an existing `apizr` executable, including a `uv tool` install.
+The release installer uses `outerspace-apizr[notebook]==0.4.6` from PyPI.
+**Apizr: Select engine** can instead select your own Python environment or an
+existing `apizr` executable, including a `uv tool` install.
 
 Set these values in Settings:
 
