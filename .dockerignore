@@ -1,0 +1,3 @@
+# The hosting recipe obtains its public source ref explicitly.
+*
+!Dockerfile

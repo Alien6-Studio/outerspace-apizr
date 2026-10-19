@@ -8,8 +8,8 @@ from pydantic import AfterValidator
 
 DEFAULT_PYTHON = sys.version_info[:2]
 MIN_PYTHON = (3, 11)
-MAX_PYTHON = (3, 14)
-SUPPORTED_RANGE = "Supported Python targets are 3.11 through 3.14"
+MAX_PYTHON = (3, 15)
+SUPPORTED_RANGE = "Supported Python targets are 3.11 through 3.15"
 
 
 def validate_python_target(version: tuple[int, int]) -> tuple[int, int]:

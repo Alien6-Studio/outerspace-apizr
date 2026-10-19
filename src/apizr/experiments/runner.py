@@ -6,6 +6,7 @@ import selectors
 import subprocess
 import sys
 import time
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
@@ -45,6 +46,8 @@ from apizr.experiments.run_protocol import (
 )
 from apizr.experiments.serialization import plan_digest, validate_run_binding
 from apizr.experiments.store import DEFAULT_STORE, RunRecord, prepare_store, publish
+from apizr.scientific_providers.contracts.model import StaticProvider
+from apizr.scientific_providers.contracts.selection import ProviderSelection
 from apizr.workspace.files import absolute_path, directory_fd, read_regular
 
 
@@ -337,6 +340,9 @@ def run_experiment(
     fingerprint_policy: FingerprintPolicy | None = None,
     options: RunOptions | None = None,
     store: Path | None = None,
+    providers: ProviderSelection | None = None,
+    provider_implementations: Mapping[str, StaticProvider] | None = None,
+    provider_directory: Path | None = None,
 ) -> RunRecord:
     """Inspect, derive, execute once and durably record trusted local evidence."""
     source = absolute_path(source)
@@ -350,6 +356,9 @@ def run_experiment(
         module_name=module_name,
         declarations=declarations,
         fingerprint_policy=policy,
+        providers=providers if providers is not None else ProviderSelection(),
+        provider_implementations=provider_implementations,
+        provider_directory=provider_directory,
     )
     plan = derive_plan(inspection, execution=options)
     destination = store if store is not None else root / DEFAULT_STORE

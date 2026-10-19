@@ -107,16 +107,28 @@ def execute(
     sys.modules["__main__"] = module
     sys.argv = [request.subject.reference]
     sys.path.insert(0, str(root))
+    # The runner owns publication while the workload executes. Restore the
+    # marker even after interruption when this worker is invoked by unit callers.
+    previous = os.environ.get("APIZR_EXPERIMENT_RUNNER")
+    os.environ["APIZR_EXPERIMENT_RUNNER"] = "1"
     try:
-        exec(compile(executable, request.subject.reference, "exec"), module.__dict__)
-    except SystemExit as error:
-        if error.code is not None and error.code != 0:
-            return WorkerFinished(status="failed", diagnostic="execution_exit")
-    except KeyboardInterrupt:
-        return WorkerFinished(status="cancelled", diagnostic="execution_cancelled")
-    except BaseException:
-        return WorkerFinished(status="failed", diagnostic="execution_exception")
-    return observe(request, module.__dict__)
+        try:
+            exec(
+                compile(executable, request.subject.reference, "exec"), module.__dict__
+            )
+        except SystemExit as error:
+            if error.code is not None and error.code != 0:
+                return WorkerFinished(status="failed", diagnostic="execution_exit")
+        except KeyboardInterrupt:
+            return WorkerFinished(status="cancelled", diagnostic="execution_cancelled")
+        except BaseException:
+            return WorkerFinished(status="failed", diagnostic="execution_exception")
+        return observe(request, module.__dict__)
+    finally:
+        if previous is None:
+            os.environ.pop("APIZR_EXPERIMENT_RUNNER", None)
+        else:
+            os.environ["APIZR_EXPERIMENT_RUNNER"] = previous
 
 
 def main() -> None:

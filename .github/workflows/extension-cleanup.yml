@@ -1,58 +1,82 @@
 name: Extension cleanup regression
 
 on:
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   workflow_dispatch:
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: Extension cleanup regression-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   cleanup:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [ubuntu-latest]
         python: ['3.11', '3.14']
+        include:
+          - {os: macos-latest, python: '3.14'}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: ${{ matrix.python }}
       - run: uv sync --locked
       - name: Run all 25 repetitions without retrying failures
-        run: uv run --locked python scripts/repeat_extension_cleanup.py --repetitions 25 --output "$RUNNER_TEMP/extension-cleanup"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        run: uv run --locked python -m scripts.qualification.extensions.repeat_extension_cleanup --repetitions 25 --output "$RUNNER_TEMP/extension-cleanup"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: cleanup-${{ matrix.os }}-${{ matrix.python }}
           path: ${{ runner.temp }}/extension-cleanup
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   git-worker-cleanup:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [ubuntu-latest]
         python: ['3.11', '3.14']
+        include:
+          - {os: macos-latest, python: '3.14'}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: ${{ matrix.python }}
       - name: Prepare disposable SSH integration prerequisites
         if: runner.os == 'Linux'
@@ -64,11 +88,11 @@ jobs:
           sudo install -d -m 755 /run/sshd
       - run: uv sync --locked
       - name: Run the fixed 25 SSH and worker cleanup repetitions
-        run: uv run --locked python scripts/repeat_extension_cleanup.py --suite git-worker --repetitions 25 --output "$RUNNER_TEMP/git-worker-cleanup"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        run: uv run --locked python -m scripts.qualification.extensions.repeat_extension_cleanup --suite git-worker --repetitions 25 --output "$RUNNER_TEMP/git-worker-cleanup"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: git-worker-cleanup-${{ matrix.os }}-${{ matrix.python }}
           path: ${{ runner.temp }}/git-worker-cleanup
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

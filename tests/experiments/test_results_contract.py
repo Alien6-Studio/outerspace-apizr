@@ -230,7 +230,10 @@ def test_historical_numeric_and_output_json_unchanged():
     ["metric-example", "results-discovery-example", "output-capture-example"],
 )
 def test_documented_examples_execute(marker):
-    guide = Path(__file__).parents[2] / "docs/guides/experiment-results.md"
+    guide = (
+        Path(__file__).parents[2]
+        / "tests/fixtures/qualified-guides/guides/experiment-results.md"
+    )
     match = re.search(
         rf"<!-- executable-{marker} -->\s*```python\n(.*?)\n```",
         guide.read_text(),

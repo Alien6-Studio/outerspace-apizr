@@ -95,8 +95,8 @@ def test_wrong_provider_and_default_provider(monkeypatch):
 
 def test_notebook_executable_required():
     from apizr.capabilities import document_digest
-    from apizr.capability_notebooks import inspect_notebook_bytes
-    from apizr.inspection import Inspection
+    from apizr.capabilities.inspection import Inspection
+    from apizr.generators.notebooks import inspect_notebook_bytes
     from apizr.oci.model import ExecutionPolicyV2
     from apizr.oci.planner import plan
     from apizr.readiness import assess, report_digest

@@ -1,33 +1,22 @@
-"""Regenerate the independent Experiment Plan and Experiment Run v1 schemas."""
+"""Compatibility CLI for scripts.qualification.experiments.export_experiment_schemas."""
 
-import json
+import runpy
+import sys
+from importlib import import_module
 from pathlib import Path
 
-from apizr.experiments import ExperimentPlan, ExperimentRun
-from apizr.experiments.comparison import ExperimentDiff
-from apizr.experiments.exposure_model import ExperimentExposureBinding
-from apizr.experiments.history import HistoryList, RunSummary
-from apizr.experiments.inspection_model import ExperimentInspection
-from apizr.experiments.store import RunRecord
-
-
-def main() -> None:
-    root = Path(__file__).resolve().parents[1] / "docs/specs"
-    for name, model in (
-        ("plan", ExperimentPlan),
-        ("run", ExperimentRun),
-        ("inspection", ExperimentInspection),
-        ("history", HistoryList),
-        ("record", RunRecord),
-        ("run-result", RunSummary),
-        ("diff", ExperimentDiff),
-        ("exposure", ExperimentExposureBinding),
-    ):
-        (root / f"apizr-experiment-{name}-v1.schema.json").write_text(
-            json.dumps(model.model_json_schema(), indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
-        )
-
-
 if __name__ == "__main__":
-    main()
+    runpy.run_path(
+        str(
+            Path(__file__).resolve().parents[1]
+            / "scripts/qualification/experiments/export_experiment_schemas.py"
+        ),
+        run_name="__main__",
+    )
+else:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    _implementation = import_module(
+        "scripts.qualification.experiments.export_experiment_schemas"
+    )
+    sys.modules[__name__] = _implementation
+    globals().update(vars(_implementation))

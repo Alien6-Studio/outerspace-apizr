@@ -8,7 +8,6 @@ from pathlib import Path
 import anyio
 import uvicorn
 from mcp.server import Server, ServerRequestContext
-from mcp.server.stdio import stdio_server
 from mcp.types import (
     CallToolRequestParams,
     CallToolResult,
@@ -19,7 +18,8 @@ from mcp.types import (
 )
 
 from apizr.execution.protocol import finite_json
-from apizr.repository_interfaces.runtime import read_artifact as artifact
+from apizr.generators.mcp.transport import BoundedServer, stdio_server, tool_result
+from apizr.repository_interfaces.artifacts import read_artifact as artifact
 
 from .runtime import GovernedRuntime
 
@@ -62,24 +62,10 @@ def create_server(root: Path) -> Server[dict[str, object]]:
             return tool_error("Invalid tool arguments")
         result = await anyio.to_thread.run_sync(runtime.invoke, identity, payload)
         if result.status == "success":
-            # Normalize only the transport; Python/REST execution values stay intact.
-            value = result.value
-            value = value if isinstance(value, dict) else {"result": value}
-            return CallToolResult(
-                content=[
-                    TextContent(
-                        type="text",
-                        text=json.dumps(
-                            value,
-                            ensure_ascii=False,
-                            sort_keys=True,
-                            separators=(",", ":"),
-                            allow_nan=False,
-                        ),
-                    )
-                ],
-                structured_content=value,
-            )
+            try:
+                return tool_result(result.value)
+            except (ValueError, RecursionError):
+                return tool_error("Tool execution failed")
         if result.status == "invalid_input":
             return tool_error("Invalid tool arguments")
         if result.status == "timeout":
@@ -88,7 +74,7 @@ def create_server(root: Path) -> Server[dict[str, object]]:
             return tool_error("Tool execution resource limit exceeded")
         return tool_error("Tool execution failed")
 
-    return Server(
+    return BoundedServer(
         "Apizr MCP",
         version="apizr.repository-mcp/v1",
         on_list_tools=list_tools,
@@ -116,5 +102,7 @@ def main(root: Path) -> None:
         asyncio.run(serve_stdio(server))
     else:
         uvicorn.run(
-            server.streamable_http_app(host=args.host), host=args.host, port=args.port
+            server.streamable_http_app(host=args.host),
+            host=args.host,
+            port=args.port,
         )

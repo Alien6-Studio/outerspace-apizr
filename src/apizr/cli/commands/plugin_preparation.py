@@ -54,7 +54,7 @@ def add_arguments(
     parser.add_argument(
         "--uv",
         type=Path,
-        help="Explicit uv 0.12 executable; otherwise use the recorded executable on PATH",
+        help="Explicit uv 0.12.x or 0.13.x executable; otherwise measure PATH",
     )
     parser.add_argument("--timeout-ms", type=timeout, default=120000)
     parser.add_argument(
@@ -83,6 +83,11 @@ def run(args: argparse.Namespace) -> int:
             "Install the retained wheels, then explicitly enable the plugin in the prepared profile."
         )
     for problem in result.diagnostics:
+        if problem.reason == "resolver_version_unsupported":
+            print(
+                "Use qualified uv 0.12.x or 0.13.x; --uv selects its absolute executable.",
+                file=sys.stderr,
+            )
         if problem.reason == "preparation_extra_required":
             print(
                 "Install Apizr with its [preparation] extra to enable wheel selection.",

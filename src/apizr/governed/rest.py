@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from apizr.execution.protocol import finite_json
+from apizr.interfaces.http_admission import JsonAdmission
 
 from .runtime import GovernedRuntime, artifact
 
@@ -17,6 +18,7 @@ def create_app(root: Path) -> FastAPI:
     runtime = GovernedRuntime(root, "rest")
     document = json.loads(artifact(root, "openapi.json"))
     app = FastAPI(title="Apizr REST API", docs_url="/docs", redoc_url=None)
+    app.add_middleware(JsonAdmission)
     app.openapi = lambda: document
 
     @app.get("/health", response_model=None)

@@ -1,7 +1,0 @@
-{
-  "quiescent_copy": true,
-  "exact_json_bytes": true,
-  "restored_runs": 4,
-  "canonical_store_read": "passed",
-  "version": "0.4.5"
-}

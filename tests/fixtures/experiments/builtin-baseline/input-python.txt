@@ -1,0 +1,23 @@
+Experiment inspection
+train.py
+No code executed; runtime evidence not observed.
+
+Code — CAPTURED
+  python; module train; sha256:5b3334222a1b
+Data — CAPTURED
+  data/train.csv: sha256:20c6a3b14153, 28 bytes (line 5)
+Parameters — UNKNOWN
+  No literal parameter candidates.
+  Static candidates, not runtime parameters.
+Randomness — UNKNOWN
+  No identifiable randomness controls.
+Environment — PARTIAL
+  Source mentions: pandas
+  Experiment runtime versions not observed.
+Metrics — UNKNOWN
+  No identifiable metric calls.
+Outputs — UNKNOWN
+  No identifiable output paths.
+Serving — PARTIAL
+  train: CONDITIONAL; python:train:train (line 4)
+  Source-local readiness; repository context not assessed.

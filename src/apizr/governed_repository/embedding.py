@@ -9,22 +9,28 @@ from apizr.capabilities.model import Digest
 from apizr.execution.policy import ExecutionPolicy
 from apizr.execution.serialization import canonical_bytes, digest
 from apizr.governed.embedding import definition, source
+from apizr.interfaces.embedding import PORTABLE_ADMISSION_FILES
 from apizr.interfaces.serialization import json_bytes
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.repository_execution.planner import container_plan, worker_plan
+from apizr.repository_interfaces.artifacts import check_bundle
 from apizr.repository_interfaces.model import RepositoryInterface
 
 from .model import Bridge, ContainerBundle, ExecutionBundle, PlanArtifact
 
 MODULES = (
-    "contract_types.py",
-    "application.py",
+    "contracts/types.py",
+    "contracts/json_budget.py",
+    "repository_interfaces/artifacts.py",
+    "contracts/application.py",
     "capabilities/model.py",
     "capabilities/types.py",
     "interfaces/model.py",
     "interfaces/serialization.py",
     "interfaces/runtime.py",
     "interfaces/results.py",
+    "interfaces/json_budget.py",
+    "interfaces/http_admission.py",
     "execution/policy.py",
     "execution/invocation.py",
     "execution/protocol.py",
@@ -57,6 +63,8 @@ def runtime_files(transport: Literal["rest", "mcp"]) -> dict[str, bytes]:
     modules = {
         name: source(name) for name in (*MODULES, f"governed_repository/{transport}.py")
     }
+    if transport == "mcp":
+        modules["generators/mcp/transport.py"] = source("generators/mcp/transport.py")
     modules["capabilities/types.py"] = modules["capabilities/types.py"].replace(
         definition("capabilities/types.py", "declared_type"), ""
     )
@@ -81,10 +89,10 @@ def runtime_files(transport: Literal["rest", "mcp"]) -> dict[str, bytes]:
         'Interface = Literal["rest", "mcp"]',
     )
     modules["repository_interfaces/runtime.py"] = (
-        "import hashlib\nimport importlib.abc\nimport importlib.util\nimport os\nimport stat\nimport sys\nimport types\nfrom pathlib import Path, PurePosixPath\nfrom typing import Any\nfrom apizr.interfaces.runtime import IntegrityError\n\n"
+        "import hashlib\nimport importlib.abc\nimport importlib.util\nimport sys\nimport types\nfrom pathlib import Path\nfrom typing import Any\nfrom apizr.interfaces.runtime import IntegrityError\nfrom apizr.repository_interfaces.artifacts import read_artifact\n\n"
         + "\n".join(
             definition("repository_interfaces/runtime.py", name)
-            for name in ("digest", "read_artifact", "RepositoryLoader")
+            for name in ("digest", "RepositoryLoader")
         )
     )
     modules["execution/model.py"] = (
@@ -205,8 +213,10 @@ def govern(
         artifacts[path] = canonical_bytes(plan)
         plans[capability.capability_id] = PlanArtifact(path=path, digest=digest(plan))
     artifacts.pop("apizr_runtime.py")
-    artifacts.pop("apizr_results.py", None)
+    for helper in PORTABLE_ADMISSION_FILES:
+        artifacts.pop(helper, None)
     artifacts.pop("apizr_repository_runtime.py")
+    artifacts.pop("apizr_repository_artifacts.py")
     runtime_artifacts = runtime_files(transport)
     if isinstance(policy, ExecutionPolicyV2) and policy.subprocess.mode == "deny":
         from apizr.subprocess_guard.embedding import strict_files
@@ -240,4 +250,5 @@ def govern(
         for name, content in sorted(artifacts.items())
     }
     artifacts[manifest_name] = json_bytes(manifest)
+    check_bundle(artifacts)
     return dict(sorted(artifacts.items()))

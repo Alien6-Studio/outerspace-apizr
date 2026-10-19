@@ -1,0 +1,33 @@
+Experiment inspection
+train.py
+No code executed; runtime evidence not observed.
+
+Code — CAPTURED
+  python; module train; sha256:fe7c0ce9e9e4
+Data — PARTIAL
+  data/train.csv: sha256:33947c26577e, 24 bytes (line 16)
+  s3://examples/validation.parquet: content unverified (line 18)
+  +1 more; see --format json
+  Dynamic input reference; value not guessed.
+Parameters — PARTIAL
+  learning_rate = 0.05 (line 11)
+  max_depth = 8 (line 12)
+  +2 more; see --format json
+  Static candidates; 6 unresolved assignments.
+Randomness — UNCONTROLLED
+  numpy.random.default_rng = null (unknown) (line 20)
+  numpy.random.seed = 42 (static) (line 19)
+  +1 more; see --format json
+  uncontrolled randomness
+Environment — PARTIAL
+  requirements.txt: sha256:deb31e05f6b8
+  Source mentions: joblib, numpy, pandas, scikit-learn
+  Experiment runtime versions not observed.
+Metrics — PARTIAL
+  sklearn.metrics.roc_auc_score: value not observed (line 24)
+  sklearn.metrics.precision_score: value not observed (line 25)
+Outputs — PARTIAL
+  artifacts/fraud.joblib: output not observed (line 26)
+Serving — PARTIAL
+  predict: CONDITIONAL; python:train:predict (line 33)
+  Source-local readiness; repository context not assessed.

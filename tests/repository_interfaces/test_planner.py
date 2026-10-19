@@ -130,8 +130,8 @@ def test_repository_refines_the_local_import_boundary(interface):
 
 
 def test_no_source_reanalysis(inputs, monkeypatch):
+    import apizr.capabilities.inspection
     import apizr.graph.builder
-    import apizr.inspection
     import apizr.repository_readiness
 
     def forbidden(*args, **kwargs):
@@ -145,7 +145,7 @@ def test_no_source_reanalysis(inputs, monkeypatch):
 
     monkeypatch.setattr(ast, "parse", annotations_only)
     monkeypatch.setattr(apizr.graph.builder, "build_graph", forbidden)
-    monkeypatch.setattr(apizr.inspection, "inspect_source", forbidden)
+    monkeypatch.setattr(apizr.capabilities.inspection, "inspect_source", forbidden)
     monkeypatch.setattr(apizr.repository_readiness, "assess_repository", forbidden)
     assert render_repository_bundle(*inputs, interface="mcp")
 

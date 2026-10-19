@@ -1,4 +1,4 @@
-"""Extend existing source embedding without changing any v1 artifact bytes."""
+"""Extend the canonical autonomous source closure for OCI-governed transports."""
 
 import json
 from typing import Literal
@@ -8,6 +8,7 @@ from apizr.capabilities.model import Digest
 from apizr.execution.serialization import canonical_bytes, digest
 from apizr.governed.embedding import definition, source
 from apizr.governed.embedding import runtime_files as local_files
+from apizr.interfaces.embedding import PORTABLE_ADMISSION_FILES
 from apizr.interfaces.serialization import json_bytes
 from apizr.oci.model import ExecutionPolicyV2, RuntimeImage
 from apizr.oci.planner import plan
@@ -54,7 +55,8 @@ def govern(
     transport: Literal["rest", "mcp"],
 ) -> dict[str, bytes]:
     artifacts.pop("apizr_runtime.py", None)
-    artifacts.pop("apizr_results.py", None)
+    for helper in PORTABLE_ADMISSION_FILES:
+        artifacts.pop(helper, None)
     manifest_name = f"apizr-{transport}.json"
     manifest = json.loads(artifacts.pop(manifest_name))
     contracts = manifest["capabilities" if transport == "rest" else "tools"]

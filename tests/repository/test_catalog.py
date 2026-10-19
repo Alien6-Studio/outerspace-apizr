@@ -5,8 +5,8 @@ import pytest
 from analysis_authorization import analysis_policy
 from jsonschema import Draft202012Validator
 
+from apizr.capabilities.inspection import json_bytes
 from apizr.capabilities.model import Digest
-from apizr.inspection import json_bytes
 from apizr.readiness import State
 from apizr.repository import (
     Catalog,
@@ -37,7 +37,7 @@ def test_reviewed_catalog_and_schemas():
         schema = model.model_json_schema()
         assert schema == json.loads(
             (
-                Path(__file__).parents[2] / f"docs/specs/apizr-{name}-v1.schema.json"
+                Path(__file__).parents[2] / f"specs/apizr-{name}-v1.schema.json"
             ).read_bytes()
         )
         Draft202012Validator.check_schema(schema)

@@ -1,30 +1,22 @@
-"""Compare unchanged bundle evidence while asserting the new provenance boundary."""
+"""Compatibility CLI for scripts.qualification.repository.bundle_provenance_assertions."""
 
-import json
+import runpy
+import sys
+from importlib import import_module
+from pathlib import Path
 
-
-def assert_equivalent_bundles(first, second):
-    first = {str(k): v for k, v in first.items()}
-    second = {str(k): v for k, v in second.items()}
-    name = "apizr-bundle-provenance.json"
-    a, b = (json.loads(value.pop(name)) for value in (first, second))
-    assert a["generator"] == b["generator"]
-    assert a["source"]["repository_digest"] == b["source"]["repository_digest"]
-    assert {a["source"]["kind"], b["source"]["kind"]} == {"git", "local"}
-    remote = a["source"] if a["source"]["kind"] == "git" else b["source"]
-    assert (
-        remote["repository"]
-        and remote["requested_ref"]
-        and len(remote["resolved_commit"]) in {40, 64}
+if __name__ == "__main__":
+    runpy.run_path(
+        str(
+            Path(__file__).resolve().parents[1]
+            / "scripts/qualification/repository/bundle_provenance_assertions.py"
+        ),
+        run_name="__main__",
     )
-    manifest = next(
-        k
-        for k in first
-        if k in {"apizr-repository-rest.json", "apizr-repository-mcp.json"}
+else:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    _implementation = import_module(
+        "scripts.qualification.repository.bundle_provenance_assertions"
     )
-    left, right = (json.loads(value.pop(manifest)) for value in (first, second))
-    for value in (left, right):
-        assert value.pop("provenance_digest") == value["artifacts"].pop(name)
-    assert left == right
-    assert first == second
-    return remote
+    sys.modules[__name__] = _implementation
+    globals().update(vars(_implementation))

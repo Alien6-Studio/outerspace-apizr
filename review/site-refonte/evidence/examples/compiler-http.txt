@@ -1,1 +1,0 @@
-{"currency": "EUR", "net_cents": 7650, "ok": true, "tax_cents": 1530, "total_cents": 9180}

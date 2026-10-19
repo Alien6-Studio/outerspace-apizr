@@ -9,8 +9,8 @@ from unittest.mock import patch
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
+from apizr.capabilities.inspection import inspect_file, inspect_source, json_bytes
 from apizr.cli import main
-from apizr.inspection import inspect_file, inspect_source, json_bytes
 from apizr.readiness.model import Code, State
 
 NAMES = st.from_regex(r"cap_[a-z]{1,10}", fullmatch=True)

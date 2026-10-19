@@ -1,10 +1,10 @@
 import sys
 from contextlib import contextmanager
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.execution import ExecutionPolicy, plan
 from apizr.execution.model import Request
 from apizr.execution.serialization import digest
-from apizr.inspection import inspect_source
 
 
 def planned(source, **changes):

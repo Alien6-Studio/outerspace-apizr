@@ -74,6 +74,21 @@ def test_cli_one_discovery_exact_retained_bytes(tmp_path, monkeypatch, capfd, ta
     )  # Changed source is no longer eligible.
 
 
+@pytest.mark.parametrize("target", ["rest", "mcp"])
+def test_bundle_limit_refuses_before_output_without_traceback(
+    tmp_path, monkeypatch, capfd, target
+):
+    from apizr.repository_interfaces import artifacts
+
+    root, output = tmp_path / "project", tmp_path / "bundle"
+    readiness = setup(root)
+    monkeypatch.setattr(artifacts, "MAX_BUNDLE_ARTIFACTS", 1)
+    assert main(flags(root, output, readiness, target)) == 2
+    message = capfd.readouterr().err
+    assert "check roots and bounds" in message
+    assert "Traceback" not in message and not output.exists()
+
+
 def test_cli_invalid_refused_and_nonempty(tmp_path, capfd):
     root, output = tmp_path / "project", tmp_path / "bundle"
     rp = setup(root)

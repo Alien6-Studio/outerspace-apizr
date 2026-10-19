@@ -5,9 +5,10 @@ import os
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 spec = importlib.util.spec_from_file_location(
-    "attest_release", Path(__file__).resolve().parents[1] / "scripts/attest_release.py"
+    "attest_release", str(qualification_script("attest_release"))
 )
 assert spec and spec.loader
 release = importlib.util.module_from_spec(spec)

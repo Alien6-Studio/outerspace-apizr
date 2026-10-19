@@ -1,27 +1,47 @@
 name: Security
 
 on:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
   push:
     branches: [master]
-  pull_request:
   schedule:
     - cron: '23 6 * * 1'
   workflow_dispatch:
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: Security-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   dependencies:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22.22.2'
       - name: Install exact client-collection lock without lifecycle scripts
@@ -31,16 +51,16 @@ jobs:
           npm audit --prefix scripts/client_collection_tools --json
           --include=prod --include=dev --include=optional --include=peer
           --audit-level=moderate > node-dependency-audit.json
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
+          version: '0.13.1'
           python-version: '3.14'
           enable-cache: true
       - run: uv sync --locked --group security
-      - run: uv run --locked python scripts/check_dependency_sources.py
-      - run: uv run --locked python scripts/check_dependency_licenses.py --output dependency-license-report.json
-      - run: uv run --locked --group security python scripts/audit_dependencies.py --output dependency-audit.json
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - run: uv run --locked python -m scripts.qualification.ci.check_dependency_sources
+      - run: uv run --locked python -m scripts.qualification.ci.check_dependency_licenses --output dependency-license-report.json
+      - run: uv run --locked --group security python -m scripts.qualification.ci.audit_dependencies --output dependency-audit.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: dependency-audit
@@ -49,29 +69,44 @@ jobs:
             dependency-license-report.json
             node-dependency-audit.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   codeql:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      security-events: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      APIZR_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4
+      - name: Choose native evidence or an uncovered-ref scan
+        id: source
+        run: python3 -m scripts.qualification.ci.codeql_evidence select --output codeql-selection --github-output "$GITHUB_OUTPUT"
+      - name: Require exact native CodeQL analyses and retain their SARIF
+        if: steps.source.outputs.mode == 'native'
+        run: python3 -m scripts.qualification.ci.codeql_evidence native --output codeql-results
+      - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        if: steps.source.outputs.mode == 'retained'
         with:
-          languages: python
+          languages: python,javascript-typescript,actions
           build-mode: none
-      - uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4
+      - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        if: steps.source.outputs.mode == 'retained'
         with:
-          # GitHub default setup already publishes Python/Actions alerts for this repo.
-          # Keep it enabled; a second CodeQL SARIF upload would be rejected.
+          # Native setup owns public alerts. Uncovered development/tag refs retain
+          # exact-source analysis without a duplicate or conflicting upload.
           upload: never
           output: codeql-results
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
         with:
-          name: codeql-python-sarif
-          path: codeql-results/*.sarif
+          name: codeql-python-and-typescript-sarif
+          path: |
+            codeql-selection/
+            codeql-results/
           if-no-files-found: error
-          retention-days: 14
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

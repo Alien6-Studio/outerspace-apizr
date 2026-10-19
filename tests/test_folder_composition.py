@@ -24,6 +24,21 @@ def test_repository_satisfies_declared_composition():
 @pytest.mark.parametrize(
     "path,addition,expected",
     [
+        (
+            "workspace/compiler.py",
+            "from apizr.cli import main\n",
+            "domain dependency not declared",
+        ),
+        (
+            "workspace/analysis_session.py",
+            "import mcp\n",
+            "external dependency not declared",
+        ),
+        (
+            "workspace/project.py",
+            "import apizr_attest\n",
+            "external dependency not declared",
+        ),
         ("experiments/inspection.py", "from apizr.cli import main\n", "non-primitive"),
         (
             "experiments/inspection.py",
@@ -31,6 +46,46 @@ def test_repository_satisfies_declared_composition():
             "non-primitive",
         ),
         ("experiments/inspection.py", "import sklearn\n", "non-primitive"),
+        (
+            "scientific_providers/contracts/model.py",
+            "import numpy\n",
+            "external dependency not declared",
+        ),
+        (
+            "scientific_providers/contracts/model.py",
+            "from apizr.experiments.store import publish\n",
+            "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/contracts/model.py",
+            "from apizr.tracking import session\n",
+            "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/builtin/metrics.py",
+            "import sklearn\n",
+            "external dependency not declared",
+        ),
+        (
+            "scientific_providers/builtin/inputs.py",
+            "from apizr.experiments.store import publish\n",
+            "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/builtin/locations.py",
+            "from apizr.experiments._lexical import bounded_tree\n",
+            "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/contracts/model.py",
+            "from apizr.scientific_providers.builtin import BuiltinProvider\n",
+            "domain dependency not declared",
+        ),
+        (
+            "scientific_providers/__init__.py",
+            "class RecognitionRule: pass\n",
+            "initializer defines",
+        ),
         (
             "experiments/inspection_model.py",
             "from apizr.generators.notebooks import inspect_notebook_bytes\n",
@@ -55,6 +110,26 @@ def test_repository_satisfies_declared_composition():
         ("experiments/model.py", "import wandb\n", "non-primitive"),
         ("experiments/model.py", "import dvc\n", "non-primitive"),
         ("experiments/model.py", "import external_governance_sdk\n", "non-primitive"),
+        (
+            "tracking/session.py",
+            "from apizr.cli import main\n",
+            "domain dependency not declared",
+        ),
+        (
+            "tracking/session.py",
+            "import apizr_mcp\n",
+            "external dependency not declared",
+        ),
+        (
+            "tracking/session.py",
+            "import sklearn\n",
+            "external dependency not declared",
+        ),
+        (
+            "tracking/session.py",
+            "import fastapi\n",
+            "external dependency not declared",
+        ),
         ("another_service.py", "def run(): pass\n", "composition namespace"),
         (
             "new_domain/__init__.py",
@@ -71,12 +146,12 @@ def test_repository_satisfies_declared_composition():
         (
             "project.py",
             "def hidden_business_logic(): pass\n",
-            "facade contains implementation",
+            "composition namespace",
         ),
         (
             "workspace/project.py",
             "from apizr import plugins_cli\n",
-            "imports compatibility path",
+            "undeclared root domain",
         ),
         ("workspace/user.py", "from ..cli import main\n", "domain depends on CLI"),
         (
@@ -95,6 +170,11 @@ def test_repository_satisfies_declared_composition():
             "local -> update",
         ),
         ("workspace/user.py", "import mcp\n", "optional adapter"),
+        (
+            "plugins/preparation/operations.py",
+            "import apizr.plugins.local.wheel\n",
+            "absent core module",
+        ),
         (
             "plugins/artifacts/wheel.py",
             "from apizr.plugins.local.activation import enable_extension\n",
@@ -118,7 +198,7 @@ def test_repository_satisfies_declared_composition():
         (
             "plugins/preparation/operations.py",
             "from apizr.local_plugins import install_extension\n",
-            "imports compatibility path",
+            "undeclared root domain",
         ),
     ],
 )
@@ -148,6 +228,21 @@ def test_a_compatibility_docstring_cannot_bypass_dependencies(tmp_path):
     )
 
 
+def test_tracking_allows_core_contracts_and_pydantic_only(tmp_path):
+    source = tmp_path / "apizr"
+    shutil.copytree(
+        ROOT / "src/apizr", source, ignore=shutil.ignore_patterns("__pycache__")
+    )
+    tracking = source / "tracking/session.py"
+    tracking.parent.mkdir(exist_ok=True)
+    tracking.write_text(
+        "from contextvars import ContextVar\n"
+        "from pydantic import BaseModel\n"
+        "from apizr.experiments import ExperimentPlan\n"
+    )
+    assert check(source, ROOT / "architecture/packages.toml") == []
+
+
 def test_allowed_plugin_dependencies_cannot_introduce_a_cycle(tmp_path):
     manifest = tmp_path / "packages.toml"
     manifest.write_text(
@@ -157,4 +252,49 @@ def test_allowed_plugin_dependencies_cannot_introduce_a_cycle(tmp_path):
     )
     assert any(
         "contains a cycle" in error for error in check(ROOT / "src/apizr", manifest)
+    )
+
+
+def test_removed_legacy_kind_cannot_restore_naming_or_dependency_exceptions(tmp_path):
+    manifest = tmp_path / "packages.toml"
+    manifest.write_text(
+        (ROOT / "architecture/packages.toml")
+        .read_text()
+        .replace(
+            '[packages."notebooks"]\nkind = "domain"',
+            '[packages."notebooks"]\nkind = "legacy"',
+        )
+    )
+    assert any(
+        "notebooks: unknown package kind" in error
+        for error in check(ROOT / "src/apizr", manifest)
+    )
+
+
+def test_retired_import_exceptions_cannot_restore_forwarding_modules(tmp_path):
+    manifest = tmp_path / "packages.toml"
+    manifest.write_text(
+        (ROOT / "architecture/packages.toml").read_text()
+        + '\n[compatibility."project.py"]\ntarget = "apizr.workspace.project"\nkind = "module"\n'
+    )
+    assert any(
+        "exceptions are retired" in error
+        for error in check(ROOT / "src/apizr", manifest)
+    )
+
+
+def test_root_implementation_cannot_be_allowed_by_expanding_the_inventory(tmp_path):
+    manifest = tmp_path / "packages.toml"
+    manifest.write_text(
+        (ROOT / "architecture/packages.toml")
+        .read_text()
+        .replace(
+            'modules = ["__init__.py"]',
+            'modules = ["__init__.py", "project.py"]',
+            1,
+        )
+    )
+    assert any(
+        "root namespace may declare only" in error
+        for error in check(ROOT / "src/apizr", manifest)
     )

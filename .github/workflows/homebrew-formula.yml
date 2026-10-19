@@ -1,42 +1,67 @@
 name: Homebrew Formula
 
 on:
-  pull_request:
+  workflow_call:
+    inputs:
+      scope_ready:
+        description: Caller already validated the complete change scope
+        type: boolean
+        default: false
+      product:
+        description: Require full product qualification when scope_ready is true
+        type: boolean
+        default: true
+      examples:
+        description: Require installed examples when scope_ready is true
+        type: boolean
+        default: true
+      candidate_artifact:
+        description: Immutable candidate artifact from this same workflow run
+        type: string
+        default: ''
   workflow_dispatch:
+
+# Supersede only earlier runs for the same PR. Other events get unique groups,
+# so even pending manual, push and scheduled qualifications cannot cancel each other.
+concurrency:
+  group: Homebrew Formula-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
   scope:
+    if: ${{ !inputs.scope_ready }}
     uses: ./.github/workflows/change-scope.yml
 
   candidate:
     needs: scope
-    if: always() && needs.scope.outputs.product != 'false'
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' && inputs.candidate_artifact == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+          ref: ${{ inputs.scope_ready && github.sha || github.event.pull_request.head.sha || github.sha }}
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
-          python-version: '3.14'
+          version: '0.13.1'
+          python-version: '3.15'
       - run: uv sync --locked
       - name: Build the coordinated candidate once for this exact source
-        run: uv run --locked python scripts/coordinated_distributions.py build --candidate "$RUNNER_TEMP/candidate"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        run: uv run --locked python -m scripts.qualification.packaging.coordinated_distributions build --candidate "$RUNNER_TEMP/candidate"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: homebrew-formula-candidate
           path: ${{ runner.temp }}/candidate
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}
 
   formula-arm64:
     name: Real Formula install (Apple Silicon CI VM)
-    needs: candidate
+    needs: [scope, candidate]
+    if: ${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' && ((inputs.scope_ready && inputs.candidate_artifact != '') || needs.candidate.result == 'success') }}
     runs-on: macos-26
     timeout-minutes: 45
     env:
@@ -46,31 +71,31 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+          ref: ${{ inputs.scope_ready && github.sha || github.event.pull_request.head.sha || github.sha }}
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
-          version: '0.12.0'
-          python-version: '3.14'
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+          version: '0.13.1'
+          python-version: '3.15'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: homebrew-formula-candidate
+          name: ${{ inputs.candidate_artifact || 'homebrew-formula-candidate' }}
           path: /private/tmp/apizr-homebrew-formula/candidate
       - name: Official runtime providers
         run: |
           test "$(uname -m)" = arm64
           brew update
-          brew install python@3.14 pydantic
+          brew install python@3.15 pydantic
       - run: uv sync --locked
       - name: Real disposable tap, offline Formula install and plugin lifecycle
         run: >-
-          uv run --locked python scripts/qualify_homebrew_formula.py
+          uv run --locked python -m scripts.qualification.packaging.qualify_homebrew_formula
           --candidate /private/tmp/apizr-homebrew-formula/candidate
           --source-sha "$(git rev-parse HEAD)"
           --output /private/tmp/apizr-homebrew-formula/qualification
           --host hosted-vm
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: homebrew-formula-proof-arm64
           path: /private/tmp/apizr-homebrew-formula/qualification/evidence
           if-no-files-found: error
-          retention-days: 90
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 90 }}

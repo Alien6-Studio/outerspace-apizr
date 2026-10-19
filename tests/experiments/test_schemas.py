@@ -21,7 +21,7 @@ FIXTURES = ROOT / "tests/fixtures/experiments/v1"
 )
 def test_schema_parity_and_golden(pair, index, name, model, encode):
     schema = json.loads(
-        (ROOT / f"docs/specs/apizr-experiment-{name}-v1.schema.json").read_bytes()
+        (ROOT / f"specs/apizr-experiment-{name}-v1.schema.json").read_bytes()
     )
     assert schema == model.model_json_schema()
     Draft202012Validator.check_schema(schema)
@@ -41,7 +41,7 @@ def test_schema_parity_and_golden(pair, index, name, model, encode):
 
 def test_export_is_deterministic():
     paths = [
-        ROOT / f"docs/specs/apizr-experiment-{name}-v1.schema.json"
+        ROOT / f"specs/apizr-experiment-{name}-v1.schema.json"
         for name in ("plan", "run")
     ]
     before = [p.read_bytes() for p in paths]
@@ -52,7 +52,9 @@ def test_export_is_deterministic():
 
 
 def test_documented_python_pair_is_executable():
-    page = (ROOT / "docs/architecture/experiment-evidence-v1.md").read_text()
+    page = (
+        ROOT / "tests/fixtures/qualified-guides/architecture/experiment-evidence-v1.md"
+    ).read_text()
     code = page.split("```python\n", 1)[1].split("```", 1)[0]
     namespace = {}
     exec(compile(code, "experiment-evidence-v1.md", "exec"), namespace)

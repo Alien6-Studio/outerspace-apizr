@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 from analysis_authorization import analysis_policy
 
-from apizr.operator_policy import AuthorizationDenied
 from apizr.repository import (
     Code,
     ScanError,
@@ -16,6 +15,7 @@ from apizr.repository import (
     scan_sources,
     scanner,
 )
+from apizr.workspace.operator_policy import AuthorizationDenied
 
 FIXTURES = Path(__file__).parents[1] / "fixtures/catalog"
 

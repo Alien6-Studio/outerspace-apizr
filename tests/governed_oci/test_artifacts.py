@@ -8,14 +8,15 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 from oci.helpers import IMAGE
+from telemetry.bundle_assertions import assert_telemetry_free
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.cli.commands.generate import main
 from apizr.execution import ExecutionPolicy
 from apizr.generators.mcp import render as mcp_render
 from apizr.generators.rest import render as rest_render
 from apizr.governed.embedding import source
 from apizr.governed_oci.model import BRIDGE_MODULES, OCI_MODULES
-from apizr.inspection import inspect_source
 from apizr.oci.model import ExecutionPolicyV2
 
 
@@ -40,6 +41,9 @@ def test_static_generation_preserves_interface_and_embeds_reviewed_code(
     files = render(
         inspected, raw, execution_policy=ExecutionPolicyV2(), runtime_image=IMAGE
     )
+    assert_telemetry_free(direct)
+    assert_telemetry_free(local)
+    assert_telemetry_free(files)
     assert files[document] == local[document] == direct[document]
     for name in (*OCI_MODULES, *BRIDGE_MODULES, f"governed_oci/{transport}.py"):
         assert (

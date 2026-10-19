@@ -1,9 +1,9 @@
 """Pure planning: no Docker discovery, source execution or image acquisition."""
 
+from apizr.capabilities.inspection import Inspection
 from apizr.execution.planner import plan as worker_plan
 from apizr.execution.policy import ExecutionPolicy, PolicyRefused
 from apizr.execution.serialization import digest
-from apizr.inspection import Inspection
 
 from .model import ContainerPlan, ExecutionPolicyV2, RuntimeImage
 

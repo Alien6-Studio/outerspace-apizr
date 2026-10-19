@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 from apizr.extension_runtime import Limits, PluginFailed, invoke_extension
-from apizr.local_plugins import list_extensions
+from apizr.plugins.local import list_extensions
 
 inventory = list_extensions(directory=Path(sys.argv[1]))
 plugin = next(

@@ -1,4 +1,4 @@
-"""Explicit project declarations, operator preferences and bounded file access.
+"""Explicit project settings, authority, captured sessions and compiler composition.
 
 Importing this namespace reads no configuration and grants no permissions.
 """

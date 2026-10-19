@@ -18,6 +18,7 @@ from apizr.experiments._files import FileFailure, fingerprint_file
 from apizr.experiments.exposure_model import (
     EXPOSURE_FILE,
     ExperimentExposureBinding,
+    ExperimentExposureBindingV2,
     ExperimentExposureRefused,
     ExperimentExposureResult,
     exposure_bytes,
@@ -25,8 +26,14 @@ from apizr.experiments.exposure_model import (
     validate_exposure_binding,
 )
 from apizr.experiments.inspection import MAX_NOTEBOOK_BYTES, inspect_experiment
-from apizr.experiments.model import OutputArtifact
-from apizr.experiments.store import RunRecord
+from apizr.experiments.model import OutputArtifact, SourceIdentity
+from apizr.experiments.store import (
+    Record,
+    RunRecord,
+    RunRecordV2,
+    record_source,
+    validate_record,
+)
 from apizr.exposure import ExposurePolicy, plan_exposure
 from apizr.exposure.policy import Interface
 from apizr.graph import GraphPolicy, RepositoryEvidence, analyze_repository, build_graph
@@ -52,7 +59,7 @@ class ExperimentExposure:
     bundle: Mapping[str, bytes]
 
 
-def _outputs(record: RunRecord, names: tuple[str, ...]) -> tuple[OutputArtifact, ...]:
+def _outputs(record: Record, names: tuple[str, ...]) -> tuple[OutputArtifact, ...]:
     if len(set(names)) != len(names):
         raise ExperimentExposureRefused("run_artifact_duplicate")
     inventory = {output.name: output for output in record.run.outputs}
@@ -156,7 +163,7 @@ def _notebook_evidence(
 
 
 def expose_run(
-    record: RunRecord,
+    record: Record,
     root: Path,
     *,
     capability: str,
@@ -171,7 +178,7 @@ def expose_run(
     dependency_wheelhouse: Path | None = None,
 ) -> ExperimentExposure:
     """Compile in memory; no publication, execution, dependency resolution or upload."""
-    record = RunRecord.model_validate(record)
+    record = validate_record(record)
     if record.run.status != "success":
         raise ExperimentExposureRefused("run_not_successful")
     policy = ExposurePolicy.model_validate(
@@ -186,10 +193,21 @@ def expose_run(
             "eligibility": {"allow_conditional": allow_conditional},
         }
     )
+    subject = record_source(record)
+    if subject is None:
+        raise ExperimentExposureRefused("run_source_unknown")
+    selected_module = policy.selection.include[0].split(":")[1]
+    if isinstance(record, RunRecordV2):
+        if subject.kind != "python":
+            raise ExperimentExposureRefused("run_notebook_executable_unknown")
+        if subject.module is not None and subject.module != selected_module:
+            raise ExperimentExposureRefused("capability_not_in_run_source")
+        subject = SourceIdentity.model_validate(
+            {**subject.model_dump(), "module": selected_module}
+        )
     root = absolute_path(root)
     # Admission precedes inspection reads. An old Run grants no repository authority.
     os.close(open_analysis_root(root, operator_policy))
-    subject = record.run.subject
     inspection = inspect_experiment(
         root / subject.reference, root=root, module_name=subject.module
     )
@@ -247,6 +265,7 @@ def expose_run(
             graph_policy=graph_policy,
         )
     else:
+        assert isinstance(record, RunRecord)
         evidence, path = _notebook_evidence(
             root, record, scan_policy or ScanPolicy(), graph_policy, operator_policy
         )
@@ -295,25 +314,33 @@ def expose_run(
     contract = RepositoryInterface.model_validate_json(
         bundle["repository-interface.json"]
     )
-    binding = ExperimentExposureBinding(
-        run_digest=record.run_digest,
-        plan_digest=record.plan_digest,
-        source=subject,
-        repository_digest=contract.repository_digest,
-        catalog_digest=contract.catalog_digest,
-        graph_digest=contract.graph_digest,
-        repository_readiness_digest=contract.repository_readiness_digest,
-        exposure_plan_digest=contract.exposure_plan_digest,
-        repository_interface_digest=Digest.of_bytes(
+    fields = {
+        "run_digest": record.run_digest,
+        "plan_digest": record.plan_digest,
+        "source": subject,
+        "repository_digest": contract.repository_digest,
+        "catalog_digest": contract.catalog_digest,
+        "graph_digest": contract.graph_digest,
+        "repository_readiness_digest": contract.repository_readiness_digest,
+        "exposure_plan_digest": contract.exposure_plan_digest,
+        "repository_interface_digest": Digest.of_bytes(
             bundle["repository-interface.json"]
         ),
-        capability=capability,
-        interface=interface,
-        outputs=outputs,
-        dependencies=pins,
-        application_inputs_digest=(
+        "capability": capability,
+        "interface": interface,
+        "outputs": outputs,
+        "dependencies": pins,
+        "application_inputs_digest": (
             Digest.of_bytes(canonical_bytes(application)) if application else None
         ),
+    }
+    binding = (
+        ExperimentExposureBindingV2.model_validate(
+            fields
+            | {"observed_source": record.run.subject, "capture": record.run.capture}
+        )
+        if isinstance(record, RunRecordV2)
+        else ExperimentExposureBinding.model_validate(fields)
     )
     validate_exposure_binding(binding, record, contract, plan, application)
     bundle = attach_evidence(

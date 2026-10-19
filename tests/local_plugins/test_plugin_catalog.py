@@ -348,9 +348,7 @@ def test_same_identity_wheel_variants_in_house_refused(catalog_setup):
 def test_schema_stays_in_sync():
     from pathlib import Path
 
-    expected = json.loads(
-        Path("docs/specs/apizr-plugin-catalog-v1.schema.json").read_text()
-    )
+    expected = json.loads(Path("specs/apizr-plugin-catalog-v1.schema.json").read_text())
     assert Catalog.model_json_schema() == expected
 
 

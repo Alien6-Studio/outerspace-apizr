@@ -8,11 +8,12 @@ from pathlib import Path
 
 import pytest
 import yaml
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-tool = runpy.run_path(str(ROOT / "scripts/check_homebrew_qualification.py"))
-inputs = runpy.run_path(str(ROOT / "scripts/prepare_homebrew_build_inputs.py"))
+tool = runpy.run_path(str(qualification_script("check_homebrew_qualification")))
+inputs = runpy.run_path(str(qualification_script("prepare_homebrew_build_inputs")))
 
 
 def policy_and_manifest():
@@ -32,13 +33,43 @@ def test_homebrew_boundary_is_explicit_deterministic_and_preserves_build_identit
         {"platform": "linux", "reason": "runtime-not-qualified-in-0.4.3"},
     ]
     assert policy["build_inputs_manifest_sha256"] == (
-        "1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd"
+        "c24d81938719818209210242c01a1f41c5c1b215806b5dcbdda2ac68c88ff556"
     )
     reordered = dict(reversed(list(policy.items())))
     assert tool["encoded"](result) == tool["encoded"](
         tool["validate"](reordered, manifest)
     )
     assert str(ROOT).encode() not in tool["encoded"](result)
+
+
+def test_development_build_refresh_preserves_frozen_publication_identity():
+    _, current = policy_and_manifest()
+    published = json.loads(
+        (ROOT / "tests/fixtures/homebrew/published-0.4.5-build-inputs.json").read_text()
+    )
+    development = json.loads(current)
+    assert inputs["digest"](inputs["encoded"](published)) == (
+        "1f21f636f060559986521aed1a7b8255988add01fdba5febbd1d1381889153dd"
+    )
+    assert development["lock_sha256"] != published["lock_sha256"]
+    assert development["policy_sha256"] != published["policy_sha256"]
+    refreshed = {"lock_sha256", "policy_sha256", "distributions"}
+    policy = json.loads((ROOT / "policy/homebrew-build-inputs.json").read_text())
+    assert policy["python_formula"] == "python@3.15"
+    assert {k: v for k, v in development.items() if k not in refreshed} == {
+        k: v for k, v in published.items() if k not in refreshed
+    }
+    previous = {item["name"]: item for item in published["distributions"]}
+    changed = [
+        item for item in development["distributions"] if item != previous[item["name"]]
+    ]
+    assert len(development["distributions"]) == len(previous)
+    assert len(changed) == 1 and changed[0]["name"] == "pluggy"
+    assert previous["pluggy"]["version"] == "1.6.0"
+    assert changed[0]["version"] == "1.7.0"
+    assert changed[0]["sha256"] == (
+        "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec"
+    )
 
 
 @pytest.mark.parametrize(
@@ -105,10 +136,13 @@ def test_required_workflow_matches_the_explicit_arm64_boundary():
     )
     jobs = workflow["jobs"]
     assert set(jobs) == {"scope", "candidate", "offline-build-arm64"}
-    assert jobs["scope"] == {"uses": "./.github/workflows/change-scope.yml"}
+    assert jobs["scope"] == {
+        "if": "${{ !inputs.scope_ready }}",
+        "uses": "./.github/workflows/change-scope.yml",
+    }
     assert jobs["candidate"]["needs"] == "scope"
     assert jobs["candidate"]["if"] == (
-        "always() && needs.scope.outputs.product != 'false'"
+        "${{ !cancelled() && (inputs.scope_ready && format('{0}', inputs.product) || needs.scope.outputs.product) != 'false' }}"
     )
     job = jobs["offline-build-arm64"]
     assert job["needs"] == "candidate"
@@ -117,6 +151,7 @@ def test_required_workflow_matches_the_explicit_arm64_boundary():
     assert "strategy" not in job
     assert "continue-on-error" not in json.dumps(workflow)
     assert any(
-        "check_homebrew_qualification.py" in step.get("run", "")
+        "-m scripts.qualification.packaging.check_homebrew_qualification"
+        in step.get("run", "")
         for step in jobs["candidate"]["steps"]
     )

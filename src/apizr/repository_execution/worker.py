@@ -25,7 +25,8 @@ from apizr.interfaces.runtime import (
     arguments,
     verify_binding,
 )
-from apizr.repository_interfaces.runtime import RepositoryLoader, read_artifact
+from apizr.repository_interfaces.artifacts import BundleBudget
+from apizr.repository_interfaces.runtime import RepositoryLoader
 
 from .model import Request
 from .planner import validate_plan, validate_sources
@@ -41,15 +42,15 @@ def handle(request: Request, root: Path) -> ExecutionResult:
     except (ValueError, RecursionError):
         return ExecutionResult(status="invalid_input")
     try:
-        raw = read_artifact(root, "repository-interface.json")
+        budget = BundleBudget()
+        raw = budget.read(root, "repository-interface.json")
         if Digest.of_bytes(raw) != plan.repository_interface_digest:
             raise ValueError("Repository interface changed")
-        validate_plan(plan, read_artifact(root, "exposure-plan.json"))
+        validate_plan(plan, budget.read(root, "exposure-plan.json"))
         check_controls(plan.policy, local_capabilities())
-        sources = {
-            s.bundle_path: read_artifact(root, s.bundle_path)
-            for s in plan.repository_interface.sources
-        }
+        sources = budget.read_many(
+            root, [s.bundle_path for s in plan.repository_interface.sources]
+        )
         validate_sources(plan.repository_interface, sources)
     except PolicyRefused:
         return ExecutionResult(status="policy_refused")
@@ -93,7 +94,7 @@ def handle(request: Request, root: Path) -> ExecutionResult:
         loader.close()
 
 
-def main() -> None:
+def _run_protocol() -> None:
     protocol_fd = os.dup(1)
     os.dup2(2, 1)
     limit = 128
@@ -108,6 +109,18 @@ def main() -> None:
     with os.fdopen(protocol_fd, "wb") as output:
         output.write(frame(encode(outcome.model_dump(mode="json"), limit)))
         output.flush()
+
+
+def main() -> None:
+    previous = os.environ.get("APIZR_SERVED_PROCESS")
+    os.environ["APIZR_SERVED_PROCESS"] = "1"
+    try:
+        _run_protocol()
+    finally:
+        if previous is None:
+            os.environ.pop("APIZR_SERVED_PROCESS", None)
+        else:
+            os.environ["APIZR_SERVED_PROCESS"] = previous
 
 
 if __name__ == "__main__":

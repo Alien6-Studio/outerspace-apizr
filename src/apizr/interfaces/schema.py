@@ -2,10 +2,10 @@
 
 from pydantic import JsonValue
 
-from apizr.contract_lowering import ContractError as ContractError
-from apizr.contract_lowering import literal as literal
-from apizr.contract_lowering import lower as lower
-from apizr.contract_lowering import lower_node as lower_node
+from apizr.contracts.lowering import ContractError as ContractError
+from apizr.contracts.lowering import literal as literal
+from apizr.contracts.lowering import lower as lower
+from apizr.contracts.lowering import lower_node as lower_node
 
 from .model import InvocationContract, TypeSpec
 

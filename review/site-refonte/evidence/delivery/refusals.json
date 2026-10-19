@@ -1,1 +1,0 @@
-[{"case": "bundle", "exit_code": 2}, {"case": "wheel-hash", "exit_code": 2}, {"case": "missing-transitive", "exit_code": 2}, {"case": "docker", "exit_code": 2}, {"case": "invalid", "exit_code": 2}]

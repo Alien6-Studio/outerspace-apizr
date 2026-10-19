@@ -20,14 +20,14 @@ from test_operator_policy import (
 )
 
 from apizr.cli import main
-from apizr.operator_policy import (
+from apizr.contracts.publication import AttestRequest, Docker
+from apizr.plugins.local import run_extension
+from apizr.workspace.operator_policy import (
     AuthorizationDenied,
     OperatorPolicy,
     decide,
     tsa_identity,
 )
-from apizr.plugins.local import run_extension
-from apizr.publication_contracts import AttestRequest, Docker
 
 pytestmark = pytest.mark.timeout(30)
 CASES = [

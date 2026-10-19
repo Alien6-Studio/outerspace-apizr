@@ -1,7 +1,7 @@
 """Compare execution requirements with the backend, independently of readiness."""
 
+from apizr.capabilities.inspection import Inspection
 from apizr.capabilities.model import EffectValue
-from apizr.inspection import Inspection
 from apizr.interfaces.planner import plan as interface_plan
 
 from .model import RuntimePlan

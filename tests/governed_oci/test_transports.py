@@ -302,6 +302,7 @@ def test_real_detached_child_cleanup_through_rest(worker_image, tmp_path):
             httpx.post, url + "/capabilities/detached", json={}, timeout=15
         )
         beats = []
+        probes = []
         container = None
         deadline = time.monotonic() + 3
         while time.monotonic() < deadline and len(set(beats)) < 2:
@@ -309,21 +310,20 @@ def test_real_detached_child_cleanup_through_rest(worker_image, tmp_path):
             if created:
                 container = next(iter(created))
                 result = subprocess.run(
-                    [
-                        "docker",
-                        "exec",
-                        container,
-                        "/usr/local/bin/python",
-                        "-c",
-                        'print(open("/tmp/heartbeat").read())',
-                    ],
+                    # Observe the child without booting another Python process
+                    # inside the same bounded CPU allocation.
+                    ["docker", "exec", container, "cat", "/tmp/heartbeat"],
                     capture_output=True,
                     timeout=2,
                 )
-                if result.returncode == 0:
+                if result.returncode == 0 and result.stdout.strip().isdigit():
                     beats.append(result.stdout)
+                probes.append((result.returncode, result.stdout, result.stderr))
             time.sleep(0.05)
-        assert len(set(beats)) >= 2
+        assert len(set(beats)) >= 2, {
+            "probes": probes,
+            "response": response.result().text if response.done() else "pending",
+        }
         assert response.result(timeout=10).status_code == 504
         assert remaining() == before
         assert (

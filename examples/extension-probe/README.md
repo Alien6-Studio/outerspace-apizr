@@ -14,18 +14,18 @@ uv run --locked python scripts/smoke_extension_packaging.py --work-dir /tmp/apiz
 Use a fresh external directory. The driver builds and installs the core and this
 package into separate environments, invokes the installed core from outside the
 checkout, and retains `evidence.json`. See the
-[ADR](../../docs/architecture/extension-packaging-v04.md) for the contract, trust
+[ADR](https://apizr.outerspace.sh/architecture/extension-packaging-v04/) for the contract, trust
 limits, real Homebrew recipe and cleanup. A separate process is not a sandbox.
 
 The `apizr_extension_probe.runtime` module also implements the reusable
 `apizr.extension/v1` protocol. `invoke.py` runs it through
 `apizr.extension_runtime` using explicit limits and an empty child environment.
 The original module entry point remains available for the packaging prototype.
-See [the invocation API](../../docs/reference/extension-invocation.md) for the
+See [the invocation API](https://apizr.outerspace.sh/reference/extension-invocation/) for the
 protocol, cancellation, failure codes and process-cleanup limits.
 
 The wheel also contains the versioned `apizr-extension.json` manifest. The
 packaging proof installs it through `apizr plugins install`, lists its record,
 and runs `invoke_installed.py` outside the checkout. See
-[local installation](../../docs/reference/local-extensions.md) for the commands,
+[local installation](https://apizr.outerspace.sh/reference/local-extensions/) for the commands,
 offline constraints and atomic inventory behavior.

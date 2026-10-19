@@ -30,11 +30,11 @@ def candidate():
     return {
         "schema": "apizr.release-candidate/v1",
         "repository": REPOSITORY,
-        "version": "0.4.5",
+        "version": "0.4.6",
         "commit": SHA,
         "artifacts": [
             {
-                "file": name.replace("-", "_") + "-0.4.5" + suffix,
+                "file": name.replace("-", "_") + "-0.4.6" + suffix,
                 "sha256": "b" * 64,
                 "bytes": 1,
             }
@@ -47,7 +47,7 @@ def candidate():
 @pytest.fixture
 def tool_surface():
     return {
-        "server": {"name": "apizr", "version": "0.4.5"},
+        "server": {"name": "apizr", "version": "0.4.6"},
         "tools": [
             {
                 "name": "apizr_analyze",
@@ -69,11 +69,11 @@ def tool_surface():
 )
 def test_pypi_checks_exact_artifacts_and_marker(candidate, fault):
     name = PACKAGES[1]
-    hashes = candidate_artifacts(candidate, "0.4.5", SHA)[name]
+    hashes = candidate_artifacts(candidate, "0.4.6", SHA)[name]
     payload = {
         "info": {
             "name": name,
-            "version": "0.4.5",
+            "version": "0.4.6",
             "description": f"<!-- mcp-name: {NAME} -->",
         },
         "urls": [
@@ -95,7 +95,7 @@ def test_pypi_checks_exact_artifacts_and_marker(candidate, fault):
         payload["urls"][0]["yanked"] = True
     elif fault == "marker":
         payload["info"]["description"] = "Wrong namespace"
-    result = providers.pypi(payload, name, "0.4.5", hashes)
+    result = providers.pypi(payload, name, "0.4.6", hashes)
     assert result["status"] == (
         "verified" if fault is None else "stale" if fault == "version" else "mismatch"
     )
@@ -485,7 +485,7 @@ def test_mcpfinder_malformed_or_unavailable_evidence_cannot_pass(monkeypatch, fa
     }
     monkeypatch.setattr(snapshot, "fetch_json", lambda *a, **k: (manifest, None))
     monkeypatch.setattr(snapshot, "fetch", lambda *a, **k: (compressed, None))
-    result = snapshot.live_snapshot("0.4.5")
+    result = snapshot.live_snapshot("0.4.6")
     assert (
         result["status"] == "temporarily_unavailable"
         and result["verification"] == "not_verified"
@@ -517,7 +517,7 @@ def test_mcpfinder_digest_bound_read_only_snapshot(tmp_path, fault):
                 "INSERT INTO servers VALUES (?, ?, ?, ?, ?, ?)",
                 (
                     REPOSITORY_URL,
-                    "0.4.4" if fault == "old_version" else "0.4.5",
+                    "0.4.4" if fault == "old_version" else "0.4.6",
                     "other" if fault == "identity" else PACKAGES[1],
                     "stdio",
                     "active",
@@ -542,7 +542,7 @@ def test_mcpfinder_digest_bound_read_only_snapshot(tmp_path, fault):
         manifest["sha256"] = "f" * 64
     if fault == "raw_size":
         manifest["rawSizeBytes"] += 1
-    result = snapshot.inspect_snapshot(manifest, compressed, "0.4.5", now=now)
+    result = snapshot.inspect_snapshot(manifest, compressed, "0.4.6", now=now)
     assert result["status"] == {
         None: "verified",
         "old_version": "stale",
@@ -572,4 +572,4 @@ def test_candidate_manifest_cannot_substitute_another_release(candidate, fault):
     elif fault == "path":
         candidate["artifacts"][0]["file"] = "../" + candidate["artifacts"][0]["file"]
     with pytest.raises(ValueError):
-        candidate_artifacts(candidate, "0.4.5", SHA)
+        candidate_artifacts(candidate, "0.4.6", SHA)

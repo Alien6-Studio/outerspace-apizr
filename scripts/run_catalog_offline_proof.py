@@ -1,47 +1,22 @@
-"""Use the same disposable-runner network isolation as plugin sync qualification."""
+"""Compatibility CLI for scripts.qualification.extensions.run_catalog_offline_proof."""
 
-import os
-import subprocess
+import runpy
 import sys
+from importlib import import_module
 from pathlib import Path
 
-root = Path(sys.argv[1]).resolve()
-command = [
-    str(root / "core/bin/python"),
-    "-I",
-    "-B",
-    str(Path(__file__).with_name("catalog_offline_proof.py").resolve()),
-    str(root),
-]
-if sys.platform == "darwin":
-    command = [
-        "/usr/bin/sandbox-exec",
-        "-p",
-        "(version 1)(allow default)(deny network*)",
-        *command,
-    ]
-elif sys.platform == "linux":
-    command = [
-        "sudo",
-        "-n",
-        "unshare",
-        "--net",
-        "--setgid",
-        str(os.getgid()),
-        "--setuid",
-        str(os.getuid()),
-        "--",
-        "/usr/bin/env",
-        "PATH=" + os.environ.get("PATH", ""),
-        "PYTHONDONTWRITEBYTECODE=1",
-        *command,
-    ]
+if __name__ == "__main__":
+    runpy.run_path(
+        str(
+            Path(__file__).resolve().parents[1]
+            / "scripts/qualification/extensions/run_catalog_offline_proof.py"
+        ),
+        run_name="__main__",
+    )
 else:
-    raise RuntimeError("Linux/macOS disposable runner required")
-subprocess.run(
-    command,
-    cwd=root,
-    check=True,
-    timeout=300,
-    env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"),
-)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    _implementation = import_module(
+        "scripts.qualification.extensions.run_catalog_offline_proof"
+    )
+    sys.modules[__name__] = _implementation
+    globals().update(vars(_implementation))

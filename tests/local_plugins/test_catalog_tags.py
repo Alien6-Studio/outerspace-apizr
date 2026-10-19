@@ -45,6 +45,24 @@ def test_abi3_does_not_allow_free_threaded():
     )
 
 
+@pytest.mark.parametrize("minor", [11, 14, 15])
+@pytest.mark.parametrize("threaded", [False, True])
+@pytest.mark.parametrize("minimum", [11, 14, 15, 16])
+@pytest.mark.parametrize("abi", ["abi3", "abi3.abi3t", "abi3t"])
+def test_compressed_stable_abi_respects_minimum_and_interpreter_build(
+    minor, threaded, minimum, abi
+):
+    target = MAC.model_copy(
+        update={
+            "python": f"3.{minor}.0",
+            "abi": f"cpython-3{minor}{'t' if threaded else ''}-darwin",
+        }
+    )
+    assert wheel_matches(f"x-1-cp3{minimum}-{abi}-macosx_11_0_arm64.whl", target) is (
+        not threaded and abi != "abi3t" and minimum <= minor
+    )
+
+
 @pytest.mark.parametrize(
     "libc,tag,valid",
     [

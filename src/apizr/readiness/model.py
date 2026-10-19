@@ -12,7 +12,7 @@ from pydantic import (
 
 from apizr.capabilities.model import Digest, Effects, Source, SourceSpan
 from apizr.capabilities.types import Evidence, ValueModel
-from apizr.contract_types import TypeSpec
+from apizr.contracts.types import TypeSpec
 
 
 class State(str, Enum):

@@ -7,10 +7,11 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
+from apizr.interfaces.http_admission import JsonAdmission
+from apizr.interfaces.results import normalize_rest_result
 from apizr.interfaces.runtime import (
     JSON,
     RuntimeInvocation,
@@ -41,6 +42,7 @@ def create_app(root: Path, plan: RuntimePlan) -> FastAPI:
     ]
     document: dict[str, JSON] = json.loads((root / "openapi.json").read_bytes())
     app = FastAPI(title="Apizr REST API", docs_url="/docs", redoc_url=None)
+    app.add_middleware(JsonAdmission)
     app.openapi = lambda: document
 
     @app.get("/health", response_model=None)
@@ -61,7 +63,7 @@ def create_app(root: Path, plan: RuntimePlan) -> FastAPI:
                     result = await function(*args, **kwargs)
                 else:
                     result = await run_in_threadpool(function, *args, **kwargs)
-                return JSONResponse(content=jsonable_encoder(result))
+                return JSONResponse(content=normalize_rest_result(result))
             except HTTPException:
                 raise
             except Exception:

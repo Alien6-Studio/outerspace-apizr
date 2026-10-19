@@ -11,11 +11,11 @@ from analysis_authorization import analysis_policy
 from analysis_authorization import authorized_main as main
 from provenance_assertions import assert_equivalent_bundles
 
-from apizr.compiler import assess_readiness, prepare_exposure, render_bundle
 from apizr.exposure import ExposurePolicy
 from apizr.git_source import AcquisitionLimits, GitSourceError, acquire_snapshot
 from apizr.git_source.ssh import configure_ssh, validate_ssh_url
 from apizr.repository_readiness import RepositoryReadinessPolicy
+from apizr.workspace.compiler import assess_readiness, prepare_exposure, render_bundle
 
 from .authorization import authorized_snapshot
 from .authorization import flags as operator_flags

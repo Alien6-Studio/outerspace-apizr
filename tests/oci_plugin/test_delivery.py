@@ -12,20 +12,20 @@ from apizr_oci.model import BuildError, BuildResult
 from pydantic import ValidationError
 from test_application import EXAMPLE, prepare
 
-from apizr.application import ApplicationConfig
 from apizr.capabilities.model import Digest
-from apizr.compiler import render_bundle
-from apizr.delivery import (
+from apizr.contracts.application import ApplicationConfig
+from apizr.contracts.delivery import (
     DeliveryManifest,
     DeliveryPlan,
     GitSource,
     LocalSource,
     identity,
 )
-from apizr.distribution_identity import LockedDistribution
-from apizr.publication_contracts import PushRequest
+from apizr.contracts.distribution import LockedDistribution
+from apizr.contracts.publication import PushRequest
 from apizr.repository.serialization import canonical_bytes
 from apizr.repository_interfaces.output import write_bundle
+from apizr.workspace.compiler import render_bundle
 
 from . import test_build
 
@@ -316,7 +316,7 @@ def test_push_request_cannot_substitute_another_image(build_inputs, tmp_path):
 def test_published_delivery_schemas(name):
     from jsonschema import Draft202012Validator
 
-    from apizr.delivery import BundleProvenance
+    from apizr.contracts.delivery import BundleProvenance
 
     model = {
         "delivery-plan": DeliveryPlan,
@@ -324,9 +324,7 @@ def test_published_delivery_schemas(name):
         "bundle-provenance": BundleProvenance,
     }[name]
     schema = json.loads(
-        (
-            Path(__file__).parents[2] / f"docs/specs/apizr-{name}-v1.schema.json"
-        ).read_bytes()
+        (Path(__file__).parents[2] / f"specs/apizr-{name}-v1.schema.json").read_bytes()
     )
     assert schema == model.model_json_schema()
     Draft202012Validator.check_schema(schema)

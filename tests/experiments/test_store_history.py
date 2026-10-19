@@ -439,7 +439,7 @@ def test_reviewed_history_fixtures_and_additive_schemas():
         ("run-result", RunSummary),
     ]:
         schema = json.loads(
-            (root / f"docs/specs/apizr-experiment-{name}-v1.schema.json").read_bytes()
+            (root / f"specs/apizr-experiment-{name}-v1.schema.json").read_bytes()
         )
         assert schema == model.model_json_schema()
         Draft202012Validator.check_schema(schema)

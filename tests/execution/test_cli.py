@@ -3,9 +3,9 @@ from pathlib import Path
 
 import pytest
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.cli.commands.execute import main
 from apizr.execution import ExecutionPolicy, plan, plan_bytes, policy_bytes
-from apizr.inspection import inspect_source
 
 pytestmark = pytest.mark.timeout(20)
 

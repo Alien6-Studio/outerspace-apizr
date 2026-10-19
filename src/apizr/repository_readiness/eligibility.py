@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING
 
+from apizr.capabilities.instrumentation import is_tracking_import
 from apizr.graph.model import ImportDeclaration, RelationshipKind, module_id
 from apizr.readiness.model import POLICY, Assessment, Code, State, combine
 
@@ -18,6 +19,15 @@ def proven_import(
     external_modules: frozenset[str] = frozenset(),
 ) -> bool:
     if declaration.availability != "unconditional" or not declaration.names:
+        return False
+    sdk_import = is_tracking_import(
+        module=declaration.declared_module,
+        names=tuple(n.name for n in declaration.names),
+        relative_level=declaration.relative_level,
+    )
+    if sdk_import and any(name.resolution != "external" for name in declaration.names):
+        # A repository-local lookalike is not the canonical SDK. Retaining the
+        # dependency reason prevents promotion through local-import refinement.
         return False
     edges = (*facts.direct, *facts.module_imports)
     for name in declaration.names:

@@ -10,11 +10,11 @@ from hypothesis import strategies as st
 from mcp import Client, StdioServerParameters
 from rest.helpers import application
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.client_collections.planner import example_value, plan_client_collection
-from apizr.contract_types import ObjectField, TypeSpec
+from apizr.contracts.types import ObjectField, TypeSpec
 from apizr.generators.mcp.generator import generate as mcp_generate
 from apizr.generators.rest.generator import generate as rest_generate
-from apizr.inspection import inspect_source
 from apizr.interfaces.runtime import validate
 
 from .test_static import MINIMAL, MINIMAL_SCHEMA, NESTED

@@ -95,7 +95,7 @@ def wheel_bytes(path, expected_hash, version):
             "Version"
         ) != [version]:
             raise Refused("forge_wheel_identity_mismatch")
-    if version not in {"0.4.4", "0.4.5"}:
+    if version not in {"0.4.4", "0.4.5", "0.4.6"}:
         raise Refused("forge_wheel_development_version_required")
     return source.name, raw
 
@@ -139,7 +139,7 @@ def main():
             )
         }
         argv = invocation(values)
-        if not (3, 11) <= sys.version_info[:2] <= (3, 14):
+        if not (3, 11) <= sys.version_info[:2] <= (3, 15):
             raise Refused("forge_python_unsupported")
         workspace = Path(os.environ["GITHUB_WORKSPACE"])
         if not workspace.is_dir() or Path.cwd().resolve() != workspace.resolve():

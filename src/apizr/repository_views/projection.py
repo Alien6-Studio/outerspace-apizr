@@ -10,7 +10,8 @@ from typing import Literal
 
 from apizr.capabilities.model import Severity
 from apizr.exposure.planner import Diagnostic
-from apizr.exposure.scope import ScopeIssue, required_evidence
+from apizr.exposure.scope import required_evidence
+from apizr.exposure.scope_model import ScopeIssue
 from apizr.graph.model import Graph, ModuleNode, RelationshipKind, module_id
 from apizr.graph.serialization import graph_digest
 from apizr.readiness.model import POLICY, State

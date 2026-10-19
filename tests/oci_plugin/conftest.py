@@ -30,14 +30,14 @@ def installed_oci_metadata(monkeypatch):
     # qualification independently uses real metadata with no patch.
     import tomllib
 
-    import apizr.delivery
+    import apizr.contracts.delivery
 
-    actual = apizr.delivery.version
+    actual = apizr.contracts.delivery.version
     declared = tomllib.loads(
         (Path(__file__).parents[2] / "plugins/oci/pyproject.toml").read_text()
     )["project"]["version"]
     monkeypatch.setattr(
-        apizr.delivery,
+        apizr.contracts.delivery,
         "version",
         lambda name: declared if name == "outerspace-apizr-oci" else actual(name),
     )

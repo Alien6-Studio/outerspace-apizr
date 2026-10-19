@@ -4,6 +4,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
+from apizr.capabilities.inspection import inspect_source
 from apizr.capabilities.model import Digest
 from apizr.execution import (
     ExecutionPolicy,
@@ -16,7 +17,6 @@ from apizr.execution import (
 )
 from apizr.execution.planner import validate_plan
 from apizr.execution.policy import BackendCapabilities, check_controls
-from apizr.inspection import inspect_source
 
 from .helpers import planned
 

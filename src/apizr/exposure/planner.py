@@ -25,7 +25,8 @@ from apizr.repository_readiness.serialization import report_digest
 
 from .model import ExposurePlan, ExposureRecord, RelationshipEvidence
 from .policy import ExposurePolicy, Interface
-from .scope import EvidenceScope, required_evidence
+from .scope import required_evidence
+from .scope_model import EvidenceScope
 from .selector import select_ids
 from .serialization import policy_digest
 

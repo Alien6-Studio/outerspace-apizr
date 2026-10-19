@@ -6,6 +6,7 @@ import pytest
 from oci.helpers import IMAGE
 from repository_interfaces.test_golden import FIXTURE as DIRECT_FIXTURE
 from repository_interfaces.test_golden import render as direct_render
+from telemetry.bundle_assertions import assert_telemetry_free
 
 from apizr.execution.policy import ExecutionPolicy
 from apizr.oci.model import ExecutionPolicyV2
@@ -43,6 +44,7 @@ def test_bridge_hashes_plans_public_surface_and_determinism(transport, policy):
         "runtime_image": IMAGE if isinstance(policy, ExecutionPolicyV2) else None,
     }
     artifacts = render_repository_bundle(*values, **args)
+    assert_telemetry_free(artifacts)
     reverse = (*values[:-1], dict(reversed(list(values[-1].items()))))
     assert artifacts == render_repository_bundle(*reverse, **args)
     bridge = json.loads(artifacts["execution/bundle.json"])
@@ -114,7 +116,9 @@ def test_embedded_definitions_reuse_reviewed_logic():
     files = runtime_files("rest")
     for path, names in {
         "execution/supervisor.py": ["exchange", "kill_group", "worker_environment"],
-        "repository_interfaces/runtime.py": ["RepositoryLoader", "read_artifact"],
+        "repository_interfaces/runtime.py": ["RepositoryLoader"],
+        "repository_interfaces/artifacts.py": ["read_artifact", "BundleBudget"],
+        "contracts/json_budget.py": ["preflight_json"],
         "oci/docker.py": ["DockerProvider"],
     }.items():
         for name in names:

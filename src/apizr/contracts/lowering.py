@@ -5,7 +5,7 @@ import math
 from collections.abc import Mapping
 
 from apizr.capabilities.types import DeclaredType
-from apizr.contract_types import Scalar, TypeSpec
+from apizr.contracts.types import Scalar, TypeSpec
 
 
 class ContractError(ValueError):

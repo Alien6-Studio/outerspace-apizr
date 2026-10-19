@@ -7,7 +7,7 @@ import pytest
 
 from apizr.capabilities.model import Digest
 from apizr.cli.commands.exposure import main
-from apizr.delivery import identity
+from apizr.contracts.delivery import identity
 from apizr.repository.serialization import canonical_bytes
 from apizr.repository_interfaces.evidence import (
     export_evidence,

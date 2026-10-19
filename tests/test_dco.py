@@ -9,8 +9,9 @@ from pathlib import Path
 
 import pytest
 import yaml
+from qualification_scripts import implementation as qualification_script
 
-CHECK = runpy.run_path(str(Path(__file__).parents[1] / "scripts/check_dco.py"))
+CHECK = runpy.run_path(str(qualification_script("check_dco")))
 
 
 def commit(sha="a" * 40, message="Change\n\nSigned-off-by: Ada <ada@example.test>\n"):
@@ -189,12 +190,17 @@ def test_workflow_audits_branch_creation_without_exempting_contributions(
         git("checkout", "--orphan", "unrelated")
     git("commit", "--allow-empty", "-m", "Contribution", *(["-s"] if signed else []))
     head = git("rev-parse", "HEAD")
-    # Execute the actual workflow in a checkout containing its validator.
-    # Use this test environment's Python without mocking the command launcher.
-    (tmp_path / "scripts").mkdir()
-    shutil.copyfile(root / "scripts/check_dco.py", tmp_path / "scripts/check_dco.py")
+    # Run the exact workflow command from a checkout containing its validator.
+    validator = tmp_path / "scripts/qualification/ci/check_dco.py"
+    validator.parent.mkdir(parents=True)
+    shutil.copyfile(qualification_script("check_dco"), validator)
     result = subprocess.run(
-        ["bash", "-e", "-c", step["run"]],
+        [
+            "bash",
+            "-e",
+            "-c",
+            step["run"],
+        ],
         cwd=tmp_path,
         text=True,
         capture_output=True,

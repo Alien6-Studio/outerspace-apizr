@@ -7,9 +7,10 @@ import tomllib
 from pathlib import Path
 
 import pytest
+from qualification_scripts import implementation as qualification_script
 
 ROOT = Path(__file__).resolve().parents[1]
-CHECKER = runpy.run_path(str(ROOT / "scripts/check_dependency_licenses.py"))
+CHECKER = runpy.run_path(str(qualification_script("check_dependency_licenses")))
 
 
 @pytest.fixture
@@ -34,6 +35,42 @@ def test_current_universal_graph_has_preserved_license_evidence(inputs):
     )
     assert report["result"] == "pass"
     assert report["limitations"]
+
+
+@pytest.mark.parametrize("scope", ["core", "extra", "transitive"])
+def test_development_license_exception_cannot_enter_runtime(inputs, scope):
+    lock, inventory, policy, texts = inputs
+    project = next(p for p in lock["package"] if p["name"] == "outerspace-apizr")
+    if scope == "core":
+        dependencies = project["dependencies"]
+    elif scope == "extra":
+        dependencies = project["optional-dependencies"]["notebook"]
+    else:
+        dependencies = next(p for p in lock["package"] if p["name"] == "pydantic")[
+            "dependencies"
+        ]
+    dependencies.append({"name": "debugpy"})
+    refused = False
+    try:
+        CHECKER["validate_inventory"](lock, inventory, policy, texts)
+    except ValueError as error:
+        assert (
+            str(error) == "Development-only license exception reached runtime: debugpy"
+        )
+        refused = True
+    assert refused, "Development-only admission must not authorize runtime use"
+
+
+def test_runtime_scope_includes_alternative_locked_versions():
+    lock = {
+        "package": [
+            {"name": "outerspace-apizr", "dependencies": [{"name": "variant"}]},
+            {"name": "variant", "version": "1", "dependencies": [{"name": "debugpy"}]},
+            {"name": "variant", "version": "2"},
+            {"name": "debugpy"},
+        ]
+    }
+    assert "debugpy" in CHECKER["runtime_dependencies"](lock)
 
 
 @pytest.mark.parametrize(
@@ -154,7 +191,7 @@ def test_collector_checks_archive_hash_and_reads_without_extraction(
     import tarfile
 
     monkeypatch.syspath_prepend(str(ROOT / "scripts"))
-    collect = runpy.run_path(str(ROOT / "scripts/collect_dependency_licenses.py"))[
+    collect = runpy.run_path(str(qualification_script("collect_dependency_licenses")))[
         "notices"
     ]
     buffer = io.BytesIO()
@@ -194,16 +231,18 @@ def test_collector_preserves_nonstandard_license_names_in_wheels(monkeypatch):
     import zipfile
 
     monkeypatch.syspath_prepend(str(ROOT / "scripts"))
-    collect = runpy.run_path(str(ROOT / "scripts/collect_dependency_licenses.py"))[
+    collect = runpy.run_path(str(qualification_script("collect_dependency_licenses")))[
         "notices"
     ]
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w") as archive:
         archive.writestr("dist-info/licenses/mit.LICENSE", "MIT evidence\n")
         archive.writestr("data/index.ABOUT", "Attribution\n")
+        archive.writestr("package/ThirdPartyNotices.txt", "Cumulative obligations\n")
     data = buffer.getvalue()
     result = collect(data, {"hash": "sha256:" + hashlib.sha256(data).hexdigest()})
     assert {r["path"] for r in result} == {
         "dist-info/licenses/mit.LICENSE",
         "data/index.ABOUT",
+        "package/ThirdPartyNotices.txt",
     }

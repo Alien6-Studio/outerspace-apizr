@@ -148,6 +148,18 @@ def test_explicit_inputs_and_bounded_reads(tmp_path):
     assert "input_too_large" in {d.code for d in limited.data.diagnostics}
 
 
+@pytest.mark.parametrize("limit", [True, 0, -1, 1.5, "1024"])
+def test_invalid_source_limit_is_refused_before_reading(tmp_path, monkeypatch, limit):
+    from apizr.experiments import inspection
+
+    def unexpected_read(*args):
+        raise AssertionError("An invalid bound must be rejected before source I/O")
+
+    monkeypatch.setattr(inspection, "read_regular", unexpected_read)
+    with pytest.raises(ValueError, match="inspection_source_limit_invalid"):
+        inspect_experiment(tmp_path / "train.py", max_source_bytes=limit)
+
+
 def test_custom_root_and_module(tmp_path):
     (tmp_path / "src").mkdir()
     path = write_source(
@@ -241,7 +253,7 @@ def test_text_order_specifics_and_concise_sample(tmp_path):
 def test_committed_schema_parity():
     root = FIXTURE.parents[3]
     committed = json.loads(
-        (root / "docs/specs/apizr-experiment-inspection-v1.schema.json").read_text()
+        (root / "specs/apizr-experiment-inspection-v1.schema.json").read_text()
     )
     assert committed == ExperimentInspection.model_json_schema()
 
