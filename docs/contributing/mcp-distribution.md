@@ -181,6 +181,9 @@ is missing; it does not run during ordinary CI.
 
 ## Additional directories
 
+See the [maintained public listings inventory](public-listings.md) for dated
+listing checks, current discrepancies and publisher correction status.
+
 | Directory | Current classification | Decision |
 | --- | --- | --- |
 | MCPfinder | Automatic upstream aggregation (Tier 2) | Verify propagation only; do not submit. |
