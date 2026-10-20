@@ -30,10 +30,10 @@ Reference: **0.4.6** · Checked: **20 October 2026**.
 | [Safety outerspace-apizr-mcp](https://getsafety.com/packages/pypi/outerspace-apizr-mcp/) | 0.4.6 | Current | — |
 | [Safety outerspace-apizr-oci](https://getsafety.com/packages/pypi/outerspace-apizr-oci/) | 0.4.6 | Current | — |
 | [Safety outerspace-apizr-attest](https://getsafety.com/packages/pypi/outerspace-apizr-attest/) | 0.4.6 | Current | — |
-| [piwheels outerspace-apizr](https://www.piwheels.org/project/outerspace-apizr/) | 0.4.5 | Awaiting indexing | Recheck 0.4.6. |
-| [piwheels outerspace-apizr-mcp](https://www.piwheels.org/project/outerspace-apizr-mcp/) | 0.4.5 | Awaiting indexing | Recheck 0.4.6. |
-| [piwheels outerspace-apizr-oci](https://www.piwheels.org/project/outerspace-apizr-oci/) | 0.4.5 | Awaiting indexing | Recheck 0.4.6. |
-| [piwheels outerspace-apizr-attest](https://www.piwheels.org/project/outerspace-apizr-attest/) | 0.4.5 | Awaiting indexing | Recheck 0.4.6. |
+| [piwheels outerspace-apizr](https://www.piwheels.org/project/outerspace-apizr/) | 0.4.5 | Refresh requested | 0.4.6 indexing requested: [piwheels#659](https://github.com/piwheels/packages/issues/659). |
+| [piwheels outerspace-apizr-mcp](https://www.piwheels.org/project/outerspace-apizr-mcp/) | 0.4.5 | Refresh requested | 0.4.6 indexing requested: [piwheels#659](https://github.com/piwheels/packages/issues/659). |
+| [piwheels outerspace-apizr-oci](https://www.piwheels.org/project/outerspace-apizr-oci/) | 0.4.5 | Refresh requested | 0.4.6 indexing requested: [piwheels#659](https://github.com/piwheels/packages/issues/659). |
+| [piwheels outerspace-apizr-attest](https://www.piwheels.org/project/outerspace-apizr-attest/) | 0.4.5 | Refresh requested | 0.4.6 indexing requested: [piwheels#659](https://github.com/piwheels/packages/issues/659). |
 | [Nowfound](https://nowfound.app/launch/outerspace-apizr) | — | Deferred | Sign-in email not received; skipped at maintainer request. |
 | [Libraries.io](https://libraries.io/pypi/outerspace-apizr) | 0.4.6 | Current | — |
 | [deps.dev / Open Source Insights](https://deps.dev/pypi/outerspace-apizr) | 0.4.6 | Current | — |
