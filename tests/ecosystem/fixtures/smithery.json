@@ -1,0 +1,5 @@
+{
+  "status": 200,
+  "checked_at": "2026-10-20T12:00:00Z",
+  "body": "{\"servers\": [{\"qualifiedName\": \"someone/other\", \"homepage\": \"https://example.org\"}], \"pagination\": {\"totalCount\": 100, \"totalPages\": 10}}"
+}

@@ -1,0 +1,5 @@
+{
+  "status": 200,
+  "checked_at": "2026-10-20T12:00:00Z",
+  "body": "{\"packageKey\": {\"system\": \"PYPI\", \"name\": \"outerspace-apizr\"}, \"versions\": [{\"versionKey\": {\"version\": \"0.7.0\"}, \"isDefault\": false}, {\"versionKey\": {\"version\": \"0.4.6\"}, \"isDefault\": true}]}"
+}

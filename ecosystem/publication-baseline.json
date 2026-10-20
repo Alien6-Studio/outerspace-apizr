@@ -1,0 +1,346 @@
+{
+  "reference_version": "0.4.6",
+  "audited_on": "2026-10-20",
+  "release_tag": "v0.4.6",
+  "release_commit": "5ace433a8e955a6fa938fa72db93cea96d124491",
+  "published_at": "2026-10-19T20:59:03Z",
+  "release_url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/tag/v0.4.6",
+  "source_commit": "458343cc648befea4b60a9c6d13dd9257ab5d499",
+  "website_branch": "gh-pages",
+  "website_commit": "5f34f8431d28a96c392e769289f08670a5d02cd3",
+  "packages": [
+    {
+      "name": "outerspace-apizr",
+      "version": "0.4.6",
+      "summary": "Compile Python codebases into discoverable, typed and governable capabilities.",
+      "requires_python": "<3.16,>=3.11",
+      "source_url": "https://pypi.org/pypi/outerspace-apizr/json",
+      "files": [
+        {
+          "filename": "outerspace_apizr-0.4.6-py3-none-any.whl",
+          "url": "https://files.pythonhosted.org/packages/56/e5/eacdedf800d027503b3e6e02fd7e26a17b45c67b2b04c4e5f8dd7543a4c5/outerspace_apizr-0.4.6-py3-none-any.whl",
+          "sha256": "3b2077d8ade320dc99d5c90692adbe3512461602ce17e48a34de5ba409c71652",
+          "uploaded_at": "2026-10-19T20:48:15.858086Z"
+        },
+        {
+          "filename": "outerspace_apizr-0.4.6.tar.gz",
+          "url": "https://files.pythonhosted.org/packages/a2/d1/774f14fe33de4bb391ced5d21c0377b324f33a8122663c023783f5e02fe0/outerspace_apizr-0.4.6.tar.gz",
+          "sha256": "2016633890ba59f5768d61a9e2546f08b4a8c220118cff4bdbbb57d87151ee54",
+          "uploaded_at": "2026-10-19T20:48:17.512973Z"
+        }
+      ]
+    },
+    {
+      "name": "outerspace-apizr-mcp",
+      "version": "0.4.6",
+      "summary": "Optional local stdio MCP server for Apizr analysis and explicitly enabled delivery",
+      "requires_python": "<3.16,>=3.11",
+      "source_url": "https://pypi.org/pypi/outerspace-apizr-mcp/json",
+      "files": [
+        {
+          "filename": "outerspace_apizr_mcp-0.4.6-py3-none-any.whl",
+          "url": "https://files.pythonhosted.org/packages/77/af/abb8fc62e39f03f0b28afe1ca8b6bb52f399adbf2612458c7922ae06ab1b/outerspace_apizr_mcp-0.4.6-py3-none-any.whl",
+          "sha256": "8171bec35de3a5003c565e63ad30c6b190d8cb69100c5a21b11df21c4f693eb0",
+          "uploaded_at": "2026-10-19T20:48:41.128125Z"
+        },
+        {
+          "filename": "outerspace_apizr_mcp-0.4.6.tar.gz",
+          "url": "https://files.pythonhosted.org/packages/ce/a9/4e88fe1aa3248d66e044301d54cefc372d38a7d48f743c78532304034246/outerspace_apizr_mcp-0.4.6.tar.gz",
+          "sha256": "6ef47e320eda9efd9e1e13d3641fcf9723c860968fd03dd04358a8d406b851f2",
+          "uploaded_at": "2026-10-19T20:48:42.558009Z"
+        }
+      ]
+    },
+    {
+      "name": "outerspace-apizr-oci",
+      "version": "0.4.6",
+      "summary": "Official Apizr plugin for building local REST and MCP service images",
+      "requires_python": "<3.16,>=3.11",
+      "source_url": "https://pypi.org/pypi/outerspace-apizr-oci/json",
+      "files": [
+        {
+          "filename": "outerspace_apizr_oci-0.4.6-py3-none-any.whl",
+          "url": "https://files.pythonhosted.org/packages/6f/b4/e8aefcd3ccc14b4581a788350bc95c3ddb8121445ba77608b21cb072e6b9/outerspace_apizr_oci-0.4.6-py3-none-any.whl",
+          "sha256": "e8fa4031c064fe99df4fa88e69747876d2627b2a40f3cee4ec36afe787e8c475",
+          "uploaded_at": "2026-10-19T20:48:27.220499Z"
+        },
+        {
+          "filename": "outerspace_apizr_oci-0.4.6.tar.gz",
+          "url": "https://files.pythonhosted.org/packages/25/29/998ec671d8d8e30ec2deed190026d1fcd8e9466514327a1f055b03bd89d2/outerspace_apizr_oci-0.4.6.tar.gz",
+          "sha256": "9ee19715bbf689c3439d0cf5e24a14de98ac2d75c51dad4d7061a052722bead9",
+          "uploaded_at": "2026-10-19T20:48:28.447134Z"
+        }
+      ]
+    },
+    {
+      "name": "outerspace-apizr-attest",
+      "version": "0.4.6",
+      "summary": "Optional Continuum Attest receipts for verified Apizr OCI deliveries",
+      "requires_python": "<3.16,>=3.11",
+      "source_url": "https://pypi.org/pypi/outerspace-apizr-attest/json",
+      "files": [
+        {
+          "filename": "outerspace_apizr_attest-0.4.6-py3-none-any.whl",
+          "url": "https://files.pythonhosted.org/packages/fb/b8/ea6daa67987309404735b581a90848ed27734feda952589cd990725d3236/outerspace_apizr_attest-0.4.6-py3-none-any.whl",
+          "sha256": "e06d75daaefb2a6f1fc480ba65f43c37e59a0c758bc8e32a610cada18b5ddac1",
+          "uploaded_at": "2026-10-19T20:48:54.478877Z"
+        },
+        {
+          "filename": "outerspace_apizr_attest-0.4.6.tar.gz",
+          "url": "https://files.pythonhosted.org/packages/ef/17/99a72cb57bee6c181710c56d2447e9013c2749af89fb7cc0e5a8511705be/outerspace_apizr_attest-0.4.6.tar.gz",
+          "sha256": "083b8e15ed75d64815e136b948dbd61a9765abdb102f4badeb29ce6d2575b6a2",
+          "uploaded_at": "2026-10-19T20:48:55.657355Z"
+        }
+      ]
+    }
+  ],
+  "tagged_source_hashes": {
+    "README.md": "3b61d484d6734337439f28fa20b09518f28ce55786090a849b89a301741d2e50",
+    "pyproject.toml": "734d4b94a0ebd7d3bb324f15f5f1884c19dea926e26739c4ab517be3bb2194e7",
+    "server.json": "8224cf7e021c1887544b4d59cf6b39d5732ddd04e67126e153983b2dcf5570a7",
+    "plugins/mcp/README.md": "d3aac5c2c178017ceab222cd71d3d87b30f09303fcb49ba88c8c3a8057fc702f",
+    "plugins/mcp/pyproject.toml": "bda5b139b809a3497e830f0210783d65643075cba316bece98192e930d32296f"
+  },
+  "release_asset_metadata": [
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.11.17.qualification.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.11.17.qualification.json",
+      "digest": "sha256:08b9cca0e9e9d60f746d76b8ac88c6bedb777d3ea3ae94d0e8147772b50b6075"
+    },
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.11.17.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.11.17.tar.gz",
+      "digest": "sha256:682aeb99878d138173a5d9684d59bd6d61cf99c97714e863bfe59fbb152c634f"
+    },
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.12.3.qualification.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.12.3.qualification.json",
+      "digest": "sha256:319e4ceaa032ab9d97b0dd259d5c296e194672ad9fd3ff3046d5af4034479ca4"
+    },
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.12.3.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.12.3.tar.gz",
+      "digest": "sha256:fda43f99212e167550ade9038e5139f6e35c0dd237141a54523cc6219fcf2685"
+    },
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.13.16.qualification.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.13.16.qualification.json",
+      "digest": "sha256:78acfe393c15f017616a740f5e6a6df82d0f8974dabacad44c150d00cd1bfdbd"
+    },
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.13.16.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.13.16.tar.gz",
+      "digest": "sha256:59f1d45444a7371e8e28daa247f855fb7a9abbda0de06a561980a93165dc27e9"
+    },
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.14.8.qualification.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.14.8.qualification.json",
+      "digest": "sha256:c0cd58a93fc7253aebd0eb9d99c2f295f916076764b5c6c84bc6e20beb0dc062"
+    },
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.14.8.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.14.8.tar.gz",
+      "digest": "sha256:cea6e6d4bd39d10ba22c34acdea119bc02087f1910232601147fe9c39ac4df33"
+    },
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.15.0.qualification.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.15.0.qualification.json",
+      "digest": "sha256:d21d6073aabc8baaa4341b66a5647307cc1c9555b4a587a673a613b67c875acb"
+    },
+    {
+      "name": "apizr-0.4.6-linux-x86_64-cpython-3.15.0.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-linux-x86_64-cpython-3.15.0.tar.gz",
+      "digest": "sha256:3639954fe88677cfa899f53953b96de162e328be7f01168b44764556ac843845"
+    },
+    {
+      "name": "apizr-0.4.6-macos-arm64-cpython-3.11.9.qualification.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-macos-arm64-cpython-3.11.9.qualification.json",
+      "digest": "sha256:e16f68a9a0ce52fd04d0200886090a7786b2831ab0b7b2025f612d5ac850486e"
+    },
+    {
+      "name": "apizr-0.4.6-macos-arm64-cpython-3.11.9.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-macos-arm64-cpython-3.11.9.tar.gz",
+      "digest": "sha256:d23e4160dd4808f53bc3a68ef591c010ef191080897722aa0593ba7a79a4c399"
+    },
+    {
+      "name": "apizr-0.4.6-macos-arm64-cpython-3.14.8.qualification.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-macos-arm64-cpython-3.14.8.qualification.json",
+      "digest": "sha256:363388a8dfcdfb1a3fce0385a00f3f88c174c1bd43051c4758668c33cad0efec"
+    },
+    {
+      "name": "apizr-0.4.6-macos-arm64-cpython-3.14.8.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-macos-arm64-cpython-3.14.8.tar.gz",
+      "digest": "sha256:13aca8a9ab8d0daa467719a42ec3f56e57133987ac651cd00f3ce57388468239"
+    },
+    {
+      "name": "apizr-0.4.6-macos-arm64-cpython-3.15.0.qualification.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-macos-arm64-cpython-3.15.0.qualification.json",
+      "digest": "sha256:5169a1d1f36f299a995922ae5fdb0fa2d5449b76ba24c5973f6e33b31768038f"
+    },
+    {
+      "name": "apizr-0.4.6-macos-arm64-cpython-3.15.0.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-macos-arm64-cpython-3.15.0.tar.gz",
+      "digest": "sha256:77f066b7f461735952565122aa7ef0de22ccea8aab5276a39dfe719366abfcef"
+    },
+    {
+      "name": "apizr-0.4.6-marketplace.vsix",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6-marketplace.vsix",
+      "digest": "sha256:9309084cd1456ed62a820cfc6b3a09403a715da77ec6afc8f180cd33c582651a"
+    },
+    {
+      "name": "apizr-0.4.6.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6.json",
+      "digest": "sha256:dd10bb67feff70822a13df7f6c8e95d849ce99967b033c069c202bcaa847e546"
+    },
+    {
+      "name": "apizr-0.4.6.vsix",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-0.4.6.vsix",
+      "digest": "sha256:4b4d3ec2cdd1d9620ee020f169c314ccb915c05f6cfa4fb88d0a88ca9dc5595c"
+    },
+    {
+      "name": "apizr-046-website-public.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-046-website-public.json",
+      "digest": "sha256:1274a376655e992d4d0f6901492360d17538a357310e337995859369fe3ac239"
+    },
+    {
+      "name": "apizr-attest-receipt.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/apizr-attest-receipt.tar.gz",
+      "digest": "sha256:b15df9ac29aa0099c584b992b1cfd876c10e911ff8116f88d4dde8a4a5fce91f"
+    },
+    {
+      "name": "attest-verification.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/attest-verification.json",
+      "digest": "sha256:26a6a116b57903b131130844f995a411cab7ca876abf408a6ec36842c1145cb4"
+    },
+    {
+      "name": "build-provenance.sigstore.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/build-provenance.sigstore.json",
+      "digest": "sha256:538a6c5d10147eb983c616453e5c7cb1b9dd5625c04108705445defd47096fdf"
+    },
+    {
+      "name": "candidate.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/candidate.json",
+      "digest": "sha256:25d79f9ec07760d0729f2877064173e3427714672cace5a5a098761cc9649ed2"
+    },
+    {
+      "name": "ci-evidence.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/ci-evidence.tar.gz",
+      "digest": "sha256:6d85aa282546b23106555bd47957b2c0b759c4a06909de0e7c65460b7f83afbf"
+    },
+    {
+      "name": "dependency-audit.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/dependency-audit.json",
+      "digest": "sha256:e22983d99acfa16fc5146145428ec3baef431e29a46c8b61f25f7cac9a30ac35"
+    },
+    {
+      "name": "dependency-license-report.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/dependency-license-report.json",
+      "digest": "sha256:5e9befcc4e7909421f5a930254c692cc5c32a91cdc31b66203ebad707db3bae2"
+    },
+    {
+      "name": "dependency-licenses.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/dependency-licenses.json",
+      "digest": "sha256:4685a4a0eefab146f53d9453244b8c4142a6fe86788659087eba857b8a7d99c1"
+    },
+    {
+      "name": "mcpb-build-comparison.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/mcpb-build-comparison.json",
+      "digest": "sha256:e2ab1394107b94f4c583527120da2535ae6aece3d0555a72e1d30ecdb19b37d4"
+    },
+    {
+      "name": "node-dependency-audit.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/node-dependency-audit.json",
+      "digest": "sha256:b092098e0b32342a8d1a1dc81b3a9b0d7be292e11a16f2a659c3271dbbad4cfb"
+    },
+    {
+      "name": "outerspace-apizr-0.4.6.mcpb",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace-apizr-0.4.6.mcpb",
+      "digest": "sha256:d59d1bd8a1a96f9ddf7cbebc08ac4824e8938f6cd3b52bd9b67265d5da4adeee"
+    },
+    {
+      "name": "outerspace_apizr-0.4.6-py3-none-any.whl",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace_apizr-0.4.6-py3-none-any.whl",
+      "digest": "sha256:3b2077d8ade320dc99d5c90692adbe3512461602ce17e48a34de5ba409c71652"
+    },
+    {
+      "name": "outerspace_apizr-0.4.6.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace_apizr-0.4.6.tar.gz",
+      "digest": "sha256:2016633890ba59f5768d61a9e2546f08b4a8c220118cff4bdbbb57d87151ee54"
+    },
+    {
+      "name": "outerspace_apizr_attest-0.4.6-py3-none-any.whl",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace_apizr_attest-0.4.6-py3-none-any.whl",
+      "digest": "sha256:e06d75daaefb2a6f1fc480ba65f43c37e59a0c758bc8e32a610cada18b5ddac1"
+    },
+    {
+      "name": "outerspace_apizr_attest-0.4.6.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace_apizr_attest-0.4.6.tar.gz",
+      "digest": "sha256:083b8e15ed75d64815e136b948dbd61a9765abdb102f4badeb29ce6d2575b6a2"
+    },
+    {
+      "name": "outerspace_apizr_mcp-0.4.6-py3-none-any.whl",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace_apizr_mcp-0.4.6-py3-none-any.whl",
+      "digest": "sha256:8171bec35de3a5003c565e63ad30c6b190d8cb69100c5a21b11df21c4f693eb0"
+    },
+    {
+      "name": "outerspace_apizr_mcp-0.4.6.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace_apizr_mcp-0.4.6.tar.gz",
+      "digest": "sha256:6ef47e320eda9efd9e1e13d3641fcf9723c860968fd03dd04358a8d406b851f2"
+    },
+    {
+      "name": "outerspace_apizr_oci-0.4.6-py3-none-any.whl",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace_apizr_oci-0.4.6-py3-none-any.whl",
+      "digest": "sha256:e8fa4031c064fe99df4fa88e69747876d2627b2a40f3cee4ec36afe787e8c475"
+    },
+    {
+      "name": "outerspace_apizr_oci-0.4.6.tar.gz",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/outerspace_apizr_oci-0.4.6.tar.gz",
+      "digest": "sha256:9ee19715bbf689c3439d0cf5e24a14de98ac2d75c51dad4d7061a052722bead9"
+    },
+    {
+      "name": "public-comparison.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/public-comparison.json",
+      "digest": "sha256:32cf8a801062e29933d5bcdfda74915a51571e2a0e21c52662b108da4b80003e"
+    },
+    {
+      "name": "public-installation.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/public-installation.json",
+      "digest": "sha256:fd30b378a2af061209a205c3ca651ac33a9b01a2584c903deafc3191a28fa5fe"
+    },
+    {
+      "name": "public-release-metadata.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/public-release-metadata.json",
+      "digest": "sha256:4bdb83b24caee74cc73c2da6ed2f0176f1d60530050f438dea66c393fb822d33"
+    },
+    {
+      "name": "publication-assets.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/publication-assets.json",
+      "digest": "sha256:389fab028b383ce31bccab96f14544fff4d53fe4579480b2dc86369987e2a7aa"
+    },
+    {
+      "name": "release-assets.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/release-assets.json",
+      "digest": "sha256:b49549b33a2afeb610d55e94ad29a7352dd060bb43e71b4fa0242602cd4e59d5"
+    },
+    {
+      "name": "release-metadata.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/release-metadata.json",
+      "digest": "sha256:9be51799799dab46cfaedcfd3252821aa11e9323f18ebc567447aa2f617f350a"
+    },
+    {
+      "name": "runtime-sbom.sigstore.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/runtime-sbom.sigstore.json",
+      "digest": "sha256:5691a8dd73515bf07471299df05eb00a8a9edd8b8a2c94c9059a88b1e08e61bb"
+    },
+    {
+      "name": "SHA256SUMS",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/SHA256SUMS",
+      "digest": "sha256:4d28a1df91e9ca85fb8c42901487ff04be9820490e80b2a10857ad6afb803f84"
+    },
+    {
+      "name": "vscode-marketplace-0.4.6.json",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/vscode-marketplace-0.4.6.json",
+      "digest": "sha256:3c400f9021c7f5f19fabcfa7cc7e11a4d2e20423885ac3b6424d9b01c862afc9"
+    }
+  ]
+}

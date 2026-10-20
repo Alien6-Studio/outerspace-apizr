@@ -1,0 +1,5 @@
+{
+  "status": 200,
+  "checked_at": "2026-10-20T12:00:00Z",
+  "body": "{\"package\": \"outerspace-apizr\", \"releases\": {\"0.4.9\": {}, \"0.4.10\": {}, \"0.5.0rc1\": {\"prerelease\": true}, \"0.6.0\": {\"yanked\": true}}}"
+}

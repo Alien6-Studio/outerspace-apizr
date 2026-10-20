@@ -1,0 +1,5 @@
+{
+  "status": 200,
+  "checked_at": "2026-10-20T12:00:00Z",
+  "body": "{\"info\": {\"name\": \"outerspace-apizr\", \"version\": \"0.4.6\", \"summary\": \"Python capability compiler\", \"requires_python\": \">=3.11,<3.16\"}}"
+}

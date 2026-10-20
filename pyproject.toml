@@ -1,7 +1,7 @@
 [project]
 name = "outerspace-apizr"
 version = "0.4.6"
-description = "Compile Python codebases into discoverable, typed and governable capabilities."
+description = "Python capability compiler for static discovery, scientific experiment tracking and typed REST/MCP interfaces with governed execution."
 requires-python = ">=3.11,<3.16"
 readme = "README.md"
 license = "GPL-3.0-or-later"

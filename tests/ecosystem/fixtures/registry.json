@@ -1,0 +1,5 @@
+{
+  "status": 200,
+  "checked_at": "2026-10-20T12:00:00Z",
+  "body": "{\"server\": {\"name\": \"io.github.Alien6-Studio/outerspace-apizr\", \"version\": \"0.4.6\", \"packages\": [{\"version\": \"0.4.5\"}]}}"
+}

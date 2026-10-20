@@ -1,7 +1,7 @@
 [project]
 name = "outerspace-apizr-mcp"
 version = "0.4.6"
-description = "Optional local stdio MCP server for Apizr analysis and explicitly enabled delivery"
+description = "Local stdio MCP server for Python static discovery, readiness, exposure planning and experiment history; delivery requires separate permissions."
 requires-python = ">=3.11,<3.16"
 readme = "README.md"
 license = "GPL-3.0-or-later"

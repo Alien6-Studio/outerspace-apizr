@@ -1,0 +1,1198 @@
+{
+  "schema_version": 1,
+  "reference_version": "0.4.6",
+  "as_of": "2026-10-20T12:12:54.666733+00:00",
+  "counts": {
+    "confirmed": 3,
+    "indeterminate": 22,
+    "obsolete": 4
+  },
+  "listings": [
+    {
+      "id": "official-mcp",
+      "platform": "Official MCP Registry",
+      "url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Alien6-Studio%2Fouterspace-apizr/versions/latest",
+      "status": "confirmed",
+      "checked_at": "2026-10-20T12:12:37.896905+00:00",
+      "freshness": "fresh",
+      "version": "0.4.6",
+      "version_comparison": "match",
+      "observation": {
+        "status": 200,
+        "final_url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Alien6-Studio%2Fouterspace-apizr/versions/latest",
+        "checked_at": "2026-10-20T12:12:37.896905+00:00",
+        "url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Alien6-Studio%2Fouterspace-apizr/versions/latest",
+        "observed": {
+          "identity_verified": true,
+          "version": "0.4.6",
+          "issues": [],
+          "description": "Python capability compiler: read-only analysis, experiment history/comparison and exposure planning.",
+          "package_versions": [
+            "0.4.6"
+          ]
+        },
+        "sha256": "f28a4b785d0223cec50e6bd163b02affed781c9810bbf7da2c4799859060c0f4"
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:52.413128+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "static analysis",
+          "experiment history/comparison",
+          "exposure planning",
+          "stdio launcher"
+        ],
+        "findings": "The latest record and its PyPI launcher package both declare 0.4.6, stdio transport and three required local paths. The registry manifest describes analysis/history/planning; it does not enumerate live tools.",
+        "evidence_urls": [
+          "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Alien6-Studio%2Fouterspace-apizr/versions/latest"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Alien6-Studio%2Fouterspace-apizr/versions/latest",
+        "instructions": "Maintain server.json and plugins/mcp/README.md in this repository. Validate using the existing MCP distribution workflow. A future version publication requires explicit release approval; do not republish or replace 0.4.6.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "glama",
+      "platform": "Glama",
+      "url": "https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:52.413408+00:00",
+        "status": "obsolete",
+        "version": null,
+        "features": [
+          "static analysis",
+          "readiness",
+          "exposure planning",
+          "three inspected tools"
+        ],
+        "findings": "The embedded repository README mentions 0.4.6, but the independent inspected surface still lists only analyze, readiness and plan_exposure. The assessment was made across three tools on 2026-10-02. The product/integrations text also mixes generated interfaces and client collection exports with analysis-server tools. Its Hybrid label is inconsistent with the Registry launcher being local stdio. No inspected package version is established by the README.",
+        "evidence_urls": [
+          "https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr"
+        ],
+        "score": {
+          "value": "TDQS A, 3.7/5 across 3 tools",
+          "assessed_at": "2026-10-02T20:15:00Z"
+        }
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "stale",
+      "update": {
+        "url": "https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/admin",
+        "instructions": "Maintainer Coopyrightdmin is declared in glama.json. Sign in to the existing Glama account, open this listing Admin, request a 0.4.6 stdio reinspection with the three required paths and reviewed grants, and use correction-requests.md#glama. Directory API reads require an API key; no key/account was created.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "mcplookup",
+      "platform": "MCPLookup",
+      "url": "https://mcplookup.com/server/io.github.Alien6-Studio/outerspace-apizr",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://mcplookup.com/server/io.github.Alien6-Studio/outerspace-apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:52.413480+00:00",
+        "status": "obsolete",
+        "version": "0.4.5",
+        "features": [
+          "static analysis",
+          "exposure planning",
+          "stdio"
+        ],
+        "findings": "The package listing and connect command are pinned to 0.4.5. Publisher text omits experiment history/comparison. Source updated 2026-10-11; platform checked 2026-10-19. The trust score has moderate evidence confidence and is not an execution/security guarantee.",
+        "evidence_urls": [
+          "https://mcplookup.com/server/io.github.Alien6-Studio/outerspace-apizr"
+        ],
+        "score": {
+          "value": "Silver 79/100; moderate confidence",
+          "assessed_at": null
+        }
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://mcplookup.com/account/support?server=io.github.Alien6-Studio%2Fouterspace-apizr",
+        "instructions": "Use the existing-account support review form with the canonical server ID, current official Registry URL and the MCPLookup draft in correction-requests.md. Publisher claiming is described as planned, not available; a private endpoint test does not update a catalog rating.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "arcade-toolbench",
+      "platform": "Arcade ToolBench",
+      "url": "https://toolbench.arcade.dev/servers/cmudbhox101v0c8nn9g1flcm1",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://toolbench.arcade.dev/servers/cmudbhox101v0c8nn9g1flcm1",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:52.413528+00:00",
+        "status": "obsolete",
+        "version": null,
+        "features": [
+          "seven legacy HTTP endpoints",
+          "static source inference"
+        ],
+        "findings": "The dated static-source assessment treats seven legacy HTTP endpoints (including file conversion, Docker/Gunicorn generation and health) as MCP tools, and assigns STREAMABLE_HTTP. It does not identify a package version. These endpoints do not describe the 0.4.6 local stdio analysis server. The protocol baseline date is not a product version.",
+        "evidence_urls": [
+          "https://toolbench.arcade.dev/servers/cmudbhox101v0c8nn9g1flcm1"
+        ],
+        "score": {
+          "value": "D 58/100; definition 50, protocol 72, supportability 63",
+          "assessed_at": "2026-09-23T00:00:00Z",
+          "date_precision": "day; midnight UTC is used only to compute assessment age"
+        }
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "stale",
+      "update": {
+        "url": "https://toolbench.arcade.dev",
+        "instructions": "Open the exact listing, sign in using an existing account if a rescore control is offered, and submit the Arcade-specific draft in correction-requests.md through the platform support/rescore route. The public page links Methodology and Sign in but exposes no documented anonymous correction API. Request reassessment of the stdio plugin at v0.4.6; do not ask to edit scores directly.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "tracevero",
+      "platform": "Tracevero",
+      "url": "https://tracevero.com/mcp/io-github-alien6-studio-outerspace-apizr",
+      "status": "confirmed",
+      "checked_at": "2026-10-20T12:12:40.006466+00:00",
+      "freshness": "fresh",
+      "version": "0.4.6",
+      "version_comparison": "match",
+      "observation": {
+        "status": 200,
+        "final_url": "https://api.tracevero.com/v1/eintrag/mcp_server/io-github-alien6-studio-outerspace-apizr",
+        "checked_at": "2026-10-20T12:12:40.006466+00:00",
+        "url": "https://api.tracevero.com/v1/eintrag/mcp_server/io-github-alien6-studio-outerspace-apizr",
+        "observed": {
+          "identity_verified": true,
+          "version": "0.4.6",
+          "issues": [],
+          "description": "Python capability compiler: read-only analysis, experiment history/comparison and exposure planning.",
+          "platform_checked_at": "2026-10-20T01:17:01.469Z"
+        },
+        "sha256": "d8d0f498485224656192fe9a5c76526145ac6f28641204b383c8f7078321290e"
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:04:37.130450+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "Registry mirror",
+          "local package",
+          "required filesystem paths"
+        ],
+        "findings": "The detail page declares 0.4.6 and the current analysis/history/planning description, with source date 2026-10-19 and collection date 2026-10-20. The directory explicitly labels vendor statements unverified. Its JSON export confirms identity; its per-entry API is linked from that export.",
+        "evidence_urls": [
+          "https://api.tracevero.com/v1/eintrag/mcp_server/io-github-alien6-studio-outerspace-apizr"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://tracevero.com/mcp/io-github-alien6-studio-outerspace-apizr",
+        "instructions": "Update the upstream official Registry for future releases. For a persistent mirror discrepancy use Report incorrect data on this detail page, attaching the official record and collection date. Do not treat absence of required secrets as absence of operator permissions.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "socketlist",
+      "platform": "Socketlist",
+      "url": "https://socketlist.com/server/io-github-alien6-studio-outerspace-apizr/",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://socketlist.com/server/io-github-alien6-studio-outerspace-apizr/",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:01:48.140826+00:00",
+        "status": "obsolete",
+        "version": "0.4.5",
+        "features": [
+          "local stdio launcher",
+          "three required paths"
+        ],
+        "findings": "The listing mirrors Registry 0.4.5 and the older analysis/planning description. It correctly provides the three required launcher flags and states that the server was not tested. Its maintenance/security/adoption score is a directory signal.",
+        "evidence_urls": [
+          "https://socketlist.com/server/io-github-alien6-studio-outerspace-apizr/"
+        ],
+        "score": {
+          "value": "73/100; maintenance 40/40, security 30/35, adoption 3/25",
+          "assessed_at": null
+        }
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://socketlist.com/contact/",
+        "instructions": "Use Claim or correct this listing (linked to /submit/) or /contact/ with the Socketlist draft in correction-requests.md. Request upstream Registry re-ingestion, preserving required paths; do not infer any live test from the score.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "smithery",
+      "platform": "Smithery",
+      "url": "https://smithery.ai/servers?q=outerspace-apizr",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://api.smithery.ai/servers?q=outerspace-apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:04:39.568073+00:00",
+        "status": "indeterminate",
+        "version": null,
+        "features": [],
+        "findings": "The website search serves a client-rendered shell. The documented semantic-search API returns HTTP 200 and a first page of ten non-matching servers (100 ranked candidates total). No exact repository match was found on this page. These incomplete semantic results do not establish absence; no publisher credential was used.",
+        "evidence_urls": [
+          "https://api.smithery.ai/servers?q=outerspace-apizr"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://smithery.ai/docs/build/publish",
+        "instructions": "First use an existing publisher account or authorised read-only API credential to search exact name and repository. If a listing exists, update its description and source under the existing namespace. Otherwise prepare a submission using the canonical copy, explicitly identifying local stdio prerequisites. Publishing/hosting a server is a separate action requiring approval.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "mcp-so",
+      "platform": "MCP.so",
+      "url": "https://mcp.so/search?q=outerspace-apizr",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://mcp.so/search?q=outerspace-apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:52.413685+00:00",
+        "status": "absent_confirmed",
+        "version": null,
+        "features": [],
+        "findings": "The platform search explicitly returns zero results for outerspace-apizr; a second on-platform query for OuterSpace Apizr also returns zero. Absence is confirmed only for these two catalogue queries, not every possible alias.",
+        "evidence_urls": [
+          "https://mcp.so/search?q=outerspace-apizr",
+          "https://mcp.so/search?q=OuterSpace%20Apizr"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://mcp.so/submit",
+        "instructions": "After approval, use Submit with the canonical server ID, repository, analysis-server copy and stdio setup guide. No submission was sent.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "pulsemcp",
+      "platform": "PulseMCP",
+      "url": "https://www.pulsemcp.com/servers?q=outerspace-apizr",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://www.pulsemcp.com/servers?q=outerspace-apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:52.588086+00:00",
+        "status": "absent_confirmed",
+        "version": null,
+        "features": [],
+        "findings": "The platform returns zero servers for both outerspace-apizr and OuterSpace Apizr. This is scoped search evidence. A notice on the directory says new submissions and listing changes are paused while ingestion is reworked.",
+        "evidence_urls": [
+          "https://www.pulsemcp.com/servers?q=outerspace-apizr",
+          "https://www.pulsemcp.com/servers?q=OuterSpace%20Apizr"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://www.pulsemcp.com/servers",
+        "instructions": "Keep the submission draft ready. Observe the directory notice: submissions/listing changes are currently paused. Recheck the official Submit route when ingestion reopens; do not claim acceptance or a listing from search alone.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "lobehub",
+      "platform": "LobeHub",
+      "url": "https://lobehub.com/mcp?q=outerspace-apizr",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://lobehub.com/mcp?q=outerspace-apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:52.595852+00:00",
+        "status": "indeterminate",
+        "version": null,
+        "features": [],
+        "findings": "The catalogue response contains no identifiable Apizr entry and does not render authoritative query results in the retrieved HTML. The q parameter is not established as a supported filter. Search-engine silence and a catalogue landing page do not establish absence.",
+        "evidence_urls": [
+          "https://lobehub.com/mcp?q=outerspace-apizr"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://lobehub.com/mcp",
+        "instructions": "Use the interactive marketplace search or the documented marketplace API with an existing authorised account. Search the exact package, server ID and repository, retain the resulting permalink, then use Publish/edit only after approval. No undocumented endpoint was used.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "pypi",
+      "platform": "PyPI outerspace-apizr",
+      "url": "https://pypi.org/project/outerspace-apizr/",
+      "status": "indeterminate",
+      "checked_at": "2026-10-20T12:12:40.051616+00:00",
+      "freshness": "fresh",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "checked_at": "2026-10-20T12:12:40.051616+00:00",
+        "error": "Access policy disallows checking or could not be verified",
+        "status": null,
+        "url": "https://pypi.org/pypi/outerspace-apizr/json",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:52.843243+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "Compile Python codebases into discoverable, typed and governable capabilities."
+        ],
+        "findings": "Published metadata declares 0.4.6; requires Python <3.16,>=3.11. Summary: Compile Python codebases into discoverable, typed and governable capabilities.. The 0.4.6 release files remain immutable.",
+        "evidence_urls": [
+          "https://pypi.org/pypi/outerspace-apizr/json"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://pypi.org/project/outerspace-apizr/",
+        "instructions": "Maintain the corresponding pyproject.toml and README in this repository for a future authorised release. PyPI upload metadata is release-bound; do not upload replacement 0.4.6 files. Project URLs and description changes are prepared in source only.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "pypi-mcp",
+      "platform": "PyPI outerspace-apizr-mcp",
+      "url": "https://pypi.org/project/outerspace-apizr-mcp/",
+      "status": "indeterminate",
+      "checked_at": "2026-10-20T12:12:40.052990+00:00",
+      "freshness": "fresh",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "checked_at": "2026-10-20T12:12:40.052990+00:00",
+        "error": "Access policy disallows checking or could not be verified",
+        "status": null,
+        "url": "https://pypi.org/pypi/outerspace-apizr-mcp/json",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:33.285707+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "Optional local stdio MCP server for Apizr analysis and explicitly enabled delivery"
+        ],
+        "findings": "Published metadata declares 0.4.6; requires Python <3.16,>=3.11. Summary: Optional local stdio MCP server for Apizr analysis and explicitly enabled delivery. The 0.4.6 release files remain immutable.",
+        "evidence_urls": [
+          "https://pypi.org/pypi/outerspace-apizr-mcp/json"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://pypi.org/project/outerspace-apizr-mcp/",
+        "instructions": "Maintain the corresponding pyproject.toml and README in this repository for a future authorised release. PyPI upload metadata is release-bound; do not upload replacement 0.4.6 files. Project URLs and description changes are prepared in source only.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "pypi-oci",
+      "platform": "PyPI outerspace-apizr-oci",
+      "url": "https://pypi.org/project/outerspace-apizr-oci/",
+      "status": "indeterminate",
+      "checked_at": "2026-10-20T12:12:40.053048+00:00",
+      "freshness": "fresh",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "checked_at": "2026-10-20T12:12:40.053048+00:00",
+        "error": "Access policy disallows checking or could not be verified",
+        "status": null,
+        "url": "https://pypi.org/pypi/outerspace-apizr-oci/json",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:34.435466+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "Official Apizr plugin for building local REST and MCP service images"
+        ],
+        "findings": "Published metadata declares 0.4.6; requires Python <3.16,>=3.11. Summary: Official Apizr plugin for building local REST and MCP service images. The 0.4.6 release files remain immutable.",
+        "evidence_urls": [
+          "https://pypi.org/pypi/outerspace-apizr-oci/json"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://pypi.org/project/outerspace-apizr-oci/",
+        "instructions": "Maintain the corresponding pyproject.toml and README in this repository for a future authorised release. PyPI upload metadata is release-bound; do not upload replacement 0.4.6 files. Project URLs and description changes are prepared in source only.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "pypi-attest",
+      "platform": "PyPI outerspace-apizr-attest",
+      "url": "https://pypi.org/project/outerspace-apizr-attest/",
+      "status": "indeterminate",
+      "checked_at": "2026-10-20T12:12:40.053081+00:00",
+      "freshness": "fresh",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "checked_at": "2026-10-20T12:12:40.053081+00:00",
+        "error": "Access policy disallows checking or could not be verified",
+        "status": null,
+        "url": "https://pypi.org/pypi/outerspace-apizr-attest/json",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:35.555885+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "Optional Continuum Attest receipts for verified Apizr OCI deliveries"
+        ],
+        "findings": "Published metadata declares 0.4.6; requires Python <3.16,>=3.11. Summary: Optional Continuum Attest receipts for verified Apizr OCI deliveries. The 0.4.6 release files remain immutable.",
+        "evidence_urls": [
+          "https://pypi.org/pypi/outerspace-apizr-attest/json"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://pypi.org/project/outerspace-apizr-attest/",
+        "instructions": "Maintain the corresponding pyproject.toml and README in this repository for a future authorised release. PyPI upload metadata is release-bound; do not upload replacement 0.4.6 files. Project URLs and description changes are prepared in source only.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "vscode-marketplace",
+      "platform": "VS Code Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=alien6-studio.apizr",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://marketplace.visualstudio.com/items?itemName=alien6-studio.apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:25.871745+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "Python/notebook inspection",
+          "experiment browsing/comparison",
+          "managed engine setup"
+        ],
+        "findings": "The exact extension ID alien6-studio.apizr is public. Embedded Marketplace metadata (not a README version mention) declares 0.4.6, last updated 2026-10-19 21:02:14 GMT. The description covers Python/notebook inspection and experiment Runs. The source is the separate outerspace-apizr-vscode repository.",
+        "evidence_urls": [
+          "https://marketplace.visualstudio.com/items?itemName=alien6-studio.apizr"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://marketplace.visualstudio.com/manage/publishers/alien6-studio",
+        "instructions": "Maintain extension copy in Alien6-Studio/outerspace-apizr-vscode, not the engine snapshot. Use the existing alien6-studio publisher dashboard for authorised updates. Preserve the released 0.4.6 VSIX and its immutable source pin.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "homebrew-tap",
+      "platform": "Homebrew official Alien6 tap",
+      "url": "https://github.com/Alien6-Studio/homebrew-tap/blob/master/Formula/apizr.rb",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://raw.githubusercontent.com/Alien6-Studio/homebrew-tap/master/Formula/apizr.rb",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:52.898965+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "core CLI",
+          "Python 3.15",
+          "official tap"
+        ],
+        "findings": "The official tap Formula points at the immutable v0.4.6 sdist and SHA-256, depends on Python 3.15 and Pydantic, and describes governed application interfaces. It is an official external tap, not a Homebrew core Formula.",
+        "evidence_urls": [
+          "https://raw.githubusercontent.com/Alien6-Studio/homebrew-tap/master/Formula/apizr.rb"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://github.com/Alien6-Studio/homebrew-tap",
+        "instructions": "Prepare a separate PR to Alien6-Studio/homebrew-tap only if a future Formula description/version needs changing. The current 0.4.6 URL and hash are correct. Use this repository’s Formula renderer/qualification for future releases; no tap mutation was made.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "homebrew-core",
+      "platform": "Homebrew core (exact apizr formula)",
+      "url": "https://formulae.brew.sh/api/formula/apizr.json",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://formulae.brew.sh/api/formula/apizr.json",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:53.082432+00:00",
+        "status": "absent_confirmed",
+        "version": null,
+        "features": [],
+        "findings": "The official formulae.brew.sh API returns 404 for the exact core Formula apizr. This says nothing about the official Alien6 tap, which is present and current.",
+        "evidence_urls": [
+          "https://formulae.brew.sh/api/formula/apizr.json"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://formulae.brew.sh/api/formula/apizr.json",
+        "instructions": "No core submission is needed to use the existing official tap. A new Homebrew core submission would need its own review and explicit authorisation.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "safety",
+      "platform": "Safety outerspace-apizr",
+      "url": "https://getsafety.com/packages/pypi/outerspace-apizr/",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://getsafety.com/packages/pypi/outerspace-apizr/",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:53.125241+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "package summary",
+          "public vulnerability catalogue"
+        ],
+        "findings": "The package page labels 0.4.6 its latest secure version. This is a Safety catalogue assertion; it is not a security review of Apizr and does not establish universal safety. Enterprise-only assessment data was not accessed.",
+        "evidence_urls": [
+          "https://getsafety.com/packages/pypi/outerspace-apizr/"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://getsafety.com/",
+        "instructions": "Correct future package descriptions upstream on PyPI through an authorised release. If ingestion remains stale, use Safety support with the exact package URL and public PyPI evidence. Do not claim that an empty public vulnerability table is proof of safety.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "safety-mcp",
+      "platform": "Safety outerspace-apizr-mcp",
+      "url": "https://getsafety.com/packages/pypi/outerspace-apizr-mcp/",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://getsafety.com/packages/pypi/outerspace-apizr-mcp/",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:04:44.075486+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "package summary",
+          "public vulnerability catalogue"
+        ],
+        "findings": "The package page labels 0.4.6 its latest secure version. This is a Safety catalogue assertion; it is not a security review of Apizr and does not establish universal safety. Enterprise-only assessment data was not accessed.",
+        "evidence_urls": [
+          "https://getsafety.com/packages/pypi/outerspace-apizr-mcp/"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://getsafety.com/",
+        "instructions": "Correct future package descriptions upstream on PyPI through an authorised release. If ingestion remains stale, use Safety support with the exact package URL and public PyPI evidence. Do not claim that an empty public vulnerability table is proof of safety.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "safety-oci",
+      "platform": "Safety outerspace-apizr-oci",
+      "url": "https://getsafety.com/packages/pypi/outerspace-apizr-oci/",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://getsafety.com/packages/pypi/outerspace-apizr-oci/",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:04:45.875508+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "package summary",
+          "public vulnerability catalogue"
+        ],
+        "findings": "The package page labels 0.4.6 its latest secure version. This is a Safety catalogue assertion; it is not a security review of Apizr and does not establish universal safety. Enterprise-only assessment data was not accessed.",
+        "evidence_urls": [
+          "https://getsafety.com/packages/pypi/outerspace-apizr-oci/"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://getsafety.com/",
+        "instructions": "Correct future package descriptions upstream on PyPI through an authorised release. If ingestion remains stale, use Safety support with the exact package URL and public PyPI evidence. Do not claim that an empty public vulnerability table is proof of safety.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "safety-attest",
+      "platform": "Safety outerspace-apizr-attest",
+      "url": "https://getsafety.com/packages/pypi/outerspace-apizr-attest/",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://getsafety.com/packages/pypi/outerspace-apizr-attest/",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:04:47.577583+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "package summary",
+          "public vulnerability catalogue"
+        ],
+        "findings": "The package page labels 0.4.6 its latest secure version. This is a Safety catalogue assertion; it is not a security review of Apizr and does not establish universal safety. Enterprise-only assessment data was not accessed.",
+        "evidence_urls": [
+          "https://getsafety.com/packages/pypi/outerspace-apizr-attest/"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://getsafety.com/",
+        "instructions": "Correct future package descriptions upstream on PyPI through an authorised release. If ingestion remains stale, use Safety support with the exact package URL and public PyPI evidence. Do not claim that an empty public vulnerability table is proof of safety.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "piwheels",
+      "platform": "piwheels outerspace-apizr",
+      "url": "https://www.piwheels.org/project/outerspace-apizr/",
+      "status": "obsolete",
+      "checked_at": "2026-10-20T12:12:42.991037+00:00",
+      "freshness": "fresh",
+      "version": "0.4.5",
+      "version_comparison": "mismatch",
+      "observation": {
+        "status": 200,
+        "final_url": "https://www.piwheels.org/project/outerspace-apizr/json/",
+        "checked_at": "2026-10-20T12:12:42.991037+00:00",
+        "url": "https://www.piwheels.org/project/outerspace-apizr/json/",
+        "observed": {
+          "identity_verified": true,
+          "version": "0.4.5",
+          "issues": [],
+          "description": "Compile Python codebases into discoverable, typed and governable capabilities."
+        },
+        "sha256": "68829e1b48bb6cda208fdf39b851020357eca1d050623ff76a13573a8b962c2b"
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:53.196426+00:00",
+        "status": "obsolete",
+        "version": "0.4.5",
+        "features": [
+          "secondary wheel index"
+        ],
+        "findings": "The live project JSON includes 0.4.5 as its highest stable, non-yanked release and no 0.4.6 release at capture time. Its summary is current. Earlier search-engine snippets still showed 0.1.3.1/0.4.1 and were not used as current evidence. This may be normal post-release ingestion delay, not a build failure.",
+        "evidence_urls": [
+          "https://www.piwheels.org/project/outerspace-apizr/json/"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://github.com/piwheels/packages/issues",
+        "instructions": "Wait for normal PyPI ingestion, then rerun the documented project JSON check. If still missing, use Package or version missing? on the project page / piwheels/packages issues, supplying the exact PyPI 0.4.6 URL and observed JSON. Do not ask for rebuilds before diagnosing ingestion.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "piwheels-mcp",
+      "platform": "piwheels outerspace-apizr-mcp",
+      "url": "https://www.piwheels.org/project/outerspace-apizr-mcp/",
+      "status": "obsolete",
+      "checked_at": "2026-10-20T12:12:44.475643+00:00",
+      "freshness": "fresh",
+      "version": "0.4.5",
+      "version_comparison": "mismatch",
+      "observation": {
+        "status": 200,
+        "final_url": "https://www.piwheels.org/project/outerspace-apizr-mcp/json/",
+        "checked_at": "2026-10-20T12:12:44.475643+00:00",
+        "url": "https://www.piwheels.org/project/outerspace-apizr-mcp/json/",
+        "observed": {
+          "identity_verified": true,
+          "version": "0.4.5",
+          "issues": [],
+          "description": "Optional local stdio MCP server for Apizr analysis and explicitly enabled delivery"
+        },
+        "sha256": "2eb9953e14ea9d48aaa72d65e13fb9ee0c145aac41856ce9df7b136ba5520da6"
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:36.677245+00:00",
+        "status": "obsolete",
+        "version": "0.4.5",
+        "features": [
+          "secondary wheel index"
+        ],
+        "findings": "The live project JSON includes 0.4.5 as its highest stable, non-yanked release and no 0.4.6 release at capture time. Its summary is current. Earlier search-engine snippets still showed 0.1.3.1/0.4.1 and were not used as current evidence. This may be normal post-release ingestion delay, not a build failure.",
+        "evidence_urls": [
+          "https://www.piwheels.org/project/outerspace-apizr-mcp/json/"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://github.com/piwheels/packages/issues",
+        "instructions": "Wait for normal PyPI ingestion, then rerun the documented project JSON check. If still missing, use Package or version missing? on the project page / piwheels/packages issues, supplying the exact PyPI 0.4.6 URL and observed JSON. Do not ask for rebuilds before diagnosing ingestion.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "piwheels-oci",
+      "platform": "piwheels outerspace-apizr-oci",
+      "url": "https://www.piwheels.org/project/outerspace-apizr-oci/",
+      "status": "obsolete",
+      "checked_at": "2026-10-20T12:12:46.182169+00:00",
+      "freshness": "fresh",
+      "version": "0.4.5",
+      "version_comparison": "mismatch",
+      "observation": {
+        "status": 200,
+        "final_url": "https://www.piwheels.org/project/outerspace-apizr-oci/json/",
+        "checked_at": "2026-10-20T12:12:46.182169+00:00",
+        "url": "https://www.piwheels.org/project/outerspace-apizr-oci/json/",
+        "observed": {
+          "identity_verified": true,
+          "version": "0.4.5",
+          "issues": [],
+          "description": "Official Apizr plugin for building local REST and MCP service images"
+        },
+        "sha256": "ba30d81e40d411babfc6cc2d3ada497e2248bde5d09072e97c85d1c9248bcf18"
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:37.811477+00:00",
+        "status": "obsolete",
+        "version": "0.4.5",
+        "features": [
+          "secondary wheel index"
+        ],
+        "findings": "The live project JSON includes 0.4.5 as its highest stable, non-yanked release and no 0.4.6 release at capture time. Its summary is current. Earlier search-engine snippets still showed 0.1.3.1/0.4.1 and were not used as current evidence. This may be normal post-release ingestion delay, not a build failure.",
+        "evidence_urls": [
+          "https://www.piwheels.org/project/outerspace-apizr-oci/json/"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://github.com/piwheels/packages/issues",
+        "instructions": "Wait for normal PyPI ingestion, then rerun the documented project JSON check. If still missing, use Package or version missing? on the project page / piwheels/packages issues, supplying the exact PyPI 0.4.6 URL and observed JSON. Do not ask for rebuilds before diagnosing ingestion.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "piwheels-attest",
+      "platform": "piwheels outerspace-apizr-attest",
+      "url": "https://www.piwheels.org/project/outerspace-apizr-attest/",
+      "status": "obsolete",
+      "checked_at": "2026-10-20T12:12:48.619817+00:00",
+      "freshness": "fresh",
+      "version": "0.4.5",
+      "version_comparison": "mismatch",
+      "observation": {
+        "status": 200,
+        "final_url": "https://www.piwheels.org/project/outerspace-apizr-attest/json/",
+        "checked_at": "2026-10-20T12:12:48.619817+00:00",
+        "url": "https://www.piwheels.org/project/outerspace-apizr-attest/json/",
+        "observed": {
+          "identity_verified": true,
+          "version": "0.4.5",
+          "issues": [],
+          "description": "Optional Continuum Attest receipts for verified Apizr OCI deliveries"
+        },
+        "sha256": "1e7178e9dac49532bc8d3d80799929c33dc865de0f2c7a3fb7194dda8b5bef72"
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:38.894451+00:00",
+        "status": "obsolete",
+        "version": "0.4.5",
+        "features": [
+          "secondary wheel index"
+        ],
+        "findings": "The live project JSON includes 0.4.5 as its highest stable, non-yanked release and no 0.4.6 release at capture time. Its summary is current. Earlier search-engine snippets still showed 0.1.3.1/0.4.1 and were not used as current evidence. This may be normal post-release ingestion delay, not a build failure.",
+        "evidence_urls": [
+          "https://www.piwheels.org/project/outerspace-apizr-attest/json/"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://github.com/piwheels/packages/issues",
+        "instructions": "Wait for normal PyPI ingestion, then rerun the documented project JSON check. If still missing, use Package or version missing? on the project page / piwheels/packages issues, supplying the exact PyPI 0.4.6 URL and observed JSON. Do not ask for rebuilds before diagnosing ingestion.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "nowfound",
+      "platform": "Nowfound",
+      "url": "https://nowfound.app/launch/outerspace-apizr",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://nowfound.app/launch/outerspace-apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:27.222065+00:00",
+        "status": "obsolete",
+        "version": null,
+        "features": [
+          "historical notebook conversion",
+          "FastAPI/container generation"
+        ],
+        "findings": "The public product record is a historical 2023 launch and retains notebook-to-FastAPI/container messaging. It does not declare an Apizr package version. The 86 votes are launch votes, not a current technical quality score. Keep the original launch date and vote history when requesting a current product-description update.",
+        "evidence_urls": [
+          "https://nowfound.app/launch/outerspace-apizr"
+        ],
+        "score": {
+          "value": "86 launch votes (2023-08-31 launch)",
+          "assessed_at": "2023-08-31T00:00:00Z",
+          "date_precision": "day; midnight UTC is used only to compute assessment age"
+        }
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "stale",
+      "update": {
+        "url": "https://nowfound.app/launch/outerspace-apizr",
+        "instructions": "Use an existing account via My products to locate the product, then request a current summary update using the Nowfound draft. The entry links an upstream Product Hunt launch; confirm which fields are inherited before editing. The public page does not document an anonymous correction API. No account or submission was created.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "libraries-io",
+      "platform": "Libraries.io",
+      "url": "https://libraries.io/pypi/outerspace-apizr",
+      "status": "indeterminate",
+      "checked_at": null,
+      "freshness": "unknown",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "error": "Manual review only; scheduled probe disabled",
+        "url": "https://libraries.io/pypi/outerspace-apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:02.355433+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "PyPI mirror",
+          "release history",
+          "README"
+        ],
+        "findings": "The live package page lists 0.4.6 and the updated README. SourceRank is an index heuristic, not product qualification. The package header abbreviates the GPL license; PyPI’s canonical expression is GPL-3.0-or-later.",
+        "evidence_urls": [
+          "https://libraries.io/pypi/outerspace-apizr"
+        ],
+        "score": {
+          "value": "SourceRank 8",
+          "assessed_at": null
+        }
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://libraries.io/pypi/outerspace-apizr",
+        "instructions": "Maintain upstream PyPI metadata for future authorised releases. If a mirror field is wrong, report the exact project URL and PyPI field to Libraries.io support; do not republish 0.4.6 to force a refresh.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "deps-dev",
+      "platform": "deps.dev / Open Source Insights",
+      "url": "https://deps.dev/pypi/outerspace-apizr",
+      "status": "indeterminate",
+      "checked_at": "2026-10-20T12:12:52.353245+00:00",
+      "freshness": "fresh",
+      "version": null,
+      "version_comparison": "unknown",
+      "observation": {
+        "checked_at": "2026-10-20T12:12:52.353245+00:00",
+        "error": "Access policy disallows checking or could not be verified",
+        "status": null,
+        "url": "https://api.deps.dev/v3/systems/pypi/packages/outerspace-apizr",
+        "observed": {
+          "identity_verified": false,
+          "version": null,
+          "issues": []
+        }
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:02:32.192341+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "package/version index"
+        ],
+        "findings": "The documented GetPackage API marks 0.4.6 as the default version. This confirms version indexing; the package endpoint does not provide a marketing description or certify governance/security properties.",
+        "evidence_urls": [
+          "https://api.deps.dev/v3/systems/pypi/packages/outerspace-apizr"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://deps.dev/pypi/outerspace-apizr",
+        "instructions": "Maintain PyPI as the upstream source. Report persistent data errors through the Contact us route in the official deps.dev API documentation, with the package key and version. No account or mutation is necessary for these GET checks.",
+        "submission_performed": false
+      }
+    },
+    {
+      "id": "github-release",
+      "platform": "GitHub official release 0.4.6",
+      "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/tag/v0.4.6",
+      "status": "confirmed",
+      "checked_at": "2026-10-20T12:12:54.666403+00:00",
+      "freshness": "fresh",
+      "version": "0.4.6",
+      "version_comparison": "match",
+      "observation": {
+        "status": 200,
+        "final_url": "https://api.github.com/repos/Alien6-Studio/outerspace-apizr/releases/tags/v0.4.6",
+        "checked_at": "2026-10-20T12:12:54.666403+00:00",
+        "url": "https://api.github.com/repos/Alien6-Studio/outerspace-apizr/releases/tags/v0.4.6",
+        "observed": {
+          "identity_verified": true,
+          "version": "0.4.6",
+          "issues": [],
+          "published_at": "2026-10-19T20:59:03Z"
+        },
+        "sha256": "d6d261cffbcf30e1f75dfb6529febed7132e9dddd3ff7e2177ef8c8ea50b3262"
+      },
+      "last_review": {
+        "checked_at": "2026-10-20T12:00:53.285287+00:00",
+        "status": "confirmed",
+        "version": "0.4.6",
+        "features": [
+          "release notes",
+          "immutable distribution assets"
+        ],
+        "findings": "The official release API confirms tag v0.4.6 and publication at 2026-10-19T20:59:03Z. Local tag resolves to 5ace433a8e955a6fa938fa72db93cea96d124491. This fixed release endpoint checks the reference release, not the latest development version.",
+        "evidence_urls": [
+          "https://api.github.com/repos/Alien6-Studio/outerspace-apizr/releases/tags/v0.4.6"
+        ]
+      },
+      "review_freshness": "fresh",
+      "assessment_freshness": "unknown",
+      "update": {
+        "url": "https://github.com/Alien6-Studio/outerspace-apizr/releases/tag/v0.4.6",
+        "instructions": "Keep v0.4.6 and its published assets immutable. Future copy changes belong in the working branch and a later authorised publication, not a replacement release.",
+        "submission_performed": false
+      }
+    }
+  ]
+}

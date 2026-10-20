@@ -1,7 +1,10 @@
 # OuterSpace Apizr
 
-Turn existing Python functions into REST APIs or MCP tools. Inspect training
-scripts and notebooks, record experiments, and compare their results.
+OuterSpace Apizr is a Python capability compiler for static discovery and
+scientific experiment tracking. Inspect scripts and notebooks, record and compare
+experiments, and expose selected functions through typed REST or MCP interfaces
+with governed execution. Reproducible evidence depends on the inputs,
+dependencies and environment information retained by each supported workflow.
 
 Apizr **0.4.6** supports Python **3.11–3.15** on macOS and Linux.
 
@@ -78,6 +81,13 @@ or follow the [Academy](https://apizr.outerspace.sh/academy/).
 
 The core handles inspection and generation. Plugins are optional. Run generated
 services and experiments only with code and dependencies you trust.
+
+The optional local stdio MCP analysis server provides static discovery, readiness,
+exposure planning and experiment history through six default tools. It is separate
+from the generated application MCP servers that execute selected functions.
+Delivery tools require separate enablement and permissions. Governed execution
+applies explicit policies and supported controls; it is not a universal sandbox.
+
 
 [Documentation](https://apizr.outerspace.sh/) ·
 [Release notes](https://github.com/Alien6-Studio/outerspace-apizr/releases) ·

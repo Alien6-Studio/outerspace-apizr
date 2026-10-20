@@ -1,0 +1,74 @@
+{
+  "mcpso-alias": {
+    "url": "https://mcp.so/search?q=OuterSpace%20Apizr",
+    "checked_at": "2026-10-20T12:01:56.087854+00:00",
+    "status": 200,
+    "final_url": "https://mcp.so/search?q=OuterSpace%20Apizr",
+    "sha256": "6ea3fc320c5fb41f63603394ed56435ecb499c44c59dcdbfc76bc2d2472995c7",
+    "findings": "Explicit zero results for the spaced product name."
+  },
+  "pulse-alias": {
+    "url": "https://www.pulsemcp.com/servers?q=OuterSpace%20Apizr",
+    "checked_at": "2026-10-20T12:04:41.178674+00:00",
+    "status": 200,
+    "final_url": "https://www.pulsemcp.com/servers?q=OuterSpace%20Apizr",
+    "sha256": "4678befdb5a7dde731fa2becd1fe60e6add80c6453a216d095f9d6174f94c072",
+    "findings": "Explicit zero servers for the spaced product name; submissions paused."
+  },
+  "lookup-publishers": {
+    "url": "https://mcplookup.com/docs/publishers",
+    "checked_at": "2026-10-20T12:01:51.918148+00:00",
+    "status": 200,
+    "final_url": "https://mcplookup.com/docs/publishers",
+    "sha256": "04d688504c1c2d59130ee0082c0cefb22c99ce1404395741b8aa752e27923845",
+    "findings": "Existing-account support review is available; publisher claiming planned."
+  },
+  "glama-api-doc": {
+    "url": "https://glama.ai/mcp/api",
+    "checked_at": "2026-10-20T12:02:30.425822+00:00",
+    "status": 200,
+    "final_url": "https://glama.ai/mcp/reference",
+    "sha256": "4917014233c01c2070a51cbd9534225df6331b34a135d09ef7eb1aae1825bd6a",
+    "findings": "Directory API requires API key; no key was created."
+  },
+  "smithery-list-doc": {
+    "url": "https://smithery.ai/docs/api-reference/servers/list-all-servers.md",
+    "checked_at": "2026-10-20T12:04:38.256128+00:00",
+    "status": 200,
+    "final_url": "https://smithery.ai/docs/api-reference/servers/list-all-servers.md",
+    "sha256": "d693f5f2b829229614e5499c56a233fe3327b5763feef94c54fac188132ef72d",
+    "findings": "q is documented as semantic and full-text search with pagination; no exhaustive absence inference is justified."
+  },
+  "vscode-package": {
+    "url": "https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr-vscode/47494a5b77a5bf3d8694485b5280437d1b81f7f8/package.json",
+    "checked_at": "2026-10-20T12:01:53.154356+00:00",
+    "status": 200,
+    "final_url": "https://raw.githubusercontent.com/Alien6-Studio/outerspace-apizr-vscode/47494a5b77a5bf3d8694485b5280437d1b81f7f8/package.json",
+    "sha256": "c664927debbbc6b5229b59b7733490b8ca70b05a3f0921c4f8d79919ce88a9dd",
+    "findings": "The pinned separate extension repository declares alien6-studio.apizr version 0.4.6."
+  },
+  "trace-search": {
+    "url": "https://tracevero.com/mcp/?suche=outerspace-apizr",
+    "checked_at": "2026-10-20T12:01:49.280508+00:00",
+    "status": 200,
+    "final_url": "https://tracevero.com/mcp/?suche=outerspace-apizr",
+    "sha256": "19d40a02094f7c88f628ce23395cbedf2e958db05607a0f3786c7a86c14b9e82",
+    "findings": "Internal exact-name search resolves to the captured Tracevero detail permalink."
+  },
+  "nowfound-detail": {
+    "url": "https://nowfound.app/alternatives/outerspace-apizr",
+    "checked_at": "2026-10-20T12:01:54.557207+00:00",
+    "status": 200,
+    "final_url": "https://nowfound.app/alternatives/outerspace-apizr",
+    "sha256": "4d69ddbd3159c9a4e78e0f75e947187c2d049de87ae3f13834c9ce7ec0a2909e",
+    "findings": "Alternatives page links the captured historical launch record."
+  },
+  "docs": {
+    "url": "https://apizr.outerspace.sh/reference/apizr-mcp-server/",
+    "checked_at": "2026-10-20T12:00:53.372082+00:00",
+    "status": 200,
+    "final_url": "https://apizr.outerspace.sh/reference/apizr-mcp-server/",
+    "sha256": "839e61678751ba6be59069d1217486dfc1ea3edd157cc062e5c5729c37b78667",
+    "findings": "Published MCP guide documents all six default tools, three optional delivery tools, stdio configuration and operator permissions."
+  }
+}
