@@ -173,6 +173,9 @@ oci-coverage.json
 mutation-evidence/
 release-evidence/
 
+# Generated ecosystem verification reports stay local.
+/ecosystem/reports/
+
 # Attest private material and local execution state (public trust is versioned).
 .attest/keys/
 .attest/receipts/

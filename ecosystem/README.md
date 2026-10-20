@@ -5,10 +5,11 @@ This inventory covers the requested platforms, the four coordinated Python
 packages and two additional package indexes. It does not claim exhaustive
 coverage of the internet.
 
-The retained audit records **15 confirmed listings, 9 obsolete listings,
-3 scoped absences and 2 indeterminate searches**. See the
-[full report](reports/2026-10-20/report.md) and
-[machine-readable report](reports/2026-10-20/report.json).
+The audit records **15 confirmed listings, 9 obsolete listings,
+3 scoped absences and 2 indeterminate searches** in the versioned
+[inventory](registry-audit.json). Generated JSON and Markdown reports stay local
+under `ecosystem/reports/`, which is excluded by `.gitignore`. CI retains its
+generated reports as workflow artifacts rather than committing them.
 
 | Finding | Evidence and next action |
 | --- | --- |
@@ -68,11 +69,12 @@ python3 -m unittest discover -s tests/ecosystem -v
 python3 ecosystem/verify.py \
   --replay ecosystem/evidence/2026-10-20.json \
   --as-of 2026-10-20T12:09:00+00:00 \
-  --output /tmp/apizr-ecosystem-replay
+  --output ecosystem/reports/2026-10-20
 ```
 
 That command deterministically regenerates `observations.json`, `report.json`
-and `report.md` from the retained observations. It does not refetch or reconstruct
+and `report.md` locally from the retained observations. These generated files are
+ignored by Git. The command does not refetch or reconstruct
 the original pages. Response hashes identify the original responses; the
 repository retains extracted facts rather than full third-party HTML. Parser
 tests use synthetic local HTTP fixtures, including malformed responses and
@@ -81,14 +83,14 @@ explicit negative results.
 For a current check of the documented public APIs:
 
 ```sh
-python3 ecosystem/verify.py --live --output /tmp/apizr-ecosystem-current
+python3 ecosystem/verify.py --live --output ecosystem/reports/current
 ```
 
 For an occasional manual check that also revisits the reviewed HTML URLs:
 
 ```sh
 python3 ecosystem/verify.py --live --include-manual \
-  --output /tmp/apizr-ecosystem-manual
+  --output ecosystem/reports/manual
 ```
 
 Live mode observes `robots.txt`, fails closed if its access policy cannot be
@@ -101,7 +103,7 @@ best-effort fallback where an unauthenticated documented API is unavailable.
 Glama's directory API requires a publisher-provided key; no key was created.
 Operators should review platform terms before enabling additional automation.
 
-The [retained live run](reports/2026-10-20-live/report.md) independently confirmed
+The locally retained live run independently confirmed
 three current API records and detected four piwheels version mismatches. The
 other 22 entries remain indeterminate in this automated run: 17 are intentionally
 manual-only, while the four PyPI JSON endpoints and deps.dev were deferred by
@@ -134,7 +136,8 @@ review without promoting its version into current verified evidence.
 
 After each substantive manual review, update the entry's `review` fields and
 supporting URLs, retain a new dated evidence snapshot, then generate a new dated
-report directory. Do not overwrite historical snapshots. Update `reference_version`
+local report directory under `ecosystem/reports/`; do not commit generated reports.
+Do not overwrite historical snapshots. Update `reference_version`
 deliberately when a later stable release becomes the audit baseline. Review
 capability descriptions and tool names against that release as well.
 
