@@ -26,7 +26,7 @@ and the starting point for future checks.
 | Platform / listing | Observed version | State | Finding / next action |
 | --- | --- | --- | --- |
 | [Official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Alien6-Studio%2Fouterspace-apizr/versions/latest) | 0.4.6 | Confirmed | Current record; stdio and three required local paths. |
-| [Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr) | Unknown | Outdated | Description updated live and verified publicly. Inspection still lists 3 tools; reinspection and release-label correction pending. |
+| [Glama](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr) | Unknown | Outdated | Description corrected publicly; fixed source/profile build passes. Public schema still lists 3 tools; corrected-build publication and release-label correction pending. |
 | [MCPLookup](https://mcplookup.com/server/io.github.Alien6-Studio/outerspace-apizr) | 0.4.5 | Outdated | Still 0.4.5; request upstream refresh through publisher support. |
 | [Arcade ToolBench](https://toolbench.arcade.dev/servers/cmudbhox101v0c8nn9g1flcm1) | Unknown | Outdated | Seven legacy HTTP endpoints assessed as MCP tools; request a new stdio assessment. |
 | [Tracevero](https://tracevero.com/mcp/io-github-alien6-studio-outerspace-apizr) | 0.4.6 | Confirmed | Current Registry mirror; vendor statements are explicitly unverified. |
@@ -60,19 +60,26 @@ and the starting point for future checks.
 | Date | Platform | Action | Verified outcome |
 | --- | --- | --- | --- |
 | 2026-10-20 | Glama | Saved a 366-character description through the existing publisher account. | New text is visible on the public listing. The three-tool inspection remains outdated. |
-| 2026-10-20 | Glama | Reviewed Releases and repository/build configuration. | An unexpected 0.4.7 entry is marked Latest; no delete/unpublish control is exposed in the reviewed Releases UI. Support correction is pending. |
+| 2026-10-20 | Glama | Reviewed Releases and repository/build configuration. | An unexpected 0.4.7 entry is marked Latest; no delete/unpublish control is exposed in the reviewed Releases UI. Support request sent; correction is pending. |
+| 2026-10-20 | Glama | Fixed the source pin and active MCP profile, then ran a build test. | [Corrected build test](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/admin/dockerfile/tests/01a15964-3844-7608-88d9-d91b0d81b572) succeeded. Public schema still shows 3 tools; Glama rejected publishing as 0.4.6 because that version already exists. |
+| 2026-10-20 | Glama | Emailed the official support address with the successful test reference and the duplicate-version error. | Message verified in Sent Items at 15:04 Europe/Paris. Requested replacement of the existing 0.4.6 build, withdrawal of the unintended 0.4.7 entry and public schema refresh; response pending. |
 
-The Glama build configuration was still pinned to source commit
-`c924618b73b46440c8d5281be7079070da733f96`, whose package metadata declares
-**0.4.2**. A repository sync and a build pin are separate settings. This explains
-why a recent release label alone cannot establish that the inspected tools are
-from 0.4.6. The origin of the 0.4.7 label has not been established.
+Glama was pinned to `c924618b73b46440c8d5281be7079070da733f96`, whose
+package metadata declares **0.4.2**. The corrected build uses fixed commit
+`458343cc648befea4b60a9c6d13dd9257ab5d499` and the active profile
+`/opt/apizr-inspection/prepared/profile`, matching the repository Dockerfile.
+Server, plugin and dependency files at that commit match `v0.4.6`. Glama rejected
+the exact tag commit as unknown despite a completed repository sync, so the
+verified current commit was used. The corrected build test succeeded. Publishing it as **0.4.6** was rejected
+with “This version already exists for this MCP server.” Support has been asked
+to attach that build to the existing release; the public schema remains outdated. The origin of
+the 0.4.7 label has not been established, and that entry is still present.
 
 ### Publisher routes
 
 | Platform | Appropriate route | Current action status |
 | --- | --- | --- |
-| Glama | Existing-account [Listing](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/admin/profile), [Releases](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/admin/releases), [Repository](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/admin/repository) and human support chat. | Description corrected; release metadata and inspection refresh pending. |
+| Glama | Existing-account [Listing](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/admin/profile), [Releases](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/admin/releases), [Repository](https://glama.ai/mcp/servers/Alien6-Studio/outerspace-apizr/admin/repository) and human support chat. | Description corrected; fixed-source/profile build passed. Support request sent; release replacement, public schema refresh and label correction pending. |
 | Arcade ToolBench | Existing-account listing controls; use the platform support/rescore route if no correction control is available. | Review/rescore request pending. |
 | MCPLookup | [Publisher support](https://mcplookup.com/docs/publishers): send canonical server ID, stale evidence and authoritative links to the published support address. | Refresh request pending. |
 | Socketlist | [Correction/contact form](https://socketlist.com/contact/), including the server ID or repository. | Refresh request pending. |
