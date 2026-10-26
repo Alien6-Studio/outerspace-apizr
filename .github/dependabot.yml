@@ -15,6 +15,13 @@ updates:
     groups:
       action-updates:
         patterns: ["*"]
+  - package-ecosystem: npm
+    directory: "/scripts/client_collection_tools"
+    schedule:
+      interval: weekly
+    groups:
+      client-tooling:
+        update-types: [minor, patch]
   - package-ecosystem: uv
     directory: "/"
     target-branch: gh-pages

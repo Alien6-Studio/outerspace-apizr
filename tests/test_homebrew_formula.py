@@ -56,6 +56,13 @@ def test_development_lock_does_not_reauthorize_published_045(tmp_path):
     assert not (tmp_path / "tap").exists()
 
 
+def test_dependency_refresh_does_not_reauthorize_published_046(tmp_path):
+    root, _, _ = candidate(tmp_path)
+    with pytest.raises(ValueError, match="Reviewed build-input identity changed"):
+        tool["render"](root, SHA, tmp_path / "tap", mode="publication")
+    assert not (tmp_path / "tap").exists()
+
+
 def test_renderer_is_deterministic_and_keeps_build_inputs_out_of_runtime(tmp_path):
     root, source, sha = candidate(tmp_path)
     a, b = tmp_path / "a", tmp_path / "b"
@@ -151,6 +158,13 @@ def test_qualification_cannot_accept_publication_overrides(tmp_path):
 def test_publication_binds_verified_evidence_and_immutable_asset(
     tmp_path, monkeypatch, change
 ):
+    # Publication tests use the frozen release inputs; the current development
+    # lock may qualify new dependencies without authorizing another 0.4.6 build.
+    frozen = json.loads(
+        (ROOT / "tests/fixtures/homebrew/published-0.4.6-build-inputs.json").read_text()
+    )
+    assert tool["digest"](tool["encoded"](frozen)) == tool["BUILD_MANIFEST"]
+    monkeypatch.setitem(tool["render"].__globals__, "manifest", lambda *args: frozen)
     root, source, sha = candidate(tmp_path)
     url = f"https://github.com/Alien6-Studio/outerspace-apizr/releases/download/v0.4.6/{source.name}"
     evidence, bundle = tmp_path / "evidence.tar.gz", tmp_path / "bundle.json"

@@ -65,3 +65,20 @@ including two critical. npm's 13 affected-package count includes parent
 metavulnerabilities and must not be confused with an advisory count. Even a
 vulnerable feature unused by the current fixture blocks the release; there is
 no development-tooling exemption.
+
+## Security refresh — 2026-10-26
+
+The lock updates `fast-uri` **3.1.8 → 3.1.9**, `ip-address`
+**10.7.3 → 10.7.5** and `undici` **7.30.0 → 7.30.1** within their existing
+parent constraints. Azure Identity **4.13.3** still requires MSAL Node `^6.0.0`,
+so an override scoped to that exact parent selects **7.1.1**, which includes the
+[authorization-code security correction](https://github.com/AzureAD/microsoft-authentication-library-for-js/releases/tag/msal-node-v7.1.0).
+Remove or review that override when Azure Identity changes.
+
+MSAL 7 removes the interactive `responseMode` option. The installed Azure
+Identity adapter does not supply that option. The compatibility check exercises
+Azure Identity's actual client-secret adapter through MSAL 7, with discovery and
+token responses supplied in memory. This verifies request parameters and token
+handling without Azure credentials; it does not qualify every Azure credential
+or interactive browser flow. The full npm audit reports zero vulnerabilities
+across all dependency categories. Dependabot now monitors this npm directory.
