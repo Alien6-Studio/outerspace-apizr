@@ -106,7 +106,17 @@ def test_dependabot_groups_compatible_updates_and_all_codeql_steps():
     assert updates[("github-actions", "gh-pages")]["groups"] == {
         "website-actions": {"patterns": ["*"]}
     }
-    assert all(item["directory"] == "/" for item in updates.values())
+    assert updates[("npm", None)]["schedule"]["interval"] == "weekly"
+    assert updates[("npm", None)]["groups"] == {
+        "client-tooling": {"update-types": ["minor", "patch"]}
+    }
+    assert {key: item["directory"] for key, item in updates.items()} == {
+        ("uv", None): "/",
+        ("github-actions", None): "/",
+        ("npm", None): "/scripts/client_collection_tools",
+        ("uv", "gh-pages"): "/",
+        ("github-actions", "gh-pages"): "/",
+    }
 
 
 def test_final_candidate_includes_one_shared_editor_and_signed_evidence():

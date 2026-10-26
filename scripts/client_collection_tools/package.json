@@ -25,6 +25,9 @@
     },
     "@usebruno/filestore@0.13.0": {
       "yaml": "2.8.3"
+    },
+    "@azure/identity@4.13.3": {
+      "@azure/msal-node": "7.1.1"
     }
   }
 }

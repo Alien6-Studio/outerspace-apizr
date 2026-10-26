@@ -71,6 +71,56 @@ async function main() {
   assert.match(form.getBuffer().toString(), /name="name"/);
   assert.equal(typeof cliRequire('axios').create().request, 'function');
 
+  // Azure Identity pins MSAL 6. Exercise its real client-credential adapter with
+  // MSAL 7 and an in-memory transport; no account or network access is needed.
+  const identityRequire = createRequire(join(__dirname, 'node_modules/@azure/identity/package.json'));
+  const { ClientSecretCredential } = identityRequire('@azure/identity');
+  const { createHttpHeaders } = identityRequire('@azure/core-rest-pipeline');
+  const tenant = '11111111-1111-1111-1111-111111111111';
+  const client = '22222222-2222-2222-2222-222222222222';
+  const authority = `https://login.microsoftonline.com/${tenant}`;
+  const scope = 'https://management.azure.com/.default';
+  let tokenRequests = 0;
+  const httpClient = {
+    async sendRequest(request) {
+      const url = new URL(request.url);
+      assert.equal(url.origin, 'https://login.microsoftonline.com');
+      let body;
+      if (request.method === 'GET' && url.pathname === `/${tenant}/v2.0/.well-known/openid-configuration`) {
+        body = {
+          issuer: `${authority}/v2.0`,
+          authorization_endpoint: `${authority}/oauth2/v2.0/authorize`,
+          token_endpoint: `${authority}/oauth2/v2.0/token`,
+          jwks_uri: `${authority}/discovery/v2.0/keys`,
+          end_session_endpoint: `${authority}/oauth2/v2.0/logout`
+        };
+      } else {
+        assert.equal(request.method, 'POST');
+        assert.equal(url.pathname, `/${tenant}/oauth2/v2.0/token`);
+        const parameters = new URLSearchParams(request.body);
+        assert.equal(parameters.get('grant_type'), 'client_credentials');
+        assert.equal(parameters.get('client_id'), client);
+        assert.equal(parameters.get('client_secret'), 'apizr-test-secret');
+        assert.equal(parameters.get('scope'), scope);
+        tokenRequests += 1;
+        body = { token_type: 'Bearer', access_token: 'apizr-offline-token', expires_in: 3600 };
+      }
+      return {
+        request, status: 200,
+        headers: createHttpHeaders({ 'content-type': 'application/json' }),
+        bodyAsText: JSON.stringify(body)
+      };
+    }
+  };
+  const credential = new ClientSecretCredential(tenant, client, 'apizr-test-secret', {
+    disableInstanceDiscovery: true, httpClient, retryOptions: { maxRetries: 0 }
+  });
+  const token = await credential.getToken(scope);
+  assert.equal(token.token, 'apizr-offline-token');
+  assert.equal(token.tokenType, 'Bearer');
+  assert.ok(token.expiresOnTimestamp > Date.now());
+  assert.equal(tokenRequests, 1);
+
   // Real HTTP/YAML/CLI execution is qualified separately by client_collections_proof.py.
   process.stdout.write(JSON.stringify({ node: process.version, overrides: checked, compatibility: 'passed' }, null, 2) + '\n');
 }

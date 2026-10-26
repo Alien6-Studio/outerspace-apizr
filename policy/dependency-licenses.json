@@ -337,21 +337,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "3ea9a0808286c6fb5511a8b3637ff004e0360116cab0fcfb9231b5019665230d",
+      "distribution_fingerprint": "f7cacc7e2e2e42114d7512ae495ee1e1044b356a776ee830e034d22b980e915f",
       "evidence_archive": {
-        "hash": "sha256:741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55",
-        "url": "https://files.pythonhosted.org/packages/a3/c2/24167ea9858356b47a87a50d39908bfdb72ceeefe0041586e704e5376b3a/certifi-2026.7.22.tar.gz"
+        "hash": "sha256:a9895e6e2758b371e0545e321a3a8fd1fcfd9829ada8824a936dfb16aaaf36cd",
+        "url": "https://files.pythonhosted.org/packages/fd/11/b524cbd9bbdaca58608e4cf4053fd463417549e1959fa8d3aa18319f9555/certifi-2026.10.23.tar.gz"
       },
       "license_files": [
         {
-          "path": "certifi-2026.7.22/LICENSE",
+          "path": "certifi-2026.10.23/LICENSE",
           "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
         }
       ],
       "name": "certifi",
-      "notes": "Reviewed the preserved primary license and bundled attribution notices for unmodified dependency use. Retain upstream notices; do not treat this entry as permission to vendor arbitrary additional components.",
+      "notes": "Reviewed the SHA-256-verified source archive for the 2026-10-26 dependency update; preserved license texts are unchanged. Retain upstream notices for unmodified dependency use.",
       "status": "reviewed",
-      "version": "2026.7.22"
+      "version": "2026.10.23"
     },
     {
       "components": [
@@ -813,21 +813,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "e56b7e606047d195df8ce6f23439421d081997e064c7571bf68167e5cee72bbb",
+      "distribution_fingerprint": "455c7fe999108633b58212ceae3c1505081d3e38ee5fe51cc9a45c96c95f5454",
       "evidence_archive": {
-        "hash": "sha256:b9ab567ee57afb4454004ce04c889f8f0160ac47946b99795887cd6e88484848",
-        "url": "https://files.pythonhosted.org/packages/38/d5/b0aeb0b303650ac87b0411de4aaf3f901b06042dcc3fb00f30b97b7ff585/fastapi-0.143.3.tar.gz"
+        "hash": "sha256:7392b2609ebaf7e2dbffd38b8a927499e61a50e55dd0e57323ebee30efc1a462",
+        "url": "https://files.pythonhosted.org/packages/d7/c0/0d48292d19c33bade0d1f3a72b2be832dadb1ecc8e9c00e1ae71dda80b5d/fastapi-0.144.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "fastapi-0.143.3/LICENSE",
+          "path": "fastapi-0.144.0/LICENSE",
           "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
         }
       ],
       "name": "fastapi",
-      "notes": "Reviewed the SHA-256-verified locked source archive. Every notice is byte-for-byte unchanged from the preceding review; existing component terms and use scopes remain applicable. Retain upstream attribution and redistribution obligations.",
+      "notes": "Reviewed the SHA-256-verified source archive for the 2026-10-26 dependency update; preserved license texts are unchanged. Retain upstream notices for unmodified dependency use.",
       "status": "reviewed",
-      "version": "0.143.3"
+      "version": "0.144.0"
     },
     {
       "components": [
@@ -865,25 +865,25 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "e495e60bc48852c29393182293fe6373607a8e4c293331c3dddbcbde328bc605",
+      "distribution_fingerprint": "d1e42a2e0613bee9c2323dd6bb855e026f6d03b71beaa2101ec2d826dded6019",
       "evidence_archive": {
-        "hash": "sha256:7a60906c75227cf04d0c273afadc8219400f11aeb13cc69591d4f6cdc6c8036e",
-        "url": "https://files.pythonhosted.org/packages/f4/a9/1af41b37c3279712b22cdc63aac78a52432202b6fe1f9666a2a3d2831fb4/filelock-4.2.0.tar.gz"
+        "hash": "sha256:c6d8663535e1650ee430507b4ffbac7b464dd64b7647ea0112a9f406499d163d",
+        "url": "https://files.pythonhosted.org/packages/d8/28/3893324bcadf8f89b1616637468d766af3f625008c0735bf704fdfa86617/filelock-4.2.4.tar.gz"
       },
       "license_files": [
         {
-          "path": "filelock-4.2.0/LICENSE",
+          "path": "filelock-4.2.4/LICENSE",
           "sha256": "608c89d5060ae9921adccf3236695bc654a9946e12323ef6c021dfa04e294d48"
         },
         {
-          "path": "filelock-4.2.0/docs/license.rst",
+          "path": "filelock-4.2.4/docs/license.rst",
           "sha256": "feec665d3f93b49689f5a94040c514454bb8aeea2ca9f8edf58f6ab7536f8298"
         }
       ],
       "name": "filelock",
-      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "notes": "Reviewed the SHA-256-verified source archive for the 2026-10-26 dependency update; preserved license texts are unchanged. Retain upstream notices for unmodified dependency use.",
       "status": "reviewed",
-      "version": "4.2.0"
+      "version": "4.2.4"
     },
     {
       "components": [
@@ -4063,31 +4063,31 @@
         },
         {
           "evidence_sha256": [
-            "0e51b915e26da42c998b274c1a81804c5f9eea5ca49d69da2f96418872590825"
+            "edcfad5b7c374e6af94d1c3ddb069bed087ba6f573664fb5fb2da5c9cc240d24"
           ],
           "expression": "MIT",
           "scope": "Unmodified bundled pip/setuptools wheels retain their own nested notices; this top-level notice does not enumerate their transitive code."
         }
       ],
-      "distribution_fingerprint": "71e41905e52e1a340eb7794431938d6c008d2d07337654b025c13eb0f0868c0e",
+      "distribution_fingerprint": "bc8030a53ca7e7e025b479d8af07eab5738d33484536352faf9839be4d384ebd",
       "evidence_archive": {
-        "hash": "sha256:5f427d56f39eb7e7447d641dd4b7ab1e9c92793f498f35f26da2e4972c5546ae",
-        "url": "https://files.pythonhosted.org/packages/dc/3f/935cf1757643381fb7f7cc98197b4bc119223d9c2cf37dc3b03ad2a4455f/virtualenv-21.14.7.tar.gz"
+        "hash": "sha256:de5307ba4b9a0001d9c8ea02832d38f63ca432880f416c1bface61c4323fd905",
+        "url": "https://files.pythonhosted.org/packages/70/aa/bff50daee0488e16d611258a9b6c5a1d0c9e128f8ca424e9f4e1c0444ef2/virtualenv-21.14.13.tar.gz"
       },
       "license_files": [
         {
-          "path": "virtualenv-21.14.7/LICENSE",
+          "path": "virtualenv-21.14.13/LICENSE",
           "sha256": "38ef740a641ff08df082680e98ab30d09badccee9e5fb686bce21212f3a663f0"
         },
         {
-          "path": "virtualenv-21.14.7/THIRD-PARTY-NOTICES.md",
-          "sha256": "0e51b915e26da42c998b274c1a81804c5f9eea5ca49d69da2f96418872590825"
+          "path": "virtualenv-21.14.13/THIRD-PARTY-NOTICES.md",
+          "sha256": "edcfad5b7c374e6af94d1c3ddb069bed087ba6f573664fb5fb2da5c9cc240d24"
         }
       ],
       "name": "virtualenv",
-      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission. The MIT copyright year becomes 2020-present; bundled-wheel notice and scope are unchanged.",
+      "notes": "Reviewed the SHA-256-verified source archive for the 2026-10-26 dependency update. Primary license texts are unchanged; third-party notices update the bundled pip/setuptools versions with the same MIT terms. Preserve all upstream notices for unmodified dependency use.",
       "status": "reviewed",
-      "version": "21.14.7"
+      "version": "21.14.13"
     },
     {
       "components": [
