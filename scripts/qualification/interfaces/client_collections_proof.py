@@ -214,7 +214,7 @@ def qualify(args):
                     }
                 )
         postman = args.postman.resolve()
-        assert run([postman, "--version"], cwd=root).strip() == "1.73.0"
+        assert run([postman, "--version"], cwd=root).strip() == "1.76.0"
         lint = json.loads(
             run(
                 [postman, "collection", "lint", root / "postman", "--reporter", "json"],
@@ -250,14 +250,14 @@ def qualify(args):
         ]
         validations["postman"] = {
             "format": "3.0.0",
-            "cli": "1.73.0",
+            "cli": "1.76.0",
             "lint": lint,
             "requests": len(results),
             "reporter": "cli (v3 JSON reporter unsupported)",
         }
         tools = args.tools.resolve()
         bruno = tools / "node_modules/.bin/bru"
-        assert run([bruno, "--version"], cwd=root).strip() == "4.2.1"
+        assert run([bruno, "--version"], cwd=root).strip() == "4.3.0"
         schema = json.loads(
             (
                 tools
@@ -292,7 +292,7 @@ def qualify(args):
             assert json.loads(execution["request"]["data"]) == request["example"]
         validations["bruno"] = {
             "format": "1.0.0",
-            "cli": "4.2.1",
+            "cli": "4.3.0",
             "schema_package": "0.14.0",
             "requests": len(executions),
         }

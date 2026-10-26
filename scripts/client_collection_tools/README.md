@@ -82,3 +82,12 @@ token responses supplied in memory. This verifies request parameters and token
 handling without Azure credentials; it does not qualify every Azure credential
 or interactive browser flow. The full npm audit reports zero vulnerabilities
 across all dependency categories. Dependabot now monitors this npm directory.
+
+The compatible tooling update selects Bruno **4.3.0** and Postman **1.76.0**.
+Bruno's new CLI, JS, requests, converters and filestore packages still constrain
+the same vulnerable dependency versions. Their reviewed overrides now apply to
+parents **4.3.0**, **0.55.0**, **0.22.0**, **0.25.0** and **0.14.0**, respectively.
+The corrected dependency versions and Node 22.22.2 requirement remain the same.
+The vendor API compatibility checks pass for those new parents; native collection
+qualification checks the actual CLI versions and executes generated requests.
+See the [Bruno 4.3.0 release](https://github.com/usebruno/bruno/releases/tag/v4.3.0).
