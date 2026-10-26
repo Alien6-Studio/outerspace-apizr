@@ -1,8 +1,8 @@
 {
   "dependencies": {
     "@opencollection/schema": "0.14.0",
-    "@usebruno/cli": "4.2.1",
-    "postman-cli": "1.73.0"
+    "@usebruno/cli": "4.3.0",
+    "postman-cli": "1.76.0"
   },
   "overrides": {
     "@usebruno/cli@4.2.1": {
