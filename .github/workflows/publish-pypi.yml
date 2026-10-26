@@ -54,7 +54,7 @@ jobs:
           ref: ${{ inputs.release_tag }}
           path: release-source
           persist-credentials: false
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: '0.13.1'
           python-version: '3.14'
@@ -212,22 +212,22 @@ jobs:
         with:
           name: pending-distributions
           path: pending
-      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
         if: needs.verify.outputs.outerspace_apizr == 'true' && (inputs.package == 'all' || inputs.package == 'outerspace-apizr')
         with:
           packages-dir: pending/outerspace-apizr/
           print-hash: true
-      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
         if: needs.verify.outputs.outerspace_apizr_oci == 'true' && (inputs.package == 'all' || inputs.package == 'outerspace-apizr-oci')
         with:
           packages-dir: pending/outerspace-apizr-oci/
           print-hash: true
-      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
         if: needs.verify.outputs.outerspace_apizr_mcp == 'true' && (inputs.package == 'all' || inputs.package == 'outerspace-apizr-mcp')
         with:
           packages-dir: pending/outerspace-apizr-mcp/
           print-hash: true
-      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
         if: needs.verify.outputs.outerspace_apizr_attest == 'true' && (inputs.package == 'all' || inputs.package == 'outerspace-apizr-attest')
         with:
           packages-dir: pending/outerspace-apizr-attest/

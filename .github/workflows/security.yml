@@ -51,7 +51,7 @@ jobs:
           npm audit --prefix scripts/client_collection_tools --json
           --include=prod --include=dev --include=optional --include=peer
           --audit-level=moderate > node-dependency-audit.json
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: '0.13.1'
           python-version: '3.14'
@@ -89,12 +89,12 @@ jobs:
       - name: Require exact native CodeQL analyses and retain their SARIF
         if: steps.source.outputs.mode == 'native'
         run: python3 -m scripts.qualification.ci.codeql_evidence native --output codeql-results
-      - uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      - uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         if: steps.source.outputs.mode == 'retained'
         with:
           languages: python,javascript-typescript,actions
           build-mode: none
-      - uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      - uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         if: steps.source.outputs.mode == 'retained'
         with:
           # Native setup owns public alerts. Uncovered development/tag refs retain

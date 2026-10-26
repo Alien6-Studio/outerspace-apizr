@@ -813,21 +813,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "455c7fe999108633b58212ceae3c1505081d3e38ee5fe51cc9a45c96c95f5454",
+      "distribution_fingerprint": "31ffb0b8c0b2480821ac8bd9bc0ddd95e9f8911113ae28c9faf3aca11594d2d3",
       "evidence_archive": {
-        "hash": "sha256:7392b2609ebaf7e2dbffd38b8a927499e61a50e55dd0e57323ebee30efc1a462",
-        "url": "https://files.pythonhosted.org/packages/d7/c0/0d48292d19c33bade0d1f3a72b2be832dadb1ecc8e9c00e1ae71dda80b5d/fastapi-0.144.0.tar.gz"
+        "hash": "sha256:4076b88434452e20289379068e976c4a04c65ffc8e6be31510106e150a422f0f",
+        "url": "https://files.pythonhosted.org/packages/ed/3d/2cc1a0dbc2dac6e157b4ef12bac063e1016cb7c6d7395f76665e439cf1aa/fastapi-0.161.1.tar.gz"
       },
       "license_files": [
         {
-          "path": "fastapi-0.144.0/LICENSE",
+          "path": "fastapi-0.161.1/LICENSE",
           "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
         }
       ],
       "name": "fastapi",
-      "notes": "Reviewed the SHA-256-verified source archive for the 2026-10-26 dependency update; preserved license texts are unchanged. Retain upstream notices for unmodified dependency use.",
+      "notes": "Reviewed the SHA-256-verified locked source archive for the 2026-10-26 dependency refresh. Preserved primary and cumulative license texts are unchanged; retain upstream notices for existing unmodified dependency use.",
       "status": "reviewed",
-      "version": "0.144.0"
+      "version": "0.161.1"
     },
     {
       "components": [
@@ -1115,21 +1115,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "7fbc3e50a283f907c7186eab62a0cce8584b65948ef8016cca14fca1f3e9d9f5",
+      "distribution_fingerprint": "ba31dcb55ceee1c698edabbf29620d8f32524ca9152f1b16dc40588a1039f4b0",
       "evidence_archive": {
-        "hash": "sha256:e7426d21b4897ddd91f361458d4a8c8a7fa9b2eafe17d0db0311b3f17a093b17",
-        "url": "https://files.pythonhosted.org/packages/b6/d3/2bef2a3b89c78ad4ff47be6825f16063a3fa3b72d20a08df72d98c0940f6/hypothesis-6.170.1.tar.gz"
+        "hash": "sha256:dfc56ceac35d825fb6a85fa3ac36a598fee3101d264a39895a62f78c1cc95521",
+        "url": "https://files.pythonhosted.org/packages/d7/1f/d08bc6d4548cf5f6a022895d2f32c23e981fb417517358aebe612544a2ad/hypothesis-6.170.8.tar.gz"
       },
       "license_files": [
         {
-          "path": "hypothesis-6.170.1/LICENSE.txt",
+          "path": "hypothesis-6.170.8/LICENSE.txt",
           "sha256": "ac89037bac63550644dce8cf32c6765e5fab9dc1a1ce94b89f8a805f341a6750"
         }
       ],
       "name": "hypothesis",
-      "notes": "Reviewed the SHA-256-verified locked source archive. Every notice is byte-for-byte unchanged from the preceding review; existing component terms and use scopes remain applicable. Retain upstream attribution and redistribution obligations.",
+      "notes": "Reviewed the SHA-256-verified locked source archive for the 2026-10-26 dependency refresh. Preserved primary and cumulative license texts are unchanged; retain upstream notices for existing unmodified dependency use.",
       "status": "reviewed",
-      "version": "6.170.1"
+      "version": "6.170.8"
     },
     {
       "components": [
@@ -1599,21 +1599,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "3399f99fb64062c9d714b6530288dae730cbdc8439b676fd782e3930e9dc28e0",
+      "distribution_fingerprint": "8ef034b4d8c1e9e9b38a3a6ed684121da27cce1d94807637e00e61076ad2cc35",
       "evidence_archive": {
-        "hash": "sha256:496f4f80f9ebd3395a04c8ec9595c40bbe8ec19e9c67d21fe071a1643e876606",
-        "url": "https://files.pythonhosted.org/packages/4e/d4/f3f4b6ed70b7c7608fa026ff3bbe59ace9b1ebca43d8ae4886c87c95e81d/markdown-3.11.1.tar.gz"
+        "hash": "sha256:87bf5d90f2d2882e2c02fcda182c2800456b985bff38913867c49706481514b0",
+        "url": "https://files.pythonhosted.org/packages/f4/32/0b4d0297064244f04af4331b65de16237cc3cce07474171ee14222a28981/markdown-3.11.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "markdown-3.11.1/LICENSE.md",
+          "path": "markdown-3.11.2/LICENSE.md",
           "sha256": "7ba4eb6d10b32b2d11dce13821340351cdbbb30ba8ccc67841db2ffd86e79aca"
         }
       ],
       "name": "markdown",
-      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "notes": "Reviewed the SHA-256-verified locked source archive for the 2026-10-26 dependency refresh. Preserved primary and cumulative license texts are unchanged; retain upstream notices for existing unmodified dependency use.",
       "status": "reviewed",
-      "version": "3.11.1"
+      "version": "3.11.2"
     },
     {
       "components": [
@@ -3421,53 +3421,53 @@
           "scope": "Unicode name data bundled in ruff_unicode_names2; checked against https://spdx.org/licenses/Unicode-3.0.html, retain its complete notice."
         }
       ],
-      "distribution_fingerprint": "e9c1143058c3099e375bdc1a084332babc053f8931d22cd1bec1b0f56e27e67c",
+      "distribution_fingerprint": "1b4aeb0fa36888ededa60a6e0bb3d9e5ae9cbdb1e0834d7588a0ec6b1519e824",
       "evidence_archive": {
-        "hash": "sha256:5bb796c5112e9fb9527f2ef2faa0a130d6312d19de92bcfaddd70dbb2d41020f",
-        "url": "https://files.pythonhosted.org/packages/f9/e7/e6d5749983b020e6cb1055abec0a6f361a8e94f0184cdcf56d4760995f02/ruff-0.17.1.tar.gz"
+        "hash": "sha256:84d632402d14c23b488f941db23712d6736a013225162062d34558c3f3c780eb",
+        "url": "https://files.pythonhosted.org/packages/ae/58/690cf56da80c8f2c8bf12042b6017beac2c34fe961f65420bcb3fb7fac38/ruff-0.17.2.tar.gz"
       },
       "license_files": [
         {
-          "path": "ruff-0.17.1/LICENSE",
+          "path": "ruff-0.17.2/LICENSE",
           "sha256": "2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18"
         },
         {
-          "path": "ruff-0.17.1/crates/ruff_annotate_snippets/LICENSE-APACHE",
+          "path": "ruff-0.17.2/crates/ruff_annotate_snippets/LICENSE-APACHE",
           "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
         },
         {
-          "path": "ruff-0.17.1/crates/ruff_annotate_snippets/LICENSE-MIT",
+          "path": "ruff-0.17.2/crates/ruff_annotate_snippets/LICENSE-MIT",
           "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
         },
         {
-          "path": "ruff-0.17.1/crates/ruff_unicode_names2/LICENSE-APACHE",
+          "path": "ruff-0.17.2/crates/ruff_unicode_names2/LICENSE-APACHE",
           "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
         },
         {
-          "path": "ruff-0.17.1/crates/ruff_unicode_names2/LICENSE-MIT",
+          "path": "ruff-0.17.2/crates/ruff_unicode_names2/LICENSE-MIT",
           "sha256": "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
         },
         {
-          "path": "ruff-0.17.1/crates/ruff_unicode_names2/data/LICENSE-UNICODE",
+          "path": "ruff-0.17.2/crates/ruff_unicode_names2/data/LICENSE-UNICODE",
           "sha256": "f858d5fab15f87699a92876e78d7699a92bdb116b57bf64bf6778c374b5cb0fe"
         },
         {
-          "path": "ruff-0.17.1/crates/ruff_unicode_names2_generator/LICENSE-APACHE",
+          "path": "ruff-0.17.2/crates/ruff_unicode_names2_generator/LICENSE-APACHE",
           "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
         },
         {
-          "path": "ruff-0.17.1/crates/ruff_unicode_names2_generator/LICENSE-MIT",
+          "path": "ruff-0.17.2/crates/ruff_unicode_names2_generator/LICENSE-MIT",
           "sha256": "6d3a9431e65e69c73a8923e6517b889d17549b23db406b9ec027710d16af701f"
         },
         {
-          "path": "ruff-0.17.1/crates/ty_vendored/vendor/typeshed/LICENSE",
+          "path": "ruff-0.17.2/crates/ty_vendored/vendor/typeshed/LICENSE",
           "sha256": "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe"
         }
       ],
       "name": "ruff",
-      "notes": "Reviewed the SHA-256-verified locked source archive. Every notice is byte-for-byte unchanged from the preceding review; existing component terms and use scopes remain applicable. Retain upstream attribution and redistribution obligations.",
+      "notes": "Reviewed the SHA-256-verified locked source archive for the 2026-10-26 dependency refresh. Preserved primary and cumulative license texts are unchanged; retain upstream notices for existing unmodified dependency use.",
       "status": "reviewed",
-      "version": "0.17.1"
+      "version": "0.17.2"
     },
     {
       "components": [
@@ -3643,21 +3643,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "fa204a75e26ad9ee0f797527160664c2f498d7b1082fc21841c40407f4e269a5",
+      "distribution_fingerprint": "3cde805fcf85142985e4c402eded5ac8e00683ad6fa4e42a134544cebfdddf40",
       "evidence_archive": {
-        "hash": "sha256:1565dc0b35d5737a271ed1e0e04e949f4e81198799f216d2667b0a0fb9cf9522",
-        "url": "https://files.pythonhosted.org/packages/e9/0c/6efb252d091ecccd7d62048ae11f0ea35cd75a4fbaeea5e30f9c3bf91d10/starlette-1.8.0.tar.gz"
+        "hash": "sha256:3d931de246ed870e35ce605974440816ef895e592f255d1396cfdf191d4c4318",
+        "url": "https://files.pythonhosted.org/packages/ad/eb/4e197bf26b023abafc5e9043ec8710d7de0fcb032d0969045236d72aa0b1/starlette-1.9.0.tar.gz"
       },
       "license_files": [
         {
-          "path": "starlette-1.8.0/LICENSE.md",
+          "path": "starlette-1.9.0/LICENSE.md",
           "sha256": "dcb95677a02240243187e964f941847d19b17821cf99e5afae684fab328c19bf"
         }
       ],
       "name": "starlette",
-      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "notes": "Reviewed the SHA-256-verified locked source archive for the 2026-10-26 dependency refresh. Preserved primary and cumulative license texts are unchanged; retain upstream notices for existing unmodified dependency use.",
       "status": "reviewed",
-      "version": "1.8.0"
+      "version": "1.9.0"
     },
     {
       "components": [
@@ -4162,21 +4162,21 @@
           "scope": "Primary project code in the reviewed archive."
         }
       ],
-      "distribution_fingerprint": "f803bee7a894ce3574a82a76a85003126190c6b6e6cf0b573c6a652867006d8e",
+      "distribution_fingerprint": "ba611614bae102f4da9a43423f3a119733075f45b87fa23ba262cd24cab68528",
       "evidence_archive": {
-        "hash": "sha256:36c2fb94c990cc2545143b12690e2de6c16300f9dbe5b4f33fa300cf57dc8792",
-        "url": "https://files.pythonhosted.org/packages/01/89/3f825ab71c242fffb62ea8fe638741c290f62f8d7aadf8125ff897747af3/websockets-17.2.tar.gz"
+        "hash": "sha256:1c7dd93a1c9f89297471493674b1fc1d9467cafd45374f2172213046bdb3a329",
+        "url": "https://files.pythonhosted.org/packages/30/4b/4692be6d5bf739ed049b3813901c42091f8c054df89d5c089343823dea0d/websockets-17.3.tar.gz"
       },
       "license_files": [
         {
-          "path": "websockets-17.2/LICENSE",
+          "path": "websockets-17.3/LICENSE",
           "sha256": "3d6a0c050d8bec52fabad502e45fb25bd02bcadbd70dea34d447b6a0ff4e6da8"
         }
       ],
       "name": "websockets",
-      "notes": "Reviewed the SHA-256-verified locked source archive and compared every preserved notice with the previous review. Component terms and existing use scopes are unchanged; retain upstream attribution and redistribution obligations. No new vendoring permission.",
+      "notes": "Reviewed the SHA-256-verified locked source archive for the 2026-10-26 dependency refresh. Preserved primary and cumulative license texts are unchanged; retain upstream notices for existing unmodified dependency use.",
       "status": "reviewed",
-      "version": "17.2"
+      "version": "17.3"
     }
   ],
   "review_date": "2026-10-19",

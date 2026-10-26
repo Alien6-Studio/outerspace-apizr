@@ -68,7 +68,7 @@ def test_platform_contracts_and_immutable_supply_chain():
     assert set(ACTION["outputs"]) == {"result", "artifacts", "apizr-version", "state"}
     dependencies = [s["uses"] for s in ACTION["runs"]["steps"] if "uses" in s]
     assert dependencies == [
-        "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+        "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
     ]
     for step in ACTION["runs"]["steps"]:
         if "run" in step:
