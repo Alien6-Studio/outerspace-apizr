@@ -1,0 +1,9 @@
+Developer Certificate of Origin 1.1
+https://developercertificate.org/
+
+I certify the unchanged GTM website contribution introduced by commit
+e0154bdc83132d6aaa467b7b2f67e32c5b8ee96c under the Developer Certificate of Origin 1.1.
+This declaration records the maintainer identity selected by GitHub for
+the squash merge of pull request #406.
+
+Signed-off-by: Ludovic Fernandez <contact@alien6.com>
