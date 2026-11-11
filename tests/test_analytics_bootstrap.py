@@ -33,7 +33,9 @@ def test_bootstrap_resolves_the_local_adapter_on_root_and_nested_pages(
         }
     )
     specifier = json.loads(re.search(r"\bfrom (\"[^\"]+\");", rendered)[1])
-    assert specifier.startswith(("./", "../", "/")), "Bare module names cannot load in the browser"
+    assert specifier.startswith(("./", "../", "/")), (
+        "Bare module names cannot load in the browser"
+    )
     assert urljoin("https://apizr.outerspace.sh" + document, specifier) == (
         "https://apizr.outerspace.sh/assets/javascripts/analytics-apizr.mjs"
     )

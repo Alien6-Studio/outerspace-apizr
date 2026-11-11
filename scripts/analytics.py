@@ -29,8 +29,33 @@ def public_path(value):
     if trailing and path != "/":
         path += "/"
     parts = path.strip("/").split("/")
-    section = parts[1] if parts[0] in {"fr", "en", "de", "es", "it"} and len(parts) > 1 else parts[0]
-    if section in {"account", "auth", "contact", "dashboard", "login", "logout", "register", "signup", "signin", "sign-in", "callback", "oauth", "profile", "checkout", "reset-password", "forgot-password", "preview", "private", "admin", "api"}:
+    section = (
+        parts[1]
+        if parts[0] in {"fr", "en", "de", "es", "it"} and len(parts) > 1
+        else parts[0]
+    )
+    if section in {
+        "account",
+        "auth",
+        "contact",
+        "dashboard",
+        "login",
+        "logout",
+        "register",
+        "signup",
+        "signin",
+        "sign-in",
+        "callback",
+        "oauth",
+        "profile",
+        "checkout",
+        "reset-password",
+        "forgot-password",
+        "preview",
+        "private",
+        "admin",
+        "api",
+    }:
         return None
     return path
 
@@ -48,7 +73,13 @@ def on_env(env, config, files):
     identifiers = set()
     for file in files.documentation_pages():
         page = file.page
-        if page is None or page.meta.get("draft") or page.meta.get("private") or page.meta.get("status") == "draft" or page.meta.get("analytics") is False:
+        if (
+            page is None
+            or page.meta.get("draft")
+            or page.meta.get("private")
+            or page.meta.get("status") == "draft"
+            or page.meta.get("analytics") is False
+        ):
             continue
         controls = PersonalControls()
         controls.feed(page.content)
@@ -59,12 +90,21 @@ def on_env(env, config, files):
         if path in catalogue or identifier in identifiers:
             raise ValueError("Ambiguous public analytics catalogue identity")
         identifiers.add(identifier)
-        catalogue[path] = {"content_id": identifier, "content_type": "home" if path == "/" else "academy" if path.startswith("/academy/") else "documentation"}
+        catalogue[path] = {
+            "content_id": identifier,
+            "content_type": "home"
+            if path == "/"
+            else "academy"
+            if path.startswith("/academy/")
+            else "documentation",
+        }
     config.extra["audience_catalogue"] = catalogue
     return env
 
 
 def on_page_context(context, page, config, nav):
     context["audience_path"] = public_path(page.file.url)
-    context["audience_page"] = config.extra["audience_catalogue"].get(context["audience_path"])
+    context["audience_page"] = config.extra["audience_catalogue"].get(
+        context["audience_path"]
+    )
     return context
