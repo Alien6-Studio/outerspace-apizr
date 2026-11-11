@@ -6,6 +6,7 @@ site_description: >-
 
 hooks:
   - scripts/build.py
+  - scripts/analytics.py
 
 # Repository
 repo_name: alien6-studio/outerspace-apizr
@@ -72,7 +73,9 @@ extra:
   consent:
     title: Cookie consent
     description: >-
-      Optional Google Analytics cookies measure documentation visits. Optional
+      Optional Google Analytics cookies measure documentation visits, selected
+      public links and reading engagement. These custom events contain no form
+      answers or search text. Optional
       GitHub requests show repository statistics. Optional Product Hunt requests
       display the homepage badge. These stay off until you choose them. You can reject them or change your choice at any time.
     actions:
