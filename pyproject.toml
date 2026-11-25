@@ -92,7 +92,7 @@ dev = [
 jupyter-qualification = ["ipykernel>=7.4,<8", "jupyter-client>=8.10,<9"]
 security = ["pip-audit>=2.9,<3"]
 readme = ["markdown>=3.7,<4"]
-homebrew-build = ["hatchling==1.32.4"]
+homebrew-build = ["hatchling==1.33.0"]
 
 [build-system]
 requires = ["hatchling<2,>=1.27"]
